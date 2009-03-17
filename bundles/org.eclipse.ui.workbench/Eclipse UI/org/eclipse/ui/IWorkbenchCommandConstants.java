@@ -186,6 +186,7 @@ public interface IWorkbenchCommandConstants {
 
     /**
      * Id for command "Add Task" in category "Edit".
+     * (value is <code>"org.eclipse.ui.edit.addTask"</code>).
      */
     public static final String EDIT_ADDTASK = "org.eclipse.ui.edit.addTask"; //$NON-NLS-1$
 
