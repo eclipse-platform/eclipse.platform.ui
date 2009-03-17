@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 compeople AG and others.
+ * Copyright (c) 2008, 2009 compeople AG and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,7 @@ import org.eclipse.core.net.proxy.IProxyData;
  */
 public class StaticProxyConfig {
 
-	private static final String[] KNOWN_TYPES = {"HTTP", "HTTPS", "FTP", "GOPHER", "SOCKS"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+	private static final String[] KNOWN_TYPES = {"HTTP", "HTTPS", "FTP", "GOPHER"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private List universalProxies = new ArrayList();
 	private Map protocolSpecificProxies = new HashMap();
 	private ProxyBypass proxyBypass;
