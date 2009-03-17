@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,7 +88,7 @@ public class NonProxyHostsComposite extends Composite {
 		hostsViewer.setLabelProvider(labelProvider);
 
 		TableLayout tableLayout = new TableLayout();
-		tableLayout.addColumnData(new ColumnPixelData(18));
+		tableLayout.addColumnData(new ColumnPixelData(24));
 		tableLayout.addColumnData(new ColumnWeightData(50, 50, true));
 		tableLayout.addColumnData(new ColumnWeightData(50, 50, true));
 		hostsTable.setLayout(tableLayout);
