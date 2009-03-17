@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,6 @@ import java.util.List;
 
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.*;
@@ -130,7 +129,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 		});
 
 		/**
-		 * The 'Project Set repository location' column
+		 * The 'Project set repository location' column
 		 */
 		final TableColumn projectSetRepositoryColumn = new TableColumn(table,
 				SWT.NONE, 0);
@@ -138,7 +137,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 				.setText(CVSUIMessages.ConfigureRepositoryLocationsWizard_column0);
 
 		/**
-		 * The 'Alternative repository locations' column
+		 * The 'Repository location' column
 		 */
 		final TableColumn alternativeRepositoryColums = new TableColumn(table,
 				SWT.NONE, 1);
@@ -186,11 +185,23 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 		fTableViewer.setContentProvider(this);
 		fTableViewer.setLabelProvider(this);
 		fTableViewer.setComparator(new AlternativeRepositoryComparator());
-
+		
 		/**
-		 * Add a cell editor in the 'Alternative repository locations' column
+		 * Add a cell editor in the 'Repository location' column
 		 */
-		new TableEditor(table);
+		TableViewerFocusCellManager focusCellManager = new TableViewerFocusCellManager(
+				fTableViewer, new FocusCellOwnerDrawHighlighter(fTableViewer));
+		ColumnViewerEditorActivationStrategy editorActivationStrategy = new ColumnViewerEditorActivationStrategy(
+				fTableViewer) {
+			protected boolean isEditorActivationEvent(
+					ColumnViewerEditorActivationEvent event) {
+				return event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
+						|| (event.eventType == ColumnViewerEditorActivationEvent.KEY_PRESSED && event.keyCode == SWT.F2);
+			}
+		};
+		TableViewerEditor.create(fTableViewer, focusCellManager,
+				editorActivationStrategy, ColumnViewerEditor.DEFAULT
+						| ColumnViewerEditor.KEYBOARD_ACTIVATION);
 
 		cellEditors = new CellEditor[2];
 		cellEditors[0] = null;
