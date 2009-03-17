@@ -72,6 +72,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
@@ -1025,7 +1026,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         setActionGroup(group);
         
         IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
-    	service.activateHandler("org.eclipse.ui.navigate.linkWithEditor", //$NON-NLS-1$
+		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLELINKWITHEDITOR,
     			new ActionHandler(group.toggleLinkingAction));
     	collapseAllHandler = new CollapseAllHandler(viewer);
     	service.activateHandler(CollapseAllHandler.COMMAND_ID,

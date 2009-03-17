@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.views.navigator;
 
+import org.eclipse.ui.IWorkbenchCommandConstants;
+
 /**
  * This action toggles whether this navigator links its selection to the active
  * editor.
@@ -20,14 +22,16 @@ package org.eclipse.ui.views.navigator;
  */
 public class ToggleLinkingAction extends ResourceNavigatorAction {
 
-	private static final String COMMAND_ID = "org.eclipse.ui.navigate.linkWithEditor"; //$NON-NLS-1$
 
 	/**
-     * Constructs a new action.
-     */
+	 * Constructs a new action.
+	 * 
+	 * @param navigator the resource navigator
+	 * @param label the label
+	 */
     public ToggleLinkingAction(IResourceNavigator navigator, String label) {
         super(navigator, label);
-        setActionDefinitionId(COMMAND_ID);
+		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_TOGGLELINKWITHEDITOR);
         setChecked(navigator.isLinkingEnabled());
     }
 
