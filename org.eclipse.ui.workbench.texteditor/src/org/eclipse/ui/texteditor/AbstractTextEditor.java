@@ -3315,15 +3315,15 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 *
 		final Map gestureMap= new HashMap();
 
-		gestureMap.put("E", "org.eclipse.ui.navigate.forwardHistory");
-		gestureMap.put("N", "org.eclipse.ui.file.save");
-		gestureMap.put("NW", "org.eclipse.ui.file.saveAll");
-		gestureMap.put("S", "org.eclipse.ui.file.close");
-		gestureMap.put("SW", "org.eclipse.ui.file.closeAll");
-		gestureMap.put("W", "org.eclipse.ui.navigate.backwardHistory");
-		gestureMap.put("EN", "org.eclipse.ui.edit.copy");
-		gestureMap.put("ES", "org.eclipse.ui.edit.paste");
-		gestureMap.put("EW", "org.eclipse.ui.edit.cut");
+		gestureMap.put("E", IWorkbenchCommandConstants.NAVIGATE_FORWARDHISTORY); //$NON-NLS-1$
+		gestureMap.put("N", IWorkbenchCommandConstants.FILE_SAVE); //$NON-NLS-1$
+		gestureMap.put("NW", IWorkbenchCommandConstants.FILE_SAVEALL); //$NON-NLS-1$
+		gestureMap.put("S", IWorkbenchCommandConstants.FILE_CLOSE); //$NON-NLS-1$
+		gestureMap.put("SW", IWorkbenchCommandConstants.FILE_CLOSEALL); //$NON-NLS-1$
+		gestureMap.put("W", IWorkbenchCommandConstants.NAVIGATE_BACKWARDHISTORY); //$NON-NLS-1$
+		gestureMap.put("EN", IWorkbenchCommandConstants.EDIT_COPY); //$NON-NLS-1$
+		gestureMap.put("ES", IWorkbenchCommandConstants.EDIT_PASTE); //$NON-NLS-1$
+		gestureMap.put("EW", IWorkbenchCommandConstants.EDIT_CUT); //$NON-NLS-1$
 
 		Capture capture= Capture.create();
 		capture.setControl(styledText);
