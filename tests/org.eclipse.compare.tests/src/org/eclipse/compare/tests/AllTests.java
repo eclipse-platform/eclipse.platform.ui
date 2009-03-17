@@ -13,15 +13,14 @@ package org.eclipse.compare.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-
 /**
  * Test some non-UI areas of the compare plugin.
  */
 public class AllTests {
 
 	public static Test suite() {
-		TestSuite suite= new TestSuite("Test for org.eclipse.compare.tests"); //$NON-NLS-1$
-		//$JUnit-BEGIN$
+		TestSuite suite = new TestSuite("Test for org.eclipse.compare.tests"); //$NON-NLS-1$
+		// $JUnit-BEGIN$
 		suite.addTestSuite(TextMergeViewerTest.class);
 		suite.addTestSuite(LineReaderTest.class);
 		suite.addTestSuite(StreamMergerTest.class);
@@ -33,7 +32,8 @@ public class AllTests {
 		suite.addTestSuite(DiffTest.class);
 		suite.addTestSuite(FileDiffResultTest.class);
 		suite.addTestSuite(ContentMergeViewerTest.class);
-		//$JUnit-END$
+		suite.addTestSuite(PatchLinesTest.class);
+		// $JUnit-END$
 		return suite;
 	}
 }

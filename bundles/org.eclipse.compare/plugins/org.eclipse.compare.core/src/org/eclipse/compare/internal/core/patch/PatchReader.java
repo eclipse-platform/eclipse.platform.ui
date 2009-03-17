@@ -386,7 +386,11 @@ public class PatchReader {
 						if (line.startsWith("*** ")) {	// old range //$NON-NLS-1$
 							// format: *** oldStart,oldEnd ***
 							extractPair(line, ' ', oldRange);
-							oldRange[1]= oldRange[1]-oldRange[0]+1;
+							if (oldRange[0] == 0) {
+								oldRange[1] = 0; // In case of the file addition
+							} else {
+								oldRange[1] = oldRange[1] - oldRange[0] + 1;
+							}
 							lines= oldLines;
 							continue;
 						}
@@ -420,7 +424,11 @@ public class PatchReader {
 						if (line.startsWith("--- ")) {	// new range //$NON-NLS-1$
 							// format: *** newStart,newEnd ***
 							extractPair(line, ' ', newRange);
-							newRange[1]= newRange[1]-newRange[0]+1;
+							if (newRange[0] == 0) {
+								newRange[1] = 0; // In case of the file removal
+							} else {
+								newRange[1] = newRange[1] - newRange[0] + 1;
+							}
 							lines= newLines;
 							continue;
 						}
