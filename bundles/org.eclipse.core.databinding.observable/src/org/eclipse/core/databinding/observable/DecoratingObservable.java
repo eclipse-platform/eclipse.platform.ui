@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237718)
- *     Matthew Hall - bugs 246626, 255734
+ *     Matthew Hall - bugs 246626, 255734, 264925
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -95,7 +95,6 @@ public class DecoratingObservable extends AbstractObservable implements
 	}
 
 	public boolean equals(Object obj) {
-		getterCalled();
 		if (obj == this)
 			return true;
 		if (obj == null)
@@ -108,7 +107,6 @@ public class DecoratingObservable extends AbstractObservable implements
 	}
 
 	public int hashCode() {
-		getterCalled();
 		return decorated.hashCode();
 	}
 
