@@ -120,7 +120,7 @@ public class StackModelFactory extends SWTPartFactory {
 	}
 
 	@Override
-	public void childAdded(MPart<?> parentElement, MPart<?> element) {
+	public void childAdded(final MPart<?> parentElement, MPart<?> element) {
 		super.childAdded(parentElement, element);
 
 		if (element instanceof MItemPart<?>) {
@@ -138,6 +138,35 @@ public class StackModelFactory extends SWTPartFactory {
 			cti.setData(OWNING_ME, element);
 			cti.setText(itemPart.getName());
 			cti.setImage(getImage(element));
+
+			// Handle label changes
+			IObservableValue textObs = EMFObservables.observeValue(
+					(EObject) element, ApplicationPackage.Literals.MITEM__NAME);
+			ISWTObservableValue uiObs = SWTObservables.observeText(cti);
+			dbc.bindValue(uiObs, textObs, null, null);
+			IObservableValue emfTTipObs = EMFObservables.observeValue(
+					(EObject) element,
+					ApplicationPackage.Literals.MITEM__TOOLTIP);
+			ISWTObservableValue uiTTipObs = SWTObservables
+					.observeTooltipText(cti);
+			dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
+
+			// Handle tab item image changes
+			((EObject) element).eAdapters().add(new AdapterImpl() {
+				@Override
+				public void notifyChanged(Notification msg) {
+					MPart<?> sm = (MPart<?>) msg.getNotifier();
+					if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
+							.getFeature())) {
+						CTabItem item = findItemForPart(parentElement, sm);
+						if (item != null) {
+							Image image = getImage(sm);
+							if (image != null)
+								item.setImage(image);
+						}
+					}
+				}
+			});
 
 			// Lazy Loading: On the first pass through this method the
 			// part's control will be null (we're just creating the tabs
@@ -183,35 +212,7 @@ public class StackModelFactory extends SWTPartFactory {
 
 	private void hookChildControllerLogic(final MPart<?> parentElement,
 			final MPart<?> childElement, final CTabItem cti) {
-		// Handle label changes
-		IObservableValue textObs = EMFObservables
-				.observeValue((EObject) childElement,
-						ApplicationPackage.Literals.MITEM__NAME);
-		ISWTObservableValue uiObs = SWTObservables.observeText(cti);
-		dbc.bindValue(uiObs, textObs, null, null);
 
-		IObservableValue emfTTipObs = EMFObservables.observeValue(
-				(EObject) childElement,
-				ApplicationPackage.Literals.MITEM__TOOLTIP);
-		ISWTObservableValue uiTTipObs = SWTObservables.observeTooltipText(cti);
-		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
-
-		// Handle tab item image changes
-		((EObject) childElement).eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				MPart<?> sm = (MPart<?>) msg.getNotifier();
-				if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
-						.getFeature())) {
-					CTabItem item = findItemForPart(parentElement, sm);
-					if (item != null) {
-						Image image = getImage(sm);
-						if (image != null)
-							item.setImage(image);
-					}
-				}
-			}
-		});
 	}
 
 	@Override
