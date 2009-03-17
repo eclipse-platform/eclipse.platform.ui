@@ -76,6 +76,8 @@ public class ActionMessages extends NLS {
 
 	public static String OpenLaunchDialogAction_1;
 
+	public static String PasteWatchExpressionsAction_0;
+
 	public static String ProfileLastAction_0;
 
 	public static String ProfileLastAction_1;
