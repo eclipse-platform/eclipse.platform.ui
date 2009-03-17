@@ -33,11 +33,10 @@ import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
-import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
@@ -217,7 +216,7 @@ public class Workbench implements IWorkbench {
 			System.err
 					.println("Initializing workbench: " + applicationDefinitionInstance); //$NON-NLS-1$
 			Resource resource = new XMIResourceImpl();
-			workbench = readWBModel(applicationDefinitionInstance);
+			workbench = loadDefaultModel(applicationDefinitionInstance);
 			resource.getContents().add((EObject) workbench);
 			resource.setURI(URI.createFileURI(workbenchData.getAbsolutePath()));
 		}
@@ -227,61 +226,15 @@ public class Workbench implements IWorkbench {
 		return workbench;
 	}
 
-	private MApplication<? extends MWindow> readWBModel(
-			URI initialWorkbenchDefinitionInstance) {
-
-		ILegacyHook legacyHook = (ILegacyHook) globalContext
-				.get(ILegacyHook.class.getName());
-		if (legacyHook != null) {
-			MApplication<MWorkbenchWindow> app = ApplicationFactory.eINSTANCE
-					.createMApplication();
-			MWorkbenchWindow wbw = WorkbenchFactory.eINSTANCE
-					.createMWorkbenchWindow();
-			app.getWindows().add(wbw);
-			wbw.setWidth(1280);
-			wbw.setHeight(1024);
-			wbw.setX(100);
-			wbw.setY(100);
-			wbw.setName("E4 Workbench MWindow [Java, Debug]"); //$NON-NLS-1$
-			wbw.setTrim(ApplicationFactory.eINSTANCE.createMTrim());
-			MPart<MPart<?>> cp = ApplicationFactory.eINSTANCE.createMPart();
-			wbw.getTrim().setTopTrim(cp);
-			cp = ApplicationFactory.eINSTANCE.createMPart();
-			wbw.getTrim().setBottomTrim(cp);
-			cp = ApplicationFactory.eINSTANCE.createMPart();
-			wbw.getTrim().setLeftTrim(cp);
-			cp = ApplicationFactory.eINSTANCE.createMPart();
-			wbw.getTrim().setRightTrim(cp);
-
-			// MMenu mainMenu = MApplicationFactory.eINSTANCE.createMenu();
-			// legacyHook.loadMenu(mainMenu);
-			// wbw.setMenu(mainMenu);
-
-			// Should set up such things as initial perspective id here...
-			String initialPerspectiveId = "org.eclipse.e4.ui.workbench.fragment.testPerspective"; //$NON-NLS-1$
-
-			MPerspective<?> persp = WorkbenchFactory.eINSTANCE
-					.createMPerspective();
-			persp.setId(initialPerspectiveId);
-			persp.setName("Java MPerspective"); //$NON-NLS-1$
-			legacyHook.loadPerspective(persp);
-			wbw.getChildren().add(persp);
-			wbw.setActiveChild(persp);
-			return app;
-		}
-		Resource resource = new ResourceSetImpl().getResource(
-				initialWorkbenchDefinitionInstance, true);
+	private MApplication<? extends MWindow> loadDefaultModel(
+			URI defaultModelPath) {
+		Resource resource = new ResourceSetImpl().getResource(defaultModelPath,
+				true);
 		MApplication<MWindow> app = (MApplication<MWindow>) resource
 				.getContents().get(0);
 
-		// temporary code - we are reading a new model but the code still
-		// assumes trim to be there
-		// if (app.getWindows().get(0).getTrim() == null) {
-		// app.getWindows().get(0).setTrim(
-		// ApplicationFactory.eINSTANCE.createMTrim());
-		// }
-
 		processPartContributions(resource, app.getWindows().get(0));
+
 		return app;
 	}
 
@@ -328,6 +281,15 @@ public class Workbench implements IWorkbench {
 	private void init(MApplication<? extends MWindow> workbench2) {
 		// Capture the MApplication into the context
 		globalContext.set(MApplication.class.getName(), workbench);
+
+		// Initialize the workbench for legacy support if required
+		ILegacyHook legacyHook = (ILegacyHook) globalContext
+				.get(ILegacyHook.class.getName());
+		MWindow<?> wbw = workbench.getWindows().get(0);
+		if (legacyHook != null && wbw.getMenu() == null) {
+			MMenu mainMenu = wbw.getMenu();
+			legacyHook.loadMenu(mainMenu);
+		}
 	}
 
 	public int run() {

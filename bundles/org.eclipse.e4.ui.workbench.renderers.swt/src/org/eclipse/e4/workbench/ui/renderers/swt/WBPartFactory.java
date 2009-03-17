@@ -17,7 +17,6 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IHandlerService;
@@ -25,7 +24,6 @@ import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.e4.workbench.ui.renderers.PartHandlerService;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
@@ -53,6 +51,7 @@ public class WBPartFactory extends SWTPartFactory {
 		if (part instanceof MWindow<?>) {
 			IEclipseContext parentContext = getContextForParent(part);
 			Shell wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
+			wbwShell.setLayout(new FillLayout());
 			newWidget = wbwShell;
 			bindWidget(part, newWidget);
 
@@ -71,8 +70,8 @@ public class WBPartFactory extends SWTPartFactory {
 			localContext.set(Shell.class.getName(), wbwShell);
 
 			if (part instanceof MWorkbenchWindow) {
-				TrimmedLayout tl = new TrimmedLayout(wbwShell);
-				wbwShell.setLayout(tl);
+				// TrimmedLayout tl = new TrimmedLayout(wbwShell);
+				// wbwShell.setLayout(tl);
 				localContext.set(MWorkbenchWindow.class.getName(), part);
 			} else {
 				wbwShell.setLayout(new FillLayout());
@@ -85,57 +84,6 @@ public class WBPartFactory extends SWTPartFactory {
 		}
 
 		return newWidget;
-	}
-
-	@Override
-	public <P extends MPart<?>> void processContents(MPart<P> me) {
-		if (me instanceof MWorkbenchWindow) {
-			MWorkbenchWindow wbwModel = (MWorkbenchWindow) me;
-			Shell wbwShell = (Shell) wbwModel.getWidget();
-			TrimmedLayout tl = (TrimmedLayout) wbwShell.getLayout();
-
-			// MTrim
-			MPart<?> topTrim = wbwModel.getTrim().getTopTrim();
-			if (topTrim != null) {
-				bindWidget(topTrim, tl.top);
-				topTrim.setOwner(this);
-				super.processContents(topTrim);
-			}
-			MPart<?> bottomTrim = wbwModel.getTrim().getBottomTrim();
-			if (bottomTrim != null) {
-				bindWidget(bottomTrim, tl.bottom);
-				bottomTrim.setOwner(this);
-				super.processContents(bottomTrim);
-			}
-			MPart<?> leftTrim = wbwModel.getTrim().getLeftTrim();
-			if (leftTrim != null) {
-				bindWidget(leftTrim, tl.left);
-				leftTrim.setOwner(this);
-				super.processContents(leftTrim);
-			}
-			MPart<?> rightTrim = wbwModel.getTrim().getRightTrim();
-			if (rightTrim != null) {
-				bindWidget(rightTrim, tl.right);
-				rightTrim.setOwner(this);
-				super.processContents(rightTrim);
-			}
-
-			// Client Area
-			MPerspective<?> persp = wbwModel.getChildren().get(0);
-			bindWidget(persp, tl.center);
-			persp.setOwner(this);
-			super.processContents(persp);
-		} else if (me instanceof MWindow<?>) {
-			MWindow<MPart<?>> window = (MWindow<MPart<?>>) me;
-			EList<MPart<?>> children = window.getChildren();
-			if (children.size() > 0) {
-				MPart<?> sash = children.get(0);
-				renderer.createGui(sash);
-			}
-		}
-
-		// TODO Auto-generated method stub
-		super.processContents(me);
 	}
 
 	@Override

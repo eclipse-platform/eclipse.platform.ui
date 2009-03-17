@@ -219,7 +219,7 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	public <P extends MPart<?>> void processContents(MPart<P> me) {
-		Widget parentWidget = getParentWidget(me);
+		Widget parentWidget = (Widget) me.getWidget();
 		if (parentWidget == null)
 			return;
 
