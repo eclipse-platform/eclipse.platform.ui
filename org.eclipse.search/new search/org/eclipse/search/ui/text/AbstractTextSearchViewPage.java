@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,6 +62,7 @@ import org.eclipse.jface.text.Region;
 
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.OpenAndLinkWithEditorHelper;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -72,7 +73,6 @@ import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.progress.UIJob;
 
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 import org.eclipse.search.internal.ui.CopyToClipboardAction;
 import org.eclipse.search.internal.ui.SearchPlugin;
@@ -1098,12 +1098,11 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	}
 
 	private void initActionDefinitionIDs() {
-		fCopyToClipboardAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
-		fRemoveSelectedMatches.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
-		//using manifest strings to work around https://bugs.eclipse.org/bugs/show_bug.cgi?id=54581 :
-		fShowNextAction.setActionDefinitionId("org.eclipse.ui.navigate.next");  //$NON-NLS-1$
-		fShowPreviousAction.setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
-		fSelectAllAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		fCopyToClipboardAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
+		fRemoveSelectedMatches.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
+		fShowNextAction.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_NEXT);
+		fShowPreviousAction.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_PREVIOUS);
+		fSelectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);
 	}
 
 	/**

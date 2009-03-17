@@ -105,6 +105,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ContributionItemFactory;
@@ -1095,12 +1096,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		ResourceAction action= new AddMarkerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.BOOKMARK_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_BOOKMARK);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADDBOOKMARK);
 		setAction(IDEActionFactory.BOOKMARK.getId(), action);
 
 		action= new AddTaskAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.AddTask.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.ADD_TASK_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.ADD_TASK);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADDTASK);
 		setAction(IDEActionFactory.ADD_TASK.getId(), action);
 
 		action= new ChangeEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$
@@ -1248,7 +1249,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		};
 
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PRINT);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PRINT);
 		setAction(ITextEditorActionConstants.PRINT, action);
 	}
 

@@ -189,6 +189,7 @@ import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -2254,9 +2255,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WINDOW_START, ST.SELECT_WINDOW_START),
 		new IdMapEntry(ITextEditorActionDefinitionIds.SELECT_WINDOW_END, ST.SELECT_WINDOW_END),
 		// modification
-		new IdMapEntry(IWorkbenchActionDefinitionIds.CUT, ST.CUT),
-		new IdMapEntry(IWorkbenchActionDefinitionIds.COPY, ST.COPY),
-		new IdMapEntry(IWorkbenchActionDefinitionIds.PASTE, ST.PASTE),
+		new IdMapEntry(IWorkbenchCommandConstants.EDIT_CUT, ST.CUT),
+		new IdMapEntry(IWorkbenchCommandConstants.EDIT_COPY, ST.COPY),
+		new IdMapEntry(IWorkbenchCommandConstants.EDIT_PASTE, ST.PASTE),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS, ST.DELETE_PREVIOUS),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_NEXT, ST.DELETE_NEXT),
 		new IdMapEntry(ITextEditorActionDefinitionIds.DELETE_PREVIOUS_WORD, ST.DELETE_WORD_PREVIOUS),
@@ -5455,13 +5456,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			// Create the undo action
 			OperationHistoryActionHandler undoAction= new UndoActionHandler(getEditorSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-			undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+			undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 			registerUndoRedoAction(ITextEditorActionConstants.UNDO, undoAction);
 
 			// Create the redo action.
 			OperationHistoryActionHandler redoAction= new RedoActionHandler(getEditorSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
-			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+			redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 			registerUndoRedoAction(ITextEditorActionConstants.REDO, redoAction);
 
 			// Install operation approvers
@@ -5488,14 +5489,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (getAction(ITextEditorActionConstants.UNDO) == null) {
 				action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Undo.", this, ITextOperationTarget.UNDO); //$NON-NLS-1$
 				action.setHelpContextId(IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-				action.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+				action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 				setAction(ITextEditorActionConstants.UNDO, action);
 			}
 
 			if (getAction(ITextEditorActionConstants.REDO) == null) {
 				action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Redo.", this, ITextOperationTarget.REDO); //$NON-NLS-1$
 				action.setHelpContextId(IAbstractTextEditorHelpContextIds.REDO_ACTION);
-				action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+				action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 				setAction(ITextEditorActionConstants.REDO, action);
 			}
 		}
@@ -5552,22 +5553,22 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Cut.", this, ITextOperationTarget.CUT); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.CUT_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
 		setAction(ITextEditorActionConstants.CUT, action);
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Copy.", this, ITextOperationTarget.COPY, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.COPY_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		setAction(ITextEditorActionConstants.COPY, action);
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Paste.", this, ITextOperationTarget.PASTE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PASTE_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 		setAction(ITextEditorActionConstants.PASTE, action);
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Delete.", this, ITextOperationTarget.DELETE); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.DELETE_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.DELETE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 		setAction(ITextEditorActionConstants.DELETE, action);
 
 		action= new DeleteLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.DeleteLine.", this, DeleteLineAction.WHOLE, false); //$NON-NLS-1$
@@ -5622,7 +5623,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 
 		action= new ShiftAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
@@ -5644,12 +5645,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Print.", this, ITextOperationTarget.PRINT, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.PRINT_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PRINT);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PRINT);
 		setAction(ITextEditorActionConstants.PRINT, action);
 
 		action= new FindReplaceAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
 		setAction(ITextEditorActionConstants.FIND, action);
 
 		action= new FindNextAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindNext.", this, true); //$NON-NLS-1$
@@ -5676,7 +5677,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new RevertToSavedAction(EditorMessages.getBundleForConstructedKeys(), "Editor.Revert.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.REVERT_TO_SAVED_ACTION);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.REVERT);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REVERT);
 		setAction(ITextEditorActionConstants.REVERT_TO_SAVED, action);
 
 		action= new GotoLineAction(EditorMessages.getBundleForConstructedKeys(), "Editor.GotoLine.", this); //$NON-NLS-1$
@@ -5795,7 +5796,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					public void setSelection(ISelection selection) {
 					}
 				});
-		openProperties.setActionDefinitionId(IWorkbenchActionDefinitionIds.PROPERTIES);
+		openProperties.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES);
 		setAction(ITextEditorActionConstants.PROPERTIES, openProperties);
 
 		markAsContentDependentAction(ITextEditorActionConstants.UNDO, true);
