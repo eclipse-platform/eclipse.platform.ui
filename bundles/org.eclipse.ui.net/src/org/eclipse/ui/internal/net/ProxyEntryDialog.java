@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,7 +146,13 @@ public class ProxyEntryDialog extends StatusDialog {
 		Dialog.applyDialogFont(composite);
 		applyData();
 		enableButtons();
+		hostText.setFocus();
 		return composite;
+	}
+
+	public void create() {
+		super.create();
+		validateHostName();
 	}
 
 	public boolean isHelpAvailable() {
@@ -173,6 +179,24 @@ public class ProxyEntryDialog extends StatusDialog {
 		requiresAuthentificationButton.setSelection(auth);
 		userIdText.setText(toString(data.getUserId()));
 		passwordText.setText(toString(data.getPassword()));
+	}
+
+	private boolean validateHostName() {
+		String scheme = null;
+		try {
+			URI uri = new URI(hostText.getText());
+			scheme = uri.getScheme();
+		} catch (URISyntaxException e) {
+			updateStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					IStatus.OK, NetUIMessages.ProxyEntryDialog_10, null));
+			return false;
+		}
+		if (scheme != null) {
+			updateStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
+					IStatus.OK, NetUIMessages.ProxyEntryDialog_13, null));
+			return false;
+		}
+		return true;
 	}
 
 	protected void okPressed() {
@@ -204,11 +228,7 @@ public class ProxyEntryDialog extends StatusDialog {
 				return;
 			}
 		}
-		try {
-			new URI(hostText.getText());
-		} catch (URISyntaxException e) {
-			updateStatus(new Status(IStatus.ERROR, Activator.PLUGIN_ID,
-					IStatus.OK, NetUIMessages.ProxyEntryDialog_10, null));
+		if (!validateHostName()) {
 			return;
 		}
 		if (hostText.getText().length() == 0) {
