@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1348,7 +1348,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getCutItem() {
 		return getItem(
 				ActionFactory.CUT.getId(),
-				"org.eclipse.ui.edit.cut", //$NON-NLS-1$
+				ActionFactory.CUT.getCommandId(),
 				ISharedImages.IMG_TOOL_CUT,
 				ISharedImages.IMG_TOOL_CUT_DISABLED,
 				WorkbenchMessages.Workbench_cut,
@@ -1358,7 +1358,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getCopyItem() {
 		return getItem(
 				ActionFactory.COPY.getId(),
-				"org.eclipse.ui.edit.copy", //$NON-NLS-1$
+				ActionFactory.COPY.getCommandId(),
 				ISharedImages.IMG_TOOL_COPY,
 				ISharedImages.IMG_TOOL_COPY_DISABLED,
 				WorkbenchMessages.Workbench_copy,
@@ -1368,7 +1368,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getPasteItem() {
 		return getItem(
 				ActionFactory.PASTE.getId(),
-				"org.eclipse.ui.edit.paste", ISharedImages.IMG_TOOL_PASTE, //$NON-NLS-1$
+				ActionFactory.PASTE.getCommandId(),
+				ISharedImages.IMG_TOOL_PASTE,
 				ISharedImages.IMG_TOOL_PASTE_DISABLED,
 				WorkbenchMessages.Workbench_paste,
 				WorkbenchMessages.Workbench_pasteToolTip, null);
@@ -1377,7 +1378,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getPrintItem() {
 		return getItem(
 				ActionFactory.PRINT.getId(),
-				"org.eclipse.ui.file.print", ISharedImages.IMG_ETOOL_PRINT_EDIT, //$NON-NLS-1$
+				ActionFactory.PRINT.getCommandId(),
+				ISharedImages.IMG_ETOOL_PRINT_EDIT,
 				ISharedImages.IMG_ETOOL_PRINT_EDIT_DISABLED,
 				WorkbenchMessages.Workbench_print,
 				WorkbenchMessages.Workbench_printToolTip, null);
@@ -1386,7 +1388,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getSelectAllItem() {
 		return getItem(
 				ActionFactory.SELECT_ALL.getId(),
-				"org.eclipse.ui.edit.selectAll", //$NON-NLS-1$
+				ActionFactory.SELECT_ALL.getCommandId(),
 				null, null, WorkbenchMessages.Workbench_selectAll,
 				WorkbenchMessages.Workbench_selectAllToolTip, null);
 	}
@@ -1394,7 +1396,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getFindItem() {
 		return getItem(
 				ActionFactory.FIND.getId(),
-				"org.eclipse.ui.edit.findReplace", //$NON-NLS-1$
+				ActionFactory.FIND.getCommandId(),
 				null, null, WorkbenchMessages.Workbench_findReplace,
 				WorkbenchMessages.Workbench_findReplaceToolTip, null);
 	}
@@ -1402,7 +1404,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getBookmarkItem() {
 		return getItem(
 				IDEActionFactory.BOOKMARK.getId(),
-				"org.eclipse.ui.edit.addBookmark", //$NON-NLS-1$
+				IDEActionFactory.BOOKMARK.getCommandId(),
 				null, null, IDEWorkbenchMessages.Workbench_addBookmark,
 				IDEWorkbenchMessages.Workbench_addBookmarkToolTip, null);
 	}
@@ -1410,14 +1412,14 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getTaskItem() {
 		return getItem(
 				IDEActionFactory.ADD_TASK.getId(),
-				"org.eclipse.ui.edit.addTask", //$NON-NLS-1$
+				IDEActionFactory.ADD_TASK.getCommandId(),
 				null, null, IDEWorkbenchMessages.Workbench_addTask,
 				IDEWorkbenchMessages.Workbench_addTaskToolTip, null);
 	}
     
     private IContributionItem getDeleteItem() {
         return getItem(ActionFactory.DELETE.getId(),
-        		"org.eclipse.ui.edit.delete", //$NON-NLS-1$
+        		ActionFactory.DELETE.getCommandId(),
         		ISharedImages.IMG_TOOL_DELETE,
         		ISharedImages.IMG_TOOL_DELETE_DISABLED,
         		WorkbenchMessages.Workbench_delete,
@@ -1428,41 +1430,42 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getRevertItem() {
 		return getItem(
 				ActionFactory.REVERT.getId(),
-				"org.eclipse.ui.file.revert", //$NON-NLS-1$
+				ActionFactory.REVERT.getCommandId(),
 				null, null, WorkbenchMessages.Workbench_revert,
 				WorkbenchMessages.Workbench_revertToolTip, null);
 	}
     
     private IContributionItem getRefreshItem() {
 		return getItem(ActionFactory.REFRESH.getId(),
-				"org.eclipse.ui.file.refresh", null, null, //$NON-NLS-1$
+				ActionFactory.REFRESH.getCommandId(), null, null,
 				WorkbenchMessages.Workbench_refresh,
 				WorkbenchMessages.Workbench_refreshToolTip, null);
 	}
     
     private IContributionItem getPropertiesItem() {
 		return getItem(ActionFactory.PROPERTIES.getId(),
-				"org.eclipse.ui.file.properties", null, null, //$NON-NLS-1$
+				ActionFactory.PROPERTIES.getCommandId(), null, null,
 				WorkbenchMessages.Workbench_properties,
 				WorkbenchMessages.Workbench_propertiesToolTip, null);
 	}
     
     private IContributionItem getMoveItem() {
-		return getItem(ActionFactory.MOVE.getId(), "org.eclipse.ui.edit.move", //$NON-NLS-1$
+		return getItem(ActionFactory.MOVE.getId(),
+				ActionFactory.MOVE.getCommandId(),
 				null, null, WorkbenchMessages.Workbench_move,
 				WorkbenchMessages.Workbench_moveToolTip, null);
 	}
     
     private IContributionItem getRenameItem() {
 		return getItem(ActionFactory.RENAME.getId(),
-				"org.eclipse.ui.edit.rename", null, null, //$NON-NLS-1$
+				ActionFactory.RENAME.getCommandId(), null, null,
 				WorkbenchMessages.Workbench_rename,
 				WorkbenchMessages.Workbench_renameToolTip, null);
 	}
     
     private IContributionItem getOpenProjectItem() {
 		return getItem(IDEActionFactory.OPEN_PROJECT.getId(),
-				"org.eclipse.ui.project.openProject", null, null, //$NON-NLS-1$
+				IDEActionFactory.OPEN_PROJECT.getCommandId(), null, null,
 				IDEWorkbenchMessages.OpenResourceAction_text,
 				IDEWorkbenchMessages.OpenResourceAction_toolTip, null);
 	}
@@ -1470,7 +1473,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     private IContributionItem getCloseProjectItem() {
 		return getItem(
 				IDEActionFactory.CLOSE_PROJECT.getId(),
-				"org.eclipse.ui.project.closeProject", //$NON-NLS-1$
+				IDEActionFactory.CLOSE_PROJECT.getCommandId(),
 				null, null, IDEWorkbenchMessages.CloseResourceAction_text,
 				IDEWorkbenchMessages.CloseResourceAction_text, null);
 	}

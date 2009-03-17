@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,16 +13,20 @@ package org.eclipse.ui.actions;
 import java.net.URL;
 import java.util.ArrayList;
 
+import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.window.Window;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -76,11 +80,11 @@ public class QuickStartAction extends Action implements
         setToolTipText(IDEWorkbenchMessages.QuickStart_toolTip);
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.QUICK_START_ACTION);
-        setActionDefinitionId("org.eclipse.ui.help.quickStartAction"); //$NON-NLS-1$
+		setActionDefinitionId(IWorkbenchCommandConstants.HELP_WELCOME);
     }
 
     /**
-     * The user has invoked this action.  Prompts for a feature with a welcome page, 
+     * The user has invoked this action.  Prompts for a feature with a welcome page,
      * then opens the corresponding welcome page.
      */
     public void run() {
@@ -152,7 +156,7 @@ public class QuickStartAction extends Action implements
      * 
      * @param featureId the about info for the feature
      * @return <code>true</code> if successful, <code>false</code> otherwise
-     * @throws WorkbenchException 
+     * @throws WorkbenchException
      */
     public boolean openWelcomePage(String featureId) throws WorkbenchException {
         AboutInfo feature = findFeature(featureId);
@@ -194,7 +198,7 @@ public class QuickStartAction extends Action implements
         String perspectiveId = feature.getWelcomePerspectiveId();
 
         if (perspectiveId == null) {
-            // Just use the current perspective unless one is not open 
+            // Just use the current perspective unless one is not open
             // in which case use the default
             page = workbenchWindow.getActivePage();
 
