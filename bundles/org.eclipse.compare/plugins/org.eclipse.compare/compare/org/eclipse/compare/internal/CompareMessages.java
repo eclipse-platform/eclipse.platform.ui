@@ -48,6 +48,7 @@ public final class CompareMessages extends NLS {
 	public static String ComparePreferencePage_1;
 	public static String ComparePreferencePage_2;
 	public static String ComparePreferencePage_3;
+	public static String ComparePreferencePage_4;
 	public static String CompareUIPlugin_0;
 	public static String CompareUIPlugin_1;
 	public static String ContentMergeViewer_resource_changed_description;
@@ -72,6 +73,7 @@ public final class CompareMessages extends NLS {
 	public static String TextMergeViewer_14;
 	public static String TextMergeViewer_15;
 	public static String TextMergeViewer_16;
+	public static String TextMergeViewer_17;
 	public static String TextMergeViewer_2;
 	public static String TextMergeViewer_3;
 	public static String TextMergeViewer_4;

@@ -3366,25 +3366,39 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			((Action)fCopyDiffLeftToRightItem.getAction()).setEnabled(leftToRight);
 		if (fCopyDiffRightToLeftItem != null)
 			((Action)fCopyDiffRightToLeftItem.getAction()).setEnabled(rightToLeft);
-			
-		boolean enableNavigation= isNavigationPossible();
 
 		if (fNextDiff != null) {
-			IAction a= fNextDiff.getAction();
-			a.setEnabled(enableNavigation || hasNextElement(true));
+			IAction a = fNextDiff.getAction();
+			a.setEnabled(isNavigationButtonEnabled(true, false));
 		}
 		if (fPreviousDiff != null) {
-			IAction a= fPreviousDiff.getAction();
-			a.setEnabled(enableNavigation || hasNextElement(false));
+			IAction a = fPreviousDiff.getAction();
+			a.setEnabled(isNavigationButtonEnabled(false, false));
 		}
 		if (fNextChange != null) {
-			IAction a= fNextChange.getAction();
-			a.setEnabled(enableNavigation);
+			IAction a = fNextChange.getAction();
+			a.setEnabled(isNavigationButtonEnabled(true, true));
 		}
 		if (fPreviousChange != null) {
-			IAction a= fPreviousChange.getAction();
-			a.setEnabled(enableNavigation);
+			IAction a = fPreviousChange.getAction();
+			a.setEnabled(isNavigationButtonEnabled(false, true));
 		}
+	}
+
+	private boolean isNavigationButtonEnabled(boolean down, boolean deep) {
+		String value = fPreferenceStore
+				.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION);
+		if (value.equals(ICompareUIConstants.PREF_VALUE_DO_NOTHING)) {
+			return getNextVisibleDiff(down, deep) != null;
+		} else if (value.equals(ICompareUIConstants.PREF_VALUE_LOOP)) {
+			return isNavigationPossible();
+		} else if (value.equals(ICompareUIConstants.PREF_VALUE_NEXT)) {
+			return hasNextElement(down);
+		} else if (value.equals(ICompareUIConstants.PREF_VALUE_PROMPT)) {
+			return isNavigationPossible() || hasNextElement(true);
+		}
+		Assert.isTrue(false);
+		return false;
 	}
 	
 	private void updateResolveStatus() {
@@ -3691,7 +3705,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	 * @see org.eclipse.compare.contentmergeviewer.ContentMergeViewer#handlePropertyChangeEvent(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	protected void handlePropertyChangeEvent(PropertyChangeEvent event) {
-		
 		String key= event.getProperty();
 		
 		if (key.equals(CompareConfiguration.IGNORE_WHITESPACE)
@@ -3710,12 +3723,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			fUseSingleLine= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SINGLE_LINE);
 //			fUseResolveUI= fUseSingleLine;
 			fBasicCenterCurve= null;
-			updateResolveStatus();
+			updateControls();
 			invalidateLines();
 	
 		} else if (key.equals(ComparePreferencePage.HIGHLIGHT_TOKEN_CHANGES)) {
 			fHighlightTokenChanges= fPreferenceStore.getBoolean(ComparePreferencePage.HIGHLIGHT_TOKEN_CHANGES);
-			updateResolveStatus();
+			updateControls();
 			updatePresentation();
 			
 //		} else if (key.equals(ComparePreferencePage.USE_RESOLVE_UI)) {
@@ -3770,11 +3783,13 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			} else {
 				setForegroundColor(createColor(fPreferenceStore, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND));
 			}
+		} else if (key.equals(ICompareUIConstants.PREF_NAVIGATION_END_ACTION)) {
+			updateControls();
 		} else {
 			super.handlePropertyChangeEvent(event);
 			
 			if (key.equals(ICompareUIConstants.PROP_IGNORE_ANCESTOR)) {
-				update(false);
+				update(true);
 				selectFirstDiff(true);
 			}
 		}
@@ -4324,18 +4339,12 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	}
 	
 	private void handleEndOfDocumentReached(Shell shell, boolean next) {
-		boolean hasNextElement = hasNextElement(next);
 		IPreferenceStore store = CompareUIPlugin.getDefault().getPreferenceStore();
 		String value = store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION);
 		if (!value.equals(ICompareUIConstants.PREF_VALUE_PROMPT)) {
-			// We only want to do the automatic thing if there is something to do
-			if (hasNextElement || store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION).equals(ICompareUIConstants.PREF_VALUE_LOOP)) {
-				performEndOfDocumentAction(shell, store, ICompareUIConstants.PREF_NAVIGATION_END_ACTION, next);
-				return;
-			}
-		}
-		shell.getDisplay().beep();
-		if (hasNextElement) {
+			performEndOfDocumentAction(shell, store, ICompareUIConstants.PREF_NAVIGATION_END_ACTION, next);
+		} else {
+			shell.getDisplay().beep();
 			String loopMessage;
 			String nextMessage;
 			String message;
@@ -4353,6 +4362,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			}
 			String[] localLoopOption = new String[] { loopMessage, ICompareUIConstants.PREF_VALUE_LOOP };
 			String[] nextElementOption = new String[] { nextMessage, ICompareUIConstants.PREF_VALUE_NEXT};
+			String[] doNothingOption = new String[] { CompareMessages.TextMergeViewer_17, ICompareUIConstants.PREF_VALUE_DO_NOTHING};
 			NavigationEndDialog dialog = new NavigationEndDialog(shell,
 					title,
 					null,
@@ -4360,38 +4370,31 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 					new String[][] {
 					localLoopOption,
 					nextElementOption,
+					doNothingOption
 			});
 			int result = dialog.open();
 			if (result == Window.OK) {
 				performEndOfDocumentAction(shell, store, ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL, next);
 				if (dialog.getToggleState()) {
+					String oldValue = store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION);
 					store.putValue(ICompareUIConstants.PREF_NAVIGATION_END_ACTION, store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL));
+					store.firePropertyChangeEvent(ICompareUIConstants.PREF_NAVIGATION_END_ACTION, oldValue, store.getString(ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL));
 				}
-			}
-		} else {
-			String message;
-			String title;
-			if (next) {
-				title = CompareMessages.TextMergeViewer_8;
-				message = CompareMessages.TextMergeViewer_9;
-			} else {
-				title = CompareMessages.TextMergeViewer_10;
-				message = CompareMessages.TextMergeViewer_11;
-			}
-			if (MessageDialog.openQuestion(shell, title, message)) {
-				selectFirstDiff(next);
 			}
 		}
 	}
 	
 	private void performEndOfDocumentAction(Shell shell, IPreferenceStore store, String key, boolean next) {
 		String value = store.getString(key);
+		if (value.equals(ICompareUIConstants.PREF_VALUE_DO_NOTHING)) {
+			return;
+		}
 		if (value.equals(ICompareUIConstants.PREF_VALUE_NEXT)) {
-			ICompareNavigator navigator = getCompareConfiguration().getContainer().getNavigator();
-			if (hasNextElement(next))
+			ICompareNavigator navigator = getCompareConfiguration()
+					.getContainer().getNavigator();
+			if (hasNextElement(next)) {
 				navigator.selectChange(next);
-			else
-				shell.getDisplay().beep();
+			}
 		} else {
 			selectFirstDiff(next);
 		}

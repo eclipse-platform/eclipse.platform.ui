@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public interface ICompareUIConstants {
 	public static final String PREF_VALUE_PROMPT = "prompt"; //$NON-NLS-1$
 	public static final String PREF_VALUE_LOOP = "loop"; //$NON-NLS-1$
 	public static final String PREF_VALUE_NEXT = "next"; //$NON-NLS-1$
+	public static final String PREF_VALUE_DO_NOTHING = "doNothing"; //$NON-NLS-1$
 
 	public static final String COMMAND_IGNORE_WHITESPACE = PREFIX + "ignoreWhiteSpace"; //$NON-NLS-1$
 }
