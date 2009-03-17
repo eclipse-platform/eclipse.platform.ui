@@ -17,11 +17,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.equinox.http.jetty.JettyConfigurator;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.server.HelpServer;
@@ -33,34 +29,77 @@ import org.osgi.framework.ServiceReference;
 
 public class JettyHelpServer extends HelpServer {
 	
+	private abstract class WorkerThread extends Thread {	
+		private Throwable exception;
+
+		public WorkerThread(String name) {
+			super(name);
+		}
+		
+		public synchronized void setException(Throwable status) {
+			this.exception = status;
+		}
+		
+		public synchronized Throwable getException() {
+			return exception;
+		}
+	}
+	
+	private final class StartServerThread extends WorkerThread {
+
+		private final String webappName;
+
+		public StartServerThread(String webappName) {
+			super("Start Help Server"); //$NON-NLS-1$
+			this.webappName = webappName;
+		}
+
+		public void run() {
+			try {
+				final Dictionary d = new Hashtable();
+				configurePort();
+				d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
+
+				// set the base URL
+				d.put("context.path", "/help"); //$NON-NLS-1$ //$NON-NLS-2$
+				d.put("other.info", "org.eclipse.help"); //$NON-NLS-1$ //$NON-NLS-2$
+
+				// suppress Jetty INFO/DEBUG messages to stderr
+				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
+
+				JettyConfigurator.startServer(webappName, d);
+			} catch (Throwable t) {
+				setException(t);
+			}
+		}
+	}
+
+	private final class StopServerThread extends WorkerThread {
+
+		private final String webappName;
+
+		public StopServerThread(String webappName) {
+			super("Stop Help Server"); //$NON-NLS-1$
+			this.webappName = webappName;
+		}
+
+		public void run() {
+			try {
+				JettyConfigurator.stopServer(webappName);
+			} catch (Throwable t) {
+				setException(t); 
+			}
+		}
+	}
+
+
 	private String host;
 	private int port = -1;
 	private static final int AUTO_SELECT_JETTY_PORT = 0;
 	
-	public void start(final String webappName) throws Exception {
-		final Dictionary d = new Hashtable();
-		
-		configurePort();
-		d.put("http.port", new Integer(getPortParameter())); //$NON-NLS-1$
-
-		// set the base URL
-		d.put("context.path", "/help"); //$NON-NLS-1$ //$NON-NLS-2$
-		d.put("other.info", "org.eclipse.help"); //$NON-NLS-1$ //$NON-NLS-2$
-		
-		// suppress Jetty INFO/DEBUG messages to stderr
-		Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
-
-		Job startJob = new Job("Start Help Server") { //$NON-NLS-1$
-			protected IStatus run(IProgressMonitor monitor) {
-				try {
-					JettyConfigurator.startServer(webappName, d);
-				} catch (Throwable t) {
-					return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, "", t); //$NON-NLS-1$
-				}
-				return Status.OK_STATUS;
-			}		
-		};
-		execute(startJob);		
+	public void start(final String webappName) throws Exception {		
+		WorkerThread startRunnable = new StartServerThread(webappName); 
+		execute(startRunnable);		
 		checkBundle();	
 	}
 
@@ -83,29 +122,22 @@ public class JettyHelpServer extends HelpServer {
 
 	public void stop(final String webappName) throws CoreException {
 		try {
-			Job stopJob = new Job("") { //$NON-NLS-1$
-				protected IStatus run(IProgressMonitor monitor) {
-					try {
-						JettyConfigurator.stopServer(webappName);
-					} catch (Throwable t) {
-						return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, "", t); //$NON-NLS-1$
-					}
-					return Status.OK_STATUS;
-				}		
-			};
-			execute(stopJob);
+			WorkerThread stopRunnable = new StopServerThread(webappName);
+			execute(stopRunnable);
 		}
 		catch (Exception e) {
 			HelpBasePlugin.logError("An error occured while stopping the help server", e); //$NON-NLS-1$
 		}
 	}
 	
-	private void execute(Job job) throws Exception {
+	private void execute(WorkerThread runnable) throws Exception {
 		boolean interrupted = false;
-		job.schedule();
+		Thread thread = runnable;
+		thread.setDaemon(true);
+		thread.start();
 		while(true) {
 			try {
-				job.join();
+				thread.join();
 				break;
 			} catch (InterruptedException e) {
 				interrupted = true;
@@ -114,13 +146,13 @@ public class JettyHelpServer extends HelpServer {
 		if (interrupted)
 			Thread.currentThread().interrupt();
 		
-		IStatus result = job.getResult();
-		if (result != null && !result.isOK() && result.getException() != null) {
-			Throwable t = result.getException();
-			if (t instanceof Exception)
+		Throwable t = runnable.getException();
+
+		if (t != null) {
+			if (t instanceof Exception) {
 				throw (Exception)t;
-			else
-				throw (Error) t;
+			}
+			throw (Error) t;
 		}
 	}
 
