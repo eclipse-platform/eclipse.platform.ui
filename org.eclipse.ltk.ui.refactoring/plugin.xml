@@ -64,6 +64,7 @@
       <viewer
             class="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorCompareViewerCreator"
             extensions="refactoring_descriptor"
+            label="%contentMergeViewers.refactoring.label"
             id="org.eclipse.ltk.ui.refactoring.descriptor.viewer"/>
    </extension>
    <extension
