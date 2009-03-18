@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,15 @@
 
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
+
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
 
@@ -54,7 +57,7 @@ public class CycleEditorHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getBackwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand("org.eclipse.ui.window.previousEditor"); //$NON-NLS-1$
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUSEDITOR);
 		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
 		return commandBack;
 	}
@@ -64,7 +67,7 @@ public class CycleEditorHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand("org.eclipse.ui.window.nextEditor"); //$NON-NLS-1$
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXTEDITOR);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}

@@ -16,6 +16,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IContributionItem;
@@ -24,13 +28,12 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -58,7 +61,6 @@ import org.eclipse.ui.views.IViewRegistry;
 public class ShowInMenu extends ContributionItem implements
 		IWorkbenchContribution {
 
-	private static final String SHOW_IN_COMMAND_ID = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
 	private static final String SHOW_IN_PARM_ID = "org.eclipse.ui.navigate.showIn.targetId"; //$NON-NLS-1$
 
 	private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets;
@@ -191,7 +193,7 @@ public class ShowInMenu extends ContributionItem implements
 	 */
 	private IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
 		CommandContributionItemParameter parm = new CommandContributionItemParameter(
-				locator, viewDescriptor.getId(), SHOW_IN_COMMAND_ID,
+				locator, viewDescriptor.getId(), IWorkbenchCommandConstants.NAVIGATE_SHOWIN,
 				CommandContributionItem.STYLE_PUSH);
 		HashMap targetId = new HashMap();
 		targetId.put(SHOW_IN_PARM_ID, viewDescriptor.getId());

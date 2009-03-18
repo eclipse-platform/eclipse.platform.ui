@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,14 +11,6 @@
 
 package org.eclipse.ui.internal.handlers;
 
-import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.resource.LocalResourceManager;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -26,6 +18,18 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
+
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.ParameterizedCommand;
+
+import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.util.Geometry;
+
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
@@ -50,9 +54,6 @@ public class CyclePageHandler extends CycleBaseHandler {
 	 * The character limit before text is truncated.
 	 */
 	private static final int TEXT_LIMIT = 65;
-	private static final String COMMAND_PREVIOUS_PAGE = "org.eclipse.ui.part.previousPage"; //$NON-NLS-1$
-	private static final String COMMAND_NEXT_PAGE = "org.eclipse.ui.part.nextPage"; //$NON-NLS-1$
-
 	private PageSwitcher pageSwitcher;
 	private LocalResourceManager lrm;
 
@@ -91,7 +92,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 		final ICommandService commandService = (ICommandService) window
 				.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService
-				.getCommand(COMMAND_PREVIOUS_PAGE);
+.getCommand(IWorkbenchCommandConstants.NAVIGATE_PREVIOUSPAGE);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}
@@ -99,7 +100,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = (ICommandService) window
 				.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand(COMMAND_NEXT_PAGE);
+		final Command command= commandService.getCommand(IWorkbenchCommandConstants.NAVIGATE_NEXTPAGE);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}
@@ -113,7 +114,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 	}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (event.getCommand().getId().equals(COMMAND_NEXT_PAGE)) {
+		if (event.getCommand().getId().equals(IWorkbenchCommandConstants.NAVIGATE_NEXTPAGE)) {
 			gotoDirection = true;
 		} else {
 			gotoDirection = false;
@@ -149,7 +150,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 		}
 		
 		// Offset the point by half the dialog size
-		Rectangle dialogBounds = dialog.getBounds();		
+		Rectangle dialogBounds = dialog.getBounds();
 		dlgAnchor.x -= (dialogBounds.width / 2);
 		dlgAnchor.y -= (dialogBounds.height / 2);
 

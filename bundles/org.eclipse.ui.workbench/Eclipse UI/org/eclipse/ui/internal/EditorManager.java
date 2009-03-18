@@ -80,6 +80,7 @@ import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.ISaveablesLifecycleListener;
 import org.eclipse.ui.ISaveablesSource;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPart3;
@@ -246,7 +247,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			// Assign the handler for the pin editor keyboard shortcut.
 			final IHandlerService handlerService = (IHandlerService) window.getWorkbench().getService(IHandlerService.class);
 			pinEditorHandlerActivation = handlerService.activateHandler(
-					"org.eclipse.ui.window.pinEditor", pinEditorHandler, //$NON-NLS-1$
+					IWorkbenchCommandConstants.WINDOW_PINEDITOR, pinEditorHandler,
 					new ActiveShellExpression(shell));
 		}
 	}

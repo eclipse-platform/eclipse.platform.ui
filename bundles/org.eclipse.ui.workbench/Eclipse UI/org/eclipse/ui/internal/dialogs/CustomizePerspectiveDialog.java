@@ -23,9 +23,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Resource;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
+import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
+
 import org.eclipse.core.runtime.CoreException;
+
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
@@ -73,45 +113,11 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.ToolTip;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Resource;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.CoolItem;
-import org.eclipse.swt.widgets.Decorations;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
+
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
@@ -172,9 +178,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE = "openPerspective"; //$NON-NLS-1$
 	private static final String SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW = "showView"; //$NON-NLS-1$
-
-	private static final String SHORTCUT_COMMAND_ID_NEW_WIZARD = "org.eclipse.ui.newWizard"; //$NON-NLS-1$
-	private static final String SHORTCUT_COMMAND_ID_SHOW_PERSPECTIVE = "org.eclipse.ui.perspectives.showPerspective"; //$NON-NLS-1$
 
 	private static final String SHORTCUT_COMMAND_PARAM_ID_NEW_WIZARD = "newWizardId"; //$NON-NLS-1$
 	private static final String SHORTCUT_COMMAND_PARAM_ID_SHOW_PERSPECTIVE = "org.eclipse.ui.perspectives.showPerspective.perspectiveId"; //$NON-NLS-1$
@@ -861,7 +864,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			ViewerCell cell = v.getCell(new Point(event.x, event.y));
 			
 			if( cell != null ) {
-				return tree.toDisplay(event.x,cell.getBounds().y+cell.getBounds().height);	
+				return tree.toDisplay(event.x,cell.getBounds().y+cell.getBounds().height);
 			}
 			
 			return super.getLocation(tipSize, event);
@@ -910,7 +913,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 						//i.e. has children
 
 						Set actionGroup = new LinkedHashSet();
-						collectDescendantCommandGroups(actionGroup, item, 
+						collectDescendantCommandGroups(actionGroup, item,
 								filter);
 						
 						if (actionGroup.size() == 1) {
@@ -1449,7 +1452,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		perspective = persp;
 		window = (WorkbenchWindow) configurer.getWindow();
 
-		toDispose = new HashSet(); 
+		toDispose = new HashSet();
 
 		initializeIcons();
 
@@ -2058,7 +2061,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				TreeManager.getTreeContentProvider(),
 				toolbarStructureFilterByActionSet);
 		toolbarStructureViewer2 = initStructureViewer(
-				toolbarStructureComposite, toolbarStructureFilter, 
+				toolbarStructureComposite, toolbarStructureFilter,
 				toolbarStructureFilterByActionSet);
 
 		toolbarStructureViewer2.addFilter(toolbarStructureFilterByActionSet);
@@ -2704,7 +2707,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		Object object = item.getIContributionItem();
 
 		if (item instanceof ShortcutItem && isShowView(item)) {
-			return ShowViewMenu.SHOW_VIEW_ID;
+			return IWorkbenchCommandConstants.VIEWS_SHOWVIEW;
 		}
 
 		return getIDFromIContributionItem(object);
@@ -2728,10 +2731,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			if (action == null)
 				return null;
 			if (action instanceof NewWizardShortcutAction) {
-				return SHORTCUT_COMMAND_ID_NEW_WIZARD;
+				return IWorkbenchCommandConstants.FILE_NEW;
 			}
 			if (action instanceof OpenPerspectiveAction) {
-				return SHORTCUT_COMMAND_ID_SHOW_PERSPECTIVE;
+				return IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE;
 			}
 			String id = action.getActionDefinitionId();
 			if (id != null) {
@@ -2953,7 +2956,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 		for (int i = 0; i < menuItems.length; i++) {
 			if (!menuItems[i].getText().equals("")) { //$NON-NLS-1$
-				IContributionItem contributionItem = 
+				IContributionItem contributionItem =
 						(IContributionItem) menuItems[i].getData();
 				if (dynamicEntry != null
 						&& contributionItem.equals(dynamicEntry
@@ -3147,10 +3150,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			return;
 
 		if (item == wizards || item == perspectives || item == views) {
-			//Shortcuts (i.e. wizards, perspectives, views) need special 
-			//handling. Shortcuts themselves are not involved in calculating 
-			//whether menus are visible, therefore we must record whether the 
-			//menu containing them is visible, and omit reading the shortcuts 
+			//Shortcuts (i.e. wizards, perspectives, views) need special
+			//handling. Shortcuts themselves are not involved in calculating
+			//whether menus are visible, therefore we must record whether the
+			//menu containing them is visible, and omit reading the shortcuts
 			//themselves in this part of the logic.
 			if (!item.getState()) {
 				String id = getCommandID(item);

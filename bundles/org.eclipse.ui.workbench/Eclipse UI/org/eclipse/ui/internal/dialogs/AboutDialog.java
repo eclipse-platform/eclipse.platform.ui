@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,8 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -395,11 +397,11 @@ public class AboutDialog extends TrayDialog {
 		final MenuManager textManager = new MenuManager();
 		textManager.add(new CommandContributionItem(
 				new CommandContributionItemParameter(PlatformUI
-						.getWorkbench(), null, "org.eclipse.ui.edit.copy", //$NON-NLS-1$
+						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_COPY,
 						CommandContributionItem.STYLE_PUSH)));
 		textManager.add(new CommandContributionItem(
 				new CommandContributionItemParameter(PlatformUI
-						.getWorkbench(), null, "org.eclipse.ui.edit.selectAll", //$NON-NLS-1$
+						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_SELECTALL,
 						CommandContributionItem.STYLE_PUSH)));
 		text.setMenu(textManager.createContextMenu(text));
 		text.addDisposeListener(new DisposeListener() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
@@ -346,7 +347,7 @@ final class KeyAssistDialog extends PopupDialog {
 	 */
 	private String getKeySequenceString() {
 		final Command command = commandService
-				.getCommand("org.eclipse.ui.window.showKeyAssist"); //$NON-NLS-1$
+				.getCommand(IWorkbenchCommandConstants.WINDOW_SHOWKEYASSIST);
 		final TriggerSequence[] keyBindings = bindingService
 				.getActiveBindingsFor(new ParameterizedCommand(command, null));
 		final int keyBindingsCount = keyBindings.length;

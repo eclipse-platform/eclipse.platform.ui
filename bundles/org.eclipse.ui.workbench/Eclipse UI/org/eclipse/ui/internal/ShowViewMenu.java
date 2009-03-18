@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.ibm.icu.text.Collator;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IParameter;
@@ -28,6 +34,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -35,9 +42,8 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
+
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -49,15 +55,16 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
 
-import com.ibm.icu.text.Collator;
-
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with Show
  * View actions. The visible views are determined by user preference from the
  * Perspective Customize dialog.
  */
 public class ShowViewMenu extends ContributionItem {
-	public static final String SHOW_VIEW_ID = "org.eclipse.ui.views.showView"; //$NON-NLS-1$
+	/**
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#VIEWS_SHOWVIEW}
+	 */
+	public static final String SHOW_VIEW_ID= IWorkbenchCommandConstants.VIEWS_SHOWVIEW;
 	public static final String VIEW_ID_PARM = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
 	private static final String PARAMETER_MAKE_FAST = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
 
@@ -150,7 +157,7 @@ public class ShowViewMenu extends ContributionItem {
 		((WorkbenchWindow) window)
 				.addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
 
-		showDlgAction.setActionDefinitionId(SHOW_VIEW_ID);
+		showDlgAction.setActionDefinitionId(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
 		
 	}
 
@@ -230,7 +237,7 @@ public class ShowViewMenu extends ContributionItem {
 		String label = desc.getLabel();
 		
 		CommandContributionItemParameter parms = new CommandContributionItemParameter(
-				window, viewId, SHOW_VIEW_ID,
+				window, viewId, IWorkbenchCommandConstants.VIEWS_SHOWVIEW,
 				CommandContributionItem.STYLE_PUSH);
 		parms.label = label;
 		parms.icon = desc.getImageDescriptor();
@@ -306,7 +313,7 @@ public class ShowViewMenu extends ContributionItem {
 	 */
 	private ParameterizedCommand getCommand(ICommandService commandService,
 			final boolean makeFast) {
-		Command c = commandService.getCommand(SHOW_VIEW_ID);
+		Command c = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
 		Parameterization[] parms = null;
 		if (makeFast) {
 			try {

@@ -111,6 +111,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -554,7 +555,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 		};
 		showViewHandler = service.activateHandler(
-				"org.eclipse.ui.window.showViewMenu", handler, //$NON-NLS-1$
+				IWorkbenchCommandConstants.WINDOW_SHOWVIEWMENU, handler,
 				new ActiveShellExpression(getShell()));
 	}
 

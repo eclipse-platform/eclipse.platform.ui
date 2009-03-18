@@ -58,6 +58,7 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 
 import org.eclipse.ui.ActiveShellExpression;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.dialogs.FilteredTree;
@@ -548,7 +549,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 				.getService(IHandlerService.class);
 		showViewHandler = service
 				.activateHandler(
-						"org.eclipse.ui.window.showViewMenu", //$NON-NLS-1$
+						IWorkbenchCommandConstants.WINDOW_SHOWVIEWMENU,
 						new ActionHandler(popupMenuAction),
 						new ActiveShellExpression(getShell()));
 

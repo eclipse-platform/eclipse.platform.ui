@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.PerspectiveMenu;
@@ -40,7 +41,8 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
     /**
      * Constructor for ChangeToPerspectiveMenu.
      * 
-     * @param window the workbench window this action applies to.
+     * @param window the workbench window this action applies to
+     * @param id the menu id
      */
     public ChangeToPerspectiveMenu(IWorkbenchWindow window, String id) {
         super(window, id);
@@ -68,7 +70,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 				.getService(ICommandService.class);
 
 		Command command = commandService
-				.getCommand(SHOW_PERSP_ID);
+				.getCommand(IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE);
 		Map parameters = new HashMap();
 		parameters
 				.put(
@@ -92,19 +94,19 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		} catch (ExecutionException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
 		} catch (NotDefinedException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
 		} catch (NotEnabledException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
 		} catch (NotHandledException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + SHOW_PERSP_ID, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
 		}
 	}
 }

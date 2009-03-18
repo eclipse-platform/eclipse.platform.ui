@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,6 +51,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
@@ -489,7 +490,7 @@ public final class BindingPersistence extends PreferencePersistence {
 						// we must be able to translate old view commands to the new
 						// parameterized command
 						viewParameter = commandId;
-						command = commandService.getCommand(ShowViewMenu.SHOW_VIEW_ID);
+						command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
 					}
 				} else {
 					command = null;
@@ -645,11 +646,11 @@ public final class BindingPersistence extends PreferencePersistence {
 					// we must be able to translate old view commands to the new
 					// parameterized command
 					viewParameter = commandId;
-					command = commandService.getCommand(ShowViewMenu.SHOW_VIEW_ID);
+					command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
 					if (DEBUG) {
 						Tracing.printTrace("BINDINGS", "Command '" //$NON-NLS-1$ //$NON-NLS-2$
 								+ commandId + "\' should be migrated to "  //$NON-NLS-1$
-								+ ShowViewMenu.SHOW_VIEW_ID);
+								+ IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
 					}
 					if (!command.isDefined()) {
 						// Reference to an undefined command. This is invalid.

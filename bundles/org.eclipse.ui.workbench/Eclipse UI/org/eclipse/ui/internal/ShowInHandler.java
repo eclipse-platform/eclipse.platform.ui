@@ -43,7 +43,6 @@ import org.eclipse.ui.views.IViewRegistry;
  * @since 3.4
  */
 public class ShowInHandler extends AbstractHandler implements IElementUpdater {
-	static final String SHOW_IN_ID = "org.eclipse.ui.navigate.showIn"; //$NON-NLS-1$
 	static final String TARGET_ID = "org.eclipse.ui.navigate.showIn.targetId"; //$NON-NLS-1$
 
 	/*

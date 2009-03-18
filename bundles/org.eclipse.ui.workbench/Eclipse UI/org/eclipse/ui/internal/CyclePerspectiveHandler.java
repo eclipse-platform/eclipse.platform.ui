@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.model.PerspectiveLabelProvider;
@@ -57,7 +58,7 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getBackwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand("org.eclipse.ui.window.previousPerspective"); //$NON-NLS-1$
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUSPERSPECTIVE);
 		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
 		return commandBack;
 	}
@@ -67,7 +68,7 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand("org.eclipse.ui.window.nextPerspective"); //$NON-NLS-1$
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXTPERSPECTIVE);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+
 import org.eclipse.core.commands.IHandler;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -24,12 +31,10 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.ToolBar;
+
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -224,7 +229,7 @@ class PreferencePageHistory {
 				boolean enabled = historyIndex > 0;
 				if (enabled) {
 					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_backward_toolTipName,getHistoryEntry(historyIndex - 1).getLabel() ));
-				} 
+				}
 				return enabled;
 			}
 
@@ -237,15 +242,15 @@ class PreferencePageHistory {
 				}
 			}
 		};
-		backward.setText(WorkbenchMessages.NavigationHistoryAction_backward_text); 
+		backward.setText(WorkbenchMessages.NavigationHistoryAction_backward_text);
 		backward
-				.setActionDefinitionId("org.eclipse.ui.navigate.backwardHistory"); //$NON-NLS-1$
+				.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARDHISTORY);
 		backward.setImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_BACK));
 		backward.setDisabledImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(
-						ISharedImages.IMG_TOOL_BACK_DISABLED));		
+						ISharedImages.IMG_TOOL_BACK_DISABLED));
 		registerKeybindings(backward);
 		historyToolbar.add(backward);
 
@@ -258,7 +263,7 @@ class PreferencePageHistory {
 				boolean enabled = historyIndex < history.size() - 1;
 				if (enabled) {
 					setToolTipText(NLS.bind(WorkbenchMessages.NavigationHistoryAction_forward_toolTipName, getHistoryEntry(historyIndex + 1).getLabel() ));
-				} 
+				}
 				return enabled;
 			}
 
@@ -272,8 +277,8 @@ class PreferencePageHistory {
 				}
 			}
 		};
-		forward.setText(WorkbenchMessages.NavigationHistoryAction_forward_text); 
-		forward.setActionDefinitionId("org.eclipse.ui.navigate.forwardHistory"); //$NON-NLS-1$
+		forward.setText(WorkbenchMessages.NavigationHistoryAction_forward_text);
+		forward.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_FORWARDHISTORY);
 		forward.setImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD));

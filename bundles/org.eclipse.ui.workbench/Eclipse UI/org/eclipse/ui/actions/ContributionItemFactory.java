@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
@@ -102,7 +103,7 @@ public abstract class ContributionItemFactory {
 	 */
 	public static final ContributionItemFactory PIN_EDITOR = new ContributionItemFactory(
 			"pinEditor") { //$NON-NLS-1$
-		private static final String COMMAND_ID = "org.eclipse.ui.window.pinEditor"; //$NON-NLS-1$
+		private static final String COMMAND_ID = IWorkbenchCommandConstants.WINDOW_PINEDITOR;
 
 		/* (non-javadoc) method declared on ContributionItemFactory */
 		public IContributionItem create(final IWorkbenchWindow window) {

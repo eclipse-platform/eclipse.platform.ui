@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,12 @@ package org.eclipse.ui.handlers;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
+
 import org.eclipse.core.runtime.Assert;
+
 import org.eclipse.jface.viewers.AbstractTreeViewer;
+
+import org.eclipse.ui.IWorkbenchCommandConstants;
 
 /**
  * Collapse a tree viewer.
@@ -42,7 +46,7 @@ public class CollapseAllHandler extends AbstractHandler {
 	/**
 	 * The command id for collapse all.
 	 */
-	public static final String COMMAND_ID = "org.eclipse.ui.navigate.collapseAll"; //$NON-NLS-1$
+	public static final String COMMAND_ID = IWorkbenchCommandConstants.NAVIGATE_COLLAPSEALL;
 
 	private AbstractTreeViewer treeViewer;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,22 +11,27 @@
 
 package org.eclipse.ui.fieldassist;
 
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
-import org.eclipse.jface.fieldassist.ContentProposalAdapter;
-import org.eclipse.jface.fieldassist.ControlDecoration;
-import org.eclipse.jface.fieldassist.FieldDecoration;
-import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.fieldassist.IContentProposalProvider;
-import org.eclipse.jface.fieldassist.IControlContentAdapter;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
+
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
+
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
+import org.eclipse.jface.fieldassist.IControlContentAdapter;
+
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
@@ -35,7 +40,7 @@ import org.eclipse.ui.keys.IBindingService;
 
 /**
  * ContentAssistCommandAdapter extends {@link ContentProposalAdapter} to invoke
- * content proposals using a specified {@link org.eclipse.ui.commands.ICommand}.
+ * content proposals using a specified {@link org.eclipse.core.commands.Command}.
  * The ability to specify a {@link org.eclipse.jface.bindings.keys.KeyStroke}
  * that explicitly invokes content proposals is hidden by this class, and
  * instead the String id of a command is used. If no command id is specified by
@@ -56,8 +61,10 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	/**
 	 * The command id used for content assist. (value
 	 * <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>)
+	 * 
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_CONTENTASSIST}
 	 */
-	public static final String CONTENT_PROPOSAL_COMMAND = "org.eclipse.ui.edit.text.contentAssist.proposals"; //$NON-NLS-1$
+	public static final String CONTENT_PROPOSAL_COMMAND= IWorkbenchCommandConstants.EDIT_CONTENTASSIST;
 
 	// Default autoactivation delay in milliseconds
 	// TODO: This should eventually be controlled by
@@ -153,7 +160,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 				autoActivationCharacters);
 		this.commandId = commandId;
 		if (commandId == null) {
-			this.commandId = CONTENT_PROPOSAL_COMMAND;
+			this.commandId= IWorkbenchCommandConstants.EDIT_CONTENTASSIST;
 		}
 
 		// If no autoactivation characters were specified, set them to the empty
