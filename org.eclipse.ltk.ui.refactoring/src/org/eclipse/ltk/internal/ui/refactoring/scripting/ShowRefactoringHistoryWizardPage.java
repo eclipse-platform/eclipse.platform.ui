@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.wizard.WizardPage;
 
@@ -37,8 +38,8 @@ import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringDescriptorDele
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper;
 import org.eclipse.ltk.internal.ui.refactoring.history.ShowRefactoringHistoryControl;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
-import org.eclipse.ltk.internal.ui.refactoring.util.PixelConverter;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
+
 
 /**
  * First page of the show refactoring history wizard.
