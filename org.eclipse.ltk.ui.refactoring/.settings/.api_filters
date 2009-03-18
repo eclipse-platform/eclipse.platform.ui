@@ -28,7 +28,7 @@
     <resource path="src/org/eclipse/ltk/ui/refactoring/history/RefactoringHistoryWizard.java" type="org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard">
         <filter id="571519004">
             <message_arguments>
-                <message_argument value="org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard"/>
+                <message_argument value="org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryWizard.createRefactoring(RefactoringDescriptor, RefactoringStatus, IProgressMonitor)"/>
                 <message_argument value="PerformRefactoringHistoryOperation"/>
             </message_arguments>
         </filter>
@@ -49,19 +49,19 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/model/RefactoringDescriptorDiff.java" type="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff">
-        <filter id="574619656">
-            <message_arguments>
-                <message_argument value="IThreeWayDiff"/>
-                <message_argument value="RefactoringDescriptorDiff"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ltk/internal/ui/refactoring/model/RefactoringDescriptorSynchronizationProxy.java" type="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorSynchronizationProxy">
         <filter id="571473929">
             <message_arguments>
                 <message_argument value="RefactoringDescriptorProxy"/>
                 <message_argument value="RefactoringDescriptorSynchronizationProxy"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ltk/internal/ui/refactoring/model/RefactoringDescriptorDiff.java" type="org.eclipse.ltk.internal.ui.refactoring.model.RefactoringDescriptorDiff">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IThreeWayDiff"/>
+                <message_argument value="RefactoringDescriptorDiff"/>
             </message_arguments>
         </filter>
     </resource>
