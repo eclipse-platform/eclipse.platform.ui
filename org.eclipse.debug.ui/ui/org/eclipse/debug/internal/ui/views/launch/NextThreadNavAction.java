@@ -7,8 +7,12 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM Corporation - updated to use command constants 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
+
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
@@ -16,8 +20,8 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.viewers.model.NavigateModelAction;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * Navigates to the next suspended thread in the Debug view.
@@ -32,6 +36,6 @@ class NextThreadNavAction extends NavigateModelAction {
         setDisabledImageDescriptor(DebugUITools.getImageDescriptor(IInternalDebugUIConstants.IMG_ELCL_NEXT_THREAD));
         setId(DebugUIPlugin.getUniqueIdentifier() + ".NextThreadNavigateAction"); //$NON-NLS-1$
         PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.NEXT_THREAD_NAVIGATE_ACTION);
-        setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
+		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_NEXT);
 	}
 }

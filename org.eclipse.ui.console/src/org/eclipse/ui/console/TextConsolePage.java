@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,13 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.ResourceBundle;
 
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.core.runtime.IAdaptable;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
@@ -26,19 +32,17 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.TextEvent;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Widget;
+
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -53,9 +57,9 @@ import org.eclipse.ui.internal.console.FollowHyperlinkAction;
 import org.eclipse.ui.internal.console.IConsoleHelpContextIds;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.IPageSite;
+
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 /**
  * A page for a text console.
@@ -63,7 +67,7 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  * Clients may contribute actions to the context menu of a text console page
  * using the <code>org.eclipse.ui.popupMenus</code> extension point. The context
  * menu identifier for a text console page is the associated console's type
- * suffixed with <code>.#ContextMenu</code>. When a console does not specify 
+ * suffixed with <code>.#ContextMenu</code>. When a console does not specify
  * a type, the context menu id is <code>#ContextMenu</code>.
  * </p>
  * <p>
@@ -148,7 +152,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
     protected void updateSelectionDependentActions() {
 		Iterator iterator= fSelectionActions.iterator();
 		while (iterator.hasNext()) {
-			updateAction((String)iterator.next());		
+			updateAction((String)iterator.next());
 		}
 	}
 
@@ -180,7 +184,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		createActions();
 		configureToolBar(getSite().getActionBars().getToolBarManager());
 		
-		getSite().registerContextMenu(id, fMenuManager, fViewer); 
+		getSite().registerContextMenu(id, fMenuManager, fViewer);
 		getSite().setSelectionProvider(fViewer);
 		
 		fViewer.getSelectionProvider().addSelectionChangedListener(selectionChangedListener);
@@ -241,7 +245,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 			String property = event.getProperty();
 			
 			if (source.equals(fConsole) && IConsoleConstants.P_FONT.equals(property)) {
-				fViewer.setFont(fConsole.getFont());	
+				fViewer.setFont(fConsole.getFont());
 			} else if (IConsoleConstants.P_FONT_STYLE.equals(property)) {
 			    fViewer.getTextWidget().redraw();
 			} else if (property.equals(IConsoleConstants.P_STREAM_COLOR)) {
@@ -250,7 +254,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 			    Integer tabSize = (Integer)event.getNewValue();
 			    fViewer.setTabWidth(tabSize.intValue());
 			} else if (source.equals(fConsole) && property.equals(IConsoleConstants.P_CONSOLE_WIDTH)) {
-			    fViewer.setConsoleWidth(fConsole.getConsoleWidth()); 
+			    fViewer.setConsoleWidth(fConsole.getConsoleWidth());
 			} else if (IConsoleConstants.P_BACKGROUND_COLOR.equals(property)) {
 				fViewer.getTextWidget().setBackground(fConsole.getBackground());
 			}
@@ -264,28 +268,28 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
         IActionBars actionBars= getSite().getActionBars();
         TextViewerAction action= new TextViewerAction(fViewer, ITextOperationTarget.SELECT_ALL);
 		action.configureAction(ConsoleMessages.TextConsolePage_SelectAllText, ConsoleMessages.TextConsolePage_SelectAllDescrip, ConsoleMessages.TextConsolePage_SelectAllDescrip);
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		action.setActionDefinitionId(ActionFactory.SELECT_ALL.getCommandId());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_SELECT_ALL_ACTION);
 		setGlobalAction(actionBars, ActionFactory.SELECT_ALL.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.CUT);
-		action.configureAction(ConsoleMessages.TextConsolePage_CutText, ConsoleMessages.TextConsolePage_CutDescrip, ConsoleMessages.TextConsolePage_CutDescrip);  
+		action.configureAction(ConsoleMessages.TextConsolePage_CutText, ConsoleMessages.TextConsolePage_CutDescrip, ConsoleMessages.TextConsolePage_CutDescrip);
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_CUT));
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+		action.setActionDefinitionId(ActionFactory.CUT.getCommandId());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_CUT_ACTION);
 		setGlobalAction(actionBars, ActionFactory.CUT.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.COPY);
 		action.configureAction(ConsoleMessages.TextConsolePage_CopyText, ConsoleMessages.TextConsolePage_CopyDescrip, ConsoleMessages.TextConsolePage_CopyDescrip);
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		action.setActionDefinitionId(ActionFactory.COPY.getCommandId());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_COPY_ACTION);
 		setGlobalAction(actionBars, ActionFactory.COPY.getId(), action);
 		
 		action= new TextViewerAction(fViewer, ITextOperationTarget.PASTE);
-		action.configureAction(ConsoleMessages.TextConsolePage_PasteText, ConsoleMessages.TextConsolePage_PasteDescrip, ConsoleMessages.TextConsolePage_PasteDescrip); 
+		action.configureAction(ConsoleMessages.TextConsolePage_PasteText, ConsoleMessages.TextConsolePage_PasteDescrip, ConsoleMessages.TextConsolePage_PasteDescrip);
 		action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_TOOL_PASTE));
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		action.setActionDefinitionId(ActionFactory.PASTE.getCommandId());
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IConsoleHelpContextIds.CONSOLE_PASTE_ACTION);
 		setGlobalAction(actionBars, ActionFactory.PASTE.getId(), action);
 		
@@ -312,7 +316,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
      * @param action associated action
      */
     protected void setGlobalAction(IActionBars actionBars, String actionID, IAction action) {
-        fGlobalActions.put(actionID, action);  
+        fGlobalActions.put(actionID, action);
         actionBars.setGlobalActionHandler(actionID, action);
     }
 
@@ -357,7 +361,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		if (action instanceof IUpdate) {
 			((IUpdate) action).update();
 		}
-	}	
+	}
 
     
 	/**

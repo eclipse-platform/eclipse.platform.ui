@@ -31,9 +31,10 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.graphics.Image;
+
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -65,7 +66,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 		setText(ActionMessages.FindAction_0);
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindElementAction"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_ELEMENT_ACTION);
-		setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
 		fViewer = viewer;
 	}
 

@@ -85,6 +85,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
@@ -98,7 +99,6 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -463,25 +463,25 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
 		textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
 		textAction.configureAction(DetailMessages.DefaultDetailPane__Copy_8, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.CUT);
 		textAction.configureAction(DetailMessages.DefaultDetailPane_Cu_t_11, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_CUT_ACTION);
 		setAction(DETAIL_CUT_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.PASTE);
 		textAction.configureAction(DetailMessages.DefaultDetailPane__Paste_14, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
-		textAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_PASTE_ACTION);
 		setAction(ActionFactory.PASTE.getId(), textAction);
 		
@@ -492,7 +492,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		// TODO: Still using "old" resource access, find/replace won't work in popup dialogs
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewResourceBundleMessages"); //$NON-NLS-1$
 		IAction action = new FindReplaceAction(bundle, "find_replace_action_", getWorkbenchPartSite().getShell(), new FindReplaceTargetWrapper(fSourceViewer.getFindReplaceTarget())); //$NON-NLS-1$
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IDebugHelpContextIds.DETAIL_PANE_FIND_REPLACE_ACTION);
 		setAction(DETAIL_FIND_REPLACE_TEXT_ACTION, action);
 			
@@ -846,14 +846,14 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			// Create the undo action
 			OperationHistoryActionHandler undoAction= new UndoActionHandler(getViewSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
-			undoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.UNDO);
+			undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 			setAction(ITextEditorActionConstants.UNDO, undoAction);
 			setGlobalAction(ITextEditorActionConstants.UNDO, undoAction);			
 			
 			// Create the re-do action.
 			OperationHistoryActionHandler redoAction= new RedoActionHandler(getViewSite(), undoContext);
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(redoAction, IAbstractTextEditorHelpContextIds.REDO_ACTION);
-			redoAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.REDO);
+			redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
 			setAction(ITextEditorActionConstants.REDO, redoAction);
 			setGlobalAction(ITextEditorActionConstants.REDO, redoAction);
 			

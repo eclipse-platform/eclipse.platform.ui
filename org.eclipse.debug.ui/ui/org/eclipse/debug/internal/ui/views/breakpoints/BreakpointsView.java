@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,30 +17,23 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.ibm.icu.text.MessageFormat;
+
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManagerListener;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveFromWorkingSetAction;
-import org.eclipse.debug.internal.ui.actions.breakpoints.OpenBreakpointMarkerAction;
-import org.eclipse.debug.internal.ui.actions.breakpoints.ShowSupportedBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -59,14 +52,7 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.dnd.Clipboard;
-import org.eclipse.swt.dnd.DND;
-import org.eclipse.swt.dnd.Transfer;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener2;
@@ -74,6 +60,7 @@ import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
@@ -84,10 +71,28 @@ import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
-import com.ibm.icu.text.MessageFormat;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBreakpointManagerListener;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.LazyModelPresentation;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveFromWorkingSetAction;
+import org.eclipse.debug.internal.ui.actions.breakpoints.OpenBreakpointMarkerAction;
+import org.eclipse.debug.internal.ui.actions.breakpoints.ShowSupportedBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+
+import org.eclipse.debug.ui.AbstractDebugView;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
 
 /**
  * This view shows the breakpoints registered with the breakpoint manager
@@ -168,9 +173,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         int ops = DND.DROP_MOVE | DND.DROP_COPY;
         // drop
         viewer.addDropSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDropAdapter(viewer));
-        // Drag 
+        // Drag
         viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDragAdapter(viewer));
-    }    
+    }
 	
 	/**
 	 * Initializes whether this view tracks selection in the
@@ -256,7 +261,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 */
 	private void handleBreakpointChecked(final CheckStateChangedEvent event, final IBreakpoint breakpoint) {
 		final boolean enable= event.getChecked();
-        String jobName = enable ? DebugUIViewsMessages.BreakpointsView_0 : DebugUIViewsMessages.BreakpointsView_1; // 
+        String jobName = enable ? DebugUIViewsMessages.BreakpointsView_0 : DebugUIViewsMessages.BreakpointsView_1; //
         new Job(jobName) {
             protected IStatus run(IProgressMonitor monitor) {
                 try {
@@ -265,13 +270,13 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
                 } catch (final CoreException e) {
                     Display.getDefault().asyncExec(new Runnable() {
                         public void run() {
-                            String titleState= enable ? DebugUIViewsMessages.BreakpointsView_6 : DebugUIViewsMessages.BreakpointsView_7; // 
-                            String messageState= enable ? DebugUIViewsMessages.BreakpointsView_8 : DebugUIViewsMessages.BreakpointsView_9;  // 
-                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_10, new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_11, new String[] { messageState }), e); // 
+                            String titleState= enable ? DebugUIViewsMessages.BreakpointsView_6 : DebugUIViewsMessages.BreakpointsView_7; //
+                            String messageState= enable ? DebugUIViewsMessages.BreakpointsView_8 : DebugUIViewsMessages.BreakpointsView_9;  //
+                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_10, new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_11, new String[] { messageState }), e); //
                             // If the breakpoint fails to update, reset its check state.
                             getCheckboxViewer().removeCheckStateListener(fCheckListener);
                             event.getCheckable().setChecked(breakpoint, !event.getChecked());
-                            getCheckboxViewer().addCheckStateListener(fCheckListener);                            
+                            getCheckboxViewer().addCheckStateListener(fCheckListener);
                         }
                     });
                 }
@@ -303,8 +308,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
         try {
             progressService.busyCursorWhile(runnable);
-        } 
-        catch (InvocationTargetException e) {} 
+        }
+        catch (InvocationTargetException e) {}
         catch (InterruptedException e) {}
 	}
 
@@ -319,16 +324,16 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 	 * @see IWorkbenchPart#dispose()
 	 */
 	public void dispose() {
-        disposeAction(IWorkbenchActionDefinitionIds.COPY);
-        disposeAction(IWorkbenchActionDefinitionIds.PASTE);
-        disposeAction(ACTION_REMOVE_FROM_GROUP); 
+        disposeAction(IWorkbenchCommandConstants.EDIT_COPY);
+        disposeAction(IWorkbenchCommandConstants.EDIT_PASTE);
+        disposeAction(ACTION_REMOVE_FROM_GROUP);
         
 	    if (getCheckboxViewer() != null) {
 	        getCheckboxViewer().removeCheckStateListener(fCheckListener);
 	    }
 		IAction action= getAction("ShowBreakpointsForModel"); //$NON-NLS-1$
 		if (action != null) {
-			((ShowSupportedBreakpointsAction)action).dispose(); 
+			((ShowSupportedBreakpointsAction)action).dispose();
 		}
 		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
 		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
@@ -358,12 +363,12 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         fClipboard= new Clipboard(getSite().getShell().getDisplay());
         
         PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
-        configure(paste, IWorkbenchActionDefinitionIds.PASTE, ActionFactory.PASTE.getId(),ISharedImages.IMG_TOOL_PASTE);
+        configure(paste, ActionFactory.PASTE.getCommandId(), ActionFactory.PASTE.getId(), ISharedImages.IMG_TOOL_PASTE);
         SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
-        configure(copy, IWorkbenchActionDefinitionIds.COPY, ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);
+        configure(copy, ActionFactory.COPY.getCommandId(), ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);
         
         SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
-        setAction(ACTION_REMOVE_FROM_GROUP, remove); 
+        setAction(ACTION_REMOVE_FROM_GROUP, remove);
         getViewer().addSelectionChangedListener(remove);
 	}
 
@@ -412,8 +417,8 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
 		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
 		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-        menu.add(getAction(IWorkbenchActionDefinitionIds.COPY));
-        menu.add(getAction(IWorkbenchActionDefinitionIds.PASTE));
+        menu.add(getAction(IWorkbenchCommandConstants.EDIT_COPY));
+        menu.add(getAction(IWorkbenchCommandConstants.EDIT_PASTE));
         IAction action = getAction(ACTION_REMOVE_FROM_GROUP);
         if (action.isEnabled()) {
             menu.add(action);
@@ -634,7 +639,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             }
         }
         return null;
-    }    
+    }
     
     /**
 	 * This method is used solely to preserve the selection state of the viewer in the event that the current selection is to be removed
@@ -730,9 +735,9 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             }
     	}
         return true;
-    }   
+    }
 	
-    /** 
+    /**
      * Pastes the selection into the given target
      * 
      * @param target target of the paste, either a BreakpointContainer,
@@ -740,7 +745,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
      * @param selection breakpoints
      * @return whether successful
      * 
-     * TODO remove in favour of using <code>TreeItem</code> as paste target 
+     * TODO remove in favour of using <code>TreeItem</code> as paste target
      */
     public boolean performPaste(Object target, ISelection selection) {
         if (target instanceof BreakpointContainer && selection instanceof IStructuredSelection) {
@@ -752,7 +757,7 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
             return true;
         }
         return false;
-    }        
+    }
     
     /**
      * Returns if the breakpoints view is currently showing groups or not

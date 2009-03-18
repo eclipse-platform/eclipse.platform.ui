@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,11 +29,11 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -145,7 +145,7 @@ public class DetailPaneAssignValueAction extends Action{
 	 * @see org.eclipse.jface.action.IAction#getActionDefinitionId()
 	 */
 	public String getActionDefinitionId() {		
-		return IWorkbenchActionDefinitionIds.SAVE;
+		return IWorkbenchCommandConstants.FILE_SAVE;
 	}
 
 }
