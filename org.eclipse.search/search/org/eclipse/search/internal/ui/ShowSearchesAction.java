@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,7 +23,8 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.window.Window;
 
-import org.eclipse.search.internal.ui.util.ListDialog;
+import org.eclipse.ui.dialogs.ListDialog;
+
 
 /**
  * Invoke the resource creation wizard selection Wizard.
@@ -114,7 +115,12 @@ class ShowSearchesAction extends Action {
 
 		LabelProvider labelProvider=new SearchesLabelProvider();
 
-		ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell(),input, title, message, new ArrayContentProvider(), labelProvider);
+		ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell());
+		dlg.setInput(input);
+		dlg.setTitle(title);
+		dlg.setContentProvider(new ArrayContentProvider());
+		dlg.setLabelProvider(labelProvider);
+		dlg.setMessage(message);
 		if (selectedAction != null) {
 			Object[] selected= new Object[1];
 			selected[0]= selectedAction;
