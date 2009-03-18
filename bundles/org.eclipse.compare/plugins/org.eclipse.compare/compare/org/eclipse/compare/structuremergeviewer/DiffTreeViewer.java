@@ -217,7 +217,7 @@ public class DiffTreeViewer extends TreeViewer {
 				return internalOpen();
 			}
 			public boolean hasChange(int changeFlag) {
-				return getNextItem(changeFlag == INavigatable.NEXT_CHANGE) != null;
+				return getNextItem(changeFlag == INavigatable.NEXT_CHANGE, false) != null;
 			}
 		};
 		tree.setData(INavigatable.NAVIGATOR_PROPERTY, nav);
@@ -571,14 +571,14 @@ public class DiffTreeViewer extends TreeViewer {
 		Control c= getControl();
 		if (!(c instanceof Tree) || c.isDisposed())
 			return false;
-		TreeItem item = getNextItem(next);
+		TreeItem item = getNextItem(next, true);
 		if (item != null) {
 			internalSetSelection(item, fireOpen);
 		}
 		return item == null;
 	}
 	
-	private TreeItem getNextItem(boolean next) {
+	private TreeItem getNextItem(boolean next, boolean expand) {
 		Control c= getControl();
 		if (!(c instanceof Tree) || c.isDisposed())
 			return null;
@@ -599,7 +599,7 @@ public class DiffTreeViewer extends TreeViewer {
 		}
 			
 		while (true) {
-			item= findNextPrev(item, next);
+			item= findNextPrev(item, next, expand);
 			if (item == null)
 				break;
 			if (item.getItemCount() <= 0)
@@ -608,7 +608,7 @@ public class DiffTreeViewer extends TreeViewer {
 		return item;
 	}
 
-	private TreeItem findNextPrev(TreeItem item, boolean next) {
+	private TreeItem findNextPrev(TreeItem item, boolean next, boolean expand) {
 		
 		if (item == null)
 			return null;
@@ -639,8 +639,9 @@ public class DiffTreeViewer extends TreeViewer {
 						int n= item.getItemCount();
 						if (n <= 0)
 							break;
-							
-						item.setExpanded(true);
+
+						if (expand)	
+							item.setExpanded(true);
 						item= item.getItems()[n-1];
 					}
 
@@ -653,7 +654,8 @@ public class DiffTreeViewer extends TreeViewer {
 			item= parent;
 					
 		} else {
-			item.setExpanded(true);
+			if (expand)
+				item.setExpanded(true);
 			createChildren(item);
 			
 			if (item.getItemCount() > 0) {
