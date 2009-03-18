@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,10 @@ public class UnifiedTree {
 		accept(visitor, IResource.DEPTH_INFINITE);
 	}
 
+	/**
+	 * Performs a breadth-first traversal of the unified tree, passing each
+	 * node to the provided visitor.
+	 */
 	public void accept(IUnifiedTreeVisitor visitor, int depth) throws CoreException {
 		Assert.isNotNull(root);
 		initializeQueue();

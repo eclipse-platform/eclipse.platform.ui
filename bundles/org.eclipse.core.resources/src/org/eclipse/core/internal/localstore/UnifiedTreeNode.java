@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,11 @@ import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.IResource;
 
+/**
+ * A node in a {@link UnifiedTree}. A node usually represents a file/folder
+ * in the workspace, the file system, or both. There are also special node
+ * instances to act as child and level markers in the tree.
+ */
 public class UnifiedTreeNode implements ILocalStoreConstants {
 	protected UnifiedTreeNode child;
 	protected boolean existsWorkspace;
@@ -40,7 +45,7 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 	}
 
 	/**
-	 * Returns an Enumeration of UnifiedResourceNode.
+	 * Returns an Iterator of UnifiedTreeNode.
 	 */
 	public Iterator getChildren() {
 		return tree.getChildren(this);
