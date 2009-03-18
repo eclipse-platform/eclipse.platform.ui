@@ -55,8 +55,31 @@ public class StackModelFactory extends SWTPartFactory {
 		Widget parentWidget = getParentWidget(part);
 		if (parentWidget instanceof Composite) {
 			IEclipseContext parentContext = getContextForParent(part);
+
+			// HACK!! Set up the close button style based on the 'Policy'
+			// Perhaps this should be CSS-based ?
+			boolean showCloseAlways = false;
+			boolean showMinMax = false;
+			int styleModifier = 0;
+			if (part.getPolicy() != null && part.getPolicy().length() > 0) {
+				String policy = part.getPolicy();
+				if (policy.indexOf("ViewStack") >= 0) { //$NON-NLS-1$
+					styleModifier = SWT.CLOSE;
+					showMinMax = true;
+				}
+				if (policy.indexOf("EditorStack") >= 0) { //$NON-NLS-1$
+					styleModifier = SWT.CLOSE;
+					showCloseAlways = true;
+					showMinMax = true;
+				}
+			}
+
 			final CTabFolder ctf = new CTabFolder((Composite) parentWidget,
-					SWT.BORDER);
+					SWT.BORDER | styleModifier);
+			ctf.setUnselectedCloseVisible(showCloseAlways);
+			ctf.setMaximizeVisible(showMinMax);
+			ctf.setMinimizeVisible(showMinMax);
+
 			bindWidget(part, ctf);
 			ctf.setVisible(true);
 			ctf.setSimple(false);

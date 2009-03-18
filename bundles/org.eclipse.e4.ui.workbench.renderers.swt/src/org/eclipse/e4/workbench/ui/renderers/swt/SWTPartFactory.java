@@ -24,9 +24,11 @@ import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IHandlerService;
+import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -55,6 +57,16 @@ public abstract class SWTPartFactory extends PartFactory {
 	public void createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
 		Widget widget = (Widget) widgetObject;
 		org.eclipse.swt.widgets.Menu swtMenu;
+
+		if (menu != null && menu.getId() != null
+				&& menu.getId().equals("org.eclipse.ui.main.menu") //$NON-NLS-1$
+				&& menu.getItems().size() == 0) {
+			// Pre-populate the main menu
+			ILegacyHook lh = (ILegacyHook) context.get(ILegacyHook.class
+					.getName());
+			lh.loadMenu(menu);
+		}
+
 		if (widget instanceof MenuItem) {
 			swtMenu = new org.eclipse.swt.widgets.Menu(((MenuItem) widget)
 					.getParent().getShell(), SWT.DROP_DOWN);
@@ -77,7 +89,17 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	public void createToolBar(MPart<?> part, Object widgetObject,
-			org.eclipse.e4.ui.model.application.MToolBar toolbar) {
+			MToolBar toolbar) {
+
+		if (toolbar != null && toolbar.getId() != null
+				&& toolbar.getId().equals("org.eclipse.ui.main.toolbar") //$NON-NLS-1$
+				&& toolbar.getItems().size() == 0) {
+			// Pre-populate the main toolbar
+			ILegacyHook lh = (ILegacyHook) context.get(ILegacyHook.class
+					.getName());
+			lh.loadToolbar(toolbar);
+		}
+
 		Composite composite = (Composite) widgetObject;
 		org.eclipse.swt.widgets.ToolBar swtToolBar = new ToolBar(composite,
 				SWT.FLAT | SWT.NO_FOCUS);
@@ -118,7 +140,9 @@ public abstract class SWTPartFactory extends PartFactory {
 			final org.eclipse.e4.ui.model.application.MToolBarItem toolBarItem) {
 		int style = SWT.PUSH;
 		final ToolItem newToolItem = new ToolItem(swtMenu, style);
-		newToolItem.setText(toolBarItem.getName());
+
+		if (toolBarItem.getName() != null)
+			newToolItem.setText(toolBarItem.getName());
 		newToolItem.setToolTipText(toolBarItem.getTooltip());
 		newToolItem.setImage(getImage(toolBarItem));
 		toolBarItem.eAdapters().add(new AdapterImpl() {

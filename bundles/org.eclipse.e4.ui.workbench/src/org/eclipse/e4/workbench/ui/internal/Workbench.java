@@ -33,7 +33,6 @@ import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
@@ -283,13 +282,7 @@ public class Workbench implements IWorkbench {
 		globalContext.set(MApplication.class.getName(), workbench);
 
 		// Initialize the workbench for legacy support if required
-		ILegacyHook legacyHook = (ILegacyHook) globalContext
-				.get(ILegacyHook.class.getName());
-		MWindow<?> wbw = workbench.getWindows().get(0);
-		if (legacyHook != null && wbw.getMenu() == null) {
-			MMenu mainMenu = wbw.getMenu();
-			legacyHook.loadMenu(mainMenu);
-		}
+		globalContext.get(ILegacyHook.class.getName());
 	}
 
 	public int run() {
