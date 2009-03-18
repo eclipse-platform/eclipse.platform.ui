@@ -11,10 +11,14 @@
 
 package org.eclipse.ui.internal.statushandlers;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeySequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
@@ -26,6 +30,8 @@ import org.eclipse.swt.dnd.DragSourceEvent;
 import org.eclipse.swt.dnd.DragSourceListener;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -35,7 +41,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.progress.ProgressMessages;
+import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
@@ -97,15 +106,58 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		gd.widthHint = 250;
 		gd.heightHint = 100;
 		list.setLayoutData(gd);
-		list.addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				list.selectAll();
-				super.widgetSelected(e);
+		// There is no support for triggering commands in the dialogs. I am
+		// trying to emulate the workbench behavior as exactly as possible.
+		IBindingService binding = (IBindingService) PlatformUI.getWorkbench()
+				.getService(IBindingService.class);
+		//find bindings for copy action
+		final TriggerSequence ts[] = binding
+				.getActiveBindingsFor(ActionFactory.COPY.getCommandId());
+		list.addKeyListener(new KeyListener() {
+			
+			ArrayList keyList = new ArrayList();
+
+			public void keyPressed(KeyEvent e) {
+				// get the character. reverse the ctrl modifier if necessary
+				char character = e.character;
+				boolean ctrlDown = (e.stateMask & SWT.CTRL) != 0;
+				if (ctrlDown && e.character != e.keyCode && e.character < 0x20
+						&& (e.keyCode & SWT.KEYCODE_BIT) == 0) {
+					character += 0x40;
+				}
+				// do not process modifier keys
+				if((e.keyCode & (~SWT.MODIFIER_MASK)) == 0){
+					return;
+				}
+				// if there is a character, use it. if no character available,
+				// try with key code
+				KeyStroke ks = KeyStroke.getInstance(e.stateMask,
+						character != 0 ? character : e.keyCode);
+				keyList.add(ks);
+				KeySequence sequence = KeySequence.getInstance(keyList);
+				boolean partialMatch = false;
+				for (int i = 0; i < ts.length; i++) {
+					if (ts[i].equals(sequence)) {
+						copyToClipboard();
+						keyList.clear();
+						break;
+					}
+					if (ts[i].startsWith(sequence, false)) {
+						partialMatch = true;
+					}
+					for (int j = 0; j < ts[i].getTriggers().length; j++) {
+						if (ts[i].getTriggers()[j].equals(ks)) {
+							partialMatch = true;
+						}
+					}
+				}
+				if (!partialMatch) {
+					keyList.clear();
+				}
+			}
+
+			public void keyReleased(KeyEvent e) {
+				//no op
 			}
 		});
 		createDNDSource();
@@ -165,16 +217,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
-				Clipboard clipboard = null;
-				try {
-					clipboard = new Clipboard(parent.getDisplay());
-					clipboard.setContents(new Object[] { prepareCopyString() },
-							new Transfer[] { TextTransfer.getInstance() });
-				} finally {
-					if (clipboard != null) {
-						clipboard.dispose();
-					}
-				}
+				copyToClipboard();
 				super.widgetSelected(e);
 			}
 
@@ -188,8 +231,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		}
 		StringBuffer sb = new StringBuffer();
 		String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
-		for (int i = 0; i < list.getItemCount(); i++) {
-			sb.append(list.getItem(i));
+		String selection[] = list.getSelection();
+		for (int i = 0; i < selection.length; i++) {
+			sb.append(selection[i]);
 			sb.append(newLine);
 		}
 		return sb.toString();
@@ -239,6 +283,19 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		return list;
 	}
 	
+	private void copyToClipboard() {
+		Clipboard clipboard = null;
+		try {
+			clipboard = new Clipboard(list.getDisplay());
+			clipboard.setContents(new Object[] { prepareCopyString() },
+					new Transfer[] { TextTransfer.getInstance() });
+		} finally {
+			if (clipboard != null) {
+				clipboard.dispose();
+			}
+		}
+	}
+
 	private boolean isDialogHandlingOKStatuses() {
 		return ((Boolean) workbenchStatusDialog
 				.getProperty(IStatusDialogConstants.HANDLE_OK_STATUSES))
