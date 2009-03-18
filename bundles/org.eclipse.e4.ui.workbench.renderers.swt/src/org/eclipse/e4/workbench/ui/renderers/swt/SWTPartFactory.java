@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledItem;
@@ -28,6 +29,8 @@ import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -118,6 +121,34 @@ public abstract class SWTPartFactory extends PartFactory {
 		newToolItem.setText(toolBarItem.getName());
 		newToolItem.setToolTipText(toolBarItem.getTooltip());
 		newToolItem.setImage(getImage(toolBarItem));
+		toolBarItem.eAdapters().add(new AdapterImpl() {
+			@Override
+			public void notifyChanged(Notification msg) {
+				if (ApplicationPackage.Literals.MITEM__NAME.equals(msg
+						.getFeature())) {
+					final MHandledItem i = (MHandledItem) msg.getNotifier();
+					newToolItem.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							if (!newToolItem.isDisposed()) {
+								newToolItem.setText(i.getName());
+								newToolItem.getParent().pack();
+							}
+						}
+					});
+				} else if (ApplicationPackage.Literals.MITEM__ICON_URI
+						.equals(msg.getFeature())) {
+					final MHandledItem i = (MHandledItem) msg.getNotifier();
+					newToolItem.getDisplay().asyncExec(new Runnable() {
+						public void run() {
+							if (!newToolItem.isDisposed()) {
+								newToolItem.setImage(getImage(i));
+								newToolItem.getParent().pack();
+							}
+						}
+					});
+				}
+			}
+		});
 		if (toolBarItem.getCommand() != null) {
 			final IEclipseContext localContext = getContext(part);
 			newToolItem.addListener(SWT.Selection, new Listener() {
@@ -184,6 +215,32 @@ public abstract class SWTPartFactory extends PartFactory {
 			newMenuItem.setText(handledItem.getName());
 			newMenuItem.setImage(getImage(handledItem));
 			newMenuItem.setEnabled(true);
+			handledItem.eAdapters().add(new AdapterImpl() {
+				@Override
+				public void notifyChanged(Notification msg) {
+					if (ApplicationPackage.Literals.MITEM__NAME.equals(msg
+							.getFeature())) {
+						final MHandledItem i = (MHandledItem) msg.getNotifier();
+						newMenuItem.getDisplay().asyncExec(new Runnable() {
+							public void run() {
+								if (!newMenuItem.isDisposed()) {
+									newMenuItem.setText(i.getName());
+								}
+							}
+						});
+					} else if (ApplicationPackage.Literals.MITEM__ICON_URI
+							.equals(msg.getFeature())) {
+						final MHandledItem i = (MHandledItem) msg.getNotifier();
+						newMenuItem.getDisplay().asyncExec(new Runnable() {
+							public void run() {
+								if (!newMenuItem.isDisposed()) {
+									newMenuItem.setImage(getImage(i));
+								}
+							}
+						});
+					}
+				}
+			});
 		}
 
 		if (handledItem.getMenu() != null) {
