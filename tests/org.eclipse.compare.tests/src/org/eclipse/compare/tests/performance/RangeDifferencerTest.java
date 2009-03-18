@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,13 +18,12 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceTestCase;
-
 
 public class RangeDifferencerTest extends PerformanceTestCase {
 	
-	static private final String EXPLANATION = "Performance decrease caused by changes in the compare framework, see bug 210688";
+
+	// static private final String EXPLANATION = "Performance decrease caused by changes in the compare framework, see bug 210688";
 
 	public RangeDifferencerTest(String name) {
         super(name);
@@ -63,7 +62,7 @@ public class RangeDifferencerTest extends PerformanceTestCase {
 	public void testLargeDocument() {
 			    
 		tagAsGlobalSummary("3-way compare, 5000 lines", Dimension.ELAPSED_PROCESS); //$NON-NLS-1$
-		setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, EXPLANATION);
+		// setComment(Performance.EXPLAINS_DEGRADATION_COMMENT, EXPLANATION);
 
 		ITokenComparator ancestor= new DocLineComparator(createDocument(0), null, false);
 		ITokenComparator left= new DocLineComparator(createDocument(1), null, false);
