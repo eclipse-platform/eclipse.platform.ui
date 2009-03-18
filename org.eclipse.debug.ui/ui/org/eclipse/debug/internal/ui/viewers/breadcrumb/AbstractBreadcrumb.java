@@ -12,9 +12,6 @@
 package org.eclipse.debug.internal.ui.viewers.breadcrumb;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.IOpenListener;
@@ -46,8 +43,6 @@ import org.eclipse.swt.widgets.Widget;
  */
 public abstract class AbstractBreadcrumb {
 
-	private static final String ACTIVE_TAB_BG_END= "org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"; //$NON-NLS-1$
-
 	private BreadcrumbViewer fBreadcrumbViewer;
 
 	private boolean fHasFocus;
@@ -56,8 +51,6 @@ public abstract class AbstractBreadcrumb {
 
 	private Listener fDisplayFocusListener;
 	private Listener fDisplayKeyListener;
-
-	private IPropertyChangeListener fPropertyChangeListener;
 
 	public AbstractBreadcrumb() {
 	}
@@ -116,8 +109,10 @@ public abstract class AbstractBreadcrumb {
 			return;
 
 		Object input= fBreadcrumbViewer.getInput();
-		if (input == element || element.equals(input))
+		if (input == element || element.equals(input)) {
+		    refresh();
 			return;
+		}
 
 		fBreadcrumbViewer.setInput(element);
 	}
@@ -211,17 +206,6 @@ public abstract class AbstractBreadcrumb {
 			}
 		});
 
-		fPropertyChangeListener= new IPropertyChangeListener() {
-			public void propertyChange(PropertyChangeEvent event) {
-				if (ACTIVE_TAB_BG_END.equals(event.getProperty())) {
-					if (fComposite.isFocusControl()) {
-						fComposite.setBackground(JFaceResources.getColorRegistry().get(ACTIVE_TAB_BG_END));
-					}
-				}
-			}
-		};
-		JFaceResources.getColorRegistry().addListener(fPropertyChangeListener);
-
 		return fComposite;
 	}
 
@@ -229,9 +213,6 @@ public abstract class AbstractBreadcrumb {
      * Dispose all resources hold by this breadcrumb.
      */
 	public void dispose() {
-		if (fPropertyChangeListener != null) {
-			JFaceResources.getColorRegistry().removeListener(fPropertyChangeListener);
-		}
 		if (fDisplayFocusListener != null) {
 			Display.getDefault().removeFilter(SWT.FocusIn, fDisplayFocusListener);
 		}
@@ -257,7 +238,6 @@ public abstract class AbstractBreadcrumb {
 		if (fHasFocus)
 			focusLost();
 
-		fComposite.setBackground(JFaceResources.getColorRegistry().get(ACTIVE_TAB_BG_END));
 		fHasFocus= true;
 
 		installDisplayListeners();
@@ -269,7 +249,6 @@ public abstract class AbstractBreadcrumb {
 	 * Focus has been revoked from the breadcrumb.
 	 */
 	private void focusLost() {
-		fComposite.setBackground(null);
 		fHasFocus= false;
 
 		deinstallDisplayListeners();
