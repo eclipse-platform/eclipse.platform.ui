@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.GlobalBuildAction;
 import org.eclipse.ui.actions.NewWizardDropDownAction;
 import org.eclipse.ui.actions.NewWizardMenu;
-import org.eclipse.ui.actions.QuickStartAction;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.TipsAndTricksAction;
@@ -54,9 +53,8 @@ public final class IDEActionFactory {
     }
 
     /**
-     * IDE-specific workbench action: Add task.
-     * This action is a {@link RetargetAction} with 
-     * id "addTask". This action maintains its enablement state.
+     * IDE-specific workbench action (id: "addTask", commandId: "org.eclipse.ui.edit.addTask"): Add task.
+     * This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory ADD_TASK = new ActionFactory("addTask", //$NON-NLS-1$
     		IWorkbenchCommandConstants.EDIT_ADDTASK) { 
@@ -74,9 +72,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Add bookmark.
-     * This action is a {@link RetargetAction} with 
-     * id "bookmark". This action maintains its enablement state.
+     * IDE-specific workbench action (id: "bookmark", commandId: "org.eclipse.ui.edit.addBookmark"): Add bookmark.
+     * This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory BOOKMARK = new ActionFactory("bookmark", //$NON-NLS-1$
     		IWorkbenchCommandConstants.EDIT_ADDBOOKMARK) { 
@@ -94,8 +91,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Incremental build.
-     * This action maintains its enablement state.
+     * IDE-specific workbench action (id: "build", commandId: "org.eclipse.ui.project.buildAll"):
+     * Incremental build. This action maintains its enablement state.
      */
     public static final ActionFactory BUILD = new ActionFactory("build",  //$NON-NLS-1$
     		IWorkbenchCommandConstants.PROJECT_BUILDALL) {
@@ -110,7 +107,7 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Build clean
+     * IDE-specific workbench action (id: "buildClean"): Build clean.
      * This action maintains its enablement state.
      * @since 3.0
      */
@@ -128,7 +125,7 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Build automatically
+     * IDE-specific workbench action (id: "buildAutomatically"): Build automatically.
      * This action maintains its enablement state.
      * @since 3.0
      */
@@ -147,9 +144,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Incremental build.
-     * This action is a {@link RetargetAction} with 
-     * id "buildProject". This action maintains its enablement state.
+     * IDE-specific workbench action (id: "buildProject", commandId: "org.eclipse.ui.project.buildProject"):
+     * Incremental build. This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory BUILD_PROJECT = new ActionFactory(
             "buildProject", IWorkbenchCommandConstants.PROJECT_BUILDPROJECT) { //$NON-NLS-1$
@@ -168,9 +164,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Close project.
-     * This action is a {@link RetargetAction} with 
-     * id "closeProject". This action maintains its enablement state.
+     * IDE-specific workbench action (id: "closeProject", commandId: "org.eclipse.ui.project.closeProject"):
+     * Close project. This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory CLOSE_PROJECT = new ActionFactory(
             "closeProject", IWorkbenchCommandConstants.PROJECT_CLOSEPROJECT) { //$NON-NLS-1$
@@ -188,7 +183,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Close unrelated projects.
+     * IDE-specific workbench action (id: "closeUnrelatedProjects", commandId: "org.eclipse.ui.project.closeUnrelatedProjects"):
+     * Close unrelated projects.
      * <p>
      * This action closes all projects that are unrelated to the selected projects. A
      * project is unrelated if it is not directly or transitively referenced by one 
@@ -218,7 +214,7 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Opens the "new" wizard drop down, including
+     * IDE-specific workbench action (id: "newWizardDropDown"): Opens the "new" wizard drop down, including
      * resource-specific items for Project... and Example...
      * This action maintains its enablement state.
      */
@@ -240,9 +236,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Open project.
-     * This action is a {@link RetargetAction} with 
-     * id "openProject". This action maintains its enablement state.
+     * IDE-specific workbench action (id: "openProject", commandId: "org.eclipse.ui.project.openProject"):
+     * Open project. This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory OPEN_PROJECT = new ActionFactory(
             "openProject", IWorkbenchCommandConstants.PROJECT_OPENPROJECT) { //$NON-NLS-1$
@@ -260,7 +255,7 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Open workspace.
+     * IDE-specific workbench action (id: "openWorkspace"): Open workspace.
      * This action maintains its enablement state.
      */
     public static final ActionFactory OPEN_WORKSPACE = new ActionFactory(
@@ -277,7 +272,7 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Open project properties.
+     * IDE-specific workbench action (id: "projectProperties"): Open project properties.
      * This action maintains its enablement state.
      */
     public static final ActionFactory OPEN_PROJECT_PROPERTIES = new ActionFactory(
@@ -294,7 +289,7 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Quick start.
+     * IDE-specific workbench action (id: "quickStart"): Quick start.
      * This action maintains its enablement state.
      * 
      * @deprecated the IDE now uses the new intro mechanism
@@ -306,14 +301,14 @@ public final class IDEActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new QuickStartAction(window);
+            IWorkbenchAction action = new org.eclipse.ui.actions.QuickStartAction(window);
             action.setId(getId());
             return action;
         }
     };
 
     /**
-     * IDE-specific workbench action: Full build.
+     * IDE-specific workbench action (id: "rebuildAll"): Full build.
      * This action maintains its enablement state.
      * 
      * @deprecated as of 3.0, this action no longer appears in the UI (was deprecated in 3.1)
@@ -333,7 +328,7 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Rebuild project.
+     * IDE-specific workbench action (id: "rebuildProject"): Rebuild project.
      * This action is a {@link RetargetAction} with 
      * id "rebuildProject". This action maintains its enablement state.
      * 
@@ -356,8 +351,8 @@ public final class IDEActionFactory {
     };
 
     /**
-     * IDE-specific workbench action: Tips and tricks.
-     * This action maintains its enablement state.
+     * IDE-specific workbench action (id: "tipsAndTricks", commandId: "org.eclipse.ui.help.tipsAndTricksAction"):
+     * Tips and tricks. This action maintains its enablement state.
      */
     public static final ActionFactory TIPS_AND_TRICKS = new ActionFactory(
             "tipsAndTricks", IWorkbenchCommandConstants.HELP_TIPSANDTRICKS) { //$NON-NLS-1$
