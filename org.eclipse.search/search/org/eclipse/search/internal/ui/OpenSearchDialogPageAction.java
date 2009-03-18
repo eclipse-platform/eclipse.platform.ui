@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 Klaus Wenger, Wind River Systems, IBM Corporation and others.
+ * Copyright (c) 2006, 2009 Klaus Wenger, Wind River Systems, IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,12 +9,13 @@
  * Klaus Wenger - initial API and implementation
  * Markus Schorn - cleanup and conversion to inner part of the search plugin.
  *******************************************************************************/
-
 package org.eclipse.search.internal.ui;
 
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 
@@ -28,35 +29,34 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 
+
 public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDelegate2 {
 
 	private IWorkbenchWindow fWorkbenchWindow;
-	private Menu fMenu;
 	private OpenSearchDialogAction fOpenSearchDialogAction;
 
 	/*
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate2#getMenu(org.eclipse.swt.widgets.Menu)
 	 */
 	public Menu getMenu(Menu parent) {
-		fMenu= new Menu(parent);
-		fillMenu(fMenu);
-		return fMenu;
+		Menu menu= new Menu(parent);
+		fillMenu(menu);
+		return menu;
 	}
 
 	/*
 	 * @see org.eclipse.ui.IWorkbenchWindowPulldownDelegate#getMenu(org.eclipse.swt.widgets.Control)
 	 */
 	public Menu getMenu(Control parent) {
-		fMenu= new Menu(parent);
-		fillMenu(fMenu);
-		return fMenu;
+		Menu menu= new Menu(parent);
+		fillMenu(menu);
+		return menu;
 	}
 
 	/*
 	 * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
-		fMenu= null;
 		if (fOpenSearchDialogAction != null) {
 			fOpenSearchDialogAction.dispose();
 		}
@@ -86,7 +86,7 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 		// Empty
 	}
 
-	protected void fillMenu(Menu localMenu) {
+	private void fillMenu(final Menu localMenu) {
 		List pageDescriptors= SearchPlugin.getDefault().getSearchPageDescriptors();
 		int accelerator= 1;
 		for (Iterator iter= pageDescriptors.iterator(); iter.hasNext();) {
@@ -96,9 +96,19 @@ public class OpenSearchDialogPageAction implements IWorkbenchWindowPulldownDeleg
 				addToMenu(localMenu, action, accelerator++);
 			}
 		}
+		localMenu.addMenuListener(new MenuAdapter() {
+			public void menuHidden(MenuEvent e) {
+				e.display.asyncExec(new Runnable() {
+					public void run() {
+						localMenu.dispose();
+					}
+				});
+			}
+		});
+
 	}
 
-	protected void addToMenu(Menu localMenu, IAction action, int accelerator) {
+	private void addToMenu(Menu localMenu, IAction action, int accelerator) {
 		StringBuffer label= new StringBuffer();
 		if (accelerator >= 0 && accelerator < 10) {
 			//add the numerical accelerator
