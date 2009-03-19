@@ -11,6 +11,7 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -24,9 +25,12 @@ public class Activator implements BundleActivator {
 	private BundleContext context;
 	private ServiceTracker pkgAdminTracker;
 	private ServiceTracker locationTracker;
+	private ServiceTracker debugTracker;
 	private static Activator activator;
+
 	/**
 	 * Get the default activator.
+	 * 
 	 * @return a BundleActivator
 	 */
 	public static Activator getDefault() {
@@ -39,7 +43,7 @@ public class Activator implements BundleActivator {
 	public BundleContext getContext() {
 		return context;
 	}
-	
+
 	/**
 	 * @return the bundle object
 	 */
@@ -53,7 +57,7 @@ public class Activator implements BundleActivator {
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		if (pkgAdminTracker!=null) {
+		if (pkgAdminTracker != null) {
 			pkgAdminTracker.close();
 			pkgAdminTracker = null;
 		}
@@ -92,7 +96,8 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * @param bundleName the bundle id
+	 * @param bundleName
+	 *            the bundle id
 	 * @return A bundle if found, or <code>null</code>
 	 */
 	public Bundle getBundleForName(String bundleName) {
@@ -108,5 +113,13 @@ public class Activator implements BundleActivator {
 		return null;
 	}
 
+	public DebugOptions getDebugOptions() {
+		if (debugTracker == null) {
+			debugTracker = new ServiceTracker(context, DebugOptions.class
+					.getName(), null);
+			debugTracker.open();
+		}
+		return (DebugOptions) debugTracker.getService();
+	}
 
 }

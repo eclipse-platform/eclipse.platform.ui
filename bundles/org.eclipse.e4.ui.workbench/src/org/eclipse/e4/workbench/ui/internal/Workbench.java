@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.ILogger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ComputedValue;
@@ -122,6 +123,7 @@ public class Workbench implements IWorkbench {
 	private IEclipseContext createContext(IEclipseContext applicationContext) {
 		final IEclipseContext mainContext = EclipseContextFactory.create(
 				applicationContext, UIContextScheduler.instance);
+		mainContext.set(ILogger.class.getName(), new WorkbenchLogger());
 		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
 
 		IConfigurationElement[] contributions = registry
