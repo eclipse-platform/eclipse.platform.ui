@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1145,12 +1145,6 @@ public class IntroHTMLGenerator {
 		// pluginId will contain the content between the "$plugin:" segment
 		// and the closing "$" token
 		private StringBuffer pluginId;
-
-		protected PluginIdParser(char tokenBegin, BufferedReader bufferedreader) {
-			reader = bufferedreader;
-			tokenContent = new StringBuffer(tokenBegin);
-			pluginId = new StringBuffer();
-		}
 
 		protected PluginIdParser(int tokenBegin, BufferedReader bufferedreader) {
 			reader = bufferedreader;
