@@ -18,14 +18,9 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  */
 public class ObjectBasic {
 	
-	public String diString;
-	private Integer diInteger;
-	protected IEclipseContext diContext;
-
-	// tests incompatible types
-	public ObjectBasic diBoolean = null;
-	public ObjectBasic myBoolean = null;
-	public int setBooleanCalled;
+	public String di_String;
+	private Integer di_Integer;
+	protected IEclipseContext context;
 
 	private String myString;
 	private Object myObject;
@@ -35,16 +30,9 @@ public class ObjectBasic {
 	public int setStringCalled;
 	public int setObjectCalled;
 
-	// Check that no extra calls are made
-	public Object diMissing = null;
-	public Object myMissing = null;
-	public int setMissingCalled;
-
 	public ObjectBasic() {
 		setStringCalled = 0;
 		setObjectCalled = 0;
-		setMissingCalled = 0;
-		setBooleanCalled = 0;
 		finalized = false;
 		disposed = false;
 	}
@@ -71,38 +59,28 @@ public class ObjectBasic {
 		myObject = null;
 	}
 
-	public void setMissingViaMethod(Object object) {
-		myMissing = object;
-		setMissingCalled++;
-	}
-
-	public void setBooleanViaMethod(ObjectBasic injector) {
-		myBoolean = injector;
-		setBooleanCalled++;
-	}
-
 	public void contextSet(IEclipseContext context) {
-		diContext = context;
+		this.context = context;
 		finalized = true;
 	}
 
 	public void contextDisposed(IEclipseContext context) {
-		if (context != diContext)
+		if (context != context)
 			throw new IllegalArgumentException("Unexpected context");
-		diContext = null;
+		context = null;
 		disposed = true;
 	}
 
 	public String getString() {
-		return diString;
+		return di_String;
 	}
 
 	public Integer getInteger() {
-		return diInteger;
+		return di_Integer;
 	}
 
 	public IEclipseContext getContext() {
-		return diContext;
+		return context;
 	}
 
 	public String getStringViaMethod() {

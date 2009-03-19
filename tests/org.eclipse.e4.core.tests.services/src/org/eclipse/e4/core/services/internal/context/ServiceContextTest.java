@@ -28,11 +28,11 @@ import org.osgi.framework.ServiceRegistration;
  */
 public class ServiceContextTest extends TestCase {
 	static class Printer {
-		PrintService diPrinter;
+		PrintService di_Printer;
 
 		public void print(String message) {
-			if (diPrinter != null)
-				diPrinter.print(message);
+			if (di_Printer != null)
+				di_Printer.print(message);
 			else
 				System.out.println(message);
 		}
@@ -80,7 +80,7 @@ public class ServiceContextTest extends TestCase {
 		userObject.print("another test");
 		//the string should be unchanged
 		assertEquals("1.1", "test", stringPrint1.toString());
-		assertNull("1.2", userObject.diPrinter);
+		assertNull("1.2", userObject.di_Printer);
 
 		//register a different service implementation
 		StringPrintService stringPrint2 = new StringPrintService();
@@ -90,7 +90,7 @@ public class ServiceContextTest extends TestCase {
 		assertEquals("2.0", "test", stringPrint1.toString());
 		assertEquals("2.1", "yet another test", stringPrint2.toString());
 		reg2.unregister();
-		assertNull("2.2", userObject.diPrinter);
+		assertNull("2.2", userObject.di_Printer);
 	}
 	
 	/**

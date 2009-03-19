@@ -44,6 +44,8 @@ public class ContextDynamicTest extends TestCase {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("Integer", testInt);
 		context.set("StringViaMethod", testStringViaMethod);
+		context.set("objectViaMethod", null);
+		context.set("string", null);
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
@@ -54,7 +56,7 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(1, userObject.setStringCalled);
 		assertNull(userObject.getString());
 		assertNull(userObject.getObjectViaMethod());
-		assertEquals(0, userObject.setObjectCalled);
+		assertEquals(1, userObject.setObjectCalled);
 
 		// add service
 		context.set("string", testString); // this checks capitalization as well
@@ -64,7 +66,7 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(testString, userObject.getString());
 		assertEquals(testInt, userObject.getInteger());
 		assertEquals(1, userObject.setStringCalled);
-		assertEquals(1, userObject.setObjectCalled);
+		assertEquals(2, userObject.setObjectCalled);
 		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
 		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
 
@@ -76,7 +78,7 @@ public class ContextDynamicTest extends TestCase {
 		assertNull(userObject.getInteger());
 		assertEquals(testString, userObject.getString());
 		assertEquals(2, userObject.setStringCalled); // XXX same setter method called on remove
-		assertEquals(1, userObject.setObjectCalled);
+		assertEquals(2, userObject.setObjectCalled);
 		assertNull(userObject.getStringViaMethod());
 		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
 	}
@@ -94,6 +96,8 @@ public class ContextDynamicTest extends TestCase {
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("Integer", testInt);
 		parentContext.set("StringViaMethod", testStringViaMethod);
+		parentContext.set("objectViaMethod", null);
+		parentContext.set("string", null);
 
 		IEclipseContext context = EclipseContextFactory.create(parentContext, null); 
 
@@ -106,7 +110,7 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(1, userObject.setStringCalled);
 		assertNull(userObject.getString());
 		assertNull(userObject.getObjectViaMethod());
-		assertEquals(0, userObject.setObjectCalled);
+		assertEquals(1, userObject.setObjectCalled);
 
 		// add service
 		parentContext.set("string", testString); // this checks capitalization as well
@@ -116,7 +120,7 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(testString, userObject.getString());
 		assertEquals(testInt, userObject.getInteger());
 		assertEquals(1, userObject.setStringCalled);
-		assertEquals(1, userObject.setObjectCalled);
+		assertEquals(2, userObject.setObjectCalled);
 		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
 		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
 
@@ -129,7 +133,7 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(testString, userObject.getString());
 		// 2: the same setter method is called on set and remove
 		assertEquals(2, userObject.setStringCalled);
-		assertEquals(1, userObject.setObjectCalled);
+		assertEquals(2, userObject.setObjectCalled);
 		assertNull(userObject.getStringViaMethod());
 		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
 	}
@@ -140,6 +144,10 @@ public class ContextDynamicTest extends TestCase {
 	public synchronized void testContextAware() {
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
+		context.set("stringViaMethod", null);
+		context.set("objectViaMethod", null);
+		context.set("string", null);
+		context.set("integer", null);
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
 

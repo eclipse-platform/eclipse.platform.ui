@@ -17,7 +17,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  * Test class to check injection mechanism into classes with inheritance
  */
 public class ObjectSubClass extends ObjectSuperClass {
-	/*package*/Integer diInteger;
+	/*package*/Integer di_Integer;
 	private Object myObject;
 
 	public int setObjectCalled;
@@ -40,7 +40,7 @@ public class ObjectSubClass extends ObjectSuperClass {
 	}
 
 	public Integer getInteger() {
-		return diInteger;
+		return di_Integer;
 	}
 
 	public Object getObjectViaMethod() {

@@ -65,10 +65,50 @@ public class ContextInjectionTest extends TestCase {
 		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
 		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
 
+		// check post processing
+		assertTrue(userObject.isFinalized());
+	}
+	
+	public void testOptionalInjection() {
+		Integer testInt = new Integer(123);
+		String testString = new String("abc");
+		Boolean testBoolean = new Boolean(true);
+		String testStringViaMethod = new String("abcd");
+		Object testObjectViaMethod = new Object();
+
+		// create context
+		IEclipseContext context = EclipseContextFactory.create();
+		// elements to be populated via fields
+		context.set("Integer", testInt);
+		context.set("string", testString); // this checks capitalization as well
+		context.set("Boolean", testBoolean);
+		// elements to be populated via methods
+		context.set("StringViaMethod", testStringViaMethod);
+		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
+
+		ObjectWithAnnotations userObject = new ObjectWithAnnotations();
+		ContextInjectionFactory.inject(userObject, context);
+
+		// check field injection
+		assertEquals(testString, userObject.getString());
+		assertEquals(testInt, userObject.getInteger());
+		assertEquals(context, userObject.getContext());
+
+		// check method injection
+		assertEquals(1, userObject.setStringCalled);
+		assertEquals(1, userObject.setObjectCalled);
+		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
+		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
+
 		// check that no extra injections are done
 		assertNull(userObject.diMissing);
 		assertNull(userObject.myMissing);
 		assertEquals(0, userObject.setMissingCalled);
+
+		// check incompatible types
+		assertNull(userObject.diBoolean);
+		assertNull(userObject.myBoolean);
+		assertEquals(0, userObject.setBooleanCalled);
 
 		// check incompatible types
 		assertNull(userObject.diBoolean);
@@ -131,6 +171,7 @@ public class ContextInjectionTest extends TestCase {
 		// create child context
 		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
 		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
+		context.set("string", "foo"); // not important for this test
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);

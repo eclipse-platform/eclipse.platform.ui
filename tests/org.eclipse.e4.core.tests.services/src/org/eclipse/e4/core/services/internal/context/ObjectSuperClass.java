@@ -17,8 +17,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  */
 public class ObjectSuperClass {
 
-	private String diString;
-	protected IEclipseContext diContext;
+	private String di_String;
+	protected IEclipseContext context;
 	private String myString;
 
 	public int setStringCalled;
@@ -35,16 +35,16 @@ public class ObjectSuperClass {
 	}
 
 	public void contextSet(IEclipseContext context) {
-		diContext = context;
+		this.context = context;
 		setFinalizedCalled++;
 	}
 
 	public String getString() {
-		return diString;
+		return di_String;
 	}
 
 	public IEclipseContext getContext() {
-		return diContext;
+		return context;
 	}
 
 	public String getStringViaMethod() {
