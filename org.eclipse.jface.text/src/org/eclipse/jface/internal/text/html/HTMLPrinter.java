@@ -20,6 +20,7 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 
+import org.eclipse.jface.util.Util;
 
 /**
  * Provides a set of convenience methods for creating HTML pages.
@@ -33,8 +34,7 @@ public class HTMLPrinter {
 	
 	private static final String UNIT; // See: https://bugs.eclipse.org/bugs/show_bug.cgi?id=155993
 	static {
-		String platform= SWT.getPlatform();
-		UNIT= "carbon".equals(platform) || "cocoa".equals(platform) ? "px" : "pt";   //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		UNIT= Util.isMac() ? "px" : "pt";   //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 
