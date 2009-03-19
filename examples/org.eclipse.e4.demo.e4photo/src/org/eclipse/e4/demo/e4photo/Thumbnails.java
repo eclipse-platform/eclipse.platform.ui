@@ -11,6 +11,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IBackgroundRunner;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.demo.e4photo.annotations.In;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.nebula.widgets.gallery.DefaultGalleryItemRenderer;
@@ -83,6 +84,7 @@ public class Thumbnails {
 		return new Point(newWidth, newHeight);
 	}
 
+	@In
 	public void setInput(IResource selection) {
 		if (selection == null)
 			return;

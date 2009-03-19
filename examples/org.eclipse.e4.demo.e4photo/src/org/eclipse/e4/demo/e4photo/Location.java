@@ -1,5 +1,6 @@
 package org.eclipse.e4.demo.e4photo;
 
+import org.eclipse.e4.demo.e4photo.annotations.In;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
@@ -17,6 +18,7 @@ public class Location {
 		browserParent = parent;
 	}
 
+	@In
 	public void setInput(Exif input) {
 		if (input == null || this.exif == input) {
 			return;

@@ -5,7 +5,7 @@ public interface IServiceConstants {
 	/**
 	 * 
 	 */
-	public final static String SELECTION = "org.eclipse.e4.ui.Selection";
+	public final static String SELECTION = "selection";
 
 	/**
 	 * 

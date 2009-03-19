@@ -272,7 +272,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			}
 
 			Object newInstance = targetConstructor.newInstance(params);
-			ContextInjectionFactory.inject(newInstance, context);
+			ContextInjectionFactory.inject(newInstance, context, " ", " "); //$NON-NLS-1$//$NON-NLS-2$
 			return newInstance;
 		} catch (Exception e) {
 			throw new RuntimeException(e);
