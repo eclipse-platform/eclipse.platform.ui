@@ -32,10 +32,6 @@ public class HTMLParser implements HTMLParserConstants {
       super();
     }
 
-    public MyPipedInputStream(PipedOutputStream src) throws IOException{
-      super(src);
-    }
-
     public boolean full() throws IOException{
       return this.available() >= PipedInputStream.PIPE_SIZE;
     }
