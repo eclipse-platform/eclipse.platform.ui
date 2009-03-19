@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,22 +46,14 @@ public class JavacMarkerCreator {
 	private class MarkerInfo {
 		
 		public int fLineNumber;
-		public String fMessage;
 		public int fOffset;
-		public int fLength;
 		public Integer fType;
 
 		public void setLineNumber(int lineNumber) {
 			fLineNumber= lineNumber;
 		}
-		public void setMessage(String message) {
-			fMessage= message;
-		}
 		public void setOffset(int offset) {
 			fOffset = offset;
-		}
-		public void setLength(int length) {
-			fLength = length;
 		}
 		public void setType(Integer type) {
 			fType= type;
@@ -97,11 +89,10 @@ public class JavacMarkerCreator {
 		fgFilesToBeCleaned.add(file);
 	}
 	
-	protected void addMarker(IFile file, int lineNumber, int offset, int length, Integer type) {
+	protected void addMarker(IFile file, int lineNumber, int offset, Integer type) {
 		MarkerInfo info= new MarkerInfo();
 		info.setLineNumber(lineNumber);
 		info.setOffset(offset);
-		info.setLength(length);
 		info.setType(type);
 		List infos= (List) fFileToMarkerInfo.get(file);
 		if (infos == null) {
