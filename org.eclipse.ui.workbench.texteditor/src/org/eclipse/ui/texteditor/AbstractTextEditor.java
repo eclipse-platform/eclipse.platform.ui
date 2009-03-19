@@ -2949,7 +2949,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 				public void mouseUp(final MouseEvent e) {
 					setFocus();
-					final int delay= fDoubleClickTime - (int)(System.currentTimeMillis() - fMouseUpDelta);
+					final int delay= fMouseUpDelta == 0 ? 0 : fDoubleClickTime - (int)(System.currentTimeMillis() - fMouseUpDelta);
 					if (1 != e.button)
 						return;
 
