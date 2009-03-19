@@ -16,7 +16,7 @@ Export-Package: org.eclipse.ui.internal.intro.impl;x-friends:="org.eclipse.ui.in
  org.eclipse.ui.internal.intro.impl.parts;x-internal:=true,
  org.eclipse.ui.internal.intro.impl.presentations;x-friends:="org.eclipse.ua.tests",
  org.eclipse.ui.internal.intro.impl.swt;x-internal:=true,
- org.eclipse.ui.internal.intro.impl.util;x-internal:=true,
+ org.eclipse.ui.internal.intro.impl.util;x-friends:="org.eclipse.ua.tests",
  org.eclipse.ui.intro.config,
  org.eclipse.ui.intro.contentproviders
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.5.0,4.0.0)",
