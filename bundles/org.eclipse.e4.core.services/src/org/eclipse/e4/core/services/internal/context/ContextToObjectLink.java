@@ -117,6 +117,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					if (keyMatches(name, injectName))
 						setField(userObject, field, null);
 					break;
+				case IRunAndTrack.DISPOSE:
 				default:
 					logWarning(userObject, new IllegalArgumentException(
 							"Unknown event type: " + eventType));
@@ -150,6 +151,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					if (keyMatches(name, candidateName
 							.substring(INJECTION_SET_METHOD_PREFIX.length())))
 						setMethod(userObject, method, null);
+					break;
+				case IRunAndTrack.DISPOSE:
 					break;
 				default:
 					logWarning(userObject, new IllegalArgumentException(
