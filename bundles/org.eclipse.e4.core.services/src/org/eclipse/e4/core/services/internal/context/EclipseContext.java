@@ -37,10 +37,13 @@ public class EclipseContext implements IEclipseContext {
 
 		final protected void doHandleInvalid(IEclipseContext context, String name,
 				int eventType) {
+			if (eventType == IRunAndTrack.DISPOSE) {
+				return;
+			}
 			if (EclipseContext.DEBUG)
 				System.out.println("scheduling " + toString()); //$NON-NLS-1$
 			((EclipseContext) context).schedule(this); // XXX conversion: should
-														// be IEclipseContext
+			// be IEclipseContext
 		}
 
 		public void run() {
@@ -70,7 +73,7 @@ public class EclipseContext implements IEclipseContext {
 		final protected void doHandleInvalid(IEclipseContext context, String name,
 				int eventType) {
 			((EclipseContext) context).schedule(this, name, eventType, null); // XXX
-																				// IEclipseContext
+			// IEclipseContext
 		}
 
 		public boolean notify(IEclipseContext context, String name, int eventType,
@@ -128,8 +131,8 @@ public class EclipseContext implements IEclipseContext {
 			Object[] args) {
 		if (runnable == null)
 			return false;
-		if (eventType != IRunAndTrack.INITIAL && strategy != null
-				&& strategy instanceof IEclipseContextScheduler)
+		if (eventType != IRunAndTrack.INITIAL && eventType != IRunAndTrack.DISPOSE
+				&& strategy != null && strategy instanceof IEclipseContextScheduler)
 			return ((IEclipseContextScheduler) strategy).schedule(this, runnable, name,
 					eventType, args);
 		return runnable.notify(this, name, eventType, args);
@@ -283,5 +286,13 @@ public class EclipseContext implements IEclipseContext {
 
 	public String toString() {
 		return (String) get(IContextConstants.DEBUG_STRING);
+	}
+
+	public void dispose() {
+		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners
+				.size()]);
+		for (int i = 0; i < ls.length; i++) {
+			ls[i].handleInvalid(this, null, IRunAndTrack.DISPOSE);
+		}
 	}
 }

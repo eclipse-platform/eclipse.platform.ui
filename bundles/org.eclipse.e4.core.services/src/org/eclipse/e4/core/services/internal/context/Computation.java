@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 abstract class Computation {
 	Map dependencies = new HashMap();
@@ -28,11 +29,17 @@ abstract class Computation {
 	}
 
 	private void stopListening(IEclipseContext context, String name) {
-		if (EclipseContext.DEBUG) System.out.println(toString() + " no longer listening"); //$NON-NLS-1$
-		
+		if (EclipseContext.DEBUG)
+			System.out.println(toString() + " no longer listening"); //$NON-NLS-1$
+
+		if (name == null) {
+			dependencies.remove(context);
+			return;
+		}
 		Set properties = (Set) dependencies.get(context);
 		if (properties != null) {
-			((EclipseContext)context).listeners.remove(this); // XXX IEclipseContext
+			((EclipseContext) context).listeners.remove(this); // XXX
+			// IEclipseContext
 			properties.remove(name);
 		}
 	}
@@ -45,17 +52,21 @@ abstract class Computation {
 
 	final void handleInvalid(IEclipseContext context, String name, int eventType) {
 		Set names = (Set) dependencies.get(context);
-		if (names != null && names.contains(name)) {
+		if (name == null && eventType == IRunAndTrack.DISPOSE) {
+			clear(context, null);
+			doHandleInvalid(context, null, eventType);
+		} else if (names != null && names.contains(name)) {
 			clear(context, name);
 			doHandleInvalid(context, name, eventType);
 		}
 	}
 
 	void startListening() {
-		if (EclipseContext.DEBUG) System.out.println(toString() + " now listening to: " //$NON-NLS-1$
-				+ mapToString(dependencies));
+		if (EclipseContext.DEBUG)
+			System.out.println(toString() + " now listening to: " //$NON-NLS-1$
+					+ mapToString(dependencies));
 		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
-			EclipseContext c = (EclipseContext) it.next();  // XXX IEclipseContex
+			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
 			c.listeners.add(this);
 		}
 	}

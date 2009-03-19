@@ -12,9 +12,8 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import org.eclipse.e4.core.services.context.IComputedValue;
-
 import org.eclipse.e4.core.services.context.IEclipseContext;
-
+import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 public class ValueComputation extends Computation {
 	Object cachedValue;
@@ -24,9 +23,9 @@ public class ValueComputation extends Computation {
 	IComputedValue computedValue;
 	EclipseContext originatingContext; // XXX IEclipseContext
 	private boolean computing; // cycle detection
-	
-	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext, String name,
-			IComputedValue computedValue) {
+
+	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext,
+			String name, IComputedValue computedValue) {
 		this.context = context;
 		this.originatingContext = (EclipseContext) originatingContext;
 		this.name = name;
@@ -41,11 +40,11 @@ public class ValueComputation extends Computation {
 			super("cycle while computing value");
 			this.cycleMessage = cycleMessage;
 		}
-		
+
 		String getCycleMessage() {
 			return cycleMessage;
 		}
-		
+
 		public String toString() {
 			return "\n" + cycleMessage + "\n";
 		}
@@ -56,8 +55,10 @@ public class ValueComputation extends Computation {
 		cachedValue = null;
 	}
 
-	final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
-		this.originatingContext.invalidate(this.name, eventType);
+	final protected void doHandleInvalid(IEclipseContext context, String name,
+			int eventType) {
+		this.originatingContext.invalidate(this.name,
+				eventType == IRunAndTrack.DISPOSE ? IRunAndTrack.REMOVED : eventType);
 	}
 
 	final Object get(Object[] arguments) {
@@ -68,22 +69,23 @@ public class ValueComputation extends Computation {
 			throw new CycleException(this.toString());
 		}
 		Computation oldComputation = (Computation) EclipseContext.currentComputation
-				.get();  // XXX IEclipseContext
-		EclipseContext.currentComputation.set(this);  // XXX IEclipseContext
+				.get(); // XXX IEclipseContext
+		EclipseContext.currentComputation.set(this); // XXX IEclipseContext
 		computing = true;
 		try {
 			cachedValue = computedValue.compute(originatingContext, arguments);
 			valid = true;
-		} catch(CycleException ex) {
+		} catch (CycleException ex) {
 			throw new CycleException(ex.getCycleMessage() + "\n" + this.toString());
 		} finally {
 			computing = false;
-			EclipseContext.currentComputation.set(oldComputation);  // XXX IEclipseContext
+			EclipseContext.currentComputation.set(oldComputation); // XXX
+																	// IEclipseContext
 		}
 		startListening();
 		return cachedValue;
 	}
-	
+
 	public String toString() {
 		StringBuffer result = new StringBuffer();
 		result.append("VC(");
