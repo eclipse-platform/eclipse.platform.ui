@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +25,22 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
+
+	private static class PropertyChangeListenerImplementation implements
+			PropertyChangeListener {
+		private final String name;
+		private final IEclipseContext outputContext;
+
+		private PropertyChangeListenerImplementation(String name,
+				IEclipseContext outputContext) {
+			this.name = name;
+			this.outputContext = outputContext;
+		}
+
+		public void propertyChange(PropertyChangeEvent evt) {
+			outputContext.set(name, evt.getNewValue());
+		}
+	}
 
 	abstract private class Processor {
 
@@ -42,6 +60,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		abstract void processField(Field field, String injectName, boolean optional);
 
 		abstract void processPostConstructMethod(Method m);
+
+		public abstract void processOutMethod(Method m, String name);
 	}
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
@@ -152,6 +172,44 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 						}
 					} catch (Exception e) {
 						logWarning(userObject, e);
+					}
+				}
+			}
+
+			public void processOutMethod(Method m, final String name) {
+				final IEclipseContext outputContext = (IEclipseContext) context
+						.get("outputs");
+				if (outputContext == null) {
+					throw new IllegalStateException(
+							"No output context available for @Out " + m + " in "
+									+ userObject);
+				}
+				if (eventType == IRunAndTrack.INITIAL) {
+					Object value;
+					try {
+						if (!m.isAccessible()) {
+							m.setAccessible(true);
+							try {
+								value = m.invoke(userObject, new Object[0]);
+							} finally {
+								m.setAccessible(false);
+							}
+						} else {
+							value = m.invoke(userObject, new Object[0]);
+						}
+						outputContext.set(name, value);
+						userObject.getClass()
+								.getMethod(
+										"addPropertyChangeListener",
+										new Class[] { String.class,
+												PropertyChangeListener.class }).invoke(
+										userObject,
+										new Object[] {
+												name,
+												new PropertyChangeListenerImplementation(
+														name, outputContext) });
+					} catch (Exception ex) {
+						throw new RuntimeException(ex);
 					}
 				}
 			}
@@ -272,27 +330,50 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		if (!superClass.getName().equals(JAVA_OBJECT)) {
 			walkClassHierarchy(superClass, processor);
 		}
-		List postConstructMethods;
+		ProcessMethodsResult processMethodsResult;
 		if (processor.isSetter) {
 			processFields(objectsClass, processor);
-			postConstructMethods = processMethods(objectsClass, processor);
+			processMethodsResult = processMethods(objectsClass, processor);
 		} else {
-			postConstructMethods = processMethods(objectsClass, processor);
+			processMethodsResult = processMethods(objectsClass, processor);
 			processFields(objectsClass, processor);
 		}
-		for (Iterator it = postConstructMethods.iterator(); it.hasNext();) {
+		for (Iterator it = processMethodsResult.postConstructMethods.iterator(); it
+				.hasNext();) {
 			Method m = (Method) it.next();
 			processor.processPostConstructMethod(m);
 		}
+		for (Iterator it = processMethodsResult.outMethods.iterator(); it.hasNext();) {
+			Method m = (Method) it.next();
+			String name = m.getName();
+			if (name.startsWith("get") && name.length() > 3) {
+				name = name.substring(3);
+				char firstChar = name.charAt(0);
+				if (Character.isUpperCase(firstChar)) {
+					firstChar = Character.toLowerCase(firstChar);
+					if (name.length() == 1) {
+						name = Character.toString(firstChar);
+					} else {
+						name = Character.toString(firstChar) + name.substring(1);
+					}
+				}
+			}
+			processor.processOutMethod(m, name);
+		}
 	}
 
-	private List processMethods(Class objectsClass, Processor processor) {
-		Method[] methods = objectsClass.getDeclaredMethods();
+	static class ProcessMethodsResult {
 		List postConstructMethods = new ArrayList();
+		List outMethods = new ArrayList();
+	}
+
+	private ProcessMethodsResult processMethods(Class objectsClass, Processor processor) {
+		Method[] methods = objectsClass.getDeclaredMethods();
+		ProcessMethodsResult result = new ProcessMethodsResult();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
 			String candidateName = method.getName();
-			boolean inject = candidateName.startsWith(INJECTION_SET_METHOD_PREFIX);
+			boolean inject = candidateName.startsWith(setMethodPrefix);
 			boolean optional = false;
 			try {
 				Object[] annotations = (Object[]) method.getClass().getMethod(
@@ -303,7 +384,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 						String annotationName = ((Class) annotation.getClass().getMethod(
 								"annotationType", new Class[0]).invoke(annotation,
 								new Object[0])).getName();
-						if (annotationName.endsWith(".Inject")) {
+						if (annotationName.endsWith(".Inject")
+								|| annotationName.endsWith(".In")) {
 							inject = true;
 							try {
 								optional = ((Boolean) annotation.getClass().getMethod(
@@ -314,7 +396,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 							}
 						} else if (annotationName.endsWith(".PostConstruct")) {
 							inject = false;
-							postConstructMethods.add(method);
+							result.postConstructMethods.add(method);
+						} else if (annotationName.endsWith(".Out")) {
+							inject = false;
+							result.outMethods.add(method);
 						} else if (annotationName.endsWith(".PreDestroy")) {
 						}
 					} catch (Exception ex) {
@@ -328,7 +413,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				processor.processMethod(method, optional);
 			}
 		}
-		return postConstructMethods;
+		return result;
 	}
 
 	private void processFields(Class objectsClass, Processor processor) {
@@ -347,7 +432,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 						String annotationName = ((Class) annotation.getClass().getMethod(
 								"annotationType", new Class[0]).invoke(annotation,
 								new Object[0])).getName();
-						if (annotationName.endsWith(".Inject")) {
+						if (annotationName.endsWith(".Inject")
+								|| annotationName.endsWith(".In")) {
 							inject = true;
 							try {
 								optional = ((Boolean) annotation.getClass().getMethod(
