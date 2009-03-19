@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,8 +41,7 @@ import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.util.Util;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.team.internal.ui.dialogs.DialogArea;
-import org.eclipse.ui.ActiveShellExpression;
-import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.*;
 import org.eclipse.ui.dialogs.PreferencesUtil;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.TextSourceViewerConfiguration;
@@ -92,19 +91,19 @@ public class CommitCommentArea extends DialogArea {
             
             final TextViewerAction cutAction = new TextViewerAction(sourceViewer, ITextOperationTarget.CUT);
             cutAction.setText(CVSUIMessages.CommitCommentArea_7);
-            cutAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.CUT);
+            cutAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
             
             final TextViewerAction copyAction = new TextViewerAction(sourceViewer, ITextOperationTarget.COPY);
             copyAction.setText(CVSUIMessages.CommitCommentArea_8);
-            copyAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.COPY);
+            copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
             
             final TextViewerAction pasteAction = new TextViewerAction(sourceViewer, ITextOperationTarget.PASTE);
             pasteAction.setText(CVSUIMessages.CommitCommentArea_9);
-            pasteAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.PASTE);
+            pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
             
             final TextViewerAction selectAllAction = new TextViewerAction(sourceViewer, ITextOperationTarget.SELECT_ALL);
             selectAllAction.setText(CVSUIMessages.CommitCommentArea_10);
-            selectAllAction.setActionDefinitionId(IWorkbenchActionDefinitionIds.SELECT_ALL);            
+            selectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);            
             
             MenuManager contextMenu = new MenuManager();
             contextMenu.add(cutAction);
@@ -165,10 +164,10 @@ public class CommitCommentArea extends DialogArea {
 					cutAction.update();
 					copyAction.update();
 					IHandlerService service = (IHandlerService) PlatformUI.getWorkbench().getService(IHandlerService.class);
-					this.cutHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.CUT, new ActionHandler(cutAction), new ActiveShellExpression(getComposite().getShell()));
-		            this.copyHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.COPY, new ActionHandler(copyAction), new ActiveShellExpression(getComposite().getShell()));
-		            this.pasteHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.PASTE, new ActionHandler(pasteAction), new ActiveShellExpression(getComposite().getShell()));
-		            this.selectAllHandlerActivation = service.activateHandler(IWorkbenchActionDefinitionIds.SELECT_ALL, new ActionHandler(selectAllAction), new ActiveShellExpression(getComposite().getShell()));
+					this.cutHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_CUT, new ActionHandler(cutAction), new ActiveShellExpression(getComposite().getShell()));
+		            this.copyHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_COPY, new ActionHandler(copyAction), new ActiveShellExpression(getComposite().getShell()));
+		            this.pasteHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_PASTE, new ActionHandler(pasteAction), new ActiveShellExpression(getComposite().getShell()));
+		            this.selectAllHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_SELECTALL, new ActionHandler(selectAllAction), new ActiveShellExpression(getComposite().getShell()));
 		            
 		            
 				}

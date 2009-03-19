@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,7 +42,7 @@ import org.eclipse.ui.services.IDisposable;
 
 /**
  * A compare editor input that makes use of a {@link Saveable} to manage the save
- * lifecycle of the editor input. If the element returned from 
+ * lifecycle of the editor input. If the element returned from
  * {@link #createFileElement(IFile)} is used as the left side of the compare input
  * and the default saveable returned from {@link #createSaveable()} is used, then
  * this compare input will provide the complete save lifecycle for the local file.
@@ -150,7 +150,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 * compare configuration.
 	 * The compare configuration is passed to subsequently created viewers.
 	 *
-	 * @param configuration the compare configuration 
+	 * @param configuration the compare configuration
 	 * @param page the workbench page that will contain the editor
 	 */
 	public SaveableCompareEditorInput(CompareConfiguration configuration, IWorkbenchPage page) {
@@ -227,8 +227,8 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	}
 	
 	/**
-	 * Prepare the compare input of this editor input. This method is not intended to be overridden of 
-	 * extended by subclasses (but is not final for backwards compatibility reasons). 
+	 * Prepare the compare input of this editor input. This method is not intended to be overridden of
+	 * extended by subclasses (but is not final for backwards compatibility reasons).
 	 * The implementation of this method in this class
 	 * delegates the creation of the compare input to the {@link #prepareCompareInput(IProgressMonitor)}
 	 * method which subclasses must implement.
@@ -250,7 +250,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 * @throws InvocationTargetException
 	 * @throws InterruptedException
 	 */
-	protected abstract ICompareInput prepareCompareInput(IProgressMonitor monitor) 
+	protected abstract ICompareInput prepareCompareInput(IProgressMonitor monitor)
 		throws InvocationTargetException, InterruptedException;
 	
 	/**
@@ -270,10 +270,10 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	protected abstract void fireInputChange();
 	
 	/**
-	 * Close the editor if it is not dirty. If it is still dirty, let the 
+	 * Close the editor if it is not dirty. If it is still dirty, let the
 	 * content merge viewer handle the compare input change.
 	 * @param checkForUnsavedChanges whether to check for unsaved changes
-	 * @return <code>true</code> if the editor was closed (note that the 
+	 * @return <code>true</code> if the editor was closed (note that the
 	 * close may be asynchronous)
 	 */
 	protected boolean closeEditor(boolean checkForUnsavedChanges) {
@@ -323,7 +323,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	 * Get the saveable that provides the save behavior for this compare editor input.
 	 * The {@link #createSaveable()} is called to create the saveable if it does not yet exist.
 	 * This method cannot be called until after the input is prepared (i.e. until after
-	 * the {@link #run(IProgressMonitor)} method is called which will in turn will invoke 
+	 * the {@link #run(IProgressMonitor)} method is called which will in turn will invoke
 	 * {@link #prepareCompareInput(IProgressMonitor)}.
 	 * @return saveable that provides the save behavior for this compare editor input.
 	 */
@@ -490,7 +490,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 						submenu1.add(showInMenu);
 						manager.insertAfter("file", submenu1); //$NON-NLS-1$
 						MenuManager submenu2 =
-							new MenuManager(TeamUIMessages.OpenWithActionGroup_0); 
+							new MenuManager(TeamUIMessages.OpenWithActionGroup_0);
 						submenu2.add(new OpenWithMenu(ws.getPage(), resource));
 						manager.insertAfter("file", submenu2); //$NON-NLS-1$
 						
@@ -508,7 +508,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		
 		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
-			keyBinding= bindingService.getBestActiveBindingFormattedFor("org.eclipse.ui.navigate.showInQuickMenu"); //$NON-NLS-1$
+			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
 		
 		if (keyBinding == null)
 			keyBinding= ""; //$NON-NLS-1$

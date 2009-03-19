@@ -168,6 +168,7 @@ import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -191,7 +192,6 @@ import org.eclipse.ui.texteditor.IDocumentProviderExtension;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
 import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 
 import com.ibm.icu.text.MessageFormat;
@@ -2547,7 +2547,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			action = new FindReplaceAction(getResourceBundle(), "Editor.FindReplace.", wp); //$NON-NLS-1$
 		else
 			action = new FindReplaceAction(getResourceBundle(), "Editor.FindReplace.", viewer.getSourceViewer().getControl().getShell(), getFindReplaceTarget()); //$NON-NLS-1$
-		action.setActionDefinitionId(IWorkbenchActionDefinitionIds.FIND_REPLACE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
 		viewer.addAction(MergeSourceViewer.FIND_ID, action);
 	}
 	

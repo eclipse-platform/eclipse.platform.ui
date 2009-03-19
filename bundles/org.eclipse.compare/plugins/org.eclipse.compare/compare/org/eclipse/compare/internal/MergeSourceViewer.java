@@ -19,17 +19,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import org.eclipse.compare.ICompareContainer;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.RGB;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuListener;
@@ -38,6 +51,13 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IRegion;
@@ -58,42 +78,30 @@ import org.eclipse.jface.text.source.IVerticalRuler;
 import org.eclipse.jface.text.source.LineNumberRulerColumn;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchActionConstants;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
+
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.ChangeEncodingAction;
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 import org.eclipse.ui.texteditor.IElementStateListener;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
+
+import org.eclipse.ui.editors.text.EditorsUI;
+
+import org.eclipse.compare.ICompareContainer;
 
 /**
  * Wraps a JFace SourceViewer and add some convenience methods.
@@ -473,7 +481,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 		if (history != null)
 			history.addOperationHistoryListener(this);
 
-		// don't add save when in a dialog, IWorkbenchPart is null in dialog containers 
+		// don't add save when in a dialog, IWorkbenchPart is null in dialog containers
 		fAddSaveAction = fContainer.getWorkbenchPart() != null;
 	}
 	
@@ -743,19 +751,19 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 	
 	protected IAction createAction(String actionId) {
 		if (UNDO_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.UNDO, IWorkbenchActionDefinitionIds.UNDO, true, false, true);
+			return new TextOperationAction(ITextOperationTarget.UNDO, IWorkbenchCommandConstants.EDIT_UNDO, true, false, true);
 		if (REDO_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.REDO, IWorkbenchActionDefinitionIds.REDO, true, false, true);
+			return new TextOperationAction(ITextOperationTarget.REDO, IWorkbenchCommandConstants.EDIT_REDO, true, false, true);
 		if (CUT_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.CUT, IWorkbenchActionDefinitionIds.CUT, true, true, false);
+			return new TextOperationAction(ITextOperationTarget.CUT, IWorkbenchCommandConstants.EDIT_CUT, true, true, false);
 		if (COPY_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.COPY, IWorkbenchActionDefinitionIds.COPY, false, true, false);
+			return new TextOperationAction(ITextOperationTarget.COPY, IWorkbenchCommandConstants.EDIT_COPY, false, true, false);
 		if (PASTE_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.PASTE, IWorkbenchActionDefinitionIds.PASTE, true, false, false);
+			return new TextOperationAction(ITextOperationTarget.PASTE, IWorkbenchCommandConstants.EDIT_PASTE, true, false, false);
 		if (DELETE_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.DELETE, IWorkbenchActionDefinitionIds.DELETE, true, false, false);
+			return new TextOperationAction(ITextOperationTarget.DELETE, IWorkbenchCommandConstants.EDIT_DELETE, true, false, false);
 		if (SELECT_ALL_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.SELECT_ALL, IWorkbenchActionDefinitionIds.SELECT_ALL, false, false, false);
+			return new TextOperationAction(ITextOperationTarget.SELECT_ALL, IWorkbenchCommandConstants.EDIT_SELECTALL, false, false, false);
 		return null;
 	}
 	
@@ -835,7 +843,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 	
 	private void addSave(IMenuManager menu) {
 		ICommandService commandService = (ICommandService) fContainer.getWorkbenchPart().getSite().getService(ICommandService.class);
-		final Command command = commandService.getCommand("org.eclipse.ui.file.save"); //$NON-NLS-1$
+		final Command command= commandService.getCommand(IWorkbenchCommandConstants.FILE_SAVE);
 		
 		final IHandler handler = command.getHandler();
 		if (handler != null) {

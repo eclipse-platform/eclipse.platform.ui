@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.ui.actions.ActionFactory;
 
 /**
  * Action to navigate the changes shown in the Synchronize View. This
- * will coordinate change browsing between the view and the compare 
+ * will coordinate change browsing between the view and the compare
  * editors.
  *
  * @since 3.0
@@ -35,12 +35,12 @@ public class NavigateAction extends Action {
 		IActionBars bars = configuration.getSite().getActionBars();
 		if (next) {
 			Utils.initAction(this, "action.navigateNext."); //$NON-NLS-1$
-			setActionDefinitionId("org.eclipse.ui.navigate.next"); //$NON-NLS-1$
+			setActionDefinitionId(ActionFactory.NEXT.getCommandId());
 			if (bars != null)
 				bars.setGlobalActionHandler(ActionFactory.NEXT.getId(), this);
 		} else {
 			Utils.initAction(this, "action.navigatePrevious."); //$NON-NLS-1$
-			setActionDefinitionId("org.eclipse.ui.navigate.previous"); //$NON-NLS-1$
+			setActionDefinitionId(ActionFactory.PREVIOUS.getCommandId());
 			if (bars != null)
 				bars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), this);
 		}
