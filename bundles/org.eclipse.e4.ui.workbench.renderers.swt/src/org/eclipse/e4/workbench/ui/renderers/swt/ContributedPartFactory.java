@@ -20,6 +20,8 @@ import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
 import org.eclipse.e4.workbench.ui.renderers.PartHandlerService;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -70,6 +72,11 @@ public class ContributedPartFactory extends SWTPartFactory {
 			Object newPart = contributionFactory.create(contributedPart
 					.getURI(), localContext);
 			contributedPart.setObject(newPart);
+			newWidget.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					localContext.dispose();
+				}
+			});
 		}
 
 		return newWidget;

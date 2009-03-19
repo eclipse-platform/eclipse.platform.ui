@@ -9,6 +9,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.services.ILogger;
 import org.eclipse.e4.core.services.JSONObject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.demo.e4photo.annotations.Inject;
@@ -39,6 +40,8 @@ public class ExifTable {
 	private IEclipseContext outputContext;
 	@Inject
 	private String persistedState;
+	@Inject
+	private ILogger logger;
 
 	public ExifTable() {
 	}
@@ -125,15 +128,13 @@ public class ExifTable {
 						Exif exif = new Exif(resource.getLocationURI(), contents);
 						inputList.add(exif);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						System.out.println(e.getMessage() + " "
-								+ ((IFile) resource).getFullPath());
+						logger.warn(((IFile) resource).getFullPath() + ": "
+								+ e.getMessage());
 					} finally {
 						try {
 							contents.close();
 						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
+							logger.warn(e, "Could not close stream");
 						}
 					}
 				}
@@ -142,5 +143,9 @@ public class ExifTable {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	
+	void dispose() {
+		System.out.println("dispose called!");
 	}
 }

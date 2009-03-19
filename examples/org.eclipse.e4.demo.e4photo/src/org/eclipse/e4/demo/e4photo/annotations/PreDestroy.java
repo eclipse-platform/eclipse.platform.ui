@@ -5,10 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-@Target( { ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.FIELD })
+@Target( { ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-public @interface Inject {
-
-	boolean optional() default false;
+public @interface PreDestroy {
 
 }
