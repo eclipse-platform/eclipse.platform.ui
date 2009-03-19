@@ -67,6 +67,16 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
         Input(TreePath path) {
             fPath = path;
         }
+        
+        public boolean equals(Object obj) {
+            return obj instanceof Input && 
+                ((fPath == null && ((Input)obj).fPath == null) ||
+                 (fPath != null && fPath.equals( ((Input)obj).fPath )));
+        }
+        
+        public int hashCode() {
+            return fPath == null ? 0 : fPath.hashCode();
+        }
     }
     
     private static class ContentProvider implements ITreePathContentProvider {
@@ -370,32 +380,35 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                 ViewerFilter[] filters = fTreeViewer.getFilters();
                 fDropDownViewer.setFilters(filters);
                 
-                ModelDelta delta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
-                fTreeViewer.saveElementState(TreePath.EMPTY, delta);
+                ModelDelta stateDelta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
+                fTreeViewer.saveElementState(TreePath.EMPTY, stateDelta);
                 
                 // If we do not want to expand the elements in the drop-down.
                 // Prune the delta to only select the element in the 
                 // top-most list.
                 if (!fView.getBreadcrumbDropDownAutoExpand()) {
                     final ModelDelta prunedDelta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
-                    delta.accept(new IModelDeltaVisitor() {
+                    stateDelta.accept(new IModelDeltaVisitor() {
                         ModelDelta copy = prunedDelta;
                         public boolean visit(IModelDelta delta, int depth) {
                             TreePath deltaPath = getViewerTreePath(delta);
                             if (deltaPath.getSegmentCount() == 0) {
                                 // skip copying the root element, only copy it's child count
                                 copy.setChildCount(delta.getChildCount());
-                                return true;
                             } else if (deltaPath.getSegmentCount() != 0 && path.startsWith(deltaPath, null) ) {
+                                // Build up the delta copy along the path of the drop-down element.
                                 copy = copy.addNode(
                                     delta.getElement(), delta.getIndex(), delta.getFlags(), delta.getChildCount());
-                                return true;
-                            } else if (deltaPath.startsWith(path, null)) {
-                                if ( (delta.getFlags() & IModelDelta.SELECT) != 0) {
-                                    copy.setFlags(IModelDelta.SELECT | IModelDelta.REVEAL);
-                                    return false;
-                                }
+                            } 
+                            
+                            // If the delta is for the drop-down element, set its select flag and stop traversing 
+                            // the delta..
+                            if (deltaPath.equals(path)) {
+                                copy.setFlags(IModelDelta.SELECT | IModelDelta.REVEAL);
+                                return false;
                             }
+                            
+                            // Continue traversing the delta.
                             return true;
                         }
                         
@@ -410,10 +423,10 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                             return new TreePath(list.toArray());
                         }
                     });
-                    delta = prunedDelta;
+                    stateDelta = prunedDelta;
                 }
                 
-                fDropDownViewer.updateViewer(delta);
+                fDropDownViewer.updateViewer(stateDelta);
                 
                 fDropDownViewer.addLabelUpdateListener(new ILabelUpdateListener() {
                     public void labelUpdateComplete(ILabelUpdate update) {}
