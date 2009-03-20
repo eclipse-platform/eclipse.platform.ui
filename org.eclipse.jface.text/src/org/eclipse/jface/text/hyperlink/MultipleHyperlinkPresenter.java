@@ -16,6 +16,7 @@ import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -361,7 +362,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 
 	private static class MultipleHyperlinkHoverManager extends AbstractInformationControlManager implements IWidgetTokenKeeper, IWidgetTokenKeeperExtension {
 
-		private class Closer implements IInformationControlCloser, Listener, KeyListener {
+		private class Closer implements IInformationControlCloser, Listener, KeyListener, MouseListener {
 
 			private Control fSubjectControl;
 			private Display fDisplay;
@@ -393,6 +394,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 					fDisplay.addFilter(SWT.FocusOut, this);
 					fDisplay.addFilter(SWT.MouseMove, this);
 					fTextViewer.getTextWidget().addKeyListener(this);
+					fTextViewer.getTextWidget().addMouseListener(this);
 				}
 			}
 
@@ -404,6 +406,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 					fDisplay.removeFilter(SWT.FocusOut, this);
 					fDisplay.removeFilter(SWT.MouseMove, this);
 					fTextViewer.getTextWidget().removeKeyListener(this);
+					fTextViewer.getTextWidget().removeMouseListener(this);
 				}
 
 				fSubjectArea= null;
@@ -491,6 +494,28 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			 * @see org.eclipse.swt.events.KeyListener#keyReleased(org.eclipse.swt.events.KeyEvent)
 			 */
 			public void keyReleased(KeyEvent e) {
+				hideInformationControl();
+			}
+
+			/*
+			 * @see org.eclipse.swt.events.MouseListener#mouseDoubleClick(org.eclipse.swt.events.MouseEvent)
+			 * @since 3.5
+			 */
+			public void mouseDoubleClick(MouseEvent e) {
+			}
+
+			/*
+			 * @see org.eclipse.swt.events.MouseListener#mouseDown(org.eclipse.swt.events.MouseEvent)
+			 * @since 3.5
+			 */
+			public void mouseDown(MouseEvent e) {
+			}
+
+			/*
+			 * @see org.eclipse.swt.events.MouseListener#mouseUp(org.eclipse.swt.events.MouseEvent)
+			 * @since 3.5
+			 */
+			public void mouseUp(MouseEvent e) {
 				hideInformationControl();
 			}
 
@@ -731,7 +756,6 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 	 */
 	public void hideHyperlinks() {
 		super.hideHyperlinks();
-
 		fHyperlinks= null;
 	}
 
