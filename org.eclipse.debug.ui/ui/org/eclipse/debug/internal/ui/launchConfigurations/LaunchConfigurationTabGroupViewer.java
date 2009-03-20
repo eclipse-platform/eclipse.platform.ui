@@ -182,8 +182,14 @@ public class LaunchConfigurationTabGroupViewer {
 	 * A link to allow users to select a valid set of launch options for the specified mode
 	 * @since 3.3
 	 */
-	private Link fOptionsLink = null;
-	
+    private Link fOptionsLink = null;
+
+    /**
+     * A label to indicate that the user needs to select an a launcher.
+     * @since 3.5
+     */
+    private Label fOptionsErrorLabel = null;
+    
 	/**
 	 * A new composite replacing the perspectives tab
 	 * @since 3.2
@@ -297,9 +303,13 @@ public class LaunchConfigurationTabGroupViewer {
 		createTabFolder(fTabComposite);
 		
 		Composite blComp = SWTFactory.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
-		Composite linkComp = SWTFactory.createComposite(blComp, blComp.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
+		Composite linkComp = SWTFactory.createComposite(blComp, blComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 
 	//a link for launch options
+		fOptionsErrorLabel = new Label(linkComp, SWT.NONE);
+        gd = new GridData();
+        fOptionsErrorLabel.setLayoutData(gd);
+        
 		fOptionsLink = new Link(linkComp, SWT.WRAP);
 		fOptionsLink.setFont(linkComp.getFont());
 		gd = new GridData(SWT.LEFT);
@@ -560,6 +570,11 @@ public class LaunchConfigurationTabGroupViewer {
 			fOptionsLink.setText(text);
 		}
 		fOptionsLink.setVisible(!canLaunchWithModes() || hasMultipleDelegates());
+		if (hasDuplicateDelegates()) {
+	        fOptionsErrorLabel.setImage(JFaceResources.getImage(Dialog.DLG_IMG_MESSAGE_ERROR));
+		} else {
+            fOptionsErrorLabel.setImage(null);
+		}
 		fViewform.layout(true, true);
 	}
 	
@@ -1144,7 +1159,11 @@ public class LaunchConfigurationTabGroupViewer {
 		} catch (CoreException ce) {
 			return ce.getStatus().getMessage();
 		}
-	
+
+		if(hasDuplicateDelegates()) {
+		    return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_18;
+		}
+
 		String message = null;
 		ILaunchConfigurationTab activeTab = getActiveTab();
 		if (activeTab == null) {
@@ -1178,9 +1197,6 @@ public class LaunchConfigurationTabGroupViewer {
 			Set modes = getCurrentModeSet();
 			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
 			return MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_14, new String[]{names.toString()});
-		}
-		if(hasDuplicateDelegates()) {
-			return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_18;
 		}
 		return null;
 	}	
