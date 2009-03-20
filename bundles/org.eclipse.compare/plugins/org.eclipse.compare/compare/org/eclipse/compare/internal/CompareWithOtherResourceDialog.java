@@ -501,7 +501,7 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 
 		private void createClearButton(Composite parent) {
 			clearButton = new Button(parent, SWT.PUSH);
-			clearButton.setText(CompareMessages.CompareWithOther_clear);
+			clearButton.setText(CompareMessages.CompareWithOtherResourceDialog_clear);
 			clearButton.addSelectionListener(new SelectionListener() {
 				public void widgetDefaultSelected(SelectionEvent e) {
 					widgetSelected(e);
@@ -631,8 +631,8 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 			} catch (CoreException e) {
 				CompareUIPlugin.log(e);
 				MessageDialog.openError(getShell(),
-								CompareMessages.CompareWithOther_externalFile_errorTitle,
-								CompareMessages.CompareWithOther_externalFile_errorMessage);
+								CompareMessages.CompareWithOtherResourceDialog_externalFile_errorTitle,
+								CompareMessages.CompareWithOtherResourceDialog_externalFile_errorMessage);
 			}
 			return r;
 		}
@@ -701,21 +701,21 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 		mainPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		ancestorPanel = new InternalExpandable(mainPanel);
-		ancestorPanel.setText(CompareMessages.CompareWithOther_ancestor);
+		ancestorPanel.setText(CompareMessages.CompareWithOtherResourceDialog_ancestor);
 		GridData ancestorGD = new GridData(SWT.FILL, SWT.FILL, true, false);
 		ancestorPanel.setLayoutData(ancestorGD);
 
 		leftPanel = new InternalGroup(mainPanel);
-		leftPanel.setText(CompareMessages.CompareWithOther_leftPanel);
+		leftPanel.setText(CompareMessages.CompareWithOtherResourceDialog_leftPanel);
 		leftPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		rightPanel = new InternalGroup(mainPanel);
-		rightPanel.setText(CompareMessages.CompareWithOther_rightPanel);
+		rightPanel.setText(CompareMessages.CompareWithOtherResourceDialog_rightPanel);
 		rightPanel.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
 		setSelection(selection);
-		getShell().setText(CompareMessages.CompareWithOther_dialogTitle);
-		setTitle(CompareMessages.CompareWithOther_dialogMessage);
+		getShell().setText(CompareMessages.CompareWithOtherResourceDialog_dialogTitle);
+		setTitle(CompareMessages.CompareWithOtherResourceDialog_dialogMessage);
 		adjustSize(ancestorPanel.expandable.isExpanded());
 
 		return mainPanel;
@@ -739,7 +739,7 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 		super.createButtonsForButtonBar(parent);
 		okButton = getButton(IDialogConstants.OK_ID);
 		updateErrorInfo();
-		setMessage(CompareMessages.CompareWithOther_info);
+		setMessage(CompareMessages.CompareWithOtherResourceDialog_info);
 	}
 
 	private void setSelection(ISelection selection) {
@@ -786,16 +786,16 @@ public class CompareWithOtherResourceDialog extends TitleAreaDialog {
 		if (okButton != null) {
 			if (leftPanel.getResource() == null
 					|| rightPanel.getResource() == null) {
-				setMessage(CompareMessages.CompareWithOther_error_empty,
+				setMessage(CompareMessages.CompareWithOtherResourceDialog_error_empty,
 						IMessageProvider.ERROR);
 				okButton.setEnabled(false);
 			} else if (!isComparePossible()) {
 				setMessage(
-						CompareMessages.CompareWithOther_error_not_comparable,
+						CompareMessages.CompareWithOtherResourceDialog_error_not_comparable,
 						IMessageProvider.ERROR);
 				okButton.setEnabled(false);
 			} else {
-				setMessage(CompareMessages.CompareWithOther_info);
+				setMessage(CompareMessages.CompareWithOtherResourceDialog_info);
 				okButton.setEnabled(true);
 			}
 		}
