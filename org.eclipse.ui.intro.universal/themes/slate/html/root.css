@@ -1,0 +1,152 @@
+/*******************************************************************************
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials 
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+
+/* Hide the extra div for links in the normal state. */
+a .link-extra-div {
+	display: none;
+}
+
+/* Link label properties */
+#page-links a .link-label {
+	top: -1.2em;
+	color:#00507C;	
+    font-family:Verdana,Arial,Helvetica;
+    font-weight:bold;
+}
+
+#page-links a:hover .link-label {
+	color: #69c; 
+	text-decoration : underline;
+}
+
+#page-links a {
+    width : 40%;
+    float : left;
+    margin-left : 7%; 
+	margin-top : 40px;
+}
+
+/*
+ * Set up the content for the root page.
+ */
+html, body {	
+	overflow : auto;
+	overflow-clip: rect(0, auto, auto, 0);
+	background-color : none;
+}
+
+#root {
+	min-height : 450px;
+    min-width : 940px;
+    background-image : url("../graphics/rootpage/root_banner.jpg");
+	background-position : top left;
+}
+
+#branding {
+	position: absolute;
+	top : 0px;
+	left : 20px;
+	bottom : 20px;
+}
+
+/* 
+ * Set up the navigation bar.  It should be centered in the middle
+ * of the page
+*/
+
+.intro-header {
+    padding-top : 90px;
+    margin-left : 7%;
+}
+
+/* For the main page content's title */
+.intro-header h1 {
+	font-family: Verdana, Arial, Helvetica;
+	color:#333333; 
+	font-weight: normal; 
+	letter-spacing:-0.03em;
+}
+
+#page-links a img {
+	height : 48px;
+	width : 103px;
+	vertical-align : middle;
+}
+
+/* Hide the text in the normal state */
+#page-links a .text {
+	display : none;
+}
+
+#page-links a span.link-label {
+    display : inline; 
+    vertical-align : middle;
+}
+
+#page-links a .background-image {
+	display: none;
+}
+
+#page-links a .link-extra-div {
+	display :none;
+}
+
+.content-img {
+    padding-left: 15px;
+}
+
+/* Link images */
+#page-links a#overview .content-img { background-image : url("../graphics/rootpage/overview48.gif"); }
+#page-links a#overview:hover .content-img,
+#page-links a#overview:active .content-img,
+#page-links a#overview:focus .content-img { background-image : url("../graphics/rootpage/overview48_hov.gif"); }
+
+#page-links a#tutorials .content-img { background-image : url("../graphics/rootpage/tutorials48.gif"); }
+#page-links a#tutorials:hover .content-img,
+#page-links a#tutorials:active .content-img,
+#page-links a#tutorials:focus .content-img { background-image : url("../graphics/rootpage/tutorials48_hov.gif"); }
+
+#page-links a#samples .content-img { background-image : url("../graphics/rootpage/samples48.gif"); }
+#page-links a#samples:hover .content-img,
+#page-links a#samples:active .content-img,
+#page-links a#samples:focus .content-img { background-image : url("../graphics/rootpage/samples48_hov.gif"); }
+
+#page-links a#whatsnew .content-img { background-image : url("../graphics/rootpage/whatsnew48.gif"); }
+#page-links a#whatsnew:hover .content-img,
+#page-links a#whatsnew:active .content-img,
+#page-links a#whatsnew:focus .content-img { background-image : url("../graphics/rootpage/whatsnew48_hov.gif"); }
+
+#page-links a#firststeps .content-img { background-image : url("../graphics/rootpage/firststeps48.gif"); }
+#page-links a#firststeps:hover .content-img,
+#page-links a#firststeps:active .content-img,
+#page-links a#firststeps:focus .content-img { background-image : url("../graphics/rootpage/firststeps48_hov.gif"); }
+
+#page-links a#migrate .content-img { background-image : url("../graphics/rootpage/migrate48.gif"); }
+#page-links a#migrate:hover .content-img,
+#page-links a#migrate:active .content-img,
+#page-links a#migrate:focus .content-img { background-image : url("../graphics/rootpage/migrate48_hov.gif"); }
+
+#page-links a#webresources .content-img { background-image : url("../graphics/rootpage/webresources48.gif"); }
+#page-links a#webresources:hover .content-img,
+#page-links a#webresources:active .content-img,
+#page-links a#webresources:focus .content-img { background-image : url("../graphics/rootpage/webresources48_hov.gif"); }
+
+#page-links a#workbench .content-img { background-image : url("../graphics/rootpage/workbench48.gif"); }
+#page-links a#workbench:hover .content-img,
+#page-links a#workbench:active .content-img,
+#page-links a#workbench:focus .content-img { background-image : url("../graphics/rootpage/workbench48_hov.gif"); }
+
+/*
+ * Not using action links.
+ */
+#action-links {
+	display: none;
+}

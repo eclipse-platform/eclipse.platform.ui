@@ -170,6 +170,67 @@
             		  value="$theme$graphics/icons/etool/migrate48.gif"/> 
             <property name="highContrastNav-workbench"
             		  value="$theme$graphics/icons/etool/wb48.gif"/>       
+      </theme> 
+      <theme
+            id="org.eclipse.ui.intro.universal.slate"
+            name="%theme.name.slate"
+            path="$nl$/themes/slate"
+            previewImage="$nl$/themes/slate/preview.png"
+            scalable="true">
+            <property name="workbenchAsRootLink"
+            		value="true"/>
+            		<!--
+            <property name="launchbarBackground"
+            		value="#a1c2cb"/>
+            		-->
+            <property name="launchbarOverviewIcon"
+            		  value="$theme$graphics/launchbar/overview16.png"/>
+            <property name="launchbarFirststepsIcon"
+            		  value="$theme$graphics/launchbar/firststeps16.png"/>
+            <property name="launchbarTutorialsIcon"
+            		  value="$theme$graphics/launchbar/tutorials16.png"/>
+            <property name="launchbarSamplesIcon"
+            		  value="$theme$graphics/launchbar/samples16.png"/>
+            <property name="launchbarWhatsnewIcon"
+            		  value="$theme$graphics/launchbar/whatsnew16.png"/>
+            <property name="launchbarMigrateIcon"
+            		  value="$theme$graphics/launchbar/migrate16.png"/>
+            <property name="launchbarWebresourcesIcon"
+            		  value="$theme$graphics/launchbar/webresources16.png"/>
+
+            <property name="highContrast-overview"
+            		  value="$theme$graphics/icons/ctool/overview.png"/>
+            <property name="highContrast-firststeps"
+            		  value="$theme$graphics/icons/ctool/firststeps.png"/>
+            <property name="highContrast-tutorials"
+            		  value="$theme$graphics/icons/ctool/tutorials.png"/>
+            <property name="highContrast-samples"
+            		  value="$theme$graphics/icons/ctool/samples.png"/>
+            <property name="highContrast-whatsnew"
+            		  value="$theme$graphics/icons/ctool/whatsnew.png"/>
+            <property name="highContrast-webresources"
+            		  value="$theme$graphics/icons/ctool/webresources.png"/>
+            <property name="highContrast-migrate"
+            		  value="$theme$graphics/icons/ctool/migrate.png"/>    
+            <property name="highContrast-workbench"
+            		  value="$theme$graphics/icons/ctool/workbench.png"/>    
+            		  
+            <property name="highContrastNav-overview"
+            		  value="$theme$graphics/icons/ctool/ov_nav.png"/>
+            <property name="highContrastNav-firststeps"
+            		  value="$theme$graphics/icons/ctool/fs_nav.png"/>
+            <property name="highContrastNav-tutorials"
+            		  value="$theme$graphics/icons/ctool/tu_nav.png"/>
+            <property name="highContrastNav-samples"
+            		  value="$theme$graphics/icons/ctool/sa_nav.png"/>
+            <property name="highContrastNav-whatsnew"
+            		  value="$theme$graphics/icons/ctool/wn_nav.png"/>
+            <property name="highContrastNav-webresources"
+            		  value="$theme$graphics/icons/ctool/wr_nav.png"/>
+            <property name="highContrastNav-migrate"
+            		  value="$theme$graphics/icons/ctool/mi_nav.png"/> 
+            <property name="highContrastNav-workbench"
+            		  value="$theme$graphics/icons/ctool/wb_nav.png"/>
       </theme>
    </extension>
 </plugin>
