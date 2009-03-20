@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -861,7 +861,7 @@ public class CustomizationContentsArea {
 		loadThemes();
 		Label previewLabel = new Label(rightColumn, SWT.NULL);
 		previewLabel.setText(Messages.WelcomeCustomizationPreferencePage_preview);
-		themePreview = new Canvas(rightColumn, SWT.NULL);
+		themePreview = new Canvas(rightColumn, SWT.BORDER);
 		gd = new GridData();
 		gd.widthHint = 160+20;
 		gd.heightHint = 120+20;
