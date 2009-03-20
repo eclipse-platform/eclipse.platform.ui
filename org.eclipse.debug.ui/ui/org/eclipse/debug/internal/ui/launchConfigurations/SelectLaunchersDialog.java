@@ -266,6 +266,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 				}
 			}
 		});
+		super.addViewerListeners(viewer);
 	}
 	
 	/* (non-Javadoc)
