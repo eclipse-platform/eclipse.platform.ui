@@ -110,7 +110,6 @@ public final class CompareMessages extends NLS {
 	public static String SelectAncestorDialog_title;
 	public static String SelectAncestorDialog_message;
 	public static String SelectAncestorDialog_option;
-	public static String CompareWithOther_fileLabel;
 	public static String CompareWithOtherResourceDialog_ancestor;
 	public static String CompareWithOtherResourceDialog_rightPanel;
 	public static String CompareWithOtherResourceDialog_leftPanel;
@@ -120,11 +119,8 @@ public final class CompareMessages extends NLS {
 	public static String CompareWithOtherResourceDialog_error_empty;
 	public static String CompareWithOtherResourceDialog_clear;
 	public static String CompareWithOtherResourceDialog_info;
-	public static String CompareWithOtherResourceDialog_externalFileButton;
 	public static String CompareWithOtherResourceDialog_externalFile_errorTitle;
 	public static String CompareWithOtherResourceDialog_externalFile_errorMessage;
-	public static String CCompareWithOtherResourceDialog_pathLabel;
-	public static String CompareWithOtherResourceDialog_externalFolderButton;
 	public static String CompareWithOtherResourceDialog_externalFileMainButton;
 	public static String CompareWithOtherResourceDialog_externalFileRadioButton;
 	public static String CompareWithOtherResourceDialog_externalFolderMainButton;
