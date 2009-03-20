@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Richard Hoefter and others.
+ * Copyright (c) 2004, 2009 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,9 +7,9 @@
  * 
  * Contributors:
  *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95300, bug 95297, bug 128104, bug 201180 
- *     IBM Corporation - nlsing and incorporating into Eclipse. 
- *                          Class created from combination of all utility classes of contribution
- *                          Bug 177833
+ *     IBM Corporation - NLS'ing and incorporating into Eclipse. 
+ *                     - Bug 177833 Class created from combination of all utility classes of contribution 
+ *                     - Bug 267459 Java project with an external jar file from C:\ on the build path throws a NPE during the Ant Buildfile generation.
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
@@ -21,6 +21,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
@@ -53,7 +54,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
@@ -67,7 +67,6 @@ import org.eclipse.jdt.core.IClassFile;
 import org.eclipse.jdt.core.IClasspathEntry;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IJavaElement;
-import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaModelMarker;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.IMethod;
@@ -94,10 +93,9 @@ import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 
 /**
- * Eclipse API shortcuts.
+ * Collection of utility methods to help when exporting to an Ant build file.
  */
-public class ExportUtil
-{
+public class ExportUtil {
     private ExportUtil()
     {
     }
@@ -121,36 +119,33 @@ public class ExportUtil
     /**
      * Get Java project from resource.
      */
-    public static IJavaProject getJavaProjectByName(String name)
-    {
-        IWorkspaceRoot rootWorkspace = ResourcesPlugin.getWorkspace().getRoot();
-        IJavaModel javaModel = JavaCore.create(rootWorkspace);
-        IJavaProject[] javaProjects;
-        try
-        {
-            javaProjects = javaModel.getJavaProjects();
-        }
-        catch (JavaModelException e)
-        {
-            return null;
-        }
-        for (int i = 0; i < javaProjects.length; i++)
-        {
-            IJavaProject javaProject = javaProjects[i];
-            if (name.equals(javaProject.getProject().getName()))
-            {
-                return javaProject;
-            }
-        }      
+    public static IJavaProject getJavaProjectByName(String name) {
+    	try {
+	        IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(name);
+	        if(project.exists()) {
+	        	return JavaCore.create(project);
+	        }
+    	}
+    	catch(IllegalArgumentException iae) {}
         return null;
     }
 
     /**
      * Get project root for given project.
      */
-    public static String getProjectRoot(IJavaProject project)
-    {
-        return project.getResource().getLocation().toString();
+    public static String getProjectRoot(IJavaProject project) {
+    	if(project == null) {
+    		return null;
+    	}
+    	IResource resource = project.getResource();
+    	if(resource == null) {
+    		return null;
+    	}
+    	URI location = resource.getLocationURI();
+    	if(location == null) {
+    		return null;
+    	}
+        return location.toString();
     }
 
     /**
@@ -159,51 +154,42 @@ public class ExportUtil
      *                  An absolute path is simply converted to a string.
      * @return full qualified path
      */
-    public static String resolve(IPath file)
-    {
-        if (file == null)
-        {
+    public static String resolve(IPath file) {
+        if (file == null) {
             return null;
         }
-        try
-        {
+        try {
             IFile f = ResourcesPlugin.getWorkspace().getRoot().getFile(file);
-            IPath p = f.getLocation();
-            return (p != null) ? p.toString() : f.toString();
+            URI uri = f.getLocationURI();
+            return (uri != null) ? uri.toString() : f.toString();
         }
-        catch (IllegalArgumentException e)
-        {
+        catch (IllegalArgumentException e) {
             // resource is missing
-            String projectName = ExportUtil.removePrefix(file.toString(), "/"); //$NON-NLS-1$
-            IJavaProject project = ExportUtil.getJavaProjectByName(projectName);
-            return ExportUtil.getProjectRoot(project);
+            String projectName = removePrefix(file.toString(), "/"); //$NON-NLS-1$
+            IJavaProject project = getJavaProjectByName(projectName);
+            if(project != null) {
+            	return getProjectRoot(project);
+            }
+        	//project is null because file is not enclosed in a project i.e. external jar 
+            //https://bugs.eclipse.org/bugs/show_bug.cgi?id=267459
+        	return file.toOSString();
         }
     }
 
     /**
      * Get Java project for given root.
      */
-    public static IJavaProject getJavaProject(String root)
-    {
-        IWorkspaceRoot rootWorkspace = ResourcesPlugin.getWorkspace().getRoot();
-        IJavaModel javaModel = JavaCore.create(rootWorkspace);
-        IJavaProject[] javaProjects;
-        try
-        {
-            javaProjects = javaModel.getJavaProjects();
+    public static IJavaProject getJavaProject(String root) {
+    	IPath path = new Path(root);
+    	if(path.segmentCount() == 1) {
+    		return getJavaProjectByName(root);
+    	}
+        IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
+        if(resource != null && resource.getType() == IResource.PROJECT) {
+        	if(resource.exists()) {
+        		return (IJavaProject) JavaCore.create(resource);
+        	}
         }
-        catch (JavaModelException e)
-        {
-            return null;
-        }
-        for (int i = 0; i < javaProjects.length; i++)
-        {
-            IJavaProject javaProject = javaProjects[i];
-            if (root.equals(javaProject.getPath().toString()))
-            {
-                return javaProject;
-            }
-        }      
         return null;
     }
 
@@ -263,7 +249,7 @@ public class ExportUtil
                 classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
                     // found required project on build path
                     String subProjectRoot = classpathEntry.getPath().toString();
-                    IJavaProject subProject = ExportUtil.getJavaProject(subProjectRoot);
+                    IJavaProject subProject = getJavaProject(subProjectRoot);
                     // is project available in workspace
                     if (subProject != null)
                     {
@@ -449,18 +435,18 @@ public class ExportUtil
 
     // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
     private static void collectTypes(Object element, Set result) throws CoreException/*, InvocationTargetException*/ {
-        element = computeScope(element);
-        while ((element instanceof ISourceReference) && !(element instanceof ICompilationUnit)) {
-            if (element instanceof IType) {
-                if (hasSuiteMethod((IType)element) || isTestType((IType)element)) {
-                    result.add(element);
+        Object obj = computeScope(element);
+        while ((obj instanceof ISourceReference) && !(obj instanceof ICompilationUnit)) {
+            if (obj instanceof IType) {
+                if (hasSuiteMethod((IType)obj) || isTestType((IType)obj)) {
+                    result.add(obj);
                     return;
                 }
             }
-            element = ((IJavaElement)element).getParent();
+            obj = ((IJavaElement)obj).getParent();
         }
-        if (element instanceof ICompilationUnit) {
-            ICompilationUnit cu= (ICompilationUnit)element;
+        if (obj instanceof ICompilationUnit) {
+            ICompilationUnit cu= (ICompilationUnit)obj;
             IType[] types= cu.getAllTypes();
 
             for (int i= 0; i < types.length; i++) {
@@ -468,9 +454,9 @@ public class ExportUtil
                     result.add(types[i]);
             }
         } 
-        else if (element instanceof IJavaElement) {
-            List testCases= findTestCases((IJavaElement)element);
-            List suiteMethods= searchSuiteMethods((IJavaElement)element);            
+        else if (obj instanceof IJavaElement) {
+            List testCases= findTestCases((IJavaElement)obj);
+            List suiteMethods= searchSuiteMethods((IJavaElement)obj);            
             while (!suiteMethods.isEmpty()) {
                 if (!testCases.contains(suiteMethods.get(0))) {
                     testCases.add(suiteMethods.get(0));
@@ -533,15 +519,16 @@ public class ExportUtil
 
     // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
     private static Object computeScope(Object element) {
+    	Object obj = null;
         if (element instanceof IFileEditorInput)
-            element= ((IFileEditorInput)element).getFile();
+        	obj = ((IFileEditorInput)element).getFile();
         if (element instanceof IResource)
-            element= JavaCore.create((IResource)element);
+        	obj = JavaCore.create((IResource)element);
         if (element instanceof IClassFile) {
-            IClassFile cf= (IClassFile)element;
-            element= cf.getType();
+            IClassFile cf = (IClassFile)element;
+            obj = cf.getType();
         }
-        return element;
+        return obj;
     }
 
     // copied from org.eclipse.jdt.internal.junit.util.TestSearchEngine
@@ -604,27 +591,16 @@ public class ExportUtil
     
     private static Comparator javaProjectComparator;
     
-    private static class JavaProjectComparator implements Comparator
-    {
-        public int compare(Object o1, Object o2)
-        {
+    private static class JavaProjectComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
             IJavaProject j1 = (IJavaProject) o1;
             IJavaProject j2 = (IJavaProject) o2;
             return j1.getProject().getName().compareTo(j2.getProject().getName());
         }
-        
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            return compare(this, obj) == 0;
-        }
     }
     
     /**
-     * Compares objects by classname.
+     * Compares objects by class name.
      */
     public static synchronized Comparator getClassnameComparator()
     {
@@ -637,20 +613,9 @@ public class ExportUtil
     
     private static Comparator classnameComparator;
     
-    private static class ClassnameComparator implements Comparator
-    {
-        public int compare(Object o1, Object o2)
-        {
+    private static class ClassnameComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
             return o1.getClass().getName().compareTo(o2.getClass().getName());
-        }
-
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            return compare(this, obj) == 0;
         }
     }
 
@@ -668,22 +633,11 @@ public class ExportUtil
     
     private static Comparator fileComparator;
     
-    private static class IFileComparator implements Comparator
-    {
-        public int compare(Object o1, Object o2)
-        {
+    private static class IFileComparator implements Comparator {
+        public int compare(Object o1, Object o2) {
             IFile f1 = (IFile) o1;
             IFile f2 = (IFile) o2;
             return f1.toString().compareTo(f2.toString());
-        }
-
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            return compare(this, obj) == 0;
         }
     }
     
@@ -703,20 +657,10 @@ public class ExportUtil
     
     private static class TypeComparator implements Comparator
     {
-        public int compare(Object o1, Object o2)
-        {
+        public int compare(Object o1, Object o2) {
             IType t1 = (IType) o1;
             IType t2 = (IType) o2;
             return t1.getFullyQualifiedName().compareTo(t2.getFullyQualifiedName());
-        }
-
-        public boolean equals(Object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            return compare(this, obj) == 0;
         }
     }
 
@@ -951,7 +895,7 @@ public class ExportUtil
     	if (status.getSeverity() == IStatus.ERROR) {
     		// not possible to checkout files: not connected to version
     		// control plugin or hijacked files and made read-only, so
-    		// collect error messages provided by validator and rethrow
+    		// collect error messages provided by validator and re-throw
     		StringBuffer message = new StringBuffer(status.getPlugin() + ": " //$NON-NLS-1$
     				+ status.getMessage() + NEWLINE);
     		if (status.isMultiStatus())
@@ -1039,7 +983,7 @@ public class ExportUtil
             }
             File file = new File(value);
             if (file.exists()) {
-                value = ExportUtil.getRelativePath(file.getAbsolutePath(), projectRoot);
+                value = getRelativePath(file.getAbsolutePath(), projectRoot);
             }
             variable2valueMap.put(variable, value);
         }

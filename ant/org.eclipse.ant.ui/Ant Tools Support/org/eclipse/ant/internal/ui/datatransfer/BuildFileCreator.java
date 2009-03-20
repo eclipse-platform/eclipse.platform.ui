@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 Richard Hoefter and others.
+ * Copyright (c) 2004, 2009 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -55,6 +56,7 @@ import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -135,11 +137,10 @@ public class BuildFileCreator
         return res;
     }
 
-    private static void createBuildFilesLoop(Set projects, Shell shell, IProgressMonitor pm,
-            List res) throws CoreException, ParserConfigurationException,
+    private static void createBuildFilesLoop(Set projects, Shell shell, IProgressMonitor pm, List res) throws CoreException, ParserConfigurationException,
             JavaModelException, TransformerConfigurationException,
             TransformerFactoryConfigurationError, TransformerException,
-            UnsupportedEncodingException, InterruptedException {
+            UnsupportedEncodingException {
 
         // determine files to create/change
         List files = new ArrayList();
@@ -152,67 +153,64 @@ public class BuildFileCreator
 
         // trigger checkout
         Set confirmedFiles = ExportUtil.validateEdit(shell, files);
-
-        if (pm != null) {
-            pm.beginTask(DataTransferMessages.AntBuildfileExportPage_0,
-                    confirmedFiles.size());
+        SubMonitor localmonitor = SubMonitor.convert(pm, DataTransferMessages.AntBuildfileExportPage_0, confirmedFiles.size());
+        try {
+	        int i = 0;
+	        for (Iterator iter = projects.iterator(); iter.hasNext(); i++)
+	        {
+	            IJavaProject currentProject = (IJavaProject) iter.next();
+	            IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
+	            if (! confirmedFiles.contains(file))
+	            {
+	                continue;
+	            }
+	            
+	            localmonitor.setTaskName(NLS.bind(DataTransferMessages.BuildFileCreator_generating_buildfile_for, currentProject.getProject().getName()));
+	            
+	            BuildFileCreator instance = new BuildFileCreator(currentProject, shell);
+	            instance.createRoot();
+	            instance.createImports();
+	            EclipseClasspath classpath = new EclipseClasspath(currentProject);
+	            if (CHECK_SOURCE_CYCLES) {
+	                SourceAnalyzer.checkCycles(currentProject, classpath, shell);
+	            }
+	            instance.createClasspaths(classpath);
+	            instance.createInit(classpath.srcDirs, classpath.classDirs);   
+	            instance.createClean(classpath.classDirs);
+	            instance.createCleanAll();
+	            instance.createBuild(classpath.srcDirs, classpath.classDirs,
+	                                 classpath.inclusionLists, classpath.exclusionLists);
+	            instance.createBuildRef();
+	            if (CREATE_ECLIPSE_COMPILE_TARGET) {
+	                instance.addInitEclipseCompiler();
+	                instance.addBuildEclipse();
+	            }
+	            instance.createRun();           
+	            instance.addSubProperties(currentProject, classpath);
+	            instance.createProperty();
+	
+	            // write build file
+	            String xml = ExportUtil.toString(instance.doc);
+	            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8")); //$NON-NLS-1$
+	            if (file.exists())
+	            {
+	                file.setContents(is, true, true, null);
+	            }
+	            else
+	            {
+	                file.create(is, true, null);
+	            }
+	            if(localmonitor.isCanceled()) {
+	            	return;
+	            }
+	            localmonitor.worked(1);
+	            res.add(instance.projectName);
+	        }
         }
-        
-        int i = 0;
-        for (Iterator iter = projects.iterator(); iter.hasNext(); i++)
-        {
-            IJavaProject currentProject = (IJavaProject) iter.next();
-            IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
-            if (! confirmedFiles.contains(file))
-            {
-                continue;
-            }
-            
-            if (pm != null) {
-                pm.subTask(currentProject.getProject().getName());
-            }
-            
-            BuildFileCreator instance = new BuildFileCreator(currentProject, shell);
-            instance.createRoot();
-            instance.createImports();
-            EclipseClasspath classpath = new EclipseClasspath(currentProject);
-            if (CHECK_SOURCE_CYCLES) {
-                SourceAnalyzer.checkCycles(currentProject, classpath, shell);
-            }
-            instance.createClasspaths(classpath);
-            instance.createInit(classpath.srcDirs, classpath.classDirs);   
-            instance.createClean(classpath.classDirs);
-            instance.createCleanAll();
-            instance.createBuild(classpath.srcDirs, classpath.classDirs,
-                                 classpath.inclusionLists, classpath.exclusionLists);
-            instance.createBuildRef();
-            if (CREATE_ECLIPSE_COMPILE_TARGET) {
-                instance.addInitEclipseCompiler();
-                instance.addBuildEclipse();
-            }
-            instance.createRun();           
-            instance.addSubProperties(currentProject, classpath);
-            instance.createProperty();
-
-            // write build file
-            String xml = ExportUtil.toString(instance.doc);
-            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8")); //$NON-NLS-1$
-            if (file.exists())
-            {
-                file.setContents(is, true, true, null);
-            }
-            else
-            {
-                file.create(is, true, null);
-            }
-
-            if (pm != null) {
-                pm.worked(1);
-                if (pm.isCanceled()) {
-                    throw new InterruptedException();
-                }
-            }
-            res.add(instance.projectName);
+        finally {
+        	if(!localmonitor.isCanceled()) {
+        		localmonitor.done();
+        	}
         }
     }
 
@@ -371,12 +369,13 @@ public class BuildFileCreator
         //     <path refid="${goodbye.classpath}"/>
         // </path>
         Element element = doc.createElement("path"); //$NON-NLS-1$
-        if (pathId == null)
+        String pathid = pathId;
+        if (pathid == null)
         {
-            pathId = currentProject.getProject().getName() + ".classpath"; //$NON-NLS-1$
+        	pathid = currentProject.getProject().getName() + ".classpath"; //$NON-NLS-1$
         }
-        element.setAttribute("id", pathId); //$NON-NLS-1$
-        visited.add(pathId);
+        element.setAttribute("id", pathid); //$NON-NLS-1$
+        visited.add(pathid);
         variable2valueMap.putAll(classpath.variable2valueMap);
         for (Iterator iter = ExportUtil.removeDuplicates(classpath.rawClassPathEntries).iterator(); iter.hasNext();)
         {
@@ -387,7 +386,7 @@ public class BuildFileCreator
                 IJavaProject referencedProject = EclipseClasspath.resolveProjectReference(entry); 
                 if (referencedProject == null)
                 {
-                    AntUIPlugin.log("project is not loaded in workspace: " + pathId, null); //$NON-NLS-1$
+                    AntUIPlugin.log("project is not loaded in workspace: " + pathid, null); //$NON-NLS-1$
                     continue;
                 }
                 String refPathId = referencedProject.getProject().getName() + ".classpath"; //$NON-NLS-1$
@@ -405,13 +404,13 @@ public class BuildFileCreator
             }
             else if (EclipseClasspath.isUserSystemLibraryReference(entry))
             {
-                if (pathId.endsWith(".bootclasspath")) { //$NON-NLS-1$
+                if (pathid.endsWith(".bootclasspath")) { //$NON-NLS-1$
                     addUserLibrary(element, entry);
                 }
             }            
             else if (EclipseClasspath.isJreReference(entry))
             {
-                if (pathId.endsWith(".bootclasspath")) { //$NON-NLS-1$
+                if (pathid.endsWith(".bootclasspath")) { //$NON-NLS-1$
                     addJre(element);
                 }
             }

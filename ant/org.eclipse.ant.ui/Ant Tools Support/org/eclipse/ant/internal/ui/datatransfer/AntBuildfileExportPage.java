@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 Richard Hoefter and others.
+ * Copyright (c) 2004, 2009 Richard Hoefter and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,6 @@ package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -30,6 +29,7 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
 import org.eclipse.jdt.core.JavaCore;
@@ -54,9 +54,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class AntBuildfileExportPage extends WizardPage {
     
@@ -249,6 +250,15 @@ public class AntBuildfileExportPage extends WizardPage {
         	setErrorMessage(DataTransferMessages.AntBuildfileExportPage_18);
             complete = false;
         }
+        List cyclicProjects;
+        try {
+            cyclicProjects = getCyclicProjects(getProjects());
+            if (cyclicProjects.size() > 0) {
+            	setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6,
+                        new String[] {ExportUtil.toString(cyclicProjects, ", ")})); //$NON-NLS-1$
+            	complete = false;
+            }
+        } catch (CoreException e) {}
         if (buildfilenameText.getText().length() == 0) {
             setErrorMessage(DataTransferMessages.AntBuildfileExportPage_19);
             complete = false;            
@@ -280,8 +290,7 @@ public class AntBuildfileExportPage extends WizardPage {
     /**
      * Convert Eclipse Java projects to Ant build files. Displays error dialogs.
      */
-    public boolean generateBuildfiles() 
-    {
+    public boolean generateBuildfiles() {
         setErrorMessage(null);
         final List projectNames = new ArrayList();
         final Set projects;
@@ -296,14 +305,15 @@ public class AntBuildfileExportPage extends WizardPage {
         }
         IRunnableWithProgress runnable = new IRunnableWithProgress() {
             public void run(IProgressMonitor pm) throws InterruptedException {
+            	SubMonitor localmonitor = SubMonitor.convert(pm, DataTransferMessages.AntBuildfileExportPage_creating_build_files, projects.size());
                 Exception problem= null;
                 try {
-                    BuildFileCreator.setOptions(buildfilenameText.getText(),
-                            junitdirText.getText(), compatibilityCheckbox
-                                    .getSelection(), compilerCheckbox
-                                    .getSelection());
-                    projectNames.addAll(BuildFileCreator.createBuildFiles(
-                            projects, getShell(), pm));
+                    BuildFileCreator.setOptions(
+                    		buildfilenameText.getText(),
+                            junitdirText.getText(), 
+                            compatibilityCheckbox.getSelection(), 
+                            compilerCheckbox.getSelection());
+                    projectNames.addAll(BuildFileCreator.createBuildFiles(projects, getShell(), localmonitor.newChild(projects.size())));
                 } catch (JavaModelException e) {
                     problem= e;
                 } catch (TransformerConfigurationException e) {
@@ -326,7 +336,7 @@ public class AntBuildfileExportPage extends WizardPage {
         };
 
         try {
-            PlatformUI.getWorkbench().getProgressService().run(false, false, runnable);
+            getContainer().run(false, false, runnable);
         } catch (InvocationTargetException e) {
             AntUIPlugin.log(e);
             return false;
@@ -337,37 +347,6 @@ public class AntBuildfileExportPage extends WizardPage {
         if (getErrorMessage() != null) {
             return false;
         }
-        
-        // show success message
-        if (projectNames.size() > 0)
-        {
-            String message = MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_5 + ExportUtil.NEWLINE, new String[] {ExportUtil.NEWLINE + ExportUtil.toString(projectNames, ExportUtil.NEWLINE)});
-            MessageDialog.openInformation(getShell(), DataTransferMessages.AntBuildfileExportPage_0, message);
-            
-            // show warning if project has cycle
-            if (!compatibilityCheckbox.getSelection()) {
-                return true;
-            }
-            List cyclicProjects;
-            try {
-                cyclicProjects = getCyclicProjects(projects);
-            } catch (CoreException e) {
-                AntUIPlugin.log(e);
-                setErrorMessage(MessageFormat.format(
-                        DataTransferMessages.AntBuildfileExportPage_10,
-                        new String[] { e.toString() }));
-                return false;
-            }
-            if (cyclicProjects.size() > 0)
-            {
-                String warningMessage= MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_6 + ExportUtil.NEWLINE + ExportUtil.NEWLINE +
-                        DataTransferMessages.AntBuildfileExportPage_7 + " " + //$NON-NLS-1$
-                        DataTransferMessages.AntBuildfileExportPage_8,
-                        new String[] { ExportUtil.NEWLINE + ExportUtil.toString(cyclicProjects, ExportUtil.NEWLINE)});
-                MessageDialog.openWarning(getShell(), DataTransferMessages.AntBuildfileExportPage_9, warningMessage);
-            }
-        }
-
         return true;
     }
 
