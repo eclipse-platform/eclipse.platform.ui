@@ -166,6 +166,7 @@
       </command>
       <command
             categoryId="org.eclipse.compare.ui.category.compare"
+            defaultHandler="org.eclipse.compare.internal.CompareWithOtherResourceHandler"
             description="%Command.compareWithOther.description"
             id="org.eclipse.compare.compareWithOther"
             name="%Command.compareWithOther.name">
@@ -206,15 +207,6 @@
                menubarPath="compareWithMenu/compareWithGroup"
                enablesFor="2+"
                id="compareWithEachOther">
-         </action>
-         <action
-               class="org.eclipse.compare.internal.CompareWithOtherResourceAction"
-               definitionId="org.eclipse.compare.compareWithOther"
-               enablesFor="*"
-               id="compareWithOtherResource"
-               label="%CompareWithOtherResource.label"
-               menubarPath="compareWithMenu/compareWithGroup"
-               tooltip="%CompareWithOtherResourceAction.tooltip">
          </action>
       </objectContribution>
       <objectContribution
