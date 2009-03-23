@@ -141,7 +141,7 @@ public class ExportUtil {
     	if(resource == null) {
     		return null;
     	}
-    	URI location = resource.getLocationURI();
+    	IPath location = resource.getLocation();
     	if(location == null) {
     		return null;
     	}
