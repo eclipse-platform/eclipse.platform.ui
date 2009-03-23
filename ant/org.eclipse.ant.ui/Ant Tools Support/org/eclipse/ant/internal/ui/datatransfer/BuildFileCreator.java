@@ -6,9 +6,10 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bugs 95297, bug 97051, bug 128103, bug 201180
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95297, bug 97051, bug 128103, bug 201180
  *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210, bug 161845, bug 177833
  *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
+ *     Ryan Fong (rfong@trapezenetworks.com) - bug 201143
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.datatransfer;
@@ -91,7 +92,7 @@ public class BuildFileCreator
     private String projectRoot;
     private Map variable2valueMap;
     private Shell shell;
-    private Set visited = new TreeSet(); // record used subclasspaths
+    private Set visited = new TreeSet(); // record used sub classpaths
     private Node classpathNode;
     
     /**
@@ -155,62 +156,63 @@ public class BuildFileCreator
         Set confirmedFiles = ExportUtil.validateEdit(shell, files);
         SubMonitor localmonitor = SubMonitor.convert(pm, DataTransferMessages.AntBuildfileExportPage_0, confirmedFiles.size());
         try {
-	        int i = 0;
-	        for (Iterator iter = projects.iterator(); iter.hasNext(); i++)
-	        {
-	            IJavaProject currentProject = (IJavaProject) iter.next();
-	            IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
-	            if (! confirmedFiles.contains(file))
-	            {
-	                continue;
-	            }
-	            
-	            localmonitor.setTaskName(NLS.bind(DataTransferMessages.BuildFileCreator_generating_buildfile_for, currentProject.getProject().getName()));
-	            
-	            BuildFileCreator instance = new BuildFileCreator(currentProject, shell);
-	            instance.createRoot();
-	            instance.createImports();
-	            EclipseClasspath classpath = new EclipseClasspath(currentProject);
-	            if (CHECK_SOURCE_CYCLES) {
-	                SourceAnalyzer.checkCycles(currentProject, classpath, shell);
-	            }
-	            instance.createClasspaths(classpath);
-	            instance.createInit(classpath.srcDirs, classpath.classDirs);   
-	            instance.createClean(classpath.classDirs);
-	            instance.createCleanAll();
-	            instance.createBuild(classpath.srcDirs, classpath.classDirs,
-	                                 classpath.inclusionLists, classpath.exclusionLists);
-	            instance.createBuildRef();
-	            if (CREATE_ECLIPSE_COMPILE_TARGET) {
-	                instance.addInitEclipseCompiler();
-	                instance.addBuildEclipse();
-	            }
-	            instance.createRun();           
-	            instance.addSubProperties(currentProject, classpath);
-	            instance.createProperty();
-	
-	            // write build file
-	            String xml = ExportUtil.toString(instance.doc);
-	            InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8")); //$NON-NLS-1$
-	            if (file.exists())
-	            {
-	                file.setContents(is, true, true, null);
-	            }
-	            else
-	            {
-	                file.create(is, true, null);
-	            }
-	            if(localmonitor.isCanceled()) {
-	            	return;
-	            }
-	            localmonitor.worked(1);
-	            res.add(instance.projectName);
-	        }
+            int i = 0;
+            for (Iterator iter = projects.iterator(); iter.hasNext(); i++)
+            {
+                IJavaProject currentProject = (IJavaProject) iter.next();
+                IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
+                if (! confirmedFiles.contains(file))
+                {
+                    continue;
+                }
+                
+                localmonitor.setTaskName(NLS.bind(DataTransferMessages.BuildFileCreator_generating_buildfile_for, currentProject.getProject().getName()));
+                
+                BuildFileCreator instance = new BuildFileCreator(currentProject, shell);
+                instance.createRoot();
+                instance.createImports();
+                EclipseClasspath classpath = new EclipseClasspath(currentProject);
+                if (CHECK_SOURCE_CYCLES) {
+                    SourceAnalyzer.checkCycles(currentProject, classpath, shell);
+                }
+                instance.createClasspaths(classpath);
+                instance.createInit(classpath.srcDirs, classpath.classDirs,
+                    classpath.inclusionLists, classpath.exclusionLists);   
+                instance.createClean(classpath.classDirs);
+                instance.createCleanAll();
+                instance.createBuild(classpath.srcDirs, classpath.classDirs,
+                                     classpath.inclusionLists, classpath.exclusionLists);
+                instance.createBuildRef();
+                if (CREATE_ECLIPSE_COMPILE_TARGET) {
+                    instance.addInitEclipseCompiler();
+                    instance.addBuildEclipse();
+                }
+                instance.createRun();           
+                instance.addSubProperties(currentProject, classpath);
+                instance.createProperty();
+    
+                // write build file
+                String xml = ExportUtil.toString(instance.doc);
+                InputStream is = new ByteArrayInputStream(xml.getBytes("UTF-8")); //$NON-NLS-1$
+                if (file.exists())
+                {
+                    file.setContents(is, true, true, null);
+                }
+                else
+                {
+                    file.create(is, true, null);
+                }
+                if(localmonitor.isCanceled()) {
+                    return;
+                }
+                localmonitor.worked(1);
+                res.add(instance.projectName);
+            }
         }
         finally {
-        	if(!localmonitor.isCanceled()) {
-        		localmonitor.done();
-        	}
+            if(!localmonitor.isCanceled()) {
+                localmonitor.done();
+            }
         }
     }
 
@@ -299,7 +301,7 @@ public class BuildFileCreator
     }
     
     /**
-     * Find buildfiles in projectroot directory and automatically import them.
+     * Find buildfiles in project root directory and automatically import them.
      */
     public void createImports()
     {
@@ -372,7 +374,7 @@ public class BuildFileCreator
         String pathid = pathId;
         if (pathid == null)
         {
-        	pathid = currentProject.getProject().getName() + ".classpath"; //$NON-NLS-1$
+            pathid = currentProject.getProject().getName() + ".classpath"; //$NON-NLS-1$
         }
         element.setAttribute("id", pathid); //$NON-NLS-1$
         visited.add(pathid);
@@ -516,7 +518,7 @@ public class BuildFileCreator
     }
     
     /**
-     * Add properties of subprojects to internal properties map.
+     * Add properties of sub-projects to internal properties map.
      */
     public void addSubProperties(IJavaProject subproject, EclipseClasspath classpath) throws JavaModelException
     { 
@@ -538,7 +540,8 @@ public class BuildFileCreator
      * @param srcDirs            source directories to copy resources from
      * @param classDirs          classes directories to copy resources to
      */
-    public void createInit(List srcDirs, List classDirs)
+    public void createInit(List srcDirs, List classDirs,
+        List inclusionLists, List exclusionLists)
     {
         // <target name="init">
         //     <mkdir dir="classes"/>
@@ -558,11 +561,13 @@ public class BuildFileCreator
             }
         }
         root.appendChild(element);
-
-        createCopyResources(srcDirs, classDirs, element);
+        
+        createCopyResources(srcDirs, classDirs, element, inclusionLists,
+            exclusionLists);
     }
 
-    private void createCopyResources(List srcDirs, List classDirs, Element element)
+    private void createCopyResources(List srcDirs, List classDirs, Element element,
+        List inclusionLists, List exclusionLists)
     {
         // Check filter for copying resources
         String filter = project.getOption(JavaCore.CORE_JAVA_BUILD_RESOURCE_COPY_FILTER, true);
@@ -570,7 +575,7 @@ public class BuildFileCreator
         List filters = Collections.list(tokenizer);
         filters.add("*.java"); //$NON-NLS-1$
         
-        // prefix filters with wildcard
+        // prefix filters with wild card
         for (int i = 0; i < filters.size(); i++)
         {
             String item = ((String) filters.get(i)).trim();
@@ -596,7 +601,32 @@ public class BuildFileCreator
                 copyElement.setAttribute("includeemptydirs", "false"); //$NON-NLS-1$ //$NON-NLS-2$
                 Element filesetElement = doc.createElement("fileset"); //$NON-NLS-1$
                 filesetElement.setAttribute("dir", srcDir); //$NON-NLS-1$
-                filesetElement.setAttribute("excludes", ExportUtil.toString(filters, ", ")); //$NON-NLS-1$ //$NON-NLS-2$
+
+                List inclusions = (List) inclusionLists.get(i);
+                List exclusions = (List) exclusionLists.get(i);
+
+                for (Iterator iter = inclusions.iterator(); iter.hasNext();)
+                {
+                    String inclusion = (String) iter.next();
+                    Element includeElement = doc.createElement("include"); //$NON-NLS-1$
+                    includeElement.setAttribute("name", inclusion); //$NON-NLS-1$
+                    filesetElement.appendChild(includeElement);
+                }           
+                for (Iterator iter = filters.iterator(); iter.hasNext();)
+                {
+                    String exclusion = (String) iter.next();
+                    Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
+                    excludeElement.setAttribute("name", exclusion); //$NON-NLS-1$
+                    filesetElement.appendChild(excludeElement);
+                }
+                for (Iterator iter = exclusions.iterator(); iter.hasNext();)
+                {
+                    String exclusion = (String) iter.next();
+                    Element excludeElement = doc.createElement("exclude"); //$NON-NLS-1$
+                    excludeElement.setAttribute("name", exclusion); //$NON-NLS-1$
+                    filesetElement.appendChild(excludeElement);
+                }
+                
                 copyElement.appendChild(filesetElement);
                 element.appendChild(copyElement);
             }
@@ -645,7 +675,7 @@ public class BuildFileCreator
     }
     
     /**
-     * Create cleanall target.
+     * Create clean all target.
      */
     public void createCleanAll() throws JavaModelException
     {
@@ -670,10 +700,10 @@ public class BuildFileCreator
 
     /**
      * Create build target.
-     * @param srcDirs           source directories of mainproject
-     * @param classDirs         class directories of mainproject
-     * @param inclusionLists    inclusion filters of mainproject 
-     * @param exclusionLists    exclusion filters of mainproject
+     * @param srcDirs           source directories of main project
+     * @param classDirs         class directories of main project
+     * @param inclusionLists    inclusion filters of main project 
+     * @param exclusionLists    exclusion filters of main project
      */
     public void createBuild(List srcDirs, List classDirs, List inclusionLists, List exclusionLists) throws JavaModelException
     {
@@ -831,11 +861,11 @@ public class BuildFileCreator
         // use ECLIPSE_HOME classpath variable
         IPath value = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
         if (value != null) {
-        	variable2valueMap.put("ECLIPSE_HOME", ExportUtil.getRelativePath( //$NON-NLS-1$
+            variable2valueMap.put("ECLIPSE_HOME", ExportUtil.getRelativePath( //$NON-NLS-1$
                 value.toString(), projectRoot));
         }
         // <target name="init-eclipse-compiler" description="copy Eclipse compiler jars to ant lib directory">
-        //     <property name="ECLIPSE_HOME" value="C:/Programme/eclipse-3.1" />
+        //     <property name="ECLIPSE_HOME" value="C:/Program/eclipse-3.1" />
         //     <copy todir="${ant.library.dir}">
         //         <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
         //     </copy>
@@ -887,7 +917,7 @@ public class BuildFileCreator
     }
 
     /**
-     * Add all bootclasspaths in srcDirs to given javacElement.
+     * Add all boot classpaths in srcDirs to given javacElement.
      */
     private void addCompilerBootClasspath(List srcDirs, Element javacElement)
     {
@@ -1144,7 +1174,7 @@ public class BuildFileCreator
     }
     
     /**
-     * Add junitreport target. 
+     * Add JUnit report target. 
      */
     public void addJUnitReport()
     {
