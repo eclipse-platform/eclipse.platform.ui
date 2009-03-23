@@ -444,6 +444,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			} else if (fControl == null && getState() != CREATING_CONTROL) {
 				// Set the state in case this method gets called again
 				setState(CREATING_CONTROL);
+				if (getSite().getSelectionProvider() == null)
+					getSite().setSelectionProvider(new CompareEditorSelectionProvider());
 				fControl= ci.createContents(fPageBook);
 				fPageBook.showPage(fControl);
 				PlatformUI.getWorkbench().getHelpSystem().setHelp(fControl, ICompareContextIds.COMPARE_EDITOR);
