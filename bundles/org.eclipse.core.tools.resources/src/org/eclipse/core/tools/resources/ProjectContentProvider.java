@@ -204,7 +204,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 				if (requiredNatures.length > 0) {
 					TreeContentProviderNode requiredNaturesNode = createNode("Required natures", null); //$NON-NLS-1$
 					for (int j = 0; j < requiredNatures.length; j++)
-						requiredNaturesNode.addChild(createNode(requiredNatures[i], null));
+						requiredNaturesNode.addChild(createNode(requiredNatures[j], null));
 					natureNode.addChild(requiredNaturesNode);
 				}
 			}
