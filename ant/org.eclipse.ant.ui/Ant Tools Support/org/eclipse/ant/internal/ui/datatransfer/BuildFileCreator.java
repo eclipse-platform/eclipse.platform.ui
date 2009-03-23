@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
- *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95297, bug 97051, bug 128103, bug 201180
+ *     Richard Hoefter (richard.hoefter@web.de) - initial API and implementation, bug 95297, bug 97051, bug 128103, bug 201180, bug 161354
  *     IBM Corporation - nlsing and incorporating into Eclipse, bug 108276, bug 124210, bug 161845, bug 177833
  *     Nikolay Metchev (N.Metchev@teamphone.com) - bug 108276
  *     Ryan Fong (rfong@trapezenetworks.com) - bug 201143
@@ -201,7 +201,7 @@ public class BuildFileCreator
                 else
                 {
                     file.create(is, true, null);
-                }
+                }    
                 if(localmonitor.isCanceled()) {
                     return;
                 }
@@ -680,7 +680,7 @@ public class BuildFileCreator
     public void createCleanAll() throws JavaModelException
     {
         // <target name="cleanall" depends="clean">
-        //     <ant antfile="${hello.location}/build.xml" inheritAll="false" target="clean"/>
+        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" inheritAll="false" target="clean"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", "cleanall"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -691,6 +691,7 @@ public class BuildFileCreator
             IJavaProject subProject = (IJavaProject) iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", "${" + subProject.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("dir", "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "clean");  //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
             element.appendChild(antElement);
@@ -714,7 +715,7 @@ public class BuildFileCreator
         root.appendChild(element);
         
         // <target name="build-subprojects">
-        //     <ant antfile="${hello.location}/build.xml" inheritAll="false" target="build-project"/>
+        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" inheritAll="false" target="build-project"/>
         // </target>
         element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", "build-subprojects"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -724,6 +725,7 @@ public class BuildFileCreator
             IJavaProject subProject = (IJavaProject) iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", "${" + subProject.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("dir", "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "build-project");  //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
             if (CREATE_ECLIPSE_COMPILE_TARGET) {
@@ -815,8 +817,8 @@ public class BuildFileCreator
         }
         
         // <target name="build-refprojects">
-        //     <ant antfile="${hello.location}/build.xml" target="clean" inheritAll="false"/> 
-        //     <ant antfile="${hello.location}/build.xml" target="build" inheritAll="false"/> 
+        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" target="clean" inheritAll="false"/> 
+        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" target="build" inheritAll="false"/> 
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", "build-refprojects"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -832,12 +834,14 @@ public class BuildFileCreator
 
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", "${" + p.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("dir", "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false"); //$NON-NLS-1$ //$NON-NLS-2$
             element.appendChild(antElement);
             
             antElement = doc.createElement("ant"); //$NON-NLS-1$
             antElement.setAttribute("antfile", "${" + p.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("dir", "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "build"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
             if (CREATE_ECLIPSE_COMPILE_TARGET) {
