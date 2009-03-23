@@ -50,8 +50,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.PlatformUI;
@@ -150,9 +150,9 @@ public class AboutPluginsPage extends ProductInfoPage {
 			 */
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				while (true) {
-					Shell dialogShell = getShell();
-					// the shell has gone down since we were asked to render
-					if (dialogShell == null || dialogShell.isDisposed())
+					Control page = getControl();
+					// the page has gone down since we were asked to render
+					if (page == null || page.isDisposed())
 						return Status.OK_STATUS;
 					AboutBundleData[] data = null;
 					synchronized (updateQueue) {
