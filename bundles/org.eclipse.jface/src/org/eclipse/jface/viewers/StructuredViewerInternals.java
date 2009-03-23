@@ -27,9 +27,8 @@ public class StructuredViewerInternals {
 	 * Nothing to see here.
 	 * 
 	 * @since 3.5
-	 * @noinstantiate This class is not intended to be instantiated by clients.
 	 * @noextend This interface is not intended to be extended by clients.
-	 * 
+	 * @noimplement This interface is not intended to be implemented by clients.
 	 */
 	protected static interface AssociateListener {
 
