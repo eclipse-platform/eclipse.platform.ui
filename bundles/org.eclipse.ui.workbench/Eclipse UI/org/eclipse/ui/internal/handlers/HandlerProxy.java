@@ -466,6 +466,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	public void handleStateChange(State state, Object oldValue) {
 		if (state.getId().equals(RegistryToggleState.STATE_ID)) {
 			checkedState = state;
+			refreshElements();
 		} else if (state.getId().equals(RadioState.STATE_ID)) {
 			radioState = state;
 			refreshElements();

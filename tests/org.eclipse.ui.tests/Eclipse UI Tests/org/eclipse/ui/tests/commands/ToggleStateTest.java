@@ -13,10 +13,16 @@ package org.eclipse.ui.tests.commands;
 
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.Parameterization;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.State;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.IElementReference;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.handlers.RegistryToggleState;
+import org.eclipse.ui.menus.UIElement;
+import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -71,6 +77,57 @@ public class ToggleStateTest extends UITestCase {
 		}
 	}
 
+	static class MyUIElement extends UIElement{
+
+		private boolean checked;
+		protected MyUIElement(IServiceLocator serviceLocator){
+			super(serviceLocator);
+		}
+
+		public void setDisabledIcon(ImageDescriptor desc) {}
+		public void setHoverIcon(ImageDescriptor desc) {}
+		public void setIcon(ImageDescriptor desc) {}
+		public void setText(String text) {}
+		public void setTooltip(String text) {}
+
+		public void setChecked(boolean checked) {
+			this.checked = checked;
+		}
+		
+		public boolean isChecked() {
+			return checked;
+		}
+
+	}
+	
+	public void testMultipleContributions() throws Exception{
+		
+		Command command1 = commandService.getCommand("org.eclipse.ui.tests.toggleStateCommand1");
+		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command1, new Parameterization[0]);
+		
+		MyUIElement element1 = new MyUIElement(fWorkbench);
+		MyUIElement element2 = new MyUIElement(fWorkbench);
+		
+		IElementReference reference1 = commandService.registerElementForCommand(parameterizedCommand, element1);
+		IElementReference reference2 = commandService.registerElementForCommand(parameterizedCommand, element2);
+		
+		try{
+		
+			commandService.refreshElements(command1.getId(), null);
+			assertEquals(element1.isChecked(), element2.isChecked());
+			
+			Boolean oldValue = (Boolean) handlerService.executeCommand(command1.getId(), null);
+			//value should have changed
+			assertEquals(!oldValue.booleanValue(), element1.isChecked());
+			//and changed in both places
+			assertEquals(element1.isChecked(), element2.isChecked());
+			
+		}finally {
+			commandService.unregisterElement(reference1);
+			commandService.unregisterElement(reference2);
+		}
+		
+	}
 
 	private void assertState(Command command1, boolean expectedValue) {
 		State state = command1.getState(RegistryToggleState.STATE_ID);
