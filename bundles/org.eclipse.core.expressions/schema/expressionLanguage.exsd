@@ -162,7 +162,7 @@
          <attribute name="args" type="string">
             <annotation>
                <documentation>
-                  additional arguments passed to the property tester. Multiple arguments are seperated
+                  additional arguments passed to the property tester. Multiple arguments are separated
                   by commas. Each individual argument is converted into a Java base type using the same
                   rules as defined for the value attribute of the test expression.
                </documentation>
@@ -296,7 +296,7 @@ rules:
          <documentation>
             This element changes the object to be inspected for all its child element to the object
             referenced by the given variable. If the variable can not be resolved then the expression
-            will throw a ExpressionException when evaluating it. The children of a with expression 
+            will throw an ExpressionException when evaluating it. The children of a with expression 
             are combined using the and operator.
          </documentation>
       </annotation>
@@ -335,7 +335,7 @@ rules:
          <documentation>
             This element changes the object to be inspected for all its child element to the object
             referenced by the given variable. If the variable can not be resolved then the expression
-            will throw a ExpressionException when evaluating it. The children of a with expression 
+            will throw an ExpressionException when evaluating it. The children of a resolve expression 
             are combined using the and operator.
          </documentation>
       </annotation>
@@ -368,7 +368,7 @@ rules:
          <attribute name="args" type="string">
             <annotation>
                <documentation>
-                  additional arguments passed to the variable resolver. Multiple arguments are seperated
+                  additional arguments passed to the variable resolver. Multiple arguments are separated
                   by commas. Each individual argument is converted into a Java base type using the same
                   rules as defined for the value attribute of the test expression.
                </documentation>
@@ -385,7 +385,7 @@ rules:
          <documentation>
             This element is used to adapt the object in focus to the type specified by the attribute
             type. The expression returns not loaded if either the adapter or the type referenced isn&apos;t
-            loaded yet. It throws a ExpressionException during evaluation if the type name doesn&apos;t exist 
+            loaded yet. It throws an ExpressionException during evaluation if the type name doesn&apos;t exist 
             at all. The children of an adapt expression are combined using the and operator.
          </documentation>
       </annotation>
