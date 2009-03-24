@@ -72,6 +72,20 @@ class MarkerComparator implements Comparator {
 			return 0;
 		return category.compare((MarkerItem) object1, (MarkerItem) object2);
 	}
+	
+	/**
+	 * Comparator to compare the two MarkerEntry(s) to see if they have the same
+	 * category value
+	 * 
+	 * @return Comparator
+	 */
+	Comparator getCategoryComparator(){
+		return new Comparator(){
+			public int compare(Object o1, Object o2) {
+				return compareCategory(o1, o2);
+			}			
+		};
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -80,28 +94,45 @@ class MarkerComparator implements Comparator {
 	 */
 	public int compare(Object arg0, Object arg1) {
 
-		MarkerItem item0 = (MarkerItem) arg0;
-		MarkerItem item1 = (MarkerItem) arg1;
-
 		// Sort by category first
-		if (category != null) {
-			int value = category.compare(item0, item1);
-			if (value != 0)
-				return value;
-		}
+		int value = compareCategory(arg0, arg1);
+		if (value == 0)
+			value=compareFields(arg0, arg1);
 
+		return value ;
+	}
+
+	/**
+	 * Compare the two objects by various fields
+	 * 
+	 * @param item0
+	 * @param item1
+	 * @return int
+	 */
+	public int compareFields(Object item0, Object item1) {
+		int value=0;
 		for (int i = 0; i < fields.length; i++) {
-
-			int value;
-			if (descendingFields.contains(fields[i]))
-				value = fields[i].compare(item1, item0);
-			else
-				value = fields[i].compare(item0, item1);
-			if (value == 0)
-				continue;
-			return value;
+			if (descendingFields.contains(fields[i])){
+				value = fields[i].compare((MarkerItem)item1,(MarkerItem)item0);
+			}else{
+				value = fields[i].compare((MarkerItem)item0,(MarkerItem)item1);
+			}if (value != 0){
+				break;
+			}
 		}
-		return 0;
+		return value;
+	}
+	/**
+	 * Comparator to compare the two MarkerEntry(s) by various fields
+	 * 
+	 * @return Comparator
+	 */
+	Comparator getFieldsComparator(){
+		return new Comparator(){
+			public int compare(Object o1, Object o2) {
+				return compareFields(o1, o2);
+			}			
+		};
 	}
 
 	/**

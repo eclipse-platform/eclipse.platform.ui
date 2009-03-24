@@ -17,9 +17,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -239,68 +241,6 @@ public class CachedMarkerBuilder {
 		} finally {
 			building = false;
 		}
-
-	}
-
-	/**
-	 * Break the marker up into categories
-	 * 
-	 * @param markers
-	 * @param start
-	 *            the start index in the markers
-	 * @param end
-	 *            the last index to check
-	 * @param sortIndex -
-	 *            the parent of the field
-	 * @return MarkerCategory[] or <code>null</code> if we are at the bottom
-	 *         of the tree
-	 */
-	MarkerCategory[] buildHierarchy(MarkerMap markers, int start, int end,
-			int sortIndex) {
-		MarkerComparator sorter = getComparator();
-
-		if (sortIndex > 0) {
-			return null;// Are we out of categories?
-		}
-
-		Collection categories = new ArrayList();
-
-		Object previous = null;
-		int categoryStart = start;
-
-		Object[] elements = markers.toArray();
-
-		for (int i = start; i <= end; i++) {
-
-			if (previous != null) {
-				// Are we at a category boundary?
-				if (sorter.compareCategory(previous, elements[i]) != 0) {
-					categories
-							.add(new MarkerCategory(
-									this,
-									categoryStart,
-									i - 1,
-									getCategoryGroup()
-											.getMarkerField()
-											.getValue(
-													markers
-															.elementAt(categoryStart))));
-					categoryStart = i;
-				}
-			}
-			previous = elements[i];
-
-		}
-
-		if (end >= categoryStart) {
-			categories.add(new MarkerCategory(this, categoryStart, end,
-					getCategoryGroup().getMarkerField().getValue(
-							markers.elementAt(categoryStart))));
-		}
-
-		MarkerCategory[] nodes = new MarkerCategory[categories.size()];
-		categories.toArray(nodes);
-		return nodes;
 
 	}
 
@@ -1162,36 +1102,87 @@ public class CachedMarkerBuilder {
 	 */
 	void sortAndMakeCategories(IProgressMonitor monitor, MarkerMap newMarkers) {
 
-		// Allow the keys to get regenerated
-		Arrays.sort(newMarkers.toArray(), getComparator());
-
-		monitor.worked(50);
-
 		if (newMarkers.getSize() == 0) {
 			categories = EMPTY_CATEGORY_ARRAY;
 			currentMap = newMarkers;
 			monitor.done();
 			return;
 		}
+		// Sort by Category first
+		if (isShowingHierarchy()) {
+			MarkerCategory[] markerCategories = groupIntoCategories(monitor,
+					newMarkers);
+			
+			categories=markerCategories;
+		}
+
+		
+		monitor.worked(50);
 
 		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
 
 		if (monitor.isCanceled())
 			return;
 
+		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
+		MarkerEntry[] entries=newMarkers.toArray();
+		Comparator comparator=getComparator().getFieldsComparator();
+		
 		if (isShowingHierarchy()) {
-			MarkerCategory[] newCategories = buildHierarchy(newMarkers, 0,
-					newMarkers.getSize() - 1, 0);
-			if (monitor.isCanceled())
-				return;
-			categories = newCategories;
+			for (int i = 0; i < categories.length; i++) {
+				// sort various categories
+				MarkerCategory category = categories[i];
+				int effLimit = limit;
+				int avaliable = category.end - category.start + 1;
+				if (avaliable < effLimit || limit == -1) {
+					effLimit = avaliable;
+				}
+				MarkerSortUtil.sortStatingKElement(entries, comparator,
+						category.start, category.end, effLimit);
+			}
+		} else {
+			int effLimit = limit;
+			if (entries.length - 1 < effLimit || limit == -1) {
+				// sort all as we'll display all
+				effLimit = entries.length - 1;
+			}
+			MarkerSortUtil.sortStatingKElement(entries, getComparator(),
+					effLimit);
 		}
 
 		monitor.worked(50);
-
+		newMarkers.clearAttributeCaches();
 		currentMap = newMarkers;
-		currentMap.clearAttributeCaches();
 	}
+
+	/**
+	 * SortMarkers according to groups, and Group them into categories
+	 * 
+	 * @param monitor
+	 * @param newMarkers
+	 * @return MarkerCategory
+	 */
+  MarkerCategory[] groupIntoCategories(IProgressMonitor monitor,
+			MarkerMap newMarkers) {
+		Map boundaryInfoMap = MarkerSortUtil.groupMarkerEnteries(newMarkers
+				.toArray(), getCategoryGroup(), newMarkers.getSize() - 1);
+		Iterator iterator = boundaryInfoMap.keySet().iterator();
+		int start = 0;
+		MarkerCategory[] markerCategories = new MarkerCategory[boundaryInfoMap
+				.size()];
+		int i = 0;
+		int end = 0;
+		while (iterator.hasNext()) {
+			Object key = iterator.next();
+			end = ((Integer) boundaryInfoMap.get(key)).intValue();
+			markerCategories[i++] = new MarkerCategory(this, start, end,
+					getCategoryGroup().getMarkerField().getValue(
+							newMarkers.elementAt(start)));
+			start = end + 1;
+		}
+		return markerCategories;
+	}
+
 
 	/**
 	 * Add group to the enabled filters.

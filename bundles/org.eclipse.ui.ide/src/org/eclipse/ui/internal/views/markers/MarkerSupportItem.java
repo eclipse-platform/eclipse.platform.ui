@@ -99,4 +99,9 @@ abstract class MarkerSupportItem extends MarkerItem {
 	 */
 	abstract boolean isConcrete();
 	
+	/**
+	 * Clear the cached values for performance reasons.
+	 */
+	abstract void clearCache();
+	
 }

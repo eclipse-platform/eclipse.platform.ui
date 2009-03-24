@@ -74,9 +74,9 @@ class MarkerMap {
 
 			for (int idx = 0; idx < markers.length; idx++) {
 				MarkerEntry marker = markers[idx];
-				int severity = marker.getAttributeValue(IMarker.SEVERITY, -1);
+				int severity = marker.getMarker().getAttribute(IMarker.SEVERITY, -1);
 				if (severity >= IMarker.SEVERITY_INFO) {
-					ints[marker.getAttributeValue(IMarker.SEVERITY, -1)]++;
+					ints[severity]++;
 				}else{
 					ints[3]++;
 				}
@@ -135,7 +135,7 @@ class MarkerMap {
 	 */
 	void clearAttributeCaches() {
 		for (int i = 0; i < markers.length; i++) {
-			markers[i].clearCaches();
+			markers[i].clearCache();
 		}
 		
 	}

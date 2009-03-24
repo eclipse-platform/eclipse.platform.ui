@@ -17,6 +17,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.viewers.ColumnViewer;
@@ -43,7 +44,8 @@ public abstract class MarkerField {
 
 	private IConfigurationElement configurationElement;
 	private ResourceManager imageManager;
-
+	private ImageRegistry imageRegistry;
+	
 	/**
 	 * Annotate the image with indicators for whether or not help or quick fix
 	 * are available.
@@ -65,19 +67,22 @@ public abstract class MarkerField {
 				if (contextId != null) {
 					if (image == null)
 						image = JFaceResources.getImage(Dialog.DLG_IMG_HELP);
-					else
-						descriptors[IDecoration.TOP_RIGHT] = IDEWorkbenchPlugin
-								.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_HELP_DECORATION_PATH);
+					else{
+						descriptors[IDecoration.TOP_RIGHT] =
+							getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_HELP_DECORATION_PATH);
+					}
 				}
 				if (IDE.getMarkerHelpRegistry().hasResolutions(marker)) {
-					if (image == null)
+					if (image == null){
 						image = getImageManager()
-								.createImage(
-										IDEInternalWorkbenchImages
-												.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED));
-					else
-						descriptors[IDecoration.BOTTOM_RIGHT] = IDEWorkbenchPlugin
-								.getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);
+						.createImage(
+								IDEInternalWorkbenchImages
+										.getImageDescriptor(IDEInternalWorkbenchImages.IMG_ELCL_QUICK_FIX_ENABLED));
+			
+					}else{
+						descriptors[IDecoration.BOTTOM_RIGHT] =
+							getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);;
+					}
 				}
 
 				if (descriptors[IDecoration.TOP_RIGHT] != null
@@ -90,6 +95,23 @@ public abstract class MarkerField {
 
 	}
 
+	/**
+	 * Get the workbench image with the given path relative to
+	 * ICON_PATH from the plugins image registry .
+	 * @param relativePath
+	 * @return ImageDescriptor
+	 */
+	ImageDescriptor getIDEImageDescriptor(String relativePath){
+		if(imageRegistry==null){
+			imageRegistry=IDEWorkbenchPlugin.getDefault().getImageRegistry();
+		}
+		ImageDescriptor descriptor=imageRegistry.getDescriptor(relativePath);
+		if(descriptor==null){
+			descriptor=IDEWorkbenchPlugin.getIDEImageDescriptor(relativePath);
+			imageRegistry.put(relativePath, descriptor);
+		}
+		return descriptor;
+	}
 	/**
 	 * Compare item1 and item2 for sorting purposes.
 	 * 

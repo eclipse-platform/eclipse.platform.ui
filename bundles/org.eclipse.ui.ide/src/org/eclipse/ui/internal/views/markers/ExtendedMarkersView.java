@@ -41,8 +41,10 @@ import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
@@ -479,6 +481,20 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.getTree().setLinesVisible(true);
 		viewer.setUseHashlookup(true);
 
+		//clear the caches for performance reasons.
+		viewer.addTreeListener(new ITreeViewerListener(){
+			public void treeCollapsed(TreeExpansionEvent event) {
+				
+			}
+			public void treeExpanded(TreeExpansionEvent event) {
+				/*
+				 * This is a good opportunity to clear caches 
+				 * that might have been created in updating UI.
+				 */
+				MarkerSupportItem item=(MarkerSupportItem) event.getElement();
+				item.clearCache();
+		}});
+		
 		createColumns(new TreeColumn[0]);
 
 		viewer.setContentProvider(getContentProvider());
@@ -1305,37 +1321,53 @@ public class ExtendedMarkersView extends ViewPart {
 						getCategoriesToExpand().add(
 								categories[0].getDescription());
 				}
+				// See Bug#252309 and Bug#222973
+				Tree tree = getViewer().getTree();
+				try {
+					tree.setRedraw(false);
+					getViewer().refresh(true);
+					updateTitle();
 
-				getViewer().refresh(true);
-				updateTitle();
+					if (preservedSelection.size() > 0) {
 
-				if (preservedSelection.size() > 0) {
+						Collection newSelection = new ArrayList();
+						MarkerItem[] markerEntries = builder.getMarkerEntries();
 
-					Collection newSelection = new ArrayList();
-					MarkerItem[] markerEntries = builder.getMarkerEntries();
-
-					for (int i = 0; i < markerEntries.length; i++) {
-						Iterator preserved = preservedSelection.iterator();
-						while (preserved.hasNext()) {
-							MarkerSelectionEntry next = (MarkerSelectionEntry) preserved
-									.next();
-							if (next.isEquivalentTo(markerEntries[i])) {
-								newSelection.add(markerEntries[i]);
-								continue;
+						for (int i = 0; i < markerEntries.length; i++) {
+							Iterator preserved = preservedSelection.iterator();
+							while (preserved.hasNext()) {
+								MarkerSelectionEntry next = (MarkerSelectionEntry) preserved
+										.next();
+								if (next.isEquivalentTo(markerEntries[i])) {
+									newSelection.add(markerEntries[i]);
+									continue;
+								}
 							}
 						}
+
+						getViewer()
+								.setSelection(
+										new StructuredSelection(newSelection
+												.toArray()), true);
+						preservedSelection.clear();
 					}
+					if (getViewer().getTree().getItemCount() > 0)
+						getViewer().getTree().setTopItem(
+								getViewer().getTree().getItem(0));
 
-					getViewer().setSelection(
-							new StructuredSelection(newSelection.toArray()),
-							true);
-					preservedSelection.clear();
+					reexpandCategories(builder);
+				} finally {
+					tree.setRedraw(true);
 				}
-				if (getViewer().getTree().getItemCount() > 0)
-					getViewer().getTree().setTopItem(
-							getViewer().getTree().getItem(0));
-
-				reexpandCategories(builder);
+				/*
+				 * For performance reasons clear caches that might have been
+				 * created in updating UI.
+				 */
+				MarkerEntry[] entries=builder.getMarkerEntries();
+				for (int i = 0; i < entries.length; i++) {
+					entries[i].clearCache();
+				}
+				
 				return Status.OK_STATUS;
 			}
 
@@ -1707,6 +1739,14 @@ public class ExtendedMarkersView extends ViewPart {
 		updateDirectionIndicator(column, field);
 		viewer.refresh();
 		reexpandCategories(builder);
+		/*
+		 * For performance reasons clear caches that might have been created in
+		 * updating UI.
+		 */
+		MarkerEntry[] entries=builder.getMarkerEntries();
+		for (int i = 0; i < entries.length; i++) {
+			entries[i].clearCache();
+		}
 	}
 
 	/**

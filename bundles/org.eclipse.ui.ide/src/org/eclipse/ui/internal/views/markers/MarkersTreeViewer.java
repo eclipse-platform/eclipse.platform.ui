@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.views.markers;
 
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
@@ -80,6 +81,22 @@ public class MarkersTreeViewer extends TreeViewer {
 	public void removeAndClearAll() {
 		removeAll(getControl());
 		unmapAllElements();		
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.AbstractTreeViewer#doUpdateItem(org.eclipse
+	 * .swt.widgets.Item, java.lang.Object)
+	 */
+	protected void doUpdateItem(Item item, Object element) {
+		super.doUpdateItem(item, element);
+		/*
+		 * For performance reasons clear cache of the item used in updating UI.
+		 */
+		MarkerSupportItem cellItem=(MarkerSupportItem) element;
+		if(cellItem.isConcrete())cellItem.clearCache();
 	}
 
 }

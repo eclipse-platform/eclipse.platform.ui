@@ -38,11 +38,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 	// The key for the string we built for display
 	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
-	Map attributeCache = new HashMap(0);
 	private MarkerCategory category;
-	Map collationKeys = null;
-	private String folder;
 	IMarker marker;
+	Map cache = null;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -101,17 +99,20 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	private Object getAttributeValue(String attribute) {
 		Object value;
-		if (attributeCache.containsKey(attribute)) {
-			value = attributeCache.get(attribute);
-		} else {
+		if (getCache().containsKey(attribute)) {
+				value = getCache().get(attribute);
+		}else {
 			try {
 				value = marker.getAttribute(attribute);
 			} catch (CoreException e) {
 				value = null;
 			}
 			// Even cache nulls so that we use the passed defaultValue.
-			attributeCache.put(attribute, value);
+			getCache().put(attribute, value);
+
 		}
+		if (value instanceof CollationKey)
+			return ((CollationKey) value).getSourceString();
 		return value;
 	}
 
@@ -158,16 +159,24 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @return CollationKey
 	 */
 	CollationKey getCollationKey(String attribute, String defaultValue) {
-		if (collationKeys != null && collationKeys.containsKey(attribute))
-			return (CollationKey) collationKeys.get(attribute);
-		String attributeValue = getAttributeValue(attribute, defaultValue);
+		String attributeValue;
+		if (getCache().containsKey(attribute)) {
+			Object value = getCache().get(attribute);
+			// Only return a collation key otherwise 
+			//use the value to generate it
+			if (value instanceof CollationKey)
+				return (CollationKey) value;
+
+			attributeValue = value.toString();
+		} else {
+			attributeValue = getAttributeValue(attribute, defaultValue);
+		}
+
 		if (attributeValue.length() == 0)
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		CollationKey key = Collator.getInstance().getCollationKey(
 				attributeValue);
-		if (collationKeys == null)
-			collationKeys = new HashMap(2);
-		collationKeys.put(attribute, key);
+		getCache().put(attribute, key);
 		return key;
 	}
 
@@ -210,15 +219,19 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getLocation()
 	 */
 	public String getLocation() {
-		if (attributeCache.containsKey(LOCATION_STRING))
-			return (String) attributeCache.get(LOCATION_STRING);
+		if (getCache().containsKey(LOCATION_STRING)) {
+			Object value = getCache().get(LOCATION_STRING);
+			if (value instanceof CollationKey)
+				return ((CollationKey) value).getSourceString();
+			return (String) value;
+		}
+
 
 		// Is the location override set?
 		String locationString = getAttributeValue(IMarker.LOCATION,
 				MarkerSupportInternalUtilities.EMPTY_STRING);
 		if (locationString.length() > 0) {
-
-			attributeCache.put(LOCATION_STRING, locationString);
+			getCache().put(LOCATION_STRING, locationString);
 			return locationString;
 		}
 
@@ -231,7 +244,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 			lineNumberString = NLS.bind(MarkerMessages.label_lineNumber,
 					Integer.toString(lineNumber));
 
-		attributeCache.put(LOCATION_STRING, lineNumberString);
+		getCache().put(LOCATION_STRING, lineNumberString);
 		return lineNumberString;
 
 	}
@@ -276,49 +289,22 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getPath()
 	 */
 	public String getPath() {
-		if (folder == null) {
-			if (!marker.exists()) {
-				return super.getPath();
-			}
-
-			// If the path attribute is set use it.
-			try {
-				Object pathAttribute = marker
-						.getAttribute(MarkerViewUtil.PATH_ATTRIBUTE);
-
-				if (pathAttribute != null) {
-					folder = pathAttribute.toString();
-					return folder;
-				}
-			} catch (CoreException exception) {
-				// Log the exception and fall back.
-				Policy.handle(exception);
-			}
-
-			IPath path = marker.getResource().getFullPath();
-			int n = path.segmentCount() - 1; // n is the number of segments
-			// in container, not path
-			if (n <= 0) {
-				return super.getPath();
-			}
-			int len = 0;
-			for (int i = 0; i < n; ++i) {
-				len += path.segment(i).length();
-			}
-			// account for /'s
-			if (n > 1) {
-				len += n - 1;
-			}
-			StringBuffer sb = new StringBuffer(len);
-			for (int i = 0; i < n; ++i) {
-				if (i != 0) {
-					sb.append('/');
-				}
-				sb.append(path.segment(i));
-			}
-			folder = sb.toString();
-
+		String folder = getAttributeValue(MarkerViewUtil.PATH_ATTRIBUTE, null);
+		if (folder != null) {
+			return folder;
 		}
+		if (!marker.exists()) {
+			return super.getPath();
+		}
+		IPath path = marker.getResource().getFullPath();
+		int n = path.segmentCount() - 1; // n is the number of segments
+		// in container, not path
+		if (n <= 0) {
+			return super.getPath();
+		}
+		folder = path.removeLastSegments(1).removeTrailingSeparator()
+				.toString();
+		getCache().put(MarkerViewUtil.PATH_ATTRIBUTE, folder);
 		return folder;
 	}
 
@@ -349,14 +335,25 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	void setMarker(IMarker marker) {
 		this.marker = marker;
-		attributeCache.clear();
+		clearCache();
+	}
+
+	/**
+	 * Get the cache for the receiver. Create if neccessary.
+	 * 
+	 * @return {@link HashMap}
+	 */
+	private Map getCache() {
+		if (cache == null)
+			cache = new HashMap(2);
+		return cache;
 	}
 
 	/**
 	 * Clear the cached values for performance reasons.
 	 */
-	void clearCaches() {
-		collationKeys = null;
-		attributeCache.clear();
+	void clearCache() {
+		cache = null;		
 	}
+	
 }

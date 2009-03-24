@@ -153,5 +153,13 @@ class MarkerCategory extends MarkerSupportItem {
 	boolean isConcrete() {
 		return false;
 	}
-
+	/**
+	 * Clear the cached values for performance reasons.
+	 */
+	void clearCache() {
+		MarkerSupportItem[] entries=getChildren();
+		for (int i = 0; i < entries.length; i++) {
+			entries[i].clearCache();
+		}
+	}
 }

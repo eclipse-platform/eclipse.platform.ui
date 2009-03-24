@@ -13,6 +13,7 @@ package org.eclipse.ui.views.markers.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -654,5 +655,18 @@ public class MarkerGroup {
 		if (entries.size() == 0)
 			typesToMappings.remove(type);
 
+	}
+	/**
+	 * Returns the comparator that can be used for 
+	 * sorting the MarkerGroupingEntry(s) in the group.
+	 * @return Comparator
+	 */
+	public Comparator getEntriesComparator(){
+		return new Comparator() {
+			public int compare(Object o1, Object o2) {
+				return -(((MarkerGroupingEntry) o1).getPriority()
+						- ((MarkerGroupingEntry) o2).getPriority());
+			}
+		};
 	}
 }
