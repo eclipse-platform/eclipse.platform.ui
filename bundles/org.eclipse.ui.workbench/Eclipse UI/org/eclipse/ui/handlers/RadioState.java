@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.handlers;
 
+import java.util.Hashtable;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.commands.PersistentState;
@@ -56,8 +58,24 @@ public final class RadioState extends PersistentState implements
 
 	public void setInitializationData(IConfigurationElement config,
 			String propertyName, Object data) {
-		if (data instanceof String)
+
+		boolean shouldPersist = true; // persist by default
+		if (data instanceof String) {
 			setValue(data);
+		} else if (data instanceof Hashtable) {
+			final Hashtable parameters = (Hashtable) data;
+			final Object defaultObject = parameters.get("default"); //$NON-NLS-1$
+			if (defaultObject instanceof String) {
+				setValue(defaultObject);
+			}
+
+			final Object persistedObject = parameters.get("persisted"); //$NON-NLS-1$
+			if (persistedObject instanceof String
+					&& "false".equalsIgnoreCase(((String) persistedObject))) //$NON-NLS-1$
+				shouldPersist = false;
+		}
+		setShouldPersist(shouldPersist);
+
 	}
 
 	/*
@@ -68,6 +86,8 @@ public final class RadioState extends PersistentState implements
 	 * .IPreferenceStore, java.lang.String)
 	 */
 	public void load(IPreferenceStore store, String preferenceKey) {
+		if (!shouldPersist())
+			return;
 		final String value = store.getString(preferenceKey);
 		if (value.length() != 0)
 			setValue(value);
@@ -81,6 +101,8 @@ public final class RadioState extends PersistentState implements
 	 * .IPreferenceStore, java.lang.String)
 	 */
 	public void save(IPreferenceStore store, String preferenceKey) {
+		if (!shouldPersist())
+			return;
 		final Object value = getValue();
 		if (value instanceof String) {
 			store.setValue(preferenceKey, (String) value);

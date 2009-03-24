@@ -73,9 +73,9 @@ public final class RegistryToggleState extends ToggleState implements
 	private final void readPersisted(final String persistedString) {
 		if ("false".equalsIgnoreCase(persistedString)) { //$NON-NLS-1$
 			setShouldPersist(false);
+		}else {
+			setShouldPersist(true);
 		}
-
-		setShouldPersist(true);
 	}
 
 	public final void setInitializationData(
