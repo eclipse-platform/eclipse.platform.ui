@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.ide.handlers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.widgets.Shell;
@@ -37,7 +36,7 @@ import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -125,10 +124,9 @@ public final class OpenResourceHandler extends Action implements IHandler,
 			}
 
 			try {
-				for (Iterator it = files.iterator(); it.hasNext();) {
-					IDE.openEditor(page, (IFile) it.next(), true);
-				}
-			} catch (final PartInitException e) {
+				IFile[] fileArray= (IFile[])files.toArray(new IFile[files.size()]);
+				IDE.openEditors(page, fileArray);
+			} catch (final MultiPartInitException e) {
 				throw new ExecutionException("error opening file in editor", e); //$NON-NLS-1$
 			}
 		}
