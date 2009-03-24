@@ -77,6 +77,8 @@ public class CocoaUIEnhancer implements IStartup {
 	static long sel_preferencesMenuItemSelected_;
 	static long sel_aboutMenuItemSelected_;
 
+	private static final long NSWindowToolbarButton = 3;
+	
 	Callback proc3Args;
 	static final byte[] SWT_OBJECT = "SWT_OBJECT".getBytes(); //$NON-NLS-1$
 
@@ -334,7 +336,7 @@ public class CocoaUIEnhancer implements IStartup {
 			
 			// Override the target and action of the toolbar button so we can control it.
 			try {
-				Object fieldValue = wrapPointer(OS.NSWindowToolbarButton);
+				Object fieldValue = wrapPointer(NSWindowToolbarButton);
 				NSButton toolbarButton = (NSButton) invokeMethod(NSWindow.class, nsWindow, "standardWindowButton", new Object[] {fieldValue});
 
 				toolbarButton.setTarget(delegate);
