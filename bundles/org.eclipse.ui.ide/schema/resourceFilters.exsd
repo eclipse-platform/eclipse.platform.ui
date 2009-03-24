@@ -8,6 +8,8 @@
       <documentation>
          This extension point is used to add predefined filters to views which show resources, such as the Navigator view.
 These filters can be selected to hide resources whose names match the filter&apos;s pattern.
+&lt;p&gt;
+This extension point is deprecated in release 3.5 and replaced by the Common Navigator Framework.
       </documentation>
    </annotation>
 
