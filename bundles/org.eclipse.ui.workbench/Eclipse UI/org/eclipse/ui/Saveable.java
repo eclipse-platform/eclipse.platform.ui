@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -204,7 +204,9 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	 * @return <code>null</code> if this saveable has been saved successfully,
 	 *         or a job runnable that needs to be run to complete the save in
 	 *         the background.
-	 * 
+	 * @throws CoreException
+	 *             if the save fails; it is the caller's responsibility to
+	 *             report the failure to the user
 	 * @since 3.3
 	 */
 	public IJobRunnable doSave(IProgressMonitor monitor,
