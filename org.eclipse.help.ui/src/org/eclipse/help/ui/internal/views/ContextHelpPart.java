@@ -257,7 +257,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		savedDescription = helpText;
 	}
 
-	private void updateSearchExpression(boolean explicitContext) {
+	private void updateSearchExpression() {
 		if (lastContext instanceof IContext2) {
 			String title = ((IContext2)lastContext).getTitle();
 			if (title!=null) {
@@ -285,10 +285,14 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		lastProvider = provider;
 		lastContext = context;
 		lastPart = part;
-		if (context==null && provider!=null) {
-			lastContext = provider.getContext(c);
+		if (provider!=null) {
+			// A provider will take precedence over a passed in context
+		    IContext providerContext = provider.getContext(c);
+		    if (providerContext != null) {
+			    lastContext = providerContext;
+		    }
 		}
-		updateSearchExpression(context!=null);
+		updateSearchExpression();
 
 		String helpText;
 		if (lastContext!=null)
