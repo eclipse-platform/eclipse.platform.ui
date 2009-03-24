@@ -258,6 +258,13 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	}
 
 	private void updateSearchExpression() {
+		if (lastProvider != null) {
+			String providerSearchExpression = lastProvider.getSearchExpression(lastControl);
+				if (providerSearchExpression != null) {
+				    updateSearchExpression(providerSearchExpression, lastControl);
+			        return;
+				}
+	    }
 		if (lastContext instanceof IContext2) {
 			String title = ((IContext2)lastContext).getTitle();
 			if (title!=null) {
@@ -265,9 +272,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				return;
 			}
 		}
-		if (lastProvider != null || lastControl != null)
-			updateSearchExpression(lastProvider != null ? lastProvider
-					.getSearchExpression(lastControl) : null, lastControl);
+		if (lastControl != null)
+			updateSearchExpression(null, lastControl);
 	}
 
 	public void handleActivation(IContextProvider provider, IContext context, 
