@@ -18,7 +18,7 @@
 
 /* show the "selected" image for this page */
 #navigation-links a#whatsnew img {
-	background-image : url(../graphics/icons/ctool/wn_nav_64.gif); 
+	background-image : url(../graphics/icons/ctool/whatsnew-select.gif); 
 	width : 64px;
 	height: 64px;
 	margin-top : 12px;

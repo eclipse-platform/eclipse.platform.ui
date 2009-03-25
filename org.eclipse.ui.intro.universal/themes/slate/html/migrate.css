@@ -18,7 +18,7 @@
 
 /* show the "selected" image for this page */
 #navigation-links a#migrate img {
-	background-image : url(../graphics/icons/ctool/mi_nav_64.gif); 
+	background-image : url(../graphics/icons/ctool/migrate-select.gif); 
 	width : 64px;
 	height: 64px;
 	margin-top : 12px

@@ -18,7 +18,7 @@
 
 /* show the "selected" image for this page */
 #navigation-links a#tutorials img {
-	background-image : url(../graphics/icons/ctool/tu_nav_64.gif); 
+	background-image : url(../graphics/icons/ctool/tutorials-select.gif); 
 	width : 64px;
 	height: 64px;
 	margin-top : 12px

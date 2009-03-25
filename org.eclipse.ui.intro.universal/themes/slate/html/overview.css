@@ -18,7 +18,7 @@
 
 /* show the "selected" image for this page */
 #navigation-links a#overview img {
-	background-image : url(../graphics/icons/ctool/ov_nav_64.gif);
+	background-image : url(../graphics/icons/ctool/overview-select.gif);
 	width : 64px;
 	height: 64px;
 	margin-top : 12px
