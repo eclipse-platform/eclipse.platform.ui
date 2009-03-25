@@ -824,7 +824,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
-	public Set/*<ViewerDescriptor>*/ findContentViewerDescriptor(Viewer oldViewer, Object in, CompareConfiguration cc) {
+	public ViewerDescriptor[] findContentViewerDescriptor(Viewer oldViewer, Object in, CompareConfiguration cc) {
 		Set result = new LinkedHashSet();
 		if (in instanceof IStreamContentAccessor) {
 			String type= ITypedElement.TEXT_TYPE;
@@ -851,7 +851,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				result.addAll(list);
 			// fallback
 			result.add(fContentViewers.search(Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT)));
-			return result;
+			return (ViewerDescriptor[]) result.toArray(new ViewerDescriptor[0]);
 		}
 
 		if (!(in instanceof ICompareInput))
@@ -913,7 +913,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			List list = fContentMergeViewers.searchAll(type);
 			if (list != null)
 				result.addAll(list);
-			return result;
+			return (ViewerDescriptor[]) result.toArray(new ViewerDescriptor[0]);
 		}
 		return null;
 	}
@@ -933,9 +933,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, Object in,
 			Composite parent, CompareConfiguration cc) {
-		Set descriptors = findContentViewerDescriptor(oldViewer, in, cc);
-		return getViewer(descriptors != null ? descriptors.toArray()[0] : null, oldViewer,
-				parent, cc);
+		ViewerDescriptor[] descriptors = findContentViewerDescriptor(oldViewer, in, cc);
+		return getViewer(descriptors != null ? descriptors[0] : null, oldViewer, parent, cc);
 	}
 	
 	private boolean isCompareAsText(ICompareInput input, CompareConfiguration cc) {
@@ -1296,5 +1295,67 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	
 	public static void log(IStatus status) {
 		getDefault().getLog().log(status);
+	}
+
+	String findContentTypeNameOrType(ICompareInput input, ViewerDescriptor vd, CompareConfiguration cc) {
+		IContentType ctype= getCommonType(input);
+		if (isCompareAsText(input, cc)) {
+			ctype = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
+		}
+		if (ctype != null) {
+			initializeRegistries();
+			List list = fContentMergeViewers.searchAll(ctype);
+			if (list != null)
+				if (list.contains(vd))
+					return ctype.getName();
+		}
+		
+		String[] types= getTypes(input);
+		String type= null;
+		if (isHomogenous(types))
+			type= types[0];
+		
+		if (ITypedElement.FOLDER_TYPE.equals(type))
+			return null;
+			
+		if (type == null) {
+			int n= 0;
+			for (int i= 0; i < types.length; i++)
+				if (!ITypedElement.UNKNOWN_TYPE.equals(types[i])) {
+					n++;
+					if (type == null)
+						type= types[i];	// remember the first known type
+				}
+			if (n > 1)	// don't use the type if there were more than one
+				type= null;
+		}
+		
+		if (type != null) {
+			initializeRegistries();
+			List list = fContentMergeViewers.searchAll(type);
+			if (list != null)
+				if (list.contains(vd))
+					return type;
+		}
+
+		// fallback
+		String leftType= guessType(input.getLeft());
+		String rightType= guessType(input.getRight());
+			
+		if (leftType != null || rightType != null) {
+			boolean right_text= rightType != null && ITypedElement.TEXT_TYPE.equals(rightType);
+			boolean left_text= leftType != null && ITypedElement.TEXT_TYPE.equals(leftType);
+			if ((leftType == null && right_text) || (left_text && rightType == null) || (left_text && right_text))
+				type= ITypedElement.TEXT_TYPE;
+			else
+				type= BINARY_TYPE;
+			
+			initializeRegistries();
+			List list = fContentMergeViewers.searchAll(type);
+			if (list != null)
+				if (list.contains(vd))
+					return type;
+		}
+		return null;
 	}
 }
