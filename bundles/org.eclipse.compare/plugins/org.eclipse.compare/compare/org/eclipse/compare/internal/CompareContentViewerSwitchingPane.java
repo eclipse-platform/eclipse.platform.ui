@@ -20,6 +20,8 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.events.MenuAdapter;
+import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -44,8 +46,6 @@ public class CompareContentViewerSwitchingPane extends
 	private ViewerDescriptor fSelectedViewerDescriptor;
 
 	private ToolBar toolBar;
-
-	private Menu menu;
 
 	public CompareContentViewerSwitchingPane(Splitter parent, int style,
 			CompareEditorInput cei) {
@@ -103,11 +103,7 @@ public class CompareContentViewerSwitchingPane extends
 				.setToolTipText(CompareMessages.CompareContentViewerSwitchingPane_switchButtonTooltip);
 		toolItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				Rectangle bounds = toolItem.getBounds();
-				Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
-				topLeft = toolBar.toDisplay(topLeft);
-				menu.setLocation(topLeft.x, topLeft.y);
-				menu.setVisible(true);
+				showMenu();
 			}
 		});
 		return composite;
@@ -120,51 +116,60 @@ public class CompareContentViewerSwitchingPane extends
 
 	public void setInput(Object input) {
 		super.setInput(input);
-		Set/* <ViewerDescriptor> */data = CompareUIPlugin.getDefault()
-				.findContentViewerDescriptor(getViewer(), input,
-						getCompareConfiguration());
-		updateMenu(data);
+		Set data = CompareUIPlugin.getDefault().findContentViewerDescriptor(
+				getViewer(), getInput(), getCompareConfiguration());
+		toolBar.setVisible(data != null && data.size() > 1);
 	}
+	
+	private void showMenu() {
+		Set data = CompareUIPlugin.getDefault().findContentViewerDescriptor(
+				getViewer(), getInput(), getCompareConfiguration());
+		ViewerDescriptor[] vd = (ViewerDescriptor[]) data
+				.toArray(new ViewerDescriptor[0]);
 
-	private void updateMenu(Set data) {
-		if (data != null && data.size() > 1) {
-			ViewerDescriptor[] fViewerDescriptors = (ViewerDescriptor[]) data
-					.toArray(new ViewerDescriptor[0]);
+		// 1. create
+		final Menu menu = new Menu(getShell(), SWT.POP_UP);
 
-			// dispose the old menu, if exists
-			if (menu != null)
-				menu.dispose();
-
-			menu = new Menu(getShell(), SWT.POP_UP);
-
-			// add default
-			String label = fViewerDescriptors[0].getLabel();
-			if (label == null || label.equals("")) { //$NON-NLS-1$
-				label = CompareMessages.CompareContentViewerSwitchingPane_defaultViewer;
-			}
-			MenuItem defaultItem = new MenuItem(menu, SWT.RADIO);
-			defaultItem.setText(label);
-			defaultItem
-					.addSelectionListener(createSelectionListener(fViewerDescriptors[0]));
-			menu.setDefaultItem(defaultItem);
-			defaultItem.setSelection(fViewerDescriptors[0] == fSelectedViewerDescriptor);
-
-			// add others
-			for (int j = 1; j < fViewerDescriptors.length; j++) {
-				final ViewerDescriptor vdi = fViewerDescriptors[j];
-				label = vdi.getLabel();
-				if (label != null && !label.equals("")) { //$NON-NLS-1$
-					MenuItem item = new MenuItem(menu, SWT.RADIO);
-					item.setText(label);
-					item.addSelectionListener(createSelectionListener(vdi));
-					item
-							.setSelection(fViewerDescriptors[j] == fSelectedViewerDescriptor);
-				}
-			}
-			toolBar.setVisible(true);
-		} else {
-			toolBar.setVisible(false);
+		// add default
+		String label = vd[0].getLabel();
+		if (label == null || label.equals("")) { //$NON-NLS-1$
+			label = CompareMessages.CompareContentViewerSwitchingPane_defaultViewer;
 		}
+		MenuItem defaultItem = new MenuItem(menu, SWT.RADIO);
+		defaultItem.setText(label);
+		defaultItem.addSelectionListener(createSelectionListener(vd[0]));
+		menu.setDefaultItem(defaultItem);
+		defaultItem.setSelection(vd[0] == fSelectedViewerDescriptor);
+
+		// add others
+		for (int j = 1; j < vd.length; j++) {
+			final ViewerDescriptor vdi = vd[j];
+			label = vdi.getLabel();
+			if (label != null && !label.equals("")) { //$NON-NLS-1$
+				MenuItem item = new MenuItem(menu, SWT.RADIO);
+				item.setText(label);
+				item.addSelectionListener(createSelectionListener(vdi));
+				item.setSelection(vd[j] == fSelectedViewerDescriptor);
+			}
+		}
+		
+		// 2. show
+		Rectangle bounds = toolBar.getItem(0).getBounds();
+		Point topLeft = new Point(bounds.x, bounds.y + bounds.height);
+		topLeft = toolBar.toDisplay(topLeft);
+		menu.setLocation(topLeft.x, topLeft.y);
+		menu.setVisible(true);
+		
+		// 3. dispose on close
+		menu.addMenuListener(new MenuAdapter() {
+			public void menuHidden(MenuEvent e) {
+				e.display.asyncExec(new Runnable() {
+					public void run() {
+						menu.dispose();
+					}
+				});
+			}
+		});
 	}
 
 	private SelectionListener createSelectionListener(final ViewerDescriptor vd) {
