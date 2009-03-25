@@ -249,17 +249,20 @@ body, .page {
 	height : 64px;
 	float : left;
 	margin-left : 10px;
-	display2 : block;
 	position : relative;
 	text-align : center;
+}
+
+#action-links a {
+    float : right;
+    margin-right : 20px;
 }
 
 #navigation-links a img {
 	height : 32px;
 	width : 32px;
 	vertical-align : center;
-	horizontal-align : center;
-	top : 10px;
+	horizontal-align : center; 
 	display : block;
 	margin-top : 5px;
 	margin-bottom : 0px;
@@ -327,6 +330,11 @@ body, .page {
 	display: block !important;
 	text-decoration: underline;
 	top : 5px;
+}
+
+#page-links span {
+    display : block;
+    margin-top : -2px;
 }
 
 /* 
