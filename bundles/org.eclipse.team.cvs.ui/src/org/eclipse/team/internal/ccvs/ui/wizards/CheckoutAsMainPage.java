@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,18 +206,14 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 	 * return a string that indicates the problem.
 	 */
 	void updateEnablements() {
-
 		if (projectNameField != null) {
 			projectNameField.setEnabled(simpleProjectButton.getSelection());
 			if (projectNameField.isEnabled()) {
 				newProjectName = this.projectNameField.getText();
 				IWorkspace workspace = ResourcesPlugin.getWorkspace();
 				IStatus nameStatus = workspace.validateName(newProjectName, IResource.PROJECT);
-				if (!nameStatus.isOK()) {
-					setErrorMessage(nameStatus.getMessage());
-					setPageComplete(false);
-					return;
-				}
+				setErrorMessage(nameStatus.isOK() ? null : nameStatus.getMessage());
+				setPageComplete(nameStatus.isOK());
 			}
 		}
 	}
