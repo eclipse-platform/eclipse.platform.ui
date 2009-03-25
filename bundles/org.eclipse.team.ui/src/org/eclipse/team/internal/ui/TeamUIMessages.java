@@ -389,7 +389,6 @@ public class TeamUIMessages extends NLS {
 	public static String RefreshSubscriberJob_2b;
 	public static String RefreshSubscriberJob_3;
 
-	public static String RefactorActionGroup_0;
 	public static String SynchronizeManager_7;
 	public static String SynchronizeManager_8;
 	public static String SynchronizeManager_9;

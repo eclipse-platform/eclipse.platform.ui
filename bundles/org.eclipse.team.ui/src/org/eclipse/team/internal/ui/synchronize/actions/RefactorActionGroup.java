@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,12 @@ package org.eclipse.team.internal.ui.synchronize.actions;
 
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.team.internal.ui.TeamUIMessages;
 import org.eclipse.team.internal.ui.Utils;
 import org.eclipse.team.ui.synchronize.ISynchronizePageSite;
 import org.eclipse.ui.*;
@@ -50,25 +49,10 @@ public class RefactorActionGroup extends ActionGroup {
 	}
 
 	public void fillContextMenu(IMenuManager parentMenu, String groupId) {
-
-		final MenuManager menu = new MenuManager(TeamUIMessages.RefactorActionGroup_0); 
-
-		final IStructuredSelection selection= getSelection();
-		final boolean anyResourceSelected =	!selection.isEmpty() && allResourcesAreOfType(selection, IResource.PROJECT | IResource.FOLDER | IResource.FILE);
-
-		// Actions can work on non-resource selections
-		copyAction.selectionChanged(getObjectSelection());
-		menu.add(copyAction);
-		
-		if (anyResourceSelected) {		    
-			deleteAction.selectionChanged(selection);
-			moveAction.selectionChanged(selection);
-			renameAction.selectionChanged(selection);
-			menu.add(deleteAction);
-			menu.add(moveAction);
-			menu.add(renameAction);
-		}
-		parentMenu.appendToGroup(groupId, menu);
+		parentMenu.appendToGroup(groupId, copyAction);
+		parentMenu.appendToGroup(groupId, deleteAction);
+		parentMenu.appendToGroup(groupId, moveAction);
+		parentMenu.appendToGroup(groupId, renameAction);
 	}
 
  	public void fillActionBars(IActionBars actionBars) {
@@ -78,34 +62,65 @@ public class RefactorActionGroup extends ActionGroup {
     	actionBars.setGlobalActionHandler(ActionFactory.MOVE.getId(), moveAction);
     }
 
-    public void updateActionBars() {
-        final IStructuredSelection structuredSelection= getSelection();
-    	copyAction.selectionChanged(getObjectSelection());
-    	deleteAction.selectionChanged(structuredSelection);
-    	moveAction.selectionChanged(structuredSelection);
-    	renameAction.selectionChanged(structuredSelection);
-    }
+	public void updateActionBars() {
+		copyAction.selectionChanged(getObjectSelection());
+		deleteAction.selectionChanged(getObjectSelection());
+		moveAction.selectionChanged(getObjectSelection());
+		renameAction.selectionChanged(getObjectSelection());
+	}
 
-    protected void makeActions() {
-    		
-        final Shell shell = site.getShell();
-        final ISharedImages images = PlatformUI.getWorkbench().getSharedImages();
-        
-        copyAction= new CopyToClipboardAction(shell, navigatorContentService);
-        moveAction= new MoveResourceAction(shell);
-        renameAction= new RenameResourceAction(shell);
-        deleteAction = new DeleteResourceAction(shell) {
-            protected List getSelectedResources() {
-                return getSelection().toList();//Arrays.asList(Utils.getResources(getSelection().toArray()));
-            }
-        };
-        
-        copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
-        copyAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
-        
-        deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
-        deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
-    }
+	protected void makeActions() {
+		final Shell shell = site.getShell();
+		final ISharedImages images = PlatformUI.getWorkbench()
+				.getSharedImages();
+
+		copyAction = new CopyToClipboardAction(shell, navigatorContentService);
+		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
+		copyAction.setImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
+		copyAction.setDisabledImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_COPY_DISABLED));
+
+		deleteAction = new DeleteResourceAction(shell) {
+			protected List getSelectedResources() {
+				return getSelection().toList();// Arrays.asList(Utils.getResources(getSelection().toArray()));
+			}
+
+			protected boolean updateSelection(IStructuredSelection selection) {
+				// TODO Auto-generated method stub
+				return super.updateSelection(selection)
+						&& allResourcesAreOfType(selection, IResource.PROJECT
+								| IResource.FOLDER | IResource.FILE);
+			}
+		};
+		deleteAction
+				.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
+		deleteAction.setImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
+		deleteAction.setDisabledImageDescriptor(images
+				.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
+
+		moveAction = new MoveResourceAction(shell) {
+			protected boolean updateSelection(IStructuredSelection selection) {
+				// TODO Auto-generated method stub
+				return super.updateSelection(selection)
+						&& allResourcesAreOfType(selection, IResource.PROJECT
+								| IResource.FOLDER | IResource.FILE);
+			}
+		};
+		moveAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_MOVE);
+
+		renameAction = new RenameResourceAction(shell) {
+			protected boolean updateSelection(IStructuredSelection selection) {
+				// TODO Auto-generated method stub
+				return super.updateSelection(selection)
+						&& allResourcesAreOfType(selection, IResource.PROJECT
+								| IResource.FOLDER | IResource.FILE);
+			}
+		};
+		renameAction
+				.setActionDefinitionId(IWorkbenchCommandConstants.FILE_RENAME);
+	}
     
     private IStructuredSelection getSelection() {
         final ISelection selection= getContext().getSelection();
