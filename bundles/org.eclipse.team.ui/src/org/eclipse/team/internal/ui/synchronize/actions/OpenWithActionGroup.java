@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,36 +80,43 @@ public class OpenWithActionGroup extends ActionGroup {
             return;
         Object[] elements = selection.toArray();
         IResource resources[] = Utils.getResources(elements);       
-        if(resources.length == 0 && openInCompareAction != null) {
-        	// We can still show the compare editor open if the element has a compare input
-        	if (elements.length > 0) {
-        		ISynchronizeParticipant participant = getParticipant();
-        		if (participant instanceof ModelSynchronizeParticipant) {
-					ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
-					boolean allElementsHaveCompareInput = true;
-					for (int i = 0; i < elements.length; i++) {
-						if (!msp.hasCompareInputFor(elements[i])) {
-							allElementsHaveCompareInput = false;
-	    					break;
+		if (resources.length == 0) {
+			if (openInCompareAction != null) {
+				// We can still show the compare editor open if the element has
+				// a compare input
+				if (elements.length > 0) {
+					ISynchronizeParticipant participant = getParticipant();
+					if (participant instanceof ModelSynchronizeParticipant) {
+						ModelSynchronizeParticipant msp = (ModelSynchronizeParticipant) participant;
+						boolean allElementsHaveCompareInput = true;
+						for (int i = 0; i < elements.length; i++) {
+							if (!msp.hasCompareInputFor(elements[i])) {
+								allElementsHaveCompareInput = false;
+								break;
+							}
+						}
+						if (allElementsHaveCompareInput) {
+							menu.appendToGroup(groupId, openInCompareAction);
 						}
 					}
-					if (allElementsHaveCompareInput) {
-						menu.appendToGroup(groupId, openInCompareAction);
-	    			}
 				}
-        	}
-            return;
+			}
+			return;
+		}
+        
+        if (elements.length != resources.length){
+        	// Only supported if all the items are resources.
+        	return;
         }
         
-        for (int i = 0; i < resources.length; i++) {
-            if (resources[i].getType() != IResource.FILE) {
-                // Only supported if all the items are files.
-                return;
-            }
-        }       
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getType() != IResource.FILE) {
+				// Only supported if all the items are files.
+				return;
+			}
+		}
         
-        if (resources.length > 0 && openInCompareAction != null) {
-            // Support multiple files selected
+        if (openInCompareAction != null) {
             menu.appendToGroup(groupId, openInCompareAction);
         }
         
@@ -120,10 +127,10 @@ public class OpenWithActionGroup extends ActionGroup {
             }
         }
         
-        if (openFileAction != null) {
-            openFileAction.selectionChanged(selection);
-            menu.appendToGroup(groupId, openFileAction);
-        }
+		if (openFileAction != null) {
+			openFileAction.selectionChanged(selection);
+			menu.appendToGroup(groupId, openFileAction);
+		}
         
         if (resources.length == 1) {
             // Only support the "Open With..." submenu if exactly one file is selected.
