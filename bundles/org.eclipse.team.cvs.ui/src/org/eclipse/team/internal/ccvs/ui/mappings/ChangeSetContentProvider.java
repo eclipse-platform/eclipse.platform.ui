@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -357,10 +357,12 @@ public class ChangeSetContentProvider extends ResourceModelContentProvider imple
 		return result.toArray();
 	}
 
-	private synchronized DiffChangeSet getUnassignedSet() {
+	synchronized DiffChangeSet getUnassignedSet() {
 		if (unassignedDiffs == null) {
-			unassignedDiffs = new UnassignedDiffChangeSet(CVSUIMessages.ChangeSetContentProvider_0);
-			unassignedDiffs.getDiffTree().addDiffChangeListener(diffTreeListener);
+			unassignedDiffs = new UnassignedDiffChangeSet(
+					CVSUIMessages.ChangeSetContentProvider_0);
+			unassignedDiffs.getDiffTree().addDiffChangeListener(
+					diffTreeListener);
 			addAllUnassignedToUnassignedSet();
 		}
 		return unassignedDiffs;

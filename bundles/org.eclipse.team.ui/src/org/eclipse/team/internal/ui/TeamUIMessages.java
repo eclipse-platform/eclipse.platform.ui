@@ -547,6 +547,7 @@ public class TeamUIMessages extends NLS {
 	public static String ChangeLogModelProvider_3a;
 	public static String ChangeLogModelProvider_0;
 	public static String ChangeLogModelProvider_12;
+	public static String ChangeLogModelProvider_13;
 	public static String ChangeLogModelProvider_5;
 	public static String ChangeLogModelProvider_6;
 	public static String ChangeLogModelProvider_7;
