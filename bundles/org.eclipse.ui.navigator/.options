@@ -12,6 +12,6 @@ org.eclipse.ui.navigator/debug/resolution=false
 # Drag and drop 
 org.eclipse.ui.navigator/debug/dnd=false
 
-#Reports the time to create the package explorer view
+#Reports the time to create the project explorer view
 org.eclipse.ui.navigator/perf/explorer/createPartControl=1300
 
