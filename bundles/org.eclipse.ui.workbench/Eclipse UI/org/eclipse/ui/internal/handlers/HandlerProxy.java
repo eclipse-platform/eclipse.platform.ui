@@ -119,6 +119,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	
 	private State radioState;
 
+	// Exception that occurs while loading the proxied handler class
+	private Exception loadException;
+
 	/**
 	 * Constructs a new instance of <code>HandlerProxy</code> with all the
 	 * information it needs to try to avoid loading until it is needed.
@@ -290,6 +293,9 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 			}
 			return handler.execute(event);
 		}
+		
+		if(loadException !=null)
+			throw new ExecutionException("Exception occured when loading the handler", loadException); //$NON-NLS-1$
 
 		return null;
 	}
@@ -356,6 +362,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				configurationElement = null;
+				loadException = e;
 
 			} catch (final CoreException e) {
 				final String message = "The proxied handler for '" + configurationElement.getAttribute(handlerAttributeName) //$NON-NLS-1$
@@ -364,6 +371,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 						WorkbenchPlugin.PI_WORKBENCH, 0, message, e);
 				WorkbenchPlugin.log(message, status);
 				configurationElement = null;
+				loadException = e;
 			}
 			return false;
 		}

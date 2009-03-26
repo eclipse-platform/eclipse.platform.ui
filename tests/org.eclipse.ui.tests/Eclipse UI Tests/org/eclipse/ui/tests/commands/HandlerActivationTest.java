@@ -263,7 +263,20 @@ public class HandlerActivationTest extends UITestCase {
 		testHandlerActivations.put(handler, handlerService.activateHandler(
 				CMD_ID, currentHandler, expression));
 	}
-
+	
+	
+	public void testExceptionThrowingHandler(){
+		
+		try {
+			handlerService.executeCommand("org.eclipse.ui.tests.command.handlerException", null);
+			fail("An exception should be thrown for this handler");
+		} catch (Exception e) {
+			if(!(e instanceof ExecutionException))
+				fail("Unexpected exception while executing command", e);
+		}
+	}
+	
+	
 	public void testBasicHandler() throws Exception {
 
 		createHandlerActivation(C1_ID, H1,

@@ -4062,6 +4062,11 @@
             id="org.eclipse.ui.tests.testToolTipCommand"
             name="My Test Tooltip Command">
       </command>
+      <command
+            defaultHandler="org.eclipse.ui.tests.commands.ExceptionThrowingHandler"
+            id="org.eclipse.ui.tests.command.handlerException"
+            name="Handler Exception">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">

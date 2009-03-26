@@ -23,6 +23,7 @@ import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -284,4 +285,37 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 			assertTrue(true);
 		}
 	}
+	
+	public void testNonExistingHandler() {
+		IHandlerService handlerService = (IHandlerService) getWorkbench()
+				.getService(IHandlerService.class);
+		getBundle();
+
+		// till the handler is loaded, we assume it could be handled
+		// when its time to execute, we load the handler and throw the
+		// ExecutionException
+		try {
+			handlerService.executeCommand(
+					"org.eclipse.ui.tests.command.handlerLoadException", null);
+			fail("An exception should be thrown for this handler");
+		} catch (Exception e) {
+			if (!(e instanceof ExecutionException))
+				fail("Unexpected exception while executing command", e);
+		}
+
+		// afterwards, we know that the handler couldn't be loaded, so it can't
+		// be handled
+		// from now we always throw NotHandledException
+		try {
+			handlerService.executeCommand(
+					"org.eclipse.ui.tests.command.handlerLoadException", null);
+			fail("An exception should be thrown for this handler");
+		} catch (Exception e) {
+			if (!(e instanceof NotHandledException))
+				fail("Unexpected exception while executing command", e);
+		}
+
+		removeBundle();
+	}
+
 }
