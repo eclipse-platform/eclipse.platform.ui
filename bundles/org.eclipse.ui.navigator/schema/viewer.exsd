@@ -164,7 +164,10 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
    <element name="includes">
       <annotation>
          <documentation>
-            Define a set of patterns that should be included when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the excludes statement will be given precedence.
+            Define a set of regular expressions that should be included when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the excludes statement will be given precedence.
+
+&lt;p&gt;
+Note: these are regular expressions and not wildcards.  So if you want to include something like &lt;code&gt;com.mycompany.content*&lt;/code&gt;, the expression would be &lt;code&gt;com\.mycompany\.content.*&lt;/code&gt;.
          </documentation>
       </annotation>
       <complexType>
@@ -182,8 +185,11 @@ For &lt;b&gt;actionProvider&lt;/b&gt; definitions which are not nested under a &
    <element name="excludes">
       <annotation>
          <documentation>
-            Define a set of patterns that should be excluded when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the excludes statement will be given precedence.
+            Define a set of regular expressions that should be excluded when looking for content extensions for the viewer that matches the &quot;viewerId&quot; attribute. When the includes and excludes statements intersect, the excludes statement will be given precedence.
             To be meaningful this will be a subset of the includes pattern.
+            
+&lt;p&gt;
+Note: these are regular expressions and not wildcards.  So if you want to include something like &lt;code&gt;com.mycompany.content*&lt;/code&gt;, the expression would be &lt;code&gt;com\.mycompany\.content.*&lt;/code&gt;.
          </documentation>
       </annotation>
       <complexType>
