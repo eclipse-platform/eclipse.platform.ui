@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,12 +23,13 @@ import java.util.ResourceBundle;
 import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * A font registry maintains a mapping between symbolic font names 
@@ -46,7 +47,7 @@ import org.eclipse.swt.widgets.Shell;
  * </p>
  * <p>
  * Methods are provided for registering listeners that will be kept
- * apprised of changes to list of registed fonts.
+ * apprised of changes to list of registered fonts.
  * </p>
  * <p>
  * Clients may instantiate this class (it was not designed to be subclassed).
@@ -291,6 +292,13 @@ public class FontRegistry extends ResourceRegistry {
     /**
      * Load the FontRegistry using the ClassLoader from the PlatformUI
      * plug-in
+     * <p>
+     * This method should only be called from the UI thread. If you are not on the UI
+     * thread then wrap the call with a
+     * <code>PlatformUI.getWorkbench().getDisplay().synchExec()</code> in order to
+     * guarantee the correct result. Failure to do this may result in an {@link
+     * SWTException} being thrown.
+     * </p>
      * @param location the location to read the resource bundle from
      * @throws MissingResourceException Thrown if a resource is missing
      */
@@ -506,17 +514,20 @@ public class FontRegistry extends ResourceRegistry {
      */
     Font calculateDefaultFont() {
         Display current = Display.getCurrent();
-        if (current == null) {
-            Shell shell = new Shell();
-            Font font = new Font(null, shell.getFont().getFontData());
-            shell.dispose();
-            return font;
-        }
+        if (current == null) // can't do much without Display
+        	SWT.error(SWT.ERROR_THREAD_INVALID_ACCESS);
 		return new Font(current, current.getSystemFont().getFontData());
     }
 
     /**
      * Returns the default font data.  Creates it if necessary.
+     * <p>
+     * This method should only be called from the UI thread. If you are not on the UI
+     * thread then wrap the call with a
+     * <code>PlatformUI.getWorkbench().getDisplay().synchExec()</code> in order to
+     * guarantee the correct result. Failure to do this may result in an {@link
+     * SWTException} being thrown.
+     * </p>
      * @return Font
      */
     public Font defaultFont() {
@@ -587,7 +598,13 @@ public class FontRegistry extends ResourceRegistry {
      * Returns the font associated with the given symbolic font name.
      * Returns the default font if there is no special value associated
      * with that name.
-     *
+     * <p>
+     * This method should only be called from the UI thread. If you are not on the UI
+     * thread then wrap the call with a
+     * <code>PlatformUI.getWorkbench().getDisplay().synchExec()</code> in order to
+     * guarantee the correct result. Failure to do this may result in an {@link
+     * SWTException} being thrown.
+     * </p>
      * @param symbolicName symbolic font name
      * @return the font
      */
@@ -600,7 +617,13 @@ public class FontRegistry extends ResourceRegistry {
      * Returns the bold font associated with the given symbolic font name.
      * Returns the bolded default font if there is no special value associated
      * with that name.
-     *
+     * <p>
+     * This method should only be called from the UI thread. If you are not on the UI
+     * thread then wrap the call with a
+     * <code>PlatformUI.getWorkbench().getDisplay().synchExec()</code> in order to
+     * guarantee the correct result. Failure to do this may result in an {@link
+     * SWTException} being thrown.
+     * </p>
      * @param symbolicName symbolic font name
      * @return the font
      * @since 3.0
@@ -614,7 +637,13 @@ public class FontRegistry extends ResourceRegistry {
      * Returns the italic font associated with the given symbolic font name.
      * Returns the italic default font if there is no special value associated
      * with that name.
-     *
+     * <p>
+     * This method should only be called from the UI thread. If you are not on the UI
+     * thread then wrap the call with a
+     * <code>PlatformUI.getWorkbench().getDisplay().synchExec()</code> in order to
+     * guarantee the correct result. Failure to do this may result in an {@link
+     * SWTException} being thrown.
+     * </p>
      * @param symbolicName symbolic font name
      * @return the font
      * @since 3.0
@@ -627,7 +656,7 @@ public class FontRegistry extends ResourceRegistry {
     /**
      * Return the font record for the key.
      * @param symbolicName The key for the record.
-     * @return FontRecird
+     * @return FontRecord
      */
     private FontRecord getFontRecord(String symbolicName) {
         Assert.isNotNull(symbolicName);
@@ -648,6 +677,11 @@ public class FontRegistry extends ResourceRegistry {
 
         if (fontRecord == null) {
 			fontRecord = defaultFontRecord();
+			if (Display.getCurrent() == null) { // log error but don't throw an exception to preserve existing functionality
+				String msg = "Unable to create font \"" + symbolicName + "\" in a non-UI thread. Using default font instead."; //$NON-NLS-1$ //$NON-NLS-2$
+				Policy.logException(new SWTException(msg));
+				return fontRecord; // don't add it to the cache; if later asked from UI thread, a proper font will be created
+			}
 		}
 
         stringToFontRecord.put(symbolicName, fontRecord);
