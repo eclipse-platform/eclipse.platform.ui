@@ -483,4 +483,15 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 			((IStateListener) handler).handleStateChange(state, oldValue);
 		}
 	}
+	
+	/**
+	 * @return the config element for use with the PDE framework.
+	 */
+	public IConfigurationElement getConfigurationElement() {
+		return configurationElement;
+	}
+	
+	public String getAttributeName() {
+		return handlerAttributeName;
+	}
 }
