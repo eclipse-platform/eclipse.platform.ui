@@ -62,7 +62,7 @@ class Binding {
 				// keep track of the result for next time
 				knownIds.put(anExtensionId, Boolean.TRUE);
 				if (Policy.DEBUG_RESOLUTION) {
-					System.out.println("Binding: " + TAG_EXTENSION +//$NON-NLS-1$
+					System.out.println("Viewer Binding: " + TAG_EXTENSION +//$NON-NLS-1$
 							" to: " + anExtensionId); //$NON-NLS-1$
 				}
 				return true;
@@ -73,10 +73,18 @@ class Binding {
 			Pattern pattern = (Pattern) itr.next();
 			if (pattern.matcher(anExtensionId).matches()) {
 				knownIds.put(anExtensionId, Boolean.FALSE);
+				if (Policy.DEBUG_RESOLUTION) {
+					System.out.println("Viewer Binding: EXCLUDED: " + TAG_EXTENSION +//$NON-NLS-1$
+							" to: " + anExtensionId); //$NON-NLS-1$
+				}
 				return false;
 			}
 		}
 
+		if (Policy.DEBUG_RESOLUTION) {
+			System.out.println("Viewer Binding: NOT FOUND: " + TAG_EXTENSION +//$NON-NLS-1$
+					" to: " + anExtensionId); //$NON-NLS-1$
+		}
 		knownIds.put(anExtensionId, Boolean.FALSE);
 		return false;
 	}
