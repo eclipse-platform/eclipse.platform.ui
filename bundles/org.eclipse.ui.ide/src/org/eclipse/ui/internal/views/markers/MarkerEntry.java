@@ -98,18 +98,16 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @return Object or <code>null</code>
 	 */
 	private Object getAttributeValue(String attribute) {
-		Object value;
-		if (getCache().containsKey(attribute)) {
-				value = getCache().get(attribute);
-		}else {
+		Object value = getCache().get(attribute);
+		if(value == null) {
 			try {
 				value = marker.getAttribute(attribute);
 			} catch (CoreException e) {
 				value = null;
 			}
-			// Even cache nulls so that we use the passed defaultValue.
-			getCache().put(attribute, value);
-
+			if(value != null) {
+				getCache().put(attribute, value);
+			}
 		}
 		if (value instanceof CollationKey)
 			return ((CollationKey) value).getSourceString();
@@ -160,8 +158,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	CollationKey getCollationKey(String attribute, String defaultValue) {
 		String attributeValue;
-		if (getCache().containsKey(attribute)) {
-			Object value = getCache().get(attribute);
+		Object value = getCache().get(attribute);
+		if (value != null) {
 			// Only return a collation key otherwise 
 			//use the value to generate it
 			if (value instanceof CollationKey)

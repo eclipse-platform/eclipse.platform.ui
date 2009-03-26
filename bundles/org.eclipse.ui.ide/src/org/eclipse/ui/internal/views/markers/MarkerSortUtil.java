@@ -235,70 +235,6 @@ class MarkerSortUtil {
 		array[first].clearCache();
 	}
 
-	/*
-	private static  void correctLinks(Object[] array,int[] links,Comparator comparator,int first,int last,int position){
-		int len = last - first;
-		int parent = position - first;
-		int child = 2 * parent + 1;
-		if(child>len)return;
-		else if(child==len){
-			links[position]=0;
-			return;
-		}
-		if (comparator.compare(array[first + child], array[first
-					+ (child + 1)]) >= 0){
-			links[position]=0;
-		}else{
-			links[position]=1;
-		}
-		correctLinks(array, links, comparator, first, last, first + child);
-		correctLinks(array, links, comparator, first, last, first + child+1);
-		return;
-	}
-	static class Counter{
-		int i;
-		Counter(int i){
-			this.i=i;
-		}
-	}
-	private static void toPartionedArray(Object src[], Object[] dest,
-			Counter destIndex, int[] links, Comparator comparator,LinkedList partions,int first,
-			int last, int parent) {
-
-		int nthChild = parent;
-		while(true) {
-			dest[destIndex.i--] = src[first + nthChild];
-			if (links[first + nthChild] == 0)
-				nthChild = 2 * nthChild + 1;
-			else if(links[first + nthChild] == 1)
-				nthChild = 2 * nthChild + 2;
-			else
-				break;
-		} 
-		if(destIndex.i>0)
-			partions.addFirst(new Integer(destIndex.i));
-		
-		nthChild = parent;
-		int otherChild = parent;
-		while(true) {
-			if (links[first + nthChild] == 0){
-				nthChild = 2 * nthChild + 1;
-				otherChild = nthChild + 1;
-			}else if(links[first + nthChild] == 1){
-				nthChild = 2 * nthChild + 2;
-				otherChild = nthChild - 1;
-			}else{
-				break;
-			}
-			if(first+otherChild>last){
-				break;
-			}
-			toPartionedArray(src, dest, destIndex, links, comparator,partions,
-					first, last, otherChild);
-		} 
-		
-	}*/
-
 	/**
 	 * Sorts [from,first+k-1] in the array of [from,to] using a variant of
 	 * modified heapsort, such that
@@ -467,6 +403,9 @@ class MarkerSortUtil {
 		TreeMap map = new TreeMap(group.getEntriesComparator());
 		for (int i = 0; i <= k; i++) {
 			IMarker marker = entries[i].getMarker();
+			if(marker == null || !marker.exists()) {
+				continue;//skip stale markers
+			}
 			try {
 				MarkerGroupingEntry groupingEntry = group.findGroupValue(marker
 						.getType(), marker);
