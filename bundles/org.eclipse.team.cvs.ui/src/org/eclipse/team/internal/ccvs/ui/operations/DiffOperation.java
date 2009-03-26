@@ -239,7 +239,7 @@ public abstract class DiffOperation extends SingleCommandOperation {
 			} catch(CVSCommunicationException ex){ // see bug 123430
 				CVSUIPlugin.openError(getShell(), null, null, ex, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
 			} catch (CVSException ex){
-				CVSUIPlugin.openError(getShell(), null, null, ex, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
+				//ignore
 			}
 		}
 		
