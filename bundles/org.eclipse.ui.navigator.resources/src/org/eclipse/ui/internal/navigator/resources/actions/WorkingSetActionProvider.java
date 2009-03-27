@@ -33,7 +33,6 @@ import org.eclipse.ui.navigator.ICommonActionExtensionSite;
 import org.eclipse.ui.navigator.IExtensionActivationListener;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 import org.eclipse.ui.navigator.INavigatorContentService;
-import org.eclipse.ui.navigator.resources.ProjectExplorer;
 
 /**
  * @since 3.2
@@ -152,17 +151,17 @@ public class WorkingSetActionProvider extends CommonActionProvider {
 					IAggregateWorkingSet agWs = (IAggregateWorkingSet) newWorkingSet;
 					IWorkingSet[] comps = agWs.getComponents();
 					if (comps.length > 1) {
-						((ProjectExplorer) viewer.getCommonNavigator())
-								.setWorkingSetLabel(WorkbenchNavigatorMessages.WorkingSetActionProvider_multipleWorkingSets);
+						viewer.getCommonNavigator().setWorkingSetLabel(
+								WorkbenchNavigatorMessages.WorkingSetActionProvider_multipleWorkingSets);
 					} else if (comps.length > 0) {
-						((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(comps[0].getLabel());
+						viewer.getCommonNavigator().setWorkingSetLabel(comps[0].getLabel());
 					} else {
-						((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(null);
+						viewer.getCommonNavigator().setWorkingSetLabel(null);
 					}
 				} else
-					((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(workingSet.getLabel());
+					viewer.getCommonNavigator().setWorkingSetLabel(workingSet.getLabel());
 			} else {
-				((ProjectExplorer) viewer.getCommonNavigator()).setWorkingSetLabel(null);
+				viewer.getCommonNavigator().setWorkingSetLabel(null);
 			}
 
 			viewer.getFrameList().reset();
