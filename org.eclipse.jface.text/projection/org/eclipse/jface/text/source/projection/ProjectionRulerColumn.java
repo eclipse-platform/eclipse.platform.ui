@@ -12,14 +12,12 @@ package org.eclipse.jface.text.source.projection;
 
 import java.util.Iterator;
 
-import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -202,8 +200,7 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		Control control= super.createControl(parentRuler, parentControl);
 
 		// set background
-		Display display= parentControl.getDisplay();
-		Color background= display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
+		Color background= getCachedTextViewer().getTextWidget().getBackground();
 		control.setBackground(background);
 
 		// install hover listener
