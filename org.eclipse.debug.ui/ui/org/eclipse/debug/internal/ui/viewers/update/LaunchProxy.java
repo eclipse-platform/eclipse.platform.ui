@@ -10,7 +10,10 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -127,6 +130,15 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 				launchDelta.addNode(child, indexOf(child, children), IModelDelta.INSTALL, -1);
 			}
 		}
+		List childrenList = Arrays.asList(children);
+        for (Iterator itr = fPrevChildren.iterator(); itr.hasNext();) {
+            Object child = itr.next();
+            if (!childrenList.contains(child)) {
+                itr.remove();
+                changes = true;
+                launchDelta.addNode(child, IModelDelta.UNINSTALL);
+            }
+        }
 		if (changes) {
 			fireModelChanged(root);
 		}
