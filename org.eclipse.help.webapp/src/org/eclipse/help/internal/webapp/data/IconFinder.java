@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,9 +100,22 @@ public class IconFinder {
 		return getIconAltText(iconId + ALT);		
 	}
 	
+	/**
+	 * Tests to see if an icon attribute was specified and the icon type was declared 
+	 * in an extension.
+	 */
+	public static boolean isIconDefined(String icon) {
+		if (icon == null || icon.length() == 0) {
+			return false;
+		}
+		String result = getImagePathFromId(icon, TYPEICON_OPEN);
+		return result != null;
+	}
+	
 	private static String lookupImagePath(String name) {
 		return getIconPath(name);
 	}
+	
 	private static void initializeTocIcons() {
 		if (iconsInitialized) {
 			return;

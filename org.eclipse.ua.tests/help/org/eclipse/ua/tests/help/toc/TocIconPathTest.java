@@ -51,5 +51,25 @@ public class TocIconPathTest extends TestCase {
 		assertEquals("org.eclipse.ua.tests/icons/sample.gif", closedPath);
 		assertEquals("org.eclipse.ua.tests/icons/sample.gif", leafPath);
 	}
+
+	public void testNullIconNotDefined() {
+		assertFalse(IconFinder.isIconDefined(null));
+	}
+
+	public void testEmptyIconNotDefined() {
+		assertFalse(IconFinder.isIconDefined(null));
+	}
+	
+	public void testUnknownIconNotDefined() {
+		assertFalse(IconFinder.isIconDefined("nosuchid"));
+	}
+
+	public void testKnownIconDefined() {
+		assertTrue(IconFinder.isIconDefined("org.eclipse.ua.tests.iconSet"));
+	}
+	
+	public void testOpenOnlyDefined() {
+		assertTrue(IconFinder.isIconDefined("org.eclipse.ua.tests.openOnly"));
+	}
 	
 }

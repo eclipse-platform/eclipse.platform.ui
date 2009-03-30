@@ -240,7 +240,7 @@ public class TocFragmentServlet extends HttpServlet {
 			if (toc instanceof Toc) {
 				String icon = ((Toc) toc).getIcon();
 				
-				if (icon != null && icon.length() > 0) {			
+				if (IconFinder.isIconDefined(icon)) {			
 				    String openIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_OPEN);
 					String closedIcon = IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_CLOSED);
 					String imageTags = '\n' + "      openImage=\"/"+ openIcon + "\""; //$NON-NLS-1$ //$NON-NLS-2$ 
@@ -262,7 +262,7 @@ public class TocFragmentServlet extends HttpServlet {
 				String icon = ((Topic) topic).getIcon();
 			    String altText = IconFinder.getIconAltFromId(icon);
 				
-				if (icon != null && icon.length() > 0) {					
+				if (IconFinder.isIconDefined(icon)) {					
 					String imageTags;
 					if (isLeaf) {		
 						imageTags = '\n' + "      openImage=\"/" +IconFinder.getImagePathFromId(icon, IconFinder.TYPEICON_LEAF) + "\"";   //$NON-NLS-1$//$NON-NLS-2$
