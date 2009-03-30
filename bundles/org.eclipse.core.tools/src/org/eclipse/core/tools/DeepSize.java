@@ -96,7 +96,7 @@ public class DeepSize {
 
 	Set getDefaultIgnoreTypeNames() {
 		Set ignored = new HashSet();
-		String[] ignore = {"org.eclipse.core.runtime.Plugin", "java.lang.ClassLoader", "org.eclipse.team.internal.ccvs.core.CVSTeamProvider", "org.eclipse.core.internal.events.BuilderPersistentInfo", "org.eclipse.core.internal.resources.Workspace", "org.eclipse.core.internal.events.EventStats"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-6$
+		String[] ignore = {"org.eclipse.core.runtime.Plugin", "java.lang.ClassLoader", "org.eclipse.team.internal.ccvs.core.CVSTeamProvider", "org.eclipse.core.internal.events.BuilderPersistentInfo", "org.eclipse.core.internal.resources.Workspace", "org.eclipse.core.internal.events.EventStats", "java.net.URL"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-6$
 		for (int i = 0; i < ignore.length; i++) {
 			ignored.add(ignore[i]);
 		}
