@@ -15,6 +15,8 @@ package org.eclipse.ui;
  * Constants for all commands defined by the Eclipse workbench.
  * 
  * @since 3.5
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchCommandConstants {
 
