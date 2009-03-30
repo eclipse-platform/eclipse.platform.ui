@@ -332,6 +332,7 @@ public class CocoaUIEnhancer implements IStartup {
 			Shell shell = window.getShell();
 			NSWindow nsWindow = shell.view.window();
 			nsWindow.setToolbar(dummyBar);
+			dummyBar.release();
 			nsWindow.setShowsToolbarButton(true);
 			
 			// Override the target and action of the toolbar button so we can control it.
