@@ -1980,7 +1980,13 @@ M4 = Platform-specific fourth key
             icon="$nl$/icons/full/obj16/brkp_obj.gif"
             annotationImageProvider="org.eclipse.debug.internal.ui.BreakpointImageProvider"
             textStylePreferenceKey="breakpointTextStyle"
-			textStylePreferenceValue="SQUIGGLES">
+            textStylePreferenceValue="SQUIGGLES"
+            showInNextPrevDropdownToolbarActionKey="showBreakpointIndicationInNextPrevDropdownToolbarAction"
+            showInNextPrevDropdownToolbarAction="true"
+            isGoToNextNavigationTargetKey="isBreakpointIndicationGoToNextNavigationTarget"
+            isGoToNextNavigationTarget="false"
+            isGoToPreviousNavigationTargetKey="isBreakpointIndicationGoToPreviousNavigationTarget"
+            isGoToPreviousNavigationTarget="false">
       </specification>
       <specification
             annotationImageProvider="org.eclipse.debug.internal.ui.InstructionPointerImageProvider"
