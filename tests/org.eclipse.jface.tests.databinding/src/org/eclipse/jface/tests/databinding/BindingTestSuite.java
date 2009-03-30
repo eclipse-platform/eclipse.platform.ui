@@ -15,7 +15,7 @@
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
- *                    255734, 263693, 169876, 266038, 268336
+ *                    255734, 263693, 169876, 266038, 268336, 270461
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -29,6 +29,8 @@ import org.eclipse.core.tests.databinding.BindingTest;
 import org.eclipse.core.tests.databinding.DatabindingContextTest;
 import org.eclipse.core.tests.databinding.ListBindingTest;
 import org.eclipse.core.tests.databinding.ObservablesManagerTest;
+import org.eclipse.core.tests.databinding.UpdateListStrategyTest;
+import org.eclipse.core.tests.databinding.UpdateSetStrategyTest;
 import org.eclipse.core.tests.databinding.UpdateStrategyTest;
 import org.eclipse.core.tests.databinding.UpdateValueStrategyTest;
 import org.eclipse.core.tests.databinding.ValueBindingTest;
@@ -226,6 +228,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(DatabindingContextTest.class);
 		addTestSuite(ListBindingTest.class);
 		addTestSuite(UpdateStrategyTest.class);
+		addTestSuite(UpdateListStrategyTest.class);
+		addTestSuite(UpdateSetStrategyTest.class);
 		addTestSuite(UpdateValueStrategyTest.class);
 		addTestSuite(ValueBindingTest.class);
 		addTestSuite(ObservablesManagerTest.class);

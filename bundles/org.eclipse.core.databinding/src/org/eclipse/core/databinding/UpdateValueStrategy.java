@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matt Carter - Character support completed (bug 197679)
- *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
+ *     Tom Schindl <tom.schindl@bestsolution.at> - bugfix for 217940
+ *     Matthew Hall <matthall@woodcraftmill.com> - bug 270461
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -54,9 +55,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Customizes a {@link Binding} between two
- * {@link IObservableValue observable values}. The following behaviors can be
- * customized via the strategy:
+ * Customizes a {@link Binding} between two {@link IObservableValue observable
+ * values}. The following behaviors can be customized via the strategy:
  * <ul>
  * <li>Validation</li>
  * <li>Conversion</li>
@@ -73,25 +73,28 @@ import org.eclipse.core.runtime.Status;
  * </ol>
  * </p>
  * <p>
- * Validation:<br/> {@link IValidator Validators} validate the value at
- * multiple phases in the update process. Statuses returned from validators are
- * aggregated into a <code>MultiStatus</code> until a status of
- * <code>ERROR</code> or <code>CANCEL</code> is encountered. Either of these
- * statuses will abort the update process. These statuses are available as the
+ * Validation:<br/>
+ * {@link IValidator Validators} validate the value at multiple phases in the
+ * update process. Statuses returned from validators are aggregated into a
+ * <code>MultiStatus</code> until a status of <code>ERROR</code> or
+ * <code>CANCEL</code> is encountered. Either of these statuses will abort the
+ * update process. These statuses are available as the
  * {@link Binding#getValidationStatus() binding validation status}.
  * </p>
  * <p>
- * Conversion:<br/> A {@link IConverter converter} will convert the value from
- * the type of the source observable into the type of the destination. The
- * strategy has the ability to default converters for common scenarios.
+ * Conversion:<br/>
+ * A {@link IConverter converter} will convert the value from the type of the
+ * source observable into the type of the destination. The strategy has the
+ * ability to default converters for common scenarios.
  * </p>
  * <p>
- * Automatic processing:<br/> The processing to perform when the source
- * observable changes. This behavior is configured via policies provided on
- * construction of the strategy (e.g. {@link #POLICY_NEVER},
- * {@link #POLICY_CONVERT}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
+ * Automatic processing:<br/>
+ * The processing to perform when the source observable changes. This behavior
+ * is configured via policies provided on construction of the strategy (e.g.
+ * {@link #POLICY_NEVER}, {@link #POLICY_CONVERT}, {@link #POLICY_ON_REQUEST},
+ * {@link #POLICY_UPDATE}).
  * </p>
- *
+ * 
  * @see DataBindingContext#bindValue(IObservableValue, IObservableValue,
  *      UpdateValueStrategy, UpdateValueStrategy)
  * @see Binding#getValidationStatus()
@@ -118,8 +121,8 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Policy constant denoting that the source observable's state should be
 	 * tracked, including validating changes except for
-	 * {@link #validateBeforeSet(Object)}, but that the destination
-	 * observable's value should only be updated on request.
+	 * {@link #validateBeforeSet(Object)}, but that the destination observable's
+	 * value should only be updated on request.
 	 */
 	public static int POLICY_CONVERT = notInlined(4);
 
@@ -135,7 +138,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * Helper method allowing API evolution of the above constant values. The
 	 * compiler will not inline constant values into client code if values are
 	 * "computed" using this helper.
-	 *
+	 * 
 	 * @param i
 	 *            an integer
 	 * @return the same integer
@@ -175,7 +178,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * Creates a new update value strategy with a configurable update policy.
 	 * Default validators and a default converter will be provided. The defaults
 	 * can be changed by calling one of the setter methods.
-	 *
+	 * 
 	 * @param updatePolicy
 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
 	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}
@@ -187,9 +190,9 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Creates a new update value strategy with a configurable update policy.
 	 * Default validators and a default converter will be provided if
-	 * <code>provideDefaults</code> is <code>true</code>. The defaults can
-	 * be changed by calling one of the setter methods.
-	 *
+	 * <code>provideDefaults</code> is <code>true</code>. The defaults can be
+	 * changed by calling one of the setter methods.
+	 * 
 	 * @param provideDefaults
 	 *            if <code>true</code>, default validators and a default
 	 *            converter will be provided based on the observable value's
@@ -206,11 +209,10 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Converts the value from the source type to the destination type.
 	 * <p>
-	 * Default implementation will use the
-	 * {@link #setConverter(IConverter) converter} if one exists. If no
-	 * converter exists no conversion occurs.
+	 * Default implementation will use the {@link #setConverter(IConverter)
+	 * converter} if one exists. If no converter exists no conversion occurs.
 	 * </p>
-	 *
+	 * 
 	 * @param value
 	 * @return the converted value
 	 */
@@ -220,9 +222,9 @@ public class UpdateValueStrategy extends UpdateStrategy {
 
 	/**
 	 * Tries to create a validator that can validate values of type fromType.
-	 * Returns <code>null</code> if no validator could be created. Either
-	 * toType or modelDescription can be <code>null</code>, but not both.
-	 *
+	 * Returns <code>null</code> if no validator could be created. Either toType
+	 * or modelDescription can be <code>null</code>, but not both.
+	 * 
 	 * @param fromType
 	 * @param toType
 	 * @return an IValidator, or <code>null</code> if unsuccessful
@@ -241,13 +243,13 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	}
 
 	/**
-	 * Fills out default values based upon the provided <code>source</code>
-	 * and <code>destination</code>. If the strategy is to default values it
-	 * will attempt to default a converter. If the converter can be defaulted an
-	 * attempt is made to default the
-	 * {@link #validateAfterGet(Object) after get validator}. If a validator
-	 * cannot be defaulted it will be <code>null</code>.
-	 *
+	 * Fills out default values based upon the provided <code>source</code> and
+	 * <code>destination</code>. If the strategy is to default values it will
+	 * attempt to default a converter. If the converter can be defaulted an
+	 * attempt is made to default the {@link #validateAfterGet(Object) after get
+	 * validator}. If a validator cannot be defaulted it will be
+	 * <code>null</code>.
+	 * 
 	 * @param source
 	 * @param destination
 	 */
@@ -273,7 +275,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 						"converter does not convert from type " + sourceType); //$NON-NLS-1$
 			}
 			if (destinationType != null) {
-				checkAssignable(converter.getToType(), destinationType,
+				checkAssignable(destinationType, converter.getToType(),
 						"converter does not convert to type " + destinationType); //$NON-NLS-1$
 			}
 		}
@@ -378,7 +380,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Sets the validator to be invoked after the source value is converted to
 	 * the type of the destination observable.
-	 *
+	 * 
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -390,7 +392,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Sets the validator to be invoked after the source value is retrieved at
 	 * the beginning of the synchronization process.
-	 *
+	 * 
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -402,7 +404,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Sets the validator to be invoked before the value is to be set on the
 	 * destination at the end of the synchronization process.
-	 *
+	 * 
 	 * @param validator
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -414,7 +416,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Sets the converter to be invoked when converting from the source type to
 	 * the destination type.
-	 *
+	 * 
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
 	 */
@@ -430,7 +432,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * {@link #setAfterConvertValidator(IValidator) validator} if one exists. If
 	 * one does not exist no validation will occur.
 	 * </p>
-	 *
+	 * 
 	 * @param value
 	 * @return an ok status
 	 */
@@ -446,7 +448,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * {@link #setAfterGetValidator(IValidator) validator} if one exists. If one
 	 * does not exist no validation will occur.
 	 * </p>
-	 *
+	 * 
 	 * @param value
 	 * @return an ok status
 	 */
@@ -462,7 +464,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	 * {@link #setBeforeSetValidator(IValidator) validator} if one exists. If
 	 * one does not exist no validation will occur.
 	 * </p>
-	 *
+	 * 
 	 * @param value
 	 * @return an ok status
 	 */
@@ -474,7 +476,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 	/**
 	 * Sets the current value of the given observable to the given value.
 	 * Clients may extend but must call the super implementation.
-	 *
+	 * 
 	 * @param observableValue
 	 * @param value
 	 * @return status
@@ -483,9 +485,11 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		try {
 			observableValue.setValue(value);
 		} catch (Exception ex) {
-			return ValidationStatus.error(BindingMessages
-					.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
-					ex);
+			return ValidationStatus
+					.error(
+							BindingMessages
+									.getString(BindingMessages.VALUEBINDING_ERROR_WHILE_SETTING_VALUE),
+							ex);
 		}
 		return Status.OK_STATUS;
 	}
@@ -535,7 +539,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 		/**
 		 * Associate a particular validator that can validate the conversion
 		 * (fromClass, toClass)
-		 *
+		 * 
 		 * @param fromClass
 		 *            The Class to convert from
 		 * @param toClass
@@ -550,7 +554,7 @@ public class UpdateValueStrategy extends UpdateStrategy {
 
 		/**
 		 * Return an IValidator for a specific fromClass and toClass.
-		 *
+		 * 
 		 * @param fromClass
 		 *            The Class to convert from
 		 * @param toClass

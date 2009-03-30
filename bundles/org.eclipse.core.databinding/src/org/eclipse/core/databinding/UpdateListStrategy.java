@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix for 217940
- *     Matthew Hall - bug 262221
+ *     Matthew Hall - bug 262221, 270461
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -165,7 +165,7 @@ public class UpdateListStrategy extends UpdateStrategy {
 						"converter does not convert from type " + sourceType); //$NON-NLS-1$
 			}
 			if (destinationType != null) {
-				checkAssignable(converter.getToType(), destinationType,
+				checkAssignable(destinationType, converter.getToType(),
 						"converter does not convert to type " + destinationType); //$NON-NLS-1$
 			}
 		}

@@ -8,6 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 124684)
  *     IBM Corporation - through UpdateListStrategy.java
+ *     Matthew Hall - bug 270461
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -20,22 +21,22 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Customizes a {@link Binding} between two
- * {@link IObservableSet observable sets}. The following behaviors can be
- * customized via the strategy:
+ * Customizes a {@link Binding} between two {@link IObservableSet observable
+ * sets}. The following behaviors can be customized via the strategy:
  * <ul>
  * <li>Conversion</li>
  * <li>Automatic processing</li>
  * </ul>
  * <p>
- * Conversion:<br/> When elements are added they can be
- * {@link #convert(Object) converted} to the destination element type.
+ * Conversion:<br/>
+ * When elements are added they can be {@link #convert(Object) converted} to the
+ * destination element type.
  * </p>
  * <p>
- * Automatic processing:<br/> The processing to perform when the source
- * observable changes. This behavior is configured via policies provided on
- * construction of the strategy (e.g. {@link #POLICY_NEVER},
- * {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
+ * Automatic processing:<br/>
+ * The processing to perform when the source observable changes. This behavior
+ * is configured via policies provided on construction of the strategy (e.g.
+ * {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, {@link #POLICY_UPDATE}).
  * </p>
  * 
  * 
@@ -133,9 +134,8 @@ public class UpdateSetStrategy extends UpdateStrategy {
 	 * When an element is added to the destination converts the element from the
 	 * source element type to the destination element type.
 	 * <p>
-	 * Default implementation will use the
-	 * {@link #setConverter(IConverter) converter} if one exists. If no
-	 * converter exists no conversion occurs.
+	 * Default implementation will use the {@link #setConverter(IConverter)
+	 * converter} if one exists. If no converter exists no conversion occurs.
 	 * </p>
 	 * 
 	 * @param element
@@ -165,7 +165,7 @@ public class UpdateSetStrategy extends UpdateStrategy {
 						"converter does not convert from type " + sourceType); //$NON-NLS-1$
 			}
 			if (destinationType != null) {
-				checkAssignable(converter.getToType(), destinationType,
+				checkAssignable(destinationType, converter.getToType(),
 						"converter does not convert to type " + destinationType); //$NON-NLS-1$
 			}
 		}
@@ -214,7 +214,7 @@ public class UpdateSetStrategy extends UpdateStrategy {
 	 * Clients may extend but must call the super implementation.
 	 * 
 	 * @param observableSet
-	 * @param element 
+	 * @param element
 	 * @return a status
 	 */
 	protected IStatus doRemove(IObservableSet observableSet, Object element) {
