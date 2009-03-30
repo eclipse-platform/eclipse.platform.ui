@@ -11,6 +11,8 @@
 package org.eclipse.compare.internal;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
@@ -62,10 +64,11 @@ public class CompareContentViewerSwitchingPane extends
 
 	protected Viewer getViewer(Viewer oldViewer, Object input) {
 		if (fSelectedViewerDescriptor != null) {
-			if (Arrays.asList(
-					CompareUIPlugin.getDefault().findContentViewerDescriptor(
-							oldViewer, input, getCompareConfiguration()))
-					.contains(fSelectedViewerDescriptor)) {
+			ViewerDescriptor[] array = CompareUIPlugin.getDefault().findContentViewerDescriptor(
+					oldViewer, input, getCompareConfiguration());
+			List list = array != null ? Arrays.asList(array)
+					: Collections.EMPTY_LIST;
+			if (list.contains(fSelectedViewerDescriptor)) {
 				// use selected viewer only when appropriate for the new input
 				fCompareEditorInput
 						.setViewerDescriptor(fSelectedViewerDescriptor);
