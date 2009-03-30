@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -103,17 +103,18 @@ public class TestConnectionDialog extends StatusDialog implements IShellProvider
 	 */
 	private void createURLSection(Composite parent) {
 		urlLabel = new Label(parent, SWT.VERTICAL);
-					
-		String urlString="\nURL: http://" + infoCenterHost; //$NON-NLS-1$
+			
+		String urlTemplate = Messages.TestConnectionDialog_URL_With_Param; 
+		String urlString="http://" + infoCenterHost; //$NON-NLS-1$
 		if (infoCenterPort
 				.equals("80")) { //$NON-NLS-1$
 			urlString = urlString + infoCenterPath;
 
 		} else {
 			urlString = urlString + ":" + infoCenterPort + infoCenterPath; //$NON-NLS-1$
-
 		}
-		urlLabel.setText(urlString+"\n"); //$NON-NLS-1$
+		urlString = NLS.bind(urlTemplate, urlString);
+		urlLabel.setText("\n" + urlString + '\n'); //$NON-NLS-1$
 	}	
 	
 	//Override cancel button so it acts as OK.  Then set OK button not visible, because we only need one button
