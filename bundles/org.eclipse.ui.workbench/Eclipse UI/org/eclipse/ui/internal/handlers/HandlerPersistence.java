@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
 import org.eclipse.ui.services.IEvaluationService;
@@ -104,8 +105,16 @@ public final class HandlerPersistence extends RegistryPersistence {
 		Iterator i = handlerActivations.iterator();
 		while (i.hasNext()) {
 			IHandlerActivation activation = (IHandlerActivation) i.next();
-			if (activation.getHandler()!=null) {
-				activation.getHandler().dispose();
+			if (activation.getHandler() != null) {
+				try {
+					activation.getHandler().dispose();
+				} catch (Exception e) {
+					WorkbenchPlugin.log("Failed to dispose handler for " //$NON-NLS-1$
+							+ activation.getCommandId(), e);
+				} catch (LinkageError e) {
+					WorkbenchPlugin.log("Failed to dispose handler for " //$NON-NLS-1$
+							+ activation.getCommandId(), e);
+				}
 			}
 		}
 		handlerActivations.clear();
