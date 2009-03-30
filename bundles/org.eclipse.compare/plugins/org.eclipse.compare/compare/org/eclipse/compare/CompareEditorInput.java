@@ -12,9 +12,7 @@ package org.eclipse.compare;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.ResourceBundle;
-import java.util.Set;
 
 import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.BinaryCompareViewer;
@@ -24,7 +22,6 @@ import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.ComparePreferencePage;
 import org.eclipse.compare.internal.CompareUIPlugin;
-import org.eclipse.compare.internal.ICompareAsText;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.internal.OutlineViewerCreator;
 import org.eclipse.compare.internal.Utilities;
@@ -204,7 +201,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	private String fHelpContextId;
 	private InternalOutlineViewerCreator fOutlineView;
-	private ICompareAsText fCompareAsText;
 	private ViewerDescriptor vd;
 	
 	private class InternalOutlineViewerCreator extends OutlineViewerCreator {
@@ -236,12 +232,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			if (creator != null)
 				return creator.getInput();
 			return null;
-		}
-	}
-	
-	private class CompareAsText implements ICompareAsText {
-		public void compareAsText(Object input) {
-			internalCompareAsText(input);
 		}
 	}
 
@@ -276,20 +266,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fContainer = configuration.getContainer();
 		configuration.setContainer(this);
 	}
-	
-	/* package */ void internalCompareAsText(Object input) {
-		Set set = (Set)getCompareConfiguration().getProperty(ICompareAsText.PROP_TEXT_INPUTS);
-		if (set == null) {
-			set = new HashSet();
-			getCompareConfiguration().setProperty(ICompareAsText.PROP_TEXT_INPUTS, set);
-		}
-		set.add(input);
-		if (fContentInputPane.getInput().equals(input)) {
-			// We need to null the input and then reset it so we get the text merge viewer
-			fContentInputPane.setInput(null);
-			fContentInputPane.setInput(input);
-		}
-	}
 
 	private boolean structureCompareOnSingleClick() {
 		return fStructureCompareOnSingleClick;
@@ -322,11 +298,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					fOutlineView = new InternalOutlineViewerCreator();
 				return fOutlineView;
 			}
-		}
-		if (adapter == ICompareAsText.class) {
-			if (fCompareAsText == null)
-				fCompareAsText = new CompareAsText();
-			return fCompareAsText;
 		}
 		if (adapter == IFindReplaceTarget.class) {
 			if (fContentInputPane != null) {

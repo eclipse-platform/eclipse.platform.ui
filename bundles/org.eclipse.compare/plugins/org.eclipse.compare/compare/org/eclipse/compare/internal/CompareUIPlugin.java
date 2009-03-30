@@ -74,7 +74,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
-
 /**
  * The Compare UI plug-in defines the entry point to initiate a configurable
  * compare operation on arbitrary resources. The result of the compare
@@ -859,10 +858,7 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 		ICompareInput input= (ICompareInput) in;
 		
-		IContentType ctype= getCommonType(input);
-		if (isCompareAsText(input, cc)) {
-			ctype = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
-		}
+		IContentType ctype = getCommonType(input);
 		if (ctype != null) {
 			initializeRegistries();
 			List list = fContentMergeViewers.searchAll(ctype);
@@ -896,23 +892,26 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			if (list != null)
 				result.addAll(list);
 		}
-
+		
 		// fallback
 		String leftType= guessType(input.getLeft());
 		String rightType= guessType(input.getRight());
 			
 		if (leftType != null || rightType != null) {
-			boolean right_text= rightType != null && ITypedElement.TEXT_TYPE.equals(rightType);
-			boolean left_text= leftType != null && ITypedElement.TEXT_TYPE.equals(leftType);
-			if ((leftType == null && right_text) || (left_text && rightType == null) || (left_text && right_text))
-				type= ITypedElement.TEXT_TYPE;
-			else
-				type= BINARY_TYPE;
-			
+			boolean right_text = rightType != null
+					&& ITypedElement.TEXT_TYPE.equals(rightType);
+			boolean left_text = leftType != null
+					&& ITypedElement.TEXT_TYPE.equals(leftType);
 			initializeRegistries();
-			List list = fContentMergeViewers.searchAll(type);
+			if (!right_text || !left_text) {
+				List list = fContentMergeViewers.searchAll(BINARY_TYPE);
+				if (list != null)
+					result.addAll(list);
+			}
+			List list = fContentMergeViewers.searchAll(ITypedElement.TEXT_TYPE);
 			if (list != null)
 				result.addAll(list);
+
 			return (ViewerDescriptor[]) result.toArray(new ViewerDescriptor[0]);
 		}
 		return null;
@@ -935,13 +934,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			Composite parent, CompareConfiguration cc) {
 		ViewerDescriptor[] descriptors = findContentViewerDescriptor(oldViewer, in, cc);
 		return getViewer(descriptors != null ? descriptors[0] : null, oldViewer, parent, cc);
-	}
-	
-	private boolean isCompareAsText(ICompareInput input, CompareConfiguration cc) {
-		Set set = (Set)cc.getProperty(ICompareAsText.PROP_TEXT_INPUTS);
-		if (set == null)
-			return false;
-		return set.contains(input);
 	}
 
 	private static Viewer getViewer(Object descriptor, Viewer oldViewer, Composite parent, CompareConfiguration cc) {    
@@ -1299,9 +1291,6 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 
 	String findContentTypeNameOrType(ICompareInput input, ViewerDescriptor vd, CompareConfiguration cc) {
 		IContentType ctype= getCommonType(input);
-		if (isCompareAsText(input, cc)) {
-			ctype = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
-		}
 		if (ctype != null) {
 			initializeRegistries();
 			List list = fContentMergeViewers.searchAll(ctype);
@@ -1343,15 +1332,18 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		String rightType= guessType(input.getRight());
 			
 		if (leftType != null || rightType != null) {
-			boolean right_text= rightType != null && ITypedElement.TEXT_TYPE.equals(rightType);
-			boolean left_text= leftType != null && ITypedElement.TEXT_TYPE.equals(leftType);
-			if ((leftType == null && right_text) || (left_text && rightType == null) || (left_text && right_text))
-				type= ITypedElement.TEXT_TYPE;
-			else
-				type= BINARY_TYPE;
-			
+			boolean right_text = rightType != null
+					&& ITypedElement.TEXT_TYPE.equals(rightType);
+			boolean left_text = leftType != null
+					&& ITypedElement.TEXT_TYPE.equals(leftType);
 			initializeRegistries();
-			List list = fContentMergeViewers.searchAll(type);
+			if (!left_text || !right_text) {
+				List list = fContentMergeViewers.searchAll(BINARY_TYPE);
+				if (list != null)
+					if (list.contains(vd))
+						return type;
+			}
+			List list = fContentMergeViewers.searchAll(ITypedElement.TEXT_TYPE);
 			if (list != null)
 				if (list.contains(vd))
 					return type;

@@ -10,20 +10,25 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ResourceBundle;
-import com.ibm.icu.text.MessageFormat;
 
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.layout.RowLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareEditorInput;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.PlatformUI;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * A simple compare viewer for binary files.
@@ -31,17 +36,15 @@ import org.eclipse.compare.structuremergeviewer.ICompareInput;
  */
 public class BinaryCompareViewer extends AbstractViewer {
 
-	private static final String BUNDLE_NAME= "org.eclipse.compare.internal.BinaryCompareViewerResources"; //$NON-NLS-1$
-
-	private static final int EOF= -1;
+	private static final String BUNDLE_NAME = "org.eclipse.compare.internal.BinaryCompareViewerResources"; //$NON-NLS-1$
+	
+	private static final int EOF = -1;
 	private ICompareInput fInput;
 	private ResourceBundle fBundle;
 	private boolean fLeftIsLocal;
 
 	private Composite fComposite;
 	private Label fMessage;
-	private Button fTextButton;
-	
 	
 	public BinaryCompareViewer(Composite parent, final CompareConfiguration cc) {
 		
@@ -59,34 +62,11 @@ public class BinaryCompareViewer extends AbstractViewer {
 		
 		fLeftIsLocal= Utilities.getBoolean(cc, "LEFT_IS_LOCAL", false); //$NON-NLS-1$
 		
-		if (canShowAsText(cc)) {
-			fTextButton = new Button(fComposite, SWT.PUSH);
-			fTextButton.setText(Utilities.getString(fBundle, "compareAsText")); //$NON-NLS-1$
-			fTextButton.addSelectionListener(new SelectionListener() {
-				public void widgetSelected(SelectionEvent e) {
-					BusyIndicator.showWhile(Display.getCurrent(), new Runnable() {
-						public void run() {
-							handleShowAsText(cc);
-						}
-					});
-				}
-				public void widgetDefaultSelected(SelectionEvent e) {
-					// Do nothing
-				}
-			});
-			fTextButton.setEnabled(false);
+		if (cc != null && cc.getContainer() instanceof CompareEditorInput) {
+			Label compareAsTextLabel = new Label(fComposite, SWT.WRAP);
+			compareAsTextLabel
+					.setText(Utilities.getString(fBundle, "compareAsText")); //$NON-NLS-1$
 		}
-	}
-
-	private boolean canShowAsText(CompareConfiguration cc) {
-		if (cc == null)
-			return false;
-		return Utilities.getAdapter(cc.getContainer(), ICompareAsText.class) != null;
-	}
-
-	protected void handleShowAsText(CompareConfiguration cc) {
-		ICompareAsText comparer = (ICompareAsText)Utilities.getAdapter(cc.getContainer(), ICompareAsText.class);
-		comparer.compareAsText(getInput());
 	}
 
 	public Control getControl() {
@@ -96,7 +76,7 @@ public class BinaryCompareViewer extends AbstractViewer {
 	public void setInput(Object input) {
 		if (fComposite != null && input instanceof ICompareInput) {
 			fInput= (ICompareInput) input;
-			
+
 			InputStream left= null;
 			InputStream right= null;
 			
@@ -142,8 +122,6 @@ public class BinaryCompareViewer extends AbstractViewer {
 			}
 			if (message != null)
 				fMessage.setText(message);
-			if (fTextButton != null)
-				fTextButton.setEnabled(true);
 			fComposite.layout();
 		}
 	}
