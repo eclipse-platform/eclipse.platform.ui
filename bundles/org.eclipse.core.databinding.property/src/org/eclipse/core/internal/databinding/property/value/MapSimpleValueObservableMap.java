@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 265561, 262287
+ *     Matthew Hall - bugs 262269, 265561, 262287, 268688
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -133,16 +133,20 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 		this.detailProperty = valueProperty;
 
 		ISimplePropertyListener listener = new ISimplePropertyListener() {
-			public void handleEvent(SimplePropertyEvent event) {
+			public void handleEvent(final SimplePropertyEvent event) {
 				if (!isDisposed() && !updating) {
-					if (event.type == SimplePropertyEvent.CHANGE)
-						notifyIfChanged(event.getSource());
-					else if (event.type == SimplePropertyEvent.STALE) {
-						boolean wasStale = !staleMasterValues.isEmpty();
-						staleMasterValues.add(event.getSource());
-						if (!wasStale)
-							fireStale();
-					}
+					getRealm().exec(new Runnable() {
+						public void run() {
+							if (event.type == SimplePropertyEvent.CHANGE) {
+								notifyIfChanged(event.getSource());
+							} else if (event.type == SimplePropertyEvent.STALE) {
+								boolean wasStale = !staleMasterValues.isEmpty();
+								staleMasterValues.add(event.getSource());
+								if (!wasStale)
+									fireStale();
+							}
+						}
+					});
 				}
 			}
 		};
@@ -172,17 +176,21 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 				}
 			}
 		});
-		knownMasterValues.addAll(masterMap.values());
 
-		masterMap.addMapChangeListener(masterListener);
-		masterMap.addStaleListener(staleListener);
+		getRealm().exec(new Runnable() {
+			public void run() {
+				knownMasterValues.addAll(masterMap.values());
+
+				masterMap.addMapChangeListener(masterListener);
+				masterMap.addStaleListener(staleListener);
+			}
+		});
 	}
 
 	protected void lastListenerRemoved() {
 		masterMap.removeMapChangeListener(masterListener);
 		masterMap.removeStaleListener(staleListener);
 		if (knownMasterValues != null) {
-			knownMasterValues.clear(); // removes attached listeners
 			knownMasterValues.dispose();
 			knownMasterValues = null;
 		}

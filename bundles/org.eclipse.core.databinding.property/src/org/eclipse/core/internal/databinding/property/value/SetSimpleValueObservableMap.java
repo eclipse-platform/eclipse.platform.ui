@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 266754, 265561, 262287
+ *     Matthew Hall - bugs 262269, 266754, 265561, 262287, 268688
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -53,25 +53,30 @@ public class SetSimpleValueObservableMap extends ComputedObservableMap
 	}
 
 	protected void firstListenerAdded() {
-		cachedValues = new IdentityMap();
-		staleKeys = new IdentitySet();
 		if (listener == null) {
 			listener = detailProperty
 					.adaptListener(new ISimplePropertyListener() {
-						public void handleEvent(SimplePropertyEvent event) {
+						public void handleEvent(final SimplePropertyEvent event) {
 							if (!isDisposed() && !updating) {
-								if (event.type == SimplePropertyEvent.CHANGE)
-									notifyIfChanged(event.getSource());
-								else if (event.type == SimplePropertyEvent.STALE) {
-									boolean wasStale = !staleKeys.isEmpty();
-									staleKeys.add(event.getSource());
-									if (!wasStale)
-										fireStale();
-								}
+								getRealm().exec(new Runnable() {
+									public void run() {
+										if (event.type == SimplePropertyEvent.CHANGE) {
+											notifyIfChanged(event.getSource());
+										} else if (event.type == SimplePropertyEvent.STALE) {
+											boolean wasStale = !staleKeys
+													.isEmpty();
+											staleKeys.add(event.getSource());
+											if (!wasStale)
+												fireStale();
+										}
+									}
+								});
 							}
 						}
 					});
 		}
+		cachedValues = new IdentityMap();
+		staleKeys = new IdentitySet();
 		super.firstListenerAdded();
 	}
 

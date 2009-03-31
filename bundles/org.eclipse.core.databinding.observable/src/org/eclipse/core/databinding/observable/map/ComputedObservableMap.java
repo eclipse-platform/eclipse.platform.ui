@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 241585, 247394, 226289, 194734, 190881, 266754
+ *     Matthew Hall - bugs 241585, 247394, 226289, 194734, 190881, 266754,
+ *                    268688
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -154,7 +155,11 @@ public abstract class ComputedObservableMap extends AbstractObservableMap {
 	}
 
 	protected void firstListenerAdded() {
-		hookListeners();
+		getRealm().exec(new Runnable() {
+			public void run() {
+				hookListeners();
+			}
+		});
 	}
 
 	protected void lastListenerRemoved() {

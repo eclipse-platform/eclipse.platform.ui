@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734
+ *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734, 268688
  *     Ovidio Mallo - bug 247741
  ******************************************************************************/
 
@@ -155,6 +155,24 @@ public class JavaBeanObservableSetTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, tracker.count);
 		assertDiff(tracker.event.diff, Collections.EMPTY_SET, Collections
 				.singleton(element));
+	}
+
+	public void testSetBeanPropertyOutsideRealm_FiresEventInsideRealm() {
+		Bean bean = new Bean(Collections.EMPTY_SET);
+		CurrentRealm realm = new CurrentRealm(true);
+		IObservableSet observable = BeansObservables.observeSet(realm, bean,
+				"set");
+		SetChangeEventTracker tracker = SetChangeEventTracker
+				.observe(observable);
+
+		realm.setCurrent(false);
+		bean.setSet(Collections.singleton("element"));
+		assertEquals(0, tracker.count);
+
+		realm.setCurrent(true);
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.EMPTY_SET, Collections
+				.singleton("element"));
 	}
 
 	private static void assertDiff(SetDiff diff, Set oldSet, Set newSet) {

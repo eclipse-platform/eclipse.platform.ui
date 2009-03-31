@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287
+ *     Matthew Hall - bugs 265561, 262287, 268688
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -54,26 +54,35 @@ public class SimplePropertyObservableValue extends AbstractObservableValue
 
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
-			cachedValue = property.getValue(source);
-			stale = false;
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
-							public void handleEvent(SimplePropertyEvent event) {
+							public void handleEvent(
+									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
-									if (event.type == SimplePropertyEvent.CHANGE) {
-										notifyIfChanged((ValueDiff) event.diff);
-									} else if (event.type == SimplePropertyEvent.STALE
-											&& !stale) {
-										stale = true;
-										fireStale();
-									}
+									getRealm().exec(new Runnable() {
+										public void run() {
+											if (event.type == SimplePropertyEvent.CHANGE) {
+												notifyIfChanged((ValueDiff) event.diff);
+											} else if (event.type == SimplePropertyEvent.STALE
+													&& !stale) {
+												stale = true;
+												fireStale();
+											}
+										}
+									});
 								}
 							}
 						});
 			}
-			if (listener != null)
-				listener.addTo(source);
+			getRealm().exec(new Runnable() {
+				public void run() {
+					cachedValue = property.getValue(source);
+					stale = false;
+					if (listener != null)
+						listener.addTo(source);
+				}
+			});
 		}
 	}
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Brad Reynolds - initial API and implementation
- *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734
+ *     Matthew Hall - bugs 221351, 213145, 244098, 246103, 194734, 268688
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -505,6 +505,24 @@ public class JavaBeanObservableArrayBasedListTest extends
 		assertEquals(1, tracker.count);
 		assertDiff(tracker.event.diff, Collections.singletonList("old"),
 				Collections.singletonList("new"));
+	}
+
+	public void testSetBeanPropertyOutsideRealm_FiresEventInsideRealm() {
+		Bean bean = new Bean(new Object[0]);
+		CurrentRealm realm = new CurrentRealm(true);
+		IObservableList observable = BeansObservables.observeList(realm, bean,
+				"array");
+		ListChangeEventTracker tracker = ListChangeEventTracker
+				.observe(observable);
+
+		realm.setCurrent(false);
+		bean.setArray(new Object[] { "element" });
+		assertEquals(0, tracker.count);
+
+		realm.setCurrent(true);
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.EMPTY_LIST, Collections
+				.singletonList("element"));
 	}
 
 	private static void assertDiff(ListDiff diff, List oldList, List newList) {

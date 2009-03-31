@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221351)
  *     Brad Reynolds - through JavaBeanObservableArrayBasedListTest.java
- *     Matthew Hall - bug 213145, 244098, 246103, 194734
+ *     Matthew Hall - bug 213145, 244098, 246103, 194734, 268688
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.beans;
@@ -319,6 +319,24 @@ public class JavaBeanObservableArrayBasedSetTest extends
 		assertEquals(1, tracker.count);
 		assertDiff(tracker.event.diff, Collections.EMPTY_SET, Collections
 				.singleton("new"));
+	}
+
+	public void testSetBeanPropertyOutsideRealm_FiresEventInsideRealm() {
+		Bean bean = new Bean(new Object[0]);
+		CurrentRealm realm = new CurrentRealm(true);
+		IObservableSet observable = BeansObservables.observeSet(realm, bean,
+				"array");
+		SetChangeEventTracker tracker = SetChangeEventTracker
+				.observe(observable);
+
+		realm.setCurrent(false);
+		bean.setArray(new Object[] { "element" });
+		assertEquals(0, tracker.count);
+
+		realm.setCurrent(true);
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.EMPTY_SET, Collections
+				.singleton("element"));
 	}
 
 	private static void assertDiff(SetDiff diff, Set oldSet, Set newSet) {

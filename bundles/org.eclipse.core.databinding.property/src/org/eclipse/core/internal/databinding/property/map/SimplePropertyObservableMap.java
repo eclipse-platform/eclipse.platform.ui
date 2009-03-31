@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 265561, 262287, 268203
+ *     Matthew Hall - bugs 265561, 262287, 268203, 268688
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.map;
@@ -77,28 +77,38 @@ public class SimplePropertyObservableMap extends AbstractObservableMap
 
 	protected void firstListenerAdded() {
 		if (!isDisposed()) {
-			cachedMap = new HashMap(getMap());
-			stale = false;
-
 			if (listener == null) {
 				listener = property
 						.adaptListener(new ISimplePropertyListener() {
-							public void handleEvent(SimplePropertyEvent event) {
+							public void handleEvent(
+									final SimplePropertyEvent event) {
 								if (!isDisposed() && !updating) {
-									if (event.type == SimplePropertyEvent.CHANGE) {
-										modCount++;
-										notifyIfChanged((MapDiff) event.diff);
-									} else if (event.type == SimplePropertyEvent.STALE
-											&& !stale) {
-										stale = true;
-										fireStale();
-									}
+									getRealm().exec(new Runnable() {
+										public void run() {
+											if (event.type == SimplePropertyEvent.CHANGE) {
+												modCount++;
+												notifyIfChanged((MapDiff) event.diff);
+											} else if (event.type == SimplePropertyEvent.STALE
+													&& !stale) {
+												stale = true;
+												fireStale();
+											}
+										}
+									});
 								}
 							}
 						});
 			}
-			if (listener != null)
-				listener.addTo(source);
+
+			getRealm().exec(new Runnable() {
+				public void run() {
+					cachedMap = new HashMap(getMap());
+					stale = false;
+
+					if (listener != null)
+						listener.addTo(source);
+				}
+			});
 		}
 	}
 

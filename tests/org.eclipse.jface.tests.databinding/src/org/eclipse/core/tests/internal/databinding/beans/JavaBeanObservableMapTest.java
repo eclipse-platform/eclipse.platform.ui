@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 213145, 241585, 246103, 194734
+ *     Matthew Hall - bugs 213145, 241585, 246103, 194734, 268688
  *     Ovidio Mallo - bug 247741
  *******************************************************************************/
 
@@ -226,6 +226,24 @@ public class JavaBeanObservableMapTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, tracker.count);
 		assertDiff(tracker.event.diff, Collections.singletonMap("key",
 				"oldValue"), Collections.singletonMap("key", "newValue"));
+	}
+
+	public void testSetBeanPropertyOutsideRealm_FiresEventInsideRealm() {
+		Bean bean = new Bean(Collections.EMPTY_MAP);
+		CurrentRealm realm = new CurrentRealm(true);
+		IObservableMap observable = BeansObservables.observeMap(realm, bean,
+				"map");
+		MapChangeEventTracker tracker = MapChangeEventTracker
+				.observe(observable);
+
+		realm.setCurrent(false);
+		bean.setMap(Collections.singletonMap("key", "value"));
+		assertEquals(0, tracker.count);
+
+		realm.setCurrent(true);
+		assertEquals(1, tracker.count);
+		assertDiff(tracker.event.diff, Collections.EMPTY_MAP, Collections
+				.singletonMap("key", "value"));
 	}
 
 	private static void assertDiff(MapDiff diff, Map oldMap, Map newMap) {

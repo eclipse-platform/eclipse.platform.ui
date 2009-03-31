@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 265561, 262287
+ *     Matthew Hall - bugs 262269, 265561, 262287, 268688
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -110,16 +110,20 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 		this.detailProperty = valueProperty;
 
 		ISimplePropertyListener listener = new ISimplePropertyListener() {
-			public void handleEvent(SimplePropertyEvent event) {
+			public void handleEvent(final SimplePropertyEvent event) {
 				if (!isDisposed() && !updating) {
-					if (event.type == SimplePropertyEvent.CHANGE)
-						notifyIfChanged(event.getSource());
-					else if (event.type == SimplePropertyEvent.STALE) {
-						boolean wasStale = !staleElements.isEmpty();
-						staleElements.add(event.getSource());
-						if (!wasStale)
-							fireStale();
-					}
+					getRealm().exec(new Runnable() {
+						public void run() {
+							if (event.type == SimplePropertyEvent.CHANGE) {
+								notifyIfChanged(event.getSource());
+							} else if (event.type == SimplePropertyEvent.STALE) {
+								boolean wasStale = !staleElements.isEmpty();
+								staleElements.add(event.getSource());
+								if (!wasStale)
+									fireStale();
+							}
+						}
+					});
 				}
 			}
 		};
@@ -149,17 +153,20 @@ public class ListSimpleValueObservableList extends AbstractObservableList
 				}
 			}
 		});
-		knownMasterElements.addAll(masterList);
+		getRealm().exec(new Runnable() {
+			public void run() {
+				knownMasterElements.addAll(masterList);
 
-		masterList.addListChangeListener(masterListener);
-		masterList.addStaleListener(staleListener);
+				masterList.addListChangeListener(masterListener);
+				masterList.addStaleListener(staleListener);
+			}
+		});
 	}
 
 	protected void lastListenerRemoved() {
 		masterList.removeListChangeListener(masterListener);
 		masterList.removeStaleListener(staleListener);
 		if (knownMasterElements != null) {
-			knownMasterElements.clear(); // clears cachedValues
 			knownMasterElements.dispose();
 			knownMasterElements = null;
 		}

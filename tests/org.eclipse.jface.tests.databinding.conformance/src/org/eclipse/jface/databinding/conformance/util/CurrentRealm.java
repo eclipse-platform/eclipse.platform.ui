@@ -7,8 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 268688
  *******************************************************************************/
 package org.eclipse.jface.databinding.conformance.util;
+
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.eclipse.core.databinding.observable.Realm;
 
@@ -20,6 +25,7 @@ import org.eclipse.core.databinding.observable.Realm;
  */
 public class CurrentRealm extends Realm {
 	private boolean current;
+	private List queue = new LinkedList();
 
 	public CurrentRealm() {
 		this(false);
@@ -35,15 +41,25 @@ public class CurrentRealm extends Realm {
 
 	public void setCurrent(boolean current) {
 		this.current = current;
+		processTasks();
 	}
 
 	protected void syncExec(Runnable runnable) {
 		super.syncExec(runnable);
 	}
 
+	private void processTasks() {
+		if (isCurrent()) {
+			for (Iterator it = queue.iterator(); it.hasNext();) {
+				Runnable task = (Runnable) it.next();
+				it.remove();
+				safeRun(task);
+			}
+		}
+	}
+
 	public void asyncExec(Runnable runnable) {
-		throw new UnsupportedOperationException(
-				"CurrentRealm does not support asyncExec(Runnable)."); //$NON-NLS-1$
+		queue.add(runnable);
 	}
 
 	protected static Realm setDefault(Realm realm) {
