@@ -1,11 +1,11 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
  * 
- * Contributors:
+ *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *     Wind River - Pawel Piech - Drag/Drop to Expressions View (Bug 184057)
@@ -13,7 +13,7 @@
  * 	   Wind River - Pawel Piech - NPE when closing the Variables view (Bug 213719)
  *     Wind River - Pawel Piech - Fix viewer input race condition (Bug 234908)
  *     Wind River - Anton Leherbauer - Fix selection provider (Bug 254442)
-******************************************************************************/
+ *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables;
 
 import java.io.ByteArrayInputStream;
