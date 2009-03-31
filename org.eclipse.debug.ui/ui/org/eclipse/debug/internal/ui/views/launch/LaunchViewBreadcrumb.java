@@ -356,6 +356,10 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
         return fViewer.getControl().getSize().y;
     }
     
+    void clearSelection() {
+        fViewer.setSelection(StructuredSelection.EMPTY);
+    }
+    
     private TreePath getPathForSelection(ISelection selection) {
         if (selection instanceof ITreeSelection && !selection.isEmpty()) {
             return ((ITreeSelection)selection).getPaths()[0];

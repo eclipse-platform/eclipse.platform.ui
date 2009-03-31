@@ -739,6 +739,9 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	    if (fDefaultPageRec != null && !getDefaultPage().equals(getCurrentPage())) {
             showPageRec(fDefaultPageRec);
             fContextProviderProxy.setActiveProvider(fTreeViewerDebugContextProvider);
+            // Clear the selection in the breadcrumb to avoid having it re-selected
+            // when the breadcrumb is activated again (bug 268124).
+            fBreadcrumbPage.fCrumb.clearSelection();
 	    }
 	}
 
@@ -751,6 +754,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         PageRec rec = getPageRec(fBreadcrumbPage);
         if (rec != null && !fBreadcrumbPage.equals(getCurrentPage())) {
             showPageRec(rec);
+            // Ask the breadcrumb to take focus if we're the active part.
+            if (getSite().getPage().getActivePart() == this) {
+                setFocus();
+            }
             fBreadcrumbPage.fCrumb.debugContextChanged(new DebugContextEvent(
                 fTreeViewerDebugContextProvider, 
                 fTreeViewerDebugContextProvider.getActiveContext(), 
