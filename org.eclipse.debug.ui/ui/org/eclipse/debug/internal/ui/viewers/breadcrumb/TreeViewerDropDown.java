@@ -192,6 +192,12 @@ public abstract class TreeViewerDropDown {
         tree.addKeyListener(new KeyListener() {
             public void keyPressed(KeyEvent e) {
                 if (e.keyCode == SWT.ARROW_UP) {
+                    // No elements in the tree (bug 262961).
+                    if (tree.getItemCount() == 0) {
+                        fDropDownSite.close();
+                        return;
+                    }
+                    
                     TreeItem[] selection= tree.getSelection();
                     if (selection.length != 1)
                         return;
