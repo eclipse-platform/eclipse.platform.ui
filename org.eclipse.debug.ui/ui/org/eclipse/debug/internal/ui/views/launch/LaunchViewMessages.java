@@ -17,10 +17,7 @@ public class LaunchViewMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.debug.internal.ui.views.launch.LaunchViewMessages";//$NON-NLS-1$
 
 	public static String Breadcrumb_NoActiveContext;
-    public static String breadcrumb_LabelPending;
-
     public static String LaunchView_ViewModeMenu_label;
-    
     public static String DebugViewModeAction_Auto_label;
     public static String DebugViewModeAction_Auto_tooltip;
     public static String DebugViewModeAction_Auto_description;

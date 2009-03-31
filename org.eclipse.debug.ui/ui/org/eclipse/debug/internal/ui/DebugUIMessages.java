@@ -70,8 +70,6 @@ public class DebugUIMessages extends NLS {
 	public static String AddMemoryRenderingAction_Add_renderings;
 	public static String AddMemoryRenderingDialog_Memory_renderings;
 	public static String AddMemoryRenderingDialog_Add_memory_rendering;
-	public static String AddMemoryRenderingAction_Add_rendering_failed;
-	public static String AddMemoryRenderingAction_Unable_to_add_selected_renderings;
 	public static String AddMemoryBlockAction_noMemoryBlock;
 	public static String AddMemoryRenderingDialog_Add_New;
 	public static String AddMemoryRenderingDialog_Unknown;

@@ -25,19 +25,14 @@ public class ImportExportMessages extends NLS {
 
 	public static String WizardImportBreakpoints_0;
 	public static String WizardExportBreakpoints_0;
-	public static String WizardBreakpointsPage_0;
 	public static String WizardBreakpointsPage_1;
 	public static String WizardBreakpointsPage_2;
-	public static String WizardBreakpointsPage_3;
 	public static String WizardBreakpointsPage_4;
 	public static String WizardBreakpointsPage_6;
 	public static String WizardBreakpointsPage_7;
 	public static String WizardBreakpointsPage_8;
 	public static String WizardBreakpointsPage_12;
 	public static String ImportExportOperations_0;
-	public static String ImportExportOperations_1;
-	public static String ImportExportOperations_2;
-	public static String ImportExportOperations_3;
 	public static String ImportOperation_0;
 	public static String WizardImportBreakpointsPage_0;
 	public static String WizardImportBreakpointsPage_1;

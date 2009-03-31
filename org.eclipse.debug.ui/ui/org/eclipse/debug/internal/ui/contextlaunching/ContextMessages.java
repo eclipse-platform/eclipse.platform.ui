@@ -24,7 +24,6 @@ public class ContextMessages extends NLS {
 	public static String ContextRunner_13;
 	public static String ContextRunner_14;
 	public static String ContextRunner_15;
-	public static String ContextRunner_16;
 	public static String ContextRunner_2;
 	public static String ContextRunner_3;
 	public static String ContextRunner_7;

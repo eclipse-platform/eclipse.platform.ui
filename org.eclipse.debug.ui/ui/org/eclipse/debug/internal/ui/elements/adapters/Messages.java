@@ -28,14 +28,7 @@ public class Messages extends NLS {
 	}
 
 	public static String VariableColumnPresentation_0;
-
 	public static String VariableColumnPresentation_1;
-
 	public static String VariableColumnPresentation_2;
-
 	public static String VariableColumnPresentation_3;
-
-	public static String VariableColumnPresentation_4;
-
-	public static String VariableColumnPresentation_5;
 }
