@@ -259,13 +259,17 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	/*
 	 * @see org.eclipse.jface.viewers.Viewer#inputChanged(java.lang.Object, java.lang.Object)
 	 */
-	protected void inputChanged(Object fInput, Object oldInput) {
+	protected void inputChanged(final Object input, Object oldInput) {
 		if (fContainer.isDisposed())
 			return;
 
 		disableRedraw();
 		try {
-			buildItemChain(fInput);
+		    preservingSelection(new Runnable() {
+		        public void run() {
+		            buildItemChain(input);
+		        }
+		    });
 		} finally {
 			enableRedraw();
 		}
@@ -406,6 +410,7 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 	protected void setSelectionToWidget(List l, boolean reveal) {
 		BreadcrumbItem focusItem= null;
 
+		// Unselect the currently selected items, and remember the focused item.  
 		for (int i= 0, size= fBreadcrumbItems.size(); i < size; i++) {
 			BreadcrumbItem item= (BreadcrumbItem) fBreadcrumbItems.get(i);
 			if (item.hasFocus())
@@ -414,9 +419,11 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 			item.setSelected(false);
 		}
 
-		if (l == null)
-			return;
+		if (l == null) {
+		    l = Collections.EMPTY_LIST;
+		}
 
+		// Set the new selection to items.
 		fSelectedItem = null;
 		for (Iterator iterator= l.iterator(); iterator.hasNext();) {
 			Object element= iterator.next();
@@ -425,9 +432,15 @@ public abstract class BreadcrumbViewer extends StructuredViewer {
 				item.setSelected(true);
 				fSelectedItem= item;
 				if (item == focusItem) {
-					item.setFocus(true);
+					focusItem = null;
 				}
 			}
+		}
+		
+		// If there is a new selection, and it does not overlap the old selection, 
+		// remove the focus marker from the old focus item.
+		if (fSelectedItem != null && focusItem != null) {
+		    focusItem.setFocus(false);
 		}
 	}
 

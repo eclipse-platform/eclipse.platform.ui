@@ -237,8 +237,6 @@ class BreadcrumbItemDetails {
 			return;
 
 		fSelected= selected;
-		if (!fSelected)
-			fHasFocus= false;
 
 		updateSelection();
 	}
@@ -379,12 +377,14 @@ class BreadcrumbItemDetails {
 			public void focusGained(FocusEvent e) {
 				if (!fHasFocus) {
 					fHasFocus= true;
+					updateSelection();
 				}
 			}
 
 			public void focusLost(FocusEvent e) {
 				if (fHasFocus) {
 					fHasFocus= false;
+					updateSelection();
 				}
 			}
 		});
