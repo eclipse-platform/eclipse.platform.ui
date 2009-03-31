@@ -22,37 +22,25 @@ public class DebugCoreMessages extends NLS {
 	public static String DebugEvent_illegal_kind;
 
 	public static String DebugPlugin_0;
-
+	public static String DebugPlugin_1;
 	public static String DebugPlugin_2;
-
 	public static String DebugPlugin_3;
-
 	public static String DebugPlugin_4;
-
 	public static String DebugPlugin_5;
-
 	public static String DebugPlugin_6;
-
 	public static String DebugPlugin_7;
-
 	public static String DebugPlugin_8;
 	public static String DebugPlugin_Eclipse_runtime_does_not_support_working_directory_2;
-	public static String DebugPlugin_1;
+	
 	public static String EnvironmentVariableResolver_0;
-
-	public static String J9VMRunner_0;
 
 	public static String LaunchConfiguration_0;
 	public static String LaunchConfiguration_11;
 	public static String LaunchConfiguration_13;
 	public static String LaunchConfiguration_14;
-
 	public static String LaunchConfiguration_16;
-
 	public static String LaunchConfiguration_17;
-
 	public static String LaunchConfiguration_18;
-
 	public static String LaunchConfiguration_19;
 	public static String LaunchConfiguration_2;
 	public static String LaunchConfiguration_3;
@@ -67,25 +55,17 @@ public class DebugCoreMessages extends NLS {
 
 	public static String LaunchConfigurationWorkingCopy_0;
 	public static String LaunchConfigurationWorkingCopy_1;
-
 	public static String LaunchConfigurationWorkingCopy_2;
-
 	public static String LaunchConfigurationWorkingCopy_3;
 
 	public static String LaunchDelegate_0;
 	public static String LaunchDelegate_1;
 	public static String LaunchDelegate_2;
-
 	public static String LaunchDelegate_3;
-	
 	public static String LaunchManager_26;
-
 	public static String LaunchManager_27;
-
 	public static String LaunchManager_28;
-
 	public static String LaunchManager_29;
-
 	public static String LaunchManager_31;
 
 	public static String LaunchMode_1;
