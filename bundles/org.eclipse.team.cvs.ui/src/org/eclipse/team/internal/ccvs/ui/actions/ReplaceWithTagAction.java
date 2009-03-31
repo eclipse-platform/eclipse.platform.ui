@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,10 @@ public abstract class ReplaceWithTagAction extends WorkspaceTraversalAction {
 			public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
                 monitor = Policy.monitorFor(monitor);
 				tag[0] = getTag(replaceOperation);
+				
+				// finish, when tag can't be obtained
+				if (tag[0] == null)
+					return;
 				
 				// For non-projects determine if the tag being loaded is the same as the resource's parent
 				// If it's not, warn the user that they will have strange sync behavior
