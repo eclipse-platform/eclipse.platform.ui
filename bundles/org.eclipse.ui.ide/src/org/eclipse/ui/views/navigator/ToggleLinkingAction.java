@@ -31,7 +31,7 @@ public class ToggleLinkingAction extends ResourceNavigatorAction {
 	 */
     public ToggleLinkingAction(IResourceNavigator navigator, String label) {
         super(navigator, label);
-		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_TOGGLELINKWITHEDITOR);
+		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR);
         setChecked(navigator.isLinkingEnabled());
     }
 

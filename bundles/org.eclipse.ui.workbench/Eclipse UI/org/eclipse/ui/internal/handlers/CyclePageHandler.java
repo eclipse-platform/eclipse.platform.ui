@@ -92,7 +92,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 		final ICommandService commandService = (ICommandService) window
 				.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService
-.getCommand(IWorkbenchCommandConstants.NAVIGATE_PREVIOUSPAGE);
+.getCommand(IWorkbenchCommandConstants.NAVIGATE_PREVIOUS_PAGE);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}
@@ -100,7 +100,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = (ICommandService) window
 				.getWorkbench().getService(ICommandService.class);
-		final Command command= commandService.getCommand(IWorkbenchCommandConstants.NAVIGATE_NEXTPAGE);
+		final Command command= commandService.getCommand(IWorkbenchCommandConstants.NAVIGATE_NEXT_PAGE);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}
@@ -114,7 +114,7 @@ public class CyclePageHandler extends CycleBaseHandler {
 	}
 
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		if (event.getCommand().getId().equals(IWorkbenchCommandConstants.NAVIGATE_NEXTPAGE)) {
+		if (event.getCommand().getId().equals(IWorkbenchCommandConstants.NAVIGATE_NEXT_PAGE)) {
 			gotoDirection = true;
 		} else {
 			gotoDirection = false;

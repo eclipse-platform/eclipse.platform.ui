@@ -960,7 +960,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 					IPerspectiveDescriptor persp = item.getPerspective();
 					
 					ICommandService commandService = (ICommandService) window.getService(ICommandService.class);
-					Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_CLOSEPERSPECTIVE);
+					Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE);
 					
 					HashMap parameters = new HashMap();
 					parameters.put(PARAMETER_CLOSE_PERSP_ID, persp.getId());
@@ -1137,7 +1137,7 @@ public class PerspectiveSwitcher implements IWindowTrim {
 						.getService(IHandlerService.class);
 				try {
 					handlerService.executeCommand(
-							IWorkbenchCommandConstants.WINDOW_CUSTOMIZEPERSPECTIVE, null);
+							IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE, null);
 				} catch (ExecutionException e1) {
 				} catch (NotDefinedException e1) {
 				} catch (NotEnabledException e1) {

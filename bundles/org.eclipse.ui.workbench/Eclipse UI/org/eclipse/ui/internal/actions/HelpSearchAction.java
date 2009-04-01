@@ -52,7 +52,7 @@ public class HelpSearchAction extends Action implements IWorkbenchAction {
             throw new IllegalArgumentException();
         }
         this.workbenchWindow = window;
-        setActionDefinitionId(IWorkbenchCommandConstants.HELP_HELPSEARCH);
+        setActionDefinitionId(IWorkbenchCommandConstants.HELP_HELP_SEARCH);
 
         // support for allowing a product to override the text for the action
         String overrideText = PrefUtil.getAPIPreferenceStore().getString(

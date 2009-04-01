@@ -549,7 +549,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 				.getService(IHandlerService.class);
 		showViewHandler = service
 				.activateHandler(
-						IWorkbenchCommandConstants.WINDOW_SHOWVIEWMENU,
+						IWorkbenchCommandConstants.WINDOW_SHOW_VIEW_MENU,
 						new ActionHandler(popupMenuAction),
 						new ActiveShellExpression(getShell()));
 

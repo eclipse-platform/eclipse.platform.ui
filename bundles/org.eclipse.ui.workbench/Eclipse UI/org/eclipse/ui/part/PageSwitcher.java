@@ -37,8 +37,8 @@ public abstract class PageSwitcher {
 	public PageSwitcher(IWorkbenchPart part) {
 		IHandlerService service = (IHandlerService) part.getSite().getService(
 				IHandlerService.class);
-		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_NEXTPAGE, new CyclePageHandler(this));
-		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_PREVIOUSPAGE, new CyclePageHandler(
+		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_NEXT_PAGE, new CyclePageHandler(this));
+		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_PREVIOUS_PAGE, new CyclePageHandler(
 				this));
 	}
 

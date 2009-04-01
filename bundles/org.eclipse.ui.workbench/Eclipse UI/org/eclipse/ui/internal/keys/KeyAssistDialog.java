@@ -347,7 +347,7 @@ final class KeyAssistDialog extends PopupDialog {
 	 */
 	private String getKeySequenceString() {
 		final Command command = commandService
-				.getCommand(IWorkbenchCommandConstants.WINDOW_SHOWKEYASSIST);
+				.getCommand(IWorkbenchCommandConstants.WINDOW_SHOW_KEY_ASSIST);
 		final TriggerSequence[] keyBindings = bindingService
 				.getActiveBindingsFor(new ParameterizedCommand(command, null));
 		final int keyBindingsCount = keyBindings.length;

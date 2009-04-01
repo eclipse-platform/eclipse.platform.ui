@@ -1026,7 +1026,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
         setActionGroup(group);
         
         IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
-		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLELINKWITHEDITOR,
+		service.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR,
     			new ActionHandler(group.toggleLinkingAction));
     	collapseAllHandler = new CollapseAllHandler(viewer);
     	service.activateHandler(CollapseAllHandler.COMMAND_ID,

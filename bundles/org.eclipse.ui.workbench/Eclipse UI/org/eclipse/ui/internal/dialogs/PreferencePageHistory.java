@@ -244,7 +244,7 @@ class PreferencePageHistory {
 		};
 		backward.setText(WorkbenchMessages.NavigationHistoryAction_backward_text);
 		backward
-				.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARDHISTORY);
+				.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
 		backward.setImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_BACK));
@@ -278,7 +278,7 @@ class PreferencePageHistory {
 			}
 		};
 		forward.setText(WorkbenchMessages.NavigationHistoryAction_forward_text);
-		forward.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_FORWARDHISTORY);
+		forward.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
 		forward.setImageDescriptor(WorkbenchPlugin.getDefault()
 				.getSharedImages().getImageDescriptor(
 						ISharedImages.IMG_TOOL_FORWARD));

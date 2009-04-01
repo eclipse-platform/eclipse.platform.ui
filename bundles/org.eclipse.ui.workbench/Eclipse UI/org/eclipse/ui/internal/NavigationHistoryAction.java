@@ -159,7 +159,7 @@ public class NavigationHistoryAction extends PageEventAction {
                     .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD));
             setDisabledImageDescriptor(sharedImages
                     .getImageDescriptor(ISharedImages.IMG_TOOL_FORWARD_DISABLED));
-            setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_FORWARDHISTORY);
+            setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY);
         } else {
             setText(WorkbenchMessages.NavigationHistoryAction_backward_text); 
             setToolTipText(WorkbenchMessages.NavigationHistoryAction_backward_toolTip);
@@ -170,7 +170,7 @@ public class NavigationHistoryAction extends PageEventAction {
                     .getImageDescriptor(ISharedImages.IMG_TOOL_BACK));
             setDisabledImageDescriptor(sharedImages
                     .getImageDescriptor(ISharedImages.IMG_TOOL_BACK_DISABLED));
-            setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARDHISTORY);
+            setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY);
         }
         // WorkbenchHelp.setHelp(this, IHelpContextIds.CLOSE_ALL_PAGES_ACTION);
         setEnabled(false);

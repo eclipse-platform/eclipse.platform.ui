@@ -38,7 +38,7 @@ public class ResetPerspectiveAction extends PerspectiveAction {
     public ResetPerspectiveAction(IWorkbenchWindow window) {
         super(window);
         setText(WorkbenchMessages.ResetPerspective_text);
-        setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_RESETPERSPECTIVE);
+        setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_RESET_PERSPECTIVE);
         // @issue missing action id
         setToolTipText(WorkbenchMessages.ResetPerspective_toolTip); 
         window.getWorkbench().getHelpSystem().setHelp(this,

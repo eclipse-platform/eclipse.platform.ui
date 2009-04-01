@@ -28,7 +28,7 @@ public class SaveAsAction extends BaseSaveAction {
      */
     public SaveAsAction(IWorkbenchWindow window) {
         super(WorkbenchMessages.SaveAs_text, window); 
-        setActionDefinitionId(IWorkbenchCommandConstants.FILE_SAVEAS);
+        setActionDefinitionId(IWorkbenchCommandConstants.FILE_SAVE_AS);
         setText(WorkbenchMessages.SaveAs_text); 
         setToolTipText(WorkbenchMessages.SaveAs_toolTip); 
         setId("saveAs"); //$NON-NLS-1$

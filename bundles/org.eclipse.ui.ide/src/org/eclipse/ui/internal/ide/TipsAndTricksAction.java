@@ -53,7 +53,7 @@ public class TipsAndTricksAction extends PartEventAction implements
         setToolTipText(IDEWorkbenchMessages.TipsAndTricks_toolTip);
         window.getWorkbench().getHelpSystem().setHelp(this,
 				IIDEHelpContextIds.TIPS_AND_TRICKS_ACTION);
-        setActionDefinitionId(IWorkbenchCommandConstants.HELP_TIPSANDTRICKS);
+        setActionDefinitionId(IWorkbenchCommandConstants.HELP_TIPS_AND_TRICKS);
         workbenchWindow.getPartService().addPartListener(this);
     }
 

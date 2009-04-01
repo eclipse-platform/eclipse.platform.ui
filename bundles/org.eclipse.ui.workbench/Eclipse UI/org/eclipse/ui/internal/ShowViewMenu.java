@@ -62,9 +62,9 @@ import org.eclipse.ui.views.IViewRegistry;
  */
 public class ShowViewMenu extends ContributionItem {
 	/**
-	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#VIEWS_SHOWVIEW}
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#VIEWS_SHOW_VIEW}
 	 */
-	public static final String SHOW_VIEW_ID= IWorkbenchCommandConstants.VIEWS_SHOWVIEW;
+	public static final String SHOW_VIEW_ID= IWorkbenchCommandConstants.VIEWS_SHOW_VIEW;
 	public static final String VIEW_ID_PARM = "org.eclipse.ui.views.showView.viewId"; //$NON-NLS-1$
 	private static final String PARAMETER_MAKE_FAST = "org.eclipse.ui.views.showView.makeFast"; //$NON-NLS-1$
 
@@ -157,7 +157,7 @@ public class ShowViewMenu extends ContributionItem {
 		((WorkbenchWindow) window)
 				.addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
 
-		showDlgAction.setActionDefinitionId(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
+		showDlgAction.setActionDefinitionId(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 		
 	}
 
@@ -237,7 +237,7 @@ public class ShowViewMenu extends ContributionItem {
 		String label = desc.getLabel();
 		
 		CommandContributionItemParameter parms = new CommandContributionItemParameter(
-				window, viewId, IWorkbenchCommandConstants.VIEWS_SHOWVIEW,
+				window, viewId, IWorkbenchCommandConstants.VIEWS_SHOW_VIEW,
 				CommandContributionItem.STYLE_PUSH);
 		parms.label = label;
 		parms.icon = desc.getImageDescriptor();
@@ -313,7 +313,7 @@ public class ShowViewMenu extends ContributionItem {
 	 */
 	private ParameterizedCommand getCommand(ICommandService commandService,
 			final boolean makeFast) {
-		Command c = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
+		Command c = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 		Parameterization[] parms = null;
 		if (makeFast) {
 			try {

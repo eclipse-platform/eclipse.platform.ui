@@ -401,7 +401,7 @@ public class AboutDialog extends TrayDialog {
 						CommandContributionItem.STYLE_PUSH)));
 		textManager.add(new CommandContributionItem(
 				new CommandContributionItemParameter(PlatformUI
-						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_SELECTALL,
+						.getWorkbench(), null, IWorkbenchCommandConstants.EDIT_SELECT_ALL,
 						CommandContributionItem.STYLE_PUSH)));
 		text.setMenu(textManager.createContextMenu(text));
 		text.addDisposeListener(new DisposeListener() {

@@ -70,7 +70,7 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 				.getService(ICommandService.class);
 
 		Command command = commandService
-				.getCommand(IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE);
+				.getCommand(IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE);
 		Map parameters = new HashMap();
 		parameters
 				.put(
@@ -94,19 +94,19 @@ public class ChangeToPerspectiveMenu extends PerspectiveMenu {
 		} catch (ExecutionException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE, e)); //$NON-NLS-1$
 		} catch (NotDefinedException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE, e)); //$NON-NLS-1$
 		} catch (NotEnabledException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE, e)); //$NON-NLS-1$
 		} catch (NotHandledException e) {
 			StatusManager.getManager().handle(
 					new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE, e)); //$NON-NLS-1$
+							"Failed to execute " + IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE, e)); //$NON-NLS-1$
 		}
 	}
 }

@@ -57,7 +57,7 @@ public class CycleEditorHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getBackwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUSEDITOR);
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUS_EDITOR);
 		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
 		return commandBack;
 	}
@@ -67,7 +67,7 @@ public class CycleEditorHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXTEDITOR);
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXT_EDITOR);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}

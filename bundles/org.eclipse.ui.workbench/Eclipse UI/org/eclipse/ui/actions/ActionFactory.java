@@ -131,7 +131,7 @@ public abstract class ActionFactory {
 	 * Activate the most recently used editor. This action maintains its enablement state.
 	 */
     public static final ActionFactory ACTIVATE_EDITOR = new ActionFactory(
-            "activateEditor", IWorkbenchCommandConstants.WINDOW_ACTIVATEEDITOR) {//$NON-NLS-1$
+            "activateEditor", IWorkbenchCommandConstants.WINDOW_ACTIVATE_EDITOR) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -176,7 +176,7 @@ public abstract class ActionFactory {
 	 * Backward in the navigation history. This action maintains its enablement state.
 	 */
     public static final ActionFactory BACKWARD_HISTORY = new ActionFactory(
-            "backardHistory", IWorkbenchCommandConstants.NAVIGATE_BACKWARDHISTORY) {//$NON-NLS-1$
+            "backardHistory", IWorkbenchCommandConstants.NAVIGATE_BACKWARD_HISTORY) {//$NON-NLS-1$
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
@@ -217,7 +217,7 @@ public abstract class ActionFactory {
 	 * editors. This action maintains its enablement state.
 	 */
     public static final ActionFactory CLOSE_ALL = new ActionFactory("closeAll",//$NON-NLS-1$
-    		IWorkbenchCommandConstants.FILE_CLOSEALL) {
+    		IWorkbenchCommandConstants.FILE_CLOSE_ALL) {
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
@@ -241,7 +241,7 @@ public abstract class ActionFactory {
 	 * @since 3.2
 	 */
     public static final ActionFactory CLOSE_OTHERS = new ActionFactory("closeOthers",//$NON-NLS-1$
-    		IWorkbenchCommandConstants.FILE_CLOSEOTHERS) {
+    		IWorkbenchCommandConstants.FILE_CLOSE_OTHERS) {
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
@@ -263,7 +263,7 @@ public abstract class ActionFactory {
 	 * Closes all perspectives. This action maintains its enablement state.
 	 */
     public static final ActionFactory CLOSE_ALL_PERSPECTIVES = new ActionFactory(
-            "closeAllPerspectives", IWorkbenchCommandConstants.WINDOW_CLOSEALLPERSPECTIVES) {//$NON-NLS-1$
+            "closeAllPerspectives", IWorkbenchCommandConstants.WINDOW_CLOSE_ALL_PERSPECTIVES) {//$NON-NLS-1$
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
          */
@@ -307,7 +307,7 @@ public abstract class ActionFactory {
 	 * Closes the current perspective. This action maintains its enablement state.
 	 */
     public static final ActionFactory CLOSE_PERSPECTIVE = new ActionFactory(
-    "closePerspective", IWorkbenchCommandConstants.WINDOW_CLOSEPERSPECTIVE) {//$NON-NLS-1$
+    "closePerspective", IWorkbenchCommandConstants.WINDOW_CLOSE_PERSPECTIVE) {//$NON-NLS-1$
     	/*
     	 * (non-Javadoc)
     	 * 
@@ -451,7 +451,7 @@ public abstract class ActionFactory {
 	 * Edit the action sets. This action maintains its enablement state.
 	 */
     public static final ActionFactory EDIT_ACTION_SETS = new ActionFactory(
-            "editActionSets", IWorkbenchCommandConstants.WINDOW_CUSTOMIZEPERSPECTIVE) {//$NON-NLS-1$
+            "editActionSets", IWorkbenchCommandConstants.WINDOW_CUSTOMIZE_PERSPECTIVE) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -507,7 +507,7 @@ public abstract class ActionFactory {
 	 * state.
 	 */
     public static final ActionFactory FIND = new ActionFactory("find", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.EDIT_FINDANDREPLACE) {
+    		IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -556,7 +556,7 @@ public abstract class ActionFactory {
 	 * Forward in the navigation history. This action maintains its enablement state.
 	 */
     public static final ActionFactory FORWARD_HISTORY = new ActionFactory(
-            "forwardHistory", IWorkbenchCommandConstants.NAVIGATE_FORWARDHISTORY) {//$NON-NLS-1$
+            "forwardHistory", IWorkbenchCommandConstants.NAVIGATE_FORWARD_HISTORY) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -577,7 +577,7 @@ public abstract class ActionFactory {
 	 * state.
 	 */
     public static final ActionFactory GO_INTO = new ActionFactory("goInto", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.NAVIGATE_GOINTO) {
+    		IWorkbenchCommandConstants.NAVIGATE_GO_INTO) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -648,7 +648,7 @@ public abstract class ActionFactory {
 	 * Maximize/restore the active part. This action maintains its enablement state.
 	 */
     public static final ActionFactory MAXIMIZE = new ActionFactory("maximize", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.WINDOW_MAXIMIZEACTIVEVIEWOREDITOR) {
+    		IWorkbenchCommandConstants.WINDOW_MAXIMIZE_ACTIVE_VIEW_OR_EDITOR) {
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -675,7 +675,7 @@ public abstract class ActionFactory {
 	 * @since 3.1
 	 */
     public static final ActionFactory MINIMIZE = new ActionFactory("minimize", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.WINDOW_MINIMIZEACTIVEVIEWOREDITOR) {
+    		IWorkbenchCommandConstants.WINDOW_MINIMIZE_ACTIVE_VIEW_OR_EDITOR) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -801,7 +801,7 @@ public abstract class ActionFactory {
 	 * </p>
 	 */
     public static final ActionFactory NEXT_EDITOR = new ActionFactory(
-            "nextEditor", IWorkbenchCommandConstants.WINDOW_NEXTEDITOR) {//$NON-NLS-1$
+            "nextEditor", IWorkbenchCommandConstants.WINDOW_NEXT_EDITOR) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -834,7 +834,7 @@ public abstract class ActionFactory {
 	 * </p>
 	 */
     public static final ActionFactory NEXT_PART = new ActionFactory("nextPart", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.WINDOW_NEXTVIEW) {
+    		IWorkbenchCommandConstants.WINDOW_NEXT_VIEW) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -865,7 +865,7 @@ public abstract class ActionFactory {
 	 * </p>
 	 */
     public static final ActionFactory NEXT_PERSPECTIVE = new ActionFactory(
-            "nextPerspective", IWorkbenchCommandConstants.WINDOW_NEXTPERSPECTIVE) {//$NON-NLS-1$
+            "nextPerspective", IWorkbenchCommandConstants.WINDOW_NEXT_PERSPECTIVE) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -891,7 +891,7 @@ public abstract class ActionFactory {
 	 * new workbench window. This action maintains its enablement state.
 	 */
     public static final ActionFactory OPEN_NEW_WINDOW = new ActionFactory(
-            "openNewWindow", IWorkbenchCommandConstants.WINDOW_NEWWINDOW) {//$NON-NLS-1$
+            "openNewWindow", IWorkbenchCommandConstants.WINDOW_NEW_WINDOW) {//$NON-NLS-1$
         
     	
         /* (non-Javadoc)
@@ -994,7 +994,7 @@ public abstract class ActionFactory {
 	 * </p>
 	 */
     public static final ActionFactory PREVIOUS_EDITOR = new ActionFactory(
-            "previousEditor", IWorkbenchCommandConstants.WINDOW_PREVIOUSEDITOR) {//$NON-NLS-1$
+            "previousEditor", IWorkbenchCommandConstants.WINDOW_PREVIOUS_EDITOR) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1026,7 +1026,7 @@ public abstract class ActionFactory {
 	 * </p>
 	 */
     public static final ActionFactory PREVIOUS_PART = new ActionFactory(
-            "previousPart", IWorkbenchCommandConstants.WINDOW_PREVIOUSVIEW) {//$NON-NLS-1$
+            "previousPart", IWorkbenchCommandConstants.WINDOW_PREVIOUS_VIEW) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1057,7 +1057,7 @@ public abstract class ActionFactory {
 	 * </p>
 	 */
     public static final ActionFactory PREVIOUS_PERSPECTIVE = new ActionFactory(
-            "previousPerspective", IWorkbenchCommandConstants.WINDOW_PREVIOUSPERSPECTIVE) {//$NON-NLS-1$
+            "previousPerspective", IWorkbenchCommandConstants.WINDOW_PREVIOUS_PERSPECTIVE) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1232,7 +1232,7 @@ public abstract class ActionFactory {
 	 * Resets the current perspective. This action maintains its enablement state.
 	 */
     public static final ActionFactory RESET_PERSPECTIVE = new ActionFactory(
-            "resetPerspective", IWorkbenchCommandConstants.WINDOW_RESETPERSPECTIVE) {//$NON-NLS-1$
+            "resetPerspective", IWorkbenchCommandConstants.WINDOW_RESET_PERSPECTIVE) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1294,7 +1294,7 @@ public abstract class ActionFactory {
 	 * editors with unsaved changes. This action maintains its enablement state.
 	 */
     public static final ActionFactory SAVE_ALL = new ActionFactory("saveAll", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.FILE_SAVEALL) {
+    		IWorkbenchCommandConstants.FILE_SAVE_ALL) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1314,7 +1314,7 @@ public abstract class ActionFactory {
 	 * active editor. This action maintains its enablement state.
 	 */
     public static final ActionFactory SAVE_AS = new ActionFactory("saveAs", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.FILE_SAVEAS) {
+    		IWorkbenchCommandConstants.FILE_SAVE_AS) {
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1334,7 +1334,7 @@ public abstract class ActionFactory {
 	 * Save the current perspective. This action maintains its enablement state.
 	 */
     public static final ActionFactory SAVE_PERSPECTIVE = new ActionFactory(
-            "savePerspective", IWorkbenchCommandConstants.WINDOW_SAVEPERSPECTIVEAS) {//$NON-NLS-1$
+            "savePerspective", IWorkbenchCommandConstants.WINDOW_SAVE_PERSPECTIVE_AS) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1355,7 +1355,7 @@ public abstract class ActionFactory {
 	 * enablement state.
 	 */
     public static final ActionFactory SELECT_ALL = new ActionFactory(
-            "selectAll", IWorkbenchCommandConstants.EDIT_SELECTALL) {//$NON-NLS-1$
+            "selectAll", IWorkbenchCommandConstants.EDIT_SELECT_ALL) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1490,7 +1490,7 @@ public abstract class ActionFactory {
 	 * the view menu. This action maintains its enablement state.
 	 */
     public static final ActionFactory SHOW_VIEW_MENU = new ActionFactory(
-            "showViewMenu", IWorkbenchCommandConstants.WINDOW_SHOWVIEWMENU) {//$NON-NLS-1$
+            "showViewMenu", IWorkbenchCommandConstants.WINDOW_SHOW_VIEW_MENU) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1563,7 +1563,7 @@ public abstract class ActionFactory {
 	 * the help contents. This action is always enabled.
 	 */
     public static final ActionFactory HELP_CONTENTS = new ActionFactory(
-            "helpContents", IWorkbenchCommandConstants.HELP_HELPCONTENTS) {//$NON-NLS-1$
+            "helpContents", IWorkbenchCommandConstants.HELP_HELP_CONTENTS) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1585,7 +1585,7 @@ public abstract class ActionFactory {
 	 * @since 3.1
 	 */
     public static final ActionFactory HELP_SEARCH = new ActionFactory(
-            "helpSearch", IWorkbenchCommandConstants.HELP_HELPSEARCH) {//$NON-NLS-1$
+            "helpSearch", IWorkbenchCommandConstants.HELP_HELP_SEARCH) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1607,7 +1607,7 @@ public abstract class ActionFactory {
 	 * @since 3.1
 	 */
     public static final ActionFactory DYNAMIC_HELP = new ActionFactory(
-            "dynamicHelp", IWorkbenchCommandConstants.HELP_DYNAMICHELP) {//$NON-NLS-1$
+            "dynamicHelp", IWorkbenchCommandConstants.HELP_DYNAMIC_HELP) {//$NON-NLS-1$
         
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1629,7 +1629,7 @@ public abstract class ActionFactory {
 	 * @since 3.1
 	 */
     public static final ActionFactory OPEN_PERSPECTIVE_DIALOG = new ActionFactory(
-            "openPerspectiveDialog", IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE) {//$NON-NLS-1$
+            "openPerspectiveDialog", IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)
@@ -1658,7 +1658,7 @@ public abstract class ActionFactory {
 	 * @since 3.1
 	 */
     public static final ActionFactory NEW_EDITOR = new ActionFactory(
-            "newEditor", IWorkbenchCommandConstants.WINDOW_NEWEDITOR) {//$NON-NLS-1$
+            "newEditor", IWorkbenchCommandConstants.WINDOW_NEW_EDITOR) {//$NON-NLS-1$
        
         /* (non-Javadoc)
          * @see org.eclipse.ui.actions.ActionFactory#create(org.eclipse.ui.IWorkbenchWindow)

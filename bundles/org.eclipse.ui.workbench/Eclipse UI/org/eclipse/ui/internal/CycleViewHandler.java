@@ -66,7 +66,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	protected ParameterizedCommand getBackwardCommand() {
 		// TODO Auto-generated method stub
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUSVIEW);
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUS_VIEW);
 		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
 		return commandBack;
 	}
@@ -77,7 +77,7 @@ public class CycleViewHandler extends CycleBaseHandler {
 	protected ParameterizedCommand getForwardCommand() {
 		// TODO Auto-generated method stub
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXTVIEW);
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXT_VIEW);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}

@@ -245,7 +245,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 		refreshAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_REFRESH);
 
 		buildAction = new BuildAction(sp, IncrementalProjectBuilder.INCREMENTAL_BUILD);
-		buildAction.setActionDefinitionId(IWorkbenchCommandConstants.PROJECT_BUILDPROJECT);
+		buildAction.setActionDefinitionId(IWorkbenchCommandConstants.PROJECT_BUILD_PROJECT);
 	}
 
 	/**

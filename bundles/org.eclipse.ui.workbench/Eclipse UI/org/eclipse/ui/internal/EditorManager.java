@@ -247,7 +247,7 @@ public class EditorManager implements IExtensionChangeHandler {
 			// Assign the handler for the pin editor keyboard shortcut.
 			final IHandlerService handlerService = (IHandlerService) window.getWorkbench().getService(IHandlerService.class);
 			pinEditorHandlerActivation = handlerService.activateHandler(
-					IWorkbenchCommandConstants.WINDOW_PINEDITOR, pinEditorHandler,
+					IWorkbenchCommandConstants.WINDOW_PIN_EDITOR, pinEditorHandler,
 					new ActiveShellExpression(shell));
 		}
 	}

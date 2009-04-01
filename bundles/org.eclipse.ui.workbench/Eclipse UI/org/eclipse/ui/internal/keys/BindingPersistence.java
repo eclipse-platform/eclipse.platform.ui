@@ -490,7 +490,7 @@ public final class BindingPersistence extends PreferencePersistence {
 						// we must be able to translate old view commands to the new
 						// parameterized command
 						viewParameter = commandId;
-						command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
+						command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 					}
 				} else {
 					command = null;
@@ -646,11 +646,11 @@ public final class BindingPersistence extends PreferencePersistence {
 					// we must be able to translate old view commands to the new
 					// parameterized command
 					viewParameter = commandId;
-					command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
+					command = commandService.getCommand(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 					if (DEBUG) {
 						Tracing.printTrace("BINDINGS", "Command '" //$NON-NLS-1$ //$NON-NLS-2$
 								+ commandId + "\' should be migrated to "  //$NON-NLS-1$
-								+ IWorkbenchCommandConstants.VIEWS_SHOWVIEW);
+								+ IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 					}
 					if (!command.isDefined()) {
 						// Reference to an undefined command. This is invalid.

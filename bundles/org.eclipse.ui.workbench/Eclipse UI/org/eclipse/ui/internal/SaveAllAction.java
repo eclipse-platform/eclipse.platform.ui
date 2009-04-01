@@ -61,7 +61,7 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
                 .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEALL_EDIT));
         setDisabledImageDescriptor(WorkbenchImages
                 .getImageDescriptor(ISharedImages.IMG_ETOOL_SAVEALL_EDIT_DISABLED));
-        setActionDefinitionId(IWorkbenchCommandConstants.FILE_SAVEALL);
+        setActionDefinitionId(IWorkbenchCommandConstants.FILE_SAVE_ALL);
     }
 
     /* (non-Javadoc)

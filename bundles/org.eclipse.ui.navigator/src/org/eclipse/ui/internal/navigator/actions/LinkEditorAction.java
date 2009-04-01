@@ -135,7 +135,7 @@ public class LinkEditorAction extends Action implements
 		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1);
 		commonNavigator = aNavigator;
 		commonViewer = aViewer;
-		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_TOGGLELINKWITHEDITOR);
+		setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR);
 		init();
 	}
 

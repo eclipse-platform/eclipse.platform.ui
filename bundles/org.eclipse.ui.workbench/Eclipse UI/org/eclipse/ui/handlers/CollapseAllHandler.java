@@ -46,7 +46,7 @@ public class CollapseAllHandler extends AbstractHandler {
 	/**
 	 * The command id for collapse all.
 	 */
-	public static final String COMMAND_ID = IWorkbenchCommandConstants.NAVIGATE_COLLAPSEALL;
+	public static final String COMMAND_ID = IWorkbenchCommandConstants.NAVIGATE_COLLAPSE_ALL;
 
 	private AbstractTreeViewer treeViewer;
 

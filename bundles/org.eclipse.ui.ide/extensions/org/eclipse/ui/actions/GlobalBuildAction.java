@@ -127,7 +127,7 @@ public class GlobalBuildAction extends Action implements
                     .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC));
             setDisabledImageDescriptor(IDEInternalWorkbenchImages
                     .getImageDescriptor(IDEInternalWorkbenchImages.IMG_ETOOL_BUILD_EXEC_DISABLED));
-            setActionDefinitionId(IWorkbenchCommandConstants.PROJECT_BUILDALL);
+            setActionDefinitionId(IWorkbenchCommandConstants.PROJECT_BUILD_ALL);
             break;
         case IncrementalProjectBuilder.FULL_BUILD:
             setText(IDEWorkbenchMessages.GlobalBuildAction_rebuildText);

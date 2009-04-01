@@ -2707,7 +2707,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		Object object = item.getIContributionItem();
 
 		if (item instanceof ShortcutItem && isShowView(item)) {
-			return IWorkbenchCommandConstants.VIEWS_SHOWVIEW;
+			return IWorkbenchCommandConstants.VIEWS_SHOW_VIEW;
 		}
 
 		return getIDFromIContributionItem(object);
@@ -2734,7 +2734,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				return IWorkbenchCommandConstants.FILE_NEW;
 			}
 			if (action instanceof OpenPerspectiveAction) {
-				return IWorkbenchCommandConstants.PERSPECTIVES_SHOWPERSPECTIVE;
+				return IWorkbenchCommandConstants.PERSPECTIVES_SHOW_PERSPECTIVE;
 			}
 			String id = action.getActionDefinitionId();
 			if (id != null) {

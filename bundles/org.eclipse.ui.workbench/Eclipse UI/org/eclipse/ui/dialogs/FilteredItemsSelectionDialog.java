@@ -555,7 +555,7 @@ public abstract class FilteredItemsSelectionDialog extends
 			}
 		};
 		showViewHandler = service.activateHandler(
-				IWorkbenchCommandConstants.WINDOW_SHOWVIEWMENU, handler,
+				IWorkbenchCommandConstants.WINDOW_SHOW_VIEW_MENU, handler,
 				new ActiveShellExpression(getShell()));
 	}
 

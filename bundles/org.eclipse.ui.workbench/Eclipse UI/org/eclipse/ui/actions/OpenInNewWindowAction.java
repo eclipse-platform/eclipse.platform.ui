@@ -51,7 +51,7 @@ public class OpenInNewWindowAction extends Action implements
      */
     public OpenInNewWindowAction(IWorkbenchWindow window) {
         this(window, ((Workbench) window.getWorkbench()).getDefaultPageInput());
-		setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_NEWWINDOW);
+		setActionDefinitionId(IWorkbenchCommandConstants.WINDOW_NEW_WINDOW);
     }
 
     /**

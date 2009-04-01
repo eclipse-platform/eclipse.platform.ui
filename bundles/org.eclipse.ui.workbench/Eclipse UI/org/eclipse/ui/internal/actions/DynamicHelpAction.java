@@ -51,7 +51,7 @@ public class DynamicHelpAction extends Action implements IWorkbenchAction {
 			throw new IllegalArgumentException();
 		}
 		this.workbenchWindow = window;
-		setActionDefinitionId(IWorkbenchCommandConstants.HELP_DYNAMICHELP);
+		setActionDefinitionId(IWorkbenchCommandConstants.HELP_DYNAMIC_HELP);
 
 		// support for allowing a product to override the text for the action
 		String overrideText = PrefUtil.getAPIPreferenceStore().getString(

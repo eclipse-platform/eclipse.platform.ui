@@ -103,7 +103,7 @@ public abstract class ContributionItemFactory {
 	 */
 	public static final ContributionItemFactory PIN_EDITOR = new ContributionItemFactory(
 			"pinEditor") { //$NON-NLS-1$
-		private static final String COMMAND_ID = IWorkbenchCommandConstants.WINDOW_PINEDITOR;
+		private static final String COMMAND_ID = IWorkbenchCommandConstants.WINDOW_PIN_EDITOR;
 
 		/* (non-javadoc) method declared on ContributionItemFactory */
 		public IContributionItem create(final IWorkbenchWindow window) {

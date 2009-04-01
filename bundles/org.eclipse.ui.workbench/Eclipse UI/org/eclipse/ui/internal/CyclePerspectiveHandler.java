@@ -58,7 +58,7 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getBackwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUSPERSPECTIVE);
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUS_PERSPECTIVE);
 		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
 		return commandBack;
 	}
@@ -68,7 +68,7 @@ public class CyclePerspectiveHandler extends CycleBaseHandler {
 	 */
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = (ICommandService) window.getWorkbench().getService(ICommandService.class);
-		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXTPERSPECTIVE);
+		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXT_PERSPECTIVE);
 		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
 		return commandF;
 	}

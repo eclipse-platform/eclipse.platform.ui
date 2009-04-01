@@ -62,9 +62,9 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 * The command id used for content assist. (value
 	 * <code>"org.eclipse.ui.edit.text.contentAssist.proposals"</code>)
 	 * 
-	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_CONTENTASSIST}
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_CONTENT_ASSIST}
 	 */
-	public static final String CONTENT_PROPOSAL_COMMAND= IWorkbenchCommandConstants.EDIT_CONTENTASSIST;
+	public static final String CONTENT_PROPOSAL_COMMAND= IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST;
 
 	// Default autoactivation delay in milliseconds
 	// TODO: This should eventually be controlled by
@@ -160,7 +160,7 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 				autoActivationCharacters);
 		this.commandId = commandId;
 		if (commandId == null) {
-			this.commandId= IWorkbenchCommandConstants.EDIT_CONTENTASSIST;
+			this.commandId= IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST;
 		}
 
 		// If no autoactivation characters were specified, set them to the empty

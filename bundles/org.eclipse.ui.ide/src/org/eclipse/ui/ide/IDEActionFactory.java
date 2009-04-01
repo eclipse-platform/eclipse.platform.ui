@@ -57,7 +57,7 @@ public final class IDEActionFactory {
      * This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory ADD_TASK = new ActionFactory("addTask", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.EDIT_ADDTASK) { 
+    		IWorkbenchCommandConstants.EDIT_ADD_TASK) { 
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -76,7 +76,7 @@ public final class IDEActionFactory {
      * This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory BOOKMARK = new ActionFactory("bookmark", //$NON-NLS-1$
-    		IWorkbenchCommandConstants.EDIT_ADDBOOKMARK) { 
+    		IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK) { 
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -95,7 +95,7 @@ public final class IDEActionFactory {
      * Incremental build. This action maintains its enablement state.
      */
     public static final ActionFactory BUILD = new ActionFactory("build",  //$NON-NLS-1$
-    		IWorkbenchCommandConstants.PROJECT_BUILDALL) {
+    		IWorkbenchCommandConstants.PROJECT_BUILD_ALL) {
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -148,7 +148,7 @@ public final class IDEActionFactory {
      * Incremental build. This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory BUILD_PROJECT = new ActionFactory(
-            "buildProject", IWorkbenchCommandConstants.PROJECT_BUILDPROJECT) { //$NON-NLS-1$
+            "buildProject", IWorkbenchCommandConstants.PROJECT_BUILD_PROJECT) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -168,7 +168,7 @@ public final class IDEActionFactory {
      * Close project. This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory CLOSE_PROJECT = new ActionFactory(
-            "closeProject", IWorkbenchCommandConstants.PROJECT_CLOSEPROJECT) { //$NON-NLS-1$
+            "closeProject", IWorkbenchCommandConstants.PROJECT_CLOSE_PROJECT) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -199,7 +199,7 @@ public final class IDEActionFactory {
      * @since 3.2
      */
     public static final ActionFactory CLOSE_UNRELATED_PROJECTS = new ActionFactory(
-            "closeUnrelatedProjects", IWorkbenchCommandConstants.PROJECT_CLOSEUNRELATEDPROJECTS) { //$NON-NLS-1$
+            "closeUnrelatedProjects", IWorkbenchCommandConstants.PROJECT_CLOSE_UNRELATED_PROJECTS) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -240,7 +240,7 @@ public final class IDEActionFactory {
      * Open project. This action is a {@link RetargetAction}. This action maintains its enablement state.
      */
     public static final ActionFactory OPEN_PROJECT = new ActionFactory(
-            "openProject", IWorkbenchCommandConstants.PROJECT_OPENPROJECT) { //$NON-NLS-1$
+            "openProject", IWorkbenchCommandConstants.PROJECT_OPEN_PROJECT) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {
@@ -355,7 +355,7 @@ public final class IDEActionFactory {
      * Tips and tricks. This action maintains its enablement state.
      */
     public static final ActionFactory TIPS_AND_TRICKS = new ActionFactory(
-            "tipsAndTricks", IWorkbenchCommandConstants.HELP_TIPSANDTRICKS) { //$NON-NLS-1$
+            "tipsAndTricks", IWorkbenchCommandConstants.HELP_TIPS_AND_TRICKS) { //$NON-NLS-1$
         /* (non-javadoc) method declared on ActionFactory */
         public IWorkbenchAction create(IWorkbenchWindow window) {
             if (window == null) {

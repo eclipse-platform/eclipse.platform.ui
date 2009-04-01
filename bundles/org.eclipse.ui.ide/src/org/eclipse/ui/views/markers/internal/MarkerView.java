@@ -942,7 +942,7 @@ public abstract class MarkerView extends TableView {
 		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		pasteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
-		selectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);
+		selectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 		propertiesAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES);
 		undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 		redoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_REDO);
@@ -1604,7 +1604,7 @@ public abstract class MarkerView extends TableView {
 				.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null) {
 			String keyBinding = bindingService
-					.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
+					.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 			if (keyBinding != null) {
 				showInLabel += '\t' + keyBinding;
 			}

@@ -1129,7 +1129,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             register(introAction);
         }
 
-        String showInQuickMenuId = IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU;
+        String showInQuickMenuId = IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU;
         showInQuickMenu = new QuickMenuAction(showInQuickMenuId) {
             protected void fillMenu(IMenuManager menu) {
                 menu.add(ContributionItemFactory.VIEWS_SHOW_IN

@@ -193,7 +193,7 @@ public class ShowInMenu extends ContributionItem implements
 	 */
 	private IContributionItem getContributionItem(IViewDescriptor viewDescriptor) {
 		CommandContributionItemParameter parm = new CommandContributionItemParameter(
-				locator, viewDescriptor.getId(), IWorkbenchCommandConstants.NAVIGATE_SHOWIN,
+				locator, viewDescriptor.getId(), IWorkbenchCommandConstants.NAVIGATE_SHOW_IN,
 				CommandContributionItem.STYLE_PUSH);
 		HashMap targetId = new HashMap();
 		targetId.put(SHOW_IN_PARM_ID, viewDescriptor.getId());
