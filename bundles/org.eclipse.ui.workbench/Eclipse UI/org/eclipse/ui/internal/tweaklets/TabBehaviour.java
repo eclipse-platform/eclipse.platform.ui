@@ -12,8 +12,14 @@
 package org.eclipse.ui.internal.tweaklets;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.internal.EditorAreaHelper;
@@ -100,6 +106,28 @@ public abstract class TabBehaviour {
 	 */
 	public boolean enableMRUTabVisibility() {
 		return true;
+	}
+	
+	public boolean sortEditorListAlphabetically() {
+		return true;		
+	}
+	
+	public Color createVisibleEditorsColor(Display display, RGB originalForegroundColor, RGB originalBackgroundColor) {
+		return new Color(display, originalForegroundColor);
+	}
+	
+	public Font createVisibleEditorsFont(Display display, Font originalFont) {
+		FontData fontData[] = originalFont.getFontData();
+		return new Font(display, fontData);
+	}
+	
+	public Font createInvisibleEditorsFont(Display display, Font originalFont) {
+        FontData fontData[] = originalFont.getFontData();
+        // Adding the bold attribute
+        for (int i = 0; i < fontData.length; i++) {
+			fontData[i].setStyle(fontData[i].getStyle() | SWT.BOLD);
+		}
+        return new Font(display, fontData);
 	}
 
 }

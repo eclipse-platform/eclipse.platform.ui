@@ -17,6 +17,7 @@ import java.util.Iterator;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
+import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -26,23 +27,26 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabItem;
 import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
 import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
+import org.eclipse.ui.internal.tweaklets.TabBehaviour;
+import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.presentations.IPresentablePart;
 import org.eclipse.ui.presentations.IStackPresentationSite;
 
 public class BasicPartList extends AbstractTableInformationControl {
 
-    private boolean hiddenTabsBold = true;
     private PresentablePartFolder folder;
     private IStackPresentationSite site;
     
@@ -75,9 +79,11 @@ public class BasicPartList extends AbstractTableInformationControl {
     }
 
     private class BasicStackListLabelProvider extends LabelProvider implements
-            IFontProvider {
+            IFontProvider, IColorProvider {
 
-        private Font boldFont = null;
+		private Font visibleEditorsFont;
+		private Font invisibleEditorsFont;
+		private Color visibleEditorsColor;
 
         /**
          * Constructor for stack list label provider.
@@ -105,31 +111,69 @@ public class BasicPartList extends AbstractTableInformationControl {
             IPresentablePart presentablePart = (IPresentablePart)element;
 
             AbstractTabItem item = folder.getTab(presentablePart);
+            Control control = folder.getTabFolder().getControl();
             // if in single tab mode, do not use the bold font for non-visible tabs
             // if in multiple tab mode, use the bold for non-visible tabs only
-            if ((item!=null && item.isShowing()) || !hiddenTabsBold) {
-				return folder.getTabFolder().getControl().getFont();
+            if (item!=null && item.isShowing()) {
+				return getVisibleEditorsFont(control.getDisplay(), control.getFont());
 			}
 
-            if (boldFont == null) {
-                Control control = folder.getTabFolder().getControl();
-                Font originalFont = control.getFont();
-                FontData fontData[] = originalFont.getFontData();
-                // Adding the bold attribute
-                for (int i = 0; i < fontData.length; i++) {
-					fontData[i].setStyle(fontData[i].getStyle() | SWT.BOLD);
-				}
-                boldFont = new Font(control.getDisplay(), fontData);
-            }
-            return boldFont;
+			return getInvisibleEditorsFont(control.getDisplay(), control.getFont());
         }
 
-        public void dispose() {
+		private Color getVisibleEditorsColor(Display display, RGB originalForeground, RGB originalBackground) {
+			if (visibleEditorsColor == null) {
+				visibleEditorsColor = ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
+						.createVisibleEditorsColor(display, originalForeground, originalBackground);
+			}
+			return visibleEditorsColor;
+		}
+
+		private Font getVisibleEditorsFont(Display display, Font font) {
+			if (visibleEditorsFont == null) {
+				visibleEditorsFont = ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
+				.createVisibleEditorsFont(display, font);
+			}
+			return visibleEditorsFont;
+		}
+		
+		private Font getInvisibleEditorsFont(Display display, Font font) {
+			if (invisibleEditorsFont == null) {
+				invisibleEditorsFont = ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
+						.createInvisibleEditorsFont(display, font);
+			}
+			return invisibleEditorsFont;
+		}
+		
+		public void dispose() {
             super.dispose();
-            if (boldFont != null) {
-				boldFont.dispose();
+            if (visibleEditorsColor != null) {
+				visibleEditorsColor.dispose();
 			}
+            if (visibleEditorsFont != null) {
+            	visibleEditorsFont.dispose();
+            }
+            if (invisibleEditorsFont != null) {
+            	invisibleEditorsFont.dispose();
+            }
         }
+
+		public Color getBackground(Object element) {
+			return null;
+		}
+
+		public Color getForeground(Object element) {
+            IPresentablePart presentablePart = (IPresentablePart)element;
+
+            AbstractTabItem item = folder.getTab(presentablePart);
+            Control control = folder.getTabFolder().getControl();
+            if (item!=null && item.isShowing()) {
+				return getVisibleEditorsColor(control.getDisplay(), control
+						.getForeground().getRGB(), control.getBackground().getRGB());
+			}
+
+			return null;
+		}
     }
 
     private class BasicStackListViewerComparator extends ViewerComparator {
@@ -248,7 +292,9 @@ public class BasicPartList extends AbstractTableInformationControl {
         };
         tableViewer.addFilter(new NamePatternFilter());
         tableViewer.setContentProvider(new BasicStackListContentProvider());
-        tableViewer.setComparator(new BasicStackListViewerComparator());
+        if (((TabBehaviour)Tweaklets.get(TabBehaviour.KEY)).sortEditorListAlphabetically()) {
+        	tableViewer.setComparator(new BasicStackListViewerComparator());
+        }
         tableViewer.setLabelProvider(new BasicStackListLabelProvider());
         return tableViewer;
     }
