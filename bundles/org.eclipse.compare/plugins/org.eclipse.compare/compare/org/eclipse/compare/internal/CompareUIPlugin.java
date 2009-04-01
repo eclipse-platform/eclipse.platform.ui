@@ -1338,7 +1338,8 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 			boolean left_text = leftType != null
 					&& ITypedElement.TEXT_TYPE.equals(leftType);
 			initializeRegistries();
-			if (!left_text || !right_text) {
+			if ((rightType != null && !right_text)
+					|| (leftType != null && !left_text)) {
 				List list = fContentMergeViewers.searchAll(BINARY_TYPE);
 				if (list != null)
 					if (list.contains(vd))
