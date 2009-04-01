@@ -109,17 +109,14 @@ public class SlaveHandlerService implements IHandlerService {
 		final String commandId = childActivation.getCommandId();
 		final IHandler handler = childActivation.getHandler();
 		final Expression childExpression = childActivation.getExpression();
-		final AndExpression expression;
-		if (childExpression instanceof AndExpression) {
-			expression = (AndExpression) childExpression;
-		} else {
-			expression = new AndExpression();
-			if (childExpression != null) {
-				expression.add(childExpression);
-			}
-		}
-		if (defaultExpression != null) {
-			expression.add(defaultExpression);
+		Expression expression = defaultExpression;
+		if (childExpression != null && defaultExpression != null) {
+			final AndExpression andExpression = new AndExpression();
+			andExpression.add(childExpression);
+			andExpression.add(defaultExpression);
+			expression = andExpression;
+		} else if (childExpression != null) {
+			expression = childExpression;
 		}
 		final int depth = childActivation.getDepth() + 1;
 		final IHandlerActivation localActivation = new HandlerActivation(
@@ -151,20 +148,17 @@ public class SlaveHandlerService implements IHandlerService {
 			return activation;
 		}
 
-		final AndExpression andExpression;
-		if (expression instanceof AndExpression) {
-			andExpression = (AndExpression) expression;
-		} else {
-			andExpression = new AndExpression();
-			if (expression != null) {
-				andExpression.add(expression);
-			}
-		}
-		if (defaultExpression != null) {
+		Expression aExpression = defaultExpression;
+		if (expression != null && defaultExpression != null) {
+			final AndExpression andExpression = new AndExpression();
+			andExpression.add(expression);
 			andExpression.add(defaultExpression);
+			aExpression = andExpression;
+		} else if (expression != null) {
+			aExpression = expression;
 		}
 		final IHandlerActivation localActivation = new HandlerActivation(
-				commandId, handler, andExpression,
+				commandId, handler, aExpression,
 				IHandlerActivation.ROOT_DEPTH, this);
 		return doActivation(localActivation);
 	}
