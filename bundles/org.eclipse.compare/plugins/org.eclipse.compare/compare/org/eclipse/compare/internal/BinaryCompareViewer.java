@@ -113,12 +113,14 @@ public class BinaryCompareViewer extends AbstractViewer {
 						message= Utilities.getString(fBundle, "deletedMessage"); //$NON-NLS-1$
 				}
 			} catch (CoreException ex) {
-				message= Utilities.getString(fBundle, "errorMessage"); //$NON-NLS-1$
+				message = Utilities.getString(fBundle, "errorMessage"); //$NON-NLS-1$
+				CompareUIPlugin.log(ex);
 			} catch (IOException ex) {
-				message= Utilities.getString(fBundle, "errorMessage"); //$NON-NLS-1$
+				message = Utilities.getString(fBundle, "errorMessage"); //$NON-NLS-1$
+				CompareUIPlugin.log(ex);
 			} finally {
 				Utilities.close(left);
-				Utilities.close(right);			
+				Utilities.close(right);
 			}
 			if (message != null)
 				fMessage.setText(message);
