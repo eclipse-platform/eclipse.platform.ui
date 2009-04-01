@@ -427,7 +427,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	private Diff fCurrentDiff;
 
 	// Bug 259362 - Update diffs after undo
-	private boolean copyOperationInProgress = false; 
+	private boolean copyOperationInProgress = false;
 	private IUndoableOperation copyUndoable = null;
 	private IOperationHistoryListener operationHistoryListener;
 
@@ -2547,7 +2547,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			action = new FindReplaceAction(getResourceBundle(), "Editor.FindReplace.", wp); //$NON-NLS-1$
 		else
 			action = new FindReplaceAction(getResourceBundle(), "Editor.FindReplace.", viewer.getSourceViewer().getControl().getShell(), getFindReplaceTarget()); //$NON-NLS-1$
-		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
 		viewer.addAction(MergeSourceViewer.FIND_ID, action);
 	}
 	
@@ -5308,7 +5308,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 					return isLeftDirty();
 				} else if (fFocusPart == fRight) {
 					return isRightDirty();
-				} 
+				}
 				return false;
 			}
 			public boolean isSaveAsAllowed() {

@@ -103,7 +103,7 @@ public class CommitCommentArea extends DialogArea {
             
             final TextViewerAction selectAllAction = new TextViewerAction(sourceViewer, ITextOperationTarget.SELECT_ALL);
             selectAllAction.setText(CVSUIMessages.CommitCommentArea_10);
-            selectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);            
+            selectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
             
             MenuManager contextMenu = new MenuManager();
             contextMenu.add(cutAction);
@@ -167,7 +167,7 @@ public class CommitCommentArea extends DialogArea {
 					this.cutHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_CUT, new ActionHandler(cutAction), new ActiveShellExpression(getComposite().getShell()));
 		            this.copyHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_COPY, new ActionHandler(copyAction), new ActiveShellExpression(getComposite().getShell()));
 		            this.pasteHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_PASTE, new ActionHandler(pasteAction), new ActiveShellExpression(getComposite().getShell()));
-		            this.selectAllHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_SELECTALL, new ActionHandler(selectAllAction), new ActiveShellExpression(getComposite().getShell()));
+		            this.selectAllHandlerActivation = service.activateHandler(IWorkbenchCommandConstants.EDIT_SELECT_ALL, new ActionHandler(selectAllAction), new ActiveShellExpression(getComposite().getShell()));
 		            
 		            
 				}
@@ -266,7 +266,7 @@ public class CommitCommentArea extends DialogArea {
             	}
             };
     		quickFixAction.setActionDefinitionId(ITextEditorActionDefinitionIds.QUICK_ASSIST);
-    		return new ActionHandler(quickFixAction);    		
+    		return new ActionHandler(quickFixAction);
         }
 
         public void modifyText(ModifyEvent e) {
@@ -284,7 +284,7 @@ public class CommitCommentArea extends DialogArea {
         
         public void focusGained(FocusEvent e) {
 
-            if (fText.length() > 0) 
+            if (fText.length() > 0)
                 return;
             
             fTextField.removeModifyListener(this);
@@ -297,7 +297,7 @@ public class CommitCommentArea extends DialogArea {
         
         public void focusLost(FocusEvent e) {
             
-            if (fText.length() > 0) 
+            if (fText.length() > 0)
                 return;
             
             fTextField.removeModifyListener(this);
@@ -423,7 +423,7 @@ public class CommitCommentArea extends DialogArea {
 		}
     }
     
-    private static final String EMPTY_MESSAGE= CVSUIMessages.CommitCommentArea_0; 
+    private static final String EMPTY_MESSAGE= CVSUIMessages.CommitCommentArea_0;
     private static final String COMBO_MESSAGE= CVSUIMessages.CommitCommentArea_1;
     private static final String CONFIGURE_TEMPLATES_MESSAGE= CVSUIMessages.CommitCommentArea_5;
     
@@ -537,9 +537,9 @@ public class CommitCommentArea extends DialogArea {
             
             if (MessageDialogWithToggle.PROMPT.equals(value)) {
                 
-                final String title= CVSUIMessages.CommitCommentArea_2; 
-                final String message= CVSUIMessages.CommitCommentArea_3; 
-                final String toggleMessage= CVSUIMessages.CommitCommentArea_4; 
+                final String title= CVSUIMessages.CommitCommentArea_2;
+                final String message= CVSUIMessages.CommitCommentArea_3;
+                final String toggleMessage= CVSUIMessages.CommitCommentArea_4;
                 
                 final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(shell, title, message, toggleMessage, false, store, ICVSUIConstants.PREF_ALLOW_EMPTY_COMMIT_COMMENTS);
                 if (dialog.getReturnCode() != IDialogConstants.YES_ID) {
@@ -627,7 +627,7 @@ public class CommitCommentArea extends DialogArea {
 
     private String getCommitTemplate() throws CVSException {
         CVSTeamProvider provider = getProvider();
-        if (provider == null) 
+        if (provider == null)
             return ""; //$NON-NLS-1$
         final String template = provider.getCommitTemplate();
         return template != null ? template : ""; //$NON-NLS-1$

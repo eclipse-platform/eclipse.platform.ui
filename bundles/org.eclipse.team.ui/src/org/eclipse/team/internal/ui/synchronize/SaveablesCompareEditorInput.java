@@ -224,14 +224,14 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 		if (labels.length == 3)
 			return NLS.bind(TeamUIMessages.SaveablesCompareEditorInput_threeWayTooltip, labels);
 		return NLS.bind(TeamUIMessages.SaveablesCompareEditorInput_twoWayTooltip, labels);
-	}		
+	}
 
 	public String getTitle() {
 		String[] labels = getLabels();
 		if (labels.length == 3)
 			return NLS.bind(TeamUIMessages.SaveablesCompareEditorInput_threeWayTitle, labels);
 		return NLS.bind(TeamUIMessages.SaveablesCompareEditorInput_twoWayTitle, labels);
-	}		
+	}
 
 	private IWorkbenchPage getPage() {
 		if (page == null)
@@ -673,7 +673,7 @@ public class SaveablesCompareEditorInput extends CompareEditorInput implements
 				.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
 			keyBinding = bindingService
-					.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
+					.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 
 		if (keyBinding == null)
 			keyBinding = ""; //$NON-NLS-1$

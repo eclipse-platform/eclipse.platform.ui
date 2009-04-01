@@ -763,7 +763,7 @@ public class MergeSourceViewer implements ISelectionChangedListener,
 		if (DELETE_ID.equals(actionId))
 			return new TextOperationAction(ITextOperationTarget.DELETE, IWorkbenchCommandConstants.EDIT_DELETE, true, false, false);
 		if (SELECT_ALL_ID.equals(actionId))
-			return new TextOperationAction(ITextOperationTarget.SELECT_ALL, IWorkbenchCommandConstants.EDIT_SELECTALL, false, false, false);
+			return new TextOperationAction(ITextOperationTarget.SELECT_ALL, IWorkbenchCommandConstants.EDIT_SELECT_ALL, false, false, false);
 		return null;
 	}
 	
