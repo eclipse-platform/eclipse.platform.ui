@@ -5623,7 +5623,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new TextOperationAction(EditorMessages.getBundleForConstructedKeys(), "Editor.SelectAll.", this, ITextOperationTarget.SELECT_ALL, true); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.SELECT_ALL_ACTION);
-		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 		setAction(ITextEditorActionConstants.SELECT_ALL, action);
 
 		action= new ShiftAction(EditorMessages.getBundleForConstructedKeys(), "Editor.ShiftRight.", this, ITextOperationTarget.SHIFT_RIGHT); //$NON-NLS-1$
@@ -5650,7 +5650,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		action= new FindReplaceAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindReplace.", this); //$NON-NLS-1$
 		action.setHelpContextId(IAbstractTextEditorHelpContextIds.FIND_ACTION);
-		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
 		setAction(ITextEditorActionConstants.FIND, action);
 
 		action= new FindNextAction(EditorMessages.getBundleForConstructedKeys(), "Editor.FindNext.", this, true); //$NON-NLS-1$

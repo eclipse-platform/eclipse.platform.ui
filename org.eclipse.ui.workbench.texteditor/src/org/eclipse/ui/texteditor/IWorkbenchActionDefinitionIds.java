@@ -127,7 +127,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * 
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_SELECTALL}
 	 */
-	public static final String SELECT_ALL= IWorkbenchCommandConstants.EDIT_SELECTALL;
+	public static final String SELECT_ALL= IWorkbenchCommandConstants.EDIT_SELECT_ALL;
 
 	/**
 	 * Action definition id of the edit find/replace action.
@@ -135,7 +135,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * 
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_FINDANDREPLACE}
 	 */
-	public static final String FIND_REPLACE= IWorkbenchCommandConstants.EDIT_FINDANDREPLACE;
+	public static final String FIND_REPLACE= IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE;
 
 	/**
 	 * Action definition id of the edit add bookmark action.
@@ -143,7 +143,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * 
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADDBOOKMARK}
 	 */
-	public static final String ADD_BOOKMARK= IWorkbenchCommandConstants.EDIT_ADDBOOKMARK;
+	public static final String ADD_BOOKMARK= IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK;
 
 	/**
 	 * Action definition id of the edit add task action.
@@ -151,7 +151,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * 
 	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADDTASK}
 	 */
-	public static final String ADD_TASK= IWorkbenchCommandConstants.EDIT_ADDTASK;
+	public static final String ADD_TASK= IWorkbenchCommandConstants.EDIT_ADD_TASK;
 
 	/**
 	 * The command identifier for the "move" action that typically appears in the file menu.

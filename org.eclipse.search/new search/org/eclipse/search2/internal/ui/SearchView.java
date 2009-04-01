@@ -647,7 +647,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 
 		IBindingService bindingService= (IBindingService) PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
-			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
+			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 
 		if (keyBinding == null)
 			keyBinding= ""; //$NON-NLS-1$

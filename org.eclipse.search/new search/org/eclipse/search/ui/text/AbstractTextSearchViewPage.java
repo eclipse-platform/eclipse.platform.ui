@@ -1102,7 +1102,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fRemoveSelectedMatches.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
 		fShowNextAction.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_NEXT);
 		fShowPreviousAction.setActionDefinitionId(IWorkbenchCommandConstants.NAVIGATE_PREVIOUS);
-		fSelectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);
+		fSelectAllAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 	}
 
 	/**

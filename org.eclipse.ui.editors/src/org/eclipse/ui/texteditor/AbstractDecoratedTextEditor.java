@@ -1096,12 +1096,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		ResourceAction action= new AddMarkerAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.AddBookmark.", this, IMarker.BOOKMARK, true); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.BOOKMARK_ACTION);
-		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADDBOOKMARK);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK);
 		setAction(IDEActionFactory.BOOKMARK.getId(), action);
 
 		action= new AddTaskAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.AddTask.", this); //$NON-NLS-1$
 		action.setHelpContextId(ITextEditorHelpContextIds.ADD_TASK_ACTION);
-		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADDTASK);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_ADD_TASK);
 		setAction(IDEActionFactory.ADD_TASK.getId(), action);
 
 		action= new ChangeEncodingAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ChangeEncodingAction.", this); //$NON-NLS-1$
@@ -1731,7 +1731,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		IBindingService bindingService= (IBindingService)PlatformUI.getWorkbench().getAdapter(IBindingService.class);
 		if (bindingService != null)
-			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOWINQUICKMENU);
+			keyBinding= bindingService.getBestActiveBindingFormattedFor(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_QUICK_MENU);
 
 		if (keyBinding == null)
 			keyBinding= ""; //$NON-NLS-1$
