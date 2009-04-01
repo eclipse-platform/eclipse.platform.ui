@@ -83,6 +83,18 @@
             class="org.eclipse.ui.tests.internal.Bug78470Test$MyPerspective"
             id="org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective"
             name="org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective"/>
+      <perspective
+            class="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory"
+            id="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory"
+            name="UI Test Perspective for Properties view"/>
+      <perspective
+            class="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory2"
+            id="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory2"
+            name="UI Test Perspective for hidden Properties view instance"/>
+      <perspective
+            class="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory3"
+            id="org.eclipse.ui.tests.propertysheet.PropertySheetPerspectiveFactory3"
+            name="Second UI Test Perspective for hidden Properties view instance"/>
    </extension>
    <extension
          point="org.eclipse.ui.views">

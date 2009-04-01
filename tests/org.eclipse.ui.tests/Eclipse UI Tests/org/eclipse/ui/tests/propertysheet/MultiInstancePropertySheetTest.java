@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Versant Corp. and others.
+ * Copyright (c) 2008, 2009 Versant Corp. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,16 +15,24 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.SelectionProviderView;
+import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.session.NonRestorableView;
 import org.eclipse.ui.views.properties.NewPropertySheetHandler;
 import org.eclipse.ui.views.properties.PropertySheet;
@@ -40,6 +48,8 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 */
 	private TestPropertySheetPage testPropertySheetPage = new TestPropertySheetPage();
 	private SelectionProviderView selectionProviderView;
+	
+	private IProject project;
 
 	public MultiInstancePropertySheetTest(String testName) {
 		super(testName);
@@ -56,6 +66,9 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		// open the property sheet with the TestPropertySheetPage
 		Platform.getAdapterManager().registerAdapters(testPropertySheetPage,
 				PropertySheet.class);
+		
+		PropertySheetPerspectiveFactory.applyPerspective(activePage);
+		
 		propertySheet = (PropertySheet) activePage
 				.showView(IPageLayout.ID_PROP_SHEET);
 
@@ -63,17 +76,25 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 				.showView(SelectionProviderView.ID);
 	}
 
+
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
 	 */
 	protected void doTearDown() throws Exception {
+	    activePage.resetPerspective();         
 		super.doTearDown();
 		Platform.getAdapterManager().unregisterAdapters(testPropertySheetPage,
 				PropertySheet.class);
 		testPropertySheetPage = null;
 		selectionProviderView = null;
+
+        if (project != null) {
+            FileUtil.deleteProject(project);
+            project = null;
+        }        
 	}
 
 	/**
@@ -276,5 +297,62 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	public void testPinningWithMultipleInstances() throws Throwable {
 		executeNewPropertySheetHandler();
 		testPinning();
+	}
+
+	/**
+	 * Tests that pinning a property sheet ensures that the content continues to
+	 * be rendered even if the original target part is not visible and is behind
+	 * another part in the part stack. 
+	 * 
+	 * @throws CoreException
+	 */
+	public void testBug268676HidingPinnedTargetPart() throws CoreException {
+		IPerspectiveDescriptor desc = activePage.getWorkbenchWindow().getWorkbench()
+				.getPerspectiveRegistry().findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+		// open the 'Resource' perspective
+		activePage.setPerspective(desc);
+		activePage.hideView(selectionProviderView);
+		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
+		
+		// create a project for properties rendering purposes
+        project = FileUtil.createProject("projectToSelect");
+        ISelection selection = new StructuredSelection(project);
+		
+		// show the 'Navigator'
+		IViewPart navigator = activePage.showView(IPageLayout.ID_RES_NAV);        
+        // have the 'Navigator' select it
+        navigator.getSite().getSelectionProvider().setSelection(selection);
+
+        // verify that the 'Navigator' uses a regular property sheet page
+		assertTrue("The 'Properties' view should render the content of the 'Navigator' in a regular property sheet page",
+				propertySheet.getCurrentPage() instanceof PropertySheetPage);
+
+		// show the 'Project Explorer'
+		IViewPart projectExplorer = activePage.showView(IPageLayout.ID_PROJECT_EXPLORER);        
+        // have the 'Project Explorer' select it        
+        projectExplorer.getSite().getSelectionProvider().setSelection(selection);
+		
+		assertFalse("The 'Navigator' should be hidden behind the 'Project Explorer'",
+				activePage.isPartVisible(navigator));
+		assertTrue("The 'Project Explorer' should be visible in front of the 'Navigator'",
+				activePage.isPartVisible(projectExplorer));
+
+        // verify that the 'Project Explorer' uses a non-standard property sheet page
+		assertFalse("The 'Properties' view should be showing the content of the 'Project Explorer' in a tabbed property sheet, not a regular one",
+				propertySheet.getCurrentPage() instanceof PropertySheetPage);
+		
+		// pin the tabbed property sheet page
+		IAction action = getPinPropertySheetAction(propertySheet);
+		action.setChecked(true);
+		
+		// now activate the 'Navigator' so a partHidden event is fired for the
+		// 'Project Explorer', just because it is hidden should _not_ mean the
+		// _pinned_ 'Properties' view should stop rendering its content though,
+		// this is the bug being tested
+		activePage.activate(navigator);
+
+		// verify that the page is not a non-standard property sheet page
+		assertFalse("The 'Properties' view should still be on the content of the 'Project Explorer' rendering a tabbed property sheet",
+				propertySheet.getCurrentPage() instanceof PropertySheetPage);
 	}
 }
