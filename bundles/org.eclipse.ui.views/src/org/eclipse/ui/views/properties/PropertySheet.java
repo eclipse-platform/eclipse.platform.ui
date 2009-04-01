@@ -100,12 +100,18 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * Whether this property sheet instance is pinned or not 
 	 */
 	private IAction pinPropertySheetAction;
+
+	/**
+	 * Whether this property view instance is hidden or not 
+	 */
+    private boolean hidden;
 	
     /**
      * Creates a property sheet view.
      */
     public PropertySheet() {
         super();
+        pinPropertySheetAction = new PinPropertySheetAction();
     }
 
     /* (non-Javadoc)
@@ -130,7 +136,6 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
     public void createPartControl(Composite parent) {
         super.createPartControl(parent);
          
-        pinPropertySheetAction = new PinPropertySheetAction();
         pinPropertySheetAction.addPropertyChangeListener(new IPropertyChangeListener(){
 			public void propertyChange(PropertyChangeEvent event) {
 				if (IAction.CHECKED.equals(event.getProperty())) {
@@ -242,9 +247,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * The property sheet may show properties for any view other than this view.
      */
     protected boolean isImportant(IWorkbenchPart part) {
-    	 return pinPropertySheetAction == null
-    	 				|| (pinPropertySheetAction != null && !pinPropertySheetAction
-    	 						.isChecked()) && !(part instanceof PropertySheet);
+    	 return !isPinned() && part != this;
     }
 
     /* (non-Javadoc)
@@ -252,18 +255,55 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * since 3.4
 	 */
 	public void partClosed(IWorkbenchPart part) {
-		if (pinPropertySheetAction.isChecked() && part.equals(currentPart)) {
+		if (isPinned() && part.equals(currentPart)) {
 			pinPropertySheetAction.setChecked(false);
 		}
 		super.partClosed(part);
 	}
-
+    
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.PageBookView#partVisible(org.eclipse.ui.IWorkbenchPart)
+	 * since 3.4
+	 */
+	protected void partVisible(IWorkbenchPart part) {
+	    if(hidden && this == part){
+            hidden = false;
+            // now we are visible again. Do not need to propagate this event to parent.
+            return;
+        }
+        
+	    super.partVisible(part);
+	}
+	
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.part.PageBookView#partHidden(org.eclipse.ui.IWorkbenchPart)
+     * since 3.4
+     */
+    protected void partHidden(IWorkbenchPart part) {
+        if(this == part){
+            hidden = true;
+        }
+        // if we are pinned, then we are not interested if parts are hidden, if
+        // our target part is hidden, we should still show whatever content we
+        // have been pinned on
+        if (!isPinned()) {
+            super.partHidden(part);     
+        }
+    }	
+    
 	/**
      * The <code>PropertySheet</code> implementation of this <code>IPartListener</code>
      * method first sees if the active part is an <code>IContributedContentsView</code>
      * adapter and if so, asks it for its contributing part.
      */
     public void partActivated(IWorkbenchPart part) {
+        if(hidden) {
+            if (this == part) {
+                hidden = false;
+            }
+            // If we are hidden (or it's our own event), ignore event.
+            return;
+        }
     	// Look for a declaratively-contributed adapter - including not yet loaded adapter factories.
     	// See bug 86362 [PropertiesView] Can not access AdapterFactory, when plugin is not loaded.
         IContributedContentsView view = (IContributedContentsView) ViewsPlugin.getAdapter(part,
@@ -280,6 +320,8 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 
         if(isImportant(part)) {
         	currentPart = part;
+        	// reset the selection (to allow selectionChanged() accept part change for empty selections)
+        	currentSelection = null;
         }
         
         // When the view is first opened, pass the selection to the page		
@@ -297,10 +339,14 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * Notify the current page that the selection has changed.
      */
     public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-        // we ignore our own selection or null selection
-		if (sel == null || !isImportant(part)
-				|| (!isImportant(part) && sel.equals(currentSelection))) {
+        // we ignore null selection, or if we are pinned, or our own selection or same selection
+		if (sel == null || !isImportant(part) || sel.equals(currentSelection)) {
 			return;
+		}
+		
+		// we ignore selection if we are hidden OR selection is coming from another source as the last one
+		if(hidden && (part == null || !part.equals(currentPart))){
+		    return;
 		}
         
         currentPart = part;
@@ -358,7 +404,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * @since 3.4
 	 */
 	public boolean isPinned() {
-		return pinPropertySheetAction.isChecked();
+		return pinPropertySheetAction != null && pinPropertySheetAction.isChecked();
 	}
 
 	/**
@@ -376,7 +422,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * @since 3.4
 	 */
 	public boolean show(ShowInContext aContext) {
-		if (!pinPropertySheetAction.isChecked()
+		if (!isPinned()
 				&& aContext instanceof PropertyShowInContext) {
 			PropertyShowInContext context = (PropertyShowInContext) aContext;
 			partActivated(context.getPart());
