@@ -34,6 +34,7 @@ import org.eclipse.swt.graphics.Image;
 
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ui.texteditor.IUpdate;
 
 import com.ibm.icu.text.MessageFormat;
@@ -66,7 +67,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 		setText(ActionMessages.FindAction_0);
 		setId(DebugUIPlugin.getUniqueIdentifier() + ".FindElementAction"); //$NON-NLS-1$
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.FIND_ELEMENT_ACTION);
-		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
+		setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
 		fViewer = viewer;
 	}
 
@@ -126,7 +127,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 	}
 	
 	protected void performFind(Object[] items) {
-		FindElementDialog dialog = new FindElementDialog(fViewer.getControl().getShell(), new FindLabelProvider(), items); 
+		FindElementDialog dialog = new FindElementDialog(fViewer.getControl().getShell(), new FindLabelProvider(), items);
 		dialog.setTitle(ActionMessages.FindDialog_3);
 		dialog.setMessage(ActionMessages.FindDialog_1);
 		if (dialog.open() == Window.OK) {
@@ -147,6 +148,6 @@ public class VirtualFindAction extends Action implements IUpdate {
 	
 	public void update() {
 		setEnabled(fViewer.getInput() != null);
-	}	
+	}
 	
 }

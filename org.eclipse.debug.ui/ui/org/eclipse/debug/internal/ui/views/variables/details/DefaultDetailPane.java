@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.operations.IUndoContext;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -95,6 +96,7 @@ import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.progress.WorkbenchJob;
+
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -149,7 +151,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	}
 	
 	/**
-	 * Internal interface for a cursor listener. I.e. aggregation 
+	 * Internal interface for a cursor listener. I.e. aggregation
 	 * of mouse and key listener.
 	 * @since 3.0
 	 */
@@ -218,7 +220,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 							break;
 						}
 					}
-				}				
+				}
 			}
 			// If no details were computed for the selected variable, clear the pane
 			// or use the message, if the variable was a java.lang.String
@@ -300,7 +302,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	}
 	
 	/**
-	 * The model presentation used to produce the string details for a 
+	 * The model presentation used to produce the string details for a
 	 * selected variable.
 	 */
 	private VariablesViewModelPresentation fModelPresentation;
@@ -376,7 +378,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fSourceViewer.getTextWidget(), IDebugHelpContextIds.DETAIL_PANE);
 		Control control = fSourceViewer.getControl();
 		GridData gd = new GridData(GridData.FILL_BOTH);
-		control.setLayoutData(gd);	
+		control.setLayoutData(gd);
 	}
 
 	/**
@@ -441,7 +443,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		fSourceViewer.getTextWidget().addKeyListener(getCursorListener());
 		
 		// Add a context menu to the detail area
-		createDetailContextMenu(fSourceViewer.getTextWidget());	
+		createDetailContextMenu(fSourceViewer.getTextWidget());
 		
 	}
 	
@@ -451,7 +453,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	private void createActions() {
 		TextViewerAction textAction= new TextViewerAction(fSourceViewer, ISourceViewer.CONTENTASSIST_PROPOSALS);
 		textAction.setActionDefinitionId(ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS);
-		textAction.configureAction(DetailMessages.DefaultDetailPane_Co_ntent_Assist_3, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane_Co_ntent_Assist_3, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING);
 		textAction.setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_ELCL_CONTENT_ASSIST));
 		textAction.setHoverImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_LCL_CONTENT_ASSIST));
 		textAction.setDisabledImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_DLCL_CONTENT_ASSIST));
@@ -462,25 +464,25 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
         setAction(DETAIL_CONTENT_ASSIST_ACTION, textAction);
 			
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.SELECT_ALL);
-		textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
-		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECTALL);
+		textAction.configureAction(DetailMessages.DefaultDetailPane_Select__All_5, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING);
+		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_SELECT_ALL);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_SELECT_ALL_ACTION);
 		setAction(DETAIL_SELECT_ALL_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.COPY);
-		textAction.configureAction(DetailMessages.DefaultDetailPane__Copy_8, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane__Copy_8, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING);
 		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_COPY_ACTION);
 		setAction(DETAIL_COPY_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.CUT);
-		textAction.configureAction(DetailMessages.DefaultDetailPane_Cu_t_11, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane_Cu_t_11, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING);
 		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_CUT);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_CUT_ACTION);
 		setAction(DETAIL_CUT_ACTION, textAction);
 		
 		textAction= new TextViewerAction(fSourceViewer, ITextOperationTarget.PASTE);
-		textAction.configureAction(DetailMessages.DefaultDetailPane__Paste_14, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING); 
+		textAction.configureAction(DetailMessages.DefaultDetailPane__Paste_14, IInternalDebugCoreConstants.EMPTY_STRING,IInternalDebugCoreConstants.EMPTY_STRING);
 		textAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_PASTE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(textAction, IDebugHelpContextIds.DETAIL_PANE_PASTE_ACTION);
 		setAction(ActionFactory.PASTE.getId(), textAction);
@@ -492,7 +494,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		// TODO: Still using "old" resource access, find/replace won't work in popup dialogs
 		ResourceBundle bundle= ResourceBundle.getBundle("org.eclipse.debug.internal.ui.views.variables.VariablesViewResourceBundleMessages"); //$NON-NLS-1$
 		IAction action = new FindReplaceAction(bundle, "find_replace_action_", getWorkbenchPartSite().getShell(), new FindReplaceTargetWrapper(fSourceViewer.getFindReplaceTarget())); //$NON-NLS-1$
-		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FINDANDREPLACE);
+		action.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(action, IDebugHelpContextIds.DETAIL_PANE_FIND_REPLACE_ACTION);
 		setAction(DETAIL_FIND_REPLACE_TEXT_ACTION, action);
 			
@@ -505,7 +507,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		setAction(DETAIL_MAX_LENGTH_ACTION,action);
 		
 		action = new DetailPaneAssignValueAction(fSourceViewer,getViewSite());
-		setAction(DETAIL_ASSIGN_VALUE_ACTION, action);	
+		setAction(DETAIL_ASSIGN_VALUE_ACTION, action);
 	}
 	
 	/**
@@ -515,7 +517,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	 * <code>targetID</code> in the extension XML.
 	 */
 	protected void createDetailContextMenu(Control menuControl) {
-		MenuManager menuMgr= new MenuManager(); 
+		MenuManager menuMgr= new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
 		menuMgr.addMenuListener(new IMenuListener() {
 			public void menuAboutToShow(IMenuManager mgr) {
@@ -544,7 +546,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		}
 		menu.add(new Separator());
 		menu.add(getAction(DETAIL_CUT_ACTION));
-		menu.add(getAction(DETAIL_COPY_ACTION)); 
+		menu.add(getAction(DETAIL_COPY_ACTION));
 		menu.add(getAction(DETAIL_PASTE_ACTION));
 		menu.add(getAction(DETAIL_SELECT_ALL_ACTION));
 		menu.add(new Separator("FIND")); //$NON-NLS-1$
@@ -638,7 +640,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			getViewSite().getActionBars().getStatusLineManager().remove(fStatusLineItem);
 			
 			DebugUIPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
-			JFaceResources.getFontRegistry().removeListener(this);	
+			JFaceResources.getFontRegistry().removeListener(this);
 		}
 		
 		super.dispose();
@@ -711,7 +713,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			try {
 				svc = mp.newDetailsViewerConfiguration();
 			} catch (CoreException e) {
-				DebugUIPlugin.errorDialog(fSourceViewer.getControl().getShell(), DetailMessages.DefaultDetailPane_Error_1, DetailMessages.DefaultDetailPane_2, e); 
+				DebugUIPlugin.errorDialog(fSourceViewer.getControl().getShell(), DetailMessages.DefaultDetailPane_Error_1, DetailMessages.DefaultDetailPane_2, e);
 			}
 		}
 		
@@ -813,7 +815,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	 */
 	protected String getDebugModel() {
 		return fDebugModelIdentifier;
-	}	
+	}
 
 	/**
 	 * Sets the identifier of the debug model being displayed
@@ -848,7 +850,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(undoAction, IAbstractTextEditorHelpContextIds.UNDO_ACTION);
 			undoAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_UNDO);
 			setAction(ITextEditorActionConstants.UNDO, undoAction);
-			setGlobalAction(ITextEditorActionConstants.UNDO, undoAction);			
+			setGlobalAction(ITextEditorActionConstants.UNDO, undoAction);
 			
 			// Create the re-do action.
 			OperationHistoryActionHandler redoAction= new RedoActionHandler(getViewSite(), undoContext);
@@ -859,7 +861,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			
 			getViewSite().getActionBars().updateActionBars();
 		}
-	}	
+	}
 	
 	/**
 	 * Disposes of the action with the specified ID
@@ -898,7 +900,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 			display(fLastDisplayed);
 		} else if (propertyName.equals(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP)) {
 			fSourceViewer.getTextWidget().setWordWrap(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
-			getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));	
+			getAction(DETAIL_WORD_WRAP_ACTION).setChecked(DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugPreferenceConstants.PREF_DETAIL_PANE_WORD_WRAP));
 		}
 		
 	}
