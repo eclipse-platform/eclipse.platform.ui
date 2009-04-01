@@ -1,12 +1,12 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
- * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
- *
- * Contributors:
- * IBM - Initial API and implementation
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
+ *  IBM - Initial API and implementation
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -51,18 +51,11 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog__Apply_17;
 	public static String LaunchConfigurationDialog__Name__16;
 	public static String LaunchConfigurationDialog_An_exception_occurred_while_retrieving_launch_configurations_20;
-
 	public static String LaunchConfigurationEditDialog_0;
-
 	public static String LaunchConfigurationEditDialog_1;
-
 	public static String LaunchConfigurationFilteredTree_discard_changes;
-
 	public static String LaunchConfigurationFilteredTree_search_with_changes;
-
 	public static String LaunchConfigurationFilteredTree_search_with_errors;
-
-	public static String LaunchConfigurationFilteredTree_type_filter_text;
 	public static String LaunchConfigurationTabGroupViewer_0;
 	public static String LaunchConfigurationDialog_Create__manage__and_run_launch_configurations_8;
 	public static String LaunchConfigurationDialog_Discard_changes__38;

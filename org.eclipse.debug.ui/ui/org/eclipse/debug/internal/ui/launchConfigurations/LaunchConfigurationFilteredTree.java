@@ -14,6 +14,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
@@ -45,7 +46,6 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	private ViewerFilter[] fFilters = null;
 	private int fTreeStyle = -1;
 	private PatternFilter fPatternFilter = null;
-	boolean filtertextchanging = false;
 	
 	/**
 	 * Constructor
@@ -123,36 +123,46 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 	 * @see org.eclipse.ui.dialogs.FilteredTree#textChanged()
 	 */
 	protected void textChanged() {
-		if(!filtertextchanging) {
-			filtertextchanging = true;
-			LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
-			if(dialog != null) {
-				LaunchConfigurationTabGroupViewer viewer = dialog.getTabViewer();
-				if(viewer != null && viewer.isDirty()) {
-					if(viewer.canSave()) {
-						if(MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_discard_changes, LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_changes)) {
-							viewer.handleApplyPressed();
-							super.textChanged();
-						}
-						else {
-							setFilterText(LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_type_filter_text);
-						}
-					}
-					else {
-						if(MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_discard_changes, LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_errors)) { 
-							viewer.handleRevertPressed();
-							super.textChanged();
-						}
-						else {
-							setFilterText(LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_type_filter_text); 
-						}
-					}
+		LaunchConfigurationsDialog dialog = (LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
+		if(dialog == null) {
+			return;
+		}
+		LaunchConfigurationTabGroupViewer viewer = dialog.getTabViewer();
+		if(viewer == null) {
+			return;
+		}
+		if(viewer.isDirty()) {
+			String text = getFilterString();
+			if(text.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
+				//we have removed the last char of select-all delete key, reset like the filter control does
+				getPatternFilter().setPattern(null);
+				getViewer().refresh();
+				return;
+			}
+			else if(text.equals(getInitialText())) {
+				//ignore, this is the default text set from losing focus
+				return;
+			}
+			String message = LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_errors;
+			boolean cansave = viewer.canSave();
+			if(cansave) {
+				message = LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_changes;
+			}
+			if(MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_discard_changes, message)) {
+				if(cansave) {
+					viewer.handleApplyPressed();
 				}
 				else {
-					super.textChanged();
+					viewer.handleRevertPressed();
 				}
+				super.textChanged();
 			}
-			filtertextchanging = false;
+			else {
+				clearText();
+			}
+		}
+		else {
+			super.textChanged();
 		}
 	}
 	
