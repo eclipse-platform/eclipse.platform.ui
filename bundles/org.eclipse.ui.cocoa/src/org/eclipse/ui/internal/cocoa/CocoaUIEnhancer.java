@@ -79,12 +79,13 @@ public class CocoaUIEnhancer implements IStartup {
 
 	private static final long NSWindowToolbarButton = 3;
 	
-	Callback proc3Args;
-	static final byte[] SWT_OBJECT = "SWT_OBJECT".getBytes(); //$NON-NLS-1$
+	/* This callback is not freed */
+	static Callback proc3Args;
+	static final byte[] SWT_OBJECT = {'S', 'W', 'T', '_', 'O', 'B', 'J', 'E', 'C', 'T', '\0'};
 
 	private void init() throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException, NoSuchFieldException {
 		// TODO: These should either move out of Display or be accessible to this class.
-		byte[] types = "*".getBytes(); //$NON-NLS-1$
+		byte[] types = {'*','\0'};
 		int size = C.PTR_SIZEOF, align = C.PTR_SIZEOF == 4 ? 2 : 3;
 
 		Class clazz = CocoaUIEnhancer.class;
@@ -184,10 +185,12 @@ public class CocoaUIEnhancer implements IStartup {
 		}
 		
 		try {
-			sel_toolbarButtonClicked_ = registerName("toolbarButtonClicked:"); //$NON-NLS-1$
-			sel_preferencesMenuItemSelected_ = registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
-			sel_aboutMenuItemSelected_ = registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
-			init();
+			if (sel_toolbarButtonClicked_ == 0) {
+				sel_toolbarButtonClicked_ = registerName("toolbarButtonClicked:"); //$NON-NLS-1$
+				sel_preferencesMenuItemSelected_ = registerName("preferencesMenuItemSelected:"); //$NON-NLS-1$
+				sel_aboutMenuItemSelected_ = registerName("aboutMenuItemSelected:"); //$NON-NLS-1$
+				init();
+			}
 		} catch (Exception e) {
 			// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
 			// not expected to happen at all.
@@ -250,9 +253,6 @@ public class CocoaUIEnhancer implements IStartup {
 								delegate.release();
 							delegate = null;
 
-							if (proc3Args != null)
-								proc3Args.dispose();
-							proc3Args = null;
 						}
 					});
 
