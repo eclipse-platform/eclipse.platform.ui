@@ -144,11 +144,13 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 				return;
 			}
 			String message = LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_errors;
+			String title = LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_discard_changes;
 			boolean cansave = viewer.canSave();
 			if(cansave) {
 				message = LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_search_with_changes;
+				title = LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_save_changes;
 			}
-			if(MessageDialog.openQuestion(getShell(), LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_discard_changes, message)) {
+			if(MessageDialog.openQuestion(getShell(), title, message)) {
 				if(cansave) {
 					viewer.handleApplyPressed();
 				}

@@ -1378,7 +1378,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	private int showSaveChangesDialog() {
 		String message = MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationDialog_The_configuration___29, new String[]{fTabViewer.getWorkingCopy().getName()}); 
 		MessageDialog dialog = new MessageDialog(getShell(), 
-												 LaunchConfigurationsMessages.LaunchConfigurationDialog_Save_changes__31, 
+												 LaunchConfigurationsMessages.LaunchConfigurationFilteredTree_save_changes, 
 												 null,
 												 message,
 												 MessageDialog.QUESTION,

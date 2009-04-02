@@ -54,6 +54,8 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationEditDialog_0;
 	public static String LaunchConfigurationEditDialog_1;
 	public static String LaunchConfigurationFilteredTree_discard_changes;
+	public static String LaunchConfigurationFilteredTree_save_changes;
+
 	public static String LaunchConfigurationFilteredTree_search_with_changes;
 	public static String LaunchConfigurationFilteredTree_search_with_errors;
 	public static String LaunchConfigurationTabGroupViewer_0;
@@ -69,7 +71,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String LaunchConfigurationDialog_Name_required_for_launch_configuration_11;
 	public static String LaunchConfigurationDialog_No_33;
 	public static String LaunchConfigurationDialog_Ready_to_launch_2;
-	public static String LaunchConfigurationDialog_Save_changes__31;
 	public static String LaunchConfigurationDialog_The_configuration___29;
 	public static String LaunchConfigurationDialog_The_configuration___35;
 	public static String LaunchConfigurationDialog_unspecified_28;
