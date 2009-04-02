@@ -12,6 +12,7 @@ package org.eclipse.core.internal.net;
 
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 
 /**
@@ -27,6 +28,30 @@ public class ProxySelector {
 	public static String[] getProviders() {
 		return new String[] { DIRECT_PROVIDER, ECLIPSE_PROVIDER,
 				NATIVE_PROVIDER };
+	}
+
+	public static String unlocalizeProvider(String name) {
+		if (Messages.ProxySelector_0.equals(name)) {
+			return DIRECT_PROVIDER;
+		} else if (Messages.ProxySelector_1.equals(name)) {
+			return ECLIPSE_PROVIDER;
+		} else if (Messages.ProxySelector_2.equals(name)) {
+			return NATIVE_PROVIDER;
+		}
+		Assert.isTrue(false);
+		return null;
+	}
+
+	public static String localizeProvider(String name) {
+		if (DIRECT_PROVIDER.equals(name)) {
+			return Messages.ProxySelector_0;
+		} else if (ECLIPSE_PROVIDER.equals(name)) {
+			return Messages.ProxySelector_1;
+		} else if (NATIVE_PROVIDER.equals(name)) {
+			return Messages.ProxySelector_2;
+		}
+		Assert.isTrue(false);
+		return null;
 	}
 
 	public static String getDefaultProvider() {

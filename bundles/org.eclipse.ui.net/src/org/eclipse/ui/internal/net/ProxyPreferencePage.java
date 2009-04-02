@@ -72,7 +72,7 @@ public class ProxyPreferencePage extends PreferencePage implements
 		providerCombo = new Combo(composite, SWT.READ_ONLY | SWT.DROP_DOWN);
 		providerCombo.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setProvider(providerCombo.getText());
+				setProvider(ProxySelector.unlocalizeProvider(providerCombo.getText()));
 			}
 		});
 	}
@@ -97,12 +97,17 @@ public class ProxyPreferencePage extends PreferencePage implements
 		int sel = providerCombo.getSelectionIndex();
 		proxyEntriesComposite.performApply();
 		nonProxyHostsComposite.performApply();
-		ProxySelector.setActiveProvider(providerCombo.getItem(sel));
+		ProxySelector.setActiveProvider(ProxySelector
+				.unlocalizeProvider(providerCombo.getItem(sel)));
 	}
 
 	protected void performDefaults() {
-		providerCombo.select(1);
-		setProvider(providerCombo.getItem(1));
+		int index = 1;
+		if (providerCombo.getItemCount() == 3) {
+			index = 2;
+		}
+		providerCombo.select(index);
+		setProvider(ProxySelector.unlocalizeProvider(providerCombo.getItem(index)));
 	}
 
 	public boolean performOk() {
@@ -111,9 +116,14 @@ public class ProxyPreferencePage extends PreferencePage implements
 	}
 
 	private void initializeValues() {
-		providerCombo.setItems(ProxySelector.getProviders());
+		String[] providers = ProxySelector.getProviders();
+		String[] localizedProviders = new String[providers.length];
+		for (int i = 0; i < localizedProviders.length; i++) {
+			localizedProviders[i] = ProxySelector.localizeProvider(providers[i]);
+		}
+		providerCombo.setItems(localizedProviders);
 		providerCombo.select(providerCombo.indexOf(ProxySelector
-				.getDefaultProvider()));
+				.localizeProvider(ProxySelector.getDefaultProvider())));
 	}
 
 	protected void setProvider(String name) {
