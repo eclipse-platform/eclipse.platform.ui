@@ -4,13 +4,7 @@
    <extension
          point="org.eclipse.e4.services">
       <servicefactory
-            class="org.eclipse.e4.demo.e4photo.WorkspaceValue">
-         <service
-               api="org.eclipse.core.resources.IWorkspace">
-         </service>
-      </servicefactory>
-      <servicefactory
-            class="org.eclipse.e4.demo.e4photo.RealmValue">
+            class="org.eclipse.e4.demo.e4photo.RealmFunction">
          <service
                api="org.eclipse.core.databinding.observable.Realm">
          </service>

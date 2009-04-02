@@ -11,20 +11,9 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.InvalidRegistryObjectException;
+import java.lang.reflect.*;
+import java.util.*;
+import org.eclipse.core.runtime.*;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -272,7 +261,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			}
 
 			Object newInstance = targetConstructor.newInstance(params);
-			ContextInjectionFactory.inject(newInstance, context, " ", " "); //$NON-NLS-1$//$NON-NLS-2$
+			ContextInjectionFactory.inject(newInstance, context, null, null);
 			return newInstance;
 		} catch (Exception e) {
 			throw new RuntimeException(e);

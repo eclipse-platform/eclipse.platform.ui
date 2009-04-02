@@ -13,15 +13,24 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IEclipseContextScheduler;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
+import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 
-public class UIContextScheduler implements IEclipseContextScheduler {
+/**
+ * A context scheduler strategy that uses the realm's async event queue for
+ * processing updates.
+ */
+public class UISchedulerStrategy implements ISchedulerStrategy {
 
-	static final public IEclipseContextScheduler instance = new UIContextScheduler();
+	private static final ISchedulerStrategy instance = new UISchedulerStrategy();
 
-	public void schedule(Runnable runnable) {
-		Realm.getDefault().asyncExec(runnable);
+	/**
+	 * Returns the singleton UI scheduler instance
+	 * 
+	 * @return the UI scheduler instance
+	 */
+	public static ISchedulerStrategy getInstance() {
+		return instance;
 	}
 
 	public boolean schedule(final IEclipseContext context,
@@ -34,5 +43,9 @@ public class UIContextScheduler implements IEclipseContextScheduler {
 			}
 		});
 		return result[0];
+	}
+
+	public void schedule(Runnable runnable) {
+		Realm.getDefault().asyncExec(runnable);
 	}
 }

@@ -11,13 +11,13 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ComputedValue;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
-public final class ActiveChildOutputValue extends ComputedValue {
+public final class ActiveChildOutputFunction extends ContextFunction {
 	private final String attr;
 
-	public ActiveChildOutputValue(String attr) {
+	public ActiveChildOutputFunction(String attr) {
 		this.attr = attr;
 	}
 

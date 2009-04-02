@@ -56,8 +56,9 @@ public class Library implements IDisposable {
 								final IContainer parent, final boolean added) {
 							final IObservableSet set = observableSets
 									.get(parent);
-							if (set != null) {
-								set.getRealm().asyncExec(new Runnable() {
+							Realm realm = set != null ? set.getRealm() : null;
+							if (realm != null) {
+								realm.asyncExec(new Runnable() {
 									public void run() {
 										if (added) {
 											set.add(resource);

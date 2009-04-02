@@ -17,32 +17,19 @@ import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Map;
-
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.*;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ComputedValue;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.*;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
-import org.eclipse.e4.workbench.ui.ILegacyHook;
-import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
+import org.eclipse.e4.workbench.ui.*;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -122,7 +109,7 @@ public class Workbench implements IWorkbench {
 
 	private IEclipseContext createContext(IEclipseContext applicationContext) {
 		final IEclipseContext mainContext = EclipseContextFactory.create(
-				applicationContext, UIContextScheduler.instance);
+				applicationContext, UISchedulerStrategy.getInstance());
 		mainContext.set(Logger.class.getName(), new WorkbenchLogger());
 		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
 
@@ -146,8 +133,8 @@ public class Workbench implements IWorkbench {
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
 		mainContext.set(IServiceConstants.SELECTION,
-				new ActiveChildOutputValue(IServiceConstants.SELECTION));
-		mainContext.set(IServiceConstants.INPUT, new ComputedValue() {
+				new ActiveChildOutputFunction(IServiceConstants.SELECTION));
+		mainContext.set(IServiceConstants.INPUT, new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				Class adapterType = null;
 				if (arguments.length > 0 && arguments[0] instanceof Class) {
@@ -385,7 +372,8 @@ public class Workbench implements IWorkbench {
 	}
 
 	public void close() {
-		windowHandler.dispose(appWindow);
+		if (appWindow != null)
+			windowHandler.dispose(appWindow);
 	}
 
 	// public Display getDisplay() {

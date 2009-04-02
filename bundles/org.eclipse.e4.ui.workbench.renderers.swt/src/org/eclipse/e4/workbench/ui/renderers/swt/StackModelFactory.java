@@ -11,17 +11,13 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.List;
-
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MItemPart;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.*;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
+import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -34,11 +30,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.*;
 
 public class StackModelFactory extends SWTPartFactory {
 
@@ -86,7 +78,7 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.setTabHeight(20);
 			newWidget = ctf;
 			final IEclipseContext folderContext = EclipseContextFactory.create(
-					parentContext, UIContextScheduler.instance);
+					parentContext, UISchedulerStrategy.getInstance());
 			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
 			part.setContext(folderContext);
 			final IEclipseContext toplevelContext = getToplevelContext(part);

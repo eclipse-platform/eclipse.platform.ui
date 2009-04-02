@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -17,15 +18,12 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IHandlerService;
-import org.eclipse.e4.workbench.ui.internal.UIContextScheduler;
+import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.renderers.PartHandlerService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Widget;
+import org.eclipse.swt.widgets.*;
 
 /**
  * Create a contribute part.
@@ -45,10 +43,10 @@ public class ContributedPartFactory extends SWTPartFactory {
 			final MContributedPart<?> contributedPart = (MContributedPart<?>) part;
 			final IHandlerService hs = new PartHandlerService(part);
 			final IEclipseContext localContext = EclipseContextFactory.create(
-					parentContext, UIContextScheduler.instance);
+					parentContext, UISchedulerStrategy.getInstance());
 			localContext.set(IContextConstants.DEBUG_STRING, "ContributedPart"); //$NON-NLS-1$
 			final IEclipseContext outputContext = EclipseContextFactory.create(
-					null, UIContextScheduler.instance);
+					null, UISchedulerStrategy.getInstance());
 			outputContext.set(IContextConstants.DEBUG_STRING,
 					"ContributedPart-output"); //$NON-NLS-1$
 			contributedPart.setContext(localContext);
@@ -74,7 +72,8 @@ public class ContributedPartFactory extends SWTPartFactory {
 			contributedPart.setObject(newPart);
 			newWidget.addDisposeListener(new DisposeListener() {
 				public void widgetDisposed(DisposeEvent e) {
-					localContext.dispose();
+					if (localContext instanceof IDisposable)
+						((IDisposable) localContext).dispose();
 				}
 			});
 		}
