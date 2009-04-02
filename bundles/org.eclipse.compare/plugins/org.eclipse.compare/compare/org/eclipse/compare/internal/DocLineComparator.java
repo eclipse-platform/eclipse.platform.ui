@@ -39,33 +39,36 @@ public class DocLineComparator implements ITokenComparator {
 	 * @param region if non-<code>null</code> only lines within this range are taken
 	 * @param ignoreWhiteSpace if <code>true</code> white space is ignored when comparing lines
 	 */
-	public DocLineComparator(IDocument document, IRegion region, boolean ignoreWhiteSpace) {
+	public DocLineComparator(IDocument document, IRegion region,
+			boolean ignoreWhiteSpace) {
+		fDocument = document;
+		fIgnoreWhiteSpace = ignoreWhiteSpace;
 
-		fDocument= document;
-		fIgnoreWhiteSpace= ignoreWhiteSpace;
-
-		fLineOffset= 0;
-		if (region == null) {
-			region = new Region(0, fDocument.getLength());
-		}
-		fLength= region.getLength();
-		int start= region.getOffset();
-		try {
-			fLineOffset= fDocument.getLineOfOffset(start);
-		} catch (BadLocationException ex) {
-			// silently ignored
-		}
-
-		if (fLength == 0)
-			fLineCount= 0;
-		else {
-			int endLine= fDocument.getNumberOfLines();
+		fLineOffset = 0;
+		if (region != null) {
+			fLength = region.getLength();
+			int start = region.getOffset();
 			try {
-				endLine= fDocument.getLineOfOffset(start + fLength);
+				fLineOffset = fDocument.getLineOfOffset(start);
 			} catch (BadLocationException ex) {
 				// silently ignored
 			}
-			fLineCount= endLine - fLineOffset + 1;
+
+			if (fLength == 0) {
+				// optimization, empty documents have one line
+				fLineCount = 1;
+			} else {
+				int endLine = fDocument.getNumberOfLines();
+				try {
+					endLine = fDocument.getLineOfOffset(start + fLength);
+				} catch (BadLocationException ex) {
+					// silently ignored
+				}
+				fLineCount = endLine - fLineOffset + 1;
+			}
+		} else {
+			fLength = document.getLength();
+			fLineCount = fDocument.getNumberOfLines();
 		}
 	}
 

@@ -80,7 +80,7 @@ public class DocLineComparatorTest extends TestCase {
 
 		Assert.assertTrue(comp1.rangesEqual(0, comp2, 0));
 		Assert.assertEquals(comp1.getRangeCount(), comp2.getRangeCount());
-		Assert.assertEquals(0, comp2.getRangeCount());
+		Assert.assertEquals(1, comp2.getRangeCount());
 	}
 	
 	public void testOneLine() {
