@@ -20,12 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import com.ibm.icu.text.Collator;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IParameter;
@@ -34,7 +28,6 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
@@ -42,7 +35,9 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -54,6 +49,8 @@ import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * A <code>ShowViewMenu</code> is used to populate a menu manager with Show
@@ -154,8 +151,10 @@ public class ShowViewMenu extends ContributionItem {
 		window.getWorkbench().getHelpSystem().setHelp(showDlgAction,
 				IWorkbenchHelpContextIds.SHOW_VIEW_OTHER_ACTION);
 		// indicate that a show views submenu has been created
-		((WorkbenchWindow) window)
-				.addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
+		if (window instanceof WorkbenchWindow) {
+			((WorkbenchWindow) window)
+					.addSubmenu(WorkbenchWindow.SHOW_VIEW_SUBMENU);
+		}
 
 		showDlgAction.setActionDefinitionId(IWorkbenchCommandConstants.VIEWS_SHOW_VIEW);
 		

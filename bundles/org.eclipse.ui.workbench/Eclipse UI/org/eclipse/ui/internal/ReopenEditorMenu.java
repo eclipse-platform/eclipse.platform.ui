@@ -29,6 +29,7 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -69,7 +70,10 @@ public class ReopenEditorMenu extends ContributionItem {
         super(id);
         this.window = window;
         this.showSeparator = showSeparator;
-        history = ((Workbench) window.getWorkbench()).getEditorHistory();
+        IWorkbench workbench = window.getWorkbench();
+		if (workbench instanceof Workbench) {
+			history = ((Workbench) workbench).getEditorHistory();
+		}
     }
 
     /**
@@ -211,7 +215,7 @@ public class ReopenEditorMenu extends ContributionItem {
 
         int itemsToShow = WorkbenchPlugin.getDefault().getPreferenceStore()
                 .getInt(IPreferenceConstants.RECENT_FILES);
-        if (itemsToShow == 0) {
+		if (itemsToShow == 0 || history == null) {
             return;
         }
 

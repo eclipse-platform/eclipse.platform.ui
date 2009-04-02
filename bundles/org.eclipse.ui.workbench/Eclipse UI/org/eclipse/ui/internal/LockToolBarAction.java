@@ -46,7 +46,7 @@ public class LockToolBarAction extends Action implements
         // before the coolbar
         window.getWorkbench().getDisplay().asyncExec(new Runnable() {
             public void run() {
-                if (workbenchWindow != null) {
+				if (workbenchWindow instanceof WorkbenchWindow) {
                     setChecked(((WorkbenchWindow) workbenchWindow)
                             .isCoolBarLocked());
                 }
