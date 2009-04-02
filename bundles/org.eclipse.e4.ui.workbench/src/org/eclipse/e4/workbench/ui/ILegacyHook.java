@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 
 public interface ILegacyHook {
-	public void loadMenu(MMenu menuModel);
+	public void loadMenu(IEclipseContext context, MMenu menuModel);
 
 	public void loadToolbar(MToolBar toolbar);
 
