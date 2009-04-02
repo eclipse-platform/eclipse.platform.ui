@@ -10,15 +10,19 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.context.spi;
 
+import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-
-import org.eclipse.e4.core.services.context.IComputedValue;
 
 /**
  * The base class for all computed value implementations. Clients may subclass
- * this class.
+ * this class. See the class comment of {@link IContextFunction} for specific
+ * rules that must be followed by function implementations.
+ * <p>
+ * This class is intended to be subclassed by clients.
+ * </p>
+ * @see IContextFunction
  */
-public abstract class ComputedValue implements IComputedValue {
+public abstract class ContextFunction implements IContextFunction {
 
 	/**
 	 * {@inheritDoc}

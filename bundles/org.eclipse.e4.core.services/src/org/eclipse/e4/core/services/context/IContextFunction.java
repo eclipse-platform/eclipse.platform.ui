@@ -11,19 +11,28 @@
 
 package org.eclipse.e4.core.services.context;
 
-import org.eclipse.e4.core.services.context.spi.ComputedValue;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 
 /**
- * A computed value instance is a place holder for an object that has not yet
+ * A context function encapsulates evaluation of some code within an {@link IEclipseContext}.
+ * The result of the function must be derived purely from the provided arguments and
+ * context objects, and must be free from side-effects other than the function's return value.
+ * In particular, the function must be idempotent - subsequent invocations of the same function
+ * with the same inputs must produce the same result.
+ * <p>
+ * A common use for context functions is as a place holder for an object that has not yet
  * been created. These place holders can be stored as values in an {@link IEclipseContext}, 
  * allowing the concrete value they represent to be computed lazily only when requested.
+ * </p>
  * 
- * @noimplement This interface is not intended to be implemented by clients. Computed
- * value implementations must subclass {@link ComputedValue} instead.
+ * @see IEclipseContext#set(String, Object)
+ * @noimplement This interface is not intended to be implemented by clients. Function
+ * implementations must subclass {@link ContextFunction} instead.
  */
-public interface IComputedValue {
+public interface IContextFunction {
 	/**
-	 * Computes and returns the concrete value that this place holder represents
+	 * Evaluates the function based on the provided arguments and context to produce
+	 * a consistent result.
 	 * 
 	 * @param context The context in which to perform the value computation.
 	 * @param arguments The arguments required to compute the value, or

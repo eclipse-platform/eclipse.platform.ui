@@ -11,21 +11,18 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
 /**
- * Runs all e4 core service tests.
+ *
  */
-public class ServicesTestSuite extends TestSuite {
-	public static Test suite() {
-		return new ServicesTestSuite();
-	}
+@Retention(value = RetentionPolicy.RUNTIME)
+@Target(value = { ElementType.CONSTRUCTOR, ElementType.METHOD, ElementType.FIELD })
+public @interface In {
 
-	public ServicesTestSuite() {
-		addTestSuite(EclipseContextTest.class);
-		addTestSuite(ServiceContextTest.class);
-		addTestSuite(ContextInjectionTest.class);
-		addTestSuite(ContextDynamicTest.class);
-	}
+	boolean optional() default false;
+
 }

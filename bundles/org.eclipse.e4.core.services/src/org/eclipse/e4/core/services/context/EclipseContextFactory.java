@@ -11,9 +11,10 @@
 
 package org.eclipse.e4.core.services.context;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
-import org.eclipse.e4.internal.core.services.osgi.OSGiServiceContext;
+import org.eclipse.e4.internal.core.services.osgi.OSGiContextStrategy;
 import org.osgi.framework.BundleContext;
 
 /**
@@ -44,6 +45,8 @@ public final class EclipseContextFactory {
 	 * @return A context containing all OSGi services
 	 */
 	public static IEclipseContext createServiceContext(BundleContext bundleContext) {
-		return new OSGiServiceContext(bundleContext);
+		IEclipseContext result = new EclipseContext(null, new OSGiContextStrategy(bundleContext));
+		result.set(IContextConstants.DEBUG_STRING, "OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+		return result;
 	}
 }

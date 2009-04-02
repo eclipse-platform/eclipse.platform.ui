@@ -11,7 +11,7 @@
 
 package org.eclipse.e4.core.services.context;
 
-import org.eclipse.e4.core.services.context.spi.ComputedValue;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 /**
@@ -52,9 +52,9 @@ public interface IEclipseContext {
 	 * <code>null</code> if no such value is defined or computable by this
 	 * context, or if the assigned value is <code>null</code>.
 	 * <p>
-	 * If the value associated with this name is an {@link IComputedValue}, this
+	 * If the value associated with this name is an {@link IContextFunction}, this
 	 * method will evaluate
-	 * {@link IComputedValue#compute(IEclipseContext, Object[])} with zero
+	 * {@link IContextFunction#compute(IEclipseContext, Object[])} with zero
 	 * arguments.
 	 * </p>
 	 * 
@@ -69,9 +69,9 @@ public interface IEclipseContext {
 	 * <code>null</code> if no such value is defined or computable by this
 	 * context.
 	 * <p>
-	 * If the value associated with this name is an {@link IComputedValue}, this
+	 * If the value associated with this name is an {@link IContextFunction}, this
 	 * method will evaluate
-	 * {@link IComputedValue#compute(IEclipseContext, Object[])} with the
+	 * {@link IContextFunction#compute(IEclipseContext, Object[])} with the
 	 * provided arguments.
 	 * </p>
 	 * 
@@ -109,10 +109,10 @@ public interface IEclipseContext {
 
 	/**
 	 * Sets a value to be associated with a given name in this context. The
-	 * value may be an arbitrary object, or it may be a {@link ComputedValue}.
-	 * In the case of a computed value, subsequent invocations of
+	 * value may be an arbitrary object, or it may be an {@link IContextFunction}.
+	 * In the case of a function, subsequent invocations of
 	 * {@link #get(String)} with the same name will invoke
-	 * {@link IComputedValue#compute(IEclipseContext, Object[])} to obtain the
+	 * {@link IContextFunction#compute(IEclipseContext, Object[])} to obtain the
 	 * value. The value may be <code>null</code>.
 	 * <p>
 	 * Removal can never affect a parent context, so it is possible that a
@@ -123,13 +123,8 @@ public interface IEclipseContext {
 	 * @param name
 	 *            The name to store a value for
 	 * @param value
-	 *            The value to be stored, or a {@link ComputedValue} that can
+	 *            The value to be stored, or a {@link ContextFunction} that can
 	 *            return the stored value.
 	 */
 	public void set(String name, Object value);
-
-	/**
-	 * Disposes of this context.
-	 */
-	public void dispose();
 }

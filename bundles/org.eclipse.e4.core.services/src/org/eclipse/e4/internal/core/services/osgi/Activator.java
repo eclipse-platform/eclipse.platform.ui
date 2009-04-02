@@ -10,30 +10,18 @@
  *******************************************************************************/
 package org.eclipse.e4.internal.core.services.osgi;
 
-import org.osgi.framework.ServiceRegistration;
-
-import org.eclipse.e4.core.services.osgi.IServiceAliasRegistry;
-
-import org.osgi.framework.BundleContext;
-
 import org.osgi.framework.BundleActivator;
-
+import org.osgi.framework.BundleContext;
 
 /**
  * Bundle activator for e4 core services bundle.
  */
 public class Activator implements BundleActivator {
-	
-
-	private ServiceRegistration aliasRegistration;
 
 	public void start(BundleContext context) throws Exception {
-		aliasRegistration = context.registerService(IServiceAliasRegistry.SERVICE_NAME, new ServiceAliasRegistryImpl(), null);
-		
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		aliasRegistration.unregister();
 	}
 
 }

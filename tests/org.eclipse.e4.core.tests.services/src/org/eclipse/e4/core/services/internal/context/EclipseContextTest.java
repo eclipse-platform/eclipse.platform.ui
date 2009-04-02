@@ -17,13 +17,13 @@ import org.eclipse.e4.core.services.context.*;
 
 public class EclipseContextTest extends TestCase {
 
-	private static class ComputedValueBar implements IComputedValue {
+	private static class ComputedValueBar implements IContextFunction {
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			return context.get("bar");
 		}
 	}
 
-	private static class ConcatFunction implements IComputedValue {
+	private static class ConcatFunction implements IContextFunction {
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			String separator = (String) context.get("separator");
 			StringBuffer result = new StringBuffer();
@@ -122,7 +122,7 @@ public class EclipseContextTest extends TestCase {
 		context.remove("foo");
 		assertEquals(3, runCounter);
 		assertEquals(null, value[0]);
-		context.set("foo", new IComputedValue() {
+		context.set("foo", new IContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				return context.get("bar");
 			}

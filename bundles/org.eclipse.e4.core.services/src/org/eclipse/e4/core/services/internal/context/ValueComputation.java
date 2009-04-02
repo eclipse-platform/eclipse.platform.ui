@@ -11,7 +11,7 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.IComputedValue;
+import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
@@ -20,12 +20,12 @@ public class ValueComputation extends Computation {
 	IEclipseContext context;
 	String name;
 	boolean valid;
-	IComputedValue computedValue;
+	IContextFunction computedValue;
 	EclipseContext originatingContext; // XXX IEclipseContext
 	private boolean computing; // cycle detection
 
 	public ValueComputation(IEclipseContext context, IEclipseContext originatingContext,
-			String name, IComputedValue computedValue) {
+			String name, IContextFunction computedValue) {
 		this.context = context;
 		this.originatingContext = (EclipseContext) originatingContext;
 		this.name = name;

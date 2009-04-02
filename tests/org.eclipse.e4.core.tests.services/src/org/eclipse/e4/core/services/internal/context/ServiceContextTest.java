@@ -11,15 +11,14 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import junit.framework.TestCase;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
-import org.eclipse.e4.core.services.osgi.IServiceAliasRegistry;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.tests.services.TestActivator;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
@@ -27,12 +26,39 @@ import org.osgi.framework.ServiceRegistration;
  * Tests for contexts used in OSGi services.
  */
 public class ServiceContextTest extends TestCase {
+	class Crayon {
+		@In
+		IPaletteService palette;
+		public void draw() {
+			if (palette == null)
+				System.out.println("I'm out of ink!");
+			else
+				System.out.println("My ink is  " + palette.getColor());
+		}
+	}
+	static enum Color {
+		RED, BLUE, YELLOW, GREEN, ORANGE, PURPLE;
+	}
+	
+	interface IPaletteService {
+		public Color getColor();
+	}
+	class PaletteImpl implements IPaletteService{
+		private final Color color;
+		PaletteImpl(Color color) {
+			this.color = color;
+		}
+		public Color getColor() {
+			return color;
+		}
+	}
 	static class Printer {
-		PrintService di_Printer;
+		@Inject
+		PrintService printer;
 
 		public void print(String message) {
-			if (di_Printer != null)
-				di_Printer.print(message);
+			if (printer != null)
+				printer.print(message);
 			else
 				System.out.println(message);
 		}
@@ -44,12 +70,10 @@ public class ServiceContextTest extends TestCase {
 	protected void setUp() throws Exception {
 		super.setUp();
 		context = EclipseContextFactory.createServiceContext(TestActivator.bundleContext);
-		((IServiceAliasRegistry) context.get(IServiceAliasRegistry.SERVICE_NAME)).registerAlias("Printer", PrintService.SERVICE_NAME);
 	}
 	
 	@Override
 	protected void tearDown() throws Exception {
-		((IServiceAliasRegistry) context.get(IServiceAliasRegistry.SERVICE_NAME)).unregisterAlias("Printer");
 		if (context instanceof IDisposable) 
 			((IDisposable)context).dispose();
 		super.tearDown();
@@ -61,7 +85,7 @@ public class ServiceContextTest extends TestCase {
 	public void testServiceContextAsParent() {
 		IEclipseContext child = EclipseContextFactory.create(context, null);
 		child.set(IContextConstants.DEBUG_STRING, "child");
-		IServiceAliasRegistry service = (IServiceAliasRegistry) child.get(IServiceAliasRegistry.SERVICE_NAME);
+		DebugOptions service = (DebugOptions) child.get(DebugOptions.class.getName());
 		assertNotNull(service);
 	}
 	
@@ -80,7 +104,7 @@ public class ServiceContextTest extends TestCase {
 		userObject.print("another test");
 		//the string should be unchanged
 		assertEquals("1.1", "test", stringPrint1.toString());
-		assertNull("1.2", userObject.di_Printer);
+		assertNull("1.2", userObject.printer);
 
 		//register a different service implementation
 		StringPrintService stringPrint2 = new StringPrintService();
@@ -90,7 +114,7 @@ public class ServiceContextTest extends TestCase {
 		assertEquals("2.0", "test", stringPrint1.toString());
 		assertEquals("2.1", "yet another test", stringPrint2.toString());
 		reg2.unregister();
-		assertNull("2.2", userObject.di_Printer);
+		assertNull("2.2", userObject.printer);
 	}
 	
 	/**
@@ -108,6 +132,16 @@ public class ServiceContextTest extends TestCase {
 		((IDisposable) context).dispose();
 		assertNull("2.0", ref.getUsingBundles());
 		reg1.unregister();
+	}
+	
+	public void testServiceExample() {
+		ServiceRegistration reg = TestActivator.bundleContext.registerService(IPaletteService.class.getName(), new PaletteImpl(Color.BLUE), null);
+		IEclipseContext context = EclipseContextFactory.createServiceContext(TestActivator.bundleContext);
+		Crayon crayon = new Crayon();
+		ContextInjectionFactory.inject(crayon, context);
+		crayon.draw();
+		reg.unregister();
+		crayon.draw();
 	}
 
 	/**
@@ -132,7 +166,7 @@ public class ServiceContextTest extends TestCase {
 		System.runFinalization();
 		System.gc();
 		//must call a method on context to give it a chance to clean up its references
-		assertTrue("2.0", context.containsKey(IServiceAliasRegistry.SERVICE_NAME));
+		assertTrue("2.0", context.containsKey(DebugOptions.class.getName()));
 		assertNull("2.1", ref.getUsingBundles());
 		
 		reg1.unregister();
