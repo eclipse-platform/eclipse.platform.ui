@@ -5286,14 +5286,18 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			public Object getAdapter(Class adapter) {
 				if (adapter == IEncodingSupport.class) {
 					if (fFocusPart == fAncestor) {
-						return fAncestorContributor;
+						return getEncodingSupport(fAncestorContributor);
 					} else if (fFocusPart == fLeft) {
-						return fLeftContributor;
+						return getEncodingSupport(fLeftContributor);
 					} else if (fFocusPart == fRight) {
-						return fRightContributor;
-					} else {
-						return null;
+						return getEncodingSupport(fRightContributor);
 					}
+				}
+				return null;
+			}
+			private IEncodingSupport getEncodingSupport(ContributorInfo contributor) {
+				if (contributor != null && contributor.getDefaultEncoding() != null) {
+					return contributor;
 				}
 				return null;
 			}
