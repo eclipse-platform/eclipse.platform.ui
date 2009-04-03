@@ -2266,6 +2266,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 							if(resource.equals(resources[j]) || 
 									resource.getFullPath().isPrefixOf(resources[j].getFullPath())) {
 								list.add(configs[i]);
+								break;
 							}
 						}
 					}
