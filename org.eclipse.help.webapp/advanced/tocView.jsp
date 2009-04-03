@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2006 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -82,10 +82,10 @@ function onloadHandler()
         TocData data = new TocData(application,request, response);
 	    if (data.getSelectedToc() != -1) {
 %>
-	var tocTopic = "<%=data.getTocDescriptionTopic(data.getSelectedToc())%>";
+	var tocTopic = "<%=UrlUtil.JavaScriptEncode(data.getTocDescriptionTopic(data.getSelectedToc()))%>";
 	var topicSelected=false;
 	// select specified topic, or else the book
-	var topic = "<%=data.getSelectedTopic()%>";
+	var topic = "<%=UrlUtil.JavaScriptEncode(data.getSelectedTopic())%>";
 	if (topic != "about:blank" && topic != tocTopic) {
 		if (topic.indexOf(window.location.protocol) != 0 && topic.length > 2) {
 			// remove the .. from topic

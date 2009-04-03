@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2007 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -145,12 +145,12 @@ setTimeout('refresh()', 2000);
 <table class="category" cellspacing='0'>
 	<tr class='list' id='r<%=topic%>c'>
 		<td>
-			<a href="<%=data.getCategoryHref(topic)%>"
+			<a href="<%=UrlUtil.htmlEncode(data.getCategoryHref(topic))%>"
 					id="a<%=topic%>c"'
 					class="link"
 					onmouseover="showStatus(event);return true;"
 					onmouseout="clearStatus();return true;">
-				<%=cat%>
+				<%=UrlUtil.htmlEncode(cat)%>
 			</a>
 		</td>
 	</tr>
@@ -187,10 +187,10 @@ setTimeout('refresh()', 2000);
 	</td>
 	<td align='<%=isRTL?"right":"left"%>'>
 		<a class='link' id='a<%=topic%>' 
-		   href="<%=data.getTopicHref(topic)%>" 
+		   href="<%=UrlUtil.htmlEncode(data.getTopicHref(topic))%>" 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
-		   title="<%=data.getTopicTocLabel(topic)%>">
+		   title="<%=UrlUtil.htmlEncode(data.getTopicTocLabel(topic))%>">
 
 <%
 		String label = null;
@@ -202,7 +202,7 @@ setTimeout('refresh()', 2000);
         }
 %>
 
-        <%=label%></a>
+        <%=UrlUtil.htmlEncode(label)%></a>
 	</td>
 </tr>
 
@@ -215,7 +215,7 @@ setTimeout('refresh()', 2000);
 	</td>
 	<td align='<%=isRTL?"right":"left"%>'>
 		<div class="description">
-			<%=desc%>
+			<%=UrlUtil.htmlEncode(desc)%>
 		</div>
 	</td>
 </tr>
@@ -230,7 +230,7 @@ setTimeout('refresh()', 2000);
 %>
 
 <script language="JavaScript">
-	selectTopicById('<%=data.getSelectedTopicId()%>');
+	selectTopicById('<%=UrlUtil.JavaScriptEncode(data.getSelectedTopicId())%>');
 </script>
 
 </body>

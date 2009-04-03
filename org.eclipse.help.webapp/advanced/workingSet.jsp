@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2006 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -196,7 +196,7 @@ function doSubmit()
 		if (!hrefs || hrefs == "")
 			return false;
 
-		var query = "operation="+'<%=data.getOperation()%>'+"&workingSet="+encodeURIComponent(workingSet)+ hrefs+"&oldName="+encodeURIComponent(oldName);
+		var query = "operation="+'<%=UrlUtil.JavaScriptEncode(data.getOperation())%>'+"&workingSet="+encodeURIComponent(workingSet)+ hrefs+"&oldName="+encodeURIComponent(oldName);
 		window.opener.location.replace("workingSetManager.jsp?"+query);
 		window.opener.focus();
 		window.close();
@@ -414,12 +414,12 @@ for (int i=0; i<data.getTocCount(); i++)
 					<img id='<%="img"+i%>' alt="<%=ServletResources.getString("bookClosed", request)%>" title="<%=ServletResources.getString("bookClosed", request)%>" src="<%=prefs.getImagesDirectory()%>/plus.gif" onclick="collapseOrExpand('<%=i%>')">
 					<input 	class='<%=className%>' 
 							type="checkbox" 
-							id='<%=data.getTocHref(i)%>' 
-							name='<%=data.getTocHref(i)%>' 
-							alt="<%=label%>" <%=checked%> 
+							id='<%=UrlUtil.htmlEncode(data.getTocHref(i))%>' 
+							name='<%=UrlUtil.htmlEncode(data.getTocHref(i))%>' 
+							alt="<%=UrlUtil.htmlEncode(label)%>" <%=checked%> 
 						  	onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
 							onclick="setSubtreeChecked(this, '<%="div"+i%>')">
-							<label for="<%=data.getTocHref(i)%>"><%=label%></label>
+							<label for="<%=UrlUtil.htmlEncode(data.getTocHref(i))%>"><%=UrlUtil.htmlEncode(label)%></label>
 					<div id='<%="div"+i%>' class="collapsed">
 <%
 	for (int topic=0; topic<data.getTopicCount(i); topic++)
@@ -432,12 +432,12 @@ for (int i=0; i<data.getTocCount(); i++)
 						<div class="topic" id='<%="id"+i+"_"+topic%>'>
 							<input 	class="checkbox" 
 									type="checkbox" 
-									id='<%=data.getTocHref(i)+"_"+topic+"_"%>' 
-									name='<%=data.getTocHref(i)+"_"+topic+"_"%>' 
-									alt="<%=topicLabel%>" <%=topicChecked%> 
+									id='<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>' 
+									name='<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>' 
+									alt="<%=UrlUtil.htmlEncode(topicLabel)%>" <%=topicChecked%> 
 									onkeydown="keyDownHandler(<%=i%>, event.keyCode, this)"
 									onclick="updateParentState(this, '<%="div"+i%>')">
-									<label for="<%=data.getTocHref(i)+"_"+topic+"_"%>"><%=topicLabel%></label>
+									<label for="<%=UrlUtil.htmlEncode(data.getTocHref(i))+"_"+topic+"_"%>"><%=UrlUtil.htmlEncode(topicLabel)%></label>
 						</div>
 <%
 	}

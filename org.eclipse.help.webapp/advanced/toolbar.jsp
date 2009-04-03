@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2007 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -163,7 +163,7 @@ for (int i=0; i<buttons.length; i++) {
 	if (!buttons[i].isSeparator()) {
 %>
 	var <%=buttons[i].getName()%> = new Image();
-	<%=buttons[i].getName()%>.src = "<%=buttons[i].getOnImage()%>";
+	<%=UrlUtil.JavaScriptEncode(buttons[i].getName())%>.src = "<%=UrlUtil.JavaScriptEncode(buttons[i].getOnImage())%>";
 <%
 	}
 }
@@ -265,7 +265,7 @@ function setWindowStatus(buttonName){
 	<%
 	for (int i=0; i<buttons.length; i++) {
 		String name = buttons[i].getName();%>
-		if (buttonName == "<%=name%>"){
+		if (buttonName == "<%=UrlUtil.JavaScriptEncode(name)%>"){
 			if (buttonName == "maximize_restore"){
 				if (bRestore){
 					window.status = "<%=UrlUtil.JavaScriptEncode(data.getRestoreTooltip())%>";
@@ -405,7 +405,7 @@ function menuExit(e) {
 <%
 if (data.getScript() != null) {
 %>
-<script language="JavaScript" src="<%=data.getScript()%>"></script>
+<script language="JavaScript" src="<%=UrlUtil.htmlEncode(data.getScript())%>"></script>
 <%
 }
 %>
@@ -447,16 +447,16 @@ if(buttons.length > 0){
 <%
 		} else {
 %>
-						<td align="middle" id="tdb_<%=buttons[i].getName()%>" class="<%=buttons[i].getStyleClass()%>" height=18>
-							<a href="javascript:<%=buttons[i].getAction()%>('b<%=i%>', '<%=buttons[i].getParam()%>');" 
-							   onmouseover="javascript:setWindowStatus('<%=buttons[i].getName()%>');return true;" 
+						<td align="middle" id="tdb_<%=UrlUtil.htmlEncode(buttons[i].getName())%>" class="<%=UrlUtil.htmlEncode(buttons[i].getStyleClass())%>" height=18>
+							<a href="javascript:<%=UrlUtil.htmlEncode(buttons[i].getAction())%>('b<%=i%>', '<%=UrlUtil.htmlEncode(buttons[i].getParam())%>');" 
+							   onmouseover="javascript:setWindowStatus('<%=UrlUtil.htmlEncode(buttons[i].getName())%>');return true;" 
 							   onmouseout="window.status='';"
 							   id="b<%=i%>">
-							   <img src="<%=buttons[i].getOnImage()%>" 
-									alt='<%=buttons[i].getTooltip()%>' 
-									title='<%=buttons[i].getTooltip()%>'
+							   <img src="<%=UrlUtil.htmlEncode(buttons[i].getOnImage())%>" 
+									alt='<%=UrlUtil.htmlEncode(buttons[i].getTooltip())%>' 
+									title='<%=UrlUtil.htmlEncode(buttons[i].getTooltip())%>'
 									border="0"
-									id="<%=buttons[i].getName()%>">
+									id="<%=UrlUtil.htmlEncode(buttons[i].getName())%>">
 							</a>
 						</td>
 <%

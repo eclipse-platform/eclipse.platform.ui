@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -261,7 +261,7 @@ function getPreviousLink(currentLink){
 <%
 		}
 %>
-	<td  title="<%=title%>" 
+	<td  title="<%=UrlUtil.htmlEncode(title)%>" 
 	     align="center"  
 	     valign="middle"
 	     class="tab" 
@@ -275,8 +275,8 @@ function getPreviousLink(currentLink){
 	         onmouseout="window.status='';"
 	         id="link<%=views[i].getName()%>"
 	         <%=views[i].getKey()==View.NO_SHORTCUT?"":"ACCESSKEY=\""+views[i].getKey()+"\""%>>
-	         <img alt="<%=title%>" 
-	              title="<%=title%>" 
+	         <img alt="<%=UrlUtil.htmlEncode(title)%>" 
+	              title="<%=UrlUtil.htmlEncode(title)%>" 
 	              src="<%=views[i].getOnImage()%>"
 	              id="img<%=views[i].getName()%>"
 	              height="16"
