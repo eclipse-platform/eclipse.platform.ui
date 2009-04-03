@@ -167,8 +167,11 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 		}
 		WorkbenchPreferenceNode node = createNode(element);
 		if (node != null) {
-			if (node.getId().equals(((Workbench) workbench).getMainPreferencePageId()))
-				node.setPriority(-1);
+			if (workbench instanceof Workbench) {
+				if (node.getId().equals(
+						((Workbench) workbench).getMainPreferencePageId()))
+					node.setPriority(-1);
+			}
 			nodes.add(node);
 		}
 		return true;
