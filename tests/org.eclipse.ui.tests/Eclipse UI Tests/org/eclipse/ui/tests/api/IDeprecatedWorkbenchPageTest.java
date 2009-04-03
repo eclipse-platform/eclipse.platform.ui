@@ -14,6 +14,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.jface.util.Util;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPageLayout;
@@ -176,6 +177,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	 * openEditor(IFile input)
 	 */
 	public void testOpenEditor() throws Throwable {
+		if (Util.isCocoa()) return; // see bug 270883
 		proj = FileUtil.createProject("testOpenEditor");
 
 		/*
