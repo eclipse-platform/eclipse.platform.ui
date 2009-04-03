@@ -125,7 +125,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * Action definition id of the edit select all action.
 	 * Value: <code>"org.eclipse.ui.edit.selectAll"</code>
 	 * 
-	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_SELECTALL}
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_SELECT_ALL}
 	 */
 	public static final String SELECT_ALL= IWorkbenchCommandConstants.EDIT_SELECT_ALL;
 
@@ -133,15 +133,15 @@ public interface IWorkbenchActionDefinitionIds {
 	 * Action definition id of the edit find/replace action.
 	 * Value: <code>"org.eclipse.ui.edit.findReplace"</code>
 	 * 
-	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_FINDANDREPLACE}
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_FIND_AND_REPLACE}
 	 */
 	public static final String FIND_REPLACE= IWorkbenchCommandConstants.EDIT_FIND_AND_REPLACE;
 
 	/**
 	 * Action definition id of the edit add bookmark action.
-	 *  Value: <code>"org.eclipse.ui.edit.addBookmark"</code>
+	 * Value: <code>"org.eclipse.ui.edit.addBookmark"</code>
 	 * 
-	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADDBOOKMARK}
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADD_BOOKMARK}
 	 */
 	public static final String ADD_BOOKMARK= IWorkbenchCommandConstants.EDIT_ADD_BOOKMARK;
 
@@ -149,7 +149,7 @@ public interface IWorkbenchActionDefinitionIds {
 	 * Action definition id of the edit add task action.
 	 * Value: <code>"org.eclipse.ui.edit.addTask"</code>
 	 * 
-	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADDTASK}
+	 * @deprecated As of 3.5, replaced by {@link IWorkbenchCommandConstants#EDIT_ADD_TASK}
 	 */
 	public static final String ADD_TASK= IWorkbenchCommandConstants.EDIT_ADD_TASK;
 
