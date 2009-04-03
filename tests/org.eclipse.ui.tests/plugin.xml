@@ -4140,7 +4140,7 @@
          </key>
          <sequenceModifier
                find="M1+8"
-               platforms="cocoa"
+               platforms="photon"
                replace="M2+8">
          </sequenceModifier>
       </extension>

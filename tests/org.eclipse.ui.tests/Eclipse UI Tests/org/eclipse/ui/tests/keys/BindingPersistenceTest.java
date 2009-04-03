@@ -266,6 +266,7 @@ public final class BindingPersistenceTest extends UITestCase {
 
 			if (backCmd.equals(binding.getParameterizedCommand())) {
 				// make sure the modifier is NOT applied
+				// this will fail on Photon (but Paul thinks we'll never run the test suite on that platform :-)
 				assertEquals(KeySequence.getInstance("M1+8 Q"), binding
 						.getTriggerSequence());
 				// and the platform should be null
