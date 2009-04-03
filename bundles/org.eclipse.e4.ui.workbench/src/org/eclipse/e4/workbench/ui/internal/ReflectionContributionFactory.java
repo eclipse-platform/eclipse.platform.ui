@@ -11,9 +11,20 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.lang.reflect.*;
-import java.util.*;
-import org.eclipse.core.runtime.*;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -50,12 +61,14 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	 */
 	public Object call(Object object, String uriString, String methodName,
 			IEclipseContext context, Object defaultValue) {
-		URI uri = URI.createURI(uriString);
-		if (uri.segmentCount() > 3) {
-			String prefix = uri.segment(2);
-			IContributionFactorySpi factory = (IContributionFactorySpi) languages
-					.get(prefix);
-			return factory.call(object, methodName, context, defaultValue);
+		if (uriString != null) {
+			URI uri = URI.createURI(uriString);
+			if (uri.segmentCount() > 3) {
+				String prefix = uri.segment(2);
+				IContributionFactorySpi factory = (IContributionFactorySpi) languages
+						.get(prefix);
+				return factory.call(object, methodName, context, defaultValue);
+			}
 		}
 
 		Method targetMethod = null;
@@ -106,7 +119,8 @@ public class ReflectionContributionFactory implements IContributionFactory {
 				for (int i = 0; i < params.length && satisfiable; i++) {
 					Class<?> clazz = params[i];
 
-					if (!context.containsKey(clazz.getName())) {
+					if (!context.containsKey(clazz.getName())
+							&& !IEclipseContext.class.equals(clazz)) {
 						satisfiable = false;
 					}
 				}
@@ -128,13 +142,19 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		Class<?>[] paramKeys = targetMethod.getParameterTypes();
 
 		try {
+			System.err.println("calling: " + methodName); //$NON-NLS-1$
 			Object[] params = new Object[paramKeys.length];
 			for (int i = 0; i < params.length; i++) {
-				params[i] = context.get(paramKeys[i].getName());
+				if (IEclipseContext.class.equals(paramKeys[i])) {
+					params[i] = context;
+				} else {
+					params[i] = context.get(paramKeys[i].getName());
+				}
 			}
 
 			return targetMethod.invoke(object, params);
 		} catch (Exception e) {
+			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
 	}

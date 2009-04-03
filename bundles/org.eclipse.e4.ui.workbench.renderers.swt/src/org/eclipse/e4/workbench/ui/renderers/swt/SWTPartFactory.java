@@ -64,7 +64,11 @@ public abstract class SWTPartFactory extends PartFactory {
 			// Pre-populate the main menu
 			ILegacyHook lh = (ILegacyHook) context.get(ILegacyHook.class
 					.getName());
-			lh.loadMenu(context, menu);
+			if (part.getContext() != null) {
+				lh.loadMenu(part.getContext(), menu);
+			} else {
+				lh.loadMenu(context, menu);
+			}
 		}
 
 		if (widget instanceof MenuItem) {
