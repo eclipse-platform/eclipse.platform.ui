@@ -60,11 +60,13 @@ public abstract class PartFactory {
 
 	protected abstract Object getImage(MApplicationElement element);
 
-	public void createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
+	public Object createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
+		return null;
 	}
 
-	public void createToolBar(MPart<?> part, Object widgetObject,
+	public Object createToolBar(MPart<?> part, Object widgetObject,
 			MToolBar toolBar) {
+		return null;
 	}
 
 	/**

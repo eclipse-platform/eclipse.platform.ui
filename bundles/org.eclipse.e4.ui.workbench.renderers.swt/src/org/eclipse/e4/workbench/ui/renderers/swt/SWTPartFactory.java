@@ -47,6 +47,7 @@ import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
@@ -54,9 +55,9 @@ import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartFactory extends PartFactory {
 
-	public void createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
+	public Object createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
 		Widget widget = (Widget) widgetObject;
-		org.eclipse.swt.widgets.Menu swtMenu;
+		Menu swtMenu;
 
 		if (menu != null && menu.getId() != null
 				&& menu.getId().equals("org.eclipse.ui.main.menu")) { //$NON-NLS-1$
@@ -72,15 +73,17 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 
 		if (widget instanceof MenuItem) {
-			swtMenu = new org.eclipse.swt.widgets.Menu(((MenuItem) widget)
-					.getParent().getShell(), SWT.DROP_DOWN);
+			swtMenu = new Menu(((MenuItem) widget).getParent().getShell(),
+					SWT.DROP_DOWN);
 			((MenuItem) widget).setMenu(swtMenu);
+		} else if (widget instanceof ToolItem) {
+			swtMenu = new Menu(((ToolItem) widget).getParent().getShell(),
+					SWT.POP_UP);
 		} else if (widget instanceof Decorations) {
-			swtMenu = new org.eclipse.swt.widgets.Menu((Decorations) widget,
-					SWT.BAR);
+			swtMenu = new Menu((Decorations) widget, SWT.BAR);
 			((Decorations) widget).setMenuBar(swtMenu);
 		} else if (widget instanceof Control) {
-			swtMenu = new org.eclipse.swt.widgets.Menu((Control) widget);
+			swtMenu = new Menu((Control) widget);
 			((Control) widget).setMenu(swtMenu);
 		} else {
 			throw new IllegalArgumentException(
@@ -90,9 +93,11 @@ public abstract class SWTPartFactory extends PartFactory {
 		for (MMenuItem menuItem : menu.getItems()) {
 			createMenuItem(part, swtMenu, menuItem);
 		}
+
+		return swtMenu;
 	}
 
-	public void createToolBar(MPart<?> part, Object widgetObject,
+	public Object createToolBar(MPart<?> part, Object widgetObject,
 			MToolBar toolbar) {
 
 		if (toolbar != null && toolbar.getId() != null
@@ -105,11 +110,13 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 
 		Composite composite = (Composite) widgetObject;
-		org.eclipse.swt.widgets.ToolBar swtToolBar = new ToolBar(composite,
-				SWT.FLAT | SWT.NO_FOCUS);
+		ToolBar swtToolBar = new ToolBar(composite, SWT.FLAT);
+		swtToolBar.setData(PartFactory.OWNING_ME, toolbar);
 		for (MToolBarItem toolBarItem : toolbar.getItems()) {
 			createToolBarItem(part, swtToolBar, toolBarItem);
 		}
+
+		return swtToolBar;
 	}
 
 	private MHandler getHandler(Display display, MHandledItem item) {
@@ -120,15 +127,16 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 		// find the first useful part in the model
 		Control control = display.getFocusControl();
-		MPart<?> part = null;
-		while (control != null && part == null) {
-			part = (MPart<?>) control.getData(OWNING_ME);
+		Object partObj = null;
+		while (control != null && !(partObj instanceof MPart<?>)) {
+			partObj = control.getData(OWNING_ME);
 			control = control.getParent();
 		}
-		if (part == null) {
+		if (partObj == null) {
 			return null;
 		}
 		// get the applicable context (or parent)
+		MPart<?> part = (MPart<?>) partObj;
 		IEclipseContext partContext = getContext(part);
 		if (partContext != null) {
 			IHandlerService hs = (IHandlerService) partContext
@@ -140,15 +148,17 @@ public abstract class SWTPartFactory extends PartFactory {
 		return h;
 	}
 
-	private void createToolBarItem(MPart<?> part, ToolBar swtMenu,
-			final org.eclipse.e4.ui.model.application.MToolBarItem toolBarItem) {
+	private void createToolBarItem(MPart<?> part, ToolBar swtTB,
+			final MToolBarItem toolBarItem) {
 		int style = SWT.PUSH;
-		final ToolItem newToolItem = new ToolItem(swtMenu, style);
+		final ToolItem newToolItem = new ToolItem(swtTB, style);
 
 		if (toolBarItem.getName() != null)
 			newToolItem.setText(toolBarItem.getName());
 		newToolItem.setToolTipText(toolBarItem.getTooltip());
 		newToolItem.setImage(getImage(toolBarItem));
+		newToolItem.setData(PartFactory.OWNING_ME, toolBarItem);
+
 		toolBarItem.eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
@@ -177,6 +187,7 @@ public abstract class SWTPartFactory extends PartFactory {
 				}
 			}
 		});
+
 		if (toolBarItem.getCommand() != null) {
 			final IEclipseContext localContext = getContext(part);
 			newToolItem.addListener(SWT.Selection, new Listener() {
@@ -226,8 +237,7 @@ public abstract class SWTPartFactory extends PartFactory {
 				context, null);
 	}
 
-	private void createMenuItem(MPart<?> part,
-			final org.eclipse.swt.widgets.Menu parentMenu,
+	private void createMenuItem(MPart<?> part, final Menu parentMenu,
 			final MHandledItem handledItem) {
 		int style = SWT.PUSH;
 		if (handledItem instanceof MMenuItem) {

@@ -11,11 +11,17 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.List;
+
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.*;
+import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.emf.common.notify.Notification;
@@ -27,12 +33,29 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
 
 public class StackModelFactory extends SWTPartFactory {
+
+	Image viewMenuImage;
 
 	public StackModelFactory() {
 		super();
@@ -71,6 +94,12 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.setUnselectedCloseVisible(showCloseAlways);
 			ctf.setMaximizeVisible(showMinMax);
 			ctf.setMinimizeVisible(showMinMax);
+
+			// Create a single ViewForm class in which to host -all- views
+			ViewForm vf = new ViewForm(ctf, SWT.NONE);
+			Label vfLabel = new Label(vf, SWT.NONE);
+			vfLabel.setText("This is a test"); //$NON-NLS-1$
+			vf.setTopLeft(vfLabel);
 
 			bindWidget(part, ctf);
 			ctf.setVisible(true);
@@ -161,7 +190,7 @@ public class StackModelFactory extends SWTPartFactory {
 			// part's control will be null (we're just creating the tabs
 			Control ctrl = (Control) element.getWidget();
 			if (ctrl != null) {
-				cti.setControl(ctrl);
+				showTab((MItemPart<?>) element);
 			}
 		}
 	}
@@ -269,6 +298,8 @@ public class StackModelFactory extends SWTPartFactory {
 				if (sm.getActiveChild() != newPart) {
 					activate(newPart);
 				}
+
+				showTab(newPart);
 			}
 		});
 
@@ -309,5 +340,144 @@ public class StackModelFactory extends SWTPartFactory {
 				}
 			}
 		});
+	}
+
+	private void showTab(MItemPart<?> part) {
+		CTabFolder ctf = (CTabFolder) getParentWidget(part);
+		Control ctrl = (Control) part.getWidget();
+		CTabItem cti = findItemForPart(part.getParent(), part);
+		// HACK! reparent the control under the ViewForm
+		ViewForm vf = (ViewForm) ctf.getChildren()[0];
+		Label lbl = (Label) vf.getTopLeft();
+		lbl.setText("This is view: " + part.getName()); //$NON-NLS-1$
+
+		cti.setControl(vf);
+		ctrl.setParent(vf);
+		vf.setContent(ctrl);
+
+		ToolBar tb = getToolbar(part);
+		if (tb != null) {
+			Control curTR = ctf.getTopRight();
+			if (curTR != null)
+				curTR.dispose();
+
+			if (tb.getSize().y > ctf.getTabHeight())
+				ctf.setTabHeight(tb.getSize().y);
+
+			ctf.setTopRight(tb, SWT.RIGHT);
+			ctf.layout(true);
+		}
+
+		// cti.setControl(ctrl);
+	}
+
+	private ToolBar getToolbar(MItemPart<?> part) {
+		if (part.getToolBar() == null && part.getMenu() == null)
+			return null;
+
+		MToolBar tbModel = part.getToolBar();
+		CTabFolder ctf = (CTabFolder) getParentWidget(part);
+		ToolBar tb = (ToolBar) createToolBar(part.getParent(), ctf, tbModel);
+
+		// View menu (if any)
+		if (part.getMenu() != null) {
+			addMenuButton(part, tb, part.getMenu());
+		}
+
+		tb.pack();
+		System.out.println("TB size = " + tb.getSize()); //$NON-NLS-1$
+		return tb;
+	}
+
+	/**
+	 * @param tb
+	 */
+	private void addMenuButton(MItemPart<?> part, ToolBar tb, MMenu menu) {
+		ToolItem ti = new ToolItem(tb, SWT.PUSH);
+		ti.setImage(getViewMenuImage());
+		ti.setHotImage(null);
+		ti.setToolTipText("View Menu"); //$NON-NLS-1$
+		ti.setData("theMenu", menu); //$NON-NLS-1$
+		ti.setData("thePart", part); //$NON-NLS-1$
+
+		ti.addSelectionListener(new SelectionListener() {
+			public void widgetSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+
+			public void widgetDefaultSelected(SelectionEvent e) {
+				showMenu((ToolItem) e.widget);
+			}
+		});
+	}
+
+	/**
+	 * @param item
+	 */
+	protected void showMenu(ToolItem item) {
+		MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
+		MItemPart<?> part = (MItemPart<?>) item.getData("thePart"); //$NON-NLS-1$
+		Menu menu = (Menu) createMenu(part, item, menuModel);
+
+		// EList<MMenuItem> items = menuModel.getItems();
+		// for (Iterator iterator = items.iterator(); iterator.hasNext();) {
+		// MMenuItem mToolBarItem = (MMenuItem) iterator.next();
+		// MenuItem mi = new MenuItem(menu, SWT.PUSH);
+		// mi.setText(mToolBarItem.getName());
+		// mi.setImage(getImage(mToolBarItem));
+		// }
+		Rectangle ib = item.getBounds();
+		Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
+		menu.setLocation(displayAt);
+		menu.setVisible(true);
+
+		Display display = Display.getCurrent();
+		while (!menu.isDisposed() && menu.isVisible()) {
+			if (!display.readAndDispatch())
+				display.sleep();
+		}
+		menu.dispose();
+	}
+
+	private Image getViewMenuImage() {
+		if (viewMenuImage == null) {
+			Display d = Display.getCurrent();
+
+			Image viewMenu = new Image(d, 16, 16);
+			Image viewMenuMask = new Image(d, 16, 16);
+
+			Display display = Display.getCurrent();
+			GC gc = new GC(viewMenu);
+			GC maskgc = new GC(viewMenuMask);
+			gc.setForeground(display
+					.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+			gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+
+			int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
+			gc.fillPolygon(shapeArray);
+			gc.drawPolygon(shapeArray);
+
+			Color black = display.getSystemColor(SWT.COLOR_BLACK);
+			Color white = display.getSystemColor(SWT.COLOR_WHITE);
+
+			maskgc.setBackground(black);
+			maskgc.fillRectangle(0, 0, 16, 16);
+
+			maskgc.setBackground(white);
+			maskgc.setForeground(white);
+			maskgc.fillPolygon(shapeArray);
+			maskgc.drawPolygon(shapeArray);
+			gc.dispose();
+			maskgc.dispose();
+
+			ImageData data = viewMenu.getImageData();
+			data.transparentPixel = data.getPixel(0, 0);
+
+			viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
+					.getImageData());
+			viewMenu.dispose();
+			viewMenuMask.dispose();
+		}
+		return viewMenuImage;
 	}
 }
