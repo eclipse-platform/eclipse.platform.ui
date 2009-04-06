@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.List;
 import org.eclipse.osgi.util.TextProcessor;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.ControlEvent;
@@ -575,6 +576,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalShell.setFont(JFaceResources.getDefaultFont());
+		fProposalShell.getAccessible().setFocus(ACC.CHILDID_SELF);
+
 		if (USE_VIRTUAL) {
 			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
