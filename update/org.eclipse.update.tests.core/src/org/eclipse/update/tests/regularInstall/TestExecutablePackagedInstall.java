@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.tests.regularInstall;
+import java.util.Arrays;
+
 import java.io.File;
 import java.net.URL;
 
@@ -60,7 +62,12 @@ public class TestExecutablePackagedInstall extends UpdateManagerTestCase {
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionedIdentifier().toString();
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
-			assertTrue("plugin files not installed locally:"+pluginFile, pluginFile.exists());
+			if (!pluginFile.exists()) {
+				//print out more failure details - see bug 271196
+				File[] existing = pluginFile.getParentFile().listFiles();
+				String detail = existing == null ? "no children" : String.valueOf(Arrays.asList(existing));
+				assertTrue("plugin files not installed locally:"+pluginFile + "children found: " + detail, pluginFile.exists());
+			}
 
 			File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());

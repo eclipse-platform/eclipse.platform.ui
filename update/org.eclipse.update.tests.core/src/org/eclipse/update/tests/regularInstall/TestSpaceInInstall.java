@@ -38,8 +38,7 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 		URL newURL = new File(dataPath + "Site with space/site.xml").toURL();
 		ISite remoteSite = SiteManager.getSite(newURL,true,null);
 		IFeatureReference[] featuresRef = remoteSite.getFeatureReferences();
-		File file = new File(testURL.getFile());
-		if (!file.exists()) file.mkdirs();
+		if (!target.exists()) target.mkdirs();
 		ISite localSite = SiteManager.getSite(testURL,true,null);
 		IFeature remoteFeature = null;
 		
@@ -58,12 +57,12 @@ public class TestSpaceInInstall extends UpdateManagerTestCase {
 			if (remoteFeature.getFeatureContentProvider() instanceof FeatureExecutableContentProvider) execFeature = true;
 
 			// verify
-			String site = testURL.getFile();
+			String site = testPath;
 			IPluginEntry[] entries = remoteFeature.getRawPluginEntries();
 			assertTrue("no plugins entry", (entries != null && entries.length != 0));
 			String pluginName = entries[0].getVersionedIdentifier().toString();
 			File pluginFile = new File(site, Site.DEFAULT_PLUGIN_PATH + pluginName);
-			assertTrue("plugin files not installed locally", pluginFile.exists());
+			assertTrue("plugin files not installed locally (pluginFile=" + pluginFile + ",target=" + target + ')', pluginFile.exists());
 
 			File featureFile = new File(site, Site.DEFAULT_INSTALLED_FEATURE_PATH + remoteFeature.getVersionedIdentifier().toString());
 			assertTrue("feature info not installed locally:"+featureFile, featureFile.exists());
