@@ -59,8 +59,8 @@ public abstract class SWTPartFactory extends PartFactory {
 		org.eclipse.swt.widgets.Menu swtMenu;
 
 		if (menu != null && menu.getId() != null
-				&& menu.getId().equals("org.eclipse.ui.main.menu") //$NON-NLS-1$
-				&& menu.getItems().size() == 0) {
+				&& menu.getId().equals("org.eclipse.ui.main.menu")) { //$NON-NLS-1$
+			menu.getItems().clear();
 			// Pre-populate the main menu
 			ILegacyHook lh = (ILegacyHook) context.get(ILegacyHook.class
 					.getName());

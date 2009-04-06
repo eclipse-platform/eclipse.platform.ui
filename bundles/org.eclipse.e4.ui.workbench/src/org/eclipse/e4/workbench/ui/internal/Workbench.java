@@ -17,19 +17,31 @@ import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Map;
+
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.*;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.*;
+import org.eclipse.e4.workbench.ui.IExceptionHandler;
+import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -271,7 +283,7 @@ public class Workbench implements IWorkbench {
 		globalContext.set(MApplication.class.getName(), workbench);
 
 		// Initialize the workbench for legacy support if required
-		globalContext.get(ILegacyHook.class.getName());
+		// globalContext.get(ILegacyHook.class.getName());
 	}
 
 	public int run() {
