@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -88,6 +88,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	private static final String BASE_DIR_PREFIX = "-Dbasedir="; //$NON-NLS-1$
 	private static final String INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.AntInputHandler"; //$NON-NLS-1$
 	private static final String REMOTE_INPUT_HANDLER_CLASS = "org.eclipse.ant.internal.ui.antsupport.inputhandler.ProxyInputHandler"; //$NON-NLS-1$
+	
+	private static final IProject[] NO_PROJECTS = new IProject[0];
     
 	/**
 	 * String attribute identifying the build scope for a launch configuration.
@@ -688,7 +690,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate  {
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		IProject[] projects = ExternalToolsBuildTab.getBuildProjects(configuration, ATTR_BUILD_SCOPE);
 		if (projects == null) {
-			return null ;
+			return NO_PROJECTS;
 		}
 		boolean isRef = ExternalToolsBuildTab.isIncludeReferencedProjects(configuration, ATTR_INCLUDE_REFERENCED_PROJECTS);
 		if (isRef) {
