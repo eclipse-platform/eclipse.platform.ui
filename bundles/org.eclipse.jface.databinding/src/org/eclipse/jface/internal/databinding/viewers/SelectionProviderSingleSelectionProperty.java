@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222, 263413, 265561
+ *     Matthew Hall - bugs 195222, 263413, 265561, 271080
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.Viewer;
 
 /**
  * @since 3.3
@@ -39,9 +40,13 @@ public class SelectionProviderSingleSelectionProperty extends
 	}
 
 	protected void doSetValue(Object source, Object value) {
-		((ISelectionProvider) source)
-				.setSelection(value == null ? StructuredSelection.EMPTY
-						: new StructuredSelection(value));
+		IStructuredSelection selection = value == null ? StructuredSelection.EMPTY
+				: new StructuredSelection(value);
+		if (source instanceof Viewer) {
+			((Viewer) source).setSelection(selection, true);
+		} else {
+			((ISelectionProvider) source).setSelection(selection);
+		}
 	}
 
 	public INativePropertyListener adaptListener(
