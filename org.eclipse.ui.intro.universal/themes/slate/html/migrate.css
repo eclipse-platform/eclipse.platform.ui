@@ -18,10 +18,15 @@
 
 /* show the "selected" image for this page */
 #navigation-links a#migrate img {
-	background-image : url(../graphics/icons/ctool/migrate-select.gif); 
+	background-image : url(../graphics/icons/ctool/migrate-select.png); 
 	width : 64px;
 	height: 64px;
 	margin-top : 12px
+}
+
+/* Hack for IE6, which cannot display png files with alpha channel transparency */
+* html #navigation-links a#migrate img {
+	background-image : url(../graphics/icons/ctool/migrate-select.gif); 
 }
 
 #navigation-links a#.high-contrast#migrate img {
