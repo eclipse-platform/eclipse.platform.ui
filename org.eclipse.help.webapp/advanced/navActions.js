@@ -97,7 +97,6 @@ function printToc(errorMsg) {
 	     }
 
 		var printWindow = window.open("print.jsp" + parameters, "printWindow", "directories=yes,location=no,menubar=yes,resizable=yes,scrollbars=yes,status=yes,titlebar=yes,toolbar=yes,width=" + w + ",height=" + h + ",left=" + x + ",top=" + y);
-		printWindow.focus();
 	}
 	else {
 		alert(errorMsg);
