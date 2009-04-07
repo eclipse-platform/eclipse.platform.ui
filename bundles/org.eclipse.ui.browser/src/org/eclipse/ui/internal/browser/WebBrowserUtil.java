@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -137,9 +137,11 @@ public class WebBrowserUtil {
 			isInternalBrowserOperational = new Boolean(true);
 			return true;
 		} catch (Throwable t) {
+			StringBuffer message = new StringBuffer("Internal browser is not available"); //$NON-NLS-1$
+			message.append(t.getMessage() == null?".":": " + t.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			WebBrowserUIPlugin.getInstance().getLog().log(
 					new Status(IStatus.WARNING, WebBrowserUIPlugin.PLUGIN_ID,
-							0, "Internal browser is not available: " + t.getMessage(), null)); //$NON-NLS-1$
+							0, message.toString() , null));
 			isInternalBrowserOperational = new Boolean(false);
 			return false;
 		} finally {
