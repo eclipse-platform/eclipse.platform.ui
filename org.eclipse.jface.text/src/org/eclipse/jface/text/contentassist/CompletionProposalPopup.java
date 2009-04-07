@@ -576,7 +576,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 		Control control= fContentAssistSubjectControlAdapter.getControl();
 		fProposalShell= new Shell(control.getShell(), SWT.ON_TOP | SWT.RESIZE );
 		fProposalShell.setFont(JFaceResources.getDefaultFont());
-		fProposalShell.getAccessible().setFocus(ACC.CHILDID_SELF);
 
 		if (USE_VIRTUAL) {
 			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
@@ -590,6 +589,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		} else {
 			fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL);
 		}
+		fProposalTable.getAccessible().setFocus(ACC.CHILDID_SELF);
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
 		if (fIsColoredLabelsSupportEnabled)
