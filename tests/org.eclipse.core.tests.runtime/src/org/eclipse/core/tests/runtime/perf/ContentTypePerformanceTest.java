@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,7 +16,8 @@ import java.net.URL;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.tests.harness.*;
@@ -158,12 +159,16 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		return count;
 	}
 
+	public IPath getExtraPluginLocation() {
+		return getTempDir().append(TEST_DATA_ID);
+	}
+
 	private Bundle installContentTypes(String tag, int numberOfLevels, int nodesPerLevel) {
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		Bundle installed = null;
 		listener.register();
 		try {
-			IPath pluginLocation = getRandomLocation();
+			IPath pluginLocation = getExtraPluginLocation();
 			pluginLocation.toFile().mkdirs();
 			URL installURL = null;
 			try {
@@ -267,23 +272,30 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		}.run(this, 10, 2);
 	}
 
+	/* (non-Javadoc)
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	protected void setUp() throws Exception {
+		super.setUp();
+		if (getName().equals("testDoSetUp") || getName().equals("testDoTearDown"))
+			return;
+		Bundle installed = null;
+		try {
+			installed = RuntimeTestsPlugin.getContext().installBundle(getExtraPluginLocation().toFile().toURL().toExternalForm());
+		} catch (BundleException e) {
+			fail("1.0", e);
+		} catch (MalformedURLException e) {
+			fail("2.0", e);
+		}
+		BundleTestingHelper.refreshPackages(RuntimeTestsPlugin.getContext(), new Bundle[] {installed});
+	}
+
 	public void testDoSetUp() {
 		installContentTypes("1.0", NUMBER_OF_LEVELS, ELEMENTS_PER_LEVEL);
 	}
 
 	public void testDoTearDown() {
-		Bundle bundle = Platform.getBundle(TEST_DATA_ID);
-		if (bundle == null)
-			// there is nothing to clean up (install failed?) 
-			fail("1.0 nothing to clean-up");
-		try {
-			bundle.uninstall();
-			ensureDoesNotExistInFileSystem(new File(new URL(bundle.getLocation()).getFile()));
-		} catch (MalformedURLException e) {
-			fail("2.0", e);
-		} catch (BundleException e) {
-			fail("3.0", e);
-		}
+		ensureDoesNotExistInFileSystem(getExtraPluginLocation().toFile());
 	}
 
 	public void testIsKindOf() {
