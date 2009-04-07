@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,11 +12,18 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
 
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.osgi.service.localization.BundleLocalization;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 
 public class LayoutData extends RequestData {
 
@@ -136,6 +143,22 @@ public class LayoutData extends RequestData {
 		return null;
 	}
 	public String getWindowTitle() {
+		String titlePref = preferences.getTitleResource();
+		int slash = titlePref.indexOf('/');
+		if (slash > 0) {
+			String resourceContainer = titlePref.substring(0, slash);
+			String resource = titlePref.substring(slash + 1);	
+			try {
+				Bundle bundle = Platform.getBundle(resourceContainer);
+				BundleContext bundleContext = HelpWebappPlugin.getContext();
+				ServiceReference ref = bundleContext.getServiceReference(BundleLocalization.class.getName()); 
+				BundleLocalization localization = (BundleLocalization) bundleContext.getService(ref); 
+                return localization.getLocalization(bundle, locale).getString(resource);
+			} catch (Exception e) {
+				// Fall through
+			}
+		}
+		
 		if (preferences.isWindowTitlePrefix()) {
 			return ServletResources.getString("browserTitle", //$NON-NLS-1$
 					BaseHelpSystem.getProductName(), request);
