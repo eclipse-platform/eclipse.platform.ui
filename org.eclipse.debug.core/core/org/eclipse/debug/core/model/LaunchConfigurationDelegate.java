@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mike Morearty - Bug 255310: Launching only gets the progress bar to 91%
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
@@ -26,7 +27,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.ILaunch;
@@ -110,12 +113,21 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#buildForLaunch(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean buildForLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		IProject[] projects = getBuildOrder(configuration, mode);
-		if (projects == null) {
-			return true;
-		} 
-		buildProjects(projects, monitor);
-		return false;
+		if (monitor != null) {
+			monitor.beginTask("", 1); //$NON-NLS-1$
+		}
+		try {
+			IProject[] projects = getBuildOrder(configuration, mode);
+			if (projects == null) {
+				return true;
+			} 
+			buildProjects(projects, new SubProgressMonitor(monitor, 1));
+			return false;
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
+		}
 	}
 	
 	/**
@@ -149,29 +161,34 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#finalLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String, org.eclipse.core.runtime.IProgressMonitor)
 	 */
 	public boolean finalLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		IProject[] projects = getProjectsForProblemSearch(configuration, mode);
-		if (projects == null) {
-			return true; //continue launch
-		}
-		boolean continueLaunch = true;
-			
-		monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6); 
-		List errors = new ArrayList();
-		for (int i = 0; i < projects.length; i++) {
-			monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new String[]{projects[i].getName()})); 
-			if (existsProblems(projects[i])) {
-				errors.add(projects[i]);
-			}	
-		}	
-		if (!errors.isEmpty()) {
-			errors.add(0, configuration);
-			IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-			if (prompter != null) {
-				continueLaunch = ((Boolean) prompter.handleStatus(complileErrorProjectPromptStatus, errors)).booleanValue();
+		monitor.beginTask("", 1); //$NON-NLS-1$
+		try {
+			IProject[] projects = getProjectsForProblemSearch(configuration, mode);
+			if (projects == null) {
+				return true; //continue launch
 			}
+			boolean continueLaunch = true;
+				
+			monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6); 
+			List errors = new ArrayList();
+			for (int i = 0; i < projects.length; i++) {
+				monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new String[]{projects[i].getName()})); 
+				if (existsProblems(projects[i])) {
+					errors.add(projects[i]);
+				}	
+			}	
+			if (!errors.isEmpty()) {
+				errors.add(0, configuration);
+				IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+				if (prompter != null) {
+					continueLaunch = ((Boolean) prompter.handleStatus(complileErrorProjectPromptStatus, errors)).booleanValue();
+				}
+			}
+				
+			return continueLaunch;
+		} finally {
+			monitor.done();
 		}
-			
-		return continueLaunch;
 	}
 	
 	/* (non-Javadoc)
@@ -228,15 +245,20 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @since 3.2
 	 */
 	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
-		IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
-		if(prompter != null) {
-			//do save here and remove saving from DebugUIPlugin to avoid it 'trumping' this save
-			IProject[] buildOrder = getBuildOrder(configuration, mode);
-			if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, new Object[]{configuration, buildOrder})).booleanValue()) {
-				return false;
-			}
-		}	
-		return true;
+		monitor.beginTask("", 1); //$NON-NLS-1$
+		try {
+			IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
+			if(prompter != null) {
+				//do save here and remove saving from DebugUIPlugin to avoid it 'trumping' this save
+				IProject[] buildOrder = getBuildOrder(configuration, mode);
+				if(!((Boolean)prompter.handleStatus(saveScopedDirtyEditors, new Object[]{configuration, buildOrder})).booleanValue()) {
+					return false;
+				}
+			}	
+			return true;
+		} finally {
+			monitor.done();
+		}
 	}
 
     /**
@@ -387,8 +409,20 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @throws CoreException if an exception occurs while building
 	 */
 	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
-		for (int i = 0; i < projects.length; i++ ) {
-			projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+		if (monitor != null) {
+			monitor.beginTask("", projects.length); //$NON-NLS-1$
+		}
+		try {
+			for (int i = 0; i < projects.length; i++ ) {
+				if (monitor != null && monitor.isCanceled()) {
+					throw new OperationCanceledException();
+				}
+				projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor, 1));
+			}
+		} finally {
+			if (monitor != null) {
+				monitor.done();
+			}
 		}
 	}
 }
