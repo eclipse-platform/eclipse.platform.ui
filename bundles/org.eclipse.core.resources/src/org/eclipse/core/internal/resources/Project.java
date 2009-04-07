@@ -504,7 +504,7 @@ public class Project extends Container implements IProject {
 				innerMonitor = Policy.monitorFor(innerMonitor);
 				final ISchedulingRule rule = workspace.getRoot();
 				try {
-					innerMonitor.beginTask("", Policy.opWork); //$NON-NLS-1$
+					innerMonitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 					try {
 						workspace.prepareOperation(rule, innerMonitor);
 						ResourceInfo info = getResourceInfo(false, false);
