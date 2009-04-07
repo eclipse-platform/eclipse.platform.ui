@@ -33,7 +33,6 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -46,7 +45,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.ToolBar;
@@ -96,10 +94,10 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.setMinimizeVisible(showMinMax);
 
 			// Create a single ViewForm class in which to host -all- views
-			ViewForm vf = new ViewForm(ctf, SWT.NONE);
-			Label vfLabel = new Label(vf, SWT.NONE);
-			vfLabel.setText("This is a test"); //$NON-NLS-1$
-			vf.setTopLeft(vfLabel);
+			// ViewForm vf = new ViewForm(ctf, SWT.NONE);
+			// Label vfLabel = new Label(vf, SWT.NONE);
+			//			vfLabel.setText("This is a test"); //$NON-NLS-1$
+			// vf.setTopLeft(vfLabel);
 
 			bindWidget(part, ctf);
 			ctf.setVisible(true);
@@ -346,14 +344,15 @@ public class StackModelFactory extends SWTPartFactory {
 		CTabFolder ctf = (CTabFolder) getParentWidget(part);
 		Control ctrl = (Control) part.getWidget();
 		CTabItem cti = findItemForPart(part.getParent(), part);
-		// HACK! reparent the control under the ViewForm
-		ViewForm vf = (ViewForm) ctf.getChildren()[0];
-		Label lbl = (Label) vf.getTopLeft();
-		lbl.setText("This is view: " + part.getName()); //$NON-NLS-1$
-
-		cti.setControl(vf);
-		ctrl.setParent(vf);
-		vf.setContent(ctrl);
+		cti.setControl(ctrl);
+		// // HACK! reparent the control under the ViewForm
+		// ViewForm vf = (ViewForm) ctf.getChildren()[0];
+		// Label lbl = (Label) vf.getTopLeft();
+		//		lbl.setText("This is view: " + part.getName()); //$NON-NLS-1$
+		//
+		// cti.setControl(vf);
+		// ctrl.setParent(vf);
+		// vf.setContent(ctrl);
 
 		ToolBar tb = getToolbar(part);
 		if (tb != null) {
@@ -368,7 +367,6 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.layout(true);
 		}
 
-		// cti.setControl(ctrl);
 	}
 
 	private ToolBar getToolbar(MItemPart<?> part) {
