@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.internal.filesystem.wrapper.WrapperFileSystem;
 
 /**
  * Tests API methods of the class {@link org.eclipse.core.filesystem.URIUtil}.
@@ -78,15 +79,26 @@ public class URIUtilTest extends FileSystemTest {
 	/**
 	 * Tests API method {@link org.eclipse.core.filesystem.URIUtil#toPath(java.net.URI)}.
 	 */
-	public void testToPath() {
-		//TODO
+	public void testToPath() throws Exception {
+		// Relative path
+		String pathString = "test/path with/spaces to_file.txt";
+		assertEquals("1.0", new Path(pathString), URIUtil.toPath(URIUtil.toURI(pathString, false)));
+		// Absolute path
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			pathString = "c:/test/path with/spaces to_file.txt";
+		} else {
+			pathString = "/test/path with/spaces to_file.txt";
+		}
+		assertEquals("2.0", new Path(pathString), URIUtil.toPath(URIUtil.toURI(pathString)));
+		// User defined file system
+		assertEquals("3.0", new Path(pathString), URIUtil.toPath(WrapperFileSystem.getWrappedURI(URIUtil.toURI(pathString))));
 	}
 
 	/**
 	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(IPath)},
 	 * {@link org.eclipse.core.filesystem.URIUtil#toURI(String)))} results equality
 	 */
-	public void testToURIAbsoulte() {
+	public void testToURIAbsolute() {
 		String pathString = null;
 		if (Platform.getOS().equals(Platform.OS_WIN32)) {
 			pathString = "c:/test/path with/spaces to_file.txt";

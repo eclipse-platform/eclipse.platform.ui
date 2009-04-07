@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,11 +58,24 @@ public class URIUtil {
 	 */
 	public static IPath toPath(URI uri) {
 		Assert.isNotNull(uri);
+		// Special treatment for LocalFileSystem. For performance only.
 		if (EFS.SCHEME_FILE.equals(uri.getScheme()))
 			return new Path(uri.getSchemeSpecificPart());
-		//handle relative path
+		// Relative path
 		if (uri.getScheme() == null)
 			return new Path(uri.getPath());
+		// General case
+		try {
+			IFileStore store = EFS.getStore(uri);
+			if (store == null)
+				return null;
+			File file = store.toLocalFile(EFS.NONE, null);
+			if (file == null)
+				return null;
+			return new Path(file.getAbsolutePath());
+		} catch (CoreException e) {
+			// Fall through to return null.
+		}
 		return null;
 	}
 
