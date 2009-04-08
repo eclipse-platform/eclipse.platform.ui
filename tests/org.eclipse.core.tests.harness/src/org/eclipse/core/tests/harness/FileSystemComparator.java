@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,13 +39,6 @@ public class FileSystemComparator {
 			this.path = file;
 			this.timestamp = timestamp;
 			this.size = directory ? -1 : size;
-		}
-
-		public void assertEquals(String tag, FileSummary other) {
-			if (!path.equals(other.path))
-				throw new IllegalArgumentException();
-			Assert.assertEquals(tag + " timestamps differ", timestamp, other.timestamp);
-			Assert.assertEquals(tag + " sizes differ", size, other.size);
 		}
 
 		public boolean equals(Object obj) {
