@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContributedPart;
@@ -55,8 +54,8 @@ public class MWindowTest extends TestCase {
 			IEclipseContext serviceContext = EclipseContextFactory
 					.createServiceContext(Activator.getDefault().getBundle()
 							.getBundleContext());
-			appContext = EclipseContextFactory.create(serviceContext, null);
-			appContext.set(IContextConstants.DEBUG_STRING, "application"); //$NON-NLS-1$
+			appContext = Workbench.createContext(serviceContext,
+					RegistryFactory.getRegistry(), null);
 			MApplication<MWindow<?>> app = ApplicationFactory.eINSTANCE
 					.createMApplication();
 			appContext.set(MApplication.class.getName(), app);
@@ -125,6 +124,8 @@ public class MWindowTest extends TestCase {
 						topWidget = (Widget) o;
 						assertTrue(topWidget instanceof Shell);
 						assertEquals("MyWindow", ((Shell) topWidget).getText());
+						assertEquals(topWidget, context
+								.get(IServiceConstants.ACTIVE_SHELL));
 					}
 				});
 	}
@@ -182,7 +183,7 @@ public class MWindowTest extends TestCase {
 
 						// should get the window context
 						IEclipseContext child = (IEclipseContext) appContext
-								.get(IServiceConstants.ACTIVE_CHILD);
+								.getLocal(IServiceConstants.ACTIVE_CHILD);
 						assertNotNull(child);
 						assertEquals(window.getContext(), child);
 
@@ -198,11 +199,11 @@ public class MWindowTest extends TestCase {
 						factory.activate(modelPart);
 
 						IEclipseContext next = (IEclipseContext) child
-								.get(IServiceConstants.ACTIVE_CHILD);
-						while (next != child) {
+								.getLocal(IServiceConstants.ACTIVE_CHILD);
+						while (next != null) {
 							child = next;
 							next = (IEclipseContext) child
-									.get(IServiceConstants.ACTIVE_CHILD);
+									.getLocal(IServiceConstants.ACTIVE_CHILD);
 						}
 						assertFalse(window.getContext() == child);
 

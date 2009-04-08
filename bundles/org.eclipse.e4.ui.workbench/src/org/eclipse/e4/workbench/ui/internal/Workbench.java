@@ -57,6 +57,7 @@ import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
 public class Workbench implements IWorkbench {
+	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
 	private MApplication<? extends MWindow> workbench;
 	private static final boolean saveAndRestore = true;
@@ -110,7 +111,10 @@ public class Workbench implements IWorkbench {
 		resourceSet.getPackageRegistry().put(WorkbenchPackage.eNS_URI,
 				WorkbenchPackage.eINSTANCE);
 
-		globalContext = createContext(applicationContext);
+		globalContext = createContext(applicationContext, registry,
+				exceptionHandler);
+		globalContext.set(IWorkbench.class.getName(), this);
+
 		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
 			createWorkbenchModel(URI.createFileURI(workbenchData
 					.getAbsolutePath()), workbenchXmiURI);
@@ -119,7 +123,9 @@ public class Workbench implements IWorkbench {
 		}
 	}
 
-	private IEclipseContext createContext(IEclipseContext applicationContext) {
+	public static IEclipseContext createContext(
+			IEclipseContext applicationContext, IExtensionRegistry registry,
+			IExceptionHandler exceptionHandler) {
 		final IEclipseContext mainContext = EclipseContextFactory.create(
 				applicationContext, UISchedulerStrategy.getInstance());
 		mainContext.set(Logger.class.getName(), new WorkbenchLogger());
@@ -141,7 +147,6 @@ public class Workbench implements IWorkbench {
 				e.printStackTrace();
 			}
 		}
-		mainContext.set(IWorkbench.class.getName(), this);
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
 		mainContext.set(IServiceConstants.SELECTION,
@@ -166,6 +171,9 @@ public class Workbench implements IWorkbench {
 				return newInput;
 			}
 		});
+		mainContext.set(IServiceConstants.ACTIVE_SHELL,
+				new ActiveChildLookupFunction(IServiceConstants.ACTIVE_SHELL,
+						LOCAL_ACTIVE_SHELL));
 
 		return mainContext;
 	}
