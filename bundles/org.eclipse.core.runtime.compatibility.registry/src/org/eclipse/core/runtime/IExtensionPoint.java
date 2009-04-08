@@ -37,9 +37,7 @@ package org.eclipse.core.runtime;
  * Also, such clients should probably register a listener with the extension registry
  * so that they receive notification of any changes to the registry.
  * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IExtensionPoint {
 	/**
