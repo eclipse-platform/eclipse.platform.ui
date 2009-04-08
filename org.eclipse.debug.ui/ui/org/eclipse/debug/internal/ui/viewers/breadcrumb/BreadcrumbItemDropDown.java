@@ -49,7 +49,6 @@ import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.forms.FormColors;
 
 
 /**
@@ -146,7 +145,7 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			RGB rgb1= display.getSystemColor(color1).getRGB();
 			RGB rgb2= display.getSystemColor(color2).getRGB();
 
-			RGB blend= FormColors.blend(rgb2, rgb1, ratio);
+			RGB blend= BreadcrumbViewer.blend(rgb2, rgb1, ratio);
 
 			return new Color(display, blend);
 		}
