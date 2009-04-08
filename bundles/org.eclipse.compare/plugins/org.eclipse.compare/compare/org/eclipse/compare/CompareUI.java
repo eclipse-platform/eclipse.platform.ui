@@ -355,27 +355,32 @@ public final class CompareUI {
 	}
 
 	/**
-	 * Adds an alias for the given type.
-	 * Subsequent calls to <code>findStructureViewer</code>
-	 * treat alias as a synonym for type and return the same viewer.
-	 * <p>
-	 * Note: this method is for internal use only. Clients should not call this method. 
-	 * @param type a type name for which a viewer has been registered
-	 * @param alias a type name which should be treated as a synonym of type
+	 * Adds an alias for the given type. Subsequent calls to
+	 * <code>findStructureViewer</code> treat alias as a synonym for type and
+	 * return the same viewer.
+	 * 
+	 * @param type
+	 *            a type name for which a viewer has been registered
+	 * @param alias
+	 *            a type name which should be treated as a synonym of type
 	 * @since 2.0
+	 * @noreference This method is for internal use only. Clients should not
+	 *              call this method.
 	 */
 	public static void addStructureViewerAlias(String type, String alias) {
 		CompareUIPlugin.getDefault().addStructureViewerAlias(type, alias);
 	}
 	
 	/**
-	 * Remove all aliases for the given type. This method does not affect
-	 * the initial binding between type and viewer. If no aliases exist for the
+	 * Remove all aliases for the given type. This method does not affect the
+	 * initial binding between type and viewer. If no aliases exist for the
 	 * given type this method does nothing.
-	 * <p>
-	 * Note: this method is for internal use only. Clients should not call this method. 
-	 * @param type the type name for which all synonyms are removed.
+	 * 
+	 * @param type
+	 *            the type name for which all synonyms are removed.
 	 * @since 2.0
+	 * @noreference This method is for internal use only. Clients should not
+	 *              call this method.
 	 */
 	public static void removeAllStructureViewerAliases(String type) {
 		CompareUIPlugin.getDefault().removeAllStructureViewerAliases(type);
