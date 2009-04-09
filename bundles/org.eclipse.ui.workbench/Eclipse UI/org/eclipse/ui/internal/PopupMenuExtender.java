@@ -354,10 +354,14 @@ public class PopupMenuExtender implements IMenuListener2,
 			menuService
 					.populateContributionManager(manager, MenuUtil.ANY_POPUP);
 			Iterator i = getMenuIds().iterator();
-			InternalMenuService realService = (InternalMenuService) menuService;
 			while (i.hasNext()) {
 				String id = "popup:" + i.next(); //$NON-NLS-1$
-				realService.populateContributionManager(manager, id, false);
+				if (menuService instanceof InternalMenuService) {
+					((InternalMenuService) menuService)
+							.populateContributionManager(manager, id, false);
+				} else {
+					menuService.populateContributionManager(manager, id);
+				}
 			}
 		}
 	}
