@@ -19,7 +19,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.core.services.IBackgroundRunner;
+import org.eclipse.e4.core.services.ISchedulingExecutor;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.demo.e4photo.annotations.In;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -44,13 +44,13 @@ public class Thumbnails {
 	private Gallery gallery;
 	private GalleryItem group;
 	private final IEclipseContext outputContext;
-	private final IBackgroundRunner backgroundRunner;
+	private final ISchedulingExecutor backgroundRunner;
 	private IContainer input;
 	private volatile Runnable runnable;
 	private final IStylingEngine stylingEngine;
 
 	public Thumbnails(Composite parent, final IEclipseContext outputContext,
-			IBackgroundRunner backgroundRunner, IStylingEngine stylingEngine) {
+			ISchedulingExecutor backgroundRunner, IStylingEngine stylingEngine) {
 		this.outputContext = outputContext;
 		this.backgroundRunner = backgroundRunner;
 		this.stylingEngine = stylingEngine;

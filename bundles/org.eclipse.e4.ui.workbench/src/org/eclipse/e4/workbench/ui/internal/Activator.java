@@ -10,23 +10,21 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.ISchedulingExecutor;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
+	private static Activator activator;
 
 	private BundleContext context;
-	private ServiceTracker pkgAdminTracker;
-	private ServiceTracker locationTracker;
 	private ServiceTracker debugTracker;
-	private static Activator activator;
+	private ServiceRegistration executorTracker;
+	private ServiceTracker locationTracker;
+	private ServiceTracker pkgAdminTracker;
 
 	/**
 	 * Get the default activator.
@@ -38,29 +36,10 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * @return this bundles context
-	 */
-	public BundleContext getContext() {
-		return context;
-	}
-
-	/**
 	 * @return the bundle object
 	 */
 	public Bundle getBundle() {
 		return context.getBundle();
-	}
-
-	public void start(BundleContext context) throws Exception {
-		activator = this;
-		this.context = context;
-	}
-
-	public void stop(BundleContext context) throws Exception {
-		if (pkgAdminTracker != null) {
-			pkgAdminTracker.close();
-			pkgAdminTracker = null;
-		}
 	}
 
 	/**
@@ -70,29 +49,10 @@ public class Activator implements BundleActivator {
 		if (pkgAdminTracker == null) {
 			if (context == null)
 				return null;
-			pkgAdminTracker = new ServiceTracker(context, PackageAdmin.class
-					.getName(), null);
+			pkgAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 			pkgAdminTracker.open();
 		}
 		return (PackageAdmin) pkgAdminTracker.getService();
-	}
-
-	/**
-	 * @return the instance Location service
-	 */
-	public Location getInstanceLocation() {
-		if (locationTracker == null) {
-			Filter filter = null;
-			try {
-				filter = context.createFilter(Location.INSTANCE_FILTER);
-			} catch (InvalidSyntaxException e) {
-				// ignore this. It should never happen as we have tested the
-				// above format.
-			}
-			locationTracker = new ServiceTracker(context, filter, null);
-			locationTracker.open();
-		}
-		return (Location) locationTracker.getService();
 	}
 
 	/**
@@ -113,13 +73,63 @@ public class Activator implements BundleActivator {
 		return null;
 	}
 
+	/**
+	 * @return this bundles context
+	 */
+	public BundleContext getContext() {
+		return context;
+	}
+
 	public DebugOptions getDebugOptions() {
 		if (debugTracker == null) {
-			debugTracker = new ServiceTracker(context, DebugOptions.class
-					.getName(), null);
+			debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 			debugTracker.open();
 		}
 		return (DebugOptions) debugTracker.getService();
+	}
+
+	/**
+	 * @return the instance Location service
+	 */
+	public Location getInstanceLocation() {
+		if (locationTracker == null) {
+			Filter filter = null;
+			try {
+				filter = context.createFilter(Location.INSTANCE_FILTER);
+			} catch (InvalidSyntaxException e) {
+				// ignore this. It should never happen as we have tested the
+				// above format.
+			}
+			locationTracker = new ServiceTracker(context, filter, null);
+			locationTracker.open();
+		}
+		return (Location) locationTracker.getService();
+	}
+
+	public void start(BundleContext context) throws Exception {
+		activator = this;
+		this.context = context;
+		executorTracker = context.registerService(ISchedulingExecutor.SERVICE_NAME,
+				new JobExecutor(), null);
+	}
+
+	public void stop(BundleContext context) throws Exception {
+		if (pkgAdminTracker != null) {
+			pkgAdminTracker.close();
+			pkgAdminTracker = null;
+		}
+		if (debugTracker != null) {
+			debugTracker.close();
+			debugTracker = null;
+		}
+		if (locationTracker != null) {
+			locationTracker.close();
+			locationTracker = null;
+		}
+		if (executorTracker != null) {
+			executorTracker.unregister();
+			executorTracker = null;
+		}
 	}
 
 }
