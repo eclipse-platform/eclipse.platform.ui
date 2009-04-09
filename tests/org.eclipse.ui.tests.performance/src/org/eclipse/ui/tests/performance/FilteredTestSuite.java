@@ -107,10 +107,13 @@ public class FilteredTestSuite extends TestSuite {
 
 			if (filterTestClassName != null) {
 				Class testClass = subTest.getClass();
-				String subTestName = testClass.getSimpleName();
-				String subTestQualName = testClass.getCanonicalName();
+				String subTestQualName = testClass.getName(); // qualified class name
 				if (subTestQualName == null)
 					subTestQualName = "";
+				int index = subTestQualName.lastIndexOf('.');
+				String subTestName = ""; // short class name
+				if ((index != -1) && ((index +1) < subTestQualName.length()))
+					subTestName = subTestQualName.substring(index+1);
 				if (!subTestName.matches(filterTestClassName) && !subTestQualName.matches(filterTestClassName))
 					continue;
 			}
