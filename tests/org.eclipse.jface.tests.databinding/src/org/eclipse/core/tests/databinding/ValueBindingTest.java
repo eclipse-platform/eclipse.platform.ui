@@ -8,17 +8,26 @@
  * Contributors:
  *     Brad Reynolds - initial API and implementation
  *     Brad Reynolds - bugs 116920, 164653, 159768
- *     Matthew Hall - bug 260329
+ *     Matthew Hall - bugs 260329, 271148
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.conversion.Converter;
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.databinding.validation.IValidator;
@@ -37,18 +46,17 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	private WritableValue model;
 
 	private DataBindingContext dbc;
+	private Binding binding;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#setUp()
-	 */
+	private List log;
+
 	protected void setUp() throws Exception {
 		super.setUp();
 
 		target = WritableValue.withValueType(String.class);
 		model = WritableValue.withValueType(String.class);
 		dbc = new DataBindingContext();
+		log = new ArrayList();
 	}
 
 	/**
@@ -198,37 +206,184 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 		Binding binding = dbc.bindValue(target, model);
 		assertTrue(binding.getValidationStatus().getValue() instanceof BindingStatus);
 	}
-	
+
 	public void testDiffsAreCheckedForEqualityBeforeUpdate() throws Exception {
 		class WritableValueStub extends WritableValue {
 			public WritableValueStub() {
 				super("", String.class);
 			}
-			
+
 			protected void fireValueChange(ValueDiff diff) {
 				super.fireValueChange(diff);
 			}
 		}
-		
+
 		WritableValueStub target = new WritableValueStub();
 		WritableValue model = WritableValue.withValueType(String.class);
-		
+
 		class Strategy extends UpdateValueStrategy {
 			int afterGetCount;
+
 			public IStatus validateAfterGet(Object value) {
 				afterGetCount++;
 				return super.validateAfterGet(value);
 			}
 		}
-		
+
 		Strategy strategy = new Strategy();
 		dbc.bindValue(target, model, strategy, null);
 		int count = strategy.afterGetCount;
-		
+
 		target.fireValueChange(Diffs.createValueDiff("", ""));
 		assertEquals("update does not occur", count, strategy.afterGetCount);
 	}
-	
+
+	public void testPostInit_UpdatePolicy_UpdateToTarget_UpdateToModel() {
+		bindLoggingValue(
+				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_UPDATE),
+				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
+		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
+				"model-after-convert", "target-before-set", "target-set",
+				"target-get", "target-convert", "target-after-convert",
+				"model-before-set" }), log);
+	}
+
+	public void testPostInit_UpdatePolicy_UpdateToTarget_ConvertToModel() {
+		bindLoggingValue(
+				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_CONVERT),
+				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
+		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
+				"model-after-convert", "target-before-set", "target-set",
+				"target-get", "target-convert", "target-after-convert",
+				"model-before-set" }), log);
+	}
+
+	public void testPostInit_UpdatePolicy_UpdateToTarget_OnRequestToModel() {
+		bindLoggingValue(
+				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_ON_REQUEST),
+				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
+		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
+				"model-after-convert", "target-before-set", "target-set" }),
+				log);
+
+		log.clear();
+		target.setValue(new Object());
+		assertEquals(Collections.singletonList("target-set"), log);
+
+		log.clear();
+		binding.validateTargetToModel();
+		assertEquals(
+				Arrays.asList(new String[] { "target-get", "target-convert",
+						"target-after-convert", "model-before-set" }), log);
+
+		log.clear();
+		binding.updateTargetToModel();
+		assertEquals(Arrays.asList(new String[] { "target-get",
+				"target-convert", "target-after-convert", "model-before-set",
+				"model-set" }), log);
+	}
+
+	public void testPostInit_UpdatePolicy_UpdateToTarget_NeverToModel() {
+		bindLoggingValue(
+				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_NEVER),
+				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_UPDATE));
+		assertEquals(Arrays.asList(new String[] { "model-get", "model-convert",
+				"model-after-convert", "target-before-set", "target-set" }),
+				log);
+
+		log.clear();
+		target.setValue(new Object());
+		assertEquals(Collections.singletonList("target-set"), log);
+
+		log.clear();
+		binding.validateTargetToModel();
+		assertEquals(Collections.EMPTY_LIST, log);
+
+		log.clear();
+		binding.updateTargetToModel();
+		assertEquals(Collections.EMPTY_LIST, log);
+	}
+
+	public void testPostInit_UpdatePolicy_ConvertToTarget_UpdateToModel() {
+		bindLoggingValue(
+				loggingTargetToModelStrategy(UpdateValueStrategy.POLICY_UPDATE),
+				loggingModelToTargetStrategy(UpdateValueStrategy.POLICY_CONVERT));
+		assertEquals(
+				Arrays.asList(new String[] { "model-get", "model-convert",
+						"model-after-convert", "target-before-set",
+						"target-get", "target-convert", "target-after-convert",
+						"model-before-set" }), log);
+
+		log.clear();
+		target.setValue(new Object());
+		assertEquals(Arrays.asList(new String[] { "target-set", "target-get",
+				"target-convert", "target-after-convert", "model-before-set",
+				"model-set" }), log);
+
+		log.clear();
+		model.setValue(new Object());
+		assertEquals(Arrays.asList(new String[] { "model-set", "model-get",
+				"model-convert", "model-after-convert" }), log);
+	}
+
+	private void bindLoggingValue(UpdateValueStrategy targetToModel,
+			UpdateValueStrategy modelToTarget) {
+		// Set model and target to different values to ensure we get a change
+		// notification when the binding is first created.
+		model.setValue("1");
+		target.setValue("2");
+
+		target.addValueChangeListener(new IValueChangeListener() {
+			public void handleValueChange(ValueChangeEvent event) {
+				log.add("target-set");
+			}
+		});
+		model.addValueChangeListener(new IValueChangeListener() {
+			public void handleValueChange(ValueChangeEvent event) {
+				log.add("model-set");
+			}
+		});
+		binding = dbc.bindValue(target, model, targetToModel, modelToTarget);
+	}
+
+	private UpdateValueStrategy loggingModelToTargetStrategy(int updatePolicy) {
+		return new UpdateValueStrategy(updatePolicy).setAfterGetValidator(
+				loggingValidator(log, "model-get")).setConverter(
+				loggingConverter(log, "model-convert"))
+				.setAfterConvertValidator(
+						loggingValidator(log, "model-after-convert"))
+				.setBeforeSetValidator(
+						loggingValidator(log, "target-before-set"));
+	}
+
+	private UpdateValueStrategy loggingTargetToModelStrategy(int updatePolicy) {
+		return new UpdateValueStrategy(updatePolicy).setAfterGetValidator(
+				loggingValidator(log, "target-get")).setConverter(
+				loggingConverter(log, "target-convert"))
+				.setAfterConvertValidator(
+						loggingValidator(log, "target-after-convert"))
+				.setBeforeSetValidator(
+						loggingValidator(log, "model-before-set"));
+	}
+
+	private IValidator loggingValidator(final List log, final String message) {
+		return new IValidator() {
+			public IStatus validate(Object value) {
+				log.add(message);
+				return ValidationStatus.ok();
+			}
+		};
+	}
+
+	private IConverter loggingConverter(final List log, final String message) {
+		return new Converter(null, null) {
+			public Object convert(Object fromObject) {
+				log.add(message);
+				return fromObject;
+			}
+		};
+	}
+
 	private IValidator warningValidator() {
 		return new IValidator() {
 			public IStatus validate(Object value) {

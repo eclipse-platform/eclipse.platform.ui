@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 220700
+ *     Matthew Hall - bugs 220700, 271148
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -38,14 +38,18 @@ class ValueBinding extends Binding {
 	private boolean updatingModel;
 	private IValueChangeListener targetChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			if (!updatingTarget && !Util.equals(event.diff.getOldValue(), event.diff.getNewValue())) {
+			if (!updatingTarget
+					&& !Util.equals(event.diff.getOldValue(), event.diff
+							.getNewValue())) {
 				doUpdate(target, model, targetToModel, false, false);
 			}
 		}
 	};
 	private IValueChangeListener modelChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			if (!updatingModel && !Util.equals(event.diff.getOldValue(), event.diff.getNewValue())) {
+			if (!updatingModel
+					&& !Util.equals(event.diff.getOldValue(), event.diff
+							.getNewValue())) {
 				doUpdate(model, target, modelToTarget, false, false);
 			}
 		}
@@ -85,8 +89,11 @@ class ValueBinding extends Binding {
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateValueStrategy.POLICY_UPDATE) {
 			updateModelToTarget();
+		} else if (modelToTarget.getUpdatePolicy() == UpdateValueStrategy.POLICY_CONVERT) {
+			validateModelToTarget();
 		}
-		if (targetToModel.getUpdatePolicy() != UpdateValueStrategy.POLICY_NEVER) {
+		if (targetToModel.getUpdatePolicy() == UpdateValueStrategy.POLICY_UPDATE
+				|| targetToModel.getUpdatePolicy() == UpdateValueStrategy.POLICY_CONVERT) {
 			validateTargetToModel();
 		}
 	}
@@ -228,7 +235,7 @@ class ValueBinding extends Binding {
 			}
 		});
 	}
-	
+
 	public void dispose() {
 		if (targetChangeListener != null) {
 			target.removeValueChangeListener(targetChangeListener);

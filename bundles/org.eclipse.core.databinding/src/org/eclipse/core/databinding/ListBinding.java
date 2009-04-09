@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 262221
+ *     Matthew Hall - bugs 262221, 271148
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -95,7 +95,7 @@ public class ListBinding extends Binding {
 		if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
 			updateModelToTarget();
 		}
-		if (targetToModel.getUpdatePolicy() != UpdateListStrategy.POLICY_NEVER) {
+		if (targetToModel.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
 			validateTargetToModel();
 		}
 	}
