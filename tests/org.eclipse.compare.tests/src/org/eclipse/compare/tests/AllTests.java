@@ -33,6 +33,7 @@ public class AllTests {
 		suite.addTestSuite(FileDiffResultTest.class);
 		suite.addTestSuite(ContentMergeViewerTest.class);
 		suite.addTestSuite(PatchLinesTest.class);
+		suite.addTestSuite(PatchUITest.class);
 		// $JUnit-END$
 		return suite;
 	}

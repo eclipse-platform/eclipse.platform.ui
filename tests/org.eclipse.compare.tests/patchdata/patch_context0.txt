@@ -1,5 +1,11 @@
---- old.txt	2005-05-07 00:16:20.000000000 +0200
-+++ new.txt	2005-05-07 00:16:32.000000000 +0200
+### Eclipse Workspace Patch 1.0
+#P ApplyPatchTest
+Index: context.txt
+===================================================================
+RCS file: context.txt
+diff -N context.txt
+--- context.txt	2005-05-07 00:16:20.000000000 +0200
++++ context.txt	2005-05-07 00:16:32.000000000 +0200
 @@ -3,0 +4,2 @@
 +[c1]
 +[c2]
