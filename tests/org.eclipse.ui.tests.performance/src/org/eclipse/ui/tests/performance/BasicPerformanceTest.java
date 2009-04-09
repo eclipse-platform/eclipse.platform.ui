@@ -50,6 +50,10 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	final private boolean tagAsGlobalSummary;
 
 	final private boolean tagAsSummary;
+
+	private static long startMeasuringTime;
+
+	private static long stopMeasuringTime;
 	
 	// whether we are displaying iterations per timebox in the console. default is false
 	private static boolean interactive;
@@ -183,6 +187,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	public void startMeasuring() {
 		if (interactive) {
+			startMeasuringTime = System.currentTimeMillis();
 			return;
 		}
 		tester.startMeasuring();
@@ -190,6 +195,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	public void stopMeasuring() {
 		if (interactive) {
+			stopMeasuringTime = System.currentTimeMillis();
 			return;
 		}
 		tester.stopMeasuring();
@@ -300,17 +306,27 @@ public abstract class BasicPerformanceTest extends UITestCase {
 				long intervalMillis = (long) (1000 * interval);
 				double averagePerInterval = interval/timePerRun;
 				System.out.println("Time per run (roughly): " + f.format(timePerRun) + " - expecting " + f.format(averagePerInterval) + " runs per 10 seconds.");
+				System.err.println("Remember - higher means faster: the following shows number of runs per interval (seconds=" + p.format(interval) + ").");
 				while (true) {
-					startTime = System.currentTimeMillis();
 					int numOperations = 0;
-					while ((currentTime = System.currentTimeMillis()) - startTime < intervalMillis) {
+					long elapsed = 0;
+					while (elapsed < intervalMillis) {
+						startMeasuringTime = -1;
+						stopMeasuringTime = -1;
+						startTime = System.currentTimeMillis();
 						numOperations++;
 						runnable.run();
+						currentTime = System.currentTimeMillis();
+						if (startMeasuringTime != -1 && stopMeasuringTime != -1) {
+							elapsed += stopMeasuringTime - startMeasuringTime;
+						} else {
+							elapsed += currentTime - startTime;
+						}
 					}
-					timePerRun = (currentTime - startTime) / 1000.0 / numOperations;
+					timePerRun = elapsed / 1000.0 / numOperations;
 					double operationsPerInterval = interval/timePerRun;
 					double deviation = (operationsPerInterval - averagePerInterval) / averagePerInterval * 100.0;
-					System.out.println(f.format(operationsPerInterval) + "     (" + (deviation>=0.0?"+":"-") + p.format(Math.abs(deviation)) + "% relative to avg=" + f.format(averagePerInterval) + ")");
+					System.out.println(f.format(operationsPerInterval) + " runs/interval    (" + (deviation>=0.0?"+":"-") + p.format(Math.abs(deviation)) + "% relative to avg=" + f.format(averagePerInterval) + ")");
 					averagePerInterval = ((averagePerInterval * totalRuns) + (operationsPerInterval * numOperations)) / (totalRuns + numOperations);
 					totalRuns += numOperations;
 				}
