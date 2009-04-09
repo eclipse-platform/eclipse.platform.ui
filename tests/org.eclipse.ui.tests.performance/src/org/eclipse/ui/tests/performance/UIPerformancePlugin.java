@@ -22,6 +22,8 @@ public class UIPerformancePlugin extends AbstractUIPlugin {
 	//The shared instance.
 	private static UIPerformancePlugin plugin;
 	
+	private BundleContext context;
+
 	/**
 	 * The constructor.
 	 */
@@ -34,6 +36,7 @@ public class UIPerformancePlugin extends AbstractUIPlugin {
 	 */
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
+		this.context = context;
 	}
 
 	/**
@@ -42,6 +45,7 @@ public class UIPerformancePlugin extends AbstractUIPlugin {
 	public void stop(BundleContext context) throws Exception {
 		super.stop(context);
 		plugin = null;
+		context = null;
 	}
 
 	/**
@@ -62,5 +66,9 @@ public class UIPerformancePlugin extends AbstractUIPlugin {
 	 */
 	public static ImageDescriptor getImageDescriptor(String path) {
 		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.tests.performance", path);
+	}
+
+	public BundleContext getContext() {
+		return context;
 	}
 }

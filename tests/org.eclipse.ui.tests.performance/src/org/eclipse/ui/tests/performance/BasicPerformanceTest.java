@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,6 +26,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.osgi.framework.BundleContext;
 
 /**
  * Baseclass for simple performance tests.
@@ -30,6 +34,8 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @since 3.1
  */
 public abstract class BasicPerformanceTest extends UITestCase {
+
+	static final public String INTERACTIVE = "org.eclipse.ui.tests.performance.interactive";
 
 	public static final int NONE = 0;
 
@@ -44,9 +50,21 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	final private boolean tagAsGlobalSummary;
 
 	final private boolean tagAsSummary;
+	
+	// whether we are displaying iterations per timebox in the console. default is false
+	private static boolean interactive;
 
 	public BasicPerformanceTest(String testName) {
 		this(testName, NONE);
+		BundleContext context = UIPerformancePlugin.getDefault().getContext();
+		if (context == null) { // most likely run in a wrong launch mode
+			System.err.println("Unable to retrieve bundle context from BasicPerformanceTest; interactive mode is disabled");
+			return;
+		}
+		String filterString = context.getProperty(INTERACTIVE);
+		if (filterString != null && filterString.toLowerCase().equals("true")) {
+			interactive = true;
+		}
 	}
 
 	/**
@@ -83,6 +101,9 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
+		if (interactive) {
+			return;
+		}
 		tester = new PerformanceTester(this);
 	}
 
@@ -93,6 +114,9 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	protected void doTearDown() throws Exception {
 		super.doTearDown();
+		if (interactive) {
+			return;
+		}
 		tester.dispose();
 	}
 
@@ -113,6 +137,9 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *             if the properties do not hold
 	 */
 	public void assertPerformance() {
+		if (interactive) {
+			return;
+		}
 		tester.assertPerformance();
 	}
 
@@ -134,11 +161,17 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	public void assertPerformanceInRelativeBand(Dimension dim,
 			int lowerPercentage, int upperPercentage) {
+		if (interactive) {
+			return;
+		}
 		tester.assertPerformanceInRelativeBand(dim, lowerPercentage,
 				upperPercentage);
 	}
 
 	public void commitMeasurements() {
+		if (interactive) {
+			return;
+		}
 		tester.commitMeasurements();
 	}
 
@@ -149,10 +182,16 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * this method or {@link PerformanceTestCase#commitMeasurements()}.
 	 */
 	public void startMeasuring() {
+		if (interactive) {
+			return;
+		}
 		tester.startMeasuring();
 	}
 
 	public void stopMeasuring() {
+		if (interactive) {
+			return;
+		}
 		tester.stopMeasuring();
 	}
 
@@ -169,11 +208,17 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	private void tagAsGlobalSummary(String shortName, Dimension dimension) {
 		System.out.println("GLOBAL " + shortName);
+		if (interactive) {
+			return;
+		}
 		tester.tagAsGlobalSummary(shortName, dimension);
 	}
 
 	private void tagAsSummary(String shortName, Dimension dimension) {
 		System.out.println("LOCAL " + shortName);
+		if (interactive) {
+			return;
+		}
 		tester.tagAsSummary(shortName, dimension);
 	}
 
@@ -238,6 +283,33 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 */
 	public static void exercise(TestRunnable runnable, int minIterations,
 			int maxIterations, int maxTime) throws CoreException {
+		if (interactive) {
+			NumberFormat f = new DecimalFormat("##.000");
+			try {
+				runnable.run();
+				long startTime = System.currentTimeMillis();
+				runnable.run();
+				runnable.run();
+				runnable.run();
+				long currentTime = System.currentTimeMillis();
+				double timePerRun = (currentTime - startTime) / 3000.0;
+				System.out.println("Time per run (roughly): " + f.format(timePerRun) + " - expecting " + f.format(10.0/timePerRun) + " runs per 10 seconds.");
+				while (true) {
+					startTime = System.currentTimeMillis();
+					int numOperations = 0;
+					while ((currentTime = System.currentTimeMillis()) - startTime < 10000) {
+						numOperations++;
+						runnable.run();
+					}
+					timePerRun = (currentTime - startTime) / 1000.0 / numOperations;
+					double operationsPerTenSeconds = 10.0 / timePerRun;
+					System.out.println(f.format(operationsPerTenSeconds));
+				}
+			} catch(Exception ex) {
+				ex.printStackTrace();
+			}
+			return;
+		}
 		long startTime = System.currentTimeMillis();
 
 		for (int counter = 0; counter < maxIterations; counter++) {
@@ -266,6 +338,9 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 *            The comment to write out for the test.
 	 */
 	public void setDegradationComment(String string) {
+		if (interactive) {
+			return;
+		}
 		tester.setDegradationComment(string);
 
 	}

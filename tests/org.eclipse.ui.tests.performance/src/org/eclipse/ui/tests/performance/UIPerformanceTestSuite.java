@@ -18,7 +18,7 @@ import org.eclipse.ui.tests.performance.presentations.PresentationPerformanceTes
 /**
  * Test all areas of the UI API.
  */
-public class UIPerformanceTestSuite extends TestSuite {
+public class UIPerformanceTestSuite extends FilteredTestSuite {
 
     /**
      * Returns the suite. This is required to use the JUnit Launcher.
@@ -31,6 +31,7 @@ public class UIPerformanceTestSuite extends TestSuite {
      * Construct the test suite.
      */
     public UIPerformanceTestSuite() {
+    	super();
         addTest(new ActivitiesPerformanceSuite());
         addTest(new PresentationPerformanceTestSuite());
         addTest(new WorkbenchPerformanceSuite());
