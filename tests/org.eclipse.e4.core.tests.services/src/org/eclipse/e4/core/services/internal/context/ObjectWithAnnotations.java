@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.annotations.Inject;
+
 /**
  *
  */

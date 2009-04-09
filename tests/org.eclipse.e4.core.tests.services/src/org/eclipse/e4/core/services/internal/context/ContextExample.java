@@ -12,7 +12,7 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import java.text.NumberFormat;
-
+import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.*;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.tests.services.TestActivator;
