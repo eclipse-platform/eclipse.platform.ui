@@ -1,56 +1,74 @@
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
+import java.util.ArrayList;
+import org.eclipse.core.runtime.*;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.annotations.In;
+import org.eclipse.osgi.framework.log.FrameworkLog;
+import org.eclipse.osgi.framework.log.FrameworkLogEntry;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugTrace;
 
 /**
- *
+ * The workbench implementation of the logger service.
  */
 public final class WorkbenchLogger extends Logger {
-	private DebugTrace trace;
-	private ILog log;
+	protected DebugTrace trace;
+	protected FrameworkLog log;
+
+	/**
+	 * Creates a new workbench logger
+	 */
+	public WorkbenchLogger() {
+		super();
+	}
 
 	public void debug(Throwable t) {
 		debug(t, null);
 	}
 
 	public void debug(Throwable t, String message) {
-		getTrace().trace(null, message, t);
-	}
-
-	private synchronized DebugTrace getTrace() {
-		if (trace != null) {
-			trace = Activator.getDefault().getDebugOptions().newDebugTrace(
-					Activator.getDefault().getBundle().getSymbolicName());
-		}
-		return trace;
+		trace(t, message);
 	}
 
 	public void error(Throwable t, String message) {
-		getLog().log(
-				new Status(IStatus.ERROR, Activator.getDefault().getBundle()
-						.getSymbolicName(), message, t));
+		log(new Status(IStatus.ERROR, Activator.getDefault().getBundle()
+				.getSymbolicName(), message, t));
 	}
 
 	/**
-	 * @return
-	 * 
+	 * Copied from PlatformLogWriter in core runtime.
 	 */
-	private synchronized ILog getLog() {
-		if (log == null) {
-			log = Platform.getLog(Activator.getDefault().getBundle());
+	private static FrameworkLogEntry getLog(IStatus status) {
+		Throwable t = status.getException();
+		ArrayList childlist = new ArrayList();
+
+		int stackCode = t instanceof CoreException ? 1 : 0;
+		// ensure a substatus inside a CoreException is properly logged
+		if (stackCode == 1) {
+			IStatus coreStatus = ((CoreException) t).getStatus();
+			if (coreStatus != null) {
+				childlist.add(getLog(coreStatus));
+			}
 		}
-		return log;
+
+		if (status.isMultiStatus()) {
+			IStatus[] children = status.getChildren();
+			for (int i = 0; i < children.length; i++) {
+				childlist.add(getLog(children[i]));
+			}
+		}
+
+		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null
+				: childlist.toArray(new FrameworkLogEntry[childlist.size()]));
+
+		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(),
+				status.getCode(), status.getMessage(), stackCode, t, children);
 	}
 
 	public void info(Throwable t, String message) {
-		getLog().log(
-				new Status(IStatus.INFO, Activator.getDefault().getBundle()
-						.getSymbolicName(), message, t));
+		log(new Status(IStatus.INFO, Activator.getDefault().getBundle()
+				.getSymbolicName(), message, t));
 	}
 
 	public boolean isDebugEnabled() {
@@ -73,13 +91,47 @@ public final class WorkbenchLogger extends Logger {
 		return true;
 	}
 
+	private void log(IStatus status) {
+		if (log != null) {
+			log.log(getLog(status));
+		} else {
+			System.out.println(status.getMessage());
+			if (status.getException() != null)
+				status.getException().printStackTrace();
+		}
+	}
+
+	/**
+	 * Sets the debug options service for this logger.
+	 * 
+	 * @param options
+	 *            The debug options to be used by this logger
+	 */
+	@In
+	public void setDebugOptions(DebugOptions options) {
+		this.trace = options.newDebugTrace(Activator.PI_WORKBENCH,
+				WorkbenchLogger.class);
+	}
+
+	/**
+	 * @param log
+	 */
+	@In
+	public void setFrameworkLog(FrameworkLog log) {
+		this.log = log;
+	}
+
 	public void trace(Throwable t, String message) {
-		getTrace().trace(null, message, t);
+		if (trace != null) {
+			trace.trace(null, message, t);
+		} else {
+			System.out.println(message);
+			t.printStackTrace();
+		}
 	}
 
 	public void warn(Throwable t, String message) {
-		getLog().log(
-				new Status(IStatus.WARNING, Activator.getDefault().getBundle()
-						.getSymbolicName(), message, t));
+		log(new Status(IStatus.WARNING, Activator.getDefault().getBundle()
+				.getSymbolicName(), message, t));
 	}
 }
