@@ -15,7 +15,7 @@
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
- *                    255734, 263693, 169876, 266038, 268336, 270461
+ *                    255734, 263693, 169876, 266038, 268336, 270461, 271720
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -177,6 +177,7 @@ import org.eclipse.jface.tests.internal.databinding.swt.ComboSingleSelectionObse
 import org.eclipse.jface.tests.internal.databinding.swt.ControlObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeCalendarObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeDateObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.DateTimeSelectionPropertyTest;
 import org.eclipse.jface.tests.internal.databinding.swt.DateTimeTimeObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ListSingleSelectionObservableValueTest;
@@ -421,6 +422,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ComboSingleSelectionObservableValueTest.class);
 		addTestSuite(DateTimeCalendarObservableValueTest.class);
 		addTestSuite(DateTimeDateObservableValueTest.class);
+		addTestSuite(DateTimeSelectionPropertyTest.class);
 		addTestSuite(DateTimeTimeObservableValueTest.class);
 		addTest(SWTDelayedObservableValueDecoratorTest.suite());
 

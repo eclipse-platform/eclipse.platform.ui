@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 169876)
+ *     Matthew Hall - bug 271720
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -60,6 +61,10 @@ public class DateTimeSelectionProperty extends WidgetValueProperty {
 
 	protected void doSetValue(Object source, Object value) {
 		DateTime dateTime = (DateTime) source;
+
+		if (value == null)
+			throw new IllegalArgumentException(
+					"Cannot set null selection on DateTime"); //$NON-NLS-1$
 
 		Calendar cal = (Calendar) calendar.get();
 		cal.setTime((Date) value);

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 169876)
+ *     Matthew Hall - bug 271720
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.value;
@@ -42,7 +43,7 @@ public class DateAndTimeObservableValueTest extends
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
 		calendar.set(Calendar.YEAR, year);
-		calendar.set(Calendar.MONTH, month);
+		calendar.set(Calendar.MONTH, month - 1); // Calendar.JANUARY == 0
 		calendar.set(Calendar.DAY_OF_MONTH, day);
 		return calendar.getTime();
 	}
@@ -60,7 +61,7 @@ public class DateAndTimeObservableValueTest extends
 			int minute, int second) {
 		Calendar calendar = Calendar.getInstance();
 		calendar.clear();
-		calendar.set(year, month, day, hour, minute, second);
+		calendar.set(year, month - 1, day, hour, minute, second);
 		return calendar.getTime();
 	}
 
