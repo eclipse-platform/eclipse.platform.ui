@@ -55,13 +55,21 @@ final public class ContextInjectionFactory {
 		// prevents instantiations
 	}
 
-	static public void inject(Object object, IEclipseContext context) {
-		inject(object, context, null, null);
+	/**
+	 * Injects a context into a domain object.
+	 * 
+	 * @param object The object to perform injection on
+	 * @param context The context to obtain injected values from
+	 * @return Returns the injected object
+	 */
+	static public Object inject(Object object, IEclipseContext context) {
+		return inject(object, context, null, null);
 	}
 
-	static public void inject(Object object, IEclipseContext context, String fieldPrefix, String setMethodPrefix) {
+	static public Object inject(Object object, IEclipseContext context, String fieldPrefix, String setMethodPrefix) {
 		ContextInjectionImpl injector = new ContextInjectionImpl(fieldPrefix, setMethodPrefix);
 		injector.injectInto(object, context);
+		return object;
 	}
 
 }
