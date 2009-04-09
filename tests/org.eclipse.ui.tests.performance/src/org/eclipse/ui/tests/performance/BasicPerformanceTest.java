@@ -285,25 +285,34 @@ public abstract class BasicPerformanceTest extends UITestCase {
 			int maxIterations, int maxTime) throws CoreException {
 		if (interactive) {
 			NumberFormat f = new DecimalFormat("##.000");
+			NumberFormat p = new DecimalFormat("#0.0");
 			try {
 				runnable.run();
+				int initialRuns = 3;
 				long startTime = System.currentTimeMillis();
-				runnable.run();
-				runnable.run();
-				runnable.run();
+				for (int i=0; i<initialRuns; i++) {
+					runnable.run();
+				}
 				long currentTime = System.currentTimeMillis();
-				double timePerRun = (currentTime - startTime) / 3000.0;
-				System.out.println("Time per run (roughly): " + f.format(timePerRun) + " - expecting " + f.format(10.0/timePerRun) + " runs per 10 seconds.");
+				double timePerRun = (currentTime - startTime) / 1000.0 / initialRuns;
+				int totalRuns = initialRuns;
+				double interval = 10.0; // ten seconds
+				long intervalMillis = (long) (1000 * interval);
+				double averagePerInterval = interval/timePerRun;
+				System.out.println("Time per run (roughly): " + f.format(timePerRun) + " - expecting " + f.format(averagePerInterval) + " runs per 10 seconds.");
 				while (true) {
 					startTime = System.currentTimeMillis();
 					int numOperations = 0;
-					while ((currentTime = System.currentTimeMillis()) - startTime < 10000) {
+					while ((currentTime = System.currentTimeMillis()) - startTime < intervalMillis) {
 						numOperations++;
 						runnable.run();
 					}
 					timePerRun = (currentTime - startTime) / 1000.0 / numOperations;
-					double operationsPerTenSeconds = 10.0 / timePerRun;
-					System.out.println(f.format(operationsPerTenSeconds));
+					double operationsPerInterval = interval/timePerRun;
+					double deviation = (operationsPerInterval - averagePerInterval) / averagePerInterval * 100.0;
+					System.out.println(f.format(operationsPerInterval) + "     (" + (deviation>=0.0?"+":"-") + p.format(Math.abs(deviation)) + " relative to avg=" + f.format(averagePerInterval) + ")");
+					averagePerInterval = ((averagePerInterval * totalRuns) + (operationsPerInterval * numOperations)) / (totalRuns + numOperations);
+					totalRuns += numOperations;
 				}
 			} catch(Exception ex) {
 				ex.printStackTrace();
