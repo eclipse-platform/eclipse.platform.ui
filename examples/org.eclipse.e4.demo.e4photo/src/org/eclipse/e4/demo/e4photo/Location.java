@@ -10,7 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.demo.e4photo.annotations.In;
+import org.eclipse.e4.core.services.annotations.In;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;

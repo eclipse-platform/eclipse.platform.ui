@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
+import org.eclipse.e4.core.services.annotations.*;
+
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
@@ -23,9 +25,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.JSONObject;
 import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.demo.e4photo.annotations.In;
-import org.eclipse.e4.demo.e4photo.annotations.Out;
-import org.eclipse.e4.demo.e4photo.annotations.PostConstruct;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
