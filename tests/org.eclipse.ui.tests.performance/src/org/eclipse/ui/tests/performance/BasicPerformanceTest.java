@@ -310,7 +310,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 					timePerRun = (currentTime - startTime) / 1000.0 / numOperations;
 					double operationsPerInterval = interval/timePerRun;
 					double deviation = (operationsPerInterval - averagePerInterval) / averagePerInterval * 100.0;
-					System.out.println(f.format(operationsPerInterval) + "     (" + (deviation>=0.0?"+":"-") + p.format(Math.abs(deviation)) + " relative to avg=" + f.format(averagePerInterval) + ")");
+					System.out.println(f.format(operationsPerInterval) + "     (" + (deviation>=0.0?"+":"-") + p.format(Math.abs(deviation)) + "% relative to avg=" + f.format(averagePerInterval) + ")");
 					averagePerInterval = ((averagePerInterval * totalRuns) + (operationsPerInterval * numOperations)) / (totalRuns + numOperations);
 					totalRuns += numOperations;
 				}
