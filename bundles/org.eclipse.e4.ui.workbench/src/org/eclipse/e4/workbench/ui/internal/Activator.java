@@ -12,16 +12,19 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.core.services.ISchedulingExecutor;
 import org.eclipse.osgi.service.datalocation.Location;
-import org.eclipse.osgi.service.debug.DebugOptions;
 import org.osgi.framework.*;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
+	/**
+	 * The bundle symbolic name.
+	 */
+	public static final String PI_WORKBENCH = "org.eclipse.e4.ui.worbkench"; //$NON-NLS-1$
+
 	private static Activator activator;
 
 	private BundleContext context;
-	private ServiceTracker debugTracker;
 	private ServiceRegistration executorTracker;
 	private ServiceTracker locationTracker;
 	private ServiceTracker pkgAdminTracker;
@@ -49,7 +52,8 @@ public class Activator implements BundleActivator {
 		if (pkgAdminTracker == null) {
 			if (context == null)
 				return null;
-			pkgAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
+			pkgAdminTracker = new ServiceTracker(context, PackageAdmin.class
+					.getName(), null);
 			pkgAdminTracker.open();
 		}
 		return (PackageAdmin) pkgAdminTracker.getService();
@@ -80,14 +84,6 @@ public class Activator implements BundleActivator {
 		return context;
 	}
 
-	public DebugOptions getDebugOptions() {
-		if (debugTracker == null) {
-			debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
-			debugTracker.open();
-		}
-		return (DebugOptions) debugTracker.getService();
-	}
-
 	/**
 	 * @return the instance Location service
 	 */
@@ -109,18 +105,14 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		activator = this;
 		this.context = context;
-		executorTracker = context.registerService(ISchedulingExecutor.SERVICE_NAME,
-				new JobExecutor(), null);
+		executorTracker = context.registerService(
+				ISchedulingExecutor.SERVICE_NAME, new JobExecutor(), null);
 	}
 
 	public void stop(BundleContext context) throws Exception {
 		if (pkgAdminTracker != null) {
 			pkgAdminTracker.close();
 			pkgAdminTracker = null;
-		}
-		if (debugTracker != null) {
-			debugTracker.close();
-			debugTracker = null;
 		}
 		if (locationTracker != null) {
 			locationTracker.close();
