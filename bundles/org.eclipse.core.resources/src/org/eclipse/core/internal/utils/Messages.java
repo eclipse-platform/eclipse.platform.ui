@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -272,7 +272,9 @@ public class Messages extends NLS {
 
 	// URL
 	public static String url_badVariant;
-	public static String url_couldNotResolve;
+	public static String url_couldNotResolve_projectDoesNotExist;
+	public static String url_couldNotResolve_URLProtocolHandlerCanNotResolveURL;
+	public static String url_couldNotResolve_resourceLocationCanNotBeDetermined;
 
 	// utils
 	public static String utils_clone;

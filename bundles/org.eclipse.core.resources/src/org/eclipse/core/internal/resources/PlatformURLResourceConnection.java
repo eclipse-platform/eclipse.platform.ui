@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,7 @@ import java.net.*;
 import org.eclipse.core.internal.boot.PlatformURLConnection;
 import org.eclipse.core.internal.boot.PlatformURLHandler;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
@@ -53,15 +52,36 @@ public class PlatformURLResourceConnection extends PlatformURLConnection {
 		// if there are two segments then the second is a project name.
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(spec.segment(1));
 		if (!project.exists()) {
-			String message = NLS.bind(Messages.url_couldNotResolve, project.getName(), url.toExternalForm());
+			String message = NLS.bind(Messages.url_couldNotResolve_projectDoesNotExist, project.getName(), url.toExternalForm());
 			throw new IOException(message);
 		}
+
+		IResource resource = null;
 		IPath result = null;
-		if (count == 2)
-			result = project.getLocation();
-		else {
+
+		if (count == 2) {
+			resource = project;
+		} else {
 			spec = spec.removeFirstSegments(2);
-			result = project.getFile(spec).getLocation();
+			resource = project.getFile(spec);
+		}
+
+		result = resource.getLocation();
+		
+		if (result == null) {
+			URI uri = resource.getLocationURI();
+			if (uri != null) {
+				try {
+					URL url2 = uri.toURL();
+					if (url2.getProtocol().equals("file")) //$NON-NLS-1$
+						return url2;
+				} catch (MalformedURLException e) {
+					String message = NLS.bind(Messages.url_couldNotResolve_URLProtocolHandlerCanNotResolveURL, uri.toString(), url.toExternalForm());
+					throw new IOException(message);
+				}
+			}
+			String message = NLS.bind(Messages.url_couldNotResolve_resourceLocationCanNotBeDetermined, resource.getFullPath(), url.toExternalForm());
+			throw new IOException(message);
 		}
 		return new URL("file", "", result.toString()); //$NON-NLS-1$ //$NON-NLS-2$
 	}
