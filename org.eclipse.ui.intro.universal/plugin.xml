@@ -33,7 +33,7 @@
          <presentation
                home-page-id="root" standby-page-id="standby">
             <implementation
-                  style="themes/shared/html/shared.css,$theme$/html/shared.css,$theme$/html/font-$fontStyle$.css,themes/shared/html/$direction$.css"
+                  style="themes/shared/html/shared.css,$theme$/html/shared.css,$theme$/html/font-$fontStyle$.css,$theme$/html/$direction$.css"
                   kind="html"
                   os="win32,linux,macosx">
             </implementation>
