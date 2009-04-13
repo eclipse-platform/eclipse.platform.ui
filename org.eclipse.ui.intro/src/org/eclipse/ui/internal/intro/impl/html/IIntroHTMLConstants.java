@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,6 +58,7 @@ public interface IIntroHTMLConstants {
     String ATTRIBUTE_TYPE = "type"; //$NON-NLS-1$
     String ATTRIBUTE_DATA = "data"; //$NON-NLS-1$
     String ATTRIBUTE_ALT = "alt"; //$NON-NLS-1$
+    String ATTRIBUTE_TITLE = "title"; //$NON-NLS-1$
     String ATTRIBUTE_FRAMEBORDER = "frameborder"; //$NON-NLS-1$
     String ATTRIBUTE_SCROLLING = "scrolling"; //$NON-NLS-1$
 

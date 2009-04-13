@@ -437,7 +437,7 @@ public class IntroHTMLGenerator {
 		String blankImageURL = BundleUtil.getResolvedResourceLocation(IIntroHTMLConstants.IMAGE_SRC_BLANK,
 				IIntroConstants.PLUGIN_ID);
 		if (blankImageURL != null) {
-			anchor1.addContent(generateImageElement(blankImageURL, null, IIntroHTMLConstants.IMAGE_CLASS_BG,
+			anchor1.addContent(generateImageElement(blankImageURL, null, null, IIntroHTMLConstants.IMAGE_CLASS_BG,
 					indentBase + 1));
 		}
 		// add link image, if one is specified
@@ -515,7 +515,7 @@ public class IntroHTMLGenerator {
 	 * @return an img HTMLElement
 	 */
 	private HTMLElement generateIntroImage(IntroImage element, int indentLevel) {
-		HTMLElement imageElement = generateImageElement(element.getSrc(), element.getAlt(), element
+		HTMLElement imageElement = generateImageElement(element.getSrc(), element.getAlt(),element.getTitle(), element
 				.getStyleId(), indentLevel);
 		if (element.getId() != null)
 			imageElement.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ID, element.getId());
@@ -956,7 +956,7 @@ public class IntroHTMLGenerator {
 	 *            the number of indents to insert before the element when it is printed
 	 * @return an img HTMLElement
 	 */
-	private HTMLElement generateImageElement(String imageSrc, String altText, String imageClass,
+	private HTMLElement generateImageElement(String imageSrc, String altText, String title, String imageClass,
 			int indentLevel) {
 		HTMLElement image = new FormattedHTMLElement(IIntroHTMLConstants.ELEMENT_IMG, indentLevel, true,
 				false);
@@ -981,6 +981,9 @@ public class IntroHTMLGenerator {
 		if (altText == null)
 			altText = ""; //$NON-NLS-1$
 		image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_ALT, altText);
+		if (title != null) {
+			image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_TITLE, title);
+		}
 		if (imageClass != null)
 			image.addAttribute(IIntroHTMLConstants.ATTRIBUTE_CLASS, imageClass);
 		return image;

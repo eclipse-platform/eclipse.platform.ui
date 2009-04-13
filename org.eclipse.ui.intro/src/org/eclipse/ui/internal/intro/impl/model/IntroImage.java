@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ public class IntroImage extends AbstractBaseIntroElement {
 
     private static final String ATT_SRC = "src"; //$NON-NLS-1$
     private static final String ATT_ALT = "alt"; //$NON-NLS-1$
+    private static final String ATT_TITLE = "title"; //$NON-NLS-1$
 
     private Element element;
     private String src;
@@ -34,12 +35,19 @@ public class IntroImage extends AbstractBaseIntroElement {
         this.element = element;
         this.base = base;
     }
- 
+
     /**
      * @return Returns the alt.
      */
     public String getAlt() {
         return getAttribute(element, ATT_ALT);
+    }
+    
+    /**
+     * @return Returns the title.
+     */
+    public String getTitle() {
+        return getAttribute(element, ATT_TITLE);
     }
 
 
