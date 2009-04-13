@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationSwitch.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -211,10 +211,11 @@ public class ApplicationSwitch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case ApplicationPackage.MTRIM: {
-				MTrim mTrim = (MTrim)theEObject;
-				T result = caseMTrim(mTrim);
-				if (result == null) result = caseMApplicationElement(mTrim);
+			case ApplicationPackage.MTRIMMED_PART: {
+				MTrimmedPart<?> mTrimmedPart = (MTrimmedPart<?>)theEObject;
+				T result = caseMTrimmedPart(mTrimmedPart);
+				if (result == null) result = caseMPart(mTrimmedPart);
+				if (result == null) result = caseMApplicationElement(mTrimmedPart);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -241,6 +242,13 @@ public class ApplicationSwitch<T> {
 				MCommand mCommand = (MCommand)theEObject;
 				T result = caseMCommand(mCommand);
 				if (result == null) result = caseMApplicationElement(mCommand);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ApplicationPackage.MTOOL_BAR_CONTAINER: {
+				MToolBarContainer<?> mToolBarContainer = (MToolBarContainer<?>)theEObject;
+				T result = caseMToolBarContainer(mToolBarContainer);
+				if (result == null) result = caseMApplicationElement(mToolBarContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -474,17 +482,17 @@ public class ApplicationSwitch<T> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>MTrim</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>MTrimmed Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>MTrim</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>MTrimmed Part</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T caseMTrim(MTrim object) {
+	public <P extends MPart<?>> T caseMTrimmedPart(MTrimmedPart<P> object) {
 		return null;
 	}
 
@@ -530,6 +538,21 @@ public class ApplicationSwitch<T> {
 	 * @generated
 	 */
 	public T caseMCommand(MCommand object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>MTool Bar Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>MTool Bar Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <I extends MToolBar> T caseMToolBarContainer(MToolBarContainer<I> object) {
 		return null;
 	}
 

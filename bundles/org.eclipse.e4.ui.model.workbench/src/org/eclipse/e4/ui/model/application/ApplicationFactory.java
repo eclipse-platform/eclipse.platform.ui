@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationFactory.java,v 1.3 2009/02/03 14:25:33 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -131,13 +131,13 @@ public interface ApplicationFactory extends EFactory {
 	MToolBar createMToolBar();
 
 	/**
-	 * Returns a new object of class '<em>MTrim</em>'.
+	 * Returns a new object of class '<em>MTrimmed Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>MTrim</em>'.
+	 * @return a new object of class '<em>MTrimmed Part</em>'.
 	 * @generated
 	 */
-	MTrim createMTrim();
+	<P extends MPart<?>> MTrimmedPart<P> createMTrimmedPart();
 
 	/**
 	 * Returns a new object of class '<em>MItem Part</em>'.
@@ -165,6 +165,15 @@ public interface ApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MCommand createMCommand();
+
+	/**
+	 * Returns a new object of class '<em>MTool Bar Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>MTool Bar Container</em>'.
+	 * @generated
+	 */
+	<I extends MToolBar> MToolBarContainer<I> createMToolBarContainer();
 
 	/**
 	 * Returns the package supported by this factory.

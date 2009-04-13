@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MPartImpl.java,v 1.2 2009/02/04 21:18:31 pwebster Exp $
+ * $Id: MPartImpl.java,v 1.3 2009/03/17 16:41:43 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -20,18 +20,12 @@ import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MTrim;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
 import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
-
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -50,7 +44,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getTrim <em>Trim</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#isVisible <em>Visible</em>}</li>
@@ -130,16 +123,6 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 	 * @ordered
 	 */
 	protected EList<MHandler> handlers;
-
-	/**
-	 * The cached value of the '{@link #getTrim() <em>Trim</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTrim()
-	 * @generated
-	 * @ordered
-	 */
-	protected MTrim trim;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -396,49 +379,6 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MTrim getTrim() {
-		return trim;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public NotificationChain basicSetTrim(MTrim newTrim, NotificationChain msgs) {
-		MTrim oldTrim = trim;
-		trim = newTrim;
-		if (eNotificationRequired()) {
-			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackage.MPART__TRIM, oldTrim, newTrim);
-			if (msgs == null) msgs = notification; else msgs.add(notification);
-		}
-		return msgs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTrim(MTrim newTrim) {
-		if (newTrim != trim) {
-			NotificationChain msgs = null;
-			if (trim != null)
-				msgs = ((InternalEObject)trim).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - ApplicationPackage.MPART__TRIM, null, msgs);
-			if (newTrim != null)
-				msgs = ((InternalEObject)newTrim).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - ApplicationPackage.MPART__TRIM, null, msgs);
-			msgs = basicSetTrim(newTrim, msgs);
-			if (msgs != null) msgs.dispatch();
-		}
-		else if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MPART__TRIM, newTrim, newTrim));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Object getWidget() {
 		return widget;
 	}
@@ -573,8 +513,6 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 			case ApplicationPackage.MPART__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
-			case ApplicationPackage.MPART__TRIM:
-				return basicSetTrim(null, msgs);
 			case ApplicationPackage.MPART__PARENT:
 				return basicSetParent(null, msgs);
 		}
@@ -616,8 +554,6 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return basicGetActiveChild();
 			case ApplicationPackage.MPART__HANDLERS:
 				return getHandlers();
-			case ApplicationPackage.MPART__TRIM:
-				return getTrim();
 			case ApplicationPackage.MPART__WIDGET:
 				return getWidget();
 			case ApplicationPackage.MPART__PARENT:
@@ -658,9 +594,6 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 			case ApplicationPackage.MPART__HANDLERS:
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
-				return;
-			case ApplicationPackage.MPART__TRIM:
-				setTrim((MTrim)newValue);
 				return;
 			case ApplicationPackage.MPART__WIDGET:
 				setWidget(newValue);
@@ -704,9 +637,6 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 			case ApplicationPackage.MPART__HANDLERS:
 				getHandlers().clear();
 				return;
-			case ApplicationPackage.MPART__TRIM:
-				setTrim((MTrim)null);
-				return;
 			case ApplicationPackage.MPART__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
@@ -743,8 +673,6 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return activeChild != null;
 			case ApplicationPackage.MPART__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
-			case ApplicationPackage.MPART__TRIM:
-				return trim != null;
 			case ApplicationPackage.MPART__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case ApplicationPackage.MPART__PARENT:

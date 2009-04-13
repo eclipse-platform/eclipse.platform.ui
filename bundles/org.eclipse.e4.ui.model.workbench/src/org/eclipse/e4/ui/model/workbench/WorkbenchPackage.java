@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackage.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
+ * $Id: WorkbenchPackage.java,v 1.4 2009/02/04 21:18:32 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -155,15 +155,6 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MWORKBENCH_WINDOW__HANDLERS = ApplicationPackage.MWINDOW__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MWORKBENCH_WINDOW__TRIM = ApplicationPackage.MWINDOW__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -365,15 +356,6 @@ public interface WorkbenchPackage extends EPackage {
 	int MPROXY_PART__HANDLERS = ApplicationPackage.MPART__HANDLERS;
 
 	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MPROXY_PART__TRIM = ApplicationPackage.MPART__TRIM;
-
-	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -508,15 +490,6 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MPERSPECTIVE__HANDLERS = ApplicationPackage.MITEM_PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MPERSPECTIVE__TRIM = ApplicationPackage.MITEM_PART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.

@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationFactoryImpl.java,v 1.3 2009/02/03 14:25:34 emoffatt Exp $
+ * $Id: ApplicationFactoryImpl.java,v 1.4 2009/02/04 21:18:31 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -78,10 +78,11 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 			case ApplicationPackage.MTOOL_BAR_ITEM: return createMToolBarItem();
 			case ApplicationPackage.MMENU: return createMMenu();
 			case ApplicationPackage.MTOOL_BAR: return createMToolBar();
-			case ApplicationPackage.MTRIM: return createMTrim();
+			case ApplicationPackage.MTRIMMED_PART: return createMTrimmedPart();
 			case ApplicationPackage.MITEM_PART: return createMItemPart();
 			case ApplicationPackage.MWINDOW: return createMWindow();
 			case ApplicationPackage.MCOMMAND: return createMCommand();
+			case ApplicationPackage.MTOOL_BAR_CONTAINER: return createMToolBarContainer();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -228,9 +229,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MTrim createMTrim() {
-		MTrimImpl mTrim = new MTrimImpl();
-		return mTrim;
+	public <P extends MPart<?>> MTrimmedPart<P> createMTrimmedPart() {
+		MTrimmedPartImpl<P> mTrimmedPart = new MTrimmedPartImpl<P>();
+		return mTrimmedPart;
 	}
 
 	/**
@@ -261,6 +262,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	public MCommand createMCommand() {
 		MCommandImpl mCommand = new MCommandImpl();
 		return mCommand;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public <I extends MToolBar> MToolBarContainer<I> createMToolBarContainer() {
+		MToolBarContainerImpl<I> mToolBarContainer = new MToolBarContainerImpl<I>();
+		return mToolBarContainer;
 	}
 
 	/**

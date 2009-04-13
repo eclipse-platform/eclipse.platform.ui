@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.7 2009/03/15 21:26:03 bbokowski Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.8 2009/03/17 16:41:43 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -31,14 +31,12 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MToolBarContainer;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
-import org.eclipse.e4.ui.model.application.MTrim;
+import org.eclipse.e4.ui.model.application.MTrimmedPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-
 import org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl;
-
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
-
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -46,7 +44,6 @@ import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.ETypeParameter;
-
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 /**
@@ -166,7 +163,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass mTrimEClass = null;
+	private EClass mTrimmedPartEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -188,6 +185,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * @generated
 	 */
 	private EClass mCommandEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass mToolBarContainerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -391,17 +395,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMPart_Trim() {
-		return (EReference)mPartEClass.getEStructuralFeatures().get(6);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getMPart_Widget() {
-		return (EAttribute)mPartEClass.getEStructuralFeatures().get(7);
+		return (EAttribute)mPartEClass.getEStructuralFeatures().get(6);
 	}
 
 	/**
@@ -410,7 +405,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * @generated
 	 */
 	public EReference getMPart_Parent() {
-		return (EReference)mPartEClass.getEStructuralFeatures().get(8);
+		return (EReference)mPartEClass.getEStructuralFeatures().get(7);
 	}
 
 	/**
@@ -419,7 +414,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * @generated
 	 */
 	public EAttribute getMPart_Visible() {
-		return (EAttribute)mPartEClass.getEStructuralFeatures().get(9);
+		return (EAttribute)mPartEClass.getEStructuralFeatures().get(8);
 	}
 
 	/**
@@ -428,7 +423,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * @generated
 	 */
 	public EAttribute getMPart_Context() {
-		return (EAttribute)mPartEClass.getEStructuralFeatures().get(10);
+		return (EAttribute)mPartEClass.getEStructuralFeatures().get(9);
 	}
 
 	/**
@@ -652,8 +647,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getMTrim() {
-		return mTrimEClass;
+	public EClass getMTrimmedPart() {
+		return mTrimmedPartEClass;
 	}
 
 	/**
@@ -661,8 +656,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMTrim_TopTrim() {
-		return (EReference)mTrimEClass.getEStructuralFeatures().get(0);
+	public EReference getMTrimmedPart_TopTrim() {
+		return (EReference)mTrimmedPartEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -670,8 +665,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMTrim_LeftTrim() {
-		return (EReference)mTrimEClass.getEStructuralFeatures().get(1);
+	public EReference getMTrimmedPart_LeftTrim() {
+		return (EReference)mTrimmedPartEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -679,8 +674,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMTrim_RightTrim() {
-		return (EReference)mTrimEClass.getEStructuralFeatures().get(2);
+	public EReference getMTrimmedPart_RightTrim() {
+		return (EReference)mTrimmedPartEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -688,8 +683,17 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getMTrim_BottomTrim() {
-		return (EReference)mTrimEClass.getEStructuralFeatures().get(3);
+	public EReference getMTrimmedPart_BottomTrim() {
+		return (EReference)mTrimmedPartEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getMTrimmedPart_ClientArea() {
+		return (EReference)mTrimmedPartEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -769,6 +773,33 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getMToolBarContainer() {
+		return mToolBarContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getMToolBarContainer_Toolbars() {
+		return (EReference)mToolBarContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMToolBarContainer_Horizontal() {
+		return (EAttribute)mToolBarContainerEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getIEclipseContext() {
 		return iEclipseContextEDataType;
 	}
@@ -816,7 +847,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEReference(mPartEClass, MPART__CHILDREN);
 		createEReference(mPartEClass, MPART__ACTIVE_CHILD);
 		createEReference(mPartEClass, MPART__HANDLERS);
-		createEReference(mPartEClass, MPART__TRIM);
 		createEAttribute(mPartEClass, MPART__WIDGET);
 		createEReference(mPartEClass, MPART__PARENT);
 		createEAttribute(mPartEClass, MPART__VISIBLE);
@@ -858,11 +888,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		mToolBarEClass = createEClass(MTOOL_BAR);
 
-		mTrimEClass = createEClass(MTRIM);
-		createEReference(mTrimEClass, MTRIM__TOP_TRIM);
-		createEReference(mTrimEClass, MTRIM__LEFT_TRIM);
-		createEReference(mTrimEClass, MTRIM__RIGHT_TRIM);
-		createEReference(mTrimEClass, MTRIM__BOTTOM_TRIM);
+		mTrimmedPartEClass = createEClass(MTRIMMED_PART);
+		createEReference(mTrimmedPartEClass, MTRIMMED_PART__TOP_TRIM);
+		createEReference(mTrimmedPartEClass, MTRIMMED_PART__LEFT_TRIM);
+		createEReference(mTrimmedPartEClass, MTRIMMED_PART__RIGHT_TRIM);
+		createEReference(mTrimmedPartEClass, MTRIMMED_PART__BOTTOM_TRIM);
+		createEReference(mTrimmedPartEClass, MTRIMMED_PART__CLIENT_AREA);
 
 		mItemPartEClass = createEClass(MITEM_PART);
 
@@ -874,6 +905,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		mCommandEClass = createEClass(MCOMMAND);
 		createEAttribute(mCommandEClass, MCOMMAND__NAME);
+
+		mToolBarContainerEClass = createEClass(MTOOL_BAR_CONTAINER);
+		createEReference(mToolBarContainerEClass, MTOOL_BAR_CONTAINER__TOOLBARS);
+		createEAttribute(mToolBarContainerEClass, MTOOL_BAR_CONTAINER__HORIZONTAL);
 
 		// Create data types
 		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
@@ -908,8 +943,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		ETypeParameter mSashFormEClass_P = addETypeParameter(mSashFormEClass, "P"); //$NON-NLS-1$
 		ETypeParameter mContributedPartEClass_P = addETypeParameter(mContributedPartEClass, "P"); //$NON-NLS-1$
 		ETypeParameter mItemContainerEClass_I = addETypeParameter(mItemContainerEClass, "I"); //$NON-NLS-1$
+		ETypeParameter mTrimmedPartEClass_P = addETypeParameter(mTrimmedPartEClass, "P"); //$NON-NLS-1$
 		ETypeParameter mItemPartEClass_P = addETypeParameter(mItemPartEClass, "P"); //$NON-NLS-1$
 		ETypeParameter mWindowEClass_P = addETypeParameter(mWindowEClass, "P"); //$NON-NLS-1$
+		ETypeParameter mToolBarContainerEClass_I = addETypeParameter(mToolBarContainerEClass, "I"); //$NON-NLS-1$
 
 		// Set bounds for type parameters
 		EGenericType g1 = createEGenericType(this.getMWindow());
@@ -933,11 +970,17 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g1 = createEGenericType(this.getMPart());
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
+		mTrimmedPartEClass_P.getEBounds().add(g1);
+		g1 = createEGenericType(this.getMPart());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
 		mItemPartEClass_P.getEBounds().add(g1);
 		g1 = createEGenericType(this.getMPart());
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
 		mWindowEClass_P.getEBounds().add(g1);
+		g1 = createEGenericType(this.getMToolBar());
+		mToolBarContainerEClass_I.getEBounds().add(g1);
 
 		// Add supertypes to classes
 		mApplicationEClass.getESuperTypes().add(this.getMApplicationElement());
@@ -973,7 +1016,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g2 = createEGenericType(this.getMToolBarItem());
 		g1.getETypeArguments().add(g2);
 		mToolBarEClass.getEGenericSuperTypes().add(g1);
-		mTrimEClass.getESuperTypes().add(this.getMApplicationElement());
+		g1 = createEGenericType(this.getMPart());
+		g2 = createEGenericType(mTrimmedPartEClass_P);
+		g1.getETypeArguments().add(g2);
+		mTrimmedPartEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getMPart());
 		g2 = createEGenericType(mItemPartEClass_P);
 		g1.getETypeArguments().add(g2);
@@ -985,6 +1031,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g1.getETypeArguments().add(g2);
 		mWindowEClass.getEGenericSuperTypes().add(g1);
 		mCommandEClass.getESuperTypes().add(this.getMApplicationElement());
+		mToolBarContainerEClass.getESuperTypes().add(this.getMApplicationElement());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(mApplicationElementEClass, MApplicationElement.class, "MApplicationElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1005,7 +1052,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g1 = createEGenericType(mPartEClass_P);
 		initEReference(getMPart_ActiveChild(), g1, null, "activeChild", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getMPart_Handlers(), this.getMHandler(), null, "handlers", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getMPart_Trim(), this.getMTrim(), null, "trim", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getMPart_Widget(), ecorePackage.getEJavaObject(), "widget", null, 0, 1, MPart.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		g1 = createEGenericType(this.getMPart());
 		g2 = createEGenericType();
@@ -1051,23 +1097,27 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		initEClass(mToolBarEClass, MToolBar.class, "MToolBar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
-		initEClass(mTrimEClass, MTrim.class, "MTrim", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEClass(mTrimmedPartEClass, MTrimmedPart.class, "MTrimmedPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		g1 = createEGenericType(this.getMToolBarContainer());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getMTrimmedPart_TopTrim(), g1, null, "topTrim", null, 0, 1, MTrimmedPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		g1 = createEGenericType(this.getMToolBarContainer());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getMTrimmedPart_LeftTrim(), g1, null, "leftTrim", null, 0, 1, MTrimmedPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		g1 = createEGenericType(this.getMToolBarContainer());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getMTrimmedPart_RightTrim(), g1, null, "rightTrim", null, 0, 1, MTrimmedPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		g1 = createEGenericType(this.getMToolBarContainer());
+		g2 = createEGenericType();
+		g1.getETypeArguments().add(g2);
+		initEReference(getMTrimmedPart_BottomTrim(), g1, null, "bottomTrim", null, 0, 1, MTrimmedPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		g1 = createEGenericType(this.getMPart());
 		g2 = createEGenericType();
 		g1.getETypeArguments().add(g2);
-		initEReference(getMTrim_TopTrim(), g1, null, "topTrim", null, 0, 1, MTrim.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		g1 = createEGenericType(this.getMPart());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEReference(getMTrim_LeftTrim(), g1, null, "leftTrim", null, 0, 1, MTrim.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		g1 = createEGenericType(this.getMPart());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEReference(getMTrim_RightTrim(), g1, null, "rightTrim", null, 0, 1, MTrim.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		g1 = createEGenericType(this.getMPart());
-		g2 = createEGenericType();
-		g1.getETypeArguments().add(g2);
-		initEReference(getMTrim_BottomTrim(), g1, null, "bottomTrim", null, 0, 1, MTrim.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getMTrimmedPart_ClientArea(), g1, null, "clientArea", null, 0, 1, MTrimmedPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mItemPartEClass, MItemPart.class, "MItemPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -1079,6 +1129,11 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 
 		initEClass(mCommandEClass, MCommand.class, "MCommand", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getMCommand_Name(), ecorePackage.getEString(), "name", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(mToolBarContainerEClass, MToolBarContainer.class, "MToolBarContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		g1 = createEGenericType(mToolBarContainerEClass_I);
+		initEReference(getMToolBarContainer_Toolbars(), g1, null, "toolbars", null, 0, -1, MToolBarContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMToolBarContainer_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MToolBarContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize data types
 		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$

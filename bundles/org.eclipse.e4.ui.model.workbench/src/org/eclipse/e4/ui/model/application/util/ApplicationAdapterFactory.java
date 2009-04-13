@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: ApplicationAdapterFactory.java,v 1.3 2009/02/03 14:25:36 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -138,8 +138,8 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createMToolBarAdapter();
 			}
 			@Override
-			public Adapter caseMTrim(MTrim object) {
-				return createMTrimAdapter();
+			public <P extends MPart<?>> Adapter caseMTrimmedPart(MTrimmedPart<P> object) {
+				return createMTrimmedPartAdapter();
 			}
 			@Override
 			public <P extends MPart<?>> Adapter caseMItemPart(MItemPart<P> object) {
@@ -152,6 +152,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseMCommand(MCommand object) {
 				return createMCommandAdapter();
+			}
+			@Override
+			public <I extends MToolBar> Adapter caseMToolBarContainer(MToolBarContainer<I> object) {
+				return createMToolBarContainerAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -384,16 +388,16 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTrim <em>MTrim</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTrimmedPart <em>MTrimmed Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MTrim
+	 * @see org.eclipse.e4.ui.model.application.MTrimmedPart
 	 * @generated
 	 */
-	public Adapter createMTrimAdapter() {
+	public Adapter createMTrimmedPartAdapter() {
 		return null;
 	}
 
@@ -436,6 +440,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMCommandAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MToolBarContainer <em>MTool Bar Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MToolBarContainer
+	 * @generated
+	 */
+	public Adapter createMToolBarContainerAdapter() {
 		return null;
 	}
 

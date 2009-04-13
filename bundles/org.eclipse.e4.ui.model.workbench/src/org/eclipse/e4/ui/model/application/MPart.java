@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MPart.java,v 1.2 2009/02/04 21:18:32 pwebster Exp $
+ * $Id: MPart.java,v 1.3 2009/03/17 16:41:43 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -29,7 +29,6 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getHandlers <em>Handlers</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getTrim <em>Trim</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#isVisible <em>Visible</em>}</li>
@@ -178,32 +177,6 @@ public interface MPart<P extends MPart<?>> extends MApplicationElement {
 	 * @generated
 	 */
 	EList<MHandler> getHandlers();
-
-	/**
-	 * Returns the value of the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Trim</em>' containment reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Trim</em>' containment reference.
-	 * @see #setTrim(MTrim)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMPart_Trim()
-	 * @model containment="true"
-	 * @generated
-	 */
-	MTrim getTrim();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MPart#getTrim <em>Trim</em>}' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Trim</em>' containment reference.
-	 * @see #getTrim()
-	 * @generated
-	 */
-	void setTrim(MTrim value);
 
 	/**
 	 * Returns the value of the '<em><b>Widget</b></em>' attribute.

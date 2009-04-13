@@ -31,5 +31,11 @@
             class="org.eclipse.e4.workbench.ui.renderers.swt.StackModelFactory">
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.e4.workbench.partfactory">
+      <factory
+            class="org.eclipse.e4.workbench.ui.renderers.swt.TrimPartFactory">
+      </factory>
+   </extension>
 
 </plugin>

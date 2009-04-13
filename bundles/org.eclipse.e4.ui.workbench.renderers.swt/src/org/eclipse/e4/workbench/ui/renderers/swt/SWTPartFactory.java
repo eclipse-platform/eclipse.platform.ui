@@ -369,16 +369,6 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 	}
 
-	public void childAdded(MPart<?> parentElement, MPart<?> element) {
-		// Ensure the child's widget is under the new parent
-		if (parentElement.getWidget() instanceof Composite
-				&& element.getWidget() instanceof Control) {
-			Composite comp = (Composite) parentElement.getWidget();
-			Control ctrl = (Control) element.getWidget();
-			ctrl.setParent(comp);
-		}
-	}
-
 	protected Image getImage(MApplicationElement element) {
 		if (element instanceof MItem) {
 			IEclipseContext localContext = context;
@@ -396,5 +386,18 @@ public abstract class SWTPartFactory extends PartFactory {
 			}
 		}
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.PartFactory#childAdded(org.eclipse
+	 * .e4.ui.model.application.MPart,
+	 * org.eclipse.e4.ui.model.application.MPart)
+	 */
+	@Override
+	public void childAdded(MPart<?> parentElement, MPart<?> element) {
+		// TODO Auto-generated method stub
 	}
 }

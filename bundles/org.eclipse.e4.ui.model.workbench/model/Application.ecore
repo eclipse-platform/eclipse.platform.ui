@@ -45,8 +45,6 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
         eType="#//MHandler" containment="true"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="trim" eType="#//MTrim"
-        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="widget" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
         transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eOpposite="#//MPart/children">
@@ -132,27 +130,40 @@
       <eTypeArguments eClassifier="#//MToolBarItem"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MTrim" eSuperTypes="#//MApplicationElement">
+  <eClassifiers xsi:type="ecore:EClass" name="MTrimmedPart">
+    <eTypeParameters name="P">
+      <eBounds eClassifier="#//MPart">
+        <eTypeArguments/>
+      </eBounds>
+    </eTypeParameters>
     <eStructuralFeatures xsi:type="ecore:EReference" name="topTrim" containment="true">
-      <eGenericType eClassifier="#//MPart">
+      <eGenericType eClassifier="#//MToolBarContainer">
         <eTypeArguments/>
       </eGenericType>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="leftTrim" containment="true">
-      <eGenericType eClassifier="#//MPart">
+      <eGenericType eClassifier="#//MToolBarContainer">
         <eTypeArguments/>
       </eGenericType>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="rightTrim" containment="true">
-      <eGenericType eClassifier="#//MPart">
+      <eGenericType eClassifier="#//MToolBarContainer">
         <eTypeArguments/>
       </eGenericType>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="bottomTrim" containment="true">
+      <eGenericType eClassifier="#//MToolBarContainer">
+        <eTypeArguments/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="clientArea" containment="true">
       <eGenericType eClassifier="#//MPart">
         <eTypeArguments/>
       </eGenericType>
     </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//MPart">
+      <eTypeArguments eTypeParameter="#//MTrimmedPart/P"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MItemPart">
     <eTypeParameters name="P">
@@ -184,4 +195,14 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="IEclipseContext" instanceClassName="org.eclipse.e4.core.services.context.IEclipseContext"
       serializable="false"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MToolBarContainer" eSuperTypes="#//MApplicationElement">
+    <eTypeParameters name="I">
+      <eBounds eClassifier="#//MToolBar"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="toolbars" upperBound="-1"
+        containment="true">
+      <eGenericType eTypeParameter="#//MToolBarContainer/I"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
 </ecore:EPackage>

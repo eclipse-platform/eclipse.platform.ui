@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.6 2009/02/04 21:18:31 pwebster Exp $
+ * $Id: ApplicationPackage.java,v 1.7 2009/03/15 21:26:03 bbokowski Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -249,22 +249,13 @@ public interface ApplicationPackage extends EPackage {
 	int MPART__HANDLERS = MAPPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MPART__TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 6;
-
-	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MPART__WIDGET = MAPPLICATION_ELEMENT_FEATURE_COUNT + 7;
+	int MPART__WIDGET = MAPPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -273,7 +264,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MPART__PARENT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 8;
+	int MPART__PARENT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -282,7 +273,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MPART__VISIBLE = MAPPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	int MPART__VISIBLE = MAPPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -291,7 +282,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MPART__CONTEXT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	int MPART__CONTEXT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>MPart</em>' class.
@@ -300,7 +291,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MPART_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 11;
+	int MPART_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MStackImpl <em>MStack</em>}' class.
@@ -383,15 +374,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MSTACK__HANDLERS = MPART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MSTACK__TRIM = MPART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -519,15 +501,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MSASH_FORM__HANDLERS = MPART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MSASH_FORM__TRIM = MPART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -664,15 +637,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MITEM_PART__HANDLERS = MPART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MITEM_PART__TRIM = MPART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -827,15 +791,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MCONTRIBUTED_PART__HANDLERS = MITEM_PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MCONTRIBUTED_PART__TRIM = MITEM_PART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1531,14 +1486,14 @@ public interface ApplicationPackage extends EPackage {
 	int MTOOL_BAR_FEATURE_COUNT = MITEM_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MTrimImpl <em>MTrim</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MTrimmedPartImpl <em>MTrimmed Part</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.internal.application.MTrimImpl
-	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMTrim()
+	 * @see org.eclipse.e4.ui.model.internal.application.MTrimmedPartImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMTrimmedPart()
 	 * @generated
 	 */
-	int MTRIM = 15;
+	int MTRIMMED_PART = 15;
 
 	/**
 	 * The feature id for the '<em><b>Owner</b></em>' attribute.
@@ -1547,7 +1502,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTRIM__OWNER = MAPPLICATION_ELEMENT__OWNER;
+	int MTRIMMED_PART__OWNER = MPART__OWNER;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1556,7 +1511,97 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTRIM__ID = MAPPLICATION_ELEMENT__ID;
+	int MTRIMMED_PART__ID = MPART__ID;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__MENU = MPART__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Tool Bar</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__TOOL_BAR = MPART__TOOL_BAR;
+
+	/**
+	 * The feature id for the '<em><b>Policy</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__POLICY = MPART__POLICY;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__CHILDREN = MPART__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__ACTIVE_CHILD = MPART__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__HANDLERS = MPART__HANDLERS;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__WIDGET = MPART__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__PARENT = MPART__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__VISIBLE = MPART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__CONTEXT = MPART__CONTEXT;
 
 	/**
 	 * The feature id for the '<em><b>Top Trim</b></em>' containment reference.
@@ -1565,7 +1610,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTRIM__TOP_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MTRIMMED_PART__TOP_TRIM = MPART_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Left Trim</b></em>' containment reference.
@@ -1574,7 +1619,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTRIM__LEFT_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MTRIMMED_PART__LEFT_TRIM = MPART_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Right Trim</b></em>' containment reference.
@@ -1583,7 +1628,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTRIM__RIGHT_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MTRIMMED_PART__RIGHT_TRIM = MPART_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Bottom Trim</b></em>' containment reference.
@@ -1592,16 +1637,25 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTRIM__BOTTOM_TRIM = MAPPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int MTRIMMED_PART__BOTTOM_TRIM = MPART_FEATURE_COUNT + 3;
 
 	/**
-	 * The number of structural features of the '<em>MTrim</em>' class.
+	 * The feature id for the '<em><b>Client Area</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MTRIM_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int MTRIMMED_PART__CLIENT_AREA = MPART_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of structural features of the '<em>MTrimmed Part</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART_FEATURE_COUNT = MPART_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MWindowImpl <em>MWindow</em>}' class.
@@ -1684,15 +1738,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MWINDOW__HANDLERS = MITEM_PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Trim</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MWINDOW__TRIM = MITEM_PART__TRIM;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1850,6 +1895,61 @@ public interface ApplicationPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarContainerImpl <em>MTool Bar Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.internal.application.MToolBarContainerImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMToolBarContainer()
+	 * @generated
+	 */
+	int MTOOL_BAR_CONTAINER = 19;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_CONTAINER__OWNER = MAPPLICATION_ELEMENT__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_CONTAINER__ID = MAPPLICATION_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Toolbars</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_CONTAINER__TOOLBARS = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_CONTAINER__HORIZONTAL = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>MTool Bar Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_CONTAINER_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1857,7 +1957,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 19;
+	int IECLIPSE_CONTEXT = 20;
 
 
 	/**
@@ -1999,17 +2099,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getMPart_Handlers();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MPart#getTrim <em>Trim</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MPart#getTrim()
-	 * @see #getMPart()
-	 * @generated
-	 */
-	EReference getMPart_Trim();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MPart#getWidget <em>Widget</em>}'.
@@ -2308,58 +2397,69 @@ public interface ApplicationPackage extends EPackage {
 	EClass getMToolBar();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTrim <em>MTrim</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTrimmedPart <em>MTrimmed Part</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>MTrim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrim
+	 * @return the meta object for class '<em>MTrimmed Part</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimmedPart
 	 * @generated
 	 */
-	EClass getMTrim();
+	EClass getMTrimmedPart();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getTopTrim <em>Top Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getTopTrim <em>Top Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Top Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrim#getTopTrim()
-	 * @see #getMTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrimmedPart#getTopTrim()
+	 * @see #getMTrimmedPart()
 	 * @generated
 	 */
-	EReference getMTrim_TopTrim();
+	EReference getMTrimmedPart_TopTrim();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getLeftTrim <em>Left Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getLeftTrim <em>Left Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Left Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrim#getLeftTrim()
-	 * @see #getMTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrimmedPart#getLeftTrim()
+	 * @see #getMTrimmedPart()
 	 * @generated
 	 */
-	EReference getMTrim_LeftTrim();
+	EReference getMTrimmedPart_LeftTrim();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getRightTrim <em>Right Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getRightTrim <em>Right Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Right Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrim#getRightTrim()
-	 * @see #getMTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrimmedPart#getRightTrim()
+	 * @see #getMTrimmedPart()
 	 * @generated
 	 */
-	EReference getMTrim_RightTrim();
+	EReference getMTrimmedPart_RightTrim();
 
 	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrim#getBottomTrim <em>Bottom Trim</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getBottomTrim <em>Bottom Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the containment reference '<em>Bottom Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrim#getBottomTrim()
-	 * @see #getMTrim()
+	 * @see org.eclipse.e4.ui.model.application.MTrimmedPart#getBottomTrim()
+	 * @see #getMTrimmedPart()
 	 * @generated
 	 */
-	EReference getMTrim_BottomTrim();
+	EReference getMTrimmedPart_BottomTrim();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getClientArea <em>Client Area</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Client Area</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimmedPart#getClientArea()
+	 * @see #getMTrimmedPart()
+	 * @generated
+	 */
+	EReference getMTrimmedPart_ClientArea();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MItemPart <em>MItem Part</em>}'.
@@ -2445,6 +2545,38 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMCommand_Name();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolBarContainer <em>MTool Bar Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>MTool Bar Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MToolBarContainer
+	 * @generated
+	 */
+	EClass getMToolBarContainer();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MToolBarContainer#getToolbars <em>Toolbars</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Toolbars</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MToolBarContainer#getToolbars()
+	 * @see #getMToolBarContainer()
+	 * @generated
+	 */
+	EReference getMToolBarContainer_Toolbars();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MToolBarContainer#isHorizontal <em>Horizontal</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Horizontal</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MToolBarContainer#isHorizontal()
+	 * @see #getMToolBarContainer()
+	 * @generated
+	 */
+	EAttribute getMToolBarContainer_Horizontal();
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.services.context.IEclipseContext <em>IEclipse Context</em>}'.
@@ -2588,14 +2720,6 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference MPART__HANDLERS = eINSTANCE.getMPart_Handlers();
-
-		/**
-		 * The meta object literal for the '<em><b>Trim</b></em>' containment reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference MPART__TRIM = eINSTANCE.getMPart_Trim();
 
 		/**
 		 * The meta object literal for the '<em><b>Widget</b></em>' attribute feature.
@@ -2846,14 +2970,14 @@ public interface ApplicationPackage extends EPackage {
 		EClass MTOOL_BAR = eINSTANCE.getMToolBar();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MTrimImpl <em>MTrim</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MTrimmedPartImpl <em>MTrimmed Part</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.internal.application.MTrimImpl
-		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMTrim()
+		 * @see org.eclipse.e4.ui.model.internal.application.MTrimmedPartImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMTrimmedPart()
 		 * @generated
 		 */
-		EClass MTRIM = eINSTANCE.getMTrim();
+		EClass MTRIMMED_PART = eINSTANCE.getMTrimmedPart();
 
 		/**
 		 * The meta object literal for the '<em><b>Top Trim</b></em>' containment reference feature.
@@ -2861,7 +2985,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MTRIM__TOP_TRIM = eINSTANCE.getMTrim_TopTrim();
+		EReference MTRIMMED_PART__TOP_TRIM = eINSTANCE.getMTrimmedPart_TopTrim();
 
 		/**
 		 * The meta object literal for the '<em><b>Left Trim</b></em>' containment reference feature.
@@ -2869,7 +2993,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MTRIM__LEFT_TRIM = eINSTANCE.getMTrim_LeftTrim();
+		EReference MTRIMMED_PART__LEFT_TRIM = eINSTANCE.getMTrimmedPart_LeftTrim();
 
 		/**
 		 * The meta object literal for the '<em><b>Right Trim</b></em>' containment reference feature.
@@ -2877,7 +3001,7 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MTRIM__RIGHT_TRIM = eINSTANCE.getMTrim_RightTrim();
+		EReference MTRIMMED_PART__RIGHT_TRIM = eINSTANCE.getMTrimmedPart_RightTrim();
 
 		/**
 		 * The meta object literal for the '<em><b>Bottom Trim</b></em>' containment reference feature.
@@ -2885,7 +3009,15 @@ public interface ApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference MTRIM__BOTTOM_TRIM = eINSTANCE.getMTrim_BottomTrim();
+		EReference MTRIMMED_PART__BOTTOM_TRIM = eINSTANCE.getMTrimmedPart_BottomTrim();
+
+		/**
+		 * The meta object literal for the '<em><b>Client Area</b></em>' containment reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MTRIMMED_PART__CLIENT_AREA = eINSTANCE.getMTrimmedPart_ClientArea();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MItemPartImpl <em>MItem Part</em>}' class.
@@ -2956,6 +3088,32 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MCOMMAND__NAME = eINSTANCE.getMCommand_Name();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarContainerImpl <em>MTool Bar Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.internal.application.MToolBarContainerImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMToolBarContainer()
+		 * @generated
+		 */
+		EClass MTOOL_BAR_CONTAINER = eINSTANCE.getMToolBarContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Toolbars</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MTOOL_BAR_CONTAINER__TOOLBARS = eINSTANCE.getMToolBarContainer_Toolbars();
+
+		/**
+		 * The meta object literal for the '<em><b>Horizontal</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MTOOL_BAR_CONTAINER__HORIZONTAL = eINSTANCE.getMToolBarContainer_Horizontal();
 
 		/**
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.
