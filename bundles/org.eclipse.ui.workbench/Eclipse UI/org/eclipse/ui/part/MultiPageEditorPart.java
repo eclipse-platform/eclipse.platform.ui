@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,25 +14,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.SafeRunner;
-
-import org.eclipse.core.commands.util.Tracing;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Item;
-
 import org.eclipse.jface.dialogs.IPageChangeProvider;
 import org.eclipse.jface.dialogs.IPageChangedListener;
 import org.eclipse.jface.dialogs.PageChangedEvent;
@@ -40,7 +29,20 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -52,6 +54,7 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.Policy;
@@ -98,6 +101,9 @@ import org.eclipse.ui.services.IServiceLocator;
  * @see org.eclipse.ui.IPartService
  */
 public abstract class MultiPageEditorPart extends EditorPart implements IPageChangeProvider {
+	
+	private static final String COMMAND_NEXT_SUB_TAB = "org.eclipse.ui.navigate.nextSubTab"; //$NON-NLS-1$
+	private static final String COMMAND_PREVIOUS_SUB_TAB = "org.eclipse.ui.navigate.previousSubTab"; //$NON-NLS-1$
 	
 	/**
 	 * Subclasses that override {@link #createPageContainer(Composite)} can use
@@ -285,6 +291,28 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				pageChange(newPageIndex);
 			}
 		});
+		newContainer.addTraverseListener(new TraverseListener() { 
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=199499 : Switching tabs by Ctrl+PageUp/PageDown must not be caught on the inner tab set
+			public void keyTraversed(TraverseEvent e) {
+				switch (e.detail) {
+					case SWT.TRAVERSE_PAGE_NEXT:
+					case SWT.TRAVERSE_PAGE_PREVIOUS:
+						int detail = e.detail;
+						e.doit = true;
+						e.detail = SWT.TRAVERSE_NONE;
+						Control control = newContainer.getParent();
+						do {
+							if (control.traverse(detail))
+								return;
+							if (control.getListeners(SWT.Traverse).length != 0)
+								return;
+							if (control instanceof Shell)
+								return;
+							control = control.getParent();
+						} while (control != null);
+				}
+			}
+		});
 		return newContainer;
 	}
 
@@ -341,6 +369,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			}
 		}
 		initializePageSwitching();
+		initializeSubTabSwitching();
 	}
 
 	/**
@@ -383,6 +412,52 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		};
 	}
 
+	/**
+	 * Initialize the MultiPageEditorPart to use the sub-tab switching commands.
+	 * 
+	 * @since 3.5
+	 */
+	private void initializeSubTabSwitching() {
+		IHandlerService service = (IHandlerService) getSite().getService(IHandlerService.class);
+		service.activateHandler(COMMAND_NEXT_SUB_TAB, new AbstractHandler() {
+			/**
+			 * {@inheritDoc}
+			 * @throws ExecutionException
+			 *             if an exception occurred during execution
+			 */
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				int n= getPageCount();
+				if (n == 0)
+					return null;
+				
+				int i= getActivePage() + 1;
+				if (i >= n)
+					i= 0;
+				setActivePage(i);
+				return null;
+			}
+		});
+		
+		service.activateHandler(COMMAND_PREVIOUS_SUB_TAB, new AbstractHandler() {
+			/**
+			 * {@inheritDoc}
+			 * @throws ExecutionException
+			 *             if an exception occurred during execution
+			 */
+			public Object execute(ExecutionEvent event) throws ExecutionException {
+				int n= getPageCount();
+				if (n == 0)
+					return null;
+				
+				int i= getActivePage() - 1;
+				if (i < 0)
+					i= n - 1;
+				setActivePage(i);
+				return null;
+			}
+		});
+	}
+	
 	/**
 	 * Creates the parent control for the container returned by
 	 * {@link #getContainer() }.

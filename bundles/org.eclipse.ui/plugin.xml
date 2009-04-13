@@ -634,6 +634,28 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+M2+NUMPAD_DIVIDE">
       </key>
+      <key
+            commandId="org.eclipse.ui.navigate.nextSubTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+PAGE_DOWN">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.previousSubTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+PAGE_UP">
+      </key>
+      <key
+            commandId="org.eclipse.ui.part.nextPage"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M3+F7">
+      </key>
+      <key
+            commandId="org.eclipse.ui.part.previousPage"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M2+M3+F7">
+      </key>
    </extension>
    
    <extension
@@ -1132,6 +1154,18 @@
             id="org.eclipse.ui.part.previousPage"
             categoryId="org.eclipse.ui.category.navigate"
             name="%command.previousPage.name">
+      </command>
+      <command
+            description="%command.nextSubTab.description"
+            id="org.eclipse.ui.navigate.nextSubTab"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%command.nextSubTab.name">
+      </command>
+      <command
+            description="%command.previousSubTab.description"
+            id="org.eclipse.ui.navigate.previousSubTab"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%command.previousSubTab.name">
       </command>
       <category
             description="%category.perspective.description"
