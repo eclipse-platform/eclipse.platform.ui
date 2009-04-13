@@ -41,6 +41,7 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
@@ -109,8 +110,13 @@ public abstract class SWTPartFactory extends PartFactory {
 			lh.loadToolbar(toolbar);
 		}
 
+		int orientation = SWT.HORIZONTAL;
 		Composite composite = (Composite) widgetObject;
-		ToolBar swtToolBar = new ToolBar(composite, SWT.FLAT);
+		if (composite.getLayout() instanceof RowLayout) {
+			RowLayout rl = (RowLayout) composite.getLayout();
+			orientation = rl.type;
+		}
+		ToolBar swtToolBar = new ToolBar(composite, SWT.FLAT | orientation);
 		swtToolBar.setData(PartFactory.OWNING_ME, toolbar);
 		for (MToolBarItem toolBarItem : toolbar.getItems()) {
 			createToolBarItem(part, swtToolBar, toolBarItem);

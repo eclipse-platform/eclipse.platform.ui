@@ -93,10 +93,10 @@ public class TrimPartFactory extends SWTPartFactory {
 	 * @param topTrim
 	 * @return
 	 */
-	private Composite createTrim(Composite trimmedComp, int horizontal,
+	private Composite createTrim(Composite trimmedComp, int orientation,
 			MTrimmedPart<?> trimModel, MToolBarContainer<?> trimContainer) {
 		Composite trimComposite = new Composite(trimmedComp, SWT.NONE);
-		RowLayout trl = new RowLayout(SWT.HORIZONTAL);
+		RowLayout trl = new RowLayout(orientation);
 		trl.marginBottom = trl.marginTop = 1;
 		trimComposite.setLayout(trl);
 
