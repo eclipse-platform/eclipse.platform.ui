@@ -790,6 +790,10 @@ public class CustomizationContentsArea {
 		key = pid + "_" + FontSelection.VAR_FONT_STYLE; //$NON-NLS-1$
 		String fontStyle = useRelativeFonts.getSelection() ? FontSelection.FONT_RELATIVE :
 			FontSelection.FONT_ABSOLUTE;
+		if (fontStyle.equals(FontSelection.FONT_ABSOLUTE)) {
+			// reset font scaling for next time relative is selected
+			FontSelection.resetScalePercentage();
+		}
 		iprefs.put(key, fontStyle);
 		if (toAll) {
 			key = FontSelection.VAR_FONT_STYLE;
