@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -59,7 +60,9 @@ public class CoreTest extends TestCase {
 			write(status, 0);
 		} else
 			e.printStackTrace();
-		fail(message + ": " + e);
+		AssertionFailedError assertFail = new AssertionFailedError(message + ": " + e);
+		assertFail.initCause(e);
+		throw assertFail;
 	}
 
 	private static void indent(OutputStream output, int indent) {
