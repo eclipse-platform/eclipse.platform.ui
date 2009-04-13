@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.intro.impl;
 
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.resource.JFaceResources;
@@ -77,6 +78,16 @@ public class FontSelection {
 			prefs.flush();
 		} catch (BackingStoreException e) {
 		}	
+	}
+	
+	// Set the scale factor to it's default
+	public static void resetScalePercentage() {
+		InstanceScope instanceScope = new InstanceScope();
+		IEclipsePreferences iprefs = instanceScope.getNode(IntroPlugin.PLUGIN_ID);
+		DefaultScope defaultScope = new DefaultScope();
+		IEclipsePreferences dprefs = defaultScope.getNode(IntroPlugin.PLUGIN_ID);
+		String defaultScale = dprefs.get(SCALE_FACTOR, "0"); //$NON-NLS-1$
+		iprefs.put(SCALE_FACTOR, defaultScale);
 	}
 
 	public static String getFontStyle() {
