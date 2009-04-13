@@ -76,13 +76,13 @@ p .group-description {
 	font-size:90%; 
 }
 
-#root #page-links, #root #action-links {
+#root #page-links, #root #action-links, #root #page-links a p .text {
     font-size : 100%;
 }
 
 /* Link label properties */
 #root #page-links a .link-label {
-	font-size : 130%;
+	font-size : 120%;
 }
 
 #root .intro-header span  {

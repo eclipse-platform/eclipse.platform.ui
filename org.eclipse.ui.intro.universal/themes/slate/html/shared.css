@@ -430,7 +430,7 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	margin-right: 53px;
 }
 
-#page-content * a p > .text { left: 58px; }
+#page-content * a p > .text { left: 56px; }
 
 #page-content * a:hover { border-right : 5px; }
 
