@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,7 @@ package org.eclipse.debug.internal.ui.viewers.update;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IExpression;
-import org.eclipse.debug.core.model.IVariable;
-import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
 
@@ -51,16 +48,6 @@ public class ExpressionEventHandler extends DebugEventHandler {
     		} 
 	    	delta.addNode(expression, flags);
 			fireDelta(delta);
-		} else if (event.getSource() instanceof IVariable) {
-			// a variable value change may effect an expression's value
-			IModelProxy modelProxy = getModelProxy();
-			if (modelProxy instanceof DefaultExpressionModelProxy) {
-				DefaultExpressionModelProxy proxy = (DefaultExpressionModelProxy) modelProxy;
-				expression = proxy.getExpression();
-				if (expression instanceof IWatchExpression) {
-					((IWatchExpression)expression).evaluate();
-				}
-			}
 		}
     }
 
