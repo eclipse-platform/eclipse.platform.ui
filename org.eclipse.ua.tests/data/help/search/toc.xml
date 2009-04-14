@@ -19,5 +19,9 @@
   </topic>
   <topic href="data/help/search/test_en.html" label="testen.html">
   </topic>
+      <topic href="data/help/search/testnl8859.htm" label="ISO 8859-1 doc">
+      </topic>
+      <topic href="data/help/search/testnlUTF8.htm" label="UTF-8 doc">
+      </topic>
 	</topic>
 </toc>

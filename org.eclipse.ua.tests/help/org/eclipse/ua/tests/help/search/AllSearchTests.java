@@ -35,5 +35,6 @@ public class AllSearchTests extends TestSuite {
 		addTestSuite(LocaleTest.class);
 		addTestSuite(AnalyzerTest.class);
 		addTest(SearchCheatsheet.suite());
+		addTest(EncodedCharacterSearch.suite());
 	}
 }
