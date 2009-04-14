@@ -2228,6 +2228,13 @@ public class Perspective {
             			id = ((ContainerPlaceholder)container).getID();
             		else if (container instanceof ViewStack)
             			id = ((ViewStack)container).getID();
+					else if (container instanceof DetachedPlaceHolder) {
+						// Views in a detached window don't participate in the
+						// minimize behavior so just revert to the default
+						// behavior
+						presentation.addPart(pane);
+						return part;
+					}
             		
             		// Is this place-holder in the trim?
                     if (id != null && fastViewManager.getFastViews(id).size() > 0) {
@@ -2237,7 +2244,8 @@ public class Perspective {
             	
             	// No explicit trim found; If we're maximized then we either have to find an
             	// arbitrary stack...
-            	if (trimId == null && presentation.getMaximizedStack() != null) {
+				if (trimId == null
+						&& presentation.getMaximizedStack() != null) {
             		if (vPart == null) {
             			ViewStackTrimToolBar blTrimStack = fastViewManager.getBottomRightTrimStack();
             			if (blTrimStack != null) {
