@@ -77,7 +77,9 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		final String textKey;
 		final String verticalRulerKey;
 
-		ListItem(String label, Image image, String colorKey, String textKey, String overviewRulerKey, String highlightKey, String verticalRulerKey, String textStyleKey) {
+		final String isNextPreviousNavigationKey;
+
+		ListItem(String label, Image image, String colorKey, String textKey, String overviewRulerKey, String highlightKey, String verticalRulerKey, String textStyleKey, String navigationKey) {
 			this.label= label;
 			this.image= image;
 			this.colorKey= colorKey;
@@ -86,6 +88,7 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			this.textKey= textKey;
 			this.textStyleKey= textStyleKey;
 			this.verticalRulerKey= verticalRulerKey;
+			this.isNextPreviousNavigationKey= navigationKey;
 		}
 	}
 
@@ -139,6 +142,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 	private Button fShowInOverviewRulerCheckBox;
 	private Button fShowInVerticalRulerCheckBox;
 
+	private Button fIsNextPreviousTargetCheckBox;
+
 	private StructuredViewer fAnnotationTypeViewer;
 	private final ListItem[] fListModel;
 
@@ -169,6 +174,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getVerticalRulerPreferenceKey()));
 			if (info.getTextStylePreferenceKey() != null)
 				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, info.getTextStylePreferenceKey()));
+			if (info.getIsGoToNextNavigationTargetKey() != null)
+				overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, info.getIsGoToNextNavigationTargetKey()));
 		}
 		OverlayPreferenceStore.OverlayKey[] keys= new OverlayPreferenceStore.OverlayKey[overlayKeys.size()];
 		overlayKeys.toArray(keys);
@@ -224,8 +231,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		label.setText(TextEditorMessages.AnnotationsConfigurationBlock_labels_showIn);
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
-        gd.horizontalSpan= 2;
-        label.setLayoutData(gd);
+		gd.horizontalSpan= 2;
+		label.setLayoutData(gd);
 
 		fShowInVerticalRulerCheckBox= new Button(optionsComposite, SWT.CHECK);
 		fShowInVerticalRulerCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_showInVerticalRuler);
@@ -274,6 +281,17 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.FILL_HORIZONTAL);
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
+
+		addFiller(optionsComposite);
+
+		fIsNextPreviousTargetCheckBox= new Button(optionsComposite, SWT.CHECK);
+		fIsNextPreviousTargetCheckBox.setText(TextEditorMessages.AnnotationsConfigurationBlock_isNavigationTarget);
+		gd= new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalAlignment= GridData.BEGINNING;
+		gd.horizontalSpan= 2;
+		gd.horizontalIndent= 0;
+		fIsNextPreviousTargetCheckBox.setLayoutData(gd);
+
 
 		fAnnotationTypeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
@@ -333,6 +351,18 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 		});
 
+		fIsNextPreviousTargetCheckBox.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
+
+			public void widgetSelected(SelectionEvent e) {
+				ListItem item= getSelectedItem();
+				fStore.setValue(item.isNextPreviousNavigationKey, fIsNextPreviousTargetCheckBox.getSelection());
+				fAnnotationTypeViewer.refresh(item);
+			}
+		});
+
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
@@ -379,6 +409,16 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		composite.layout();
 		return composite;
+	}
+
+	private void addFiller(Composite composite) {
+		PixelConverter pixelConverter= new PixelConverter(composite);
+
+		Label filler= new Label(composite, SWT.LEFT);
+		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd.horizontalSpan= 2;
+		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
+		filler.setLayoutData(gd);
 	}
 
 	/**
@@ -441,6 +481,14 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		fShowInOverviewRulerCheckBox.setSelection(fStore.getBoolean(item.overviewRulerKey));
 
+		if (item.isNextPreviousNavigationKey != null) {
+			fIsNextPreviousTargetCheckBox.setEnabled(true);
+			fIsNextPreviousTargetCheckBox.setSelection(fStore.getBoolean(item.isNextPreviousNavigationKey));
+		} else {
+			fIsNextPreviousTargetCheckBox.setEnabled(false);
+			fIsNextPreviousTargetCheckBox.setSelection(false);
+		}
+
 		if (item.verticalRulerKey != null) {
 			fShowInVerticalRulerCheckBox.setSelection(fStore.getBoolean(item.verticalRulerKey));
 			fShowInVerticalRulerCheckBox.setEnabled(true);
@@ -478,7 +526,8 @@ class AnnotationsConfigurationBlock implements IPreferenceConfigurationBlock {
 
 				Image image= getImage(info);
 
-				listModelItems.add(new ListItem(label, image, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey()));
+				listModelItems.add(new ListItem(label, image, info.getColorPreferenceKey(), info.getTextPreferenceKey(), info.getOverviewRulerPreferenceKey(), info.getHighlightPreferenceKey(), info
+						.getVerticalRulerPreferenceKey(), info.getTextStylePreferenceKey(), info.getIsGoToNextNavigationTargetKey()));
 			}
 		}
 
