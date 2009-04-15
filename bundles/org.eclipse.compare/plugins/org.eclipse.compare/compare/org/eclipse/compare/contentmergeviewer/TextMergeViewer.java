@@ -236,10 +236,10 @@ import com.ibm.icu.text.MessageFormat;
  * the <code>configureTextViewer</code> method to configure the <code>TextViewer</code> for Java source code,
  * the <code>createTokenComparator</code> method to create a Java specific tokenizer.
  * <p>
- * In 3.5 M5 a new, experimental API has been introduced to let clients provide
- * their own source viewers implementation with an option to configure them
- * basing on a corresponding editor input.
- *
+ * In 3.5 a new API has been introduced to let clients provide their own source
+ * viewers implementation with an option to configure them basing on a
+ * corresponding editor input.
+ * 
  * @see org.eclipse.compare.rangedifferencer.RangeDifferencer
  * @see org.eclipse.jface.text.TextViewer
  * @see ITokenComparator
@@ -2388,14 +2388,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	 * viewer is not expected to be configured with a source viewer
 	 * configuration.
 	 * 
-	 * <p>
-	 * This method is part of a new, <strong>EXPERIMENTAL</strong> API of
-	 * <code>TextMergeViewer</code>. It has been added as part of a work in
-	 * progress. There is a guarantee neither that this API will work nor that
-	 * it will remain the same. Please do not use this API without consulting
-	 * with the Workspace team.
-	 * </p>
-	 * 
 	 * @param parent
 	 *            the parent of the viewer's control
 	 * @param textOrientation
@@ -2420,19 +2412,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	}
 
 	/**
-	 * Returns an editor input for the given source viewer. The method returns <code>null</code>
-	 * when no input is available, for example when the input for the merge viewer has not been set
-	 * yet.
+	 * Returns an editor input for the given source viewer. The method returns
+	 * <code>null</code> when no input is available, for example when the input
+	 * for the merge viewer has not been set yet.
 	 * 
-	 * <p>
-	 * This method is part of a new, <strong>EXPERIMENTAL</strong> API of
-	 * <code>TextMergeViewer</code>. It has been added as part of a work in progress. There is a
-	 * guarantee neither that this API will work nor that it will remain the same. Please do not use
-	 * this API without consulting with the Workspace team.
-	 * </p>
-	 * 
-	 * @param sourceViewer the source viewer to get input for
-	 * @return input for the given viewer or <code>null</code> when no input is available
+	 * @param sourceViewer
+	 *            the source viewer to get input for
+	 * @return input for the given viewer or <code>null</code> when no input is
+	 *         available
 	 * 
 	 * @since 3.5
 	 */
@@ -2919,15 +2906,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 
 	/**
 	 * Sets the editable state of the given source viewer.
-	 * 
-	 * <p>
-	 * This method is part of a new, <strong>EXPERIMENTAL</strong> API of
-	 * <code>TextMergeViewer</code>. It has been added as part of a work in
-	 * progress. There is a guarantee neither that this API will work nor that
-	 * it will remain the same. Please do not use this API without consulting
-	 * with the Workspace team.
-	 * </p>
-	 * 
 	 * 
 	 * @param sourceViewer
 	 *            the source viewer
