@@ -28,8 +28,52 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.LegacyActionTools;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.ContentViewer;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IColorProvider;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.IFontProvider;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ILazyContentProvider;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -65,54 +109,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
-
-import org.eclipse.core.commands.AbstractHandler;
-import org.eclipse.core.commands.ExecutionEvent;
-import org.eclipse.core.commands.IHandler;
-
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.core.runtime.ProgressMonitorWrapper;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.ActionContributionItem;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.LegacyActionTools;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.ContentViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IContentProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IFontProvider;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ILazyContentProvider;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StyledCellLabelProvider;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
-
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -3000,39 +2996,36 @@ public abstract class FilteredItemsSelectionDialog extends
 		protected Object[] getFilteredItems(Object parent,
 				IProgressMonitor monitor) {
 			int ticks = 100;
+			if (monitor == null) {
+				monitor = new NullProgressMonitor();
+			}
 
-			if (monitor != null) {
-				monitor
-						.beginTask(
-								WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_getFilteredElements,
-								ticks);
-				if (filters != null) {
-					ticks /= (filters.size() + 2);
-				} else {
-					ticks /= 2;
-				}
+			monitor
+					.beginTask(
+							WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_getFilteredElements,
+							ticks);
+			if (filters != null) {
+				ticks /= (filters.size() + 2);
+			} else {
+				ticks /= 2;
 			}
 
 			// get already sorted array
 			Object[] filteredElements = getSortedItems();
 
-			if (monitor != null) {
-				monitor.worked(ticks);
-			}
+			monitor.worked(ticks);
 
 			// filter the elements using provided ViewerFilters
 			if (filters != null && filteredElements != null) {
 				for (Iterator iter = filters.iterator(); iter.hasNext();) {
 					ViewerFilter f = (ViewerFilter) iter.next();
 					filteredElements = f.filter(list, parent, filteredElements);
-					if (monitor != null)
-						monitor.worked(ticks);
+					monitor.worked(ticks);
 				}
 			}
 
 			if (filteredElements == null || monitor.isCanceled()) {
-				if (monitor != null)
-					monitor.done();
+				monitor.done();
 				return new Object[0];
 			}
 
@@ -3058,13 +3051,12 @@ public abstract class FilteredItemsSelectionDialog extends
 
 				preparedElements.add(item);
 
-				if (monitor != null && reportEvery != 0
-						&& ((i + 1) % reportEvery == 0))
+				if (reportEvery != 0 && ((i + 1) % reportEvery == 0)) {
 					monitor.worked(1);
+				}
 			}
 
-			if (monitor != null)
-				monitor.done();
+			monitor.done();
 
 			return preparedElements.toArray();
 		}
