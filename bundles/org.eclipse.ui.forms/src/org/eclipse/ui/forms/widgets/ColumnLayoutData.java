@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,11 +37,11 @@ public final class ColumnLayoutData {
 	 */
 	public static final int LEFT = 1;
 	/**
-	 * Horizontal alignment constant - control will be aligned to the right.
+	 * Horizontal alignment constant - control will be centered.
 	 */
 	public static final int CENTER = 2;
 	/**
-	 * Horizontal alignment constant - control will be centered.
+	 * Horizontal alignment constant - control will be aligned to the right.
 	 */
 	public static final int RIGHT = 3;
 	/**
