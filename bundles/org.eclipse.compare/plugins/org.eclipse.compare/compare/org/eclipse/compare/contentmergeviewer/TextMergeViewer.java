@@ -2404,7 +2404,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	 *         {@link SourceViewer}.
 	 * @since 3.5
 	 */
-	protected ISourceViewer createSourceViewer(Composite parent, int textOrientation) {
+	protected SourceViewer createSourceViewer(Composite parent, int textOrientation) {
 		return new SourceViewer(parent, new CompositeRuler(), textOrientation | SWT.H_SCROLL | SWT.V_SCROLL);
 	}
 	
@@ -2454,9 +2454,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	 * Creates and initializes a text part.
 	 */
 	private MergeSourceViewer createPart(Composite parent) {
-		// TODO: check before casting to SourceViewer
-		SourceViewer sourceViewer = (SourceViewer) createSourceViewer(parent, getDirection());
-		final MergeSourceViewer viewer= new MergeSourceViewer(sourceViewer, getResourceBundle(), getCompareConfiguration().getContainer());
+		final MergeSourceViewer viewer = new MergeSourceViewer(
+				createSourceViewer(parent, getDirection()),
+				getResourceBundle(), getCompareConfiguration().getContainer());
 		final StyledText te= viewer.getSourceViewer().getTextWidget();
 		
 		if (!fConfirmSave)
