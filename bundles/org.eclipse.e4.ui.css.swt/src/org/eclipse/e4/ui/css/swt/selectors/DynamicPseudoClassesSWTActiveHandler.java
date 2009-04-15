@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.css.swt.selectors;
 
 import org.eclipse.e4.ui.css.core.dom.selectors.IDynamicPseudoClassesHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Control;
@@ -26,8 +27,6 @@ public class DynamicPseudoClassesSWTActiveHandler extends
 
 	public static final IDynamicPseudoClassesHandler INSTANCE = new DynamicPseudoClassesSWTActiveHandler();
 
-	private static String ACTIVE_LISTENER = "org.eclipse.e4.ui.core.css.swt.selectors.ACTIVE_LISTENER";
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -40,7 +39,7 @@ public class DynamicPseudoClassesSWTActiveHandler extends
 
 			public void shellActivated(ShellEvent e) {
 				try {
-					control.setData("activeLost", null);
+					control.setData(CSSSWTConstants.ACTIVE_LOST, null);
 					engine.applyStyles(control, false, true);
 				} catch (Exception ex) {
 					engine.handleExceptions(ex);
@@ -50,13 +49,13 @@ public class DynamicPseudoClassesSWTActiveHandler extends
 			public void shellDeactivated(ShellEvent e) {
 				try {
 					// Set activeLost flag to true
-					control.setData("activeLost", Boolean.TRUE);
+					control.setData(CSSSWTConstants.ACTIVE_LOST, Boolean.TRUE);
 					engine.applyStyles(control, false, true);
 				} catch (Exception ex) {
 					engine.handleExceptions(ex);
 				} finally {
 					// Set activeLost flag to false
-					control.setData("activeLost", null);
+					control.setData(CSSSWTConstants.ACTIVE_LOST, null);
 				}
 			}
 
@@ -74,7 +73,7 @@ public class DynamicPseudoClassesSWTActiveHandler extends
 		// Register the active listener into Control Data
 		// in order to remove it when dispose method is called.
 		Shell shell = (Shell)control;
-		shell.setData(ACTIVE_LISTENER, shellListener);
+		shell.setData(CSSSWTConstants.ACTIVE_LISTENER, shellListener);
 		// Add the active listener to the control
 		shell.addShellListener(shellListener);
 	}
@@ -88,10 +87,10 @@ public class DynamicPseudoClassesSWTActiveHandler extends
 	protected void dispose(Control control, CSSEngine engine) {
 		// Get the active listener registered into control data
 		ShellListener shellListener = (ShellListener) control
-				.getData(ACTIVE_LISTENER);
+				.getData(CSSSWTConstants.ACTIVE_LISTENER);
 		if (shellListener != null)
 			// remove the focus listener to the control
 			((Shell)control).removeShellListener(shellListener);
-		control.setData(ACTIVE_LISTENER, null);
+		control.setData(CSSSWTConstants.ACTIVE_LISTENER, null);
 	}
 }

@@ -275,18 +275,18 @@ public class SWTElement extends ElementAdapter implements NodeList {
 		if ("focus".equals(s)) {
 			Control control = (Control) getNativeWidget();
 			if (control.isFocusControl()) {
-				return control.getData("focusLost") == null;
+				return control.getData(CSSSWTConstants.FOCUS_LOST) == null;
 			}
 		}
 		if ("active".equals(s) && getNativeWidget() instanceof Shell) {
 				Control control = (Control) getNativeWidget();
 				if (control.isEnabled()) {
-					return control.getData("activeLost") == null;
+					return control.getData(CSSSWTConstants.ACTIVE_LOST) == null;
 				}
 		}
 		if ("hover".equals(s)) {
 			Control control = (Control) getNativeWidget();
-			return control.getData("mouseHover") != null;
+			return control.getData(CSSSWTConstants.MOUSE_HOVER) != null;
 		}
 		if ("odd".equals(s)) {
 			Object widget = getNativeWidget();

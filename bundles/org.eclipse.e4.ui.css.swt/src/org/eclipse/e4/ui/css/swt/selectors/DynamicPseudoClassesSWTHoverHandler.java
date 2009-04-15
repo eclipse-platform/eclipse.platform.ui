@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.css.swt.selectors;
 
 import org.eclipse.e4.ui.css.core.dom.selectors.IDynamicPseudoClassesHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.widgets.Control;
@@ -24,8 +25,6 @@ public class DynamicPseudoClassesSWTHoverHandler extends
 		AbstractDynamicPseudoClassesControlHandler {
 
 	public static final IDynamicPseudoClassesHandler INSTANCE = new DynamicPseudoClassesSWTHoverHandler();
-
-	private static String MOUSE_HOVER_LISTENER = "org.eclipse.e4.ui.core.css.swt.selectors.MOUSE_HOVER_LISTENER";
 
 	/*
 	 * (non-Javadoc)
@@ -40,12 +39,12 @@ public class DynamicPseudoClassesSWTHoverHandler extends
 				try {
 					// mouse hover, apply styles
 					// into the SWT control
-					control.setData("mouseHover", Boolean.TRUE);
+					control.setData(CSSSWTConstants.MOUSE_HOVER, Boolean.TRUE);
 					engine.applyStyles(control, false, true);
 				} catch (Exception ex) {
 					engine.handleExceptions(ex);
 				} finally {
-					control.setData("mouseHover", null);
+					control.setData(CSSSWTConstants.MOUSE_HOVER, null);
 				}
 			}
 
@@ -53,14 +52,14 @@ public class DynamicPseudoClassesSWTHoverHandler extends
 				// mouse exit, apply styles
 				// into the SWT control
 				try {
-					control.setData("mouseHover", null);
+					control.setData(CSSSWTConstants.MOUSE_HOVER, null);
 					engine.applyStyles(control, false, true);
 				} catch (Exception ex) {
 					engine.handleExceptions(ex);
 				}
 			}
 		};
-		control.setData(MOUSE_HOVER_LISTENER, mouseHoverListener);
+		control.setData(CSSSWTConstants.MOUSE_HOVER_LOST, mouseHoverListener);
 		control.addMouseTrackListener(mouseHoverListener);
 	}
 
@@ -73,11 +72,11 @@ public class DynamicPseudoClassesSWTHoverHandler extends
 	protected void dispose(Control control, CSSEngine engine) {
 		// Get the MouseTrack listener registered into control data
 		MouseTrackAdapter mouseHoverListener = (MouseTrackAdapter) control
-				.getData(MOUSE_HOVER_LISTENER);
+				.getData(CSSSWTConstants.MOUSE_HOVER_LOST);
 		if (mouseHoverListener != null)
 			// remove the MouseTrack listener to the control
 			control.removeMouseTrackListener(mouseHoverListener);
-		control.setData(MOUSE_HOVER_LISTENER, null);
+		control.setData(CSSSWTConstants.MOUSE_HOVER_LOST, null);
 	}
 
 }

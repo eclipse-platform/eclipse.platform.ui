@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.css.swt.selectors;
 
 import org.eclipse.e4.ui.css.core.dom.selectors.IDynamicPseudoClassesHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.widgets.Control;
@@ -24,8 +25,6 @@ public class DynamicPseudoClassesSWTFocusHandler extends
 		AbstractDynamicPseudoClassesControlHandler {
 
 	public static final IDynamicPseudoClassesHandler INSTANCE = new DynamicPseudoClassesSWTFocusHandler();
-
-	private static String FOCUS_LISTENER = "org.eclipse.e4.ui.core.css.swt.selectors.FOCUS_LISTENER";
 
 	/*
 	 * (non-Javadoc)
@@ -49,7 +48,7 @@ public class DynamicPseudoClassesSWTFocusHandler extends
 			public void focusLost(FocusEvent e) {
 				try {
 					// Set focusLost flag to true
-					control.setData("focusLost", Boolean.TRUE);
+					control.setData(CSSSWTConstants.FOCUS_LOST, Boolean.TRUE);
 					// control lost focus, apply styles
 					// into the SWT control
 					engine.applyStyles(control, false, true);
@@ -57,13 +56,13 @@ public class DynamicPseudoClassesSWTFocusHandler extends
 					engine.handleExceptions(ex);
 				} finally {
 					// Set focusLost flag to false
-					control.setData("focusLost", null);
+					control.setData(CSSSWTConstants.FOCUS_LOST, null);
 				}
 			}
 		};
 		// Register the focus listener into Control Data
 		// in order to remove it when dispose method is called.
-		control.setData(FOCUS_LISTENER, focusListener);
+		control.setData(CSSSWTConstants.FOCUS_LISTENER, focusListener);
 		// Add the focus listener to the control
 		control.addFocusListener(focusListener);
 	}
@@ -77,10 +76,10 @@ public class DynamicPseudoClassesSWTFocusHandler extends
 	protected void dispose(Control control, CSSEngine engine) {
 		// Get the focus listener registered into control data
 		FocusListener focusListener = (FocusListener) control
-				.getData(FOCUS_LISTENER);
+				.getData(CSSSWTConstants.FOCUS_LISTENER);
 		if (focusListener != null)
 			// remove the focus listener to the control
 			control.removeFocusListener(focusListener);
-		control.setData(FOCUS_LISTENER, null);
+		control.setData(CSSSWTConstants.FOCUS_LISTENER, null);
 	}
 }
