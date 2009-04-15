@@ -16,9 +16,7 @@ import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledItem;
-import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -26,8 +24,8 @@ import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
+import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
-import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
@@ -125,12 +123,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		return swtToolBar;
 	}
 
-	private MHandler getHandler(Display display, MHandledItem item) {
-		MHandler h = null;
-		MCommand command = item.getCommand();
-		if (command == null) {
-			return h;
-		}
+	private IEclipseContext getFocusContext(Display display) {
 		// find the first useful part in the model
 		Control control = display.getFocusControl();
 		Object partObj = null;
@@ -139,19 +132,11 @@ public abstract class SWTPartFactory extends PartFactory {
 			control = control.getParent();
 		}
 		if (partObj == null) {
-			return null;
+			return context;
 		}
 		// get the applicable context (or parent)
 		MPart<?> part = (MPart<?>) partObj;
-		IEclipseContext partContext = getContext(part);
-		if (partContext != null) {
-			IHandlerService hs = (IHandlerService) partContext
-					.get(IHandlerService.class.getName());
-			if (hs != null) {
-				h = hs.getHandler(command);
-			}
-		}
-		return h;
+		return getContext(part);
 	}
 
 	private void createToolBarItem(MPart<?> part, ToolBar swtTB,
@@ -195,14 +180,10 @@ public abstract class SWTPartFactory extends PartFactory {
 		});
 
 		if (toolBarItem.getCommand() != null) {
-			final IEclipseContext localContext = getContext(part);
 			newToolItem.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					Object result = canExecuteItem(localContext, newToolItem
-							.getDisplay(), toolBarItem);
-					if (Boolean.TRUE.equals(result)) {
-						executeItem(localContext, newToolItem.getDisplay(),
-								toolBarItem);
+					if (canExecuteItem(newToolItem.getDisplay(), toolBarItem)) {
+						executeItem(newToolItem.getDisplay(), toolBarItem);
 					}
 				}
 			});
@@ -211,36 +192,26 @@ public abstract class SWTPartFactory extends PartFactory {
 					if (newToolItem.isDisposed()) {
 						return;
 					}
-					Object result = canExecuteItem(localContext, newToolItem
-							.getDisplay(), toolBarItem);
-					((ToolItem) newToolItem).setEnabled(Boolean.TRUE
-							.equals(result));
+					newToolItem.setEnabled(canExecuteItem(newToolItem
+							.getDisplay(), toolBarItem));
 					newToolItem.getDisplay().timerExec(100, this);
 				}
 			});
 		}
 	}
 
-	protected Object canExecuteItem(final IEclipseContext context,
-			Display display, final MHandledItem item) {
-		MHandler h = getHandler(display, item);
-		if (h == null) {
-			return Boolean.TRUE;
-		}
-
-		Object result = contributionFactory.call(h.getObject(), h.getURI(),
-				"canExecute", context, Boolean.TRUE); //$NON-NLS-1$
-		return result;
+	protected boolean canExecuteItem(Display display, final MHandledItem item) {
+		IEclipseContext context = getFocusContext(display);
+		EHandlerService hs = (EHandlerService) context
+				.get(EHandlerService.class.getName());
+		return hs.canExecute(item.getCommand().getId());
 	}
 
-	protected void executeItem(final IEclipseContext context, Display display,
-			final MHandledItem item) {
-		MHandler h = getHandler(display, item);
-		if (h == null) {
-			return;
-		}
-		contributionFactory.call(h.getObject(), h.getURI(), "execute", //$NON-NLS-1$
-				context, null);
+	protected Object executeItem(Display display, final MHandledItem item) {
+		IEclipseContext context = getFocusContext(display);
+		EHandlerService hs = (EHandlerService) context
+				.get(EHandlerService.class.getName());
+		return hs.executeHandler(item.getCommand().getId());
 	}
 
 	private void createMenuItem(MPart<?> part, final Menu parentMenu,
@@ -290,16 +261,11 @@ public abstract class SWTPartFactory extends PartFactory {
 		if (handledItem.getMenu() != null) {
 			createMenu(part, newMenuItem, handledItem.getMenu());
 		}
-		final IEclipseContext localContext = getContext(part);
-
 		if (handledItem.getCommand() != null) {
 			newMenuItem.addListener(SWT.Selection, new Listener() {
 				public void handleEvent(Event event) {
-					Object result = canExecuteItem(localContext, newMenuItem
-							.getDisplay(), handledItem);
-					if (Boolean.TRUE.equals(result)) {
-						executeItem(localContext, newMenuItem.getDisplay(),
-								handledItem);
+					if (canExecuteItem(newMenuItem.getDisplay(), handledItem)) {
+						executeItem(newMenuItem.getDisplay(), handledItem);
 					}
 				}
 			});
@@ -309,11 +275,8 @@ public abstract class SWTPartFactory extends PartFactory {
 					if (newMenuItem.isDisposed()) {
 						return;
 					}
-					Object result = canExecuteItem(localContext, newMenuItem
-							.getDisplay(), handledItem);
-
-					((MenuItem) newMenuItem).setEnabled(Boolean.TRUE
-							.equals(result));
+					newMenuItem.setEnabled(canExecuteItem(newMenuItem
+							.getDisplay(), handledItem));
 				}
 			});
 		}

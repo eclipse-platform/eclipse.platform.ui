@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipse.e4.ui.tests.workbench.HandlerTest;
 import org.eclipse.e4.ui.tests.workbench.MWindowTest;
 
 /**
@@ -26,5 +27,6 @@ public class UIAllTests extends TestSuite {
 
 	public UIAllTests() {
 		addTestSuite(MWindowTest.class);
+		addTestSuite(HandlerTest.class);
 	}
 }

@@ -17,13 +17,14 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
-import org.eclipse.e4.workbench.ui.renderers.PartHandlerService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * Create a contribute part.
@@ -41,7 +42,6 @@ public class ContributedPartFactory extends SWTPartFactory {
 			newWidget = newComposite;
 			bindWidget(part, newWidget);
 			final MContributedPart<?> contributedPart = (MContributedPart<?>) part;
-			final IHandlerService hs = new PartHandlerService(part);
 			final IEclipseContext localContext = EclipseContextFactory.create(
 					parentContext, UISchedulerStrategy.getInstance());
 			localContext.set(IContextConstants.DEBUG_STRING, "ContributedPart"); //$NON-NLS-1$
@@ -51,7 +51,6 @@ public class ContributedPartFactory extends SWTPartFactory {
 					"ContributedPart-output"); //$NON-NLS-1$
 			contributedPart.setContext(localContext);
 			localContext.set(Composite.class.getName(), newComposite);
-			localContext.set(IHandlerService.class.getName(), hs);
 			localContext.set(IServiceConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			localContext.set(MContributedPart.class.getName(), contributedPart);

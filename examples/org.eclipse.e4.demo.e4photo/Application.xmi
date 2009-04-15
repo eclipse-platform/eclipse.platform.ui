@@ -49,6 +49,6 @@
     <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="//@command.1"/>
     <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="//@command.0"/>
   </windows>
-  <command id="e4photo.newProject"/>
-  <command id="e4photo.exit"/>
+  <command id="e4photo.newProject" name="New Project"/>
+  <command id="e4photo.exit" name="Exit"/>
 </application:MApplication>

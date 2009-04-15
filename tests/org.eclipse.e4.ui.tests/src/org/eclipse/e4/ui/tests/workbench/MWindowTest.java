@@ -46,7 +46,7 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class MWindowTest extends TestCase {
 	private IEclipseContext appContext;
-	private IContributionFactory contributionFactory;
+	private static IContributionFactory contributionFactory;
 
 	private IEclipseContext getAppContext() {
 		if (appContext == null) {
@@ -55,7 +55,7 @@ public class MWindowTest extends TestCase {
 					.createServiceContext(Activator.getDefault().getBundle()
 							.getBundleContext());
 			appContext = Workbench.createContext(serviceContext,
-					RegistryFactory.getRegistry(), null);
+					RegistryFactory.getRegistry(), null, null);
 			MApplication<MWindow<?>> app = ApplicationFactory.eINSTANCE
 					.createMApplication();
 			appContext.set(MApplication.class.getName(), app);
@@ -63,7 +63,7 @@ public class MWindowTest extends TestCase {
 		return appContext;
 	}
 
-	private IContributionFactory getCFactory() {
+	static IContributionFactory getCFactory() {
 		if (contributionFactory == null) {
 			contributionFactory = new ReflectionContributionFactory(
 					RegistryFactory.getRegistry());

@@ -19,10 +19,8 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.IHandlerService;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
-import org.eclipse.e4.workbench.ui.renderers.PartHandlerService;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -57,13 +55,11 @@ public class WBPartFactory extends SWTPartFactory {
 			bindWidget(part, newWidget);
 
 			// set up context
-			final IHandlerService hs = new PartHandlerService(part);
 			IEclipseContext localContext = EclipseContextFactory.create(
 					parentContext, UISchedulerStrategy.getInstance());
 			localContext
 					.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
 			part.setContext(localContext);
-			localContext.set(IHandlerService.class.getName(), hs);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 			localContext.set(MWindow.class.getName(), part);
 

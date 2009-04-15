@@ -105,7 +105,8 @@ public class PartRenderer {
 
 	protected void processHandlers(MPart<?> element) {
 		for (MHandler contributedHandler : element.getHandlers()) {
-			if (contributedHandler.getURI() != null) {
+			if (contributedHandler.getURI() != null
+					&& contributedHandler.getObject() == null) {
 				contributedHandler.setObject(contributionFactory.create(
 						contributedHandler.getURI(), context));
 			}

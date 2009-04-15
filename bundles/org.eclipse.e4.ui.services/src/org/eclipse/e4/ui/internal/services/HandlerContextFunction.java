@@ -8,14 +8,16 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.workbench.ui;
+package org.eclipse.e4.ui.internal.services;
 
-import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 
-/**
- *
- */
-public interface IHandlerService {
-	public MHandler getHandler(MCommand command);
+public class HandlerContextFunction extends ContextFunction {
+
+	@Override
+	public Object compute(IEclipseContext context, Object[] arguments) {
+		return new ContextHandlerService(context);
+	}
+
 }

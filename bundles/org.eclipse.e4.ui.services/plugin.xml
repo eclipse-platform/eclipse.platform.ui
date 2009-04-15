@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.2"?>
 <plugin>
+   <extension
+         point="org.eclipse.e4.services">
+      <servicefactory
+            class="org.eclipse.e4.ui.internal.services.HandlerContextFunction">
+         <service
+               api="org.eclipse.e4.ui.services.EHandlerService">
+         </service>
+      </servicefactory>
+   </extension>
 
 </plugin>

@@ -17,20 +17,43 @@ import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Map;
+
+import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdapterManager;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.*;
-import org.eclipse.e4.ui.model.application.*;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.internal.services.ContextCommandService;
+import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
+import org.eclipse.e4.ui.services.ECommandService;
+import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.*;
+import org.eclipse.e4.workbench.ui.IExceptionHandler;
+import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -99,7 +122,7 @@ public class Workbench implements IWorkbench {
 				WorkbenchPackage.eINSTANCE);
 
 		globalContext = createContext(applicationContext, registry,
-				exceptionHandler);
+				exceptionHandler, contributionFactory);
 		globalContext.set(IWorkbench.class.getName(), this);
 
 		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
@@ -112,12 +135,23 @@ public class Workbench implements IWorkbench {
 
 	public static IEclipseContext createContext(
 			final IEclipseContext applicationContext,
-			IExtensionRegistry registry, IExceptionHandler exceptionHandler) {
+			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
+			IContributionFactory contributionFactory) {
 		final IEclipseContext mainContext = EclipseContextFactory.create(
 				applicationContext, UISchedulerStrategy.getInstance());
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), mainContext));
 		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
+
+		// setup for commands and handlers
+		if (contributionFactory != null) {
+			mainContext.set(IContributionFactory.class.getName(),
+					contributionFactory);
+		}
+		mainContext.set(CommandManager.class.getName(), new CommandManager());
+		mainContext.set(ECommandService.class.getName(),
+				new ContextCommandService(mainContext));
+		// EHandlerService comes from a ContextFunction
 
 		IConfigurationElement[] contributions = registry
 				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$
@@ -135,6 +169,7 @@ public class Workbench implements IWorkbench {
 				e.printStackTrace();
 			}
 		}
+
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
 		mainContext.set(IServiceConstants.SELECTION,
@@ -282,8 +317,19 @@ public class Workbench implements IWorkbench {
 		// Capture the MApplication into the context
 		globalContext.set(MApplication.class.getName(), workbench);
 
-		// Initialize the workbench for legacy support if required
-		// globalContext.get(ILegacyHook.class.getName());
+		// fill in commands
+		System.err.println("workbench init commands"); //$NON-NLS-1$
+		ECommandService cs = (ECommandService) globalContext
+				.get(ECommandService.class.getName());
+		Category cat = cs.getCategory(MApplication.class.getName());
+		cat.define("Application Category", null); //$NON-NLS-1$
+		EList<MCommand> commands = workbench.getCommand();
+		for (MCommand cmd : commands) {
+			String id = cmd.getId();
+			String name = cmd.getName();
+			Command command = cs.getCommand(id);
+			command.define(name, null, cat);
+		}
 	}
 
 	public int run() {
@@ -302,6 +348,7 @@ public class Workbench implements IWorkbench {
 		windowHandler.layout(appWindow);
 
 		windowHandler.open(appWindow);
+		initializeHandlers();
 
 		windowHandler.runEvenLoop(appWindow);
 
@@ -322,6 +369,34 @@ public class Workbench implements IWorkbench {
 		}
 
 		return rv;
+	}
+
+	private void initializeHandlers() {
+		EList<? extends MWindow> windows = workbench.getWindows();
+		for (MWindow<MPart<?>> window : windows) {
+			processHandlers(window);
+		}
+	}
+
+	private void processHandlers(MPart<MPart<?>> part) {
+		IEclipseContext context = part.getContext();
+		if (context != null) {
+			EHandlerService hs = (EHandlerService) context
+					.get(EHandlerService.class.getName());
+			EList<MHandler> handlers = part.getHandlers();
+			for (MHandler handler : handlers) {
+				String commandId = handler.getCommand().getId();
+				if (handler.getObject() == null) {
+					handler.setObject(contributionFactory.create(handler
+							.getURI(), context));
+				}
+				hs.activateHandler(commandId, handler.getObject());
+			}
+		}
+		EList<MPart<?>> children = part.getChildren();
+		for (MPart<?> child : children) {
+			processHandlers((MPart<MPart<?>>) child);
+		}
 	}
 
 	/**
