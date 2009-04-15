@@ -18,6 +18,7 @@ import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
+import org.eclipse.text.edits.RangeMarker;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
@@ -89,8 +90,11 @@ public final class SelectionProcessor {
 		 * @param selection the selection
 		 * @return <code>true</code> if <code>selection</code> covers text on two or more lines,
 		 *         <code>false</code> otherwise
+		 * @throws BadLocationException if selection is not a valid selection on the target document 
 		 */
-		boolean isMultiline(ISelection selection) {
+		boolean isMultiline(ISelection selection) throws BadLocationException {
+			if (selection == null)
+				throw new NullPointerException();
 			return false;
 		}
 
@@ -107,10 +111,13 @@ public final class SelectionProcessor {
 		 * empty}. Typically, the selection is reduced to its left-most offset.
 		 * 
 		 * @param selection the selection
+		 * @param beginning <code>true</code> to collapse the selection to its smallest position
+		 *            (i.e. its left-most offset), <code>false</code> to collapse it to its greatest
+		 *            position (e.g its right-most offset)
 		 * @return an empty variant of <code>selection</code>
 		 * @throws BadLocationException if accessing the document failed
 		 */
-		ISelection makeEmpty(ISelection selection) throws BadLocationException {
+		ISelection makeEmpty(ISelection selection, boolean beginning) throws BadLocationException {
 			return selection;
 		}
 
@@ -135,6 +142,18 @@ public final class SelectionProcessor {
 		int getCoveredLines(ISelection selection) throws BadLocationException {
 			return 0;
 		}
+
+		/**
+		 * Returns the selection after replacing <code>selection</code> by <code>replacement</code>.
+		 * 
+		 * @param selection the selection to be replaced
+		 * @param replacement the replacement text
+		 * @return the selection that the user expects after the specified replacement operation
+		 * @throws BadLocationException if accessing the document failed
+		 */
+		ISelection makeReplaceSelection(ISelection selection, String replacement) throws BadLocationException {
+			return makeEmpty(selection, false);
+		}
 	}
 
 	private final Implementation NULL_IMPLEMENTATION= new Implementation();
@@ -152,12 +171,12 @@ public final class SelectionProcessor {
 
 		boolean isEmpty(ISelection selection) {
 			ITextSelection ts= (ITextSelection)selection;
-			return ts.getLength() == 0;
+			return ts.getLength() <= 0;
 		}
 
-		boolean isMultiline(ISelection selection) {
+		boolean isMultiline(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
-			return ts.getEndLine() > ts.getStartLine();
+			return fDocument.getLineOfOffset(ts.getOffset()) < fDocument.getLineOfOffset(ts.getOffset() + ts.getLength());
 		}
 
 		TextEdit delete(ISelection selection) {
@@ -174,9 +193,11 @@ public final class SelectionProcessor {
 			return new DeleteEdit(ts.getOffset(), ts.getLength());
 		}
 
-		ISelection makeEmpty(ISelection selection) {
+		ISelection makeEmpty(ISelection selection, boolean beginning) {
 			ITextSelection ts= (ITextSelection)selection;
-			return new TextSelection(fDocument, ts.getOffset(), 0);
+			return beginning ? 
+					  new TextSelection(fDocument, ts.getOffset(), 0)
+					: new TextSelection(fDocument, ts.getOffset() + ts.getLength(), 0);
 		}
 
 		IRegion[] getRanges(ISelection selection) {
@@ -187,6 +208,11 @@ public final class SelectionProcessor {
 		int getCoveredLines(ISelection selection) throws BadLocationException {
 			ITextSelection ts= (ITextSelection)selection;
 			return ts.getEndLine() - ts.getStartLine() + 1;
+		}
+		
+		ISelection makeReplaceSelection(ISelection selection, String replacement) {
+			ITextSelection ts= (ITextSelection)selection;
+			return new TextSelection(fDocument, ts.getOffset() + replacement.length(), 0);
 		}
 	};
 
@@ -222,6 +248,8 @@ public final class SelectionProcessor {
 					}
 					TextEdit replace= createReplaceEdit(line, visualStartColumn, visualEndColumn, string);
 					root.addChild(replace);
+					if (line == startLine)
+						root.addChild(new RangeMarker(replace.getOffset() + replace.getLength(), 0));
 				}
 				while (lastDelim != -1) {
 					// more stuff to insert
@@ -308,13 +336,38 @@ public final class SelectionProcessor {
 			return replace(selection, ""); //$NON-NLS-1$
 		}
 
-		ISelection makeEmpty(ISelection selection) throws BadLocationException {
+		ISelection makeEmpty(ISelection selection, boolean beginning) throws BadLocationException {
 			IBlockTextSelection cts= (IBlockTextSelection)selection;
-			int startLine= cts.getStartLine();
-			int startColumn= cts.getStartColumn();
-			int endLine= cts.getEndLine();
-			int endColumn= computeCharacterColumn(cts.getEndLine(), computeVisualColumn(startLine, startColumn));
+			int startLine, startColumn, endLine, endColumn;
+			if (beginning) {
+				startLine= cts.getStartLine();
+				startColumn= cts.getStartColumn();
+				endLine= cts.getEndLine();
+				endColumn= computeCharacterColumn(endLine, computeVisualColumn(startLine, startColumn));
+			} else {
+				endLine= cts.getEndLine();
+				endColumn= cts.getEndColumn();
+				startLine= cts.getStartLine();
+				startColumn= computeCharacterColumn(startLine, computeVisualColumn(endLine, endColumn));
+			}
 			return new BlockTextSelection(fDocument, startLine, startColumn, endLine, endColumn, fTabWidth);
+		}
+		
+		ISelection makeReplaceSelection(ISelection selection, String replacement) throws BadLocationException {
+			IBlockTextSelection bts= (IBlockTextSelection)selection;
+			String[] delimiters= fDocument.getLegalLineDelimiters();
+			int[] index= TextUtilities.indexOf(delimiters, replacement, 0);
+			int length;
+			if (index[0] == -1)
+				length= replacement.length();
+			else
+				length= index[0];
+
+			int startLine= bts.getStartLine();
+			int column= bts.getStartColumn() + length;
+			int endLine= bts.getEndLine();
+			int endColumn= computeCharacterColumn(endLine, computeVisualColumn(startLine, column));
+			return new BlockTextSelection(fDocument, startLine, column, endLine, endColumn, fTabWidth);
 		}
 
 		IRegion[] getRanges(ISelection selection) throws BadLocationException {
@@ -539,27 +592,36 @@ public final class SelectionProcessor {
 	}
 
 	/**
-	 * Returns <code>true</code> if <code>selection</code> covers text on two or more lines,
+	 * Returns <code>true</code> if <code>selection</code> extends to two or more lines,
 	 * <code>false</code> otherwise.
 	 * 
 	 * @param selection the selection
-	 * @return <code>true</code> if <code>selection</code> covers text on two or more lines,
+	 * @return <code>true</code> if <code>selection</code> extends to two or more lines,
 	 *         <code>false</code> otherwise
+	 * @throws BadLocationException if <code>selection</code> is not valid regarding the target
+	 *             document
 	 */
-	public boolean isMultiline(ISelection selection) {
+	public boolean isMultiline(ISelection selection) throws BadLocationException {
 		return getImplementation(selection).isMultiline(selection);
 	}
 
 	/**
 	 * Returns a selection similar to <code>selection</code> but {@linkplain #isEmpty(ISelection)
-	 * empty}. Typically, the selection is reduced to its left-most offset.
+	 * empty}. Typically, the selection is reduced to its extreme offsets.
 	 * 
 	 * @param selection the selection
+	 * @param beginning <code>true</code> to collapse the selection to its smallest position (i.e.
+	 *            its left-most offset), <code>false</code> to collapse it to its greatest position
+	 *            (e.g its right-most offset)
 	 * @return an empty variant of <code>selection</code>
 	 * @throws BadLocationException if accessing the document failed
 	 */
-	public ISelection makeEmpty(ISelection selection) throws BadLocationException {
-		return getImplementation(selection).makeEmpty(selection);
+	public ISelection makeEmpty(ISelection selection, boolean beginning) throws BadLocationException {
+		return getImplementation(selection).makeEmpty(selection, beginning);
+	}
+	
+	private ISelection makeReplaceSelection(ISelection selection, String replacement) throws BadLocationException {
+		return getImplementation(selection).makeReplaceSelection(selection, replacement);
 	}
 
 	/**
@@ -574,13 +636,42 @@ public final class SelectionProcessor {
 		boolean complex= edit.hasChildren();
 		if (complex && fRewriteTarget != null)
 			fRewriteTarget.beginCompoundChange();
-		edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
-		ISelection empty= makeEmpty(selection);
-		if (fSelectionProvider != null)
-			fSelectionProvider.setSelection(empty);
+		try {
+			edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
+			if (fSelectionProvider != null) {
+				ISelection empty= makeEmpty(selection, true);
+				fSelectionProvider.setSelection(empty);
+			}
+		} finally {
 		if (complex && fRewriteTarget != null)
 			fRewriteTarget.endCompoundChange();
+		}
+	}
+	
+	/**
+	 * Convenience method that applies the edit returned from {@link #replace(ISelection, String)}
+	 * to the underlying document and adapts the selection accordingly.
+	 * 
+	 * @param selection the selection to replace
+	 * @param replacement the replacement text
+	 * @throws BadLocationException if accessing the document failed
+	 */
+	public void doReplace(ISelection selection, String replacement) throws BadLocationException {
+		TextEdit edit= replace(selection, replacement);
+		boolean complex= edit.hasChildren();
+		if (complex && fRewriteTarget != null)
+			fRewriteTarget.beginCompoundChange();
+		try {
+			edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
 
+			if (fSelectionProvider != null) {
+				ISelection empty= makeReplaceSelection(selection, replacement);
+				fSelectionProvider.setSelection(empty);
+			}
+		} finally {
+			if (complex && fRewriteTarget != null)
+				fRewriteTarget.endCompoundChange();
+		}
 	}
 	
 	/**

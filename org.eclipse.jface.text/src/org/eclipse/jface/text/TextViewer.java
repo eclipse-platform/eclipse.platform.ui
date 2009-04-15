@@ -31,6 +31,9 @@ import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.custom.VerifyKeyListener;
+import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
@@ -3648,7 +3651,7 @@ public class TextViewer extends Viewer implements
 				return;
 		}
 		
-		if (fTextWidget.getBlockSelection() && fTextWidget.getSelectionRanges().length > 2) {
+		if (fTextWidget.getBlockSelection() && fTextWidget.getSelectionRanges().length > 2 && (e.text == null || e.text.length() < 2)) {
 			verifyEventInBlockSelection(e);
 			return;
 		}
@@ -3723,6 +3726,8 @@ public class TextViewer extends Viewer implements
 		 the events share no manifest attribute to group them together or to detect the last event
 		 of a sequence, we simulate the modification at the first event and veto any following
 		 events with an equal event time.
+		 
+		 See also bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=268044
 		 */
 		e.doit= false;
 		boolean isFirst= e.time != fLastEventTime;
@@ -3732,22 +3737,26 @@ public class TextViewer extends Viewer implements
 				public void run() {
 					SelectionProcessor processor= new SelectionProcessor(TextViewer.this);
 					try {
-						TextEdit edit;
 						/* Use the selection instead of the event's coordinates. Is this dangerous? */
 						ISelection selection= getSelection();
-						if (e.text.length() == 0 && e.character == '\0') {
+						int length= e.text.length();
+						if (length == 0 && e.character == '\0') {
 							// backspace in StyledText block selection mode...
-							edit= processor.backspace(selection);
+							TextEdit edit= processor.backspace(selection);
+							edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
+							ISelection empty= processor.makeEmpty(selection, true);
+							setSelection(empty);
 						} else {
 							int lines= processor.getCoveredLines(selection);
-							String text= e.text;
-							for (int i= 0; i < lines - 1; i++)
-								text += fDocument.getLegalLineDelimiters()[0] + e.text;
-							edit= processor.replace(selection, text);
+							String delim= fDocument.getLegalLineDelimiters()[0];
+							StringBuffer text= new StringBuffer(lines * length + (lines - 1) * delim.length());
+							text.append(e.text);
+							for (int i= 0; i < lines - 1; i++) {
+								text.append(delim);
+								text.append(e.text);
+							}
+							processor.doReplace(selection, text.toString());
 						}
-						edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
-						ISelection empty= processor.makeEmpty(selection);
-						setSelection(empty);
 					} catch (BadLocationException x) {
 						if (TRACE_ERRORS)
 							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.verifyText")); //$NON-NLS-1$
@@ -3855,24 +3864,10 @@ public class TextViewer extends Viewer implements
 					fTextWidget.copy();
 				break;
 			case PASTE:
-//				ignoreAutoEditStrategies(true);
-				wrapCompoundChange(new Runnable(){
-					public void run() {
-						fTextWidget.paste();
-					}
-				});
-				selection= fTextWidget.getSelectionRange();
-				fireSelectionChanged(selection.x, selection.y);
-//				ignoreAutoEditStrategies(false);
+				paste();
 				break;
 			case DELETE:
-				wrapCompoundChange(new Runnable(){
-					public void run() {
-						fTextWidget.invokeAction(ST.DELETE_NEXT);
-					}
-				});
-				selection= fTextWidget.getSelectionRange();
-				fireSelectionChanged(selection.x, selection.y);
+				delete();
 				break;
 			case SELECT_ALL: {
 				if (getDocument() != null)
@@ -3895,6 +3890,82 @@ public class TextViewer extends Viewer implements
 				print();
 				break;
 		}
+	}
+
+	private void delete() {
+		if (!fTextWidget.getBlockSelection()) {
+			fTextWidget.invokeAction(ST.DELETE_NEXT);
+		} else {
+			wrapCompoundChange(new Runnable(){
+				public void run() {
+					try {
+						new SelectionProcessor(TextViewer.this).doDelete(getSelection());
+					} catch (BadLocationException e) {
+						if (TRACE_ERRORS)
+							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.delete")); //$NON-NLS-1$
+					}
+				}
+			});
+		}
+		Point selection= fTextWidget.getSelectionRange();
+		fireSelectionChanged(selection.x, selection.y);
+	}
+
+	private void paste() {
+//		ignoreAutoEditStrategies(true);
+		if (!fTextWidget.getBlockSelection()) {
+			fTextWidget.paste();
+		} else {
+			wrapCompoundChange(new Runnable(){
+				public void run() {
+					SelectionProcessor processor= new SelectionProcessor(TextViewer.this);
+					Clipboard clipboard= new Clipboard(getDisplay());
+					try {
+						/*
+						 * Paste in block selection mode. If the pasted text is not a multi-line
+						 * text, pasting behaves like typing, i.e. the pasted text replaces
+						 * the selection on each line. If the pasted text is multi-line (e.g. from
+						 * copying a column selection), the selection is replaced, line-by-line, by
+						 * the corresponding contents of the pasted text. If the selection touches
+						 * more lines than the pasted text, the selection on the remaining lines
+						 * is deleted (assuming an empty text being pasted). If the pasted
+						 * text contains more lines than the selection, the selection is extended
+						 * to the succeeding lines, or more lines are added to accommodate the
+						 * paste operation.
+						 */
+						ISelection selection= getSelection();
+						TextTransfer plainTextTransfer = TextTransfer.getInstance();
+						String contents= (String)clipboard.getContents(plainTextTransfer, DND.CLIPBOARD);
+						String toInsert;
+						if (TextUtilities.indexOf(fDocument.getLegalLineDelimiters(), contents, 0)[0] != -1) {
+							// multi-line insertion
+							toInsert= contents;
+						} else {
+							// single-line insertion
+							int length= contents.length();
+							int lines= processor.getCoveredLines(selection);
+							String delim= fDocument.getLegalLineDelimiters()[0];
+							StringBuffer text= new StringBuffer(lines * length + (lines - 1) * delim.length());
+							text.append(contents);
+							for (int i= 0; i < lines - 1; i++) {
+								text.append(delim);
+								text.append(contents);
+							}
+							toInsert= text.toString();
+						}
+						processor.doReplace(selection, toInsert);
+					} catch (BadLocationException x) {
+						if (TRACE_ERRORS)
+							System.out.println(JFaceTextMessages.getString("TextViewer.error.bad_location.paste")); //$NON-NLS-1$
+					} finally {
+						clipboard.dispose();
+					}
+				}
+			});
+		}
+		Point selection= fTextWidget.getSelectionRange();
+		fireSelectionChanged(selection.x, selection.y);
+//		ignoreAutoEditStrategies(false);
 	}
 
 	/**
