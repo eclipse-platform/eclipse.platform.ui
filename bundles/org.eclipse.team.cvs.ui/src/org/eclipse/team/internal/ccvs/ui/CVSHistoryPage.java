@@ -154,7 +154,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	public final static int REMOTE_MODE = 1;
 	public final static int LOCAL_MODE = 2;
 
-	// page settings keys 
+	// page settings keys
 	private final static String SASH_WEIGHTS = "SASH_WEIGHTS"; //$NON-NLS-1$
 	private final static String INNER_SASH_WEIGHTS = "INNER_SASH_WEIGHTS"; //$NON-NLS-1$
 	private final static String SASH_WEIGHTS_SEPARATOR = ";"; //$NON-NLS-1$
@@ -1315,7 +1315,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		
 		
 		if (!sashForm.isDisposed() && !innerSashForm.isDisposed()) {
-			saveState(); // called when switching pages 
+			saveState(); // called when switching pages
 			if (disposeListener != null){
 				sashForm.getParent().removeDisposeListener(disposeListener);
 				disposeListener = null;
@@ -1485,7 +1485,8 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 		}
 		
 		public IStatus run(IProgressMonitor monitor)  {
-		
+			final int cachedRefreshFlags = refreshFlags;
+
 			IStatus status = Status.OK_STATUS;
 			
 			if (fileHistory != null && !shutdown) {
@@ -1493,7 +1494,9 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 				//revisions only
 				boolean localFetched = false;
 				boolean needsUpdate = true;
-				if (!fileHistory.isInitialized() && fileHistory.isIncludeLocal() && (refreshFlags & CVSFileHistory.REFRESH_REMOTE) > 0) {
+				if (!fileHistory.isInitialized()
+						&& fileHistory.isIncludeLocal()
+						&& (cachedRefreshFlags & CVSFileHistory.REFRESH_REMOTE) > 0) {
 					// If this is the first refresh, show the local history before hitting the server
 					try {
 						fileHistory.refresh(CVSFileHistory.REFRESH_LOCAL, monitor);
@@ -1510,7 +1513,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 					}
 				}
 				try {
-					fileHistory.refresh(refreshFlags , monitor);
+					fileHistory.refresh(cachedRefreshFlags, monitor);
 					needsUpdate = true;
 				} catch (TeamException ex) {
 					if (Policy.DEBUG_HISTORY) {
