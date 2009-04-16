@@ -67,7 +67,7 @@ public class DecoratedField {
 	/**
 	 * Cached platform flags for dealing with platform-specific issues.
 	 */
-	private static boolean CARBON = Util.isCarbon();
+	private static boolean MAC = Util.isMac();
 
 	/**
 	 * Constants describing the array indices used to hold the decorations in
@@ -212,7 +212,7 @@ public class DecoratedField {
 			hoverShell.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent pe) {
 					pe.gc.drawString(text, hm, hm);
-					if (!CARBON) {
+					if (!MAC) {
 						pe.gc.drawPolygon(getPolygon(true));
 					}
 				}

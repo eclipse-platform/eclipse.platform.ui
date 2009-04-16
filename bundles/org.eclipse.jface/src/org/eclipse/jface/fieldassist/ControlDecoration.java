@@ -79,9 +79,10 @@ public class ControlDecoration {
 	private static boolean DEBUG = false;
 
 	/**
-	 * Cached platform flags for dealing with platform-specific issues.
+	 * Cached platform flag for dealing with platform-specific issue:
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=219326 : Shell with custom region and SWT.NO_TRIM still has border
 	 */
-	private static boolean CARBON = Util.isCarbon();
+	private static boolean MAC = Util.isMac();
 
 	/**
 	 * The associated control
@@ -270,7 +271,7 @@ public class ControlDecoration {
 			hoverShell.addPaintListener(new PaintListener() {
 				public void paintControl(PaintEvent pe) {
 					pe.gc.drawText(text, hm, hm);
-					if (!CARBON) {
+					if (!MAC) {
 						pe.gc.drawPolygon(getPolygon(true));
 					}
 				}
