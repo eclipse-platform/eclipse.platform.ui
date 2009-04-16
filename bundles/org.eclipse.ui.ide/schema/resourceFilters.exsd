@@ -9,14 +9,14 @@
          This extension point is used to add predefined filters to views which show resources, such as the Navigator view.
 These filters can be selected to hide resources whose names match the filter&apos;s pattern.
 &lt;p&gt;
-This extension point is deprecated in release 3.5 and replaced by the Common Navigator Framework.
+This extension point is deprecated in release 3.5 and replaced by the Common Navigator Framework.  Note that it is intentionally not actually marked deprecated in order to prevent warnings in other Eclipse plugins that must support this.
       </documentation>
    </annotation>
 
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element deprecated="true" />
+            <meta.element />
          </appInfo>
       </annotation>
       <complexType>
@@ -51,11 +51,6 @@ This extension point is deprecated in release 3.5 and replaced by the Common Nav
    </element>
 
    <element name="filter">
-      <annotation>
-         <appInfo>
-            <meta.element deprecated="true"/>
-         </appInfo>
-      </annotation>
       <complexType>
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
@@ -80,7 +75,7 @@ This extension point is deprecated in release 3.5 and replaced by the Common Nav
    <element name="description" type="string">
       <annotation>
          <appInfo>
-            <meta.element translatable="true" deprecated="true"/>
+            <meta.element translatable="true"/>
          </appInfo>
          <documentation>
             the description of the purpose of this filter.
