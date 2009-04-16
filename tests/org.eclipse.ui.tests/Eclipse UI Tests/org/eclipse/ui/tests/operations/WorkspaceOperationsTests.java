@@ -2155,4 +2155,23 @@ public class WorkspaceOperationsTests extends UITestCase {
 		// Now that project exists again, the undo should fail.
 		undoExpectFail(op);
 	}
+	
+	public void test250125() throws ExecutionException {
+		IFolder folder = getWorkspaceRoot().getFolder(
+				testProject.getFullPath().append(TEST_NEWFOLDER_NAME));
+		CreateFolderOperation op = new CreateFolderOperation(folder, null,
+				"testFolderCreateLeaf");
+		assertFalse("Folder should not exist before test is run", folder
+				.exists());
+		IFile file = getWorkspaceRoot().getFile(folder.getFullPath().append(TEST_NEWFILE_NAME));
+		CreateFileOperation fileOp = new CreateFileOperation(file, null, null, "file operation");
+		assertFalse("File should not exist yet", file.exists());
+		assertTrue("op state is valid", op.computeExecutionStatus(getMonitor()).isOK());
+		assertTrue("op state is valid", fileOp.computeExecutionStatus(getMonitor()).isOK());
+		execute(op);
+		assertTrue("Folder should exist", folder.exists());
+		// Now that the folder is created, the file op which also was to create the container
+		// should be invalid
+		assertFalse("op state should be invalid", fileOp.computeExecutionStatus(getMonitor()).isOK());
+	}
 }

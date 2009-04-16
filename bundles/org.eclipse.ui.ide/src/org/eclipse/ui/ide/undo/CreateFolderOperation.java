@@ -22,7 +22,11 @@ import org.eclipse.ui.internal.ide.undo.ContainerDescription;
  * considered to be linked to the specified location. If a link location is not
  * specified, the folder will be created in the location specified by the
  * handle, and the entire containment path of the folder will be created if it
- * does not exist. Clients may call the public API from a background thread.
+ * does not exist.  The folder should not already exist, and the existence 
+ * of the containment path should not be changed between the time this operation
+ * is created and the time it is executed.
+ * 
+ * Clients may call the public API from a background thread.
  * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.

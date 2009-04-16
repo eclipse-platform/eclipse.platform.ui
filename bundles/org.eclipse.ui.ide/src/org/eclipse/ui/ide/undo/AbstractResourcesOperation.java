@@ -30,8 +30,15 @@ import org.eclipse.ui.internal.ide.undo.UndoMessages;
  * An AbstractResourcesOperation represents an undoable operation that
  * manipulates resources. It provides implementations for resource rename,
  * delete, creation, and modification. It also assigns the workspace undo
- * context as the undo context for operations of this type. Clients may call the
- * public API from a background thread.
+ * context as the undo context for operations of this type. 
+ * 
+ * Resource operations record a snapshot of the workspace state when they
+ * are created.  It is expected that an operation will be created and
+ * executed without there being any intermediate changes to the resources
+ * described in the operation between construction of the operation and
+ * execution of the operation.
+ * 
+ * Clients may call the public API from a background thread.
  * 
  * This class is not intended to be subclassed by clients.
  * 

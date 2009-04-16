@@ -17,17 +17,23 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 import org.eclipse.ui.internal.ide.undo.FileDescription;
 import org.eclipse.ui.internal.ide.undo.IFileContentDescription;
 
 /**
  * A CreateFileOperation represents an undoable operation for creating a file in
- * the workspace. If a link location is specified, the folder is considered to
+ * the workspace. If a link location is specified, the file is considered to
  * be linked to the file at the specified location. If a link location is not
  * specified, the file will be created in the location specified by the handle,
  * and the entire containment path of the file will be created if it does not
- * exist. Clients may call the public API from a background thread.
+ * exist.  The file should not already exist, and the existence of the 
+ * containment path should not be changed between the time this operation 
+ * is created and the time it is executed.
+ * 
+ * Clients may call the public API from a background thread.
  * 
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
@@ -115,5 +121,18 @@ public class CreateFileOperation extends AbstractCreateResourcesOperation {
 				return true;
 			}
 		};
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ide.undo.AbstractCreateResourcesOperation#computeExecutionStatus(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public IStatus computeExecutionStatus(IProgressMonitor monitor) {
+		IStatus status = super.computeExecutionStatus(monitor);
+		if (status.isOK()) {
+		    // Overwrite is not allowed when we are creating a new file
+			status = computeCreateStatus(false);
+		}
+		return status;
 	}
 }
