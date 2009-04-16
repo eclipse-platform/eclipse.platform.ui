@@ -247,7 +247,10 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * The property sheet may show properties for any view other than this view.
      */
     protected boolean isImportant(IWorkbenchPart part) {
-    	 return !isPinned() && part != this;
+		// See Bug 252887...explicitly exclude the Help view as a
+		// participant
+		boolean isHelpView = "org.eclipse.help.ui.HelpView".equals(part.getSite().getId()); //$NON-NLS-1$
+		return !isPinned() && part != this && !isHelpView;
     }
 
     /* (non-Javadoc)
