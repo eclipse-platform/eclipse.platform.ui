@@ -65,8 +65,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.forms.events.ExpansionAdapter;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
+import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormToolkit;
-import org.eclipse.ui.forms.widgets.ScrolledForm;
 
 
 public class PreviewPatchPage2 extends WizardPage {
@@ -95,7 +95,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	private IDialogSettings settings;
 	private ExpandableComposite patchOptions;
 	private Button generateRejects;
-	private FormToolkit toolkit;
+	private FormToolkit fToolkit;
 		
 	public PreviewPatchPage2(WorkspacePatcher patcher, CompareConfiguration configuration) {
 		super(PREVIEWPATCHPAGE_NAME, PatchMessages.PreviewPatchPage_title, null);
@@ -114,10 +114,10 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 
 	public void createControl(Composite parent) {
-		toolkit = new FormToolkit(parent.getDisplay());
-		toolkit.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		fToolkit = new FormToolkit(parent.getDisplay());
+		fToolkit.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 		
-		final ScrolledForm form = toolkit.createScrolledForm(parent);
+		final Form form = fToolkit.createForm(parent);
 		Composite composite = form.getBody();
 		composite.setLayout(new GridLayout());
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -134,7 +134,7 @@ public class PreviewPatchPage2 extends WizardPage {
 			}
 		};
 		
-		buildPatchOptionsGroup(toolkit, form);
+		buildPatchOptionsGroup(form);
 		
 		// Initialize the input
 		try {
@@ -418,16 +418,16 @@ public class PreviewPatchPage2 extends WizardPage {
 	/*
 	 *	Create the group for setting various patch options
 	 */
-	private void buildPatchOptionsGroup(FormToolkit toolkit, final ScrolledForm form) {
+	private void buildPatchOptionsGroup(final Form form) {
 		Composite parent = form.getBody();
 			
-		patchOptions = toolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
+		patchOptions = fToolkit.createExpandableComposite(parent, ExpandableComposite.TWISTIE | ExpandableComposite.CLIENT_INDENT);
 		patchOptions.setText(PatchMessages.PreviewPatchPage_PatchOptions_title);
 		patchOptions.setFont(JFaceResources.getFontRegistry().getBold(JFaceResources.DIALOG_FONT));
 		patchOptions.setLayoutData(new GridData(GridData.FILL, GridData.FILL, true, false, 3, 1));
 		patchOptions.addExpansionListener(new ExpansionAdapter() {
 			public void expansionStateChanged(ExpansionEvent e) {
-				form.reflow(true);
+				form.layout();
 			}
 		});
 
@@ -739,7 +739,7 @@ public class PreviewPatchPage2 extends WizardPage {
 	}
 
 	public void dispose() {
-		toolkit.dispose();
+		fToolkit.dispose();
 		super.dispose();
 	}
 }
