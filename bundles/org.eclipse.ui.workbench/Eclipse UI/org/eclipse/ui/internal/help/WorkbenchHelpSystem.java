@@ -463,7 +463,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 				for (int i = 0; i < extensions.length; i++) {
 					IExtension extension = extensions[i];
 					if (desiredHelpSystemId.equals(extension.getUniqueIdentifier())) {
-						IConfigurationElement[] elements = extensions[0]
+						IConfigurationElement[] elements = extension
 								.getConfigurationElements();
 						if (elements.length == 0) {
 							// help UI present but mangled - act like there was
