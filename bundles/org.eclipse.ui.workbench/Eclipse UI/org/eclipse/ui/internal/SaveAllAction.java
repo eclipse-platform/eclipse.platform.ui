@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesLifecycleListener;
@@ -190,4 +191,15 @@ public class SaveAllAction extends PageEventAction implements IPropertyListener 
         }
         partsWithListeners.clear();
     }
+
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		IWorkbenchWindow window = getWorkbenchWindow();
+		if (window != null) {
+			Shell shell = window.getShell();
+			if (shell != null && !shell.isDisposed()) {
+				shell.setModified(enabled);
+			}
+		}
+	}
 }
