@@ -654,7 +654,10 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 		}
 
 		// Step 3. Use application-specific default
-		defaultPerspID = Workbench.getInstance().getDefaultPerspectiveId();
+		Workbench instance = Workbench.getInstance();
+		if (instance != null) {
+			defaultPerspID = instance.getDefaultPerspectiveId();
+		}
 	}
 
 	/*

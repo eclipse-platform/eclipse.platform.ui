@@ -21,6 +21,7 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -46,10 +47,10 @@ public class ActionProvider extends QuickAccessProvider {
 	public QuickAccessElement[] getElements() {
 		if (idToElement == null) {
 			idToElement = new HashMap();
-			WorkbenchWindow window = (WorkbenchWindow) PlatformUI
+			IWorkbenchWindow window = PlatformUI
 					.getWorkbench().getActiveWorkbenchWindow();
-			if (window != null) {
-				MenuManager menu = window.getMenuManager();
+			if (window instanceof WorkbenchWindow) {
+				MenuManager menu = ((WorkbenchWindow) window).getMenuManager();
 				Set result = new HashSet();
 				collectContributions(menu, result);
 				ActionContributionItem[] actions = (ActionContributionItem[]) result

@@ -16,7 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.commands.IParameterValues;
 import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Provides the parameter values for the show perspective command.
@@ -28,8 +28,8 @@ public final class PerspectiveParameterValues implements IParameterValues {
 	public final Map getParameterValues() {
 		final Map values = new HashMap();
 
-		final IPerspectiveDescriptor[] perspectives = WorkbenchPlugin
-				.getDefault().getPerspectiveRegistry().getPerspectives();
+		final IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench()
+				.getPerspectiveRegistry().getPerspectives();
 		for (int i = 0; i < perspectives.length; i++) {
 			final IPerspectiveDescriptor perspective = perspectives[i];
 			values.put(perspective.getLabel(), perspective.getId());
