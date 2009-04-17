@@ -212,7 +212,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		if (compareInput != null)
 			compareInput.removeCompareInputChangeListener(compareInputChangeListener);
 		compareInputChangeListener = null;
-		if (saveable instanceof SaveableComparison) {
+		if (saveable instanceof SaveableComparison && propertyListener != null) {
 			SaveableComparison scm = (SaveableComparison) saveable;
 			scm.removePropertyListener(propertyListener);
 			propertyListener = null;
