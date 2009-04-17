@@ -35,6 +35,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.services.ContextCommandService;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -153,7 +154,10 @@ public class Workbench implements IWorkbench {
 		mainContext.set(ContextManager.class.getName(), new ContextManager());
 		mainContext.set(ECommandService.class.getName(),
 				new ContextCommandService(mainContext));
+		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS,
+				new ActiveContextsFunction());
 		// EHandlerService comes from a ContextFunction
+		// EContextService comes from a ContextFunction
 
 		IConfigurationElement[] contributions = registry
 				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$

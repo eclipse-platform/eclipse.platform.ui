@@ -75,7 +75,9 @@ public class ContextContextService implements EContextService {
 	public Collection<String> getActiveContextIds() {
 		Set<String> set = (Set<String>) eclipseContext
 				.get(IServiceConstants.ACTIVE_CONTEXTS);
-		contextManager.setActiveContextIds(set);
+		if (set != null) {
+			contextManager.setActiveContextIds(set);
+		}
 		return set;
 	}
 
