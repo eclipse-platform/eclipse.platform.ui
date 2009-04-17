@@ -15,12 +15,17 @@ public interface IServiceConstants {
 	/**
 	 * 
 	 */
-	public final static String SELECTION = "selection";
+	public final static String SELECTION = "selection"; //$NON-NLS-1$
 
 	/**
 	 * 
 	 */
 	public static final String ACTIVE_CHILD = "activeChild"; //$NON-NLS-1$
+	
+	/**
+	 * 
+	 */
+	public static final String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
 
 	/**
 	 * 

@@ -21,6 +21,7 @@ import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -149,6 +150,7 @@ public class Workbench implements IWorkbench {
 					contributionFactory);
 		}
 		mainContext.set(CommandManager.class.getName(), new CommandManager());
+		mainContext.set(ContextManager.class.getName(), new ContextManager());
 		mainContext.set(ECommandService.class.getName(),
 				new ContextCommandService(mainContext));
 		// EHandlerService comes from a ContextFunction

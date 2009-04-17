@@ -9,6 +9,12 @@
                api="org.eclipse.e4.ui.services.EHandlerService">
          </service>
       </servicefactory>
+      <servicefactory
+            class="org.eclipse.e4.ui.internal.services.ContextContextFunction">
+         <service
+               api="org.eclipse.e4.ui.services.EContextService">
+         </service>
+      </servicefactory>
    </extension>
 
 </plugin>
