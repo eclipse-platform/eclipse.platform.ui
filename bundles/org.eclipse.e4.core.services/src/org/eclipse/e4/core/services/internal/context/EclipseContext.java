@@ -11,13 +11,27 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.*;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
+import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
+import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
+import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 
 public class EclipseContext implements IEclipseContext, IDisposable {
+	/**
+	 * A context key identifying the parent context, which can be retrieved with
+	 * {@link IEclipseContext#get(String)}.
+	 */
+	public static final String PARENT = "PARENT_CONTEXT"; //$NON-NLS-1$
 
 	static class LookupKey {
 		Object[] arguments;
@@ -53,7 +67,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			if (arguments != null) {
 				for (int i = 0; i < arguments.length; i++) {
 					Object arg = arguments[i];
-					result = prime * result + (arg == null ? 0 : arg.hashCode());
+					result = prime * result
+							+ (arg == null ? 0 : arg.hashCode());
 				}
 			}
 			result = prime * result + ((name == null) ? 0 : name.hashCode());
@@ -70,7 +85,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			this.name = name;
 		}
 
-		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
+		final protected void doHandleInvalid(IEclipseContext context,
+				String name, int eventType) {
 			if (eventType == IRunAndTrack.DISPOSE) {
 				return;
 			}
@@ -96,7 +112,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
-	static class TrackableComputationExt extends Computation implements IRunAndTrack {
+	static class TrackableComputationExt extends Computation implements
+			IRunAndTrack {
 
 		private IRunAndTrack runnable;
 
@@ -104,12 +121,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			this.runnable = runnable;
 		}
 
-		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
+		final protected void doHandleInvalid(IEclipseContext context,
+				String name, int eventType) {
 			((EclipseContext) context).schedule(this, name, eventType, null); // XXX
 			// IEclipseContext
 		}
 
-		public boolean notify(IEclipseContext context, String name, int eventType, Object[] args) {
+		public boolean notify(IEclipseContext context, String name,
+				int eventType, Object[] args) {
 			Computation oldComputation = (Computation) currentComputation.get();
 			currentComputation.set(this);
 			boolean result = true;
@@ -144,10 +163,12 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private IEclipseContextStrategy strategy;
 
-	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
+	public EclipseContext(IEclipseContext parent,
+			IEclipseContextStrategy strategy) {
 		this.parent = parent;
 		this.strategy = strategy;
 		set(IContextConstants.DEBUG_STRING, "Anonymous Context"); //$NON-NLS-1$
+		set(PARENT, parent);
 	}
 
 	public boolean containsKey(String name) {
@@ -164,10 +185,12 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	/*
 	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.e4.core.services.context.IEclipseContext#dispose()
 	 */
 	public void dispose() {
-		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = (Computation[]) listeners
+				.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
 			ls[i].handleInvalid(this, null, IRunAndTrack.DISPOSE);
 		}
@@ -187,45 +210,54 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return internalGet(this, name, null, true);
 	}
 
-	protected Object internalGet(EclipseContext originatingContext, String name, Object[] arguments, boolean local) {
+	protected Object internalGet(EclipseContext originatingContext,
+			String name, Object[] arguments, boolean local) {
 		trackAccess(name);
 		LookupKey lookupKey = new LookupKey(name, arguments);
 		if (this == originatingContext) {
-			ValueComputation valueComputation = (ValueComputation) localValueComputations.get(lookupKey);
+			ValueComputation valueComputation = (ValueComputation) localValueComputations
+					.get(lookupKey);
 			if (valueComputation != null) {
 				return valueComputation.get(arguments);
 			}
 		}
-		//1. try for local value
+		// 1. try for local value
 		Object result = localValues.get(name);
 
-		//2. try the local strategy
+		// 2. try the local strategy
 		if (result == null && strategy instanceof ILookupStrategy)
-			result = ((ILookupStrategy) strategy).lookup(name, originatingContext);
+			result = ((ILookupStrategy) strategy).lookup(name,
+					originatingContext);
 
-		//if we found something, compute the concrete value and return
+		// if we found something, compute the concrete value and return
 		if (result != null) {
 			if (result instanceof IContextFunction) {
 				if (EclipseContext.DEBUG)
-					System.out.println("creating new value computation for " + name + " in " + this + " from " + originatingContext); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-				ValueComputation valueComputation = new ValueComputation(this, originatingContext, name, ((IContextFunction) result));
-				originatingContext.localValueComputations.put(lookupKey, valueComputation);
+					System.out
+							.println("creating new value computation for " + name + " in " + this + " from " + originatingContext); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				ValueComputation valueComputation = new ValueComputation(this,
+						originatingContext, name, ((IContextFunction) result));
+				originatingContext.localValueComputations.put(lookupKey,
+						valueComputation);
 				result = valueComputation.get(arguments);
 			}
 			return result;
 		}
-		//3. delegate to parent
+		// 3. delegate to parent
 		if (!local && parent != null) {
-			return ((EclipseContext) parent).internalGet(originatingContext, name, arguments, local); // XXX IEclipseContext
+			return ((EclipseContext) parent).internalGet(originatingContext,
+					name, arguments, local); // XXX IEclipseContext
 		}
 		return null;
 	}
 
 	protected void invalidate(String name, int eventType) {
 		if (EclipseContext.DEBUG)
-			System.out.println("invalidating " + get(IContextConstants.DEBUG_STRING) + ',' + name); //$NON-NLS-1$
+			System.out
+					.println("invalidating " + get(IContextConstants.DEBUG_STRING) + ',' + name); //$NON-NLS-1$
 		localValueComputations.remove(name);
-		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		Computation[] ls = (Computation[]) listeners
+				.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
 			ls[i].handleInvalid(this, name, eventType);
 		}
@@ -249,20 +281,26 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
-		TrackableComputationExt computation = new TrackableComputationExt(runnable);
+		TrackableComputationExt computation = new TrackableComputationExt(
+				runnable);
 		schedule(computation, null, IRunAndTrack.INITIAL, args);
 	}
 
 	public void runAndTrack(final Runnable runnable, String name) {
-		TrackableComputation computation = new TrackableComputation(runnable, name);
+		TrackableComputation computation = new TrackableComputation(runnable,
+				name);
 		schedule(computation);
 	}
 
-	protected boolean schedule(IRunAndTrack runnable, String name, int eventType, Object[] args) {
+	protected boolean schedule(IRunAndTrack runnable, String name,
+			int eventType, Object[] args) {
 		if (runnable == null)
 			return false;
-		if (eventType != IRunAndTrack.INITIAL && eventType != IRunAndTrack.DISPOSE && strategy != null && strategy instanceof ISchedulerStrategy)
-			return ((ISchedulerStrategy) strategy).schedule(this, runnable, name, eventType, args);
+		if (eventType != IRunAndTrack.INITIAL
+				&& eventType != IRunAndTrack.DISPOSE && strategy != null
+				&& strategy instanceof ISchedulerStrategy)
+			return ((ISchedulerStrategy) strategy).schedule(this, runnable,
+					name, eventType, args);
 		return runnable.notify(this, name, eventType, args);
 	}
 
@@ -286,7 +324,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	/**
-	 * Returns a string representation of this context for debugging purposes only.
+	 * Returns a string representation of this context for debugging purposes
+	 * only.
 	 */
 	public String toString() {
 		return (String) get(IContextConstants.DEBUG_STRING);
