@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -408,21 +409,26 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 * @param monitor progress monitor
 	 * @throws CoreException if an exception occurs while building
 	 */
-	protected void buildProjects(IProject[] projects, IProgressMonitor monitor) throws CoreException {
-		if (monitor != null) {
-			monitor.beginTask("", projects.length); //$NON-NLS-1$
-		}
-		try {
-			for (int i = 0; i < projects.length; i++ ) {
-				if (monitor != null && monitor.isCanceled()) {
-					throw new OperationCanceledException();
+	protected void buildProjects(final IProject[] projects, IProgressMonitor monitor) throws CoreException {
+		IWorkspaceRunnable build = new IWorkspaceRunnable(){
+			public void run(IProgressMonitor pm) throws CoreException {
+				try {
+					if (pm != null) {
+						pm.beginTask("", projects.length); //$NON-NLS-1$
+					}
+					for (int i = 0; i < projects.length; i++ ) {
+						if (pm != null && pm.isCanceled()) {
+							throw new OperationCanceledException();
+						}
+						projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(pm, 1));
+					}
+				} finally {
+					if (pm != null) {
+						pm.done();
+					}
 				}
-				projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(monitor, 1));
 			}
-		} finally {
-			if (monitor != null) {
-				monitor.done();
-			}
-		}
+		};
+		ResourcesPlugin.getWorkspace().run(build, monitor);
 	}
 }
