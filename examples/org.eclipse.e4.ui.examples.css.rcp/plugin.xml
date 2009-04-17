@@ -65,7 +65,7 @@
       <key
             commandId="org.eclipse.e4.ui.examples.css.rcp.markAsRead"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-            sequence="CTRL+3">
+            sequence="CTRL+4">
       </key>
       <key
             commandId="org.eclipse.ui.file.exit"
