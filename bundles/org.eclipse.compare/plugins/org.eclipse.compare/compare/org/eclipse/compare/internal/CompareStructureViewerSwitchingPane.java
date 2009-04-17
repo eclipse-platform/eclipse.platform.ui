@@ -17,7 +17,6 @@ import java.util.List;
 import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.CompareEditorInput;
 import org.eclipse.compare.CompareViewerSwitchingPane;
-import org.eclipse.compare.Splitter;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
@@ -43,7 +42,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
 
-public class CompareContentViewerSwitchingPane extends
+public class CompareStructureViewerSwitchingPane extends
 		CompareViewerSwitchingPane {
 
 	private CompareEditorInput fCompareEditorInput;
@@ -52,9 +51,9 @@ public class CompareContentViewerSwitchingPane extends
 
 	private ToolBar toolBar;
 
-	public CompareContentViewerSwitchingPane(Splitter parent, int style,
-			CompareEditorInput cei) {
-		super(parent, style);
+	public CompareStructureViewerSwitchingPane(Composite parent, int style,
+			boolean visibility, CompareEditorInput cei) {
+		super(parent, style, visibility);
 		fCompareEditorInput = cei;
 	}
 
@@ -63,27 +62,28 @@ public class CompareContentViewerSwitchingPane extends
 	}
 
 	protected Viewer getViewer(Viewer oldViewer, Object input) {
-		if (fSelectedViewerDescriptor != null) {
-			ViewerDescriptor[] array = CompareUIPlugin.getDefault().findContentViewerDescriptor(
-					oldViewer, input, getCompareConfiguration());
-			List list = array != null ? Arrays.asList(array)
-					: Collections.EMPTY_LIST;
-			if (list.contains(fSelectedViewerDescriptor)) {
-				// use selected viewer only when appropriate for the new input
-				fCompareEditorInput
-						.setContentViewerDescriptor(fSelectedViewerDescriptor);
-				Viewer viewer = fCompareEditorInput.findContentViewer(
-						oldViewer, (ICompareInput) input, this);
-				return viewer;
-			}
-			// fallback to default otherwise
-			fSelectedViewerDescriptor = null;
-		}
 		if (input instanceof ICompareInput) {
-			fCompareEditorInput.setContentViewerDescriptor(null);
-			Viewer viewer = fCompareEditorInput.findContentViewer(oldViewer,
+			if (fSelectedViewerDescriptor != null) {
+				ViewerDescriptor[] array = CompareUIPlugin.getDefault().findStructureViewerDescriptor(
+						oldViewer, (ICompareInput)input, getCompareConfiguration());
+				List list = array != null ? Arrays.asList(array)
+						: Collections.EMPTY_LIST;
+				if (list.contains(fSelectedViewerDescriptor)) {
+					// use selected viewer only when appropriate for the new input
+					fCompareEditorInput
+							.setStructureViewerDescriptor(fSelectedViewerDescriptor);
+					Viewer viewer = fCompareEditorInput.findStructureViewer(
+							oldViewer, (ICompareInput) input, this);
+					return viewer;
+				}
+				// fallback to default otherwise
+				fSelectedViewerDescriptor = null;
+			}
+
+			fCompareEditorInput.setStructureViewerDescriptor(null);
+			Viewer viewer = fCompareEditorInput.findStructureViewer(oldViewer,
 					(ICompareInput) input, this);
-			fCompareEditorInput.setContentViewerDescriptor(fSelectedViewerDescriptor);
+			fCompareEditorInput.setStructureViewerDescriptor(fSelectedViewerDescriptor);
 			return viewer;
 		}
 		return null;
@@ -109,7 +109,7 @@ public class CompareContentViewerSwitchingPane extends
 		toolItem.setImage(PlatformUI.getWorkbench().getSharedImages().getImage(
 				/* IWorkbenchGraphicConstants */"IMG_LCL_VIEW_MENU")); //$NON-NLS-1$
 		toolItem
-				.setToolTipText(CompareMessages.CompareContentViewerSwitchingPane_switchButtonTooltip);
+				.setToolTipText(CompareMessages.CompareStructureViewerSwitchingPane_switchButtonTooltip);
 		toolItem.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				showMenu();
@@ -125,27 +125,33 @@ public class CompareContentViewerSwitchingPane extends
 	
 	protected boolean inputChanged(Object input) {
 		return getInput() != input
-				|| fCompareEditorInput.getContentViewerDescriptor() != fSelectedViewerDescriptor;
+				|| fCompareEditorInput.getStructureViewerDescriptor() != fSelectedViewerDescriptor;
 	}
 
 	public void setInput(Object input) {
 		super.setInput(input);
-		ViewerDescriptor[] vd = CompareUIPlugin.getDefault()
-				.findContentViewerDescriptor(getViewer(), getInput(),
-						getCompareConfiguration());
+		ViewerDescriptor[] vd = null;
+		if (getInput() instanceof ICompareInput) {
+			vd = CompareUIPlugin.getDefault().findStructureViewerDescriptor(
+					getViewer(), (ICompareInput) getInput(),
+					getCompareConfiguration());
+		}
 		toolBar.setVisible(vd != null && vd.length > 1);
 	}
 
 	private void showMenu() {
+		if (!(getInput() instanceof ICompareInput))
+			return;
+		
 		ViewerDescriptor[] vd = CompareUIPlugin.getDefault()
-				.findContentViewerDescriptor(getViewer(), getInput(),
-						getCompareConfiguration());
+				.findStructureViewerDescriptor(getViewer(),
+						(ICompareInput) getInput(), getCompareConfiguration());
 
 		// 1. create
 		final Menu menu = new Menu(getShell(), SWT.POP_UP);
 
 		// add default
-		String label = CompareMessages.CompareContentViewerSwitchingPane_defaultViewer;
+		String label = CompareMessages.CompareStructureViewerSwitchingPane_defaultViewer;
 		MenuItem defaultItem = new MenuItem(menu, SWT.RADIO);
 		defaultItem.setText(label);
 		defaultItem.addSelectionListener(createSelectionListener(null));
@@ -158,11 +164,11 @@ public class CompareContentViewerSwitchingPane extends
 			final ViewerDescriptor vdi = vd[i];
 			label = vdi.getLabel();
 			if (label == null || label.equals("")) { //$NON-NLS-1$
-				String l = CompareUIPlugin.getDefault().findContentTypeNameOrType((ICompareInput) getInput(), vdi, getCompareConfiguration());
+				String l = CompareUIPlugin.getDefault().findStructureTypeNameOrType((ICompareInput) getInput(), vdi, getCompareConfiguration());
 				if (l == null)
 					// couldn't figure out the label, skip the viewer
 					continue;
-				label = NLS.bind(CompareMessages.CompareContentViewerSwitchingPane_discoveredLabel, new Object[] {l});
+				label = NLS.bind(CompareMessages.CompareStructureViewerSwitchingPane_discoveredLabel, new Object[] {l});
 			}
 			MenuItem item = new MenuItem(menu, SWT.RADIO);
 			item.setText(label);
@@ -196,7 +202,7 @@ public class CompareContentViewerSwitchingPane extends
 				if (mi.getSelection()) {
 					Viewer oldViewer = getViewer();
 					fSelectedViewerDescriptor = vd;
-					CompareContentViewerSwitchingPane.this.setInput(oldViewer
+					CompareStructureViewerSwitchingPane.this.setInput(oldViewer
 							.getInput());
 				}
 			}

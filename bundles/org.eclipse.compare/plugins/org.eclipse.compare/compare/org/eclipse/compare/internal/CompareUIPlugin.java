@@ -758,6 +758,46 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 		return null;
 	}
 	
+	public ViewerDescriptor[] findStructureViewerDescriptor(Viewer oldViewer,
+			ICompareInput input, CompareConfiguration configuration) {
+		if (input == null)
+			return null;
+		// we don't show the structure of additions or deletions
+		if (input == null || input.getLeft() == null || input.getRight() == null)	
+			return null;
+
+		Set result = new LinkedHashSet();
+					
+		// content type search
+		IContentType ctype= getCommonType(input);
+		if (ctype != null) {
+			initializeRegistries();
+			List list = fStructureMergeViewers.searchAll(ctype);
+			if (list != null)
+				result.addAll(list);
+		}
+
+		// old style search
+		String[] types= getTypes(input);
+		String type= null;
+		if (isHomogenous(types)) {
+			type= normalizeCase(types[0]);
+			initializeRegistries();
+			List list = fStructureMergeViewers.searchAll(type);
+			if (list != null)
+				result.addAll(list);
+			String alias= getStructureViewerAlias(type);
+			if (alias != null) {
+				list = fStructureMergeViewers.searchAll(alias);
+				if (list != null)
+					result.addAll(list);
+			}
+		}
+
+		return result.size() > 0 ? (ViewerDescriptor[]) result
+				.toArray(new ViewerDescriptor[0]) : null;
+	}
+	
 	/**
 	 * Returns a structure compare viewer based on an old viewer and an input object.
 	 * If the old viewer is suitable for showing the input, the old viewer
@@ -773,56 +813,38 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 	 */
 	public Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent,
 				CompareConfiguration configuration) {
+		ViewerDescriptor[] descriptors = findStructureViewerDescriptor(oldViewer, input, configuration);
+		if (descriptors == null || descriptors.length == 0) {
+			// we didn't found any viewer so far.
+			// now we try to find a structure creator for the generic StructureDiffViewer
+			IContentType ctype= getCommonType(input);
 
-		if (input.getLeft() == null || input.getRight() == null)	// we don't show the structure of additions or deletions
+			String[] types= getTypes(input);
+			String type= null;
+			if (isHomogenous(types)) {
+				type= normalizeCase(types[0]);
+			}
+
+			StructureCreatorDescriptor scc= null;
+			initializeRegistries();
+			Object desc= fStructureCreators.search(ctype);	// search for content type
+			if (desc instanceof StructureCreatorDescriptor)
+			    scc= (StructureCreatorDescriptor) desc;
+			if (scc == null && type != null)
+			    scc= getStructureCreator(type);	// search for old-style type scheme
+			if (scc != null) {
+				IStructureCreator sc= scc.createStructureCreator();
+				if (sc != null) {
+					StructureDiffViewer sdv= new StructureDiffViewer(parent, configuration);
+					sdv.setStructureCreator(sc);
+					return sdv;
+				}
+			}
 			return null;
-					
-		// content type search
-		IContentType ctype= getCommonType(input);
-		if (ctype != null) {
-			initializeRegistries();
-			Viewer viewer= getViewer(fStructureMergeViewers.search(ctype), oldViewer, parent, configuration);
-			if (viewer != null)
-				return viewer;
 		}
-		
-		// old style search
-		String[] types= getTypes(input);
-		String type= null;
-		if (isHomogenous(types)) {
-			type= normalizeCase(types[0]);
-			initializeRegistries();
-			IViewerDescriptor vd= (IViewerDescriptor) fStructureMergeViewers.search(type);
-			if (vd == null) {
-				String alias= getStructureViewerAlias(type);
-				if (alias != null)
-					vd= (IViewerDescriptor) fStructureMergeViewers.search(alias);
-			}
-			if (vd != null)
-				return vd.createViewer(oldViewer, parent, configuration);
-		}
-		
-		// we didn't found any viewer so far.
-		// now we try to find a structure creator for the generic StructureDiffViewer
-		
-		StructureCreatorDescriptor scc= null;
-		initializeRegistries();
-		Object desc= fStructureCreators.search(ctype);	// search for content type
-		if (desc instanceof StructureCreatorDescriptor)
-		    scc= (StructureCreatorDescriptor) desc;
-		if (scc == null && type != null)
-		    scc= getStructureCreator(type);	// search for old-style type scheme
-		if (scc != null) {
-			IStructureCreator sc= scc.createStructureCreator();
-			if (sc != null) {
-				StructureDiffViewer sdv= new StructureDiffViewer(parent, configuration);
-				sdv.setStructureCreator(sc);
-				return sdv;
-			}
-		}
-		return null;
+		return getViewer(descriptors[0], oldViewer, parent, configuration);
 	}
-	
+
 	public ViewerDescriptor[] findContentViewerDescriptor(Viewer oldViewer, Object in, CompareConfiguration cc) {
 		Set result = new LinkedHashSet();
 		if (in instanceof IStreamContentAccessor) {
@@ -1350,6 +1372,45 @@ public final class CompareUIPlugin extends AbstractUIPlugin {
 				if (list.contains(vd))
 					return type;
 		}
+		return null;
+	}
+
+	String findStructureTypeNameOrType(ICompareInput input, ViewerDescriptor vd, CompareConfiguration cc) {
+		if (input == null)
+			return null;
+		// we don't show the structure of additions or deletions
+		if (input == null || input.getLeft() == null || input.getRight() == null)	
+			return null;
+
+		// content type search
+		IContentType ctype= getCommonType(input);
+		if (ctype != null) {
+			initializeRegistries();
+			List list = fStructureMergeViewers.searchAll(ctype);
+			if (list != null)
+				if (list.contains(vd))
+					return ctype.getName();
+		}
+		
+		// old style search
+		String[] types= getTypes(input);
+		String type= null;
+		if (isHomogenous(types)) {
+			type= normalizeCase(types[0]);
+			initializeRegistries();
+			List list = fStructureMergeViewers.searchAll(type);
+			if (list != null)
+				if (list.contains(vd))
+					return type;
+			String alias= getStructureViewerAlias(type);
+			if (alias != null) {
+				list = fStructureMergeViewers.searchAll(alias);
+				if (list != null)
+					if (list.contains(vd))
+						return alias;
+			}
+		}
+
 		return null;
 	}
 }

@@ -130,6 +130,9 @@ public final class CompareMessages extends NLS {
 	public static String CompareContentViewerSwitchingPane_defaultViewer;
 	public static String CompareContentViewerSwitchingPane_switchButtonTooltip;
 	public static String CompareContentViewerSwitchingPane_discoveredLabel;
+	public static String CompareStructureViewerSwitchingPane_defaultViewer;
+	public static String CompareStructureViewerSwitchingPane_switchButtonTooltip;
+	public static String CompareStructureViewerSwitchingPane_discoveredLabel;
 
 	public static String ReaderCreator_fileIsNotAccessible;
 

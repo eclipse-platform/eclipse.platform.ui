@@ -21,6 +21,7 @@ import org.eclipse.compare.internal.CompareContentViewerSwitchingPane;
 import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.ComparePreferencePage;
+import org.eclipse.compare.internal.CompareStructureViewerSwitchingPane;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ICompareUIConstants;
 import org.eclipse.compare.internal.OutlineViewerCreator;
@@ -201,7 +202,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	private String fHelpContextId;
 	private InternalOutlineViewerCreator fOutlineView;
-	private ViewerDescriptor vd;
+	private ViewerDescriptor fContentViewerDescriptor;
+	private ViewerDescriptor fStructureViewerDescriptor;
 	
 	private class InternalOutlineViewerCreator extends OutlineViewerCreator {
 		private OutlineViewerCreator getWrappedCreator() {
@@ -599,22 +601,10 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (hasChildren(getCompareResult()))
 			fFocusPane= fStructureInputPane;
 		
-		fStructurePane1= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
-			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				if (input instanceof ICompareInput)
-					return findStructureViewer(oldViewer, (ICompareInput)input, this);
-				return null;
-			}
-		};
+		fStructurePane1= new CompareStructureViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true, this);
 		h.setVisible(fStructurePane1, false);
 		
-		fStructurePane2= new CompareViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true) {
-			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				if (input instanceof ICompareInput)
-					return findStructureViewer(oldViewer, (ICompareInput)input, this);
-				return null;
-			}
-		};
+		fStructurePane2= new CompareStructureViewerSwitchingPane(h, SWT.BORDER | SWT.FLAT, true, this);
 		h.setVisible(fStructurePane2, false);
 		
 		// setup the wiring for top left pane
@@ -673,14 +663,12 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	protected CompareViewerPane createStructureInputPane(
 			final Composite parent) {
-		return new CompareViewerSwitchingPane(parent, SWT.BORDER | SWT.FLAT, true) {
+		return new CompareStructureViewerSwitchingPane(parent, SWT.BORDER | SWT.FLAT, true, this) {
 			protected Viewer getViewer(Viewer oldViewer, Object input) {
 				if (CompareEditorInput.this.hasChildren(input)) {
 					return createDiffViewer(this);
 				}
-				if (input instanceof ICompareInput)
-					return findStructureViewer(oldViewer, (ICompareInput)input, this);
-				return null;
+				return super.getViewer(oldViewer, input);
 			}
 		};
 	}
@@ -891,7 +879,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @return a compare viewer which is suitable for the given input object or <code>null</code>
 	 */
 	public Viewer findStructureViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
-		return CompareUI.findStructureViewer(oldViewer, input, parent, fCompareConfiguration);
+		return fStructureViewerDescriptor != null ? fStructureViewerDescriptor.createViewer(oldViewer, parent,
+				fCompareConfiguration) : CompareUI.findStructureViewer(oldViewer,
+				input, parent, fCompareConfiguration);
 	}
 
 	/**
@@ -912,7 +902,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	public Viewer findContentViewer(Viewer oldViewer, ICompareInput input, Composite parent) {
 
-		Viewer newViewer = vd != null ? vd.createViewer(oldViewer, parent,
+		Viewer newViewer = fContentViewerDescriptor != null ? fContentViewerDescriptor.createViewer(oldViewer, parent,
 				fCompareConfiguration) : CompareUI.findContentViewer(oldViewer,
 				input, parent, fCompareConfiguration);
 			
@@ -938,23 +928,44 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	
 	/**
 	 * @param vd
-	 *            the viewer descriptor
+	 *            the content viewer descriptor
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 *             by clients.
 	 */
-	public void setViewerDescriptor(ViewerDescriptor vd) {
-		this.vd = vd;
+	public void setContentViewerDescriptor(ViewerDescriptor vd) {
+		this.fContentViewerDescriptor = vd;
 	}
 
 	/**
-	 * @return the viewer descriptor set for the input
+	 * @return the content viewer descriptor set for the input
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended
 	 *             by clients.
 	 */
-	public ViewerDescriptor getViewerDescriptor() {
-		return this.vd;
+	public ViewerDescriptor getContentViewerDescriptor() {
+		return this.fContentViewerDescriptor;
+	}
+
+	/**
+	 * @param vd
+	 *            the structure viewer descriptor
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	public void setStructureViewerDescriptor(ViewerDescriptor vd) {
+		this.fStructureViewerDescriptor = vd;
+	}
+
+	/**
+	 * @return the structure viewer descriptor set for the input
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	public ViewerDescriptor getStructureViewerDescriptor() {
+		return this.fStructureViewerDescriptor;
 	}
 	
 	/**
