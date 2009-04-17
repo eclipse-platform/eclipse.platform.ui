@@ -26,8 +26,8 @@ import org.eclipse.jface.bindings.keys.formatting.KeyFormatterFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 
@@ -74,7 +74,7 @@ public final class BindingService implements IBindingService {
 	 *            be <code>null</code>.
 	 */
 	public BindingService(final BindingManager bindingManager,
-			final ICommandService commandService, final Workbench workbench) {
+			final ICommandService commandService, final IWorkbench workbench) {
 		if (bindingManager == null) {
 			throw new NullPointerException(
 					"Cannot create a binding service with a null manager"); //$NON-NLS-1$

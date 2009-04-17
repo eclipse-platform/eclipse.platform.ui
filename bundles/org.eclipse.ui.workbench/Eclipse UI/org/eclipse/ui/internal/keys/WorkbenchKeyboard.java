@@ -46,7 +46,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.contexts.ContextService;
 import org.eclipse.ui.internal.handlers.HandlerService;
@@ -379,7 +378,7 @@ public final class WorkbenchKeyboard {
 	 *            must not be <code>null</code>.
 	 * @since 3.1
 	 */
-	public WorkbenchKeyboard(Workbench associatedWorkbench) {
+	public WorkbenchKeyboard(IWorkbench associatedWorkbench) {
 		workbench = associatedWorkbench;
 		state = new KeyBindingState(associatedWorkbench);
 		workbench.addWindowListener(windowListener);
@@ -795,13 +794,15 @@ public final class WorkbenchKeyboard {
 			}
 
 			// Update the handlers.
-			final HandlerService handlerService = (HandlerService) workbench
-					.getService(IHandlerService.class);
-			if ((widget instanceof Control) && (!widget.isDisposed())) {
-				final Shell shell = ((Control) widget).getShell();
-				handlerService.updateShellKludge(shell);
-			} else {
-				handlerService.updateShellKludge();
+			Object hs = workbench.getService(IHandlerService.class);
+			if (hs instanceof HandlerService) {
+				final HandlerService handlerService = (HandlerService) hs;
+				if ((widget instanceof Control) && (!widget.isDisposed())) {
+					final Shell shell = ((Control) widget).getShell();
+					handlerService.updateShellKludge(shell);
+				} else {
+					handlerService.updateShellKludge();
+				}
 			}
 		}
 
