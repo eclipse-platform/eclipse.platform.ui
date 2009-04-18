@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 169876)
+ *     Elias Volanakis <elias@eclipsesource.com> - bug 271720
  ******************************************************************************/
 
 package org.eclipse.core.databinding.observable.value;
@@ -45,6 +46,41 @@ import org.eclipse.core.runtime.Assert;
  * are left intact. That is, the hour, minute, second and millisecond components
  * of the date observable are preserved, and the year, month and day components
  * of the time observable are preserved.
+ * <p>
+ * The observables used for the date and time component may impose their own
+ * restrictions with regard to supported values. For example some observables do
+ * not allow a null value, because the underlying widget lacks support for a
+ * null value (example: DateTime).
+ * <p>
+ * One use for this class is binding a date-and-time value to two separate user
+ * interface elements, one for editing date and one for editing time:
+ * 
+ * <pre>
+ * DataBindingContext dbc = new DataBindingContext();
+ * IObservableValue beanValue = BeansObservables.observeValue(...);
+ * IObservableValue dateObservable = WidgetProperties.selection().observe(
+ * 		dateWidget);
+ * IObservableValue timeObservable = WidgetProperties.selection().observe(
+ * 		timeWidget);
+ * dbc.bindValue(new DateAndTimeObservableValue(dateObservable, timeObservable),
+ * 		beanValue);
+ * </pre>
+ * 
+ * A second use is editing only the date or time value of a date-and-time value.
+ * This can be accomplished by using a widget-specific observable for the
+ * editable value and a WritableValue as a container for the fixed value. The
+ * example below allows editing the date while preserving the time:
+ * 
+ * <pre>
+ * DataBindingContext dbc = new DataBindingContext();
+ * IObservableValue beanValue = BeansObservables.observeValue(...);
+ * IObservableValue dateObservable = WidgetProperties.selection().observe(
+ * 		dateWidget);
+ * IObservableValue timeObservable = new WritableValue(dateObservable.getRealm(),
+ * 		beanValue.getValue(), Date.class);
+ * dbc.bindValue(new DateAndTimeObservableValue(dateObservable, timeObservable), beanValue);
+ * 
+ * <pre>
  * 
  * @since 1.2
  */
