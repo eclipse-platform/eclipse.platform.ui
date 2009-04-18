@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -73,6 +74,8 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 		createPromptOption(container);
 		createMaxWorkspacesField(container);
 		createWorkspacesList(container);
+		
+		Dialog.applyDialogFont(container);
 
 		return container;
 	}
