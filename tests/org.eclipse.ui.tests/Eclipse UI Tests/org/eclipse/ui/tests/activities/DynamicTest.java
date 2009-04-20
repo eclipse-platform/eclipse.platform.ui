@@ -10,23 +10,37 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.internal.registry.ExtensionRegistry;
+import org.eclipse.core.runtime.ContributorFactoryOSGi;
+import org.eclipse.core.runtime.IContributor;
+import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityEvent;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.CategoryEvent;
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityListener;
 import org.eclipse.ui.activities.IActivityManagerListener;
+import org.eclipse.ui.activities.IActivityPatternBinding;
+import org.eclipse.ui.activities.IActivityRequirementBinding;
 import org.eclipse.ui.activities.ICategory;
+import org.eclipse.ui.activities.ICategoryActivityBinding;
 import org.eclipse.ui.activities.ICategoryListener;
 import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IIdentifierListener;
+import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -431,4 +445,111 @@ public class DynamicTest extends UITestCase {
         }
         assertTrue(listenerType == -1);
     }
+    
+	/**
+	 * Tests to ensure dynamism with regard to the extension registry.
+	 */
+	public void testDynamicRegistry() {
+		IWorkbenchActivitySupport was = PlatformUI.getWorkbench()
+				.getActivitySupport();
+		IActivity activity = was.getActivityManager().getActivity(
+				"dynamic.activity");
+		ICategory category = was.getActivityManager().getCategory(
+				"dynamic.category");
+		assertFalse(activity.isDefined());
+		assertFalse(category.isDefined());
+		// set to true when the activity/category in question have had an event
+		// fired
+		final boolean[] registryChanged = new boolean[] { false, false };
+		activity.addActivityListener(new IActivityListener() {
+
+			public void activityChanged(ActivityEvent activityEvent) {
+				registryChanged[0] = true;
+
+			}
+		});
+		category.addCategoryListener(new ICategoryListener() {
+
+			public void categoryChanged(CategoryEvent categoryEvent) {
+				System.err.println("categoryChanged");
+				registryChanged[1] = true;
+
+			}
+		});
+
+		try {
+			String ACTIVITY = "<plugin><extension point=\"org.eclipse.ui.activities\">"
+					+ "<category id=\"dynamic.category\" name=\"Dynamic Activity Category\"/>"
+					+ "<activity id=\"dynamic.activity\" name=\"Dynamic Activity\"/>"
+					+ "<activity id=\"dynamic.parent\" name=\"Dynamic Parent Activity\"/>"
+					+ "<activityRequirementBinding requiredActivityId = \"dynamic.parent\" activityId = \"dynamic.activity\" />"
+					+ "<categoryActivityBinding categoryId = \"dynamic.category\" activityId = \"dynamic.activity\" />"
+					+ "<activityPatternBinding activityId=\"dynamic.activity\"  pattern=\"dynamic.activity/.*\"/>"
+					+ "<defaultEnablement id=\"dynamic.activity\"/>"
+					+ "</extension></plugin>";
+			byte[] bytes = ACTIVITY.toString().getBytes("UTF-8");
+			InputStream is = new ByteArrayInputStream(bytes);
+			IContributor contrib = ContributorFactoryOSGi
+					.createContributor(TestPlugin.getDefault().getBundle());
+			ExtensionRegistry registry = (ExtensionRegistry) RegistryFactory
+					.getRegistry();
+			if (!registry.addContribution(is, contrib, false, null, null,
+					registry.getTemporaryUserToken()))
+				throw new RuntimeException();
+		} catch (UnsupportedEncodingException e) {
+			fail(e.getMessage(), e);
+		}
+
+		// spin the event loop and ensure that the changes come down the pipe.
+		// 20 seconds should be more than enough
+		long endTime = System.currentTimeMillis() + 20000;
+		while (!(registryChanged[0] && registryChanged[1])
+				&& System.currentTimeMillis() < endTime) {
+
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			if (display != null && !display.isDisposed())
+				while (display.readAndDispatch())
+					;
+			display.sleep();
+
+		}
+
+		assertTrue("Activity Listener not called", registryChanged[0]);
+		assertTrue("Category Listener not called", registryChanged[1]);
+
+		assertTrue(activity.isDefined());
+		Set patternBindings = activity.getActivityPatternBindings();
+		assertEquals(1, patternBindings.size());
+
+		IActivityPatternBinding patternBinding = (IActivityPatternBinding) patternBindings
+				.iterator().next();
+
+		assertEquals("dynamic.activity/.*", patternBinding.getPattern()
+				.pattern());
+		assertEquals("dynamic.activity", patternBinding.getActivityId());
+
+		try {
+			assertTrue(activity.isDefaultEnabled());
+		} catch (NotDefinedException e) {
+			fail(e.getMessage(), e);
+		}
+
+		Set requirementBindings = activity.getActivityRequirementBindings();
+		assertEquals(1, requirementBindings.size());
+
+		IActivityRequirementBinding requirementBinding = (IActivityRequirementBinding) requirementBindings
+				.iterator().next();
+		assertEquals("dynamic.parent", requirementBinding
+				.getRequiredActivityId());
+		assertEquals("dynamic.activity", requirementBinding.getActivityId());
+
+		assertTrue(category.isDefined());
+		Set categoryBindings = category.getCategoryActivityBindings();
+		assertEquals(1, categoryBindings.size());
+		ICategoryActivityBinding categoryBinding = (ICategoryActivityBinding) categoryBindings
+				.iterator().next();
+		assertEquals("dynamic.activity", categoryBinding.getActivityId());
+		assertEquals("dynamic.category", categoryBinding.getCategoryId());
+
+	}
 }
