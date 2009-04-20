@@ -57,10 +57,13 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					int viewIndex = provider.modelToViewIndex(elementPath, modelIndex);
 					if (provider.shouldFilter(elementPath, element)) {
 						if (provider.addFilteredIndex(elementPath, modelIndex, element)) {
-                            if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-								System.out.println("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+							if (viewer.getChildElement(elementPath, viewIndex) == null) {
+								// only remove the element if currently unmapped
+								if (ModelContentProvider.DEBUG_CONTENT_PROVIDER && (ModelContentProvider.DEBUG_PRESENTATION_ID == null || ModelContentProvider.DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+									System.out.println("REMOVE(" + getElement() + ", modelIndex: " + modelIndex + " viewIndex: " + viewIndex + ", " + element + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+								}
+								viewer.remove(elementPath, viewIndex);
 							}
-							viewer.remove(elementPath, viewIndex);
 						}
 					} else {
 						if (provider.isFiltered(elementPath, modelIndex)) {

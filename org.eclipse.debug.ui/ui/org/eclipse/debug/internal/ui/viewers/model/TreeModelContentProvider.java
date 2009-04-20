@@ -81,17 +81,37 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.viewers.ModelContentProvider#handleAdd(org.eclipse.debug.internal.ui.viewers.provisional.IModelDelta)
 	 */
 	protected void handleAdd(IModelDelta delta) {
-		if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-			System.out.println("handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 		IModelDelta parentDelta = delta.getParentDelta();
 		TreePath parentPath = getViewerTreePath(parentDelta);
+		Object element = delta.getElement();
 		int count = parentDelta.getChildCount();
 		if (count > 0) {
 		    setModelChildCount(parentPath, count);
 		    int viewCount = modelToViewChildCount(parentPath, count);
-	        getViewer().setChildCount(parentPath, viewCount);
+	        int modelIndex = count - 1;
+	        int viewIndex = viewCount - 1;
+			if (shouldFilter(parentPath, element)) {
+				addFilteredIndex(parentPath, modelIndex, element);
+				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+					System.out.println("[filtered] handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			} else {
+				if (isFiltered(parentPath, modelIndex)) {
+					clearFilteredChild(parentPath, modelIndex);
+				}
+				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+					System.out.println("handleAdd(" + delta.getElement() + ") viewIndex: " + viewCount + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				}
+				getViewer().setChildCount(parentPath, viewCount);
+				getViewer().replace(parentPath, viewIndex, element);
+				TreePath childPath = parentPath.createChildPath(element);
+				updateHasChildren(childPath);
+				doRestore(childPath, modelIndex, false, false);
+			}	        
 		} else {
+			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+				System.out.println("handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
 		    doUpdateChildCount(getViewerTreePath(delta.getParentDelta()));
 		}
 	}
@@ -247,7 +267,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		        clearFilters(parentPath);
 		    }
 		    viewIndex = treeViewer.findElementIndex(parentPath, element);
-		    if (viewIndex > 0) {
+		    if (viewIndex >= 0) {
 		        modelIndex = viewToModelIndex(parentPath, viewIndex);
 		    } else {
 		        unmappedIndex = treeViewer.findElementIndex(parentPath, null);
@@ -269,7 +289,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 			// did not find the element, but found an unmapped item.
 			// remove the unmapped item in it's place and update filters
 			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-				System.out.println(" - (not found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				System.out.println(" - (not found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex + " unmapped index: " + unmappedIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 			}
 			modelIndex = viewToModelIndex(parentPath, unmappedIndex);
 			rescheduleUpdates(parentPath, modelIndex);

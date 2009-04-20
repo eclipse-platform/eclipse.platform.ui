@@ -2153,7 +2153,7 @@ public class InternalTreeModelViewer extends TreeViewer
     }
     
     public Object getChildElement(TreePath path, int index) {
-        TreeItem childItem = ((Tree)getControl()).getItem(index);
+        TreeItem childItem = null;
         if (path.getSegmentCount() == 0) {
             Tree tree = (Tree)getControl();
             try {
