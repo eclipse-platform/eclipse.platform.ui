@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
@@ -412,20 +413,16 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	protected void buildProjects(final IProject[] projects, IProgressMonitor monitor) throws CoreException {
 		IWorkspaceRunnable build = new IWorkspaceRunnable(){
 			public void run(IProgressMonitor pm) throws CoreException {
+				SubMonitor localmonitor = SubMonitor.convert(pm, DebugCoreMessages.LaunchConfigurationDelegate_scoped_incremental_build, projects.length);
 				try {
-					if (pm != null) {
-						pm.beginTask("", projects.length); //$NON-NLS-1$
-					}
 					for (int i = 0; i < projects.length; i++ ) {
-						if (pm != null && pm.isCanceled()) {
+						if (localmonitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
-						projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, new SubProgressMonitor(pm, 1));
+						projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.newChild(1));
 					}
 				} finally {
-					if (pm != null) {
-						pm.done();
-					}
+					localmonitor.done();
 				}
 			}
 		};

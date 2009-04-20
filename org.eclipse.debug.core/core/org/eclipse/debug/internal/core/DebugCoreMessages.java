@@ -81,6 +81,8 @@ public class DebugCoreMessages extends NLS {
 	public static String LaunchConfiguration_Failed_to_delete_launch_configuration__1;
 	public static String LaunchConfigurationDelegate_6;
 	public static String LaunchConfigurationDelegate_7;
+
+	public static String LaunchConfigurationDelegate_scoped_incremental_build;
 	public static String LaunchConfigurationInfo_Attribute__0__is_not_of_type_boolean__3;
 	public static String LaunchConfigurationInfo_Attribute__0__is_not_of_type_int__2;
 	public static String LaunchConfigurationInfo_Attribute__0__is_not_of_type_java_lang_String__1;
