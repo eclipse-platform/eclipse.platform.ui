@@ -10,20 +10,16 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.ImageDescriptor;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IViewPart;
@@ -464,9 +460,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				}
 			}
 
-			if (site != null) {
+			if (actionBars != null) {
 				try {
-					site.dispose();
+					actionBars.dispose();
 				} catch (RuntimeException re) {
 					StatusManager.getManager().handle(
 							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
@@ -474,9 +470,9 @@ class ViewReference extends WorkbenchPartReference implements IViewReference {
 				}
 			}
 
-			if (actionBars != null) {
+			if (site != null) {
 				try {
-					actionBars.dispose();
+					site.dispose();
 				} catch (RuntimeException re) {
 					StatusManager.getManager().handle(
 							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,

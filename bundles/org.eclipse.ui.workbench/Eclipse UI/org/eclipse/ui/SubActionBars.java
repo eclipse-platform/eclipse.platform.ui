@@ -194,7 +194,9 @@ public class SubActionBars extends EventManager implements IActionBars {
 				while (iterator.hasNext()) {
 					final IHandlerActivation activation = (IHandlerActivation) iterator
 							.next();
-					service.deactivateHandler(activation);
+					if (service != null) {
+						service.deactivateHandler(activation);
+					}
 					activation.getHandler().dispose();
 				}
 			}
