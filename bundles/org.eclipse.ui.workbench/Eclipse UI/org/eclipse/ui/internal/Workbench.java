@@ -83,6 +83,7 @@ import org.eclipse.jface.window.WindowManager;
 import org.eclipse.osgi.service.runnable.StartupMonitor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.SWTException;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.graphics.DeviceData;
 import org.eclipse.swt.graphics.Image;
@@ -634,7 +635,14 @@ public final class Workbench extends EventManager implements IWorkbench {
 			try {
 				InputStream input = new BufferedInputStream(
 						new FileInputStream(splashLoc));
-				background = new Image(display, input);
+				try {
+					background = new Image(display, input);
+				} catch (SWTException e) {
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
+									e));
+				}
+				input.close();
 			} catch (IOException e) {
 				StatusManager.getManager().handle(
 						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
