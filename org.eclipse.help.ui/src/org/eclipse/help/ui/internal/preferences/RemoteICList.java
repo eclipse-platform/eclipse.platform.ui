@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.Vector;
 
+import org.eclipse.help.internal.base.remote.DefaultPreferenceFileHandler;
 import org.eclipse.help.internal.base.remote.PreferenceFileHandler;
 import org.eclipse.help.internal.base.remote.RemoteIC;
 
@@ -69,6 +70,38 @@ public class RemoteICList {
 			RemoteIC initRemoteIC;
 			initRemoteIC = new RemoteIC(currEnabled, name, host, path, port);
 			remote_ics.add(initRemoteIC);
+		}
+	}
+	
+	public void loadDefaultPreferences() {
+
+		// Load the preferences in org.eclipse.help.base/preferences.ini
+		DefaultPreferenceFileHandler handler = new DefaultPreferenceFileHandler();
+		int totalICs = handler.getTotalRemoteInfocenters();
+		String host,name,path,port,enabledDisabled;
+		boolean currEnabled;
+		
+		for (int i = 0; i < totalICs; i++) {
+
+			host = (handler.getHostEntries())[i];
+			name = (handler.getNameEntries())[i];
+			path = (handler.getPathEntries())[i];
+			port = (handler.getPortEntries())[i];
+			enabledDisabled=(handler.getEnabledEntries())[i];
+			if(enabledDisabled.equals("true")) //$NON-NLS-1$
+			{
+				currEnabled=true;
+			}
+			else
+			{
+				currEnabled=false;
+			}
+			
+			// Add preferences to the model
+			RemoteIC initRemoteIC;
+			initRemoteIC = new RemoteIC(currEnabled, name, host, path, port);
+
+			addRemoteIC(initRemoteIC);
 		}
 	}
 

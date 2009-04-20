@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,13 +23,13 @@ import org.osgi.service.prefs.BackingStoreException;
 
 public class PreferenceFileHandler {
 
-	private String[] nameEntries, hostEntries, pathEntries, portEntries, isICEnabled = null;
+	protected String[] nameEntries, hostEntries, pathEntries, portEntries, isICEnabled = null;
 
-	private String namePreference, hostPreference, pathPreference, portPreference, icEnabledPreference;
+	protected String namePreference, hostPreference, pathPreference, portPreference, icEnabledPreference;
 
-	private int numEntries = 0, numHostEntries=0;
+	protected int numEntries = 0, numHostEntries=0;
 
-	private static String PREFERENCE_ENTRY_DELIMITER = ","; //$NON-NLS-1$
+	protected static String PREFERENCE_ENTRY_DELIMITER = ","; //$NON-NLS-1$
 
 	public PreferenceFileHandler() {
 
@@ -77,7 +77,7 @@ public class PreferenceFileHandler {
 
 	}
 
-	private String[] getValues(String preferenceEntry, String appendString) {
+	protected String[] getValues(String preferenceEntry, String appendString) {
 
 		if (numHostEntries==0) //preference equals ""
 			return  new String[0];//NEW
