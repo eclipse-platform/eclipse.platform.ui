@@ -267,6 +267,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
      * Returns the breakpoint collection that is relevant for this launch delegate.
      * By default this is all the breakpoints registered with the Debug breakpoint manager.
      * 
+     * @param configuration the configuration to get associated breakpoints for
      * @since 3.1
      * @return the breakpoints that are relevant for this launch delegate
      */ 
