@@ -27,6 +27,7 @@ import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -68,6 +69,12 @@ public class PatchUITest extends TestCase {
 	}
 
 	public void testApplyClipboardPatch() throws CoreException {
+		// Clipboard support on Mac OS is not reliable when tests are run
+		// through an SSH session, see bug 272870 for details
+		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
+			return;
+		}
+
 		copyIntoClipboard("patch_context0.txt");
 		copyIntoWorkspace("context.txt");
 
