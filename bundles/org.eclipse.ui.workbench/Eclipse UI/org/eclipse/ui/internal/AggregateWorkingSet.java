@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
@@ -33,6 +34,11 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		IAggregateWorkingSet, IPropertyChangeListener {
 
 	private IWorkingSet[] components;
+
+	/**
+	 * Prevents stack overflow on cyclic element inclusions.
+	 */
+	private boolean inElementConstruction = false;
 
 	/**
 	 * 
@@ -77,17 +83,40 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	 * @param fireEvent whether a working set change event should be fired
 	 */
 	private void constructElements(boolean fireEvent) {
-		Set elements = new HashSet();
-		IWorkingSet[] localComponents = getComponentsInternal();
-		for (int i = 0; i < localComponents.length; i++) {
-			IWorkingSet workingSet = localComponents[i];
-			elements.addAll(Arrays.asList(workingSet.getElements()));
+		if (inElementConstruction) {
+			String msg = NLS.bind(WorkbenchMessages.ProblemCyclicDependency, getName());
+            WorkbenchPlugin.log(msg);
+            throw new IllegalStateException(msg);
 		}
-		internalSetElements((IAdaptable[]) elements
-				.toArray(new IAdaptable[elements.size()]));
-		if (fireEvent) {
-			fireWorkingSetChanged(
-				IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
+		inElementConstruction = true;
+		try {
+			Set elements = new HashSet();
+			IWorkingSet[] localComponents = getComponentsInternal();
+			for (int i = 0; i < localComponents.length; i++) {
+				IWorkingSet workingSet = localComponents[i];
+				try {
+					IAdaptable[] componentElements = workingSet.getElements();
+					elements.addAll(Arrays.asList(componentElements));
+				} catch (IllegalStateException e) { // an invalid component; remove it
+					IWorkingSet[] tmp = new IWorkingSet[components.length - 1];
+					if (i > 0)
+						System.arraycopy(components, 0, tmp, 0, i);
+					if (components.length - i - 1 > 0)
+						System.arraycopy(components, i + 1, tmp, i, components.length - i - 1);
+					components = tmp;
+					workingSetMemento = null; // toss cached info
+					fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);						
+					continue;
+				}
+			}
+			internalSetElements((IAdaptable[]) elements
+					.toArray(new IAdaptable[elements.size()]));
+			if (fireEvent) {
+				fireWorkingSetChanged(
+					IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE, null);
+			}
+		} finally {
+			inElementConstruction = false;
 		}
 	}
 
@@ -150,7 +179,9 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	}
 
 	public void disconnect() {
-		getManager().removePropertyChangeListener(this);
+		IWorkingSetManager connectedManager = getManager();
+		if (connectedManager != null)
+			connectedManager.removePropertyChangeListener(this);
 		super.disconnect();
 	}
 

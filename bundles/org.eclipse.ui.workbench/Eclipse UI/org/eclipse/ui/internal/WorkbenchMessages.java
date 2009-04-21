@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -816,6 +816,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ProblemRestoringWorkingSetState_message;
 
 	public static String ProblemRestoringWorkingSetState_title;
+	public static String ProblemCyclicDependency;
 
 	public static String WorkingSetEditWizard_title;
 	public static String WorkingSetNewWizard_title;

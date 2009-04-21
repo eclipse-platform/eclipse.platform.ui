@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -99,5 +99,111 @@ public class IAggregateWorkingSetTest extends UITestCase {
 		assertTrue(ArrayUtil.equals(
 				new IAdaptable[] {},
 				fWorkingSet.getElements()));
+	}
+
+	/**
+	 * Core of the problem: while Eclipse is running, name collisions among working sets
+	 * don't matter. However, on save and restart names will be used to identify working
+	 * sets, which could possibly lead to cycles in aggregate working sets.
+	 * 
+	 * Bottom line: if there are multiple aggregate working sets with the same name, expect
+	 * trouble on restart.
+	 * 
+	 * To create a cycle we have to be creative:
+	 * - create an aggregate1 with an ID = "testCycle"
+	 * - create an aggregate2 with an ID = "testCycle" containing aggregate1
+	 * - save it into IMemento
+	 * 
+	 * Now the IMememnto creates a self reference:
+	 * 
+	 * <workingSet name="testCycle" label="testCycle" aggregate="true">
+	 * 	<workingSet IMemento.internal.id="testCycle" />
+	 * </workingSet>
+	 * 
+	 * All we have to do to emulate stack overflow is to create a working set based on this IMemento.
+	 * 
+	 * @throws Throwable
+	 */
+	public void testWorkingSetCycle() throws Throwable {
+		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
+		
+		// create an IMemento with a cycle in it
+		IAggregateWorkingSet aggregate = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle","testCycle", new IWorkingSet[0]);
+		
+		IAggregateWorkingSet aggregate2 = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle","testCycle", new IWorkingSet[] {aggregate});
+		
+		IMemento memento=XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET);
+		aggregate2.saveState(memento);
+		
+		// load the IMemento
+		IAggregateWorkingSet aggregateReloaded = null;
+		try {
+			aggregateReloaded = (IAggregateWorkingSet) manager.createWorkingSet(memento);
+			manager.addWorkingSet(aggregateReloaded);
+			aggregateReloaded.getComponents();
+		} catch (StackOverflowError e) {
+			e.printStackTrace();
+			fail("Stack overflow for self-referenced aggregate working set", e);
+		} finally {
+			if (aggregateReloaded != null)
+				manager.removeWorkingSet(aggregateReloaded);
+		}
+	}
+	
+	/**
+	 * Tests cleanup of the cycle from an aggregate working set.
+	 * @throws Throwable
+	 */
+	public void testCycleCleanup() throws Throwable {
+		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
+		
+		// create an IMemento with a cycle in it: { good, good, cycle, good, good }
+		IAggregateWorkingSet aggregateSub0 = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle0","testCycle0", new IWorkingSet[0]);
+		
+		IAggregateWorkingSet aggregateSub1 = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle1","testCycle1", new IWorkingSet[0]);
+
+		IAggregateWorkingSet aggregateSub2 = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle","testCycle", new IWorkingSet[0]); // cycle
+		
+		IAggregateWorkingSet aggregateSub3 = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle3","testCycle3", new IWorkingSet[0]);
+		
+		IAggregateWorkingSet aggregateSub4 = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle4","testCycle4", new IWorkingSet[0]);
+		
+		
+		IAggregateWorkingSet aggregate = (IAggregateWorkingSet) manager
+		.createAggregateWorkingSet("testCycle","testCycle", new IWorkingSet[] {aggregateSub0, 
+				aggregateSub1, aggregateSub2, aggregateSub3, aggregateSub4});
+
+		manager.addWorkingSet(aggregateSub0);
+		manager.addWorkingSet(aggregateSub1);
+		manager.addWorkingSet(aggregateSub3);
+		manager.addWorkingSet(aggregateSub4);
+		
+		IMemento memento=XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET);
+		aggregate.saveState(memento);
+		
+		// load the IMemento
+		IAggregateWorkingSet aggregateReloaded = null;
+		try {
+			aggregateReloaded = (IAggregateWorkingSet) manager.createWorkingSet(memento);
+			manager.addWorkingSet(aggregateReloaded);
+			IWorkingSet[] aggregates = aggregateReloaded.getComponents();
+			assertNotNull(aggregates);
+			assertEquals(4, aggregates.length);
+			for(int i = 0; i < aggregates.length; i++)
+				assertFalse("testCycle".equals(aggregates[i].getName()));
+		} catch (StackOverflowError e) {
+			e.printStackTrace();
+			fail("Stack overflow for self-referenced aggregate working set", e);
+		} finally {
+			if (aggregateReloaded != null)
+				manager.removeWorkingSet(aggregateReloaded);
+		}
 	}
 }
