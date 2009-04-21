@@ -27,7 +27,7 @@ public class Project extends Container implements IProject {
 	protected Project(IPath path, Workspace container) {
 		super(path, container);
 	}
-	
+
 	protected void assertCreateRequirements(IProjectDescription description) throws CoreException {
 		checkDoesNotExist();
 		checkDescription(this, description, false);
@@ -226,29 +226,29 @@ public class Project extends Container implements IProject {
 	public void create(IProgressMonitor monitor) throws CoreException {
 		create(null, monitor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IProject#create(IProjectDescription, IProgressMonitor)
 	 */
 	public void create(IProjectDescription description, IProgressMonitor monitor) throws CoreException {
 		create(description, IResource.NONE, monitor);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IProject#create(IProjectDescription, IProgressMonitor)
 	 */
-	public  void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	public void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			monitor.beginTask(Messages.resources_create, Policy.totalWork);
 			checkValidPath(path, PROJECT, false);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
-				workspace.prepareOperation(rule, monitor);				
+				workspace.prepareOperation(rule, monitor);
 				if (description == null) {
 					description = new ProjectDescription();
 					description.setName(getName());
-				}		
+				}
 				assertCreateRequirements(description);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CREATE, this));
 				workspace.beginOperation(true);
@@ -325,7 +325,7 @@ public class Project extends Container implements IProject {
 		clearHistory(null);
 	}
 
-	protected void fixupAfterMoveSource()  throws CoreException {
+	protected void fixupAfterMoveSource() throws CoreException {
 		workspace.deleteResource(this);
 		// check if we deleted a preferences file 
 		ProjectPreferences.deleted(this);
@@ -507,9 +507,7 @@ public class Project extends Container implements IProject {
 					innerMonitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
 					try {
 						workspace.prepareOperation(rule, innerMonitor);
-						ResourceInfo info = getResourceInfo(false, false);
-						int flags = getFlags(info);
-						if (!exists(flags, true) || !isOpen(flags))
+						if (!shouldBuild())
 							return;
 						workspace.beginOperation(true);
 						workspace.aboutToBuild(Project.this, trigger);
@@ -541,8 +539,37 @@ public class Project extends Container implements IProject {
 					innerMonitor.done();
 				}
 			}
+			/**
+			 * Returns whether this project should be built for a given trigger. Note we
+			 * can't optimize the general case here because the build manager can change
+			 * the trigger depending on the presence of a built state. All we can do here
+			 * are certain optimizations when auto-build is enabled
+			 * @return <code>true</code> if the build should proceed, and <code>false</code> otherwise.
+			 */
+			private boolean shouldBuild() {
+				ResourceInfo info = getResourceInfo(false, false);
+				int flags = getFlags(info);
+				if (!exists(flags, true) || !isOpen(flags))
+					return false;
+				if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD && getWorkspace().isAutoBuilding()) {
+					//don't need to do an incremental build if all builders respond to autobuild
+					IProjectDescription description = internalGetDescription();
+					if (description == null)
+						return false;
+					ICommand[] commands = description.getBuildSpec();
+					for (int i = 0; i < commands.length; i++) {
+						if (!commands[i].isBuilding(IncrementalProjectBuilder.AUTO_BUILD))
+							return true;
+					}
+					//all builders respond to autobuild, so no need for incremental build
+					return false;
+				}
+				return true;
+			}
+
 		}, monitor);
 	}
+
 
 	/**
 	 * Closes the project.  This is called during restore when there is a failure
@@ -735,7 +762,7 @@ public class Project extends Container implements IProject {
 	public boolean isLinked(int options) {
 		return false;//projects are never linked
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IResource#isTeamPrivateMember(int)
 	 */
@@ -890,7 +917,7 @@ public class Project extends Container implements IProject {
 				// the M_USED flag is used to indicate the difference between opening a project
 				// for the first time and opening it from a previous close (restoring it from disk)
 				boolean used = info.isSet(M_USED);
-				boolean minorIssuesDuringRestore = false;	
+				boolean minorIssuesDuringRestore = false;
 				if (used) {
 					minorIssuesDuringRestore = workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 				} else {
@@ -1009,7 +1036,7 @@ public class Project extends Container implements IProject {
 			if ((updateFlags & IResource.AVOID_NATURE_CONFIG) != 0)
 				rule = workspace.getRuleFactory().modifyRule(this);
 			else
-				rule = workspace.getRoot();		
+				rule = workspace.getRoot();
 			try {
 				//need to use root rule because nature configuration calls third party code
 				workspace.prepareOperation(rule, monitor);
