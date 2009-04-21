@@ -22,6 +22,7 @@ public class AllTests extends TestSuite {
 		suite.addTest(BenchFileStore.suite());
 		suite.addTest(BenchWorkspace.suite());
 		suite.addTest(BenchMiscWorkspace.suite());
+		suite.addTest(BuilderPerformanceTest.suite());
 		suite.addTest(MarkerPerformanceTest.suite());
 		suite.addTest(LocalHistoryPerformanceTest.suite());
 		suite.addTest(WorkspacePerformanceTest.suite());
