@@ -32,7 +32,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	 * These listeners are to be informed when 
 	 * something in a content type changes.
 	 */
-	protected ListenerList contentTypeListeners = new ListenerList();
+	protected final ListenerList contentTypeListeners = new ListenerList();
 
 	/**
 	 * Creates and initializes the platform's content type manager. A reference to the
