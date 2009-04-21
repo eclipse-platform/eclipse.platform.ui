@@ -72,6 +72,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.SelectionProcessor;
 import org.eclipse.jface.internal.text.StickyHoverManager;
+import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -1117,6 +1118,20 @@ public class TextViewer extends Viewer implements
 			fStateMask= stateMask;
 		}
 	}
+	
+	/**
+	 * Position storing block selection information in order to maintain a column selection.
+	 * 
+	 * @since 3.5
+	 */
+	private static final class ColumnPosition extends Position {
+		int fStartColumn, fEndColumn;
+		ColumnPosition(int offset, int length, int startColumn, int endColumn) {
+			super(offset, length);
+			fStartColumn= startColumn;
+			fEndColumn= endColumn;
+		}
+	}
 
 	/**
 	 * Captures and remembers the viewer state (selection and visual position). {@link TextViewer.ViewerState}
@@ -1193,13 +1208,32 @@ public class TextViewer extends Viewer implements
 			if (isConnected())
 				disconnect();
 			if (fSelection != null) {
-				int offset= fSelection.getOffset();
-				int length= fSelection.getLength();
-				if (fReverseSelection) {
-					offset-= length;
-					length= -length;
+				if (fSelection instanceof ColumnPosition) {
+					ColumnPosition cp= (ColumnPosition)fSelection;
+					IDocument document= fDocument;
+					try {
+						int startLine= document.getLineOfOffset(fSelection.getOffset());
+						int startLineOffset= document.getLineOffset(startLine);
+						int selectionEnd= fSelection.getOffset() + fSelection.getLength();
+						int endLine= document.getLineOfOffset(selectionEnd);
+						int endLineOffset= document.getLineOffset(endLine);
+						int tabs= getTextWidget().getTabs();
+						int startColumn= fSelection.getOffset() - startLineOffset + cp.fStartColumn;
+						int endColumn= selectionEnd - endLineOffset + cp.fEndColumn;
+						setSelection(new BlockTextSelection(document, startLine, startColumn, endLine, endColumn, tabs));
+					} catch (BadLocationException e) {
+						// fall back to linear mode
+						setSelectedRange(cp.getOffset(), cp.getLength());
+					}
+				} else {
+					int offset= fSelection.getOffset();
+					int length= fSelection.getLength();
+					if (fReverseSelection) {
+						offset-= length;
+						length= -length;
+					}
+					setSelectedRange(offset, length);
 				}
-				setSelectedRange(offset, length);
 				if (restoreViewport)
 					updateViewport();
 			}
@@ -1246,18 +1280,26 @@ public class TextViewer extends Viewer implements
 				fUpdaterDocument.addPositionCategory(fUpdaterCategory);
 				fUpdaterDocument.addPositionUpdater(fUpdater);
 
-				Point selectionRange= getSelectedRange();
-				fReverseSelection= selectionRange.y < 0;
-				int offset, length;
-				if (fReverseSelection) {
-					offset= selectionRange.x + selectionRange.y;
-					length= -selectionRange.y;
+				ISelection selection= TextViewer.this.getSelection();
+				if (selection instanceof IBlockTextSelection) {
+					IBlockTextSelection bts= (IBlockTextSelection) selection;
+					int startVirtual= Math.max(0, bts.getStartColumn() - document.getLineInformationOfOffset(bts.getOffset()).getLength());
+					int endVirtual= Math.max(0, bts.getEndColumn() - document.getLineInformationOfOffset(bts.getOffset() + bts.getLength()).getLength());
+					fSelection= new ColumnPosition(bts.getOffset(), bts.getLength(), startVirtual, endVirtual);
 				} else {
-					offset= selectionRange.x;
-					length= selectionRange.y;
+					Point selectionRange= getSelectedRange();
+					fReverseSelection= selectionRange.y < 0;
+					int offset, length;
+					if (fReverseSelection) {
+						offset= selectionRange.x + selectionRange.y;
+						length= -selectionRange.y;
+					} else {
+						offset= selectionRange.x;
+						length= selectionRange.y;
+					}
+					fSelection= new Position(offset, length);
 				}
 
-				fSelection= new Position(offset, length);
 				fSelectionSet= false;
 				fUpdaterDocument.addPosition(fUpdaterCategory, fSelection);
 
@@ -2427,17 +2469,39 @@ public class TextViewer extends Viewer implements
 	 * @see Viewer#setSelection(ISelection)
 	 */
 	public void setSelection(ISelection selection, boolean reveal) {
-//		// FIXME ViewerState should also support column selections
-//		if (selection instanceof IColumnTextSelection && getTextWidget().getBlockSelection()) {
-//			IColumnTextSelection s= (IColumnTextSelection) selection;
-//			StyledText styledText= getTextWidget();
-//			int startLine= modelLine2WidgetLine(s.getStartLine());
-//			int endLine= modelLine2WidgetLine(s.getEndLine());
-//			styledText.setBlColumnSelection(s.getStartColumn(), startLine, s.getEndColumn(), endLine);
-//			if (reveal)
-//				revealRange(s.getOffset(), s.getLength());
-//		} else if (selection instanceof ITextSelection) {
-		if (selection instanceof ITextSelection) {
+		if (selection instanceof IBlockTextSelection && getTextWidget().getBlockSelection()) {
+			IBlockTextSelection s= (IBlockTextSelection) selection;
+
+			try {
+				int startLine= s.getStartLine();
+				int endLine= s.getEndLine();
+				IRegion startLineInfo= fDocument.getLineInformation(startLine);
+				int startLineLength= startLineInfo.getLength();
+				int startVirtuals= Math.max(0, s.getStartColumn() - startLineLength);
+
+				IRegion endLineInfo= fDocument.getLineInformation(endLine);
+				int endLineLength= endLineInfo.getLength();
+				int endVirtuals= Math.max(0, s.getEndColumn() - endLineLength);
+				
+				int startOffset= modelOffset2WidgetOffset(startLineInfo.getOffset() + s.getStartColumn() - startVirtuals);
+				int endOffset= modelOffset2WidgetOffset(endLineInfo.getOffset() + s.getEndColumn() - endVirtuals);
+				Point clientAreaOrigin= new Point(fTextWidget.getHorizontalPixel(), fTextWidget.getTopPixel());
+				Point startLocation= Geometry.add(clientAreaOrigin, fTextWidget.getLocationAtOffset(startOffset));
+				int averageCharWidth= getAverageCharWidth();
+				startLocation.x += startVirtuals * averageCharWidth;
+				Point endLocation= Geometry.add(clientAreaOrigin, fTextWidget.getLocationAtOffset(endOffset));
+				endLocation.x += endVirtuals * averageCharWidth;
+				endLocation.y += fTextWidget.getLineHeight(endOffset);
+
+				fTextWidget.setBlockSelectionBounds(Geometry.createRectangle(startLocation, Geometry.subtract(endLocation, startLocation)));
+				// TODO fire selection change, validate etc - see setSelectedRange
+			} catch (BadLocationException e) {
+				// fall back to linear selection mode
+				setSelectedRange(s.getOffset(), s.getLength());
+			}
+			if (reveal)
+				revealRange(s.getOffset(), s.getLength());
+		} else if (selection instanceof ITextSelection) {
 			ITextSelection s= (ITextSelection) selection;
 			setSelectedRange(s.getOffset(), s.getLength());
 			if (reveal)
@@ -2449,10 +2513,19 @@ public class TextViewer extends Viewer implements
 	 * @see Viewer#getSelection()
 	 */
 	public ISelection getSelection() {
-		if (redraws() && fTextWidget != null && fTextWidget.getBlockSelection()) {
+		if (fTextWidget != null && fTextWidget.getBlockSelection()) {
 			int[] ranges= fTextWidget.getSelectionRanges();
 			int startOffset= ranges[0];
 			int endOffset= ranges[ranges.length - 2] + ranges[ranges.length - 1];
+			
+			// getBlockSelectionBounds returns pixel coordinates relative to document
+			Rectangle bounds= fTextWidget.getBlockSelectionBounds();
+			int clientAreaX= fTextWidget.getHorizontalPixel();
+			int startX= bounds.x - clientAreaX;
+			int endX= bounds.x + bounds.width - clientAreaX;
+			int avgCharWidth= getAverageCharWidth();
+			int startVirtuals= computeVirtualChars(startOffset, startX, avgCharWidth);
+			int endVirtuals= computeVirtualChars(endOffset, endX, avgCharWidth);
 			
 			IDocument document= getDocument();
 			startOffset= widgetOffset2ModelOffset(startOffset);
@@ -2461,8 +2534,8 @@ public class TextViewer extends Viewer implements
 				int startLine= document.getLineOfOffset(startOffset);
 				int endLine= document.getLineOfOffset(endOffset);
 				
-				int startColumn= startOffset - document.getLineOffset(startLine);
-				int endColumn= endOffset - document.getLineOffset(endLine);
+				int startColumn= startOffset - document.getLineOffset(startLine) + startVirtuals;
+				int endColumn= endOffset - document.getLineOffset(endLine) + endVirtuals;
 				if (startLine == -1 || endLine == -1)
 					return TextSelection.emptySelection();
 				return new BlockTextSelection(document, startLine, startColumn, endLine, endColumn, fTextWidget.getTabs());
@@ -2476,6 +2549,22 @@ public class TextViewer extends Viewer implements
 			return TextSelection.emptySelection();
 
 		return new TextSelection(getDocument(), p.x, p.y);
+	}
+
+	/**
+	 * Returns the number of virtual characters that exist beyond the end-of-line at offset
+	 * <code>offset</code> for an x-coordinate <code>x</code>.
+	 * 
+	 * @param offset the non-virtual offset to consider
+	 * @param x the x-coordinate (relative to the client area) of the possibly virtual offset
+	 * @param avgCharWidth the average character width to assume for virtual spaces
+	 * @return the number of virtual spaces needed to reach <code>x</code> from the location of
+	 *         <code>offset</code>, <code>0</code> if <code>x</code> points inside the text
+	 * @since 3.5
+	 */
+	private int computeVirtualChars(int offset, int x, int avgCharWidth) {
+		int diff= x - fTextWidget.getLocationAtOffset(offset).x;
+		return diff > 0 ? diff / avgCharWidth : 0;
 	}
 
 	/*

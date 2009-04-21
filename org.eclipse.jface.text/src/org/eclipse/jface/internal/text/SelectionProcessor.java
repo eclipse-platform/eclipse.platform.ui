@@ -18,7 +18,6 @@ import org.eclipse.text.edits.DeleteEdit;
 import org.eclipse.text.edits.InsertEdit;
 import org.eclipse.text.edits.MalformedTreeException;
 import org.eclipse.text.edits.MultiTextEdit;
-import org.eclipse.text.edits.RangeMarker;
 import org.eclipse.text.edits.ReplaceEdit;
 import org.eclipse.text.edits.TextEdit;
 
@@ -227,7 +226,6 @@ public final class SelectionProcessor {
 				int endColumn= cts.getEndColumn();
 				int visualStartColumn= computeVisualColumn(startLine, startColumn);
 				int visualEndColumn= computeVisualColumn(endLine, endColumn);
-				visualEndColumn= Math.max(visualStartColumn, visualEndColumn); // HACK - TextViewer::getSelection does not know about virtual selections
 				root= new MultiTextEdit();
 				String[] delimiters= fDocument.getLegalLineDelimiters();
 
@@ -248,8 +246,6 @@ public final class SelectionProcessor {
 					}
 					TextEdit replace= createReplaceEdit(line, visualStartColumn, visualEndColumn, string);
 					root.addChild(replace);
-					if (line == startLine)
-						root.addChild(new RangeMarker(replace.getOffset() + replace.getLength(), 0));
 				}
 				while (lastDelim != -1) {
 					// more stuff to insert
@@ -427,6 +423,8 @@ public final class SelectionProcessor {
 			}
 			if (endColumn == -1)
 				endColumn= lineLength;
+			if (replacement.length() == 0)
+				return new DeleteEdit(info.getOffset() + startColumn, endColumn - startColumn);
 			return new ReplaceEdit(info.getOffset() + startColumn, endColumn - startColumn, replacement);
 		}
 
