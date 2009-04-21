@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class SearchResults implements ISearchHitCollector {
 		boolean scoreScaleSet = false;
 		
 		Iterator iter = hits.iterator();
-		for (int i=0;i<maxHits && iter.hasNext();i++) {
+		for (int filteredHits = 0; filteredHits < maxHits && iter.hasNext(); ) {
 			SearchHit rawHit = (SearchHit)iter.next();
 			String href = rawHit.getHref();
 			IToc toc = null; // the TOC containing the topic
@@ -107,6 +107,7 @@ public class SearchResults implements ISearchHitCollector {
 			if (urlEncodedWords.length() > 0) {
 				href += "?resultof=" + urlEncodedWords; //$NON-NLS-1$
 			}
+			filteredHits ++;
 			searchHitList.add(new SearchHit(href, label, rawHit.getSummary(), score, toc, rawHit.getRawId(), rawHit.getParticipantId(), rawHit.isPotentialHit()));
 		}
 		searchHits = (SearchHit[]) searchHitList
