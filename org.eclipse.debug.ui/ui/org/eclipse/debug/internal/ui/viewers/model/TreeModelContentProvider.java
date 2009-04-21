@@ -194,9 +194,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 				System.out.println("[expand] setChildCount(" + delta.getElement() + ", (model) " + childCount + " (view) " + viewCount); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			treeViewer.setChildCount(elementPath, viewCount);
-			if (!treeViewer.getExpandedState(elementPath)) {
-				treeViewer.expandToLevel(elementPath, 1);
-			}
+		}
+		if (!treeViewer.getExpandedState(elementPath)) {
+			treeViewer.expandToLevel(elementPath, 1);
 		}
 	}
 	

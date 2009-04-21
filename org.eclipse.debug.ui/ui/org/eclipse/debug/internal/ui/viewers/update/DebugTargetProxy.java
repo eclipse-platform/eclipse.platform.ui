@@ -82,21 +82,18 @@ public class DebugTargetProxy extends EventHandlerModelProxy implements IModelNa
 		// select any thread that is already suspended after installation
 		IDebugTarget target = fDebugTarget;
 		if (target != null) {
-			try {
-				ModelDelta delta = getNextSuspendedThreadDelta(null, false, false);
-				if (delta == null) {
-	                ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-	                ILaunch launch = target.getLaunch();
-	                int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
-	                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
-	                delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
-	                ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-	                node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, target.getThreads().length);
-				}
-				// expand the target if no suspended thread
-				fireModelChanged(delta);
-			} catch (DebugException e) {
+			ModelDelta delta = getNextSuspendedThreadDelta(null, false, false);
+			if (delta == null) {
+                ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+                ILaunch launch = target.getLaunch();
+                int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
+                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
+                delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
+                ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+                node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, -1);
 			}
+			// expand the target if no suspended thread
+			fireModelChanged(delta);
 		}
 	}
     
