@@ -1,5 +1,5 @@
 /***************************************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others. All rights reserved. This program and the
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved. This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
@@ -13,6 +13,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
+import org.eclipse.help.IContextProvider;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -300,7 +301,9 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			IWorkbenchPage page = window.getActivePage();
 			if (page != null) {
 				if (!noInfopop && winfopop) {
-					displayContextAsInfopop(context, x, y);
+					IWorkbenchPart activePart = page.getActivePart();
+					Control c = window.getShell().getDisplay().getFocusControl();
+					displayContextAsInfopop(context, x, y, activePart, c);
 					return;
 				}
 				try {
@@ -346,7 +349,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			return;
 		}
 		// we are here either as a fallback or because of the user preferences
-		displayContextAsInfopop(context, x, y);
+		displayContextAsInfopop(context, x, y, null, null);
 	}
 
 	/*
@@ -377,9 +380,19 @@ public class DefaultHelpUI extends AbstractHelpUI {
 		return activeShell != null && activeShell.equals(window.getShell());
 	}
 
-	private void displayContextAsInfopop(IContext context, int x, int y) {
+	private void displayContextAsInfopop(IContext context, int x, int y, IWorkbenchPart activePart, Control c) {
 		if (f1Dialog != null) {
 			f1Dialog.close();
+		}
+		if (activePart != null) {
+			IContextProvider provider = (IContextProvider) activePart
+				.getAdapter(IContextProvider.class);
+			if (provider != null) {
+				IContext providedContext = provider.getContext(c);
+				if (providedContext != null) {
+					context = providedContext;
+				}
+			}
 		}
 		if (context != null) {
 			/*
