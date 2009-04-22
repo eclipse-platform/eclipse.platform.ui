@@ -17,8 +17,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -32,9 +30,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
  */
 public class CSSPropertyHandlerLazyProviderImpl extends
 		AbstractCSSPropertyHandlerProvider {
-
-	private static Log logger = LogFactory
-			.getLog(CSSPropertyHandlerLazyProviderImpl.class);
 
 	// List of package names containing handlers class for properties
 	private List packageNames = new ArrayList();
@@ -68,20 +63,22 @@ public class CSSPropertyHandlerLazyProviderImpl extends
 				ICSSPropertyHandler handler = getCSSPropertyHandler(
 						packageName, handlerClassName);
 				if (handler != null) {
-					if (logger.isDebugEnabled())
-						logger.debug("Handle CSS Property=" + property
-								+ ", with class=" + packageName + "."
-								+ handlerClassName);
+					//TODO replace with eclipse logging
+//					if (logger.isDebugEnabled())
+//						logger.debug("Handle CSS Property=" + property
+//								+ ", with class=" + packageName + "."
+//								+ handlerClassName);
 					if (handlers == null)
 						handlers = new ArrayList();
 					handlers.add(handler);
 				}
 			}
-			if (logger.isDebugEnabled()) {
-				if (handlers == null)
-					logger.debug("Cannot find Handle Class CSS Property="
-							+ property + ", for class=" + handlerClassName);
-			}
+			//TODO replace with eclipse logging
+//			if (logger.isDebugEnabled()) {
+//				if (handlers == null)
+//					logger.debug("Cannot find Handle Class CSS Property="
+//							+ property + ", for class=" + handlerClassName);
+//			}
 		} finally {
 			if (handlers != null)
 				propertyHandlers.put(property, handlers);

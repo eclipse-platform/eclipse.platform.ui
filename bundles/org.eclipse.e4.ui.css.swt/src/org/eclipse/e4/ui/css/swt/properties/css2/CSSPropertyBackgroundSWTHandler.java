@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
@@ -27,9 +25,6 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyBackgroundSWTHandler extends
 		AbstractCSSPropertyBackgroundHandler {
-
-	private static Log logger = LogFactory
-			.getLog(CSSPropertyBackgroundSWTHandler.class);
 
 	public final static ICSSPropertyBackgroundHandler INSTANCE = new CSSPropertyBackgroundSWTHandler();
 
@@ -102,9 +97,10 @@ public class CSSPropertyBackgroundSWTHandler extends
 			try {
 				control.setBackgroundImage(image);
 			} catch (Throwable e) {
-				if (logger.isWarnEnabled())
-					logger
-							.warn("Impossible to manage backround-image, This SWT version doesn't support control.setBackgroundImage(Image image) Method");
+				//TODO replace with eclipse logging
+//				if (logger.isWarnEnabled())
+//					logger
+//							.warn("Impossible to manage backround-image, This SWT version doesn't support control.setBackgroundImage(Image image) Method");
 			}
 		}
 	}

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyClassificationHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyClassificationHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -23,9 +21,6 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyClassificationSWTHandler extends
 		AbstractCSSPropertyClassificationHandler {
-
-	private static Log logger = LogFactory
-			.getLog(CSSPropertyClassificationSWTHandler.class);
 
 	public final static ICSSPropertyClassificationHandler INSTANCE = new CSSPropertyClassificationSWTHandler();
 
@@ -82,9 +77,10 @@ public class CSSPropertyClassificationSWTHandler extends
 		try {
 			cursor = control.getCursor();
 		} catch (Throwable e) {
-			if (logger.isWarnEnabled())
-				logger
-						.warn("Impossible to manage cursor, This SWT version doesn't support control.getCursor() Method");
+			//TODO replace with eclipse logging
+//			if (logger.isWarnEnabled())
+//				logger
+//						.warn("Impossible to manage cursor, This SWT version doesn't support control.getCursor() Method");
 		}
 		return engine.convert(cursor, Cursor.class, null);
 	}

@@ -13,8 +13,6 @@ package org.eclipse.e4.ui.css.core.impl.sac;
 
 import java.util.Stack;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.eclipse.e4.ui.css.core.dom.CSSProperty;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSImportRuleImpl;
 import org.eclipse.e4.ui.css.core.impl.dom.CSSPageRuleImpl;
@@ -40,8 +38,6 @@ import org.w3c.dom.css.CSSStyleSheet;
  * {@link org.eclipse.ui.css.core.sac.ExtendedDocumentHandler} interface.
  */
 public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
-
-	private static Log logger = LogFactory.getLog(CSSDocumentHandlerImpl.class);
 
 	private Stack nodeStack;
 	private Object nodeRoot = null;
@@ -97,10 +93,11 @@ public class CSSDocumentHandlerImpl implements ExtendedDocumentHandler {
 
 	public void namespaceDeclaration(String prefix, String uri)
 			throws CSSException {
-		if (logger.isDebugEnabled()) {
-			logger.debug("Declare namespace [prefix=" + prefix + ", uri=" + uri
-					+ "]");
-		}
+		//TODO replace with eclipse logging
+//		if (logger.isDebugEnabled()) {
+//			logger.debug("Declare namespace [prefix=" + prefix + ", uri=" + uri
+//					+ "]");
+//		}
 	}
 
 	public void importStyle(String uri, SACMediaList media,
