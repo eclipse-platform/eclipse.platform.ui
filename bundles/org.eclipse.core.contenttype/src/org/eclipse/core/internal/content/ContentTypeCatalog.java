@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,22 +20,21 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
 public final class ContentTypeCatalog {
 	private static final IContentType[] NO_CONTENT_TYPES = new IContentType[0];
 
-	private Map allChildren = new HashMap();
-	private Map contentTypes = new HashMap();
-
-	private Map fileExtensions = new HashMap();
-
-	private Map fileNames = new HashMap();
-
+	/**
+	 * All fields are guarded by lock on "this"
+	 */
+	private final Map allChildren = new HashMap();
+	private final Map contentTypes = new HashMap();
+	private final Map fileExtensions = new HashMap();
+	private final Map fileNames = new HashMap();
 	private int generation;
-
 	private ContentTypeManager manager;
 
 	/**
 	 * A sorting policy where the more generic content type wins. Lexicographical comparison is done
 	 * as a last resort when all other criteria fail.  
 	 */
-	private Comparator policyConstantGeneralIsBetter = new Comparator() {
+	private final Comparator policyConstantGeneralIsBetter = new Comparator() {
 		public int compare(Object o1, Object o2) {
 			ContentType type1 = (ContentType) o1;
 			ContentType type2 = (ContentType) o2;
@@ -137,7 +136,7 @@ public final class ContentTypeCatalog {
 		this.generation = generation;
 	}
 
-	void addContentType(IContentType contentType) {
+	synchronized void addContentType(IContentType contentType) {
 		contentTypes.put(contentType.getId(), contentType);
 	}
 
@@ -160,7 +159,7 @@ public final class ContentTypeCatalog {
 		return result[0];
 	}
 
-	void associate(ContentType contentType) {
+	private void associate(ContentType contentType) {
 		String[] builtInFileNames = contentType.getFileSpecs(IContentType.IGNORE_USER_DEFINED | IContentType.FILE_NAME_SPEC);
 		for (int i = 0; i < builtInFileNames.length; i++)
 			associate(contentType, builtInFileNames[i], IContentType.FILE_NAME_SPEC);
@@ -169,7 +168,7 @@ public final class ContentTypeCatalog {
 			associate(contentType, builtInFileExtensions[i], IContentType.FILE_EXTENSION_SPEC);
 	}
 
-	void associate(ContentType contentType, String text, int type) {
+	synchronized void associate(ContentType contentType, String text, int type) {
 		Map fileSpecMap = ((type & IContentType.FILE_NAME_SPEC) != 0) ? fileNames : fileExtensions;
 		String mappingKey = FileSpec.getMappingKeyFor(text);
 		Set existing = (Set) fileSpecMap.get(mappingKey);
@@ -199,7 +198,7 @@ public final class ContentTypeCatalog {
 		return valid;
 	}
 
-	void dissociate(ContentType contentType, String text, int type) {
+	synchronized void dissociate(ContentType contentType, String text, int type) {
 		Map fileSpecMap = ((type & IContentType.FILE_NAME_SPEC) != 0) ? fileNames : fileExtensions;
 		String mappingKey = FileSpec.getMappingKeyFor(text);
 		Set existing = (Set) fileSpecMap.get(mappingKey);
@@ -270,7 +269,7 @@ public final class ContentTypeCatalog {
 		return selected;
 	}
 
-	public IContentType[] getAllContentTypes() {
+	synchronized public IContentType[] getAllContentTypes() {
 		List result = new ArrayList(contentTypes.size());
 		for (Iterator i = contentTypes.values().iterator(); i.hasNext();) {
 			ContentType type = (ContentType) i.next();
@@ -280,7 +279,7 @@ public final class ContentTypeCatalog {
 		return (IContentType[]) result.toArray(new IContentType[result.size()]);
 	}
 
-	public ContentType[] getChildren(ContentType parent) {
+	private ContentType[] getChildren(ContentType parent) {
 		ContentType[] children = (ContentType[]) allChildren.get(parent);
 		if (children != null)
 			return children;
@@ -330,7 +329,7 @@ public final class ContentTypeCatalog {
 		return manager;
 	}
 
-	public boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
+	private boolean internalAccept(ContentTypeVisitor visitor, ContentType root) {
 		if (!root.isValid() || root.isAlias())
 			return true;
 		int result = visitor.visit(root);
@@ -353,7 +352,7 @@ public final class ContentTypeCatalog {
 		return true;
 	}
 
-	public IContentType[] internalFindContentTypesFor(ILazySource buffer, IContentType[][] subset, Comparator validPolicy, Comparator indeterminatePolicy) throws IOException {
+	private IContentType[] internalFindContentTypesFor(ILazySource buffer, IContentType[][] subset, Comparator validPolicy, Comparator indeterminatePolicy) throws IOException {
 		final List appropriate = new ArrayList(5);
 		final int validFullName = collectMatchingByContents(0, subset[0], appropriate, buffer);
 		final int appropriateFullName = appropriate.size();
@@ -371,7 +370,7 @@ public final class ContentTypeCatalog {
 		return result;
 	}
 
-	private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName, boolean forceValidation) throws IOException {
+	synchronized private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName, boolean forceValidation) throws IOException {
 		final IContentType[][] subset;
 		final Comparator validPolicy;
 		Comparator indeterminatePolicy;
@@ -413,7 +412,7 @@ public final class ContentTypeCatalog {
 	 * @return all matching content types in the preferred order 
 	 * @see IContentTypeManager#findContentTypesFor(String)
 	 */
-	public IContentType[][] internalFindContentTypesFor(ContentTypeMatcher matcher, final String fileName, Comparator sortingPolicy) {
+	synchronized private IContentType[][] internalFindContentTypesFor(ContentTypeMatcher matcher, final String fileName, Comparator sortingPolicy) {
 		IScopeContext context = matcher.getContext();
 		IContentType[][] result = {NO_CONTENT_TYPES, NO_CONTENT_TYPES};
 
@@ -460,7 +459,7 @@ public final class ContentTypeCatalog {
 	 *	</ul>
 	 * @return a set of content types
 	 */
-	public Set getDirectlyAssociated(String text, int typeMask) {
+	private Set getDirectlyAssociated(String text, int typeMask) {
 		Map associations = (typeMask & IContentTypeSettings.FILE_NAME_SPEC) != 0 ? fileNames : fileExtensions;
 		Set result = null;
 		if ((typeMask & (IContentType.IGNORE_PRE_DEFINED | IContentType.IGNORE_USER_DEFINED)) == 0)
@@ -484,11 +483,11 @@ public final class ContentTypeCatalog {
 		return result == null ? Collections.EMPTY_SET : result;
 	}
 
-	ContentType internalGetContentType(String contentTypeIdentifier) {
+	synchronized ContentType internalGetContentType(String contentTypeIdentifier) {
 		return (ContentType) contentTypes.get(contentTypeIdentifier);
 	}
 
-	void makeAliases() {
+	private void makeAliases() {
 		// process all content types marking aliases appropriately
 		for (Iterator i = contentTypes.values().iterator(); i.hasNext();) {
 			ContentType type = (ContentType) i.next();
@@ -504,7 +503,7 @@ public final class ContentTypeCatalog {
 	/**
 	 * Resolves inter-content type associations (inheritance and aliasing).
 	 */
-	protected void organize() {
+	synchronized protected void organize() {
 		// build the aliasing
 		makeAliases();
 		// do the validation
