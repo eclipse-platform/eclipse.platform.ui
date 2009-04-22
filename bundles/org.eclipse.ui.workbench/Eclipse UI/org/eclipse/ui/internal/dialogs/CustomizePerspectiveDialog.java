@@ -2235,31 +2235,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 * @param selected
 	 */
 	private void setSelectionOn(Viewer viewer, final Object selected) {
-		viewer.setSelection(new IStructuredSelection() {
-			public Object getFirstElement() {
-				return selected;
-			}
-
-			public Iterator iterator() {
-				return toList().iterator();
-			}
-
-			public int size() {
-				return 1;
-			}
-
-			public Object[] toArray() {
-				return new Object[] { selected };
-			}
-
-			public List toList() {
-				return Arrays.asList(toArray());
-			}
-
-			public boolean isEmpty() {
-				return false;
-			}
-		});
+		viewer.setSelection(new StructuredSelection(selected), true);
 	}
 
 	/**
