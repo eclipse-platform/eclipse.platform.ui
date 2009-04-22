@@ -30,5 +30,6 @@ public class AllOtherTests extends TestSuite {
 	 */
 	public AllOtherTests() {
 		addTest(ReopenStateTest.suite());
+		addTest(NormalizeWhitespaceTest.suite());
 	}
 }
