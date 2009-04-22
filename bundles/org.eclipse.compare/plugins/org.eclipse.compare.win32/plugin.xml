@@ -19,7 +19,7 @@
       <content-type
             file-extensions="doc"
             id="org.eclipse.compare.wordDoc"
-            name="Word Document">
+            name="%wordDocumentContentTypeName">
       </content-type>
    </extension>
 
