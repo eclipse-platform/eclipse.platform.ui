@@ -218,7 +218,6 @@ public class WorkbenchMessages extends NLS {
 	public static String HideItemsCannotMakeVisible_unavailableCommandGroupText;
 	public static String HideItemsCannotMakeVisible_switchToCommandGroupTab;
 	public static String HideItemsCannotMakeVisible_unavailableChildrenText;
-	public static String HideItemsCannotMakeVisible_expandItemText;
 	
 	public static String HideMenuItems_menuItemsTab;
 	public static String HideMenuItems_chooseMenuItemsLabel;

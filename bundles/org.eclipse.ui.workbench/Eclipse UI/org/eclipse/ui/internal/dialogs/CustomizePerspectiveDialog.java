@@ -23,49 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.SashForm;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.graphics.FontData;
-import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Resource;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.CoolBar;
-import org.eclipse.swt.widgets.CoolItem;
-import org.eclipse.swt.widgets.Decorations;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.MessageBox;
-import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
-import org.eclipse.swt.widgets.Tree;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
-
 import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.CoolBarManager;
@@ -113,7 +73,42 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.ToolTip;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Resource;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.swt.widgets.CoolItem;
+import org.eclipse.swt.widgets.Decorations;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.MessageBox;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
@@ -1260,23 +1255,19 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					mb.open();
 				} else {
 					MessageBox mb = new MessageBox(viewer.getControl()
-							.getShell(), SWT.YES | SWT.NO | SWT.ICON_WARNING);
+							.getShell(), SWT.OK | SWT.ICON_WARNING);
 					mb
 							.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
 					mb
 							.setMessage(NLS
 									.bind(
 											WorkbenchMessages.HideItemsCannotMakeVisible_unavailableChildrenText,
-											item.getLabel())
-									+ WorkbenchMessages.HideItemsCannotMakeVisible_expandItemText);
-					if (mb.open() == SWT.YES) {
-						viewer.setExpandedState(item, true);
-					}
+											item.getLabel()));
+					mb.open();
 				}
 			} else {
 				// the case where this item is unavailable because it belongs to
-				// an
-				// unavailable action set
+				// an unavailable action set
 				MessageBox mb = new MessageBox(viewer.getControl().getShell(),
 						SWT.YES | SWT.NO | SWT.ICON_WARNING);
 				mb
