@@ -24,7 +24,7 @@ import org.eclipse.ui.about.InstallationPage;
 
 /**
  * Abstract superclass of the individual about dialogs that appear outside of
- * the InstallationDialog These dialogs contain a single installation page, and
+ * the InstallationDialog. These dialogs contain a single installation page, and
  * scope the page to something more specific than it would be in the standard
  * installation dialog.
  * 
