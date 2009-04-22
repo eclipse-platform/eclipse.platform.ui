@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.utils.FileUtil;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -436,7 +438,7 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			String message = NLS.bind(Messages.resources_errorContentDescription, file.getFullPath());
 			throw new ResourceException(IResourceStatus.FAILED_DESCRIBING_CONTENTS, file.getFullPath(), message, e);
 		} finally {
-			file.ensureClosed(contents);
+			FileUtil.safeClose(contents);
 		}
 	}
 

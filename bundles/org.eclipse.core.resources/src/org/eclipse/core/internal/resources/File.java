@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.internal.utils.FileUtil;
+
 import java.io.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -174,7 +176,7 @@ public class File extends Resource implements IFile {
 			}
 		} finally {
 			monitor.done();
-			ensureClosed(content);
+			FileUtil.safeClose(content);
 		}
 	}
 
@@ -184,21 +186,6 @@ public class File extends Resource implements IFile {
 	public void create(InputStream content, boolean force, IProgressMonitor monitor) throws CoreException {
 		// funnel all operations to central method
 		create(content, (force ? IResource.FORCE : IResource.NONE), monitor);
-	}
-
-	/**
-	 * IFile API methods require that the stream be closed regardless
-	 * of the success of the method.  This method makes a best effort
-	 * at closing the stream, and ignores any resulting IOException.
-	 */
-	protected void ensureClosed(InputStream stream) {
-		if (stream != null) {
-			try {
-				stream.close();
-			} catch (IOException e) {
-				// ignore
-			}
-		}
 	}
 
 	/* (non-Javadoc)
@@ -375,7 +362,7 @@ public class File extends Resource implements IFile {
 			}
 		} finally {
 			monitor.done();
-			ensureClosed(content);
+			FileUtil.safeClose(content);
 		}
 	}
 
