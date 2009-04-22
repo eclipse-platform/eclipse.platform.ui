@@ -699,7 +699,8 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		// Copied from Wizard Dialog.
 
 		// increment the number of columns in the button bar
-		((GridLayout) parent.getLayout()).numColumns+= 2; // parent is assumed to have a GridLayout (see javadoc of Dialog#createButton(..))
+		GridLayout barLayout= (GridLayout) parent.getLayout();
+		barLayout.numColumns+= 2; // parent is assumed to have a GridLayout (see javadoc of Dialog#createButton(..))
 		Composite composite= new Composite(parent, SWT.NONE);
 		// create a layout with spacing and margins appropriate for the font
 		// size.
@@ -730,7 +731,8 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		int widthHint= convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 		Point minSize1= backButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		Point minSize2= nextButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
-		data.widthHint= Math.max(widthHint * 2, minSize1.x + minSize2.x);
+		int minSize= Math.max(minSize1.x, minSize2.x);
+		data.widthHint= 2 * (Math.max(widthHint, minSize) + barLayout.horizontalSpacing);
 		data.horizontalAlignment= SWT.END;
 		data.horizontalSpan= 2;
 		composite.setLayoutData(data);
