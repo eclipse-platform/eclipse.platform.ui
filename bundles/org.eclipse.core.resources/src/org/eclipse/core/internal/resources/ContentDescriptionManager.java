@@ -337,9 +337,19 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 			if (entry != null && entry.getTimestamp() == getTimestamp(info))
 				// there was a description in the cache, and it was up to date
 				return (IContentDescription) entry.getCached();
+		}
+		
+		// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
+		// reading description can call 3rd party code, so don't synchronize it
+		IContentDescription newDescription = readDescription(file);
+		
+		synchronized (this) {
+			// tries to get a description from the cache
+			Cache.Entry entry = cache.getEntry(file.getFullPath());
+			if (entry != null && entry.getTimestamp() == getTimestamp(info))
+				// there was a description in the cache, and it was up to date
+				return (IContentDescription) entry.getCached();
 			
-			// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
-			IContentDescription newDescription = readDescription(file);
 			if (getCacheState() != ABOUT_TO_FLUSH) {
 				// we are going to add an entry to the cache or update the resource info - remember that
 				setCacheState(USED_CACHE);
