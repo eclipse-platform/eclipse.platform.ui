@@ -47,7 +47,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -259,8 +258,9 @@ public class AboutDialog extends TrayDialog {
         // arbitrary default
         int topContainerHeightHint = 100;
         try {
-        	// default height enough for 6 lines of text
-        	topContainerHeightHint = Math.max(topContainerHeightHint, gc.getFontMetrics().getHeight() * 6);         
+			// default height enough for 6 lines of text
+			topContainerHeightHint = Math.max(topContainerHeightHint, gc
+					.getFontMetrics().getHeight() * 6);
         }
         finally {
         	gc.dispose();
@@ -290,7 +290,7 @@ public class AboutDialog extends TrayDialog {
         topContainer.setLayoutData(data);
         
         if (item != null) {
-        	final int minWidth = 400; // This value should really be calculated
+			final int minWidth = 400; // This value should really be calculated
         	// from the computeSize(SWT.DEFAULT,
         	// SWT.DEFAULT) of all the
         	// children in infoArea excluding the
@@ -466,4 +466,13 @@ public class AboutDialog extends TrayDialog {
 
         return button;
     }
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.dialogs.Dialog#isResizable()
+	 */
+	protected boolean isResizable() {
+		return true;
+	}
 }
