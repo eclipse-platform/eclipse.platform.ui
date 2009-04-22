@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTImageConverter
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTRGBConverterImpl;
 import org.eclipse.e4.ui.css.swt.resources.SWTResourcesRegistry;
 import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTActiveHandler;
+import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTButtonSelectedHandler;
 import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTFocusHandler;
 import org.eclipse.e4.ui.css.swt.selectors.DynamicPseudoClassesSWTHoverHandler;
 import org.eclipse.swt.widgets.Display;
@@ -65,6 +66,9 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		// Register SWT Hover Handler
 		super.registerDynamicPseudoClassHandler("hover",
 				DynamicPseudoClassesSWTHoverHandler.INSTANCE);
+		// Register SWT Checked Handler
+		super.registerDynamicPseudoClassHandler("selected",
+				DynamicPseudoClassesSWTButtonSelectedHandler.INSTANCE);
 
 		/** Initialize SWT CSSValue converter * */
 

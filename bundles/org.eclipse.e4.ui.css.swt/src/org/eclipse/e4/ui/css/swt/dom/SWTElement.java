@@ -261,13 +261,10 @@ public class SWTElement extends ElementAdapter implements NodeList {
 			Control control = (Control) getNativeWidget();
 			return !control.isEnabled();
 		}
-		if ("checked".equals(s)) {
-			if (getNativeWidget() instanceof Button) {
-				Button button = (Button) getNativeWidget();
-				return button.getSelection();
-			}
-			return false;
-		}
+		if ("selected".equals(s) && getNativeWidget() instanceof Button) {
+			Button button = (Button) getNativeWidget();
+			return button.getSelection();
+	}
 		if ("visible".equals(s)) {
 			Control control = (Control) getNativeWidget();
 			return !control.isVisible();

@@ -59,6 +59,8 @@ public class CSSSWTConstants {
 	
 	public static final String MOUSE_HOVER_LOST = "org.eclipse.e4.ui.css.swt.HOVER_LOST";
 	
+	public static final String BUTTON_SELECTED_LISTENER = "org.eclipse.e4.ui.css.swt.BUTTON_SELECTED_LISTENER";
+	
 	
 	
 
