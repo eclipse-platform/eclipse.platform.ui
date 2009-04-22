@@ -1009,6 +1009,13 @@ public abstract class PartSashContainer extends LayoutPart implements
         }
 
         boolean differentWindows = sourcePart.getWorkbenchWindow() != getWorkbenchWindow();
+
+        // Special check for views that haven't been shown yet. Since they don't have
+        // controls checking for their WBW results in a 'null' (but their 'page' is set
+        if (sourcePart instanceof ViewPane) {
+        	differentWindows =  ((ViewPane)sourcePart).getPage() != getPage();
+        }
+        
         boolean editorDropOK = ((sourcePart instanceof EditorPane) && 
         							sourcePart.getWorkbenchWindow().getWorkbench() == 
         							getWorkbenchWindow().getWorkbench());

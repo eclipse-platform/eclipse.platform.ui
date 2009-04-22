@@ -197,8 +197,8 @@ public class FastViewDnDHandler implements IDragOverListener {
         if (draggedObject instanceof ViewPane) {
             ViewPane pane = (ViewPane) draggedObject;
 
-            // Can't drag views between windows
-            if (pane.getWorkbenchWindow() != wbw) {
+            // Can't drag views between pages
+            if (pane.getPage() != wbw.getActivePage()) {
                 return null;
             }
 

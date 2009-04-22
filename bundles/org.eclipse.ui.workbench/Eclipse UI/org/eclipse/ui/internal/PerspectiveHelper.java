@@ -109,7 +109,13 @@ public class PerspectiveHelper {
             }
             final LayoutPart part = (LayoutPart) draggedObject;
 
-            if (part.getWorkbenchWindow() != page.getWorkbenchWindow()) {
+            // Views that haven't been shown yet have no 'control' which causes
+            // 'getWorkbenchWindow' to return 'null' so check explicitly
+            if (part instanceof ViewPane) {
+            	if (((ViewPane)part).getPage() != page)
+            		return null;
+            }
+            else if (part.getWorkbenchWindow() != page.getWorkbenchWindow()) {
                 return null;
             }
 
