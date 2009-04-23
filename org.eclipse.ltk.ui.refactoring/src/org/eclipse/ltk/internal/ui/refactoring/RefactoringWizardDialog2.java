@@ -732,12 +732,24 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 		Point minSize1= backButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		Point minSize2= nextButton.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 		int minSize= Math.max(minSize1.x, minSize2.x);
-		data.widthHint= 2 * (Math.max(widthHint, minSize) + barLayout.horizontalSpacing);
-		data.horizontalAlignment= SWT.END;
+		((GridData) backButton.getLayoutData()).widthHint= minSize;
+		((GridData) nextButton.getLayoutData()).widthHint= minSize;
+		data.widthHint= 2 * Math.max(widthHint, minSize) + barLayout.horizontalSpacing;
+		data.horizontalAlignment= SWT.FILL;
+		data.grabExcessHorizontalSpace= true;
 		data.horizontalSpan= 2;
 		composite.setLayoutData(data);
 
 		return composite;
+	}
+	
+	/*
+	 * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
+	 * @since 3.5
+	 */
+	protected void setButtonLayoutData(Button button) {
+		super.setButtonLayoutData(button);
+		((GridData) button.getLayoutData()).grabExcessHorizontalSpace= true;
 	}
 
 	private void makeVisible(IWizardPage page) {
