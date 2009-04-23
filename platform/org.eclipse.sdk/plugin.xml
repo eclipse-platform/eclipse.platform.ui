@@ -38,7 +38,7 @@
 				value="%introDescription-samples"/>
     <property
           name="buildIdLocation"
-          value="280,190">
+          value="285,190">
     </property>
       </product> 
     </extension> 
