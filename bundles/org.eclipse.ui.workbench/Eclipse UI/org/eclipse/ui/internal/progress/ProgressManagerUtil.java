@@ -278,19 +278,16 @@ public class ProgressManagerUtil {
 
 	public static Shell getModalShellExcluding(Shell shell) {
 
-			Shell parent = shell;
-			
-	        // Make sure we don't pick a parent that has a modal child (this can lock the app)
-	        if (parent == null || parent.isDisposed()) {
-	            parent = getModalChildExcluding(PlatformUI.getWorkbench().getDisplay().getShells(), shell);
-	        } else {
-	            // If we picked a parent with a modal child, use the modal child instead
-	            Shell modalChild = getModalChildExcluding(parent.getShells(), shell);
-	            if (modalChild != null) {
-	                parent = modalChild;
-	            }
-	        }
-	        return parent;
+		Shell parent = shell;
+
+		// If parent is null or disposed, then look through all shells
+		if (parent == null || parent.isDisposed()) {
+			return getModalChildExcluding(PlatformUI.getWorkbench()
+					.getDisplay().getShells(), shell);
+		}
+
+		// Start with the shell to exclude and check it's shells
+		return getModalChildExcluding(parent.getShells(), shell);
 	}
 	        
 	/**
@@ -304,6 +301,10 @@ public class ProgressManagerUtil {
 	private static Shell getModalChildExcluding(Shell[] toSearch, Shell toExclude) {
 		int modal = SWT.APPLICATION_MODAL | SWT.SYSTEM_MODAL
 				| SWT.PRIMARY_MODAL;
+
+		// Make sure we don't pick a parent that has a modal child (this can
+		// lock the app)
+		// If we picked a parent with a modal child, use the modal child instead
 
 		for (int i = toSearch.length - 1; i >= 0; i--) {
 			Shell shell = toSearch[i];
