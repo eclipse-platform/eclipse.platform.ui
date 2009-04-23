@@ -15,8 +15,7 @@ import java.util.Map;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.core.tests.harness.TestJob;
@@ -826,6 +825,8 @@ public class BuilderTest extends AbstractBuilderTest {
 			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
 			fail("3.0");
 		} catch (CoreException e) {
+			//see discussion in bug 273147 about build exception severity
+			assertEquals("3.1", IStatus.ERROR, e.getStatus().getSeverity());
 			//expected
 		} finally {
 			getWorkspace().removeResourceChangeListener(listener);
