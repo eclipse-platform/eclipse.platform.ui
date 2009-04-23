@@ -154,7 +154,8 @@ public class ViewPane extends PartPane {
             boolean visible = ctrl != null && ctrl.isVisible()
                     && toolbarIsVisible();
 
-            toolbar.setVisible(visible);
+            if (toolbar.isVisible() != visible)
+            	toolbar.setVisible(visible);
         }
 
         firePropertyChange(IPresentablePart.PROP_TOOLBAR);
