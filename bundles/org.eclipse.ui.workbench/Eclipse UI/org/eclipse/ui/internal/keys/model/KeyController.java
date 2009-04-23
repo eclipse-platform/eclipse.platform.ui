@@ -350,8 +350,10 @@ public class KeyController {
 				if (keySequence != null && !keySequence.isEmpty()) {
 					String activeSchemeId = fSchemeModel.getSelectedElement()
 							.getId();
-					String activeContextId = contextModel.getSelectedElement()
-							.getId();
+					ModelElement selectedElement = contextModel
+							.getSelectedElement();
+					String activeContextId = selectedElement == null ? IContextService.CONTEXT_ID_WINDOW
+							: selectedElement.getId();
 					final KeyBinding binding = new KeyBinding(keySequence,
 							keyBinding.getParameterizedCommand(),
 							activeSchemeId, activeContextId, null, null, null,
