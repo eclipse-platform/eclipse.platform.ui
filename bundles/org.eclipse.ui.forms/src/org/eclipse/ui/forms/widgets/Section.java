@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.forms.widgets.FormImages;
 import org.eclipse.ui.internal.forms.widgets.FormUtil;
@@ -123,7 +124,7 @@ public class Section extends ExpandableComposite {
 		while (c != null) {
 			c.setRedraw(false);
 			c = c.getParent();
-			if (c instanceof SharedScrolledComposite) {
+			if (c instanceof SharedScrolledComposite || c instanceof Shell) {
 				break;
 			}
 		}
@@ -140,7 +141,7 @@ public class Section extends ExpandableComposite {
 		while (c != null) {
 			c.setRedraw(true);
 			c = c.getParent();
-			if (c instanceof SharedScrolledComposite) {
+			if (c instanceof SharedScrolledComposite || c instanceof Shell) {
 				break;
 			}
 		}
