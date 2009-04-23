@@ -126,7 +126,11 @@ public class BuildOrderPreferencePage extends PreferencePage implements
 
         ListSelectionDialog dialog = new ListSelectionDialog(this.getShell(),
                 this, contentsProvider, labelProvider,
-                PROJECT_SELECTION_MESSAGE);
+                PROJECT_SELECTION_MESSAGE) {
+        	protected int getShellStyle() {
+        		return super.getShellStyle() | SWT.SHEET;
+        	}
+        };
 
         if (dialog.open() != Window.OK) {
 			return;
