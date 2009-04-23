@@ -632,22 +632,26 @@ public final class Workbench extends EventManager implements IWorkbench {
 	private Image loadImage(String splashLoc) {
 		Image background = null;
 		if (splashLoc != null) {
+			InputStream input = null;
 			try {
-				InputStream input = new BufferedInputStream(
-						new FileInputStream(splashLoc));
-				try {
-					background = new Image(display, input);
-				} catch (SWTException e) {
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH,
-									e));
-				}
-				input.close();
+				input = new BufferedInputStream(new FileInputStream(splashLoc));
+				background = new Image(display, input);
+			} catch (SWTException e) {
+				StatusManager.getManager().handle(
+						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
 			} catch (IOException e) {
 				StatusManager.getManager().handle(
 						StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, e));
+			} finally {
+				if (input != null) {
+					try {
+						input.close();
+					} catch (IOException e) {
+						// he's done for
+					}
+				}
 			}
-		} 
+		}
 		return background;
 	}
 
