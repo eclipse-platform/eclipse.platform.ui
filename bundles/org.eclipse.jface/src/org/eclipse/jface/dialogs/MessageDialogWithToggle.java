@@ -67,6 +67,55 @@ public class MessageDialogWithToggle extends MessageDialog {
     public static final String PROMPT = "prompt"; //$NON-NLS-1$
 
     /**
+     * Convenience method to open a simple dialog as specified by the <code>kind</code> flag,
+     * with a "don't show again' toggle.
+     *
+     * @param kind 
+	 *            the kind of dialog to open, one of {@link #ERROR},
+	 *            {@link #INFORMATION}, {@link #QUESTION}, {@link #WARNING},
+	 *            {@link #CONFIRM}, or {#QUESTION_WITH_CANCEL}.
+     * @param parent
+     *            the parent shell of the dialog, or <code>null</code> if none
+     * @param title
+     *            the dialog's title, or <code>null</code> if none
+     * @param message
+     *            the message
+     * @param toggleMessage
+     *            the message for the toggle control, or <code>null</code> for
+     *            the default message
+     * @param toggleState
+     *            the initial state for the toggle
+     * @param store
+     *            the IPreference store in which the user's preference should be
+     *            persisted; <code>null</code> if you don't want it persisted
+     *            automatically.
+     * @param key
+     *            the key to use when persisting the user's preference;
+     *            <code>null</code> if you don't want it persisted.
+	 * @param style
+	 *            {@link SWT#NONE} for a default dialog, or {@link SWT#SHEET} for
+	 *            a dialog with sheet behavior
+     * @return the dialog, after being closed by the user, which the client can
+     *         only call <code>getReturnCode()</code> or
+     *         <code>getToggleState()</code>
+     * @since 3.5
+     */
+    public static MessageDialogWithToggle open(int kind, Shell parent, String title,
+            String message, String toggleMessage, boolean toggleState,
+            IPreferenceStore store, String key, int style) {
+        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
+                title, null, // accept the default window icon
+                message, kind, getButtonLabels(kind), 0,
+                toggleMessage, toggleState);
+        style &= SWT.SHEET;
+        dialog.setShellStyle(dialog.getShellStyle() | style);
+        dialog.prefStore = store;
+        dialog.prefKey = key;
+        dialog.open();
+        return dialog;
+    }
+
+    /**
      * Convenience method to open a standard error dialog.
      * 
      * @param parent
@@ -94,17 +143,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     public static MessageDialogWithToggle openError(Shell parent, String title,
             String message, String toggleMessage, boolean toggleState,
             IPreferenceStore store, String key) {
-        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
-                title, null, // accept the default window icon
-                message, ERROR, new String[] { IDialogConstants.OK_LABEL }, 0, // ok
-                // is
-                // the
-                // default
-                toggleMessage, toggleState);
-        dialog.prefStore = store;
-        dialog.prefKey = key;
-        dialog.open();
-        return dialog;
+    	return open(ERROR, parent, title, message, toggleMessage, toggleState, store, key, SWT.NONE);
     }
 
     /**
@@ -136,16 +175,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     public static MessageDialogWithToggle openInformation(Shell parent,
             String title, String message, String toggleMessage,
             boolean toggleState, IPreferenceStore store, String key) {
-        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
-                title, null, // accept the default window icon
-                message, INFORMATION,
-                new String[] { IDialogConstants.OK_LABEL }, 0, // ok is the
-                // default
-                toggleMessage, toggleState);
-        dialog.prefStore = store;
-        dialog.prefKey = key;
-        dialog.open();
-        return dialog;
+    	return open(INFORMATION, parent, title, message, toggleMessage, toggleState, store, key, SWT.NONE);
     }
 
     /**
@@ -176,15 +206,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     public static MessageDialogWithToggle openOkCancelConfirm(Shell parent,
             String title, String message, String toggleMessage,
             boolean toggleState, IPreferenceStore store, String key) {
-        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
-                title, null, // accept the default window icon
-                message, QUESTION, new String[] { IDialogConstants.OK_LABEL,
-                        IDialogConstants.CANCEL_LABEL }, 0, // OK is the default
-                toggleMessage, toggleState);
-        dialog.prefStore = store;
-        dialog.prefKey = key;
-        dialog.open();
-        return dialog;
+    	return open(CONFIRM, parent, title, message, toggleMessage, toggleState, store, key, SWT.NONE);
     }
 
     /**
@@ -215,15 +237,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     public static MessageDialogWithToggle openWarning(Shell parent,
             String title, String message, String toggleMessage,
             boolean toggleState, IPreferenceStore store, String key) {
-        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
-                title, null, // accept the default window icon
-                message, WARNING, new String[] { IDialogConstants.OK_LABEL },
-                0, // ok is the default
-                toggleMessage, toggleState);
-        dialog.prefStore = store;
-        dialog.prefKey = key;
-        dialog.open();
-        return dialog;
+    	return open(WARNING, parent, title, message, toggleMessage, toggleState, store, key, SWT.NONE);
     }
 
     /**
@@ -254,17 +268,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     public static MessageDialogWithToggle openYesNoCancelQuestion(Shell parent,
             String title, String message, String toggleMessage,
             boolean toggleState, IPreferenceStore store, String key) {
-        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
-                title, null, // accept the default window icon
-                message, QUESTION, new String[] { IDialogConstants.YES_LABEL,
-                        IDialogConstants.NO_LABEL,
-                        IDialogConstants.CANCEL_LABEL }, 0, // YES is the
-                // default
-                toggleMessage, toggleState);
-        dialog.prefStore = store;
-        dialog.prefKey = key;
-        dialog.open();
-        return dialog;
+    	return open(QUESTION_WITH_CANCEL, parent, title, message, toggleMessage, toggleState, store, key, SWT.NONE);
     }
 
     /**
@@ -296,15 +300,7 @@ public class MessageDialogWithToggle extends MessageDialog {
     public static MessageDialogWithToggle openYesNoQuestion(Shell parent,
             String title, String message, String toggleMessage,
             boolean toggleState, IPreferenceStore store, String key) {
-        MessageDialogWithToggle dialog = new MessageDialogWithToggle(parent,
-                title, null, // accept the default window icon
-                message, QUESTION, new String[] { IDialogConstants.YES_LABEL,
-                        IDialogConstants.NO_LABEL }, 0, // yes is the default
-                toggleMessage, toggleState);
-        dialog.prefStore = store;
-        dialog.prefKey = key;
-        dialog.open();
-        return dialog;
+    	return open(QUESTION, parent, title, message, toggleMessage, toggleState, store, key, SWT.NONE);
     }
 
     /**
