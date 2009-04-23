@@ -613,17 +613,11 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 					builderName = currentBuilder.getClass().getName();
 				String pluginId = currentBuilder.getPluginId();
 				String message = NLS.bind(Messages.events_builderError, builderName, currentBuilder.getProject().getName());
-				status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, null));
+				status.add(new Status(IStatus.ERROR, pluginId, IResourceStatus.BUILD_FAILED, message, e));
 
 				//add the exception status to the MultiStatus
 				if (e instanceof CoreException)
 					status.add(((CoreException) e).getStatus());
-				else {
-					message = e.getMessage();
-					if (message == null)
-						message = NLS.bind(Messages.events_unknown, e.getClass().getName(), builderName);
-					status.add(new Status(IStatus.WARNING, pluginId, IResourceStatus.BUILD_FAILED, message, e));
-				}
 			}
 
 			public void run() throws Exception {
