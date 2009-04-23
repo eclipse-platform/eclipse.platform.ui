@@ -60,6 +60,8 @@ public final class BindingService implements IBindingService {
 	 */
 	private WorkbenchKeyboard keyboard;
 
+	private IWorkbench workbench;
+
 	/**
 	 * Constructs a new instance of <code>BindingService</code> using a JFace
 	 * binding manager.
@@ -87,6 +89,7 @@ public final class BindingService implements IBindingService {
 		this.bindingPersistence = new BindingPersistence(bindingManager,
 				commandService);
 
+		this.workbench = workbench;
 		// Hook up the key binding support.
 		keyboard = new WorkbenchKeyboard(workbench);
 		final Display display = workbench.getDisplay();
@@ -118,6 +121,14 @@ public final class BindingService implements IBindingService {
 	}
 	
 	public final void dispose() {
+		final Listener listener = keyboard.getKeyDownFilter();
+		final Display display = workbench.getDisplay();
+		if (display != null) {
+			display.removeFilter(SWT.KeyDown, listener);
+			display.removeFilter(SWT.Traverse, listener);
+		}
+		workbench = null;
+		keyboard = null;
 		bindingPersistence.dispose();
 	}
 
