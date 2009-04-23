@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.ExceptionHandler;
 
 /**
@@ -133,10 +132,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 				} else if (numParams == 0) {
 					// This is a no-argument selectAll method.
 					methodToExecute.invoke(focusControl, null);
-					Event swtEvent = new Event();
-					swtEvent.widget = focusControl;
-					swtEvent.item = focusControl;
-					focusControl.notifyListeners(SWT.Selection, swtEvent);
+					focusControl.notifyListeners(SWT.Selection, null);
 
 				} else if (numParams == 1) {
 					// This is a single-point selection method.
@@ -148,10 +144,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 							.intValue()) };
 					methodToExecute.invoke(focusControl, parameters);
 					if (!(focusControl instanceof Combo)) {
-						Event swtEvent = new Event();
-						swtEvent.widget = focusControl;
-						swtEvent.item = focusControl;
-						focusControl.notifyListeners(SWT.Selection, swtEvent);
+						focusControl.notifyListeners(SWT.Selection, null);
 					}
 
 				} else {
