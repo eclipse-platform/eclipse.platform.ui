@@ -65,6 +65,13 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 	public AggregateWorkingSet(String name, String label, IMemento memento) {
 		super(name, label);
 		workingSetMemento = memento;
+		if (workingSetMemento != null) {
+			String uniqueId = workingSetMemento
+					.getString(IWorkbenchConstants.TAG_ID);
+			if (uniqueId != null) {
+				setUniqueId(uniqueId);
+			}
+		}
 	}
 
 	void setComponents(IWorkingSet[] components) {
@@ -161,6 +168,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 		} else {
 			memento.putString(IWorkbenchConstants.TAG_NAME, getName());
 			memento.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
+			memento.putString(IWorkbenchConstants.TAG_ID, getUniqueId());
 			memento.putString(AbstractWorkingSet.TAG_AGGREGATE, Boolean.TRUE
 					.toString());
 

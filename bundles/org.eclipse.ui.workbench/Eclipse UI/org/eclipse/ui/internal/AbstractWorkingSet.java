@@ -43,7 +43,12 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 	protected IMemento workingSetMemento;
 
 	private String label;
-
+	
+	//Workspace wide unique id for workingsets
+	private String uniqueId;
+	
+	private static int counter;
+	
 	/**
 	 * Whether or not the label value should follow the name value. It should do
 	 * this until a call to setLabel() differentiates it from the name.
@@ -61,8 +66,9 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 		this.name = name;
 		this.label = label;
 		labelBoundToName = Util.equals(name, label);
-	}
-	
+		uniqueId = Long.toString(System.currentTimeMillis()) + "_" + counter++; //$NON-NLS-1$
+	}	
+
 	/**
 	 * Returns the receiver if the requested type is either IWorkingSet 
 	 * or IPersistableElement.
@@ -85,13 +91,17 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 
 	public void setName(String newName) {
 	    Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
+	    if(manager!=null){
+	    	IWorkingSet wSet=manager.getWorkingSet(newName);
+	    	Assert.isTrue(wSet==null,"working set with same name already registered"); //$NON-NLS-1$
+	    }
 	    
 	    name = newName;
+
 	    fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE, null);
 	    
 	    if (labelBoundToName) {
-	    		label = newName;
-	    		fireWorkingSetChanged(IWorkingSetManager.CHANGE_WORKING_SET_LABEL_CHANGE, null);
+	    		setLabel(newName);
 	    }
 	}
 
@@ -187,4 +197,22 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
     public final ImageDescriptor getImage() {
         return getImageDescriptor();
     }
+
+
+	/* 
+	 * (non-Javadoc)
+	 * @return Returns the unigueId.
+	 */
+    /*package*/String getUniqueId() {
+		return uniqueId;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @param unigueId The unigueId to set.
+	 */
+	/*package*/void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+       
 }

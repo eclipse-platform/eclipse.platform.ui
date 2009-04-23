@@ -15,6 +15,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -91,7 +93,14 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 					StatusUtil.newStatus(PlatformUI.PLUGIN_ID, exception));
 		}
 	}
-    private SortedSet workingSets = new TreeSet(WorkingSetComparator.INSTANCE);
+
+	private SortedSet workingSets = new TreeSet(new Comparator() {
+		public int compare(Object o1, Object o2) {
+			// Cast and compare directly
+			return ((AbstractWorkingSet) o1).getUniqueId().compareTo(
+					((AbstractWorkingSet) o2).getUniqueId());
+		}
+	});
     
     /**
      * Size of the list of most recently used working sets.
@@ -227,8 +236,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * @see org.eclipse.ui.IWorkingSetManager
      */
     public void addWorkingSet(IWorkingSet workingSet) {
-        Assert.isTrue(!workingSets.contains(workingSet),
-                "working set already registered"); //$NON-NLS-1$
+    	IWorkingSet wSet=getWorkingSet(workingSet.getName());
+    	Assert.isTrue(wSet==null,"working set with same name already registered"); //$NON-NLS-1$
         internalAddWorkingSet(workingSet);
     }
 
@@ -268,9 +277,12 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
         return (IWorkingSet[]) visibleSubset.toArray(new IWorkingSet[visibleSubset.size()]);
     }
     
-    public IWorkingSet[] getAllWorkingSets() {
-    		return (IWorkingSet[]) workingSets.toArray(new IWorkingSet[workingSets.size()]);
-    }
+	public IWorkingSet[] getAllWorkingSets() {
+		IWorkingSet[] sets = (IWorkingSet[]) workingSets
+					.toArray(new IWorkingSet[workingSets.size()]);
+		Arrays.sort(sets, WorkingSetComparator.INSTANCE);
+		return sets;
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.IWorkingSetManager

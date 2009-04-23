@@ -49,10 +49,15 @@ public class IWorkingSetTest extends UITestCase {
         fWorkspace = ResourcesPlugin.getWorkspace();
         fWorkingSet = workingSetManager.createWorkingSet(WORKING_SET_NAME_1,
                 new IAdaptable[] { fWorkspace.getRoot() });
-        workingSetManager.removeWorkingSet(fWorkingSet);
+        
         workingSetManager.addWorkingSet(fWorkingSet);
     }
-
+	protected void doTearDown() throws Exception {
+		IWorkingSetManager workingSetManager = fWorkbench
+        .getWorkingSetManager();
+		 workingSetManager.removeWorkingSet(fWorkingSet);
+		super.doTearDown();
+	}
     public void testGetElements() throws Throwable {
         assertEquals(fWorkspace.getRoot(), fWorkingSet.getElements()[0]);
     }
@@ -119,6 +124,74 @@ public class IWorkingSetTest extends UITestCase {
         fWorkingSet.setName(" ");
         assertEquals(" ", fWorkingSet.getName());
     }
+   
+	public void testNoDuplicateWorkingSetName() throws Throwable {
+		/* get workingSetManager */
+		IWorkingSetManager workingSetManager = fWorkbench
+				.getWorkingSetManager();
+
+		/*
+		 * check that initially workingSetManager contains "fWorkingSet"
+		 */
+		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
+				workingSetManager.getWorkingSets()));
+
+		IWorkingSet wSet = workingSetManager.createWorkingSet(
+				WORKING_SET_NAME_2, new IAdaptable[] {});
+		workingSetManager.addWorkingSet(wSet);
+
+		/* check that workingSetManager contains "fWorkingSet" and wSet */
+		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet, wSet },
+				workingSetManager.getWorkingSets())
+				|| ArrayUtil.equals(new IWorkingSet[] { wSet, fWorkingSet },
+						workingSetManager.getWorkingSets()));
+
+		String sameName = fWorkingSet.getName();
+		boolean exceptionThrown = false;
+
+		try {
+			wSet.setName(sameName);
+			/* Test failed,set original name for restoring state */
+			wSet.setName(WORKING_SET_NAME_2);
+		} catch (RuntimeException exception) {
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+
+		/* restore state */
+		workingSetManager.removeWorkingSet(wSet);
+	}
+
+	public void testNoDuplicateWorkingSetNamesDifferentLabels()
+			throws Throwable {
+		/* get workingSetManager */
+		IWorkingSetManager workingSetManager = fWorkbench
+				.getWorkingSetManager();
+		/*
+		 * check that initially workingSetManager contains "fWorkingSet"
+		 */
+		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
+				workingSetManager.getWorkingSets()));
+
+		String sameName = fWorkingSet.getName();
+		IWorkingSet wSet = workingSetManager.createWorkingSet(sameName,
+				new IAdaptable[] {});
+		wSet.setLabel(WORKING_SET_NAME_2);
+
+		/*
+		 * Expected to throw an error as the wSet has the same name as
+		 * fWorkingSet
+		 */
+		boolean exceptionThrown = false;
+		try {
+			workingSetManager.addWorkingSet(wSet);
+			/* Test failed, restore state */
+			workingSetManager.removeWorkingSet(wSet);
+		} catch (RuntimeException exception) {
+			exceptionThrown = true;
+		}
+		assertTrue(exceptionThrown);
+	}
     
     public void testIsEmpty() {
 		fWorkingSet.setElements(new IAdaptable[] {});
