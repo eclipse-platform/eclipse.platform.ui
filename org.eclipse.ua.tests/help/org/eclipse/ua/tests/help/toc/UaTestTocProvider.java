@@ -61,10 +61,12 @@ public class UaTestTocProvider extends AbstractTocProvider {
 
 	public UaTestTocProvider() {
 		toc = new UserToc("Generated Toc", null, true);
-		UserTopic parentTopic = new UserTopic("Generated Parent", "data/help/index/topic1.html", true);
+		UserTopic parentTopic = new UserTopic("Generated Parent", 
+				"generated/Generated+Parent/Parent+page+with+searchable+word+egrology+.html", true);
 		for (int i = 1; i <= 4; i++) {
-			UserTopic childTopic = new UserTopic("Generated Child #" + i, 
-					"data/help/index/topic" + i + ".html", true);
+			UserTopic childTopic = new UserTopic("Generated Child " + i, 
+					"generated/Generated+Child" + i +
+					"/Child+topic+" + i + ".html", true);
 			parentTopic.addTopic(childTopic);
 		}
 		toc.addTopic(parentTopic);

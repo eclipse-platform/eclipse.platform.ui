@@ -477,5 +477,11 @@
             filter="(other.info=org.eclipse.help)">
       </serviceSelector>
    </extension>
+   <extension
+         point="org.eclipse.help.contentProducer">
+      <contentProducer
+            producer="org.eclipse.ua.tests.util.UATestContentProducer">
+      </contentProducer>
+   </extension>
 
 </plugin>

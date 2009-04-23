@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,5 +101,9 @@ public class BasicTest extends TestCase {
     
     public void testSearchMultipleAdjacentExactMatch() {
     	SearchTestUtils.searchAllLocales("\"vkrhjewiwh riehguanil\"", new String[] { "/org.eclipse.ua.tests/data/help/search/test1.xhtml"});
+    }
+    
+    public void testSearchContentProducer() {
+    	SearchTestUtils.searchAllLocales("egrology", new String[] { "/org.eclipse.ua.tests/generated/Generated+Parent/Parent+page+with+searchable+word+egrology+.html"});
     }
 }
