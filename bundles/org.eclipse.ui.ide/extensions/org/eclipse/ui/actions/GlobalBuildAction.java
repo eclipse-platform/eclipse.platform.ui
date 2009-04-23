@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,30 +10,24 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.widgets.Shell;
-
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
-import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -179,19 +173,16 @@ public class GlobalBuildAction extends Action implements
              * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
              */
             protected IStatus run(IProgressMonitor monitor) {
-                final MultiStatus status = new MultiStatus(
-                        PlatformUI.PLUGIN_ID, 0, IDEWorkbenchMessages.GlobalBuildAction_buildProblems,
-                        null);
                 monitor.beginTask(getOperationMessage(), 100);
                 try {
                     ResourcesPlugin.getWorkspace().build(buildType,
                             new SubProgressMonitor(monitor, 100));
                 } catch (CoreException e) {
-                    status.add(e.getStatus());
+                    return e.getStatus();
                 } finally {
                     monitor.done();
                 }
-                return status;
+                return Status.OK_STATUS;
             }
 
             /*
