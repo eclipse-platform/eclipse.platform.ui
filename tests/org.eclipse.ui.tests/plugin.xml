@@ -4184,4 +4184,9 @@
             </state>
          </command>
       </extension>
-</plugin>            
+   <extension id="rcpSessionApplication" point="org.eclipse.core.runtime.applications">
+	   <application cardinality="singleton-global" thread="main" visible="true">
+	      <run class="org.eclipse.ui.tests.RCPSessionApplication"> </run>
+	   </application>
+   </extension>
+</plugin>

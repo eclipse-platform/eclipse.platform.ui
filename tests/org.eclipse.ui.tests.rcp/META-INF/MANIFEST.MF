@@ -10,5 +10,7 @@ Bundle-Localization: plugin
 Require-Bundle: org.eclipse.core.runtime.compatibility,
  org.eclipse.ui,
  org.junit,
- org.eclipse.test.performance
+ org.eclipse.test.performance,
+ org.eclipse.ui.tests.harness
 Bundle-ActivationPolicy: lazy
+Export-Package: org.eclipse.ui.tests.rcp.util;x-internal:=true

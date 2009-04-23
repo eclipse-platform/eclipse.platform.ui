@@ -13,6 +13,8 @@ package org.eclipse.ui.tests.session;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.zip.ZipFile;
 
 import org.eclipse.core.runtime.IPath;
@@ -31,8 +33,24 @@ import org.eclipse.ui.tests.harness.util.FileTool;
  * @since 3.1
  */
 public class WorkbenchSessionTest extends SessionTestSuite {
+	
+	private Map arguments;
 
 	private String dataLocation;
+	
+	/**
+	 * Create a new workbench session test.
+	 * 
+	 * @param dataLocation
+	 *            the location of the workspace to test, relative to
+	 *            data/workspaces
+	 * @param clazz
+	 *            the <code>Test</code> class
+	 */
+	public WorkbenchSessionTest(String dataLocation, Class clazz, Map arguments) {
+		this(dataLocation, clazz);
+		this.arguments = arguments;
+	}
 	
 	/**
 	 * Create a new workbench session test.
@@ -72,6 +90,14 @@ public class WorkbenchSessionTest extends SessionTestSuite {
 		Setup base = super.newSetup();
 		try {
 			base.setEclipseArgument(Setup.DATA, copyDataLocation());
+			if (arguments != null) {
+				for(Iterator i = arguments.entrySet().iterator(); i.hasNext(); ) {
+					Map.Entry entry = (Map.Entry) i.next();
+					String key = (String) entry.getKey();
+					String value = (String) entry.getValue();
+					base.setEclipseArgument(key, value);
+				}
+			}
 		} catch (Exception e) {
 			throw SetupManager.getInstance().new SetupException(e.getMessage(),
 					e);

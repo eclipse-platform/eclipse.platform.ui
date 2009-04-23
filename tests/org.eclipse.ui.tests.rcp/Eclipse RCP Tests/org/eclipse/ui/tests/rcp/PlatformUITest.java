@@ -15,7 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.tests.rcp.util.RCPTestWorkbenchAdvisor;
+import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
 
 public class PlatformUITest extends TestCase {

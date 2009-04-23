@@ -21,6 +21,7 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
+import org.eclipse.ui.tests.harness.util.RCPTestWorkbenchAdvisor;
 
 /**
  * This utility class is used to record the order in which the hooks are called.

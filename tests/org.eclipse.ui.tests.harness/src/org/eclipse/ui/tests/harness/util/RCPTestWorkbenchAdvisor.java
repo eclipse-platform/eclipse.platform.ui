@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.tests.rcp.util;
+package org.eclipse.ui.tests.harness.util;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWTException;

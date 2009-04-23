@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,9 @@
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
  *******************************************************************************/
 package org.eclipse.ui.tests.session;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -42,6 +45,7 @@ public class SessionTests extends TestSuite {
 		addViewStateTests();
 		addThemeTests();
 		addStatusHandlingTests();
+		addRestoredSessionTest();
 	}
 
 	/**
@@ -67,6 +71,13 @@ public class SessionTests extends TestSuite {
 		addTest(new WorkbenchSessionTest("themeSessionTests",
 				ThemeStateTest.class));
 		
+	}
+
+	private void addRestoredSessionTest() {
+		Map arguments = new HashMap(2);
+		arguments.put("product", null);
+		arguments.put("testApplication", "org.eclipse.ui.tests.rcpSessionApplication");
+		addTest(new WorkbenchSessionTest("introSessionTests",RestoreSessionTest.class, arguments));
 	}
 
 	/**
