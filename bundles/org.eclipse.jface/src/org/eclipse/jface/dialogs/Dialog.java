@@ -706,6 +706,7 @@ public abstract class Dialog extends Window {
 				if (defaultButton != null
 						&& isContained(buttonBar, defaultButton)) {
 					defaultButton.moveBelow(null);
+					((Composite) buttonBar).layout();
 				}
 			}
 		}
