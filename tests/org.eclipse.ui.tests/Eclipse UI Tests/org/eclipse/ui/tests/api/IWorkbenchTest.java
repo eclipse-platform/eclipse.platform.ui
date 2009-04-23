@@ -96,6 +96,8 @@ public class IWorkbenchTest extends UITestCase {
         workingSetManager = fWorkbench.getWorkingSetManager();
         assertEquals(1, workingSetManager.getWorkingSets().length);
         assertEquals(workingSet, workingSetManager.getWorkingSets()[0]);
+        
+        workingSetManager.removeWorkingSet(workingSet);
     }
 
     public void testGetWorkbenchWindows() throws Throwable {
