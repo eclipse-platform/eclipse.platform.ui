@@ -68,7 +68,7 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 			final String buildId = System.getProperty(
 					"eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
 			// find the specified location.  Not currently API
-			// hardcoded to be sensible with our current Europa Graphic
+			// hardcoded to be sensible with our current Galileo Graphic
 			String buildIdLocString = product.getProperty("buildIdLocation"); //$NON-NLS-1$
 			final Point buildIdPoint = StringConverter.asPoint(buildIdLocString,
 					new Point(322, 190));
