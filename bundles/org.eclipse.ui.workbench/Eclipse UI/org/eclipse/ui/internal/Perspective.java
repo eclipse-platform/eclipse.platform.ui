@@ -977,6 +977,9 @@ public class Perspective {
 		// Show the layout
 		presentation.activate(getClientComposite());
 
+		// Ensure that the action bars pick up local overrides
+		updateActionBars();
+
     	if (useNewMinMax) {
     		fastViewManager.activate();
 
