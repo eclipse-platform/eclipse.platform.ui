@@ -562,7 +562,10 @@ public abstract class Plugin implements BundleActivator {
 		if (bundle == null)
 			return null;
 		if (debugTracker == null) {
-			debugTracker = new ServiceTracker(this.bundle.getBundleContext(), DebugOptions.class.getName(), null);
+			BundleContext context = bundle.getBundleContext();
+			if (context == null)
+				return null;
+			debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
 			debugTracker.open();
 		}
 		return (DebugOptions) this.debugTracker.getService();
