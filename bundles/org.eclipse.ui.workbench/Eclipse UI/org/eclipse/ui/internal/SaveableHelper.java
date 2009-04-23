@@ -34,6 +34,7 @@ import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.ISaveablesLifecycleListener;
@@ -111,10 +112,17 @@ public class SaveableHelper {
 				if (choice == USER_RESPONSE || choice == ISaveablePart2.DEFAULT) {
 					String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, part.getTitle()); 
 					// Show a dialog.
-					String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-						MessageDialog d = new MessageDialog(
-							window.getShell(), WorkbenchMessages.Save_Resource,
-							null, message, MessageDialog.QUESTION, buttons, 0);
+					String[] buttons = new String[] {
+							IDialogConstants.YES_LABEL,
+							IDialogConstants.NO_LABEL,
+							IDialogConstants.CANCEL_LABEL };
+					MessageDialog d = new MessageDialog(window.getShell(),
+							WorkbenchMessages.Save_Resource, null, message,
+							MessageDialog.QUESTION, buttons, 0) {
+						protected int getShellStyle() {
+							return super.getShellStyle() | SWT.SHEET;
+						}
+					};
 					choice = d.open();
 				}
 			}

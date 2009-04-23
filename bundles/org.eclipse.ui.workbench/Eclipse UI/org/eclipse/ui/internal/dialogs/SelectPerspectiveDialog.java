@@ -74,6 +74,7 @@ public class SelectPerspectiveDialog extends Dialog implements
             IPerspectiveRegistry perspReg) {
         super(parentShell);
         this.perspReg = perspReg;
+		setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /*

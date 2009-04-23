@@ -413,7 +413,6 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * openEditor(IWorkbenchPage page, IFile input)
 	 */
 	public void testOpenEditor() throws Throwable {
-		if (org.eclipse.jface.util.Util.isCocoa()) return; // see bug 270883
 		proj = FileUtil.createProject("testOpenEditor");
 
 		/*

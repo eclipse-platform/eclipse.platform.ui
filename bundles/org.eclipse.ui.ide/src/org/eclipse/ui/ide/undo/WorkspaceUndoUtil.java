@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -697,7 +698,11 @@ public class WorkspaceUndoUtil {
 				new String[] { IDialogConstants.YES_LABEL,
 						IDialogConstants.YES_TO_ALL_LABEL,
 						IDialogConstants.NO_LABEL,
-						IDialogConstants.CANCEL_LABEL }, 0);
+						IDialogConstants.CANCEL_LABEL }, 0) {
+			protected int getShellStyle() {
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
 		shell.getDisplay().syncExec(new Runnable() {
 			public void run() {
 				dialog.open();

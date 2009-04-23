@@ -1327,9 +1327,9 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * Shows the "Page Flipping abort" dialog.
 	 */
 	void showPageFlippingAbortDialog() {
-		MessageDialog.openError(getShell(), JFaceResources
+		MessageDialog.open(MessageDialog.ERROR, getShell(), JFaceResources
 				.getString("AbortPageFlippingDialog.title"), //$NON-NLS-1$
-				JFaceResources.getString("AbortPageFlippingDialog.message")); //$NON-NLS-1$
+				JFaceResources.getString("AbortPageFlippingDialog.message"), SWT.SHEET); //$NON-NLS-1$
 	}
 
 	/**

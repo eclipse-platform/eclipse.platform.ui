@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.DialogTray;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.ErrorSupportProvider;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -1990,13 +1991,12 @@ public class WorkbenchStatusDialogManager {
 		if (!store.contains(PREF_SKIP_GOTO_ACTION_PROMPT)
 				|| !store.getString(PREF_SKIP_GOTO_ACTION_PROMPT).equals(
 						MessageDialogWithToggle.ALWAYS)) {
-			MessageDialogWithToggle dialog = MessageDialogWithToggle
-					.openOkCancelConfirm(
-							getShell(),
-							ProgressMessages.JobErrorDialog_CloseDialogTitle,
-							ProgressMessages.JobErrorDialog_CloseDialogMessage,
-							ProgressMessages.JobErrorDialog_DoNotShowAgainMessage,
-							false, store, PREF_SKIP_GOTO_ACTION_PROMPT);
+			MessageDialogWithToggle dialog = MessageDialogWithToggle.open(
+					MessageDialog.CONFIRM, getShell(),
+					ProgressMessages.JobErrorDialog_CloseDialogTitle,
+					ProgressMessages.JobErrorDialog_CloseDialogMessage,
+					ProgressMessages.JobErrorDialog_DoNotShowAgainMessage,
+					false, store, PREF_SKIP_GOTO_ACTION_PROMPT, SWT.SHEET);
 			return dialog.getReturnCode() == Window.OK;
 		}
 		return true;

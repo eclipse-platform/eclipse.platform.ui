@@ -88,6 +88,7 @@ public class DeleteResourceAction extends SelectionListenerAction {
 							IDialogConstants.NO_LABEL }, 0); // yes is the
 			// default
 			this.projects = projects;
+			setShellStyle(getShellStyle() | SWT.SHEET);
 		}
 
 		static String getTitle(IResource[] projects) {

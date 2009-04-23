@@ -172,7 +172,9 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                     fis = new FileInputStream(importFile);
                 } catch (FileNotFoundException e) {
                     WorkbenchPlugin.log(e.getMessage(), e);
-                    MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					MessageDialog.open(MessageDialog.ERROR, getControl()
+							.getShell(), new String(), e.getLocalizedMessage(),
+							SWT.SHEET);
                     return false;
                 }
                 IPreferencesService service = Platform.getPreferencesService();
@@ -182,7 +184,9 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                     service.applyPreferences(prefs, filters);
                 } catch (CoreException e) {
                     WorkbenchPlugin.log(e.getMessage(), e);
-                    MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					MessageDialog.open(MessageDialog.ERROR, getControl()
+							.getShell(), new String(), e.getLocalizedMessage(),
+							SWT.SHEET);
                     return false;
                 }
             }
@@ -192,7 +196,9 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
                     fis.close();
                 } catch (IOException e) {
                 	WorkbenchPlugin.log(e.getMessage(), e);
-                	MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					MessageDialog.open(MessageDialog.ERROR, getControl()
+							.getShell(), new String(), e.getLocalizedMessage(),
+							SWT.SHEET);
                 }
 			}
         }
@@ -224,7 +230,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 	 * @see org.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#getFileDialogStyle()
 	 */
 	protected int getFileDialogStyle() {
-		return SWT.OPEN;
+		return SWT.OPEN | SWT.SHEET;
 	}
 	
 	/* (non-Javadoc)

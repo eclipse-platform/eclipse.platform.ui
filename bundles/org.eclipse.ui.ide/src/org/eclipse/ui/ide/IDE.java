@@ -55,6 +55,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorDescriptor;
@@ -1460,6 +1461,9 @@ public final class IDE {
 							super.buttonPressed(IDialogConstants.CANCEL_ID);
 						}
 						super.buttonPressed(id);
+					}
+					protected int getShellStyle() {
+						return super.getShellStyle() | SWT.SHEET;
 					}
 				};
 				int code = dialog.open();

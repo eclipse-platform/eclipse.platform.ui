@@ -278,7 +278,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
         browseButton.setLayoutData(data);
         browseButton.addSelectionListener(new SelectionAdapter() {
             public void widgetSelected(SelectionEvent e) {
-                DirectoryDialog dialog = new DirectoryDialog(getShell());
+                DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
                 dialog.setText(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserTitle);
                 dialog.setMessage(IDEWorkbenchMessages.ChooseWorkspaceDialog_directoryBrowserMessage);
                 dialog.setFilterPath(getInitialBrowsePath());

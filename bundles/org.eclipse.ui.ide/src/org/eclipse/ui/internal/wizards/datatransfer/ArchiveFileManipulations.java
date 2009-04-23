@@ -15,12 +15,10 @@ package org.eclipse.ui.internal.wizards.datatransfer;
 import java.io.IOException;
 import java.util.zip.ZipFile;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.dialogs.MessageDialog;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -164,7 +162,7 @@ public class ArchiveFileManipulations {
 	 *            the error message
 	 */
 	protected static void displayErrorDialog(String message, Shell shell) {
-		MessageDialog.openError(shell, getErrorDialogTitle(), message);
+		MessageDialog.open(MessageDialog.ERROR, shell, getErrorDialogTitle(), message, SWT.SHEET);
 	}
 
 	/**

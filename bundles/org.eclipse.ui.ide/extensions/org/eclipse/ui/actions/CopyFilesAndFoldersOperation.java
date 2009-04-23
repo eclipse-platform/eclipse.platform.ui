@@ -312,7 +312,11 @@ public class CopyFilesAndFoldersOperation {
 				MessageDialog dialog = new MessageDialog(
 						messageShell,
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_resourceExists,
-						null, message, MessageDialog.QUESTION, labels, 0);
+						null, message, MessageDialog.QUESTION, labels, 0) {
+					protected int getShellStyle() {
+						return super.getShellStyle() | SWT.SHEET;
+					}
+				};
 				dialog.open();
 				if (dialog.getReturnCode() == SWT.DEFAULT) {
 					// A window close returns SWT.DEFAULT, which has to be
@@ -1252,7 +1256,11 @@ public class CopyFilesAndFoldersOperation {
 						MessageDialog dialog = new MessageDialog(
 								messageShell,
 								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_question,
-								null, msg, MessageDialog.QUESTION, options, 0);
+								null, msg, MessageDialog.QUESTION, options, 0) {
+							protected int getShellStyle() {
+								return super.getShellStyle() | SWT.SHEET;
+							}
+						};
 						dialog.open();
 						int returnVal = dialog.getReturnCode();
 						String[] returnCodes = { YES, ALL, NO, CANCEL };

@@ -177,7 +177,11 @@ public final class ResourceEncodingFieldEditor extends
 									encoding, descriptionCharset),
 					MessageDialog.WARNING, new String[] {
 							IDialogConstants.YES_LABEL,
-							IDialogConstants.NO_LABEL }, 0); // yes is the
+							IDialogConstants.NO_LABEL }, 0) {
+				protected int getShellStyle() {
+					return super.getShellStyle() | SWT.SHEET;
+				}
+			}; // yes is the
 			// default
 			if (dialog.open() > 0) {
 				return;

@@ -398,7 +398,7 @@ public class CreateLinkedResourceGroup {
 		}
 		if (type == IResource.FILE) {
 			if (isDefault) {
-				FileDialog dialog = new FileDialog(linkTargetField.getShell());
+				FileDialog dialog = new FileDialog(linkTargetField.getShell(), SWT.SHEET);
 				dialog.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionTitle);
 				if (store != null) {
 					if (store.fetchInfo().isDirectory()) {
@@ -428,7 +428,7 @@ public class CreateLinkedResourceGroup {
 
 			if (isDefault) {
 				DirectoryDialog dialog = new DirectoryDialog(linkTargetField
-						.getShell());
+						.getShell(), SWT.SHEET);
 				dialog
 						.setMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_targetSelectionLabel);
 				if (filterPath != null)

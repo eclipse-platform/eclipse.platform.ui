@@ -348,7 +348,7 @@ public class ProjectContentsLocationArea {
 				FileSystemSupportRegistry.getInstance()
 						.getDefaultConfiguration())) {
 			DirectoryDialog dialog = new DirectoryDialog(locationPathField
-					.getShell());
+					.getShell(), SWT.SHEET);
 			dialog
 					.setMessage(IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel);
 

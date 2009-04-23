@@ -220,7 +220,7 @@ public class WizardNewLinkPage extends WizardPage {
             }
         }
         if (type == IResource.FILE) {
-            FileDialog dialog = new FileDialog(getShell());
+            FileDialog dialog = new FileDialog(getShell(), SWT.SHEET);
             if (store != null) {
                 if (store.fetchInfo().isDirectory()) {
 					dialog.setFilterPath(linkTargetName);
@@ -230,7 +230,7 @@ public class WizardNewLinkPage extends WizardPage {
             }
             selection = dialog.open();
         } else {
-            DirectoryDialog dialog = new DirectoryDialog(getShell());
+            DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
             if (store != null) {
                 if (!store.fetchInfo().isDirectory()) {
                     linkTargetName = store.getParent().getName();

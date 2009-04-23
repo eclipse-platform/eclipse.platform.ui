@@ -155,7 +155,7 @@ public class FileFieldEditor extends StringButtonFieldEditor {
      */
     private File getFile(File startingDirectory) {
 
-        FileDialog dialog = new FileDialog(getShell(), SWT.OPEN);
+        FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.SHEET);
         if (startingDirectory != null) {
 			dialog.setFileName(startingDirectory.getPath());
 		}

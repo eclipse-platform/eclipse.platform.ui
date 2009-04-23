@@ -20,18 +20,9 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -45,7 +36,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
@@ -60,7 +50,13 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.window.IShellProvider;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.BusyIndicator;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ActiveShellExpression;
 import org.eclipse.ui.IEditorActionBarContributor;
 import org.eclipse.ui.IEditorDescriptor;
@@ -1155,9 +1151,13 @@ public class EditorManager implements IExtensionChangeHandler {
 				String message = NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, model.getName());
 				// Show a dialog.
 				String[] buttons = new String[] { IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-				MessageDialog d = new MessageDialog(
-					shellProvider.getShell(), WorkbenchMessages.Save_Resource,
-					null, message, MessageDialog.QUESTION, buttons, 0);
+				MessageDialog d = new MessageDialog(shellProvider.getShell(),
+						WorkbenchMessages.Save_Resource, null, message,
+						MessageDialog.QUESTION, buttons, 0) {
+					protected int getShellStyle() {
+						return super.getShellStyle() | SWT.SHEET;
+					}
+				};
 				
 				int choice = SaveableHelper.testGetAutomatedResponse();
 				if (SaveableHelper.testGetAutomatedResponse() == SaveableHelper.USER_RESPONSE) {
@@ -1181,7 +1181,11 @@ public class EditorManager implements IExtensionChangeHandler {
 	            ListSelectionDialog dlg = new ListSelectionDialog(
 	                    shellProvider.getShell(), modelsToSave,
 	                    new ArrayContentProvider(),
-	                    new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE);
+	                    new WorkbenchPartLabelProvider(), RESOURCES_TO_SAVE_MESSAGE) {
+	            	protected int getShellStyle() {
+	            		return super.getShellStyle() | SWT.SHEET;
+	            	}
+	            };
 	            dlg.setInitialSelections(modelsToSave.toArray());
 	            dlg.setTitle(SAVE_RESOURCES_TITLE);
 	

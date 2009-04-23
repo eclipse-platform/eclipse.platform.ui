@@ -1244,7 +1244,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				// children
 				if (viewer.getExpandedState(item)) {
 					MessageBox mb = new MessageBox(viewer.getControl()
-							.getShell(), SWT.OK | SWT.ICON_WARNING);
+							.getShell(), SWT.OK | SWT.ICON_WARNING | SWT.SHEET);
 					mb
 							.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
 					mb
@@ -1255,7 +1255,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 					mb.open();
 				} else {
 					MessageBox mb = new MessageBox(viewer.getControl()
-							.getShell(), SWT.OK | SWT.ICON_WARNING);
+							.getShell(), SWT.OK | SWT.ICON_WARNING | SWT.SHEET);
 					mb
 							.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
 					mb
@@ -1269,7 +1269,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				// the case where this item is unavailable because it belongs to
 				// an unavailable action set
 				MessageBox mb = new MessageBox(viewer.getControl().getShell(),
-						SWT.YES | SWT.NO | SWT.ICON_WARNING);
+						SWT.YES | SWT.NO | SWT.ICON_WARNING | SWT.SHEET);
 				mb
 						.setText(WorkbenchMessages.HideItemsCannotMakeVisible_dialogTitle);
 				final String errorExplanation = NLS

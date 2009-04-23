@@ -2808,7 +2808,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                             MessageDialog.QUESTION, new String[] {
                                     IDialogConstants.YES_LABEL,
                                     IDialogConstants.NO_LABEL,
-                                    IDialogConstants.CANCEL_LABEL }, 0);
+									IDialogConstants.CANCEL_LABEL }, 0) {
+						protected int getShellStyle() {
+							return super.getShellStyle() | SWT.SHEET;
+						}
+					};
                     int saveFile = dialog.open();
                     if (saveFile == 0) {
                         try {

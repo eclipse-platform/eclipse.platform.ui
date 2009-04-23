@@ -22,6 +22,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -84,6 +85,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                         updateExtendButtonState();
                     }
                 });
+        setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
 

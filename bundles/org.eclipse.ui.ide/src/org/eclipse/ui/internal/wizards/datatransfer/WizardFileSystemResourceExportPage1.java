@@ -326,7 +326,7 @@ public class WizardFileSystemResourceExportPage1 extends
      */
     protected void handleDestinationBrowseButtonPressed() {
         DirectoryDialog dialog = new DirectoryDialog(getContainer().getShell(),
-                SWT.SAVE);
+                SWT.SAVE | SWT.SHEET);
         dialog.setMessage(SELECT_DESTINATION_MESSAGE);
         dialog.setText(SELECT_DESTINATION_TITLE);
         dialog.setFilterPath(getDestinationValue());

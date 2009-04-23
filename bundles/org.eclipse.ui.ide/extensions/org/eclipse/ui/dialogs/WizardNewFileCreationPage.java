@@ -410,13 +410,13 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 			IDEWorkbenchPlugin.log(getClass(),
 					"createNewFile()", e.getTargetException()); //$NON-NLS-1$
 			MessageDialog
-					.openError(
+					.open(MessageDialog.ERROR,
 							getContainer().getShell(),
 							IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorTitle,
 							NLS
 									.bind(
 											IDEWorkbenchMessages.WizardNewFileCreationPage_internalErrorMessage,
-											e.getTargetException().getMessage()));
+											e.getTargetException().getMessage()), SWT.SHEET);
 
 			return null;
 		}

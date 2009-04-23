@@ -108,7 +108,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 					} catch (PartInitException e) {
 						String msg =  NLS.bind(IDEWorkbenchMessages.OpenLocalFileAction_message_errorOnOpen, fileStore.getName());
 						IDEWorkbenchPlugin.log(msg,e.getStatus());
-						MessageDialog.openError(window.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg);
+						MessageDialog.open(MessageDialog.ERROR,window.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg, SWT.SHEET);
 					}
 				} else {
 					if (++numberOfFilesNotFound > 1)
@@ -120,7 +120,7 @@ public class OpenLocalFileAction extends Action implements IWorkbenchWindowActio
 			if (numberOfFilesNotFound > 0) {
 				String msgFmt =  numberOfFilesNotFound == 1 ? IDEWorkbenchMessages.OpenLocalFileAction_message_fileNotFound : IDEWorkbenchMessages.OpenLocalFileAction_message_filesNotFound;
 				String msg =  NLS.bind(msgFmt, notFound.toString());
-				MessageDialog.openError(window.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg);
+				MessageDialog.open(MessageDialog.ERROR, window.getShell(), IDEWorkbenchMessages.OpenLocalFileAction_title, msg, SWT.SHEET);
 			}
 		}
 	}

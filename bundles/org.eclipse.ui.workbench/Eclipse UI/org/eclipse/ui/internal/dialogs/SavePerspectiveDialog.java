@@ -76,6 +76,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
     public SavePerspectiveDialog(Shell parentShell, PerspectiveRegistry perspReg) {
         super(parentShell);
         this.perspReg = perspReg;
+		setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /* (non-Javadoc)
@@ -244,9 +245,13 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
             String message = NLS.bind(WorkbenchMessages.SavePerspective_overwriteQuestion,perspName ); 
             String[] buttons = new String[] { IDialogConstants.YES_LABEL,
                     IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL };
-            MessageDialog d = new MessageDialog(this.getShell(),
-                    WorkbenchMessages.SavePerspective_overwriteTitle, 
-                    null, message, MessageDialog.QUESTION, buttons, 0);
+			MessageDialog d = new MessageDialog(this.getShell(),
+					WorkbenchMessages.SavePerspective_overwriteTitle, null,
+					message, MessageDialog.QUESTION, buttons, 0) {
+				protected int getShellStyle() {
+					return super.getShellStyle() | SWT.SHEET;
+				}
+			};
 
             switch (d.open()) {
             case 0: //yes

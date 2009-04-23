@@ -491,7 +491,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 						protected int getShellStyle() {
 							return (canCancel ? SWT.CLOSE : SWT.NONE)
 									| SWT.TITLE | SWT.BORDER
-									| SWT.APPLICATION_MODAL
+									| SWT.APPLICATION_MODAL | SWT.SHEET
 									| getDefaultOrientation();
 						}
 					};
@@ -507,7 +507,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 						protected int getShellStyle() {
 							return (canCancel ? SWT.CLOSE : SWT.NONE)
 									| SWT.TITLE | SWT.BORDER
-									| SWT.APPLICATION_MODAL
+									| SWT.APPLICATION_MODAL | SWT.SHEET
 									| getDefaultOrientation();
 						}
 					};
@@ -726,11 +726,11 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 			super(shell, input, contentprovider, labelProvider, message);
 			this.canCancel = canCancel;
 			this.stillOpenElsewhere = stillOpenElsewhere;
+			int shellStyle = getShellStyle();
 			if (!canCancel) {
-				int shellStyle = getShellStyle();
 				shellStyle &= ~SWT.CLOSE;
-				setShellStyle(shellStyle);
 			}
+			setShellStyle(shellStyle | SWT.SHEET);
 		}
 
 		/**

@@ -122,7 +122,11 @@ public class RefreshAction extends WorkspaceAction {
 					null, // use default window icon
 					message, MessageDialog.QUESTION, new String[] {
 							IDialogConstants.YES_LABEL,
-							IDialogConstants.NO_LABEL }, 0); // yes is the
+							IDialogConstants.NO_LABEL }, 0) {
+				protected int getShellStyle() {
+					return super.getShellStyle() | SWT.SHEET;
+				}
+			}; // yes is the
 			// default
 
 			// Must prompt user in UI thread (we're in the operation thread

@@ -82,6 +82,7 @@ public class ResourceSelectionDialog extends SelectionDialog {
 		} else {
 			setMessage(IDEWorkbenchMessages.ResourceSelectionDialog_message);
 		}
+        setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /**

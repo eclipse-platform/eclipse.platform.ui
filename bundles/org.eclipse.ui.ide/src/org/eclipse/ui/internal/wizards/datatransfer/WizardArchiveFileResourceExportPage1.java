@@ -299,7 +299,7 @@ public class WizardArchiveFileResourceExportPage1 extends
      *	to import from
      */
     protected void handleDestinationBrowseButtonPressed() {
-        FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE);
+        FileDialog dialog = new FileDialog(getContainer().getShell(), SWT.SAVE | SWT.SHEET);
         dialog.setFilterExtensions(new String[] { "*.zip;*.tar.gz;*.tar;*.tgz", "*.*" }); //$NON-NLS-1$ //$NON-NLS-2$
         dialog.setText(DataTransferMessages.ArchiveExport_selectDestinationTitle);
         String currentSourceString = getDestinationValue();

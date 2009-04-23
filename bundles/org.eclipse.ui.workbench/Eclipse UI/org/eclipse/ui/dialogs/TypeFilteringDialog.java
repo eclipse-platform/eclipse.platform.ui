@@ -81,6 +81,7 @@ public class TypeFilteringDialog extends SelectionDialog {
         setTitle(WorkbenchMessages.TypesFiltering_title); 
         this.initialSelections = preselections;
         setMessage(WorkbenchMessages.TypesFiltering_message); 
+		setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /**

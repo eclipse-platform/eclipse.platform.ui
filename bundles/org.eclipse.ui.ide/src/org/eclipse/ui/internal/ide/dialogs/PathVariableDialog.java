@@ -179,6 +179,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		} else {
 			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
 		}
+        setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /**
@@ -355,7 +356,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      * Opens a dialog where the user can select a folder path.
      */
     private void selectFolder() {
-        DirectoryDialog dialog = new DirectoryDialog(getShell());
+        DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
         dialog.setText(IDEWorkbenchMessages.PathVariableDialog_selectFolderTitle);
         dialog.setMessage(IDEWorkbenchMessages.PathVariableDialog_selectFolderMessage);
         dialog.setFilterPath(variableValue);
@@ -370,7 +371,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      * Opens a dialog where the user can select a file path.
      */
     private void selectFile() {
-        FileDialog dialog = new FileDialog(getShell());
+        FileDialog dialog = new FileDialog(getShell(), SWT.SHEET);
         dialog.setText(IDEWorkbenchMessages.PathVariableDialog_selectFileTitle);
         dialog.setFilterPath(variableValue);
         String res = dialog.open();

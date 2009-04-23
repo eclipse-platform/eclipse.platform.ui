@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,8 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * The ReadOnlyStateChecker is a helper class that takes a set of resource
@@ -233,7 +235,11 @@ public class ReadOnlyStateChecker {
                         IDialogConstants.YES_LABEL,
                         IDialogConstants.YES_TO_ALL_LABEL,
                         IDialogConstants.NO_LABEL,
-                        IDialogConstants.CANCEL_LABEL }, 0);
+                        IDialogConstants.CANCEL_LABEL }, 0) {
+        	protected int getShellStyle() {
+        		return super.getShellStyle() | SWT.SHEET;
+        	}
+        };
         shell.getDisplay().syncExec(new Runnable() {
             public void run() {
                 dialog.open();

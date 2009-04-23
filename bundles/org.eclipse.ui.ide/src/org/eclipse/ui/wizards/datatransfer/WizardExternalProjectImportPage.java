@@ -286,7 +286,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
      */
     private void handleLocationBrowseButtonPressed() {
         DirectoryDialog dialog = new DirectoryDialog(locationPathField
-                .getShell());
+                .getShell(), SWT.SHEET);
         dialog.setMessage(DataTransferMessages.WizardExternalProjectImportPage_directoryLabel);
 
         String dirName = getProjectLocationFieldValue();
@@ -469,12 +469,13 @@ public class WizardExternalProjectImportPage extends WizardPage {
             if (t instanceof CoreException) {
                 if (((CoreException) t).getStatus().getCode() == IResourceStatus.CASE_VARIANT_EXISTS) {
                     MessageDialog
-                            .openError(
+                            .open(MessageDialog.ERROR,
                                     getShell(),
                                     DataTransferMessages.WizardExternalProjectImportPage_errorMessage,
                                     NLS.bind(
                                     		DataTransferMessages.WizardExternalProjectImportPage_caseVariantExistsError,
-                                    		projectName)
+                                    		projectName),
+                                    SWT.SHEET
                             );
                 } else {
                     ErrorDialog

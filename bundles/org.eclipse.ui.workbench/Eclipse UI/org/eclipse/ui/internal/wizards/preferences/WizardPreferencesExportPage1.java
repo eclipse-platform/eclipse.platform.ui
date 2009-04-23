@@ -159,7 +159,9 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 					fos = new FileOutputStream(exportFile);
 				} catch (FileNotFoundException e) {
 					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					MessageDialog.open(MessageDialog.ERROR, getControl()
+							.getShell(), new String(), e.getLocalizedMessage(),
+							SWT.SHEET);
 					return false;
 				}
 				IPreferencesService service = Platform.getPreferencesService();
@@ -168,7 +170,9 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 							fos);
 				} catch (CoreException e) {
 					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					MessageDialog.open(MessageDialog.ERROR, getControl()
+							.getShell(), new String(), e.getLocalizedMessage(),
+							SWT.SHEET);
 					return false;
 				}
 			}
@@ -178,7 +182,9 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 					fos.close();
 				} catch (IOException e) {
 					WorkbenchPlugin.log(e.getMessage(), e);
-					MessageDialog.openError(getControl().getShell(), new String(), e.getLocalizedMessage());
+					MessageDialog.open(MessageDialog.ERROR, getControl()
+							.getShell(), new String(), e.getLocalizedMessage(),
+							SWT.SHEET);
 					return false;
 				}
 			}
@@ -191,7 +197,7 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	}
 
 	protected int getFileDialogStyle() {
-		return SWT.SAVE;
+		return SWT.SAVE | SWT.SHEET;
 	}
 	
 	/* (non-Javadoc)

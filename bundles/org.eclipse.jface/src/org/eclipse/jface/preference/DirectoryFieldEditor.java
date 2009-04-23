@@ -83,7 +83,7 @@ public class DirectoryFieldEditor extends StringButtonFieldEditor {
      */
     private File getDirectory(File startingDirectory) {
 
-        DirectoryDialog fileDialog = new DirectoryDialog(getShell(), SWT.OPEN);
+        DirectoryDialog fileDialog = new DirectoryDialog(getShell(), SWT.OPEN | SWT.SHEET);
         if (startingDirectory != null) {
 			fileDialog.setFilterPath(startingDirectory.getPath());
 		}

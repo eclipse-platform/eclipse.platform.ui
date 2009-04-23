@@ -154,6 +154,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 				}
             }
         }
+		setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /* (non-Javadoc)

@@ -1271,8 +1271,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 				"restoreDefaultsMessageBoxText"); //$NON-NLS-1$
 		final String message = Util.translateString(RESOURCE_BUNDLE,
 				"restoreDefaultsMessageBoxMessage"); //$NON-NLS-1$
-		final boolean confirmed = MessageDialog.openConfirm(getShell(), title,
-				message);
+		final boolean confirmed = MessageDialog.open(MessageDialog.CONFIRM,
+				getShell(), title, message, SWT.SHEET);
 
 		if (confirmed) {
 			// Fix the scheme in the local changes.
@@ -1365,7 +1365,8 @@ public final class KeysPreferencePage extends PreferencePage implements
 	 * @since 3.1
 	 */
 	private final void selectedButtonExport() {
-		final FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE);
+		final FileDialog fileDialog = new FileDialog(getShell(), SWT.SAVE
+				| SWT.SHEET);
 		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
 		fileDialog.setFilterNames(new String[] { Util.translateString(
 				RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$

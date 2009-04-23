@@ -372,13 +372,13 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			IDEWorkbenchPlugin.log(getClass(),
 					"createNewFolder()", e.getTargetException()); //$NON-NLS-1$
 			MessageDialog
-					.openError(
+					.open(MessageDialog.ERROR,
 							getContainer().getShell(),
 							IDEWorkbenchMessages.WizardNewFolderCreationPage_internalErrorTitle,
 							NLS
 									.bind(
 											IDEWorkbenchMessages.WizardNewFolder_internalError,
-											e.getTargetException().getMessage()));
+											e.getTargetException().getMessage()), SWT.SHEET);
 			return null;
 		}
 

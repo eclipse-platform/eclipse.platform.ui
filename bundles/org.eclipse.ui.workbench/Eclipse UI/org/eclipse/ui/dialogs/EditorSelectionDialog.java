@@ -354,7 +354,7 @@ public final class EditorSelectionDialog extends Dialog {
 
 	protected void promptForExternalEditor() {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN
-				| SWT.PRIMARY_MODAL);
+				| SWT.PRIMARY_MODAL | SWT.SHEET);
 		dialog.setFilterExtensions(Executable_Filters);
 		String result = dialog.open();
 		if (result != null) {

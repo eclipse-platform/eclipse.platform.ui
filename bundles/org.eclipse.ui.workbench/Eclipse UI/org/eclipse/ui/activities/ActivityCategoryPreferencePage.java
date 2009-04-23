@@ -131,6 +131,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage impleme
          */
         protected AdvancedDialog(Shell parentShell) {
             super(parentShell);
+			setShellStyle(getShellStyle() | SWT.SHEET);
          }
         
         /* (non-Javadoc)

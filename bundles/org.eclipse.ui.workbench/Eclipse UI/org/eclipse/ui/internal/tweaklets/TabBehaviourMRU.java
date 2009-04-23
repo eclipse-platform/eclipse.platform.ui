@@ -15,6 +15,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -90,7 +91,11 @@ public class TabBehaviourMRU extends TabBehaviour {
 						dirtyEditor.getName()), MessageDialog.QUESTION,
 				new String[] { IDialogConstants.YES_LABEL,
 						IDialogConstants.NO_LABEL,
-						WorkbenchMessages.EditorManager_openNewEditorLabel }, 0);
+						WorkbenchMessages.EditorManager_openNewEditorLabel }, 0) {
+			protected int getShellStyle() {
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
 		int result = dialog.open();
 		if (result == 0) { // YES
 			ProgressMonitorDialog pmd = new ProgressMonitorJobsDialog(dialog

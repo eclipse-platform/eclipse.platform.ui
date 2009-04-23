@@ -1040,8 +1040,8 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 * 		the error message
 	 */
 	protected void displayErrorDialog(String message) {
-		MessageDialog.openError(getContainer().getShell(),
-				getErrorDialogTitle(), message);
+		MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(),
+				getErrorDialogTitle(), message, SWT.SHEET);
 	}
 
 	/**
@@ -1164,7 +1164,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	protected void handleLocationDirectoryButtonPressed() {
 
 		DirectoryDialog dialog = new DirectoryDialog(directoryPathField
-				.getShell());
+				.getShell(), SWT.SHEET);
 		dialog
 				.setMessage(DataTransferMessages.WizardProjectsImportPage_SelectDialogTitle);
 
@@ -1197,7 +1197,7 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 */
 	protected void handleLocationArchiveButtonPressed() {
 
-		FileDialog dialog = new FileDialog(archivePathField.getShell());
+		FileDialog dialog = new FileDialog(archivePathField.getShell(), SWT.SHEET);
 		dialog.setFilterExtensions(FILE_IMPORT_MASK);
 		dialog
 				.setText(DataTransferMessages.WizardProjectsImportPage_SelectArchiveDialogTitle);
@@ -1436,7 +1436,11 @@ public class WizardProjectsImportPage extends WizardPage implements
 						IDialogConstants.YES_TO_ALL_LABEL,
 						IDialogConstants.NO_LABEL,
 						IDialogConstants.NO_TO_ALL_LABEL,
-						IDialogConstants.CANCEL_LABEL }, 0);
+						IDialogConstants.CANCEL_LABEL }, 0) {
+			protected int getShellStyle() {
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
 		String[] response = new String[] { YES, ALL, NO, NO_ALL, CANCEL };
 		// run in syncExec because callback is from an operation,
 		// which is probably not running in the UI thread.

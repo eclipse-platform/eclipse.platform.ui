@@ -729,7 +729,11 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 				null,
 				JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
 				MessageDialog.QUESTION,
-				new String[] { IDialogConstants.OK_LABEL }, 0);
+				new String[] { IDialogConstants.OK_LABEL }, 0) {
+			protected int getShellStyle() {
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
 		return result;
 	}
 

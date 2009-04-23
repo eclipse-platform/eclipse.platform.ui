@@ -492,10 +492,12 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 			if (!directory.mkdirs()) {
 				MessageDialog
-						.openError(
+						.open(
+								MessageDialog.ERROR,
 								getContainer().getShell(),
 								PreferencesMessages.PreferencesExport_error,
-								PreferencesMessages.PreferencesExport_directoryCreationError);
+								PreferencesMessages.PreferencesExport_directoryCreationError,
+								SWT.SHEET);
 				return false;
 			}
 		}
@@ -514,7 +516,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		MessageDialog dialog = new MessageDialog(getContainer().getShell(),
 				PreferencesMessages.Question, (Image) null, message,
 				MessageDialog.NONE, new String[] { IDialogConstants.YES_LABEL,
-						IDialogConstants.NO_LABEL }, 0);
+						IDialogConstants.NO_LABEL }, 0) {
+			protected int getShellStyle() {
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
 		// ensure yes is the default
 
 		return dialog.open() == 0;
@@ -995,7 +1001,11 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 						IDialogConstants.YES_TO_ALL_LABEL,
 						IDialogConstants.NO_LABEL,
 						IDialogConstants.NO_TO_ALL_LABEL,
-						IDialogConstants.CANCEL_LABEL }, 0);
+						IDialogConstants.CANCEL_LABEL }, 0) {
+			protected int getShellStyle() {
+				return super.getShellStyle() | SWT.SHEET;
+			}
+		};
 		String[] response = new String[] { YES, ALL, NO, NO_ALL, CANCEL };
 		// run in syncExec because callback is from an operation,
 		// which is probably not running in the UI thread.

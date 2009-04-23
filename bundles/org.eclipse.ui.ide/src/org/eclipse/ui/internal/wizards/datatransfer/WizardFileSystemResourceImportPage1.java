@@ -610,7 +610,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
         String currentSource = this.sourceNameField.getText();
         DirectoryDialog dialog = new DirectoryDialog(
-                sourceNameField.getShell(), SWT.SAVE);
+                sourceNameField.getShell(), SWT.SAVE | SWT.SHEET);
         dialog.setText(SELECT_SOURCE_TITLE);
         dialog.setMessage(SELECT_SOURCE_MESSAGE);
         dialog.setFilterPath(getSourceDirectoryName(currentSource));

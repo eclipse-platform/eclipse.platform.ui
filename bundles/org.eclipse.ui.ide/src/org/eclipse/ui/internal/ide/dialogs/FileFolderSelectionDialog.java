@@ -19,6 +19,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
@@ -238,5 +239,6 @@ public class FileFolderSelectionDialog extends ElementTreeSelectionDialog {
 		setComparator(new FileViewerSorter());
 		setValidator(new FileSelectionValidator(multiSelect,
 				(type & IResource.FOLDER) != 0));
+		setShellStyle(getShellStyle() | SWT.SHEET);
 	}
 }

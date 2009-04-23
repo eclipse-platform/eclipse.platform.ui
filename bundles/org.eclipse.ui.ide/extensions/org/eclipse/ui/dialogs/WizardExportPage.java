@@ -282,7 +282,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
      * @param message the error message
      */
     protected void displayErrorDialog(String message) {
-        MessageDialog.openError(getContainer().getShell(), IDEWorkbenchMessages.WizardExportPage_errorDialogTitle, message);
+        MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(), IDEWorkbenchMessages.WizardExportPage_errorDialogTitle, message, SWT.SHEET);
     }
 
     /**
@@ -628,7 +628,11 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
         ListSelectionDialog dialog = new ListSelectionDialog(getContainer()
                 .getShell(), editorMappings,
                 FileEditorMappingContentProvider.INSTANCE,
-                FileEditorMappingLabelProvider.INSTANCE, IDEWorkbenchMessages.WizardExportPage_selectionDialogMessage);
+                FileEditorMappingLabelProvider.INSTANCE, IDEWorkbenchMessages.WizardExportPage_selectionDialogMessage){
+        	protected int getShellStyle() {
+        		return super.getShellStyle() | SWT.SHEET;
+        	}
+        };
 
         dialog.setTitle(IDEWorkbenchMessages.WizardExportPage_resourceTypeDialog);
         dialog.open();

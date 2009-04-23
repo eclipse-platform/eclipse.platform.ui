@@ -67,6 +67,7 @@ public class FileExtensionDialog extends TitleAreaDialog {
 				WorkbenchMessages.FileExtension_dialogTitle,
 				WorkbenchMessages.FileExtension_fileTypeMessage,
 				WorkbenchMessages.FileExtension_fileTypeLabel);
+		setShellStyle(getShellStyle() | SWT.SHEET);
 	}
     
     /**
@@ -87,7 +88,8 @@ public class FileExtensionDialog extends TitleAreaDialog {
 		this.headerTitle = headerTitle;
 		message2 = message;
 		this.label = label;
-    	
+
+		setShellStyle(getShellStyle() | SWT.SHEET);
     }
     
     /* (non-Javadoc)

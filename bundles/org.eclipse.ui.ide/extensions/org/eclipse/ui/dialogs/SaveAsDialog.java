@@ -82,6 +82,7 @@ public class SaveAsDialog extends TitleAreaDialog {
      */
     public SaveAsDialog(Shell parentShell) {
         super(parentShell);
+        setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /* (non-Javadoc)
@@ -230,7 +231,11 @@ public class SaveAsDialog extends TitleAreaDialog {
 							.toString());
 			MessageDialog d = new MessageDialog(getShell(),
                     IDEWorkbenchMessages.Question,
-                    null, question, MessageDialog.QUESTION, buttons, 0);
+                    null, question, MessageDialog.QUESTION, buttons, 0) {
+				protected int getShellStyle() {
+					return super.getShellStyle() | SWT.SHEET;
+				}
+			};
             int overwrite = d.open();
             switch (overwrite) {
             case 0: // Yes

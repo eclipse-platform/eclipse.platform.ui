@@ -54,7 +54,8 @@ public class DialogUtil {
                     .getStatus());
         } else {
             // Open a regular error dialog since there is no
-            // extra information to display
+            // extra information to display. Don't use SWT.SHEET because
+        	// we don't know if the title contains important information.
             MessageDialog.openError(parent, title, message);
         }
     }

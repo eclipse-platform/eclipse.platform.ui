@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -75,7 +76,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 				 */
 				public URI browseFileSystem(String initialPath, Shell shell) {
 
-					DirectoryDialog dialog = new DirectoryDialog(shell);
+					DirectoryDialog dialog = new DirectoryDialog(shell, SWT.SHEET);
 					dialog
 							.setMessage(IDEWorkbenchMessages.ProjectLocationSelectionDialog_directoryLabel);
 

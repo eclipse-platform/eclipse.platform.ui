@@ -14,6 +14,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.DirectoryDialog;
 
@@ -75,7 +76,7 @@ public class PathEditor extends ListEditor {
      */
     protected String getNewInputObject() {
 
-        DirectoryDialog dialog = new DirectoryDialog(getShell());
+        DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
         if (dirChooserLabelText != null) {
 			dialog.setMessage(dirChooserLabelText);
 		}

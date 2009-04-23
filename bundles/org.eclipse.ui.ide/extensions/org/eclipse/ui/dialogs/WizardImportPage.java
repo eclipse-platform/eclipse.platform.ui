@@ -185,7 +185,7 @@ public abstract class WizardImportPage extends WizardDataTransferPage {
      * @param message the error message
      */
     protected void displayErrorDialog(String message) {
-        MessageDialog.openError(getContainer().getShell(), IDEWorkbenchMessages.WizardImportPage_errorDialogTitle, message);
+        MessageDialog.open(MessageDialog.ERROR, getContainer().getShell(), IDEWorkbenchMessages.WizardImportPage_errorDialogTitle, message, SWT.SHEET);
     }
 
     /**
