@@ -826,7 +826,7 @@ public class BuilderTest extends AbstractBuilderTest {
 			fail("3.0");
 		} catch (CoreException e) {
 			//see discussion in bug 273147 about build exception severity
-			assertEquals("3.1", IStatus.ERROR, e.getStatus().getSeverity());
+			assertEquals("3.1", IStatus.WARNING, e.getStatus().getSeverity());
 			//expected
 		} finally {
 			getWorkspace().removeResourceChangeListener(listener);
