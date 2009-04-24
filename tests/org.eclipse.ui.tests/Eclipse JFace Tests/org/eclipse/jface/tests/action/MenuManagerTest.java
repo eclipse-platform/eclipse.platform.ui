@@ -99,6 +99,16 @@ public class MenuManagerTest extends JFaceActionTest {
         menuBarMgr.dispose();
         assertTrue(menuBarMgr.isDirty());
     }
+    
+    /**
+     * This is a test case for bug 255429 to ensure that a menu manager without any text
+     * set does not throw an NPE. 
+     */
+    public void testEmptyMenuManagerNPE() {
+    	Menu menu = new Menu(getShell());
+    	MenuManager manager = new MenuManager();
+    	manager.fill(menu, -1);
+    }
 
     /**
      * Creates a menu manager with the given name, adding items based on the given template.
