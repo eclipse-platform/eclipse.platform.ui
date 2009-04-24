@@ -62,9 +62,8 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 										+ name + " cannot be opened.", //$NON-NLS-1$
 								null);
 					}
-					ParsedDocument parsed = new ParsedDocument(parser.getContentReader());
-					doc.add(new Field("contents", parsed.newContentReader())); //$NON-NLS-1$
-					doc.add(new Field("exact_contents", parsed.newContentReader())); //$NON-NLS-1$
+					doc.add(new Field("contents", parser.getContentReader())); //$NON-NLS-1$
+					doc.add(new Field("exact_contents", parser.getContentReader())); //$NON-NLS-1$
 					String title = parser.getTitle();
 					doc.add(new Field("title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
 					doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$

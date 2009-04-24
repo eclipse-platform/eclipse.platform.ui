@@ -83,6 +83,7 @@ public class HTMLDocParser {
 		else {
 			htmlParser = new HTMLParser(new InputStreamReader(inputStream));
 		}
+		htmlParser.parse();
 	}
 	/**
 	 * Releases resources (closes streams)

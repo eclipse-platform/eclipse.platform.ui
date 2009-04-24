@@ -33,6 +33,8 @@ package org.apache.lucene.demo.html;
 import java.io.*;
 import java.util.Properties;
 
+import org.eclipse.help.internal.search.LimitedSizeCharArrayWriter;
+
 public class HTMLParser implements HTMLParserConstants {
   public static int SUMMARY_LENGTH = 175;
 
@@ -50,22 +52,8 @@ public class HTMLParser implements HTMLParserConstants {
   boolean afterTag = false;
   boolean afterSpace = false;
   String eol = System.getProperty("line.separator"); //$NON-NLS-1$
-  Reader pipeIn = null;
-  Writer pipeOut;
-  private MyPipedInputStream pipeInStream = null;
-  private PipedOutputStream pipeOutStream = null;
+  private LimitedSizeCharArrayWriter writer = new LimitedSizeCharArrayWriter(1000000);
   private Exception exception = null;
-
-  private class MyPipedInputStream extends PipedInputStream{
-
-    public MyPipedInputStream(){
-      super();
-    }
-
-    public boolean full() throws IOException{
-      return this.available() >= PipedInputStream.PIPE_SIZE;
-    }
-  }
 
   /**
    * @deprecated Use HTMLParser(FileInputStream) instead
@@ -74,44 +62,17 @@ public class HTMLParser implements HTMLParserConstants {
     this(new FileInputStream(file));
   }
 
-  public String getTitle() throws IOException, InterruptedException {
-    if (pipeIn == null)
-      getReader();                                // spawn parsing thread
-    while (true) {
-      synchronized(this) {
-        if (titleComplete || pipeInStream.full())
-          break;
-        wait(10);
-      }
-    }
+  public String getTitle() throws IOException, InterruptedException {                              // spawn parsing thread
     return title.toString().trim();
   }
 
   public Properties getMetaTags() throws IOException,
 InterruptedException {
-    if (pipeIn == null)
-      getReader();                                // spawn parsing thread
-    while (true) {
-      synchronized(this) {
-        if (titleComplete || pipeInStream.full())
-          break;
-        wait(10);
-      }
-    }
     return metaTags;
   }
 
 
-  public String getSummary() throws IOException, InterruptedException {
-    if (pipeIn == null)
-      getReader();                                // spawn parsing thread
-    while (true) {
-      synchronized(this) {
-        if (summary.length() >= SUMMARY_LENGTH || pipeInStream.full())
-          break;
-        wait(10);
-      }
-    }
+  public String getSummary() throws IOException, InterruptedException {                              // spawn parsing thread
     String metaDescription = metaTags.getProperty("description"); //$NON-NLS-1$
     if (metaDescription != null) {
     	if (metaDescription.length() > SUMMARY_LENGTH) {
@@ -122,19 +83,17 @@ InterruptedException {
     }
     return summary.toString().trim();
   }
-
+  
   public Reader getReader() throws IOException {
-    if (pipeIn == null) {
-      pipeInStream = new MyPipedInputStream();
-      pipeOutStream = new PipedOutputStream(pipeInStream);
-      pipeIn = new InputStreamReader(pipeInStream, "UTF-16BE"); //$NON-NLS-1$
-      pipeOut = new OutputStreamWriter(pipeOutStream, "UTF-16BE"); //$NON-NLS-1$
+	  return new CharArrayReader(writer.toCharArray());
+  }
 
-      Thread thread = new ParserThread(this);
-      thread.start();                             // start parsing
-    }
-
-    return pipeIn;
+  public void parse() throws IOException {
+	try { // parse document to pipeOut
+		HTMLDocument();
+	} catch (Exception e) {
+		setException(e);
+	}
   }
 
   void addToSummary(String text) {
@@ -174,7 +133,7 @@ InterruptedException {
     }
 
     length += text.length();
-    pipeOut.write(text);
+    writer.write(text);
 
     afterSpace = false;
   }
@@ -182,9 +141,9 @@ InterruptedException {
   void addMetaTag() throws IOException {
       metaTags.setProperty(currentMetaTag, currentMetaContent);
       if (currentMetaTag.equalsIgnoreCase("keywords")) { //$NON-NLS-1$
-    	  pipeOut.write(' '); 
-          pipeOut.write(currentMetaContent);
-    	  pipeOut.write(' '); 
+    	  writer.write(' '); 
+          writer.write(currentMetaContent);
+    	  writer.write(' '); 
       }
       currentMetaTag = null;
       currentMetaContent = null;
@@ -200,7 +159,7 @@ InterruptedException {
 
       String space = afterTag ? eol : " "; //$NON-NLS-1$
       length += space.length();
-      pipeOut.write(space);
+      writer.write(space);
       afterSpace = true;
     }
   }
