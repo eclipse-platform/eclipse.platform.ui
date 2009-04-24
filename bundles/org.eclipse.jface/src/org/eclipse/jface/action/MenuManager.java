@@ -260,7 +260,10 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 				menuItem = new MenuItem(parent, SWT.CASCADE);
 			}
 
-            menuItem.setText(getMenuText());
+			String text = getMenuText();
+			if (text != null) {
+				menuItem.setText(text);
+			}
 
             if (image != null) {
 				LocalResourceManager localManager = new LocalResourceManager(
