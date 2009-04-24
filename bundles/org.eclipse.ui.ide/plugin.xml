@@ -1584,10 +1584,12 @@
                  <and>
                  	<or>
                    		 <with variable="activePart">
+                   				<instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                         		<test args="org.eclipse.ui.ide.allMarkersGenerator"
                           		property="org.eclipse.ui.ide.contentGenerator"/>
                     	</with>
                    		<with variable="activePart">
+                   				<instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                       			<test args="org.eclipse.ui.ide.problemsGenerator"
                        	   			property="org.eclipse.ui.ide.contentGenerator"/>
                     	</with>
@@ -1611,6 +1613,7 @@
                     checkEnabled="false">
                  <with
                        variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                     <test
                           args="org.eclipse.ui.ide.tasksGenerator"
                           forcePluginActivation="false"
@@ -1627,6 +1630,7 @@
                     checkEnabled="false">
                  <with
                        variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                     <test
                           args="org.eclipse.ui.ide.tasksGenerator"
                           property="org.eclipse.ui.ide.contentGenerator">
@@ -1642,6 +1646,7 @@
                     checkEnabled="false">
                  <with
                        variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                     <test
                           args="org.eclipse.ui.ide.tasksGenerator"
                           property="org.eclipse.ui.ide.contentGenerator">
@@ -1680,23 +1685,6 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.ProblemView">
          <menu
-               id="org.eclipse.ui.ide.problems.contentsMenu"
-               label="%MarkerContentsMenu.Contents.name">
-            <dynamic
-                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
-                  id="org.eclipse.ui.ide.contentsContribution">
-            </dynamic>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <test
-                        property="org.eclipse.ui.ide.multipleContentGenerators">
-                  </test>
-               </with>
-            </visibleWhen>
-         </menu>
-         <menu
                id="org.eclipse.ui.ide.problems.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
@@ -1707,6 +1695,7 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
+                  <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                   <test
                         property="org.eclipse.ui.ide.hasFilters">
                   </test>
@@ -1759,23 +1748,6 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.TaskList">
          <menu
-               id="org.eclipse.ui.ide.tasks.contentsMenu"
-               label="%MarkerContentsMenu.Contents.name">
-            <dynamic
-                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
-                  id="org.eclipse.ui.ide.contentsContribution">
-            </dynamic>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <test
-                        property="org.eclipse.ui.ide.multipleContentGenerators">
-                  </test>
-               </with>
-            </visibleWhen>
-         </menu>
-         <menu
                id="org.eclipse.ui.ide.tasks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
@@ -1786,6 +1758,7 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
+                  <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                   <test
                         property="org.eclipse.ui.ide.hasFilters">
                   </test>
@@ -1838,23 +1811,6 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.BookmarkView">
          <menu
-               id="org.eclipse.ui.ide.bookmarks.contentsMenu"
-               label="%MarkerContentsMenu.Contents.name">
-            <dynamic
-                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
-                  id="org.eclipse.ui.ide.contentsContribution">
-            </dynamic>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <test
-                        property="org.eclipse.ui.ide.multipleContentGenerators">
-                  </test>
-               </with>
-            </visibleWhen>
-         </menu>
-         <menu
                id="org.eclipse.ui.ide.bookmarks.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
@@ -1865,6 +1821,7 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
+                  <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                   <test
                         property="org.eclipse.ui.ide.hasFilters">
                   </test>
@@ -1882,6 +1839,7 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
+                  <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                   <test
                         property="org.eclipse.ui.ide.hasGroups">
                   </test>
@@ -1926,23 +1884,6 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.AllMarkersView">
          <menu
-               id="org.eclipse.ui.ide.allMarkers.contentsMenu"
-               label="%MarkerContentsMenu.Contents.name">
-            <dynamic
-                  class="org.eclipse.ui.internal.views.markers.ContentsContribution"
-                  id="org.eclipse.ui.ide.contentsContribution">
-            </dynamic>
-            <visibleWhen
-                  checkEnabled="false">
-               <with
-                     variable="activePart">
-                  <test
-                        property="org.eclipse.ui.ide.multipleContentGenerators">
-                  </test>
-               </with>
-            </visibleWhen>
-         </menu>
-         <menu
                id="org.eclipse.ui.ide.allMarkers.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic
@@ -1953,6 +1894,7 @@
                   checkEnabled="false">
                <with
                      variable="activePart">
+                  <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                   <test
                         property="org.eclipse.ui.ide.hasFilters">
                   </test>
@@ -2016,6 +1958,7 @@
          <activeWhen>
             <with
                   variable="activePart">
+               <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                <test
                      args="any"
                      property="org.eclipse.ui.ide.contentGenerator">
@@ -2029,6 +1972,7 @@
          <activeWhen>
             <with
                   variable="activePart">
+               <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                <test
                      args="any"
                      property="org.eclipse.ui.ide.contentGenerator">
@@ -2043,6 +1987,7 @@
             <iterate
                   ifEmpty="false"
                   operator="or">
+               <instanceof value="org.eclipse.ui.internal.views.markers.MarkerEntry"/>
                <test
                      forcePluginActivation="false"
                      property="org.eclipse.ui.ide.fileMarker">
@@ -2052,6 +1997,7 @@
          <activeWhen>
             <with
                   variable="activePart">
+               <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                <test
                      args="any"
                      property="org.eclipse.ui.ide.contentGenerator">
@@ -2065,16 +2011,15 @@
             commandId="org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals">
          <activeWhen>
              <and>
+                 <with variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                  	<or>
-                   		 <with variable="activePart">
-                        		<test args="org.eclipse.ui.ide.allMarkersGenerator"
+                        <test args="org.eclipse.ui.ide.allMarkersGenerator"
                           		property="org.eclipse.ui.ide.contentGenerator"/>
-                    		</with>
-                   		 <with variable="activePart">
-                      			<test args="org.eclipse.ui.ide.problemsGenerator"
-                       	   			property="org.eclipse.ui.ide.contentGenerator"/>
-                    		</with>
+                        <test args="org.eclipse.ui.ide.problemsGenerator"
+                          		property="org.eclipse.ui.ide.contentGenerator"/>
                  	</or>
+                 </with>
                		<with variable="selection">
                           	<iterate ifEmpty="false" operator="and">
                           		<adapt type="org.eclipse.core.resources.IMarker" >
@@ -2090,6 +2035,7 @@
                <iterate
                      ifEmpty="false"
                      operator="or">
+                  <instanceof value="org.eclipse.ui.internal.views.markers.MarkerEntry"/>
                   <test
                         property="org.eclipse.ui.ide.quickFix">
                   </test>
@@ -2106,6 +2052,7 @@
             <activeWhen>
             <with
                        variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                     <test
                           args="org.eclipse.ui.ide.tasksGenerator"
                           property="org.eclipse.ui.ide.contentGenerator">
@@ -2120,6 +2067,7 @@
             <iterate
                   ifEmpty="false"
                   operator="and">
+               <instanceof value="org.eclipse.ui.internal.views.markers.MarkerEntry"/>
                <test
                      forcePluginActivation="false"
                      property="org.eclipse.ui.ide.editable">
@@ -2129,6 +2077,7 @@
             <activeWhen>
             <with
                        variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                     <test
                           args="any"
                           property="org.eclipse.ui.ide.contentGenerator">
@@ -2142,6 +2091,7 @@
             <activeWhen>
             <with
                        variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                     <test
                           args="org.eclipse.ui.ide.tasksGenerator"
                           property="org.eclipse.ui.ide.contentGenerator">
@@ -2155,6 +2105,7 @@
             <activeWhen>
              <with
                        variable="activePart">
+                    <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                     <test
                           args="org.eclipse.ui.ide.tasksGenerator"
                           property="org.eclipse.ui.ide.contentGenerator">
@@ -2165,6 +2116,7 @@
             <iterate
                   ifEmpty="false"
                   operator="and">
+               <instanceof value="org.eclipse.ui.internal.views.markers.MarkerEntry"/>
                <test
                      forcePluginActivation="false"
                      property="org.eclipse.ui.ide.editable">
