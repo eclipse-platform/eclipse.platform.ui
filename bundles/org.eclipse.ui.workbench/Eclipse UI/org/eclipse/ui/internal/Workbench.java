@@ -1381,7 +1381,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 				public void runWithException() throws Throwable {
 					advisor.preStartup();
 					
-					if (!advisor.openWindows()) {
+					if (isClosing() || !advisor.openWindows()) {
 						bail[0] = true;
 					}
 				}});
