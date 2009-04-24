@@ -60,7 +60,7 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 						return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 								"Help document " //$NON-NLS-1$
 										+ name + " cannot be opened.", //$NON-NLS-1$
-								ioe);
+								null);
 					}
 					ParsedDocument parsed = new ParsedDocument(parser.getContentReader());
 					doc.add(new Field("contents", parsed.newContentReader())); //$NON-NLS-1$
