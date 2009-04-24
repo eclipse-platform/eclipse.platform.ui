@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     WindRiver - Bug 272367: "Show Type Names" attribute is not available in the IPresentationContext properties 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
@@ -16,11 +17,13 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.PlatformUI;
 
@@ -53,16 +56,22 @@ public class ShowTypesAction extends Action {
 	}
 
 	private void valueChanged(boolean on) {
-		if (getView().getViewer().getControl().isDisposed()) {
+		final Viewer viewer = getView().getViewer();
+		if (viewer.getControl().isDisposed()) {
 			return;
 		}
 		
 		IDebugModelPresentation debugLabelProvider= (IDebugModelPresentation)getView().getAdapter(IDebugModelPresentation.class);
 		if (debugLabelProvider != null) {
-			debugLabelProvider.setAttribute(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, (on ? Boolean.TRUE : Boolean.FALSE));			
-			BusyIndicator.showWhile(getView().getViewer().getControl().getDisplay(), new Runnable() {
+			Boolean typesStatus = on ? Boolean.TRUE : Boolean.FALSE;
+			debugLabelProvider.setAttribute(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, typesStatus);
+			if (viewer instanceof TreeModelViewer) {
+				TreeModelViewer treeViewer = (TreeModelViewer) viewer;
+				treeViewer.getPresentationContext().setProperty(IDebugModelPresentation.DISPLAY_VARIABLE_TYPE_NAMES, typesStatus);
+			}
+			BusyIndicator.showWhile(viewer.getControl().getDisplay(), new Runnable() {
 				public void run() {
-					getView().getViewer().refresh();					
+					viewer.refresh();					
 				}
 			});
 		}
