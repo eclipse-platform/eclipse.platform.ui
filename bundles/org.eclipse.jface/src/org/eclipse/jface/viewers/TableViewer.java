@@ -382,7 +382,9 @@ public class TableViewer extends AbstractTableViewer {
 		if (elements.length == 0) {
 			return;
 		}
+
 		// deselect any items that are being removed, see bug 97786
+		boolean deselectedItems = false;
 		Object elementToBeRemoved = null;
 		CustomHashtable elementsToBeRemoved = null;
 		if (elements.length == 1) {
@@ -404,10 +406,17 @@ public class TableViewer extends AbstractTableViewer {
 						.containsKey(data))
 						|| equals(elementToBeRemoved, data)) {
 					table.deselect(index);
+					deselectedItems = true;
 				}
 			}
 		}
 		super.remove(elements);
+
+		if (deselectedItems) {
+			ISelection sel = getSelection();
+			updateSelection(sel);
+			firePostSelectionChanged(new SelectionChangedEvent(this, sel));
+		}
 	}
 	
 	protected Widget doFindItem(Object element) {
