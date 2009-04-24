@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,6 +29,13 @@ import org.eclipse.core.runtime.Platform;
 public class TypeExtensionManager implements IRegistryChangeListener {
 
 	private String fExtensionPoint;
+
+	/**
+	 * Tells whether this class is in debug mode.
+	 * 
+	 * @since 3.5
+	 */
+	private static boolean DEBUG= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.core.expressions/debug/TypeExtensionManager")); //$NON-NLS-1$//$NON-NLS-2$
 
 	private static final String TYPE= "type"; //$NON-NLS-1$
 
@@ -106,13 +113,19 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 		TypeExtension extension= get(clazz);
 		IPropertyTester extender= extension.findTypeExtender(this, namespace, method, receiver instanceof Class, forcePluginActivation);
 		if (extender == TypeExtension.CONTINUE || extender == null) {
+			Throwable t= null;
+			if (DEBUG) {
+				//XXX: more logging for https://bugs.eclipse.org/bugs/show_bug.cgi?id=239715 :
+				t= new Throwable("forcePluginActivation: " + forcePluginActivation + ", receiver: " + receiver).fillInStackTrace(); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+
+			
 			throw new CoreException(new ExpressionStatus(
 				ExpressionStatus.TYPE_EXTENDER_UNKOWN_METHOD,
 				Messages.format(
 					ExpressionMessages.TypeExtender_unknownMethod,
 					new String[] {namespace + '.' + method, clazz.toString()}),
-				//XXX: more logging for https://bugs.eclipse.org/bugs/show_bug.cgi?id=239715 :
-				new Throwable("forcePluginActivation: " + forcePluginActivation + ", receiver: " + receiver).fillInStackTrace())); //$NON-NLS-1$ //$NON-NLS-2$
+					t));
 		}
 		result.setPropertyTester(extender);
 		fPropertyCache.put(result);
