@@ -15,7 +15,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.expressions.IEvaluationContext;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -344,13 +343,16 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			sources |= ISources.ACTIVE_SITE;
 			lastShowInInput = newShowInInput;
 		}
-		final Object newShowInSelection= updateShowInSelection ? currentState.get(ISources.SHOW_IN_SELECTION) : IEvaluationContext.UNDEFINED_VARIABLE;
-		if (!Util.equals(newShowInSelection, lastShowInSelection)) {
-			sources |= ISources.ACTIVE_SITE;
-			if (newShowInSelection != IEvaluationContext.UNDEFINED_VARIABLE) {
-				lastShowInSelection = (ISelection) newShowInSelection;
-			} else {
-				lastShowInSelection = null;
+		if (updateShowInSelection) {
+			final Object newShowInSelection = currentState
+					.get(ISources.SHOW_IN_SELECTION);
+			if (!Util.equals(newShowInSelection, lastShowInSelection)) {
+				sources |= ISources.ACTIVE_SITE;
+				if (newShowInSelection != IEvaluationContext.UNDEFINED_VARIABLE) {
+					lastShowInSelection = (ISelection) newShowInSelection;
+				} else {
+					lastShowInSelection = null;
+				}
 			}
 		}
 		Object newActiveEditor = currentState.get(ISources.ACTIVE_EDITOR_NAME);
