@@ -278,16 +278,14 @@ public class ProgressManagerUtil {
 
 	public static Shell getModalShellExcluding(Shell shell) {
 
-		Shell parent = shell;
-
-		// If parent is null or disposed, then look through all shells
-		if (parent == null || parent.isDisposed()) {
+		// If shell is null or disposed, then look through all shells
+		if (shell == null || shell.isDisposed()) {
 			return getModalChildExcluding(PlatformUI.getWorkbench()
 					.getDisplay().getShells(), shell);
 		}
 
 		// Start with the shell to exclude and check it's shells
-		return getModalChildExcluding(parent.getShells(), shell);
+		return getModalChildExcluding(shell.getShells(), shell);
 	}
 	        
 	/**
