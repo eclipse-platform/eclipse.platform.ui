@@ -84,6 +84,11 @@ public interface IMenuService extends IServiceWithSources {
 	 * service, you must inform the menu service to release its contributions.
 	 * This takes care of unregistering any IContributionItems that have their
 	 * visibleWhen clause managed by this menu service.
+	 * <p>
+	 * This will not update the ContributionManager (and any widgets). It will
+	 * simply remove all menu service references to the contents of this
+	 * ContributionManager.
+	 * </p>
 	 * 
 	 * @param mgr
 	 *            The manager that was populated by a call to

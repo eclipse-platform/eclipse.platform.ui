@@ -808,7 +808,7 @@ Separator contributions that have an id define the start of a logical group so t
    <element name="toolbar">
       <annotation>
          <documentation>
-            Contributes a new ToolBar at the current insertion point.
+            Contributes a new ToolBar at the current insertion point.  This element is only currently valid for CoolBarManagers, which can contain toolbars.  For example, the trim location URIs specified in &lt;code&gt;org.eclipse.ui.menus.MenuUtil&lt;/code&gt;.
          </documentation>
       </annotation>
       <complexType>
