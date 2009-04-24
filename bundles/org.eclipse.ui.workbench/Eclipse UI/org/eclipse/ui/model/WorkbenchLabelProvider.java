@@ -74,7 +74,6 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      */
     public WorkbenchLabelProvider() {
     	PlatformUI.getWorkbench().getEditorRegistry().addPropertyListener(editorRegistryListener);
-    	this.resourceManager = new LocalResourceManager(JFaceResources.getResources());
     }
 
     /**
@@ -115,7 +114,8 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      */
     public void dispose() {
     	PlatformUI.getWorkbench().getEditorRegistry().removePropertyListener(editorRegistryListener);
-    	resourceManager.dispose();
+		if (resourceManager != null)
+			resourceManager.dispose();
     	resourceManager = null;
     	super.dispose();
     }
@@ -142,6 +142,20 @@ public class WorkbenchLabelProvider extends LabelProvider implements
         return (IWorkbenchAdapter2)Util.getAdapter(o, IWorkbenchAdapter2.class);
     }
 
+	/**
+	 * Lazy load the resource manager
+	 * 
+	 * @return The resource manager, create one if necessary
+	 */
+	private ResourceManager getResourceManager() {
+		if (resourceManager == null) {
+			resourceManager = new LocalResourceManager(JFaceResources
+					.getResources());
+		}
+
+		return resourceManager;
+	}
+
     /* (non-Javadoc)
      * Method declared on ILabelProvider
      */
@@ -159,7 +173,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
         //add any annotations to the image descriptor
         descriptor = decorateImage(descriptor, element);
 
-        return (Image)resourceManager.get(descriptor);
+		return (Image) getResourceManager().get(descriptor);
     }
 
     /* (non-Javadoc)
@@ -205,7 +219,8 @@ public class WorkbenchLabelProvider extends LabelProvider implements
             return null;
         }
 
-        return (Font)resourceManager.get(FontDescriptor.createFrom(descriptor));
+		return (Font) getResourceManager().get(
+				FontDescriptor.createFrom(descriptor));
     }
 
     private Color getColor(Object element, boolean forground) {
@@ -219,6 +234,7 @@ public class WorkbenchLabelProvider extends LabelProvider implements
             return null;
         }
 
-        return (Color)resourceManager.get(ColorDescriptor.createFrom(descriptor));
+		return (Color) getResourceManager().get(
+				ColorDescriptor.createFrom(descriptor));
     }
 }
