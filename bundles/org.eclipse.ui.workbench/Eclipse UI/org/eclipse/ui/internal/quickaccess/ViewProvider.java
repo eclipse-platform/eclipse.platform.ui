@@ -39,6 +39,11 @@ public class ViewProvider extends QuickAccessProvider {
 	}
 
 	public QuickAccessElement[] getElements() {
+		if (PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getActivePage() == null) {
+			cachedElements = null;
+			return new QuickAccessElement[0];
+		}
 		if (cachedElements == null) {
 			IViewDescriptor[] views = PlatformUI.getWorkbench()
 					.getViewRegistry().getViews();

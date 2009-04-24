@@ -11,10 +11,19 @@
 
 package org.eclipse.ui.internal.quickaccess;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * @since 3.3
@@ -30,10 +39,23 @@ public class PerspectiveElement extends QuickAccessElement {
 	}
 
 	public void execute() {
-		IWorkbenchPage activePage = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow().getActivePage();
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		IWorkbenchWindow window = workbench
+				.getActiveWorkbenchWindow();
+		IWorkbenchPage activePage = window.getActivePage();
 		if (activePage != null) {
 			activePage.setPerspective(descriptor);
+		} else {
+			try {
+				window.openPage(descriptor.getId(), ((Workbench) workbench)
+						.getDefaultPageInput());
+			} catch (WorkbenchException e) {
+				IStatus errorStatus = WorkbenchPlugin.newError(NLS.bind(
+						WorkbenchMessages.Workbench_showPerspectiveError,
+						descriptor.getLabel()), e);
+				StatusManager.getManager().handle(errorStatus,
+						StatusManager.SHOW);
+			}
 		}
 	}
 
