@@ -1115,6 +1115,7 @@
 				<with variable="selection">
 					<count value="+"/>
 					<iterate>
+						<instanceof value="org.eclipse.core.runtime.IAdaptable"/>
 				    	<test property="org.eclipse.debug.ui.canCreateWatchExpression" value="true"/>
 					</iterate>
 				</with>             
