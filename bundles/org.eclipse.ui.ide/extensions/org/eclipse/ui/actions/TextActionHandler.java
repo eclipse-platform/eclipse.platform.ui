@@ -146,20 +146,15 @@ public class TextActionHandler {
         }
 
         public void runWithEvent(Event event) {
-            if (activeTextControl != null && !activeTextControl.isDisposed()) {
-				String text = activeTextControl.getText();
+			if (activeTextControl != null && !activeTextControl.isDisposed()) {
 				Point selection = activeTextControl.getSelection();
-				if (selection.y == selection.x) {
-					++selection.y;
+				if (selection.y == selection.x
+						&& selection.x < activeTextControl.getCharCount()) {
+					activeTextControl
+							.setSelection(selection.x, selection.x + 1);
 				}
-				if (selection.y > text.length()) {
-					return;
-				}
-				StringBuffer buf = new StringBuffer(text.substring(0,
-						selection.x));
-				buf.append(text.substring(selection.y));
-				activeTextControl.setText(buf.toString());
-				activeTextControl.setSelection(selection.x, selection.x);
+				activeTextControl.insert(""); //$NON-NLS-1$
+
 				updateActionsEnableState();
 				return;
 			}
