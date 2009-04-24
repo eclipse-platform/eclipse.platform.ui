@@ -81,15 +81,15 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * Multi-page editors have a single action bar contributor, which manages
  * contributions for all the pages. The contributor must be a subclass of
- * <code>AbstractMultiPageEditorActionBarContributor</code>. Note that since any
- * nested editors are created directly in code by callers of
+ * <code>MultiPageEditorActionBarContributor</code>. Note that since any nested
+ * editors are created directly in code by callers of
  * <code>addPage(IEditorPart,IEditorInput)</code>, nested editors do not have
  * their own contributors.
  * </p>
  * <p>
  * As of 3.5 multi-page editors will post PageChangedEvents at the end of
  * {@link #pageChange(int)}. Subclasses may override {@link #getSelectedPage()}
- * to return a page appropriate to their multi-page editor.  IPartListener2
+ * to return a page appropriate to their multi-page editor. IPartListener2
  * listeners registered with the IPartService can implement IPageChangedListener
  * to be notified about all page change events within the workbench page or
  * workbench window.
