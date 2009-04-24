@@ -235,8 +235,6 @@ public class DefaultLabelProvider implements ILabelProvider {
 				if (((IDisconnect) element).isDisconnected()) {
 					label.insert(0, DebugUIMessages.DefaultLabelProvider__disconnected__1); 
 				}
-			} else if (element instanceof String) {
-				label.append((String)element);
 			}
 		} catch (DebugException e) {
 			DebugUIPlugin.log(e);
