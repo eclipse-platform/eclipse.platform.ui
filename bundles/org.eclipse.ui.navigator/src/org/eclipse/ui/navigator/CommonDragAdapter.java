@@ -134,6 +134,8 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 					boolean doIt = false;
 					INavigatorDnDService dndService = contentService.getDnDService();
 					CommonDragAdapterAssistant[] assistants = dndService.getCommonDragAssistants();
+					if (assistants.length == 0)
+						doIt = true;
 					for (int i = 0; i < assistants.length; i++) {
 						if (Policy.DEBUG_DND) {
 							System.out.println("CommonDragAdapter.dragStart assistant: " + assistants[i]); //$NON-NLS-1$
