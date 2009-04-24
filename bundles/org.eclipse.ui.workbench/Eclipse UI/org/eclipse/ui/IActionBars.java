@@ -137,13 +137,16 @@ public interface IActionBars {
      */
     public void setGlobalActionHandler(String actionId, IAction handler);
 
-    /**
-     * Updates the action bars.
-     * <p>
-     * Clients who add or remove items from the menu, tool bar, or status line
-     * managers should call this method to propagated the changes throughout 
-     * the workbench.
-     * </p>
-     */
+	/**
+	 * Updates the action bars.
+	 * <p>
+	 * Clients who add or remove items from the menu, tool bar, or status line
+	 * managers, or that update global action handlers, should call this method
+	 * to propagated the changes throughout the workbench.
+	 * </p>
+	 * 
+	 * @see #setGlobalActionHandler(String, IAction)
+	 * @see #clearGlobalActionHandlers()
+	 */
     public void updateActionBars();
 }
