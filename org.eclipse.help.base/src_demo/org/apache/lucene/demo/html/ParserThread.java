@@ -1,7 +1,7 @@
 package org.apache.lucene.demo.html;
 
 /**
- * Copyright 2004 The Apache Software Foundation
+ * Copyright 2004, The Apache Software Foundation
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,7 +14,16 @@ package org.apache.lucene.demo.html;
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ * 
+ *     Copyright (c) 2009 IBM Corp.
+ *     All rights reserved.
  */
+ 
+/**
+* History
+* 2004 Initial contribution The Apache Software Foundation
+* 2009 Chris Goldthorpe, IBM Corporation, fix for bug 266649
+*/
 
 import java.io.*;
 
@@ -26,23 +35,20 @@ class ParserThread extends Thread {
   }
 
   public void run() {				  // convert pipeOut to pipeIn
-    try {
+
       try {					  // parse document to pipeOut
         parser.HTMLDocument();
-      } catch (ParseException e) {
-        System.out.println("Parse Aborted: " + e.getMessage()); //$NON-NLS-1$
-      } catch (TokenMgrError e) {
-        System.out.println("Parse Aborted: " + e.getMessage()); //$NON-NLS-1$
-      } finally {
-        parser.pipeOut.close();
-        synchronized (parser) {
-	      parser.summary.setLength(HTMLParser.SUMMARY_LENGTH);
-	      parser.titleComplete = true;
-	      parser.notifyAll();
-	    }
+      } catch (Exception e) {
+    	  parser.setException(e);
       }
-    } catch (IOException e) {
-	  e.printStackTrace();
+
+      try {
+	    parser.summary.setLength(HTMLParser.SUMMARY_LENGTH);
+	    parser.titleComplete = true;
+        parser.pipeOut.close();
+      } catch (IOException e) {
+	       e.printStackTrace();
     }
+	parser.notifyAll();
   }
 }

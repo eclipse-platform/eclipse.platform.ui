@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,7 +60,7 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 						return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 								"Help document " //$NON-NLS-1$
 										+ name + " cannot be opened.", //$NON-NLS-1$
-								null);
+								ioe);
 					}
 					ParsedDocument parsed = new ParsedDocument(parser.getContentReader());
 					doc.add(new Field("contents", parsed.newContentReader())); //$NON-NLS-1$
@@ -70,13 +70,19 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 					doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
 					doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
 					doc.add(new Field("summary", parser.getSummary(title), Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+					if (parser.getException() != null) {
+						return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
+								"Parse error occurred while adding document " + name //$NON-NLS-1$
+										+ " to search index " + indexPath + ".", //$NON-NLS-1$ //$NON-NLS-2$
+								parser.getException());
+					}
 				} finally {
 					parser.closeDocument();
 				}
 			} catch (IOException e) {
 				return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 						"IO exception occurred while adding document " + name //$NON-NLS-1$
-								+ " to index " + indexPath + ".", //$NON-NLS-1$ //$NON-NLS-2$
+								+ " to search index " + indexPath + ".", //$NON-NLS-1$ //$NON-NLS-2$
 						e);
 			}
 			return Status.OK_STATUS;
