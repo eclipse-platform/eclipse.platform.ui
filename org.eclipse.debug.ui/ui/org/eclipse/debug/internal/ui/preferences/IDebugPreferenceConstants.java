@@ -160,6 +160,12 @@ public interface IDebugPreferenceConstants {
 	public static final String PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER = IDebugUIConstants.PLUGIN_ID + ".remove_breakpoints_from_container_prompt"; //$NON-NLS-1$
 	
 	/**
+	 * Stores the boolean preference of whether to prompt when removing all expressions.
+	 * @since 3.5
+	 */
+	public static final String PREF_PROMPT_REMOVE_ALL_EXPRESSIONS = IDebugUIConstants.PLUGIN_ID + ".remove_all_expressions_prompt"; //$NON-NLS-1$
+	
+	/**
 	 * Default padded string for renderings
 	 * 
 	 * @since 3.1

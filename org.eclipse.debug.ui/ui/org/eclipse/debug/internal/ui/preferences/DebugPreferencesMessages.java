@@ -189,6 +189,8 @@ public class DebugPreferencesMessages extends NLS {
 
 	public static String DebugPreferencePage_28;
 
+	public static String DebugPreferencePage_5;
+
 	public static String RunDebugPropertiesPage_0;
 
 }

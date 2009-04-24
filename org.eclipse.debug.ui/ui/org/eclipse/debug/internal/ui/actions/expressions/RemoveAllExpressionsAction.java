@@ -18,8 +18,11 @@ import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.AbstractRemoveAllActionDelegate;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IWorkbenchWindow;
 
 /**
@@ -31,9 +34,21 @@ public class RemoveAllExpressionsAction extends AbstractRemoveAllActionDelegate 
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
-		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = DebugUIPlugin.getActiveWorkbenchWindow();		
 		if (window != null) {
-			boolean proceed = MessageDialog.openQuestion(window.getShell(), ActionMessages.RemoveAllExpressionsAction_0, ActionMessages.RemoveAllExpressionsAction_1);  
+			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+			boolean prompt = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_EXPRESSIONS);
+			boolean proceed = true;
+			if (prompt) {
+				MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(window.getShell(), ActionMessages.RemoveAllExpressionsAction_0, 
+						ActionMessages.RemoveAllExpressionsAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompt, null, null);
+				if(mdwt.getReturnCode() !=  IDialogConstants.YES_ID){
+					proceed = false;
+				}
+				else {
+					store.setValue(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_ALL_EXPRESSIONS, !mdwt.getToggleState());
+				}
+			}
 			if (proceed) {
 				IExpressionManager manager = DebugPlugin.getDefault().getExpressionManager();
 				IExpression[] expressions= manager.getExpressions();
