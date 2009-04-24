@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -383,15 +384,17 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		IRunnableWithProgress runnable = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				try {
-					status.merge(ResourcesPlugin.getWorkspace().save(true,
-							monitor));
+					monitor
+							.subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_clickToSkipHistoryPruning);
+					status.merge(((Workspace) ResourcesPlugin.getWorkspace())
+							.save(true, true, monitor));
 				} catch (CoreException e) {
 					status.merge(e.getStatus());
 				}
 			}
 		};
 		try {
-			new ProgressMonitorJobsDialog(null).run(true, false, runnable);
+			new ProgressMonitorJobsDialog(null).run(true, true, runnable);
 		} catch (InvocationTargetException e) {
 			status
 					.merge(new Status(IStatus.ERROR,
