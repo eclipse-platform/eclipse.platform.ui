@@ -421,7 +421,10 @@ rules:
    <element name="iterate">
       <annotation>
          <documentation>
-            This element is used to iterate over a variable that is of type java.util.Collection, or a variable that adapts to org.eclipse.core.expressions.IIterable. If the object in focus is not one of the above then a CoreException with an ExpressionStatus will be thrown while evaluating the expression.
+            This element is used to iterate over a variable that is of type java.util.Collection, or a variable that
+            adapts to org.eclipse.core.expressions.IIterable. If the object in focus is not one of the above then a
+            CoreException with an ExpressionStatus will be thrown while evaluating the expression.
+            The child expressions of an iterate expression are combined using the and operator.
          </documentation>
       </annotation>
       <complexType>
@@ -443,7 +446,9 @@ rules:
          <attribute name="operator">
             <annotation>
                <documentation>
-                  either &quot;and&quot; or &quot;or&quot;. The operator defines how the results of the child elements will be combined and what if any short circuit evaluation will be used. If not specified, &quot;and&quot; will be used.
+                  either &quot;and&quot; or &quot;or&quot;. The operator defines how the results of all the child expressions
+                  applied to each child of the Collection or IIterable will be combined and what (if any) short circuit
+                  evaluation will be used. If not specified, &quot;and&quot; will be used.
                </documentation>
             </annotation>
             <simpleType>
