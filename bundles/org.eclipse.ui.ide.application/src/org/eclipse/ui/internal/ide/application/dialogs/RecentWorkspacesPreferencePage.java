@@ -128,12 +128,13 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 		removeButton.addSelectionListener(new SelectionAdapter(){
 				public void widgetSelected(SelectionEvent event) {
 					removeSelectedWorkspaces();
+					updateRemoveButton();
 				}
 			});
 
 		workspacesList.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
-					removeButton.setEnabled(workspacesList.getSelectionCount() > 0);
+					updateRemoveButton();
 				}
 			});
 
@@ -185,6 +186,11 @@ public class RecentWorkspacesPreferencePage extends PreferencePage
 		workspacesData.setRecentWorkspaces(workspaces);
 		workspacesData.writePersistedData();
 		return true;
+	}
+
+
+	protected void updateRemoveButton() {
+		removeButton.setEnabled(workspacesList.getSelectionCount() > 0);
 	}
 
 }
