@@ -360,8 +360,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 						newState[0] = CANCELED;
 					Display.getDefault().syncExec(new Runnable() {
 						public void run() {
-							// we need to register the saveable if we had a previous input or if 
-							// there are knownSaveables (which means that the workbench called 
+							// we need to register the saveable if we had a previous input or if
+							// there are knownSaveables (which means that the workbench called
 							// getSaveables and got an empty list
 							if (monitor.isCanceled() || fPageBook.isDisposed())
 								return;
@@ -437,7 +437,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 					closeEditor();
 					CompareUIPlugin.getDefault().handleNoDifference();
 				} else if (getState() == ERROR) {
-					// If an error occurred, close the editor 
+					// If an error occurred, close the editor
 					// (the message would be displayed by the progress view)
 					closeEditor();
 				}
@@ -483,7 +483,11 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		if (input instanceof IPropertyChangeNotifier)
 			((IPropertyChangeNotifier)input).removePropertyChangeListener(this);
 								
+		if (input instanceof CompareEditorInput)
+			((CompareEditorInput)input).dispose();
+
 		super.dispose();
+
 	}
 			
 	/* (non-Javadoc)
@@ -542,7 +546,7 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			String reason= x.getTargetException().getMessage();
 			MessageDialog.openError(shell, title, Utilities.getFormattedString("CompareEditor.cantSaveError", reason));	//$NON-NLS-1$
 		}
-	}	
+	}
 		
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.EditorPart#isDirty()
@@ -739,8 +743,8 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 			}
 			if (result.isEmpty())
 				return;
-			event = new SaveablesLifecycleEvent(this, 
-					SaveablesLifecycleEvent.POST_CLOSE, 
+			event = new SaveablesLifecycleEvent(this,
+					SaveablesLifecycleEvent.POST_CLOSE,
 					(Saveable[]) result.toArray(new Saveable[result.size()]),
 					false);
 		} else if (event.getEventType() == SaveablesLifecycleEvent.POST_OPEN) {

@@ -18,6 +18,7 @@ import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.BinaryCompareViewer;
 import org.eclipse.compare.internal.ChangePropertyAction;
 import org.eclipse.compare.internal.CompareContentViewerSwitchingPane;
+import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.ComparePreferencePage;
@@ -88,7 +89,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * Running the compare operation and presenting the results in a compare editor
  * are combined in one class because it allows a client to keep the implementation
  * all in one place while separating it from the innards of a specific UI implementation of compare/merge.
- * <p> 
+ * <p>
  * A <code>CompareEditorInput</code> defines methods for the following sequence steps:
  * <UL>
  * <LI>running a lengthy compare operation under progress monitor control,
@@ -133,7 +134,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * top left pane, method <code>createDiffViewer</code> can be overridden.
  * <p>
  * If subclasses of this class implement {@link ISaveablesSource}, the compare editor will
- * pass these models through to the workbench. The editor will still show the dirty indicator 
+ * pass these models through to the workbench. The editor will still show the dirty indicator
  * if one of these underlying models is dirty. It is the responsibility of subclasses that
  * implement this interface to call {@link #setDirty(boolean)} when the dirty state of
  * any of the models managed by the subclass change dirty state.
@@ -242,7 +243,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * compare configuration.
 	 * The compare configuration is passed to subsequently created viewers.
 	 *
-	 * @param configuration the compare configuration 
+	 * @param configuration the compare configuration
 	 */
 	public CompareEditorInput(CompareConfiguration configuration) {
 		fCompareConfiguration= configuration;
@@ -257,7 +258,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 					if (newValue instanceof Boolean)
 						changed= ((Boolean)newValue).booleanValue();
 					setDirty(e.getSource(), changed);
-				}			
+				}
 			}
 		};
 
@@ -465,8 +466,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @exception InvocationTargetException if the <code>prepareInput</code> method must propagate a checked exception,
 	 * 	it should wrap it inside an <code>InvocationTargetException</code>; runtime exceptions are automatically
 	 *  wrapped in an <code>InvocationTargetException</code> by the calling context
-	 * @exception InterruptedException if the operation detects a request to cancel, 
-	 *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
+	 * @exception InterruptedException if the operation detects a request to cancel,
+	 *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing
 	 *  <code>InterruptedException</code>
 	 */
 	public void run(IProgressMonitor monitor) throws InterruptedException, InvocationTargetException {
@@ -477,7 +478,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * Runs the compare operation and returns the compare result.
 	 * If <code>null</code> is returned no differences were found and no compare editor needs to be opened.
 	 * Progress should be reported to the given progress monitor.
-	 * A request to cancel the operation should be honored and acknowledged 
+	 * A request to cancel the operation should be honored and acknowledged
 	 * by throwing <code>InterruptedException</code>.
 	 * <p>
 	 * Note: this method is typically called in a modal context thread which doesn't have a Display assigned.
@@ -490,8 +491,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @exception InvocationTargetException if the <code>prepareInput</code> method must propagate a checked exception,
 	 * 	it should wrap it inside an <code>InvocationTargetException</code>; runtime exceptions are automatically
 	 *  wrapped in an <code>InvocationTargetException</code> by the calling context
-	 * @exception InterruptedException if the operation detects a request to cancel, 
-	 *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing 
+	 * @exception InterruptedException if the operation detects a request to cancel,
+	 *  using <code>IProgressMonitor.isCanceled()</code>, it should exit by throwing
 	 *  <code>InterruptedException</code>
 	 */
 	protected abstract Object prepareInput(IProgressMonitor monitor)
@@ -545,13 +546,27 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	
 		fComposite.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				handleDispose();
+				if (!(getWorkbenchPart() instanceof CompareEditor))
+					handleDispose();
 			}
 		});
 		if (fHelpContextId != null)
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(fComposite, fHelpContextId);
 		contentsCreated();
 		return fComposite;
+	}
+
+	/**
+	 * Disposes this editor input. Clients should not call this method. The
+	 * Compare Editor calls this method at appropriate times i.e. when disposing.
+	 * 
+	 * @since 3.5
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public void dispose() {
+		handleDispose();
 	}
 	
 	/**
@@ -571,7 +586,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fStructurePane1 = null;
 		fStructurePane2 = null;
 		fContentInputPane = null;
-		fFocusPane = null; 
+		fFocusPane = null;
 		fNavigator = null;
 		fCompareConfiguration.dispose();
 	}
@@ -590,7 +605,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	/**
 	 * @param parent the parent control under which the control must be created
-	 * @param direction the layout direction of the contents, either </code>SWT.HORIZONTAL<code> or </code>SWT.VERTICAL<code> 
+	 * @param direction the layout direction of the contents, either </code>SWT.HORIZONTAL<code> or </code>SWT.VERTICAL<code>
 	 * @return the SWT control hierarchy for the outline part of the compare editor
 	 * @since 3.0
 	 */
@@ -683,7 +698,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	private void feedInput() {
 		if (fStructureInputPane != null
-				&& (fInput instanceof ICompareInput 
+				&& (fInput instanceof ICompareInput
 						|| isCustomStructureInputPane())) {
 			if (hasChildren(fInput) || isCustomStructureInputPane()) {
 				// The input has multiple entries so set the input of the structure input pane
@@ -693,9 +708,9 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				// we'll set the content pane to see if we need to provide a structure
 				internalSetContentPaneInput(fInput);
 				// If the content viewer is unusable
-				if (hasUnusableContentViewer() 
-						|| (structureCompareOnSingleClick() 
-								&& isShowStructureInOutlineView() 
+				if (hasUnusableContentViewer()
+						|| (structureCompareOnSingleClick()
+								&& isShowStructureInOutlineView()
 								&& !hasOutlineViewer(fInput))) {
 					fStructureInputPane.setInput(fInput);
 				}
@@ -800,7 +815,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 	
 	/**
-	 * Returns the first element of the given selection if the selection 
+	 * Returns the first element of the given selection if the selection
 	 * is a <code>IStructuredSelection</code> with exactly one element. Returns
 	 * <code>null</code> otherwise.
 	 *
@@ -987,7 +1002,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * Returns <code>true</code> if there are unsaved changes.
 	 * The method should be called by any parts or dialogs
 	 * that contain the input.
-	 * By default, this method calls {@link #isSaveNeeded()} 
+	 * By default, this method calls {@link #isSaveNeeded()}
 	 * but subclasses may extend.
 	 * @return <code>true</code> if there are unsaved changes
 	 * @since 3.3
@@ -1022,7 +1037,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (DEBUG) System.out.println("setDirty("+source+", "+dirty+"): " + newDirty); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (oldDirty != newDirty)
 			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(oldDirty), new Boolean(newDirty));
-	}	
+	}
 	
 	/* (non Javadoc)
 	 * see IPropertyChangeNotifier.addListener
@@ -1205,7 +1220,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	/**
 	 * Return the container of this input or <code>null</code> if there is no container
-	 * set. 
+	 * set.
 	 * @return the container of this input or <code>null</code>
 	 * @since 3.3
 	 */
@@ -1214,7 +1229,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 	
 	/**
-	 * Fire the given property change event to all listeners 
+	 * Fire the given property change event to all listeners
 	 * registered with this compare editor input.
 	 * @param event the property change event
 	 * @since 3.3
@@ -1226,8 +1241,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	/**
 	 * Return whether this compare editor input can be run as a job.
 	 * By default, <code>false</code> is returned since traditionally inputs
-	 * were prepared in the foreground (i.e the UI was blocked when the 
-	 * {@link #run(IProgressMonitor)} method (and indirectly the 
+	 * were prepared in the foreground (i.e the UI was blocked when the
+	 * {@link #run(IProgressMonitor)} method (and indirectly the
 	 * {@link #prepareInput(IProgressMonitor)} method) was invoked. Subclasses
 	 * may override.
 	 * @return whether this compare editor input can be run in the background
@@ -1296,7 +1311,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	}
 
 	private boolean isEditable() {
-		return getCompareConfiguration().isLeftEditable() 
+		return getCompareConfiguration().isLeftEditable()
 			|| getCompareConfiguration().isRightEditable();
 	}
 	
@@ -1345,8 +1360,8 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		} catch (OperationCanceledException x) {
 			// Ignore
 		} catch (InvocationTargetException x) {
-			ErrorDialog.openError(fComposite.getShell(), CompareMessages.CompareDialog_error_title, null, 
-				new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0, 
+			ErrorDialog.openError(fComposite.getShell(), CompareMessages.CompareDialog_error_title, null,
+				new Status(IStatus.ERROR, CompareUIPlugin.PLUGIN_ID, 0,
 					NLS.bind(CompareMessages.CompareDialog_error_message, x.getTargetException().getMessage()), x.getTargetException()));
 		}
 		return false;
@@ -1378,7 +1393,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 * @since 3.3
 	 */
 	public void setHelpContextId(String helpContextId) {
-		this.fHelpContextId = helpContextId;	
+		this.fHelpContextId = helpContextId;
 	}
 	
 }
