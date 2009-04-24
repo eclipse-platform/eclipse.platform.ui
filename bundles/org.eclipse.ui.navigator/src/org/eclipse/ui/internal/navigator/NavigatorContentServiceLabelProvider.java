@@ -192,6 +192,8 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	}
 	
 	private String makeSmallString(Object obj) {
+		if (obj == null)
+			return "null"; //$NON-NLS-1$
 		String str = obj.toString();
 		int len = str.length();
 		return str.substring(0, len < 50 ? len : 49);
