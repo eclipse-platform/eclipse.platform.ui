@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,21 +12,29 @@ package org.eclipse.team.internal.ccvs.core.client.listeners;
 
 
 import java.io.PrintStream;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.team.internal.ccvs.core.ICVSFolder;
-import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.CommandOutputListener;
 import org.eclipse.team.internal.ccvs.core.client.Session;
 
 public class DiffListener extends CommandOutputListener {
+
+	//Error Messages returned by CVS
+	static final String ERR_NOSUCHDIRECTORY = "cvs [diff aborted]: no such directory"; //$NON-NLS-1$
+
+	// Expressions for examining response lines 
+	static final String INDEX = "Index: "; //$NON-NLS-1$
+	static final String BINARYFILESDIFFER = "Binary files .* and .* differ"; //$NON-NLS-1$
+	
 	PrintStream patchStream;
 	boolean wroteToStream;
 	
-	//Error Messages returned by CVS
-	static final String ERR_NOSUCHDIRECTORY = "cvs [diff aborted]: no such directory"; //$NON-NLS-1$
-	
+	private String index = ""; //$NON-NLS-1$
+
 	public DiffListener(PrintStream patchStream) {
 		this.patchStream = patchStream;
 		wroteToStream=false;
@@ -46,8 +54,18 @@ public class DiffListener extends CommandOutputListener {
 			line = line.substring(0, line.length() - 1);
 		}
 		patchStream.println(line);
-		wroteToStream=true;
-		
+		wroteToStream = true;
+
+		if (line.startsWith(INDEX)) {
+			index = line.substring(INDEX.length());
+		} else if (Pattern.matches(BINARYFILESDIFFER, line)) {
+			String message = NLS.bind(
+					CVSMessages.ThePatchDoesNotContainChangesFor_0,
+					new String[] { index });
+			return new CVSStatus(IStatus.WARNING,
+					CVSStatus.BINARY_FILES_DIFFER, message, (Throwable) null);
+		}
+
 		return OK;
 	}
 

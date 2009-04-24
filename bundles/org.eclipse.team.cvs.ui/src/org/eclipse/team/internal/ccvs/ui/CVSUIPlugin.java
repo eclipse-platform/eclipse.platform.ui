@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -438,26 +438,63 @@ public class CVSUIPlugin extends AbstractUIPlugin {
 		
 		// Log if the user requested it
 		if (log) CVSUIPlugin.log(status.getSeverity(), status.getMessage(), exception);
-		
+
+		return openDialog(providedShell, title, message, status, flags);
+	}
+
+	/**
+	 * Convenience method for showing an error dialog
+	 * 
+	 * @param shell a valid shell or null
+	 * @param status the status to be reported
+	 * @param title the title to be displayed
+	 * @param flags customized attributes for the error handling
+	 * @return IStatus the status that was displayed to the user
+	 */
+	public static IStatus openError(Shell providedShell, String title,
+			String message, IStatus status, int flags) {
+		boolean log = false;
+
+		// Check for a build error and report it differently
+		if (status.getCode() == IResourceStatus.BUILD_FAILED) {
+			message = CVSUIMessages.buildError;
+			log = true;
+		}
+
+		// Check for multi-status with only one child
+		if (status.isMultiStatus() && status.getChildren().length == 1) {
+			status = status.getChildren()[0];
+		}
+		if (status.isOK())
+			return status;
+
+		// Log if the user requested it
+		if (log)
+			CVSUIPlugin.log(status);
+
+		return openDialog(providedShell, title, message, status, flags);
+	}
+
+	private static IStatus openDialog(Shell providedShell, final String title,
+			final String message, final IStatus status, int flags) {
 		// Create a runnable that will display the error status
-		final String displayTitle = title;
-		final String displayMessage = message;
-		final IStatus displayStatus = status;
 		final IOpenableInShell openable = new IOpenableInShell() {
 			public void open(Shell shell) {
-				if (displayStatus.getSeverity() == IStatus.INFO && !displayStatus.isMultiStatus()) {
-					MessageDialog.openInformation(shell, CVSUIMessages.information, displayStatus.getMessage()); 
+				if (status.getSeverity() == IStatus.INFO
+						&& !status.isMultiStatus()) {
+					MessageDialog.openInformation(shell,
+							CVSUIMessages.information, status.getMessage());
 				} else {
-					ErrorDialog.openError(shell, displayTitle, displayMessage, displayStatus);
+					ErrorDialog.openError(shell, title, message, status);
 				}
 			}
 		};
 		openDialog(providedShell, openable, flags);
-		
+
 		// return the status we display
 		return status;
 	}
-	
+
 	/**
 	 * Interface that allows a shell to be passed to an open method. The
 	 * provided shell can be used without sync-execing, etc.

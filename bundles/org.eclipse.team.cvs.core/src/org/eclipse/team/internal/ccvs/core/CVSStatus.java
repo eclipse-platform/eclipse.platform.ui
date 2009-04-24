@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,8 @@ public class CVSStatus extends TeamStatus {
 	public static final int RESPONSE_HANDLING_FAILURE = -28;
 	public static final int COMMUNICATION_FAILURE = -29;
 	public static final int AUTHENTICATION_FAILURE = -30;
-	
+	public static final int BINARY_FILES_DIFFER = -31;
+
 	// Path for resource related status
 	private ICVSFolder commandRoot;
 	// Server information

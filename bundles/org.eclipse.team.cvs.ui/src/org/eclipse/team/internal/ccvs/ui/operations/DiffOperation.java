@@ -11,8 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.io.*;
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.*;
 
 import org.eclipse.compare.patch.WorkspacePatcherUI;
 import org.eclipse.core.resources.*;
@@ -238,11 +237,11 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				super.execute(provider, (IResource[]) existingFiles.toArray(new IResource[existingFiles.size()]), recurse, Policy.subMonitorFor(monitor, 90));
 			} catch(CVSCommunicationException ex){ // see bug 123430
 				CVSUIPlugin.openError(getShell(), null, null, ex, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
-			} catch (CVSException ex){
-				//ignore
+			} catch (CVSException ex) {
+				handleCVSException(ex);
 			}
 		}
-		
+
 		if (!newFiles.isEmpty() && Diff.INCLUDE_NEWFILES.isElementOf(localoptions)){
 			//Set new file to flag to let us know that we have added something to the current patch
 			patchHasNewFiles=true;
@@ -260,6 +259,32 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		}
 		
 		monitor.done();
+	}
+
+	/**
+	 * Checks if the exception contain a status that has to be shown to the
+	 * user. If yes, the method shows the dialog.
+	 * 
+	 * @param ex exception to handle
+	 */
+	private void handleCVSException(CVSException ex) {
+		IStatus status = ex.getStatus();
+		List toShow = new ArrayList();
+		IStatus children[] = status.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			if (children[i].getCode() == CVSStatus.BINARY_FILES_DIFFER) {
+				toShow.add(children[i]);
+			}
+		}
+		if (toShow.size() > 0) {
+			status = new MultiStatus(CVSProviderPlugin.ID,
+					CVSStatus.SERVER_ERROR, (IStatus[]) toShow
+							.toArray(new IStatus[0]),
+					CVSMessages.ThePatchDoesNotContainAllTheChanges, null);
+			CVSUIPlugin.openError(getShell(), null, null, status,
+					CVSUIPlugin.PERFORM_SYNC_EXEC
+							| CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
+		}
 	}
 
 	private ICVSFolder getNewFileRoot(ICVSFile cvsFile) {
