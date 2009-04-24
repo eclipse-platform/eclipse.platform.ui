@@ -156,9 +156,6 @@ public class DecorationScheduler {
 			if (shutdown) {
 				return;
 			}
-			if (decorationJob.getState() == Job.SLEEPING) {
-				decorationJob.wakeUp();
-			}
 			decorationJob.schedule();
 		}
 
