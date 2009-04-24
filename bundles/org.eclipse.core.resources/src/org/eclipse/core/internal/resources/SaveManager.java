@@ -970,9 +970,30 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 		return true;
 	}
+	
+	class InternalMonitorWrapper extends ProgressMonitorWrapper{
+		private boolean ignoreCancel;
+		
+		public InternalMonitorWrapper(IProgressMonitor monitor){
+			super(Policy.monitorFor(monitor));
+		}
 
+		public void ignoreCancelState(boolean ignore) {
+			this.ignoreCancel = ignore;
+		}
+		
+		public boolean isCanceled() {
+			return ignoreCancel ? false : super.isCanceled();
+		}
+	};
+	
 	public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		return save(kind, false, project, monitor);
+	}
+
+	public IStatus save(int kind, boolean keepConsistencyWhenCanceled, Project project, IProgressMonitor parentMonitor) throws CoreException {
+		InternalMonitorWrapper monitor = new InternalMonitorWrapper(parentMonitor);
+		monitor.ignoreCancelState(keepConsistencyWhenCanceled);
 		try {
 			isSaving = true;
 			String message = Messages.resources_saving_0;
@@ -1011,7 +1032,12 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 							//remove unused files
 							removeUnusedSafeTables();
 							removeUnusedTreeFiles();
+
+							// history pruning can be always canceled
+							monitor.ignoreCancelState(false);
 							workspace.getFileSystemManager().getHistoryStore().clean(Policy.subMonitorFor(monitor, 1));
+							monitor.ignoreCancelState(keepConsistencyWhenCanceled);
+							
 							// write out all metainfo (e.g., workspace/project descriptions) 
 							saveMetaInfo(warnings, Policy.subMonitorFor(monitor, 1));
 							break;

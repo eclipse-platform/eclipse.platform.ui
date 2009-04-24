@@ -1812,11 +1812,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.done();
 		}
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see IWorkspace#save(boolean, IProgressMonitor)
 	 */
 	public IStatus save(boolean full, IProgressMonitor monitor) throws CoreException {
+		return this.save(full, false, monitor);
+	}
+
+	public IStatus save(boolean full, boolean keepConsistencyWhenCanceled, IProgressMonitor monitor) throws CoreException {
 		String message;
 		if (full) {
 			//according to spec it is illegal to start a full save inside another operation
@@ -1824,7 +1828,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				message = Messages.resources_saveOp;
 				throw new ResourceException(IResourceStatus.OPERATION_FAILED, null, message, new IllegalStateException());
 			}
-			return saveManager.save(ISaveContext.FULL_SAVE, null, monitor);
+			return saveManager.save(ISaveContext.FULL_SAVE, keepConsistencyWhenCanceled, null, monitor);
 		}
 		// A snapshot was requested.  Start an operation (if not already started) and 
 		// signal that a snapshot should be done at the end.

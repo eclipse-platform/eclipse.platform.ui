@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -145,18 +145,21 @@ public class HistoryStore2 implements IHistoryStore {
 		tree.getCurrent().save();
 	}
 
-	public synchronized void clean(IProgressMonitor monitor) {
+	public synchronized void clean(final IProgressMonitor monitor) {
 		long start = System.currentTimeMillis();
 		try {
+			monitor.beginTask(Messages.resources_pruningHistory, IProgressMonitor.UNKNOWN);
 			IWorkspaceDescription description = workspace.internalGetDescription();
 			final long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
 			final int maxStates = description.getMaxFileStates();
 			final int[] entryCount = new int[1];
 			tree.accept(new Bucket.Visitor() {
 				public int visit(Entry fileEntry) {
+					if (monitor.isCanceled())
+						return RETURN;
 					entryCount[0] += fileEntry.getOccurrences();
 					applyPolicy((HistoryEntry) fileEntry, maxStates, minimumTimestamp);
-					return CONTINUE;
+					return monitor.isCanceled() ? RETURN : CONTINUE;
 				}
 			}, Path.ROOT, BucketTree.DEPTH_INFINITE);
 			if (Policy.DEBUG_HISTORY) {
@@ -173,6 +176,8 @@ public class HistoryStore2 implements IHistoryStore {
 			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			Policy.log(status);
+		} finally {
+			monitor.done();
 		}
 	}
 

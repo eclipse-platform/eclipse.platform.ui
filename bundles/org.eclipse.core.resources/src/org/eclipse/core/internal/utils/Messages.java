@@ -223,6 +223,7 @@ public class Messages extends NLS {
 	public static String resources_projectDesc;
 	public static String resources_projectDescSync;
 	public static String resources_projectPath;
+	public static String resources_pruningHistory;
 	public static String resources_reading;
 	public static String resources_readingEncoding;
 	public static String resources_readingSnap;
