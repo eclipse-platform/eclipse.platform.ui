@@ -4579,12 +4579,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		}
 
 		final IEditorInput input= getEditorInput();
+		final String inputName= input.getToolTipText();
+
 		if (provider.isDeleted(input)) {
 
 			if (isSaveAsAllowed()) {
 
 				title= EditorMessages.Editor_error_activated_deleted_save_title;
-				msg= EditorMessages.Editor_error_activated_deleted_save_message;
+				msg= NLSUtility.format(EditorMessages.Editor_error_activated_deleted_save_message, inputName);
 
 				String[] buttons= {
 						EditorMessages.Editor_error_activated_deleted_save_button_save,
@@ -4605,7 +4607,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			} else {
 
 				title= EditorMessages.Editor_error_activated_deleted_close_title;
-				msg= EditorMessages.Editor_error_activated_deleted_close_message;
+				msg= NLSUtility.format(EditorMessages.Editor_error_activated_deleted_close_message, inputName);
 				if (MessageDialog.openConfirm(shell, title, msg))
 					close(false);
 			}
@@ -4613,7 +4615,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		} else {
 
 			title= EditorMessages.Editor_error_activated_outofsync_title;
-			msg= EditorMessages.Editor_error_activated_outofsync_message;
+			msg= NLSUtility.format(EditorMessages.Editor_error_activated_outofsync_message, inputName);
 
 			if (fHasBeenActivated && MessageDialog.openQuestion(shell, title, msg)) {
 
@@ -4629,7 +4631,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					IStatus status= x.getStatus();
 					if (status == null || status.getSeverity() != IStatus.CANCEL) {
 						title= EditorMessages.Editor_error_refresh_outofsync_title;
-						msg= EditorMessages.Editor_error_refresh_outofsync_message;
+						msg= NLSUtility.format(EditorMessages.Editor_error_refresh_outofsync_message, inputName);
 						ErrorDialog.openError(shell, title, msg, x.getStatus());
 					}
 				}
