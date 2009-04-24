@@ -57,5 +57,6 @@ public class KeysTestSuite extends TestSuite {
          */
         //addTest(new TestSuite(Bug53489Test.class));
         addTest(new TestSuite(Bug189167Test.class));
+        addTest(new TestSuite(KeysPreferenceModelTest.class));
     }
 }

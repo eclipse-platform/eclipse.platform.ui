@@ -189,14 +189,12 @@ public class KeysPreferenceModelTest extends UITestCase {
 		events.clear();
 		bm.setSelectedElement(null);
 		assertNull(bm.getSelectedElement());
-		assertNull(cm.getSelectedElement());
+		assertTrue(cm.getSelectedElement().getId().equals(
+				activateEditor.getContext().getId()));
 
 		expected = new PropertyChangeEvent[] {
 				new PropertyChangeEvent(controller.getConflictModel(),
 						CommonModel.PROP_SELECTED_ELEMENT, activateEditor, null),
-				new PropertyChangeEvent(controller.getContextModel(),
-						CommonModel.PROP_SELECTED_ELEMENT, activateEditor
-								.getContext(), null),
 				new PropertyChangeEvent(controller.getBindingModel(),
 						CommonModel.PROP_SELECTED_ELEMENT, activateEditor, null) };
 		assertChanges(expected, events);
@@ -309,7 +307,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		final BindingModel bm = controller.getBindingModel();
 		BindingElement about = getBindingElement(bm, ID_ABOUT);
 		assertNotNull(about);
-		assertNull(about.getTrigger());
+		assertNotNull(about.getTrigger());
 
 		BindingElement active = getBindingElement(bm, ID_ACTIVATE_EDITOR);
 		assertNotNull(active);
@@ -344,7 +342,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		final BindingModel bm = controller.getBindingModel();
 		BindingElement about = getBindingElement(bm, ID_ABOUT);
 		assertNotNull(about);
-		assertNull(about.getTrigger());
+		assertNotNull(about.getTrigger());
 
 		BindingElement active = getBindingElement(bm, ID_ACTIVATE_EDITOR);
 		assertNotNull(active);
@@ -373,7 +371,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		final BindingModel bm = controller.getBindingModel();
 		BindingElement about = getBindingElement(bm, ID_ABOUT);
 		assertNotNull(about);
-		assertNull(about.getTrigger());
+		assertNotNull(about.getTrigger());
 
 		BindingElement active = getBindingElement(bm, ID_ACTIVATE_EDITOR);
 		assertNotNull(active);
@@ -480,7 +478,6 @@ public class KeysPreferenceModelTest extends UITestCase {
 		Object bindingConflict1 = conflict1.getModelObject();
 		conflict2.setTrigger(ctrl5);
 		ConflictModel conflictModel = controller.getConflictModel();
-		ContextModel contextModel = controller.getContextModel();
 		ArrayList oldValue = new ArrayList();
 		oldValue.add(conflict3);
 
@@ -514,8 +511,6 @@ public class KeysPreferenceModelTest extends UITestCase {
 						Boolean.FALSE),
 				new PropertyChangeEvent(conflictModel,
 						ConflictModel.PROP_CONFLICTS, oldValue, null),
-				new PropertyChangeEvent(contextModel,
-						CommonModel.PROP_SELECTED_ELEMENT, dialog, null),
 				new PropertyChangeEvent(conflict1,
 						ModelElement.PROP_MODEL_OBJECT, bindingConflict1,
 						conflict1.getModelObject()),

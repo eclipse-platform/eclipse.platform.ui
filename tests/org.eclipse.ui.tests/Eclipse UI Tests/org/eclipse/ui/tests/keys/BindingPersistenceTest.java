@@ -276,4 +276,18 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
+	 */
+	protected void doTearDown() throws Exception {
+		final IPreferenceStore store = WorkbenchPlugin.getDefault()
+				.getPreferenceStore();
+		store
+				.setValue(
+						"org.eclipse.ui.commands",
+						"<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\""
+								+ IBindingService.DEFAULT_DEFAULT_ACTIVE_SCHEME_ID
+								+ "\"/></org.eclipse.ui.commands>");
+		super.doTearDown();
+	}
 }

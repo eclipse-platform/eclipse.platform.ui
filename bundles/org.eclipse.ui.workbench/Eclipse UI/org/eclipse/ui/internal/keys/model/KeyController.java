@@ -196,11 +196,13 @@ public class KeyController {
 							.getNewValue();
 					if (binding == null) {
 						conflictModel.setSelectedElement(null);
-						contextModel.setSelectedElement(null);
 						return;
 					}
 					conflictModel.setSelectedElement(binding);
-					contextModel.setSelectedElement(binding.getContext());
+					ContextElement context = binding.getContext();
+					if (context != null) {
+						contextModel.setSelectedElement(context);
+					}
 				}
 			}
 		});
@@ -255,7 +257,9 @@ public class KeyController {
 						}
 
 						ContextElement context = element.getContext();
-						contextModel.setSelectedElement(context);
+						if (context != null) {
+							contextModel.setSelectedElement(context);
+						}
 					}
 				}
 			}
@@ -405,7 +409,10 @@ public class KeyController {
 			if (keySequence != null && !keySequence.isEmpty()) {
 				String activeSchemeId = fSchemeModel.getSelectedElement()
 						.getId();
-				String activeContextId = IContextService.CONTEXT_ID_WINDOW;
+				ModelElement selectedElement = contextModel
+						.getSelectedElement();
+				String activeContextId = selectedElement == null ? IContextService.CONTEXT_ID_WINDOW
+						: selectedElement.getId();
 				final KeyBinding binding = new KeyBinding(keySequence, cmd,
 						activeSchemeId, activeContextId, null, null, null,
 						Binding.USER);

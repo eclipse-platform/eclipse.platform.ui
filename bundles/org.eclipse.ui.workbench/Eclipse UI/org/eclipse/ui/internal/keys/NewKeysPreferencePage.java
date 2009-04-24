@@ -783,7 +783,9 @@ public class NewKeysPreferencePage extends PreferencePage implements
 			public final void selectionChanged(final SelectionChangedEvent event) {
 				ContextElement context = (ContextElement) ((IStructuredSelection) event
 						.getSelection()).getFirstElement();
-				keyController.getContextModel().setSelectedElement(context);
+				if (context != null) {
+					keyController.getContextModel().setSelectedElement(context);
+				}
 			}
 		});
 		IPropertyChangeListener whenListener = new IPropertyChangeListener() {
@@ -946,9 +948,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 					commandNameValueLabel.setText(""); //$NON-NLS-1$
 					fDescriptionText.setText(""); //$NON-NLS-1$
 					fBindingText.setText(""); //$NON-NLS-1$
-					fWhenCombo.setSelection(null);
-					fWhenCombo.getCombo().setVisible(false);
-					whenLabel.setVisible(false);
 				} else if (bindingElement != null) {
 					commandNameValueLabel.setText(bindingElement.getName());
 					String desc = bindingElement.getDescription();
@@ -956,11 +955,6 @@ public class NewKeysPreferencePage extends PreferencePage implements
 					KeySequence trigger = (KeySequence) bindingElement
 							.getTrigger();
 					fKeySequenceText.setKeySequence(trigger);
-					Object context = bindingElement.getContext();
-					fWhenCombo.setSelection(context == null ? null
-							: new StructuredSelection(context));
-					fWhenCombo.getCombo().setVisible(context != null);
-					whenLabel.setVisible(context != null);
 				}
 			}
 		};
