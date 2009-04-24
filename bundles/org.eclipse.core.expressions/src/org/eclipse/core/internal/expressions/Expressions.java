@@ -42,12 +42,9 @@ public class Expressions {
 	private static WeakHashMap fgKnownClasses;
 
 	/* debugging flag to enable tracing */
-	public static final boolean TRACING;
-	static {
-		String value= Platform.getDebugOption("org.eclipse.core.expressions/tracePropertyResolving"); //$NON-NLS-1$
-		TRACING= value != null && value.equalsIgnoreCase("true"); //$NON-NLS-1$
-	}
+	public static final boolean TRACING= "true".equalsIgnoreCase(Platform.getDebugOption("org.eclipse.core.expressions/tracePropertyResolving")); //$NON-NLS-1$ //$NON-NLS-2$
 
+	
 	private Expressions() {
 		// no instance
 	}
@@ -94,7 +91,7 @@ public class Expressions {
 			bundleContext.addBundleListener(listener);
 		}
 		return fgKnownClasses;
-	}	
+	}
 
 	public static boolean uncachedIsSubtype(Class clazz, String type) {
 		if (clazz.getName().equals(type))
