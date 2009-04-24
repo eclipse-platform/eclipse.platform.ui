@@ -35,7 +35,7 @@
             <implementation
                   style="themes/shared/html/shared.css,$theme$/html/shared.css,$theme$/html/font-$fontStyle$.css,$theme$/html/$direction$.css"
                   kind="html"
-                  os="win32,linux,macosx">
+                  os="win32,linux,macosx,solaris">
             </implementation>
             <implementation
                   kind="swt">
