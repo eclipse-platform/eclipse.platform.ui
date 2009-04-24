@@ -69,18 +69,16 @@ public class EclipseSplashHandler extends BasicSplashHandler {
 					"eclipse.buildId", "Unknown Build"); //$NON-NLS-1$ //$NON-NLS-2$
 			// find the specified location.  Not currently API
 			// hardcoded to be sensible with our current splash Graphic
-			// buildIdLocation is right justified with graphic end
 			String buildIdLocString = product.getProperty("buildIdLocation"); //$NON-NLS-1$
 			final Point buildIdPoint = StringConverter.asPoint(buildIdLocString,
 					new Point(322, 190));
 			getContent().addPaintListener(new PaintListener() {
 
 				public void paintControl(PaintEvent e) {
-
-					int length = e.gc.stringExtent(buildId).x;
 					e.gc.setForeground(getForeground());
-					e.gc.drawText(buildId, buildIdPoint.x - length,
-							buildIdPoint.y, true);
+					e.gc
+							.drawText(buildId, buildIdPoint.x, buildIdPoint.y,
+									true);
 				}
 			});
 		}
