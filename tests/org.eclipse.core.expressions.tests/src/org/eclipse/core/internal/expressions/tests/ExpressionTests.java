@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -718,6 +718,31 @@ public class ExpressionTests extends TestCase {
 		assertTrue(result.equals(input));
 	}
 
+	public void testIterateExpressionOrMultiChildren() throws Exception {
+		//Test for Bug 260522: <iterate> iterates over collection elements,
+		//thereby *and*-ing all evaluated child expressions
+		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
+		exp.add(Expression.FALSE);
+		exp.add(Expression.TRUE);
+		List input= new ArrayList();
+		input.add("one"); //$NON-NLS-1$
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+
+	public void testIterateExpressionAndMultiChildren() throws Exception {
+		//Test for Bug 260522: <iterate> iterates over collection elements,
+		//thereby *and*-ing all evaluated child expressions
+		IterateExpression exp= new IterateExpression("and"); //$NON-NLS-1$
+		exp.add(Expression.FALSE);
+		exp.add(Expression.TRUE);
+		List input= new ArrayList();
+		input.add("one"); //$NON-NLS-1$
+		input.add("two"); //$NON-NLS-1$
+		EvaluationContext context= new EvaluationContext(null, input);
+		assertTrue(EvaluationResult.FALSE == exp.evaluate(context));
+	}
+	
 	public void testIterateExpressionEmptyOr() throws Exception {
 		IterateExpression exp= new IterateExpression("or"); //$NON-NLS-1$
 		List input= new ArrayList();
