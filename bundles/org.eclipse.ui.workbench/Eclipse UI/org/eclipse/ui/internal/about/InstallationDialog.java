@@ -168,7 +168,14 @@ public class InstallationDialog extends Dialog implements
 			productName = product.getName();
 		newShell.setText(NLS.bind(
 				WorkbenchMessages.InstallationDialog_ShellTitle, productName));
-		newShell.setSize(600, 768);
+	}
+
+	protected Point getInitialSize() {
+		IDialogSettings section = WorkbenchPlugin.getDefault()
+				.getDialogSettings().getSection(DIALOG_SETTINGS_SECTION);
+		if (section == null)
+			return new Point(600, 768);
+		return super.getInitialSize();
 	}
 
 	/*
@@ -384,9 +391,9 @@ public class InstallationDialog extends Dialog implements
 	 * @param parent
 	 *            the modal parent dialog that launched this dialog, or
 	 *            <code>null</code> if there was no parent.
-	 *            
-	 * This is an internal method and should not be used outside of 
-	 * platform UI.
+	 * 
+	 *            This is an internal method and should not be used outside of
+	 *            platform UI.
 	 */
 	public void setModalParent(Dialog parent) {
 		this.modalParent = parent;
