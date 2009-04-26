@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IMemento;
@@ -737,17 +736,10 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		NavigatorContentDescriptor src = (NavigatorContentDescriptor) contributionMemory.get(element);
 		if (src != null)
 			return src;
-		final Widget[] ws = structuredViewerManager.getItems(element);
+		Widget[] ws = structuredViewerManager.getItems(element);
 		if (ws.length == 0)
 			return null;
-		final NavigatorContentDescriptor[] descriptor = new NavigatorContentDescriptor[1];
-		Display.getDefault().syncExec(new Runnable() {
-			public void run() {
-				descriptor[0] = (NavigatorContentDescriptor) ws[0].getData(WIDGET_KEY);
-			}
-		});
-		return descriptor[0];
-	
+		return (NavigatorContentDescriptor)ws[0].getData(WIDGET_KEY);
 	}
 	/**
 	 * 
