@@ -2493,8 +2493,13 @@ public class TextViewer extends Viewer implements
 				endLocation.x += endVirtuals * averageCharWidth;
 				endLocation.y += fTextWidget.getLineHeight(endOffset);
 
-				fTextWidget.setBlockSelectionBounds(Geometry.createRectangle(startLocation, Geometry.subtract(endLocation, startLocation)));
-				// TODO fire selection change, validate etc - see setSelectedRange
+				int widgetLength= endOffset - startOffset;
+				int[] widgetSelection= { startOffset, widgetLength};
+				validateSelectionRange(widgetSelection);
+				if (widgetSelection[0] >= 0) {
+					fTextWidget.setBlockSelectionBounds(Geometry.createRectangle(startLocation, Geometry.subtract(endLocation, startLocation)));
+					selectionChanged(startOffset, widgetLength);
+				}
 			} catch (BadLocationException e) {
 				// fall back to linear selection mode
 				setSelectedRange(s.getOffset(), s.getLength());
