@@ -254,9 +254,15 @@ public class CursorLinePainter implements IPainter, LineBackgroundListener {
 	 */
 	private boolean hasMultiLineSelection(StyledText textWidget) {
 		Point selection= textWidget.getSelection();
-		int startLine= textWidget.getLineAtOffset(selection.x);
-		int endLine= textWidget.getLineAtOffset(selection.y);
-		return startLine != endLine;
+		try {
+			int startLine= textWidget.getLineAtOffset(selection.x);
+			int endLine= textWidget.getLineAtOffset(selection.y);
+			return startLine != endLine;
+		} catch (IllegalArgumentException e) {
+			// ignore - apparently, the widget has a stale selection
+			// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=273721
+			return false;
+		}
 	}
 
 	/*
