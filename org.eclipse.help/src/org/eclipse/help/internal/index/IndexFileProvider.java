@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,12 +19,14 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.HelpPlugin;
+import org.xml.sax.SAXParseException;
 
 /*
  * Provides index data from index XML files to the help system.
  */
 public class IndexFileProvider extends AbstractIndexProvider {
 
+	private static final String ERROR_READING_HELP_KEYWORD_INDEX_FILE = "Error reading help keyword index file /\""; //$NON-NLS-1$
 	public static final String EXTENSION_POINT_ID_INDEX = HelpPlugin.PLUGIN_ID + ".index"; //$NON-NLS-1$
 	public static final String ELEMENT_NAME_INDEX = "index"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_NAME_FILE = "file"; //$NON-NLS-1$
@@ -37,16 +39,35 @@ public class IndexFileProvider extends AbstractIndexProvider {
 		IndexFile[] indexFiles = getIndexFiles(locale);
 		IndexFileParser parser = new IndexFileParser();
 		for (int i=0;i<indexFiles.length;++i) {
+			IndexFile indexFile = indexFiles[i];
 			try {
-				IIndexContribution toc = parser.parse(indexFiles[i]);
+				IIndexContribution toc = parser.parse(indexFile);
 				contributions.add(toc);
-			}
+			}  catch (SAXParseException spe) {
+				StringBuffer buffer = new StringBuffer(ERROR_READING_HELP_KEYWORD_INDEX_FILE);
+				buffer.append(getIndexFilePath(indexFile));
+				buffer.append("\" at line "); //$NON-NLS-1$
+			    buffer.append(spe.getLineNumber());
+			    buffer.append(". "); //$NON-NLS-1$   
+	            buffer.append(spe.getMessage());
+
+	            // Use the contained exception.
+	            Exception x = spe;
+	            if (spe.getException() != null)
+	                x = spe.getException();
+	            HelpPlugin.logError(buffer.toString(), x);
+
+	        } 
 			catch (Throwable t) {
-				String msg = "Error reading help keyword index file /\"" + indexFiles[i].getPluginId() + '/' + indexFiles[i].getFile() + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
+				String msg = ERROR_READING_HELP_KEYWORD_INDEX_FILE + getIndexFilePath(indexFile) + "\" (skipping file)"; //$NON-NLS-1$
 				HelpPlugin.logError(msg, t);
 			}
 		}
 		return (IIndexContribution[])contributions.toArray(new IIndexContribution[contributions.size()]);
+	}
+
+	private String getIndexFilePath(IndexFile indexFile) {
+		return indexFile.getPluginId() + '/' + indexFile.getFile();
 	}
 
 	/*
