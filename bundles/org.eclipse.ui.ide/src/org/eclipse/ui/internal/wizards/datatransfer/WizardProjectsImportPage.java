@@ -52,6 +52,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -111,15 +112,6 @@ public class WizardProjectsImportPage extends WizardPage implements
 	 */
 	private ILeveledImportStructureProvider structureProvider;
 	
-	
-	// Added width and height constants because Text and
-	// CheckboxTreeViewer components are sized improperly
-	// when wizard is called with an initial path
-	private final static int PATH_FIELD_WIDTH = 220;
-	private final static int PATH_FIELD_HEIGHT = 14;
-	private final static int PROJECT_LIST_WIDTH = 340;
-	private final static int PROJECT_LIST_HEIGHT = 200;
-
 	/**
 	 * @since 3.5
 	 *
@@ -458,7 +450,10 @@ public class WizardProjectsImportPage extends WizardPage implements
 				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
 
 		projectsList = new CheckboxTreeViewer(listComposite, SWT.BORDER);
-		projectsList.getControl().setLayoutData(new GridData(PROJECT_LIST_WIDTH,PROJECT_LIST_HEIGHT));
+		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
+		gridData.widthHint = new PixelConverter(projectsList.getControl()).convertWidthInCharsToPixels(25);
+		gridData.heightHint = new PixelConverter(projectsList.getControl()).convertHeightInCharsToPixels(10);
+		projectsList.getControl().setLayoutData(gridData);
 		projectsList.setContentProvider(new ITreeContentProvider() {
 
 			/*
@@ -648,7 +643,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 		// project location entry field
 		this.directoryPathField = new Text(projectGroup, SWT.BORDER);
 
-		directoryPathField.setLayoutData(new GridData(PATH_FIELD_WIDTH,PATH_FIELD_HEIGHT));
+		GridData directoryPathData = new GridData(SWT.FILL, SWT.NONE, true, false);
+		directoryPathData.widthHint = new PixelConverter(directoryPathField).convertWidthInCharsToPixels(25);
+		directoryPathField.setLayoutData(directoryPathData);
 		
 		// browse button
 		browseDirectoriesButton = new Button(projectGroup, SWT.PUSH);
@@ -664,7 +661,9 @@ public class WizardProjectsImportPage extends WizardPage implements
 		// project location entry field
 		archivePathField = new Text(projectGroup, SWT.BORDER);
 
-		archivePathField.setLayoutData(new GridData(PATH_FIELD_WIDTH,PATH_FIELD_HEIGHT));		// browse button
+		GridData archivePathData = new GridData(SWT.FILL, SWT.NONE, true, false);
+		archivePathData.widthHint = new PixelConverter(archivePathField).convertWidthInCharsToPixels(25);
+		archivePathField.setLayoutData(archivePathData); // browse button
 		browseArchivesButton = new Button(projectGroup, SWT.PUSH);
 		browseArchivesButton.setText(DataTransferMessages.DataTransfer_browse);
 		setButtonLayoutData(browseArchivesButton);
