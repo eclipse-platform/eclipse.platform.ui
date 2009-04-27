@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.search" version="2">
+    <resource path="search/org/eclipse/search/internal/ui/SearchDialog.java" type="org.eclipse.search.internal.ui.SearchDialog">
+        <filter id="571519004">
+            <message_arguments>
+                <message_argument value="org.eclipse.search.internal.ui.SearchDialog.handleCustomizePressed()"/>
+                <message_argument value="ListSelectionDialog"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="search/org/eclipse/search/internal/ui/SearchResultViewer.java" type="org.eclipse.search.internal.ui.SearchResultViewer">
         <filter id="571473929">
             <message_arguments>
                 <message_argument value="TableViewer"/>
                 <message_argument value="SearchResultViewer"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="search/org/eclipse/search/internal/ui/SearchDialog.java" type="org.eclipse.search.internal.ui.SearchDialog">
-        <filter id="571519004">
-            <message_arguments>
-                <message_argument value="org.eclipse.search.internal.ui.SearchDialog"/>
-                <message_argument value="ListSelectionDialog"/>
             </message_arguments>
         </filter>
     </resource>
