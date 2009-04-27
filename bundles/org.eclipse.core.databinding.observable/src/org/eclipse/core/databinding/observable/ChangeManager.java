@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Hall - bugs 118516, 255734
+ *     Chris Audley - bug 273265
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable;
@@ -22,17 +23,17 @@ import org.eclipse.core.runtime.ListenerList;
  * @since 1.0
  * 
  */
-/* package */ class ChangeManager {
+/* package */class ChangeManager {
 
 	ListenerList[] listenerLists = null;
 	Object listenerTypes[] = null;
 	private Realm realm;
 
 	/**
-	 * @param realm 
+	 * @param realm
 	 * 
 	 */
-	/* package */ ChangeManager(Realm realm) {
+	/* package */ChangeManager(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		this.realm = realm;
 	}
@@ -148,4 +149,10 @@ import org.eclipse.core.runtime.ListenerList;
 		return realm;
 	}
 
+	protected Object clone() throws CloneNotSupportedException {
+		ChangeManager duplicate = (ChangeManager) super.clone();
+		duplicate.listenerLists = null;
+		duplicate.listenerTypes = null;
+		return duplicate;
+	}
 }
