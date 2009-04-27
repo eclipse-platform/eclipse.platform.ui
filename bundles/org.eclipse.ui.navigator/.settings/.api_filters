@@ -1,5 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.navigator" version="2">
+    <resource path="src/org/eclipse/ui/internal/navigator/extensions/StructuredViewerManager.java" type="org.eclipse.ui.internal.navigator.extensions.StructuredViewerManager$StructuredViewerAccess">
+        <filter id="571473929">
+            <message_arguments>
+                <message_argument value="StructuredViewerInternals"/>
+                <message_argument value="StructuredViewerAccess"/>
+            </message_arguments>
+        </filter>
+        <filter id="640712815">
+            <message_arguments>
+                <message_argument value="StructuredViewerInternals"/>
+                <message_argument value="StructuredViewerAccess"/>
+                <message_argument value="setAssociateListener(StructuredViewer, StructuredViewerInternalsAssociateListener)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/internal/navigator/extensions/StructuredViewerManager.java" type="org.eclipse.ui.internal.navigator.extensions.StructuredViewerManager$StructuredViewerAccess$Listener">
         <filter id="574619656">
             <message_arguments>
@@ -8,32 +23,20 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/internal/navigator/extensions/StructuredViewerManager.java" type="org.eclipse.ui.internal.navigator.extensions.StructuredViewerManager$StructuredViewerAccess">
-        <filter id="640712815">
+    <resource path="src/org/eclipse/ui/navigator/CommonNavigator.java" type="org.eclipse.ui.navigator.CommonNavigator">
+        <filter id="388194388">
             <message_arguments>
-                <message_argument value="StructuredViewerInternals"/>
-                <message_argument value="StructuredViewerAccess"/>
-                <message_argument value="setAssociateListener(StructuredViewer, StructuredViewerInternalsAssociateListener)"/>
-            </message_arguments>
-        </filter>
-        <filter id="640712815">
-            <message_arguments>
-                <message_argument value="StructuredViewerInternals"/>
-                <message_argument value="StructuredViewerAccess"/>
-                <message_argument value="getItems(StructuredViewer, Object)"/>
-            </message_arguments>
-        </filter>
-        <filter id="571473929">
-            <message_arguments>
-                <message_argument value="StructuredViewerInternals"/>
-                <message_argument value="StructuredViewerAccess"/>
+                <message_argument value="org.eclipse.ui.navigator.CommonNavigator"/>
+                <message_argument value="IS_LINKING_ENABLED_PROPERTY"/>
+                <message_argument value="1"/>
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorPipelineService.java" type="org.eclipse.ui.navigator.INavigatorPipelineService">
-        <filter id="403853384">
+    <resource path="src/org/eclipse/ui/navigator/CommonViewer.java" type="org.eclipse.ui.navigator.CommonViewer">
+        <filter id="571473929">
             <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorPipelineService"/>
+                <message_argument value="TreeViewer"/>
+                <message_argument value="CommonViewer"/>
             </message_arguments>
         </filter>
     </resource>
@@ -44,12 +47,102 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="src/org/eclipse/ui/navigator/CommonNavigator.java" type="org.eclipse.ui.navigator.CommonNavigator">
-        <filter id="388194388">
+    <resource path="src/org/eclipse/ui/navigator/ICommonActionExtensionSite.java" type="org.eclipse.ui.navigator.ICommonActionExtensionSite">
+        <filter id="403853384">
             <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.CommonNavigator"/>
-                <message_argument value="IS_LINKING_ENABLED_PROPERTY"/>
-                <message_argument value="1"/>
+                <message_argument value="org.eclipse.ui.navigator.ICommonActionExtensionSite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/ICommonContentExtensionSite.java" type="org.eclipse.ui.navigator.ICommonContentExtensionSite">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.ICommonContentExtensionSite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/ICommonFilterDescriptor.java" type="org.eclipse.ui.navigator.ICommonFilterDescriptor">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.ICommonFilterDescriptor"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/ICommonMenuConstants.java" type="org.eclipse.ui.navigator.ICommonMenuConstants">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.ICommonMenuConstants"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/ICommonViewerSite.java" type="org.eclipse.ui.navigator.ICommonViewerSite">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.ICommonViewerSite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/ICommonViewerWorkbenchSite.java" type="org.eclipse.ui.navigator.ICommonViewerWorkbenchSite">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.ICommonViewerWorkbenchSite"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/IExtensionStateModel.java" type="org.eclipse.ui.navigator.IExtensionStateModel">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.IExtensionStateModel"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorContentDescriptor.java" type="org.eclipse.ui.navigator.INavigatorContentDescriptor">
+        <filter id="405901410">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorContentDescriptor"/>
+                <message_argument value="getOverridePolicy()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorContentExtension.java" type="org.eclipse.ui.navigator.INavigatorContentExtension">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorContentExtension"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorContentService.java" type="org.eclipse.ui.navigator.INavigatorContentService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorContentService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorDnDService.java" type="org.eclipse.ui.navigator.INavigatorDnDService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorDnDService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorFilterService.java" type="org.eclipse.ui.navigator.INavigatorFilterService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorFilterService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorPipelineService.java" type="org.eclipse.ui.navigator.INavigatorPipelineService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorPipelineService"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/navigator/INavigatorSaveablesService.java" type="org.eclipse.ui.navigator.INavigatorSaveablesService">
+        <filter id="403853384">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.navigator.INavigatorSaveablesService"/>
             </message_arguments>
         </filter>
     </resource>
@@ -64,106 +157,6 @@
         <filter id="403853384">
             <message_arguments>
                 <message_argument value="org.eclipse.ui.navigator.INavigatorViewerDescriptor"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorContentExtension.java" type="org.eclipse.ui.navigator.INavigatorContentExtension">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorContentExtension"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/ICommonFilterDescriptor.java" type="org.eclipse.ui.navigator.ICommonFilterDescriptor">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.ICommonFilterDescriptor"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/ICommonContentExtensionSite.java" type="org.eclipse.ui.navigator.ICommonContentExtensionSite">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.ICommonContentExtensionSite"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/ICommonViewerSite.java" type="org.eclipse.ui.navigator.ICommonViewerSite">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.ICommonViewerSite"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorDnDService.java" type="org.eclipse.ui.navigator.INavigatorDnDService">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorDnDService"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/CommonViewer.java" type="org.eclipse.ui.navigator.CommonViewer">
-        <filter id="571473929">
-            <message_arguments>
-                <message_argument value="TreeViewer"/>
-                <message_argument value="CommonViewer"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/ICommonActionExtensionSite.java" type="org.eclipse.ui.navigator.ICommonActionExtensionSite">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.ICommonActionExtensionSite"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorContentDescriptor.java" type="org.eclipse.ui.navigator.INavigatorContentDescriptor">
-        <filter id="405901410">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorContentDescriptor"/>
-                <message_argument value="getOverridePolicy()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorSaveablesService.java" type="org.eclipse.ui.navigator.INavigatorSaveablesService">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorSaveablesService"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorContentService.java" type="org.eclipse.ui.navigator.INavigatorContentService">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorContentService"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/ICommonViewerWorkbenchSite.java" type="org.eclipse.ui.navigator.ICommonViewerWorkbenchSite">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.ICommonViewerWorkbenchSite"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/INavigatorFilterService.java" type="org.eclipse.ui.navigator.INavigatorFilterService">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.INavigatorFilterService"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/IExtensionStateModel.java" type="org.eclipse.ui.navigator.IExtensionStateModel">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.IExtensionStateModel"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/navigator/ICommonMenuConstants.java" type="org.eclipse.ui.navigator.ICommonMenuConstants">
-        <filter id="403853384">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.navigator.ICommonMenuConstants"/>
             </message_arguments>
         </filter>
     </resource>

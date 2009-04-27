@@ -10,15 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.StructuredViewerInternals;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Item;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
+import org.eclipse.ui.internal.navigator.Policy;
 
 /**
  * <p>
@@ -50,40 +53,60 @@ public class StructuredViewerManager {
 
 	private Object cachedNewInput;
 
+	/*
+	 * This map is used to associate elements in the viewer with their
+	 * associated NavigatorContentDescriptor. To avoid things getting out of
+	 * hand, it associates only the items that are actually present in the tree.
+	 * We need this association to make sure that we can always get the source
+	 * (NavigatorContentDescriptor) of a given element for the case of providing
+	 * the label which must use the same navigator content extension that
+	 * provided the element.
+	 */
+	// Map<element, NavigatorContentDescriptor>
+	private Map viewerDataMap;
+	
 	static class StructuredViewerAccess extends StructuredViewerInternals {
 		static class Listener implements StructuredViewerInternals.AssociateListener {
 			private final NavigatorContentService contentService;
-			public Listener(NavigatorContentService contentService) {
+			private final Map viewerDataMap;
+			public Listener(NavigatorContentService contentService, Map viewerDataMap) {
 				this.contentService = contentService;
+				this.viewerDataMap = viewerDataMap;
 			}
 			public void associate(Object element, Item item) {
 				NavigatorContentDescriptor desc = contentService.getContribution(element);
-				if (item.getData(NavigatorContentService.WIDGET_KEY) != null) {
-					//System.out.println("associate: SKIPPED " + element + " item: " + item + " desc: " + desc + " found: " + item.getData(NavigatorContentService.WIDGET_KEY)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-					return;
+				synchronized (viewerDataMap) {
+					if (viewerDataMap.containsKey(element)) {
+						if (Policy.DEBUG_VIEWER_MAP)
+							System.out.println("associate: SKIPPED " + element + " item: " + item + " desc: " + desc + " FOUND"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+						return;
+					}
+					viewerDataMap.put(element, desc);
+					if (Policy.DEBUG_VIEWER_MAP)
+						System.out.println("associate: " + element + " item: " + item + " desc: " + desc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
-				item.setData(NavigatorContentService.WIDGET_KEY, desc);
-				//System.out.println("associate: " + element + " item: " + item + " desc: " + desc); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			public void disassociate(Item item) {
-				item.setData(NavigatorContentService.WIDGET_KEY, null);
-				//System.out.println("disassociate:  item: " + item); //$NON-NLS-1$
+				synchronized (viewerDataMap) {
+					if (Policy.DEBUG_VIEWER_MAP)
+						System.out.println("disassociate:  item: " + item + " object: " + item.getData()); //$NON-NLS-1$ //$NON-NLS-2$
+					viewerDataMap.remove(item.getData());
+				}
 			}
 		}
-		protected static void hookAssociateListener(StructuredViewer v, NavigatorContentService contentService) {
-			StructuredViewerInternals.setAssociateListener(v, new Listener(contentService));
-		}
-		protected static Widget[] getItems(StructuredViewer v, Object element) {
-			return StructuredViewerInternals.getItems(v, element);
+		protected static void hookAssociateListener(StructuredViewer v, Map viewerDataMap, NavigatorContentService contentService) {
+			StructuredViewerInternals.setAssociateListener(v, new Listener(contentService, viewerDataMap));
 		}
 	}
 	
 	/**
 	 * @param element
-	 * @return the items
+	 * @return the object
 	 */
-	public Widget[] getItems(Object element) {
-		return StructuredViewerAccess.getItems(viewer, element);
+	public Object getData(Object element) {
+		synchronized (viewerDataMap) {
+			return viewerDataMap.get(element);
+		}
 	}
 
 	/**
@@ -94,7 +117,8 @@ public class StructuredViewerManager {
 	public StructuredViewerManager(StructuredViewer aViewer, NavigatorContentService contentService) {
 		super();
 		viewer = aViewer;
-		StructuredViewerAccess.hookAssociateListener(viewer, contentService);
+		viewerDataMap = new HashMap();
+		StructuredViewerAccess.hookAssociateListener(viewer, viewerDataMap, contentService);
 	}
 
 	/**

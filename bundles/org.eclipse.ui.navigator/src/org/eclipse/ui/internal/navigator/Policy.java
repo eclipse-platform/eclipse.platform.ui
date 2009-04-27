@@ -38,11 +38,17 @@ public class Policy {
 	 */
 	public static boolean DEBUG_DND = DEFAULT;
 
+	/**
+	 * Option for tracing viewer/content descriptor association map
+	 */
+	public static boolean DEBUG_VIEWER_MAP = DEFAULT;
+
 	static {
 		if (getDebugOption("/debug")) { //$NON-NLS-1$
 			DEBUG_EXTENSION_SETUP = getDebugOption("/debug/setup"); //$NON-NLS-1$
 			DEBUG_RESOLUTION = getDebugOption("/debug/resolution"); //$NON-NLS-1$
 			DEBUG_DND = getDebugOption("/debug/dnd"); //$NON-NLS-1$
+			DEBUG_VIEWER_MAP = getDebugOption("/debug/viewermap"); //$NON-NLS-1$
 		}
 	}
 

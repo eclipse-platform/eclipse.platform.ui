@@ -34,7 +34,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
@@ -736,10 +735,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		NavigatorContentDescriptor src = (NavigatorContentDescriptor) contributionMemory.get(element);
 		if (src != null)
 			return src;
-		Widget[] ws = structuredViewerManager.getItems(element);
-		if (ws.length == 0)
-			return null;
-		return (NavigatorContentDescriptor)ws[0].getData(WIDGET_KEY);
+		return (NavigatorContentDescriptor) structuredViewerManager.getData(element);
 	}
 	/**
 	 * 
