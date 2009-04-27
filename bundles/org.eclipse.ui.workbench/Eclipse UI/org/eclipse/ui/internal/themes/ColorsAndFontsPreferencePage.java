@@ -125,6 +125,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	 */
 	private static final char MARKER_FONT = 'F';
 			
+	private static final int PREVIEW_BORDER_RADIUS = 6;
+
     private class ThemeContentProvider implements ITreeContentProvider {
 
         private IThemeRegistry registry;
@@ -573,14 +575,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	private Color currentColor;
 	
 	/**
-	 * Label holding the sample text for default font preview. 
-	 */
-	private Text fontPreviewLabel;
-	
-	/**
 	 * Canvas used to draw default color preview 
 	 */
 	private Canvas colorSampler;
+
+	/**
+	 * Canvas used to draw default font preview
+	 */
+	private Canvas fontSampler;
+
+	private String fontSampleText;
 
     private List dialogFontWidgets = new ArrayList();
 
@@ -763,7 +767,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         
         updateTreeSelection(tree.getViewer().getSelection());
 
-		advancedComposite.setWeights(new int[] { 70, 30 });
+		advancedComposite.setWeights(new int[] { 75, 25 });
         return advancedComposite;
     }
 
@@ -1677,33 +1681,30 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		if (currentFont != null && !currentFont.isDisposed())
 			currentFont.dispose();
 		currentFont = new Font(previewComposite.getDisplay(), fontData);
-		
+
 		// recalculate sample text
-		StringBuffer fontSampleText = new StringBuffer();
+		StringBuffer tmp = new StringBuffer();
 		for (int i = 0; i < fontData.length; i++) {
-			fontSampleText.append(fontData[i].getName());
-			fontSampleText.append(' ');
-			fontSampleText.append(fontData[i].getHeight());
-			
+			tmp.append(fontData[i].getName());
+			tmp.append(' ');
+			tmp.append(fontData[i].getHeight());
+
 			int style = fontData[i].getStyle();
 			if ((style & SWT.BOLD) != 0) {
-				fontSampleText.append(' ');
-				fontSampleText.append(RESOURCE_BUNDLE.getString("boldFont")); //$NON-NLS-1$
+				tmp.append(' ');
+				tmp.append(RESOURCE_BUNDLE.getString("boldFont")); //$NON-NLS-1$
 			}
 			if ((style & SWT.ITALIC) != 0) {
-				fontSampleText.append(' ');
-				fontSampleText.append(RESOURCE_BUNDLE.getString("italicFont")); //$NON-NLS-1$
+				tmp.append(' ');
+				tmp.append(RESOURCE_BUNDLE.getString("italicFont")); //$NON-NLS-1$
 			}
-			fontSampleText.append('\n');
 		}
-		fontSampleText.append(RESOURCE_BUNDLE.getString("fontTextSample")); //$NON-NLS-1$
-		if (fontPreviewLabel != null) {
-			fontPreviewLabel.setText(fontSampleText.toString());
-			fontPreviewLabel.setFont(currentFont);
-		}
+		fontSampleText = tmp.toString();
 
 		String description = fontDefinition.getDescription();
 		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
+
+		fontSampler.redraw();
 	}
 	
 	public void setCurrentColor(ColorDefinition colorDefinition) {
@@ -1718,15 +1719,42 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	}
 	
 	private Composite createFontPreviewControl() {
-		Composite previewControl = new Composite(previewComposite, SWT.BORDER);
-		FillLayout layout = new FillLayout();
-		layout.marginHeight = 5;
-		layout.marginWidth = 5;
-		previewControl.setLayout(layout);
-		fontPreviewLabel = new Text(previewControl, SWT.READ_ONLY | SWT.WRAP | SWT.MULTI);
-		return previewControl;
+		fontSampler = new Canvas(previewComposite, SWT.NONE);
+		GridLayout gridLayout = new GridLayout();
+		gridLayout.marginWidth = 0;
+		gridLayout.marginHeight = 0;
+		fontSampler.setLayout(gridLayout);
+		fontSampler.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		fontSampler.addPaintListener(new PaintListener() {
+			public void paintControl(PaintEvent e) {
+				if (currentFont != null) // do the font preview
+					paintFontSample(e.gc);
+			}
+		});
+		return fontSampler;
 	}
-	
+
+	private void paintFontSample(GC gc) {
+		if (currentFont == null || currentFont.isDisposed())
+			return;
+
+		// draw rectangle all around
+		Rectangle clientArea = colorSampler.getClientArea();
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		gc.drawRoundRectangle(0, 0, clientArea.width - 1, clientArea.height - 1, PREVIEW_BORDER_RADIUS,
+				PREVIEW_BORDER_RADIUS);
+
+		gc.setFont(currentFont);
+		FontMetrics fontMetrics = gc.getFontMetrics();
+		int lineHeight = fontMetrics.getHeight();
+		int topY = clientArea.y + 5;
+
+		gc.setClipping(1, 1, clientArea.width - 2, clientArea.height - 2);
+		gc.drawText(fontSampleText, clientArea.x + 5, topY);
+		gc.drawText(RESOURCE_BUNDLE.getString("fontTextSample"), clientArea.x + 5, topY + lineHeight); //$NON-NLS-1$
+	}
+
 	private Composite createColorPreviewControl() {
 		colorSampler = new Canvas(previewComposite, SWT.NONE);
         GridLayout gridLayout = new GridLayout();
@@ -1743,7 +1771,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		});
 		return colorSampler;
 	}
-	
+
 	private void paintColorSample(GC gc) {
 		if (currentColor == null || currentColor.isDisposed())
 			return;
@@ -1752,44 +1780,70 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		int lineHeight = fontMetrics.getHeight();
 		Rectangle clientArea = colorSampler.getClientArea();
 		
+		String messageTop = RESOURCE_BUNDLE.getString("fontColorSample"); //$NON-NLS-1$
+		RGB rgb = currentColor.getRGB();
+		String messageBottom = MessageFormat
+				.format(
+						"RGB({0}, {1}, {2})", new Object[] { new Integer(rgb.red), new Integer(rgb.green), new Integer(rgb.blue) }); //$NON-NLS-1$
+
 		// calculate position of the vertical line
-		int separator = (clientArea.width - 2) / 2;
-		
+		int separator = (clientArea.width - 2) / 3;
+
 		// calculate text positions
-		int textVerticalOffset = (clientArea.height - lineHeight - 2) / 2;
-		if (textVerticalOffset < 1)
-			textVerticalOffset = 1;
-		String msg = RESOURCE_BUNDLE.getString("fontColorSample"); //$NON-NLS-1$ 
-		int stringWidth = gc.stringExtent(msg).x;
-		int textHorizontalOffset = (separator - stringWidth - 1) / 2;
-		if (textHorizontalOffset < 1)
-			textHorizontalOffset = 1;
-		int textHorizontalOffset2 = separator + textHorizontalOffset;
-		
-		int bannerHeight = (textVerticalOffset < 20 ) ? textVerticalOffset : 20;
-		
-		// draw rectangle all around
+		int verticalCenter = clientArea.height / 2;
+		int textTopY = (verticalCenter - lineHeight) / 2;
+		if (textTopY < 1)
+			textTopY = 1;
+		textTopY += clientArea.y;
+
+		int textBottomY = verticalCenter + textTopY;
+		if (textBottomY > clientArea.height - 2)
+			textBottomY = clientArea.height - 2;
+		textBottomY += clientArea.y;
+
+		int stringWidthTop = gc.stringExtent(messageTop).x;
+		int textTopX = (separator - stringWidthTop - 1) / 2;
+		if (textTopX < 1)
+			textTopX = 1;
+		textTopX += clientArea.x;
+
+		int stringWidthBottom = gc.stringExtent(messageBottom).x;
+		int textBottomX = (separator - stringWidthBottom - 1) / 2;
+		if (textBottomX < 1)
+			textBottomX = 1;
+		textBottomX += clientArea.x;
+
+		// put text on the left - default background
 		gc.setForeground(currentColor);
-		gc.drawRectangle(0, 0, clientArea.width - 1, clientArea.height - 1);
-		// draw rectangle on the top
+		gc.drawText(messageTop, textTopX, textTopY);
+		gc.drawText(messageBottom, textBottomX, textBottomY);
+
+		// fill right rectangle
+		gc.setBackground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+		int rightWidth = clientArea.width - 2 - separator * 2 + 2 * PREVIEW_BORDER_RADIUS;
+		gc.fillRoundRectangle(separator * 2 - 2 * PREVIEW_BORDER_RADIUS, 1, rightWidth, clientArea.height - 2,
+				PREVIEW_BORDER_RADIUS, PREVIEW_BORDER_RADIUS);
+		// put text in the right rectangle
+		gc.setForeground(currentColor);
+		gc.drawText(messageTop, separator * 2 + textTopX, textTopY);
+		gc.drawText(messageBottom, separator * 2 + textBottomX, textBottomY);
+
+		// fill center rectangle
 		gc.setBackground(currentColor);
-		gc.fillRectangle(0, 0, clientArea.width, bannerHeight);
-		// draw rectangle on the bottom
-		gc.fillRectangle(0, clientArea.height - bannerHeight, clientArea.width, clientArea.height);
-		// draw the vertical separator line
-		gc.drawLine(separator, 0, separator, clientArea.height);
-		
-		// draw left text rectangle
-		gc.setForeground(currentColor);
-		gc.setBackground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
-		gc.fillRectangle(1, bannerHeight, separator - 1, clientArea.height - bannerHeight * 2 - 1);
-		
-		gc.drawText(msg, clientArea.x + textHorizontalOffset, clientArea.y + textVerticalOffset);
-		
-		// do the text in the right half on default background
-		gc.setForeground(currentColor);
-		gc.setBackground(colorSampler.getBackground());
-		gc.drawText(msg, clientArea.x + textHorizontalOffset2, clientArea.y + textVerticalOffset);
+		gc.fillRectangle(separator, 1, separator, clientArea.height - 2);
+		// text: center top
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		gc.drawText(messageTop, separator + textTopX, textTopY);
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
+		gc.drawText(messageBottom, separator + textBottomX, textBottomY);
+		// niceties
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		gc.drawLine(separator, verticalCenter, separator * 2 - 1, verticalCenter);
+
+		// draw rectangle all around
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		gc.drawRoundRectangle(0, 0, clientArea.width - 1, clientArea.height - 1, PREVIEW_BORDER_RADIUS,
+				PREVIEW_BORDER_RADIUS);
 	}
 
 	private void createDescriptionControl(Composite parent) {
