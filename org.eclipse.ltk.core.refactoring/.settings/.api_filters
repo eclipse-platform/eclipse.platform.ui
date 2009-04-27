@@ -3,7 +3,7 @@
     <resource path="src/org/eclipse/ltk/core/refactoring/MultiStateTextFileChange.java" type="org.eclipse.ltk.core.refactoring.MultiStateTextFileChange">
         <filter id="571519004">
             <message_arguments>
-                <message_argument value="org.eclipse.ltk.core.refactoring.MultiStateTextFileChange"/>
+                <message_argument value="org.eclipse.ltk.core.refactoring.MultiStateTextFileChange.getPreviewContent(TextEditBasedChangeGroup[], IRegion, boolean, int, IProgressMonitor)"/>
                 <message_argument value="TextEditProcessor"/>
             </message_arguments>
         </filter>
