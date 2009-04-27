@@ -324,6 +324,7 @@ public class EditorSashContainer extends PartSashContainer {
 		            }
 		            if (defaultWorkbook != null) {
 						remove(defaultWorkbook);
+						defaultWorkbook.dispose();
 					}
 				}});
             
