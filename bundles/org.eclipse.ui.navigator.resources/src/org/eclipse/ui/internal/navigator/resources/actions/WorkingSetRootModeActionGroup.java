@@ -35,6 +35,14 @@ import org.eclipse.ui.internal.navigator.workingsets.WorkingSetsContentProvider;
 import org.eclipse.ui.navigator.IExtensionStateModel;
 
 /**
+ * 
+ * Provides the radio buttons at the top of the view menu that control the root
+ * of the ProjectExplorer, which is either working sets of projects.  When the
+ * state is changed through the actions, the WorkingSetsContentProvider.SHOW_TOP_LEVEL_WORKING_SETS
+ * property in the extension state model is updated.
+ * 
+ * This is installed by the WorkingSetActionProvider.
+ * 
  * @since 3.2
  * 
  */
