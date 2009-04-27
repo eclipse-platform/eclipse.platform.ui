@@ -242,7 +242,7 @@ public class Utilities {
 	/**
 	 * Creates a CoreException from some other exception.
 	 * The type of the CoreException is <code>IStatus.ERROR</code>
-	 * If the exceptionpassed as a parameter is also a CoreException,
+	 * If the exception passed as a parameter is also a CoreException,
 	 * the new CoreException will contain all the status of the passed
 	 * CoreException.
 	 * 
