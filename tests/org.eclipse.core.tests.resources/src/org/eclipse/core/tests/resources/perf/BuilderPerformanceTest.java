@@ -117,8 +117,8 @@ public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 				}
 			}
 		};
+		//this test simulates a manual build before launch with autobuild enabled
+		runner.setFingerprintName("Build workspace before launch");
 		runner.run(this, REPEATS, 1);
-
 	}
-
 }
