@@ -7,16 +7,17 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 208858)
+ *     Matthew Hall - bug 272651
  ******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.list;
+
+import junit.framework.TestCase;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
-
-import junit.framework.TestCase;
 
 /**
  * Tests for ListDiff class
@@ -41,30 +42,71 @@ public class ListDiffTest extends TestCase {
 		assertEquals("remove(0,element)", visitor.log);
 	}
 
-	public void testAccept_Move() {
+	public void testAccept_MoveForward_RemoveBeforeAdd() {
 		createListDiff(remove(0, "element"), add(1, "element")).accept(visitor);
 		assertEquals("move(0,1,element)", visitor.log);
 	}
 
-	public void testAccept_Replace() {
+	public void testAccept_MoveForward_AddBeforeRemove() {
+		// Add at index 2 then remove at index 0 leaves the element at index 1
+		createListDiff(add(2, "element"), remove(0, "element")).accept(visitor);
+		assertEquals("move(0,1,element)", visitor.log);
+	}
+
+	public void testAccept_MoveBackward_RemoveBeforeAdd() {
+		createListDiff(remove(4, "element"), add(1, "element")).accept(visitor);
+		assertEquals("move(4,1,element)", visitor.log);
+	}
+
+	public void testAccept_MoveBackward_AddBeforeRemove() {
+		// Element is originally at position 4 in this test, but we must remove
+		// it at 5 since the adding it at 1 first changes the index
+		createListDiff(add(1, "element"), remove(5, "element")).accept(visitor);
+		assertEquals("move(4,1,element)", visitor.log);
+	}
+
+	public void testAccept_Replace_RemoveBeforeAdd() {
 		createListDiff(remove(0, "element0"), add(0, "element1")).accept(
+				visitor);
+		assertEquals("replace(0,element0,element1)", visitor.log);
+	}
+
+	public void testAccept_Replace_AddBeforeRemove() {
+		createListDiff(add(0, "element1"), remove(1, "element0")).accept(
 				visitor);
 		assertEquals("replace(0,element0,element1)", visitor.log);
 	}
 
 	public void testAccept_AllPatterns() {
 		createListDiff(new ListDiffEntry[] {
-				// Replace
+		// Replace (remove before add)
 				remove(0, "element0"), add(0, "element1"),
+				// Replace (add before remove)
+				add(0, "element3"), remove(1, "element2"),
 				// Remove
-				remove(1, "element2"),
+				remove(1, "element4"),
 				// Add
-				add(2, "element3"),
-				// Move
-				remove(3, "element4"), add(4, "element4") }).accept(visitor);
+				add(2, "element5"),
+				// Move forward (remove before add)
+				remove(5, "element6"), add(6, "element6"),
+				// Move forward (add before remove)
+				add(7, "element6"), remove(5, "element6"),
+				// Move backward (remove before add)
+				remove(12, "element7"), add(11, "element7"),
+				// Move backward (add before remove)
+				add(11, "element7"), remove(13, "element7"),
+				// Remove then add in place -- treat as replace
+				remove(11, "element8"), add(11, "element8"),
+				// Add then remove in place (special case) -- treat as separate
+				// add and remove
+				add(12, "element9"), remove(12, "element9") }).accept(visitor);
 		assertEquals(
-				"replace(0,element0,element1), remove(1,element2), add(2,element3), move(3,4,element4)",
-				visitor.log);
+				"replace(0,element0,element1), replace(0,element2,element3), "
+						+ "remove(1,element4), " + "add(2,element5), "
+						+ "move(5,6,element6), move(5,6,element6), "
+						+ "move(12,11,element7), move(12,11,element7), "
+						+ "replace(11,element8,element8), "
+						+ "add(12,element9), remove(12,element9)", visitor.log);
 	}
 
 	public void testAccept_MoveDetectionUsesEqualityNotSameness() {

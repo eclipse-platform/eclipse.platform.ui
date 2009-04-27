@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 208858, 251884, 194734
+ *     Matthew Hall - bugs 208858, 251884, 194734, 272651
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -38,11 +38,11 @@ public abstract class ListDiff implements IDiff {
 	 * method in <code>visitor</code> for each difference.
 	 * <ol>
 	 * <li>{@link ListDiffVisitor#handleReplace(int, Object, Object)} is called
-	 * whenever a remove entry is immediately followed by an add entry which
-	 * shares the same list index.
+	 * whenever an add entry is adjacent to a remove entry, and both entries
+	 * operate on the same location in the list.
 	 * <li>{@link ListDiffVisitor#handleMove(int, int, Object)} is called
-	 * whenever a remove entry is immediately followed by an add entry with an
-	 * equivalent element.
+	 * whenever an add entry is adjacent to a remove entry, and both entries
+	 * have equivalent elements.
 	 * <li>{@link ListDiffVisitor#handleRemove(int, Object)} is called whenever
 	 * a remove entry does not match conditions 1 or 2.
 	 * <li>{@link ListDiffVisitor#handleAdd(int, Object)} is called whenever an
@@ -58,31 +58,83 @@ public abstract class ListDiff implements IDiff {
 		ListDiffEntry[] differences = getDifferences();
 		for (int i = 0; i < differences.length; i++) {
 			ListDiffEntry entry = differences[i];
-			int position = entry.getPosition();
-			Object element = entry.getElement();
-			boolean addition = entry.isAddition();
+			Object elem = entry.getElement();
+			int pos = entry.getPosition();
+			boolean add = entry.isAddition();
 
-			if (!addition && i + 1 < differences.length) {
-				ListDiffEntry entry2 = differences[i + 1];
-				if (entry2.isAddition()) {
-					int position2 = entry2.getPosition();
-					Object element2 = entry2.getElement();
-					if (position == position2) {
-						visitor.handleReplace(position, element, element2);
+			if (i + 1 < differences.length) {
+				ListDiffEntry nextEntry = differences[i + 1];
+				if (add != nextEntry.isAddition()) {
+					int addPos;
+					Object addElem;
+
+					int removePos;
+					Object removeElem;
+
+					if (add) {
+						addPos = pos;
+						addElem = elem;
+
+						removePos = nextEntry.getPosition();
+						removeElem = nextEntry.getElement();
+
+						if (addPos > removePos) {
+							// a b c d e f -- start
+							// a b c b d e f -- add b at 4
+							// a c b d e f -- remove b at 2
+
+							// net effect is the same as:
+							// a b c d e f -- start
+							// a c d e f -- remove b at 2
+							// a c b d e f -- add b at 3
+
+							addPos--;
+						} else if (removePos > addPos) {
+							// a b c d e f -- start
+							// a d b c d e f -- add d at 2
+							// a d b c e f -- remove d at 5
+
+							// net effect is the same as
+							// a b c d e f -- start
+							// a b c e f -- remove d at 4
+							// a d b c d e f -- add d at 2
+
+							// So we adjust the remove index to fit the indices
+							// of the remove-then-add scenario
+							removePos--;
+						} else {
+							// rare case: element is added and then immediately
+							// removed. Handle the add entry and then continue
+							// iterating starting at the remove entry
+							visitor.handleAdd(pos, elem);
+							continue;
+						}
+					} else {
+						removePos = pos;
+						removeElem = elem;
+
+						addPos = nextEntry.getPosition();
+						addElem = nextEntry.getElement();
+					}
+
+					if (removePos == addPos) {
+						visitor.handleReplace(pos, removeElem, addElem);
 						i++;
 						continue;
 					}
-					if (Util.equals(element, element2)) {
-						visitor.handleMove(position, position2, element);
+
+					if (Util.equals(removeElem, addElem)) {
+						visitor.handleMove(removePos, addPos, elem);
 						i++;
 						continue;
 					}
 				}
 			}
-			if (addition)
-				visitor.handleAdd(position, element);
+
+			if (add)
+				visitor.handleAdd(pos, elem);
 			else
-				visitor.handleRemove(position, element);
+				visitor.handleRemove(pos, elem);
 		}
 	}
 
@@ -129,28 +181,26 @@ public abstract class ListDiff implements IDiff {
 		ListDiffEntry[] differences = getDifferences();
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getClass().getName());
-		
+
 		if (differences == null || differences.length == 0) {
-			buffer
-				.append("{}"); //$NON-NLS-1$
+			buffer.append("{}"); //$NON-NLS-1$
 		} else {
-			buffer
-				.append("{"); //$NON-NLS-1$
-			
+			buffer.append("{"); //$NON-NLS-1$
+
 			for (int i = 0; i < differences.length; i++) {
 				if (i > 0)
 					buffer.append(", "); //$NON-NLS-1$
-				
-				buffer
-					.append("difference[") //$NON-NLS-1$
-					.append(i)
-					.append("] [") //$NON-NLS-1$
-					.append(differences[i] != null ? differences[i].toString() : "null") //$NON-NLS-1$
-					.append("]"); //$NON-NLS-1$
+
+				buffer.append("difference[") //$NON-NLS-1$
+						.append(i).append("] [") //$NON-NLS-1$
+						.append(
+								differences[i] != null ? differences[i]
+										.toString() : "null") //$NON-NLS-1$
+						.append("]"); //$NON-NLS-1$
 			}
 			buffer.append("}"); //$NON-NLS-1$
 		}
-		
+
 		return buffer.toString();
 	}
 }
