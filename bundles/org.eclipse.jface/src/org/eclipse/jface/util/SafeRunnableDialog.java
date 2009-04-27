@@ -71,8 +71,8 @@ class SafeRunnableDialog extends ErrorDialog {
 					.getException().toString() : status.getException()
 					.getMessage();
 		}
-		this.message = JFaceResources.format(JFaceResources
-				.getString("SafeRunnableDialog_reason"), new Object[] { //$NON-NLS-1$
+		this.message = JFaceResources.format(
+				"SafeRunnableDialog_reason", new Object[] { //$NON-NLS-1$
 				status.getMessage(), reason });
 	}
 
