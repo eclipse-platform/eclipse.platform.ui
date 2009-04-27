@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,7 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.update.internal.core;
-
 
 import org.eclipse.update.core.FeatureContentProvider;
 
@@ -48,16 +47,15 @@ public class SiteFileFactory extends BaseSiteFactory {
 	// private when parsing file system
 	private SiteFile site;
 
-
 	/*
 	 * @see ISiteFactory#createSite(URL,boolean)
 	 */
 	public ISite createSite(URL url) throws CoreException, InvalidSiteTypeException {
-	
+
 		Site site = null;
 		InputStream siteStream = null;
 		SiteModelFactory factory = this;
-	
+
 		try {
 			// if url points to a directory
 			// attempt to parse site.xml
@@ -81,35 +79,35 @@ public class SiteFileFactory extends BaseSiteFactory {
 					siteStream = openStream(resolvedURL);
 					site = (Site) factory.parseSite(siteStream);
 				} catch (IOException e) {
-	
+
 					// attempt to parse parent directory
 					File file = new File(url.getFile());
 					File parentDirectory = file.getParentFile();
-	
+
 					// do not create directory if it doesn't exist	[18318]
 					// instead hrow error					
 					if (parentDirectory != null && !parentDirectory.exists())
-						throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_DirectoryDoesNotExist, (new String[] { file.getAbsolutePath() })), null);
-	
+						throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_DirectoryDoesNotExist, (new String[] {file.getAbsolutePath()})), null);
+
 					if (parentDirectory == null || !parentDirectory.isDirectory())
-						throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToObtainParentDirectory, (new String[] { file.getAbsolutePath() })), null);
-	
+						throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToObtainParentDirectory, (new String[] {file.getAbsolutePath()})), null);
+
 					site = parseSite(parentDirectory);
-	
+
 				}
 			}
-	
+
 			SiteContentProvider contentProvider = new SiteFileContentProvider(url);
 			site.setSiteContentProvider(contentProvider);
 			contentProvider.setSite(site);
 			site.resolve(url, url);
-	
+
 			// Do not set read only as may install in it
 			//site.markReadOnly();
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURL, (new String[] { url == null ? "" : url.toExternalForm() })), e);	//$NON-NLS-1$
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURL, (new String[] {url == null ? "" : url.toExternalForm()})), e); //$NON-NLS-1$
 		} catch (IOException e) {
-			throw Utilities.newCoreException(Messages.SiteFileFactory_UnableToAccessSite,ISite.SITE_ACCESS_EXCEPTION, e);
+			throw Utilities.newCoreException(Messages.SiteFileFactory_UnableToAccessSite, ISite.SITE_ACCESS_EXCEPTION, e);
 		} finally {
 			try {
 				if (siteStream != null)
@@ -119,6 +117,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		}
 		return site;
 	}
+
 	/**
 	 * Method parseSite.
 	 */
@@ -127,7 +126,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 		this.site = (SiteFile) createSiteMapModel();
 
 		if (!directory.exists())
-			throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_FileDoesNotExist, (new String[] { directory.getAbsolutePath() })), null);
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_FileDoesNotExist, (new String[] {directory.getAbsolutePath()})), null);
 
 		File pluginPath = new File(directory, Site.DEFAULT_PLUGIN_PATH);
 
@@ -177,9 +176,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 
 			try {
 				// handle the installed featuresConfigured under featuresConfigured subdirectory
-				dir = featureDir.list();				
+				dir = featureDir.list();
 				if (dir == null) {
-					throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, directory.getName() + File.separator + directory.getName() + "directory is empty", null)); //$NON-NLS-1$
+					throw new EmptyDirectoryException(new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, directory.getName() + File.separator + directory.getName() + "directory is empty", null)); //$NON-NLS-1$
 				}
 				for (int index = 0; index < dir.length; index++) {
 
@@ -202,7 +201,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					}
 				}
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURLForFile, (new String[] { newFilePath })), e);
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURLForFile, (new String[] {newFilePath})), e);
 			}
 		}
 	}
@@ -226,9 +225,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 				// only list JAR files
 				dir = featureDir.list(FeaturePackagedContentProvider.filter);
 				if (dir == null) {
-					throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, directory.getName() + File.separator + directory.getName() + "directory is empty", null)); //$NON-NLS-1$
+					throw new EmptyDirectoryException(new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, directory.getName() + File.separator + directory.getName() + "directory is empty", null)); //$NON-NLS-1$
 				}
-				
+
 				for (int index = 0; index < dir.length; index++) {
 
 					// check if the JAR file contains a feature.xml
@@ -254,7 +253,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 					}
 				}
 			} catch (MalformedURLException e) {
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURLForFile, (new String[] { newFilePath })), e);
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURLForFile, (new String[] {newFilePath})), e);
 			}
 		}
 	}
@@ -277,9 +276,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 			}
 		});
 		DefaultPluginParser parser = new DefaultPluginParser();
-		
+
 		if (dirs == null) {
-			throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, pluginsDir.getName() + File.separator + pluginsDir.getName() + "directory is empty", null)); //$NON-NLS-1$
+			throw new EmptyDirectoryException(new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, pluginsDir.getName() + File.separator + pluginsDir.getName() + "directory is empty", null)); //$NON-NLS-1$
 		}
 		for (int i = 0; i < dirs.length; i++) {
 			File pluginFile = new File(dirs[i], "META-INF/MANIFEST.MF"); //$NON-NLS-1$
@@ -291,32 +290,26 @@ public class SiteFileFactory extends BaseSiteFactory {
 					addParsedPlugin(entry, dirs[i]);
 				} else {
 					if (!(pluginFile = new File(dirs[i], "plugin.xml")) //$NON-NLS-1$
-							.exists()) { 
+							.exists()) {
 						pluginFile = new File(dirs[i], "fragment.xml"); //$NON-NLS-1$
 					}
-					if (pluginFile != null && pluginFile.exists()
-							&& !pluginFile.isDirectory()) {
+					if (pluginFile != null && pluginFile.exists() && !pluginFile.isDirectory()) {
 						in = new FileInputStream(pluginFile);
 						PluginEntry entry = parser.parse(in);
 						addParsedPlugin(entry, dirs[i]);
 					}
 				}
 			} catch (IOException e) {
-				String pluginFileString = (pluginFile == null)
-						? null
-						: pluginFile.getAbsolutePath();
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] { pluginFileString })), e);
+				String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] {pluginFileString})), e);
 			} catch (SAXException e) {
-				String pluginFileString = (pluginFile == null)
-						? null
-						: pluginFile.getAbsolutePath();
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] { pluginFileString })),
-						e);
+				String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] {pluginFileString})), e);
 			} finally {
-				if (in != null){
-					try{
+				if (in != null) {
+					try {
 						in.close();
-					} catch(IOException e){
+					} catch (IOException e) {
 					}
 				}
 			}
@@ -328,7 +321,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	 * and a PluginEntry for the Site	 
 	 */
 	// PERF: removed intermediate Plugin object
-	private void addParsedPlugin(PluginEntry entry,File file) throws CoreException {
+	private void addParsedPlugin(PluginEntry entry, File file) throws CoreException {
 
 		String location = null;
 		try {
@@ -355,7 +348,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			}
 		} catch (MalformedURLException e) {
-			throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURLForFile, (new String[] { location })), e);
+			throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_UnableToCreateURLForFile, (new String[] {location})), e);
 		}
 	}
 
@@ -367,9 +360,9 @@ public class SiteFileFactory extends BaseSiteFactory {
 			return;
 		}
 		String[] dir = pluginDir.list(FeaturePackagedContentProvider.filter);
-		
+
 		if (dir == null) {
-			throw new EmptyDirectoryException( new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, pluginDir.getName() + File.separator + pluginDir.getName() + "directory is empty", null)); //$NON-NLS-1$
+			throw new EmptyDirectoryException(new Status(IStatus.WARNING, UpdateCore.getPlugin().getBundle().getSymbolicName(), IStatus.OK, pluginDir.getName() + File.separator + pluginDir.getName() + "directory is empty", null)); //$NON-NLS-1$
 		}
 		for (int i = 0; i < dir.length; i++) {
 			ContentReference ref = null;
@@ -378,8 +371,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 			JarContentReference jarReference = null;
 			try {
 				File file = new File(pluginDir, dir[i]);
-				jarReference = new JarContentReference(
-						null, file);
+				jarReference = new JarContentReference(null, file);
 				ref = jarReference.peek("META-INF/MANIFEST.MF", null, null); //$NON-NLS-1$
 				if (ref != null) {
 					in = ref.getInputStream();
@@ -400,23 +392,21 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			} catch (IOException e) {
 				try {
-					refString = (ref == null) ? null : ref.asURL()
-							.toExternalForm();
+					refString = (ref == null) ? null : ref.asURL().toExternalForm();
 				} catch (IOException ioe) {
 				}
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] { refString })), e);
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] {refString})), e);
 			} catch (SAXException e) {
 				try {
-					refString = (ref == null) ? null : ref.asURL()
-							.toExternalForm();
+					refString = (ref == null) ? null : ref.asURL().toExternalForm();
 				} catch (IOException ioe) {
 				}
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] { refString })), e);
+				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] {refString})), e);
 			} finally {
-				if(in != null){
-					try{
+				if (in != null) {
+					try {
 						in.close();
-					}catch(IOException ce){
+					} catch (IOException ce) {
 					}
 				}
 				if (jarReference != null) {
