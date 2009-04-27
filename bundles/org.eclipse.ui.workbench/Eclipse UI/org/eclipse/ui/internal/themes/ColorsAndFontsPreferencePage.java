@@ -43,8 +43,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
-import org.eclipse.jface.window.DefaultToolTip;
-import org.eclipse.jface.window.ToolTip;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StackLayout;
@@ -60,7 +58,6 @@ import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
@@ -72,11 +69,10 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.FontDialog;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
@@ -639,6 +635,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
     private FilteredTree tree;
     
+	private Text descriptionText;
+
     /**
      * Create a new instance of the receiver.
      */
@@ -725,26 +723,28 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         fontResetButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("reset")); //$NON-NLS-1$
         // --- end of buttons
 
-        Composite previewColumn = new Composite(advancedComposite, SWT.NONE); //SWT.BORDER);
+		createDescriptionControl(mainColumn);
+
+		Composite previewColumn = new Composite(advancedComposite, SWT.NONE);
         GridLayout previewLayout = new GridLayout();
-        previewLayout.marginWidth = 0;
-        previewLayout.marginHeight = 0;
+		previewLayout.marginWidth = 0;
+		previewLayout.marginHeight = 0;
         previewColumn.setFont(parent.getFont());
-        previewColumn.setLayout(layout);
+        previewColumn.setLayout(previewLayout);
         
         // --- create preview control
-        Composite composite = new Composite(previewColumn, SWT.NONE);
+		Composite composite = new Composite(previewColumn, SWT.NONE);
+
         GridData data2 = new GridData(GridData.FILL_BOTH);
         composite.setLayoutData(data2);
         GridLayout layout2 = new GridLayout(1, true);
-        layout2.marginHeight = 0;
-        layout2.marginWidth = 0;
-        composite.setLayout(layout);
-
+		layout2.marginHeight = 0;
+		layout2.marginWidth = 0;
+		composite.setLayout(layout2);
         
-        Label label2 = new Label(composite, SWT.LEFT);
-        label2.setText(RESOURCE_BUNDLE.getString("preview")); //$NON-NLS-1$
-        myApplyDialogFont(label2);
+		Label label2 = new Label(composite, SWT.LEFT);
+		label2.setText(RESOURCE_BUNDLE.getString("preview")); //$NON-NLS-1$
+		myApplyDialogFont(label2);
         
         previewComposite = new Composite(composite, SWT.NONE);
         previewComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
@@ -822,50 +822,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
                 updateControls();
             }
         });
-        
-        // disable conventional tooltips
-        tree.getViewer().getTree().setToolTipText(""); //$NON-NLS-1$
-        new DefaultToolTip(tree.getViewer().getControl(), ToolTip.NO_RECREATE, false) {
-        
-			private Object currentHoverElement;
-			
-        	/* (non-Javadoc)
-        	 * @see org.eclipse.jface.window.DefaultToolTip#getText(org.eclipse.swt.widgets.Event)
-        	 */
-        	protected String getText(Event event) {
-				currentHoverElement = getHoveredElement(event);
-				String text = null;
-				if (currentHoverElement instanceof FontDefinition)
-					text = ((FontDefinition) currentHoverElement).getDescription();
-				else if (currentHoverElement instanceof ColorDefinition)
-					text = ((ColorDefinition) currentHoverElement).getDescription();
-				else if (currentHoverElement instanceof ThemeElementCategory)
-					text = ((ThemeElementCategory) currentHoverElement).getDescription();
-				if (text != null)
-					return text;
-				return labelProvider.getText(currentHoverElement);
-			}
-        	
-        	/* (non-Javadoc)
-        	 * @see org.eclipse.jface.window.ToolTip#shouldCreateToolTip(org.eclipse.swt.widgets.Event)
-        	 */
-        	protected boolean shouldCreateToolTip(Event event) {
-				Object hoverElement= getHoveredElement(event);
-				if (hoverElement == null)
-					return false;
-				return (hoverElement != currentHoverElement || super.shouldCreateToolTip(event));
-        	}
-        	
-        	
-			private Object getHoveredElement(Event event) {
-				TreeItem item = tree.getViewer().getTree().getItem(
-						new Point(event.x, event.y));
-				if (item != null)
-					return item.getData();
-				return null;
-			}
-			};
-			
+
         restoreTreeExpansion();
         restoreTreeSelection();
     }
@@ -1700,6 +1657,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         fontChangeButton.setEnabled(false);
         fontSystemButton.setEnabled(false);
         fontResetButton.setEnabled(false);
+		descriptionText.setText(""); //$NON-NLS-1$
 	}
 	
     /**
@@ -1743,6 +1701,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			fontPreviewLabel.setText(fontSampleText.toString());
 			fontPreviewLabel.setFont(currentFont);
 		}
+
+		String description = fontDefinition.getDescription();
+		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
 	}
 	
 	public void setCurrentColor(ColorDefinition colorDefinition) {
@@ -1751,6 +1712,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 			currentColor.dispose();
 		currentColor = new Color(previewComposite.getDisplay(), color);
 		colorSampler.redraw();
+
+		String description = colorDefinition.getDescription();
+		descriptionText.setText(description == null ? "" : description); //$NON-NLS-1$
 	}
 	
 	private Composite createFontPreviewControl() {
@@ -1826,5 +1790,21 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		gc.setForeground(currentColor);
 		gc.setBackground(colorSampler.getBackground());
 		gc.drawText(msg, clientArea.x + textHorizontalOffset2, clientArea.y + textVerticalOffset);
+	}
+
+	private void createDescriptionControl(Composite parent) {
+		Group composite = new Group(parent, SWT.NONE);
+		GridLayout layout = new GridLayout();
+		composite.setLayout(layout);
+		GridData dataComposite = new GridData(GridData.FILL_HORIZONTAL);
+		dataComposite.horizontalSpan = 2;
+		composite.setLayoutData(dataComposite);
+		composite.setText(RESOURCE_BUNDLE.getString("description")); //$NON-NLS-1$
+
+		descriptionText = new Text(composite, SWT.READ_ONLY | SWT.WRAP);
+		GridData data = new GridData(GridData.FILL_BOTH);
+		data.heightHint = convertHeightInCharsToPixels(3);
+		descriptionText.setLayoutData(data);
+		myApplyDialogFont(descriptionText);
 	}
 }
