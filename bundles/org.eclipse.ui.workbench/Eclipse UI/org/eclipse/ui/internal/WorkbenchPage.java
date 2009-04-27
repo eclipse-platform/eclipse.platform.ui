@@ -5073,10 +5073,12 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 					Workbench workbench = (Workbench) getWorkbenchWindow().getWorkbench();
 						workbench.largeUpdateStart();
 						try {
-							for (int i = 0 ; i < inputs.length; i++) {
+							deferUpdates(true);
+							for (int i = inputs.length - 1; i >= 0; i--) {
 							   if (inputs[i] == null || editorIDs[i] == null)
 							        throw new IllegalArgumentException();
-								boolean activate = (i ==0); // activate the first editor
+								// activate the first editor
+								boolean activate = (i == 0);
 								try {
 									// check if there is an editor we can reuse
 							        IEditorReference ref = batchReuseEditor(inputs[i], editorIDs[i], 
@@ -5086,7 +5088,16 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 							        results[i] = ref;
 								} catch (PartInitException e) {
 									exceptions[i] = e;
+									results[i] = null;
 								}
+							}
+							deferUpdates(false);
+							// Update activation history. This can't be done
+							// "as we go" or editors will be materialized.
+							for (int i = inputs.length - 1; i >= 0; i--) {
+								if (results[i] == null)
+									continue;
+								activationList.bringToTop(results[i]);
 							}
 						} finally {
 							workbench.largeUpdateEnd();
