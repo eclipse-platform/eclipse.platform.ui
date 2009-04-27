@@ -3871,7 +3871,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	}
 	
 	private void invalidateLines() {
-		if (isThreeWay()) {
+		if (isThreeWay() && isAncestorVisible()) {
 			if (Utilities.okToUse(fAncestorCanvas))
 				fAncestorCanvas.redraw();
 			if (fAncestor != null && fAncestor.isControlOkToUse())
@@ -4423,6 +4423,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 
 //		if (d == fCurrentDiff)
 //			return;
+		boolean diffChanged = fCurrentDiff != d;
 
 		if (fCenterButton != null && !fCenterButton.isDisposed())
 			fCenterButton.setVisible(false);
@@ -4452,7 +4453,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		}
 
 		updateControls();
-		invalidateLines();
+		if (diffChanged)
+			invalidateLines();
 		refreshBirdsEyeView();
 	}
 
