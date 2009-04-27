@@ -301,10 +301,10 @@ public class SiteFileFactory extends BaseSiteFactory {
 				}
 			} catch (IOException e) {
 				String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] {pluginFileString})), e);
+				UpdateCore.log(Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] {pluginFileString})), e));
 			} catch (SAXException e) {
 				String pluginFileString = (pluginFile == null) ? null : pluginFile.getAbsolutePath();
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] {pluginFileString})), e);
+				UpdateCore.log(Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] {pluginFileString})), e));
 			} finally {
 				if (in != null) {
 					try {
@@ -317,7 +317,7 @@ public class SiteFileFactory extends BaseSiteFactory {
 	}
 
 	/**
-	 * tranform each Plugin and Fragment into an ArchiveReferenceModel
+	 * transform each Plugin and Fragment into an ArchiveReferenceModel
 	 * and a PluginEntry for the Site	 
 	 */
 	// PERF: removed intermediate Plugin object
@@ -377,11 +377,12 @@ public class SiteFileFactory extends BaseSiteFactory {
 					in = ref.getInputStream();
 					BundleManifest manifest = new BundleManifest(in);
 					if (manifest.exists()) {
+
 						addParsedPlugin(manifest.getPluginEntry(), file);
 						continue;
 					}
 				}
-				ref = jarReference.peek("plugin.xml", null, null); //$NON-NLS-1$
+				ref = jarReference.peek("plugin.xml", null, null);//$NON-NLS-1$
 				if (ref == null) {
 					ref = jarReference.peek("fragment.xml", null, null); //$NON-NLS-1$
 				}
@@ -390,18 +391,25 @@ public class SiteFileFactory extends BaseSiteFactory {
 					PluginEntry entry = new DefaultPluginParser().parse(in);
 					addParsedPlugin(entry, file);
 				}
-			} catch (IOException e) {
+			} catch (Exception e) {
 				try {
 					refString = (ref == null) ? null : ref.asURL().toExternalForm();
 				} catch (IOException ioe) {
 				}
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] {refString})), e);
-			} catch (SAXException e) {
-				try {
-					refString = (ref == null) ? null : ref.asURL().toExternalForm();
-				} catch (IOException ioe) {
-				}
-				throw Utilities.newCoreException(NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] {refString})), e);
+
+				String message;
+
+				if (e instanceof IOException) {
+					message = NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] {refString}));
+				} else if (e instanceof SAXException) {
+					message = NLS.bind(Messages.SiteFileFactory_ErrorParsingFile, (new String[] {refString}));
+				} else {
+					message = NLS.bind(Messages.SiteFileFactory_ErrorAccessing, (new String[] {refString}));
+				}// end if
+
+				// Log exception, but do not throw to caller.
+				// Continue with processing remaining plug-ins
+				UpdateCore.log(message, e);
 			} finally {
 				if (in != null) {
 					try {
