@@ -184,7 +184,38 @@
           </popupMenu>
        </viewer>
    </extension>
-   
+
+<!-- *************** Property Testers **************** -->
+   <extension point="org.eclipse.core.expressions.propertyTesters">
+      <propertyTester
+         id="org.eclipse.team.internal.ccvs.ui.IEditorInputTester"
+         type="org.eclipse.ui.IEditorInput"
+         namespace="org.eclipse.team.internal.ccvs.ui"
+         properties="isManaged"
+         class="org.eclipse.team.internal.ccvs.ui.IEditorInputTester">
+      </propertyTester>
+   </extension>
+
+<!-- *************** Menus **************** -->   
+   <extension point="org.eclipse.ui.menus">
+      <menuContribution
+         locationURI="popup:#AbstractTextEditorRulerContext?after=QuickDiff.Toggle">
+         <command
+            commandId="org.eclipse.team.cvs.ui.showAnnotation"
+            style="push">
+            <visibleWhen
+               checkEnabled="false">
+               <with variable="activeEditorInput">
+                  <test
+                     property="org.eclipse.team.internal.ccvs.ui.isManaged"
+                     value="true">
+                  </test>
+               </with>
+            </visibleWhen>
+         </command>
+      </menuContribution>
+   </extension>
+
 <!-- *************** Authenticator **************** -->
    <extension
          point="org.eclipse.team.cvs.core.authenticator">
