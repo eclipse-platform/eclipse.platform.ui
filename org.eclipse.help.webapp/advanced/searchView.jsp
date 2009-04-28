@@ -190,7 +190,7 @@ setTimeout('refresh()', 2000);
 		   href="<%=UrlUtil.htmlEncode(data.getTopicHref(topic))%>" 
 		   onmouseover="showStatus(event);return true;"
 		   onmouseout="clearStatus();return true;"
-		   title="<%=UrlUtil.htmlEncode(data.getTopicTocLabel(topic))%>">
+		   title="<%=data.getTopicTocLabel(topic)%>">
 
 <%
 		String label = null;
@@ -202,7 +202,7 @@ setTimeout('refresh()', 2000);
         }
 %>
 
-        <%=UrlUtil.htmlEncode(label)%></a>
+        <%=label%></a>
 	</td>
 </tr>
 
@@ -215,7 +215,7 @@ setTimeout('refresh()', 2000);
 	</td>
 	<td align='<%=isRTL?"right":"left"%>'>
 		<div class="description">
-			<%=UrlUtil.htmlEncode(desc)%>
+			<%=desc%>
 		</div>
 	</td>
 </tr>
