@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -356,7 +356,7 @@ public class PropertyStore {
 	 * @param resourceName the resource containing the properties.
 	 * @param propertyNames the property names to remove.
 	 * @param depth the scope for matching the resource name.
-	 * @param removeRule the behavior when removing non-existant properties.
+	 * @param removeRule the behaviour when removing non-existent properties.
 	 * @exception CoreException
 	 */
 	public QueryResults remove(ResourceName resourceName, QualifiedName[] propertyNames, int depth, int removeRule) throws CoreException {
@@ -427,13 +427,13 @@ public class PropertyStore {
 	 * <p>
 	 * The <code>PropertyExistsException</code> is thrown if the matching resource
 	 * already has a property of the same name, and the rule requires that
-	 * it must not.  If the exception is thrown, all successfull properties
+	 * it must not.  If the exception is thrown, all successful properties
 	 * will have been set, and the failures are listed in the exception.</p>
 	 *
 	 * @param resourceName the resource to receive the properties.
 	 * @param properties the properties to add.
-	 * @param depth the depth at which to apply the add opertion.
-	 * @param mode the behavior of the add operation.
+	 * @param depth the depth at which to apply the add operation.
+	 * @param mode the behaviour of the add operation.
 	 * @exception CoreException
 	 */
 	public QueryResults set(ResourceName resourceName, StoredProperty[] properties, int depth, int mode) throws CoreException {
