@@ -731,10 +731,37 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		//Register help listener on the tree to use context sensitive help
 		viewer.getControl().addHelpListener(new HelpListener() {
 			public void helpRequested(HelpEvent event) {
-				// call perform help on the current page
-				if (currentPage != null) {
-					currentPage.performHelp();
+				if (currentPage == null) { // no current page? open dialog's help
+					openDialogHelp();
+					return;
 				}
+				// A) A typical path: the current page has registered its own help link 
+				// via WorkbenchHelpSystem#setHelp(). When just call it and let 
+				// it handle the help request.
+				Control pageControl = currentPage.getControl();
+				if (pageControl != null && pageControl.isListening(SWT.Help)) {
+					currentPage.performHelp();
+					return;
+				}
+				
+				// B) Less typical path: no standard listener has been created for the page.
+				// In this case we may or may not have an override of page's #performHelp().
+				// 1) Try to get default help opened for the dialog;
+				openDialogHelp();
+				// 2) Next call currentPage's #performHelp(). If it was overridden, it might switch help 
+				// to something else.
+				currentPage.performHelp();
+			}
+			
+			private void openDialogHelp() {
+				if (pageContainer == null)
+					return;
+		    	for(Control currentControl = pageContainer; currentControl != null; currentControl = currentControl.getParent()) {  
+		    		if (currentControl.isListening(SWT.Help)) {
+		    			currentControl.notifyListeners(SWT.Help, new Event());
+		    			break;
+		    		}
+		    	}
 			}
 		});
 	}
