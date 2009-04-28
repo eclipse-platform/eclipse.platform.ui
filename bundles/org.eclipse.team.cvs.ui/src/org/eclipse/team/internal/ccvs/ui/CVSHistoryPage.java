@@ -279,7 +279,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	private void saveState() {
 		saveSashWeights(SASH_WEIGHTS, sashForm.getWeights());
 		saveSashWeights(INNER_SASH_WEIGHTS, innerSashForm.getWeights());
-		historyTableProvider.saveColumnWeights();
+		historyTableProvider.saveColumnLayout();
 	}
 
 	private int[] loadSashWeights(String key) {
@@ -906,9 +906,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 	protected TreeViewer createTree(Composite parent) {
 
 		historyTableProvider = new CVSHistoryTableProvider();
-		TreeViewer viewer = historyTableProvider
-				.createTree(parent, cvsFileHistory == null ? true
-						: cvsFileHistory.isIncludeLocal());
+		TreeViewer viewer = historyTableProvider.createTree(parent);
 
 		viewer.setContentProvider(new ITreeContentProvider() {
 			public Object[] getElements(Object inputElement) {
@@ -1559,7 +1557,7 @@ public class CVSHistoryPage extends HistoryPage implements IAdaptable, IHistoryC
 			
 			Utils.asyncExec(new Runnable() {
 				public void run() {
-					historyTableProvider.setLocalRevisionsDisplayed(fileHistory.isIncludeLocal());
+					treeViewer.refresh();
 					historyTableProvider.setFile(fileHistory, workspaceFile);
 					//historyTableProvider.setWorkspaceFile(workspaceFile);
 					if (!selectOnly){

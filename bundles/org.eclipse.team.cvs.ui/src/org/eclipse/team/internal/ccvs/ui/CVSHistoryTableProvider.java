@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -76,6 +76,8 @@ public class CVSHistoryTableProvider {
 	private static final String COL_COMMENT_NAME = "COL_COMMENT"; //$NON-NLS-1$
 
 	private static final String COL_NAME = "COLUMN_NAME"; //$NON-NLS-1$
+	private static final String SORT_COL_NAME = "SORT_COL_NAME"; //$NON-NLS-1$
+	private static final String SORT_COL_DIRECTION = "SORT_COL_DIRECTION"; //$NON-NLS-1$
 
 	public CVSHistoryTableProvider() {
 		IDialogSettings viewsSettings = CVSUIPlugin.getPlugin()
@@ -474,7 +476,7 @@ public class CVSHistoryTableProvider {
 	 * @param parent
 	 * @return TableViewer
 	 */
-	public TreeViewer createTree(Composite parent, boolean localIsDisplayed) {
+	public TreeViewer createTree(Composite parent) {
 		Tree tree = new Tree(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION);
 		tree.setHeaderVisible(true);
 		tree.setLinesVisible(true);
@@ -490,7 +492,7 @@ public class CVSHistoryTableProvider {
 		
 		// Initialize the sorting
 		ColumnViewerToolTipSupport.enableFor(viewer);
-		setLocalRevisionsDisplayed(localIsDisplayed);
+		viewer.refresh();
 
 		tree.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
@@ -517,7 +519,6 @@ public class CVSHistoryTableProvider {
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Revision);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(loadColumnWeightData(COL_REVISIONID_NAME));
 
 		// tags
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
@@ -527,7 +528,6 @@ public class CVSHistoryTableProvider {
 		col.setResizable(true);
 		col.setText(CVSUIMessages.HistoryView_tags); 
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(loadColumnWeightData(COL_TAGS_NAME));
 
 		// creation date
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
@@ -537,7 +537,6 @@ public class CVSHistoryTableProvider {
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_RevisionTime);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(loadColumnWeightData(COL_DATE_NAME));
 
 		// author
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
@@ -547,7 +546,6 @@ public class CVSHistoryTableProvider {
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Author);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(loadColumnWeightData(COL_AUTHOR_NAME));
 
 		//comment
 		viewerCol = new TreeViewerColumn(tree, SWT.NONE);
@@ -557,23 +555,60 @@ public class CVSHistoryTableProvider {
 		col.setResizable(true);
 		col.setText(TeamUIMessages.GenericHistoryTableProvider_Comment);
 		col.addSelectionListener(headerListener);
-		layout.addColumnData(loadColumnWeightData(COL_COMMENT_NAME));
+
+		loadColumnLayout(layout);
 	}
 
-	private ColumnLayoutData loadColumnWeightData(String key) {
+	public void loadColumnLayout(TableLayout layout) {
+		layout.addColumnData(getWeightData(settings.get(COL_REVISIONID_NAME)));
+		layout.addColumnData(getWeightData(settings.get(COL_TAGS_NAME)));
+		layout.addColumnData(getWeightData(settings.get(COL_DATE_NAME)));
+		layout.addColumnData(getWeightData(settings.get(COL_AUTHOR_NAME)));
+		layout.addColumnData(getWeightData(settings.get(COL_COMMENT_NAME)));
+
+		String sortName = settings.get(SORT_COL_NAME);
+		if (sortName == null) {
+			sortName = COL_DATE_NAME;
+		}
+		int sortDirection = SWT.DOWN;
 		try {
-			return new ColumnPixelData(settings.getInt(key), true);
+			sortDirection = settings.getInt(SORT_COL_DIRECTION);
+		} catch (NumberFormatException e) {
+			// Silently ignored
+		}
+		TreeColumn sortColumn = null;
+		int columnNumber = 0;
+		TreeColumn columns[] = viewer.getTree().getColumns();
+		for (int i = 0; i < columns.length; i++) {
+			if (columns[i].getData(COL_NAME).equals(sortName)) {
+				sortColumn = columns[i];
+				columnNumber = i;
+			}
+		}
+		viewer.getTree().setSortColumn(sortColumn);
+		viewer.getTree().setSortDirection(sortDirection);
+		HistoryComparator sorter = new HistoryComparator(columnNumber);
+		sorter.setReversed(sortDirection == SWT.DOWN);
+		viewer.setComparator(sorter);
+	}
+ 
+	private ColumnLayoutData getWeightData(String value) {
+		try {
+			return new ColumnPixelData(Integer.parseInt(value), true);
 		} catch (NumberFormatException e) {
 			return new ColumnWeightData(20, true);
 		}
 	}
 
-	public void saveColumnWeights() {
+	public void saveColumnLayout() {
 		TreeColumn columns[] = viewer.getTree().getColumns();
 		for (int i = 0; i < columns.length; i++) {
 			settings.put((String) columns[i].getData(COL_NAME), columns[i]
 					.getWidth());
 		}
+		settings.put(SORT_COL_NAME, (String) viewer.getTree().getSortColumn()
+				.getData(COL_NAME));
+		settings.put(SORT_COL_DIRECTION, viewer.getTree().getSortDirection());
 	}
 
 	/**
@@ -643,32 +678,6 @@ public class CVSHistoryTableProvider {
 		}
 
 		return null;
-	}
-	
-	/*
-	 * Used to reset the sorting for the table provider; if local files
-	 * are included in the table, then we sort by date. Otherwise we default
-	 * to sorting by revision 
-	 */
-	public void setLocalRevisionsDisplayed(boolean displayed){
-		//init sort to sort by revision
-		int column = COL_REVISIONID;
-		if (displayed){
-			//locals displayed, if the base has been modified then sort by DATE
-			column = COL_DATE;	
-		}
-		
-		HistoryComparator oldSorter = (HistoryComparator) viewer.getComparator();
-		if (oldSorter != null && column == oldSorter.getColumnNumber()) {
-			viewer.refresh();
-		} else {
-			HistoryComparator newSorter = new HistoryComparator(column);
-			newSorter.setReversed(true);
-			viewer.setComparator(newSorter);
-			viewer.getTree().setSortColumn(viewer.getTree().getColumn(column));
-			viewer.getTree().setSortDirection(newSorter.isReversed() ? SWT.DOWN : SWT.UP);
-		 
-		}
 	}
 
 	public void setBaseModified(boolean modified) {
