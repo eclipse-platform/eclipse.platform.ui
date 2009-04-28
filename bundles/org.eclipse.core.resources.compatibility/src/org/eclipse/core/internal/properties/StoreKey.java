@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -148,13 +148,13 @@ public class StoreKey {
 		return new String(toBytes());
 	}
 
-	private void writeBytes(ByteArrayOutputStream stream, String value) throws IOException {
-		byte[] bytes = Convert.toUTF8(value);
+	private void writeBytes(ByteArrayOutputStream stream, String aValue) throws IOException {
+		byte[] bytes = Convert.toUTF8(aValue);
 		stream.write(bytes);
 	}
 
-	private void writeNullTerminated(ByteArrayOutputStream stream, String value) throws IOException {
-		writeBytes(stream, value);
+	private void writeNullTerminated(ByteArrayOutputStream stream, String aValue) throws IOException {
+		writeBytes(stream, aValue);
 		stream.write(0);
 	}
 }
