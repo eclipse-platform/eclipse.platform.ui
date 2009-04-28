@@ -26,12 +26,13 @@ import org.eclipse.ui.internal.misc.StringMatcher;
 import com.ibm.icu.text.BreakIterator;
 
 /**
- * A filter used in conjunction with <code>FilteredTree</code>.  In order to 
- * determine if a node should be filtered it uses the content provider of the 
- * tree to do pattern matching on its children.  This causes the entire tree
- * structure to be realized.
- *  
- * @see org.eclipse.ui.dialogs.FilteredTree  
+ * A filter used in conjunction with <code>FilteredTree</code>. In order to
+ * determine if a node should be filtered it uses the content and label provider
+ * of the tree to do pattern matching on its children. This causes the entire
+ * tree structure to be realized. Note that the label provider must implement
+ * ILabelProvider.
+ * 
+ * @see org.eclipse.ui.dialogs.FilteredTree
  * @since 3.2
  */
 public class PatternFilter extends ViewerFilter {
