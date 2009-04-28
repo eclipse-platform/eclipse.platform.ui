@@ -1652,9 +1652,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	private boolean hardClose() {
 		boolean result;
 		try {
-			// Clear the action sets, fix for bug 27416.
-            getActionPresentation().clearActionSets();
-
 			// Remove the handler submissions. Bug 64024.
 			final IWorkbench workbench = getWorkbench();
 			final IHandlerService handlerService = (IHandlerService) workbench.getService(IHandlerService.class);
@@ -1712,6 +1709,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			}
 		} finally {
 			result = super.close();
+			// Clear the action sets, fix for bug 27416.
+			getActionPresentation().clearActionSets();
 			try {
 				// Bring down all of the services ... after the window goes away
 				serviceLocator.dispose();
