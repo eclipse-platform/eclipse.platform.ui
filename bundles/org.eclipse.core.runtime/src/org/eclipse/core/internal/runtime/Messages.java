@@ -37,11 +37,6 @@ public class Messages extends NLS {
 	// Preferences
 	public static String preferences_saveProblems;
 
-	// Product
-	public static String product_notFound;
-	public static String provider_invalid;
-	public static String provider_invalid_general;
-
 	// Compatibility - parsing/resolve
 	public static String parse_badPrereqOnFrag;
 	public static String parse_duplicateFragment;
