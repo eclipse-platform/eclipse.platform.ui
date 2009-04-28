@@ -44,7 +44,6 @@ final class FileBuffersMessages extends NLS {
 	public static String TextFileBufferManager_error_documentSetupFailed;
 	public static String TextFileBufferManager_error_documentFactoryFailed;
 	public static String TextFileBufferManager_warning_documentSetupInstallsDefaultPartitioner;
-	public static String DocumentInputStream_error_read;
 	public static String DocumentInputStream_error_streamClosed;
 
 	static {
