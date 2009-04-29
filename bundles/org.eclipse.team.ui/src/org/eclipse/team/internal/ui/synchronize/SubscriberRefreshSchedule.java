@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,7 +162,7 @@ public class SubscriberRefreshSchedule {
 		Calendar now = Calendar.getInstance();
 		Calendar start = Calendar.getInstance();
 		start.setTime(refreshStart);
-		if (now.after(start)) {
+		while (now.after(start)) {
 			start.add(Calendar.DATE, 1); // tomorrow
 		}
 		return start.getTimeInMillis() - now.getTimeInMillis();
