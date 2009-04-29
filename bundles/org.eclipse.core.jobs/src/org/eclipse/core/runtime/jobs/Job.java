@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -593,7 +593,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * without running.
 	 * <p>
 	 * This method is called immediately prior to calling the job's
-	 * run method, so it can be used for last minute pre-condition checking before
+	 * run method, so it can be used for last minute precondition checking before
 	 * a job is run. This method must not attempt to schedule or change the
 	 * state of any other job.
 	 * </p><p>
@@ -614,7 +614,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * without being added to the queue.
 	 * <p>
 	 * This method is called immediately prior to adding the job to the waiting job
-	 * queue.,so it can be used for last minute pre-condition checking before
+	 * queue.,so it can be used for last minute precondition checking before
 	 * a job is scheduled.
 	 * </p><p>
 	 * Clients may override this method.  This default implementation always returns

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.preferences.IScopeContext;
  */
 public interface IContentType extends IContentTypeSettings {
 	/**
-	 * File spec type flag constant, indicating that pre-defined file 
+	 * File spec type flag constant, indicating that predefined file 
 	 * specifications should not be taken into account.
 	 */
 	public static final int IGNORE_PRE_DEFINED = 0x01;

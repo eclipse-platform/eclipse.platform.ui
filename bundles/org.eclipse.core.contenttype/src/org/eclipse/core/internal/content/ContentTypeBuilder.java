@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -174,7 +174,7 @@ public class ContentTypeBuilder {
 	private final static IConfigurationElement[] emptyConfArray = new IConfigurationElement[0];
 
 	/**
-	 * Gets confuguration elements for both "backward compatible" extension point
+	 * Gets configuration elements for both "backward compatible" extension point
 	 * 		org.eclipse.core.runtime.contentTypes
 	 * and "new" extension point controlled by this plugin:
 	 * 		org.eclipse.core.contenttype.contentTypes
@@ -185,7 +185,7 @@ public class ContentTypeBuilder {
 			return emptyConfArray;
 		IConfigurationElement[] oldConfigElements = emptyConfArray;
 		IConfigurationElement[] newConfigElements = emptyConfArray;
-		// "old" extenstion point
+		// "old" extension point
 		IExtensionPoint oldPoint = registry.getExtensionPoint(IContentConstants.RUNTIME_NAME, PT_CONTENTTYPES);
 		if (oldPoint != null)
 			oldConfigElements = oldPoint.getConfigurationElements();
