@@ -387,7 +387,7 @@ public abstract class Plugin implements BundleActivator {
 	 * @deprecated Replaced by InstanceScope.getNode(&lt;bundleId&gt;).flush()
 	 */
 	public final void savePluginPreferences() {
-		// populate the "preferences" instvar. We still might
+		// populate the "preferences" instance variable. We still might
 		// need to save them because someone else might have
 		// made changes via the OSGi APIs.
 		getPluginPreferences();
