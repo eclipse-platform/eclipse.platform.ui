@@ -70,7 +70,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.FontDialog;
-import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
@@ -125,8 +124,6 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 	 */
 	private static final char MARKER_FONT = 'F';
 			
-	private static final int PREVIEW_BORDER_RADIUS = 6;
-
     private class ThemeContentProvider implements ITreeContentProvider {
 
         private IThemeRegistry registry;
@@ -722,7 +719,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
         placeholderData.heightHint = convertVerticalDLUsToPixels(12);
         placeholder.setLayoutData(placeholderData);
 
-        fontChangeButton = createButton(controlColumn, JFaceResources.getString("openChange")); //$NON-NLS-1$
+		fontChangeButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("openChange")); //$NON-NLS-1$
         fontSystemButton = createButton(controlColumn, WorkbenchMessages.FontsPreference_useSystemFont);
         fontResetButton = createButton(controlColumn, RESOURCE_BUNDLE.getString("reset")); //$NON-NLS-1$
         // --- end of buttons
@@ -731,6 +728,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 		Composite previewColumn = new Composite(advancedComposite, SWT.NONE);
         GridLayout previewLayout = new GridLayout();
+		previewLayout.marginTop = 7;
 		previewLayout.marginWidth = 0;
 		previewLayout.marginHeight = 0;
         previewColumn.setFont(parent.getFont());
@@ -1741,10 +1739,16 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 		// draw rectangle all around
 		Rectangle clientArea = colorSampler.getClientArea();
-		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		gc.drawRoundRectangle(0, 0, clientArea.width - 1, clientArea.height - 1, PREVIEW_BORDER_RADIUS,
-				PREVIEW_BORDER_RADIUS);
+		FontMetrics standardFontMetrics = gc.getFontMetrics();
+		int standardLineHeight = standardFontMetrics.getHeight();
+		int maxHeight = standardLineHeight * 4;
+		if (clientArea.height > maxHeight)
+			clientArea = new Rectangle(clientArea.x, clientArea.y, clientArea.width, maxHeight);
 
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		gc.drawRectangle(0, 0, clientArea.width - 1, clientArea.height - 1);
+
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
 		gc.setFont(currentFont);
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		int lineHeight = fontMetrics.getHeight();
@@ -1779,6 +1783,9 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		FontMetrics fontMetrics = gc.getFontMetrics();
 		int lineHeight = fontMetrics.getHeight();
 		Rectangle clientArea = colorSampler.getClientArea();
+		int maxHeight = lineHeight * 4;
+		if (clientArea.height > maxHeight)
+			clientArea = new Rectangle(clientArea.x, clientArea.y, clientArea.width, maxHeight);
 		
 		String messageTop = RESOURCE_BUNDLE.getString("fontColorSample"); //$NON-NLS-1$
 		RGB rgb = currentColor.getRGB();
@@ -1820,9 +1827,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 
 		// fill right rectangle
 		gc.setBackground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-		int rightWidth = clientArea.width - 2 - separator * 2 + 2 * PREVIEW_BORDER_RADIUS;
-		gc.fillRoundRectangle(separator * 2 - 2 * PREVIEW_BORDER_RADIUS, 1, rightWidth, clientArea.height - 2,
-				PREVIEW_BORDER_RADIUS, PREVIEW_BORDER_RADIUS);
+		int rightWidth = clientArea.width - 2 - separator * 2;
+		gc.fillRectangle(separator * 2, 1, rightWidth, clientArea.height - 2);
 		// put text in the right rectangle
 		gc.setForeground(currentColor);
 		gc.drawText(messageTop, separator * 2 + textTopX, textTopY);
@@ -1837,27 +1843,32 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		gc.drawText(messageBottom, separator + textBottomX, textBottomY);
 		// niceties
-		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
 		gc.drawLine(separator, verticalCenter, separator * 2 - 1, verticalCenter);
 
 		// draw rectangle all around
-		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_BLACK));
-		gc.drawRoundRectangle(0, 0, clientArea.width - 1, clientArea.height - 1, PREVIEW_BORDER_RADIUS,
-				PREVIEW_BORDER_RADIUS);
+		gc.setForeground(previewComposite.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW));
+		gc.drawRectangle(0, 0, clientArea.width - 1, clientArea.height - 1);
 	}
 
 	private void createDescriptionControl(Composite parent) {
-		Group composite = new Group(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
+		layout.marginWidth = 0;
+		layout.marginHeight = 0;
 		composite.setLayout(layout);
-		GridData dataComposite = new GridData(GridData.FILL_HORIZONTAL);
-		dataComposite.horizontalSpan = 2;
-		composite.setLayoutData(dataComposite);
-		composite.setText(RESOURCE_BUNDLE.getString("description")); //$NON-NLS-1$
+		GridData data = new GridData(GridData.FILL_HORIZONTAL);
+		data.horizontalSpan = 2;
+		composite.setLayoutData(data);
 
-		descriptionText = new Text(composite, SWT.READ_ONLY | SWT.WRAP);
-		GridData data = new GridData(GridData.FILL_BOTH);
+		Label label = new Label(composite, SWT.LEFT);
+		label.setText(RESOURCE_BUNDLE.getString("description")); //$NON-NLS-1$
+		myApplyDialogFont(label);
+
+        descriptionText = new Text(composite, SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
+		data = new GridData(GridData.FILL_BOTH);
 		data.heightHint = convertHeightInCharsToPixels(3);
+		data.widthHint = convertWidthInCharsToPixels(30);
 		descriptionText.setLayoutData(data);
 		myApplyDialogFont(descriptionText);
 	}
