@@ -4966,6 +4966,17 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 	}
 
 	public void setWorkingSets(IWorkingSet[] newWorkingSets) {
+		if (newWorkingSets != null) {
+			WorkbenchPlugin
+					.getDefault()
+					.getWorkingSetManager()
+					.addPropertyChangeListener(workingSetPropertyChangeListener);
+		} else {
+			WorkbenchPlugin.getDefault().getWorkingSetManager()
+					.removePropertyChangeListener(
+							workingSetPropertyChangeListener);
+		}
+
 		if (newWorkingSets == null) {
 			newWorkingSets = new IWorkingSet[0];
 		}
@@ -4992,16 +5003,6 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			if (aggregateWorkingSet != null) {
 				aggregateWorkingSet.setComponents(workingSets);
 			}
-		}
-		if (newWorkingSets != null) {
-			WorkbenchPlugin
-					.getDefault()
-					.getWorkingSetManager()
-					.addPropertyChangeListener(workingSetPropertyChangeListener);
-		} else {
-			WorkbenchPlugin.getDefault().getWorkingSetManager()
-					.removePropertyChangeListener(
-							workingSetPropertyChangeListener);
 		}
 	}
 	
