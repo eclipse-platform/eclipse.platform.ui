@@ -179,7 +179,6 @@ public class PathVariableDialog extends TitleAreaDialog {
 		} else {
 			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
 		}
-        setShellStyle(getShellStyle() | SWT.SHEET);
     }
 
     /**
