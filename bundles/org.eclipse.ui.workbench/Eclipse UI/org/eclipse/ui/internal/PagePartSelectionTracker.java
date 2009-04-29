@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,20 +16,23 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartReference;
 
 /**
  * Provides debug view selection management/notification for
  * a debug view in a specific workbench page. This selection
- * provider sheilds clients from a debug view openning and closing,
+ * provider shields clients from a debug view opening and closing,
  * and still provides selection notification/information even
  * when the debug view is not the active part.
  */
 public class PagePartSelectionTracker extends AbstractPartSelectionTracker
-        implements IPartListener, ISelectionChangedListener {
+        implements IPartListener, IPerspectiveListener2, ISelectionChangedListener {
 
     /**
      * The workbench page for which this is tracking selection.
@@ -57,6 +60,7 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
         super(partId);
         setPage(page);
         page.addPartListener(this);
+        page.getWorkbenchWindow().addPerspectiveListener(this);
         String secondaryId = null;
         int indexOfColon;
         if ((indexOfColon = partId.indexOf(':')) != -1) {
@@ -74,6 +78,9 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
      * currently registered.
      */
     public void dispose() {
+    	IWorkbenchPage page = getPage();
+    	page.getWorkbenchWindow().removePerspectiveListener(this);
+    	page.removePartListener(this);
         setPart(null, false);
         setPage(null);
         super.dispose();
@@ -239,4 +246,27 @@ public class PagePartSelectionTracker extends AbstractPartSelectionTracker
             firePostSelection(part, sel);
         }
     }
+
+	public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
+		// nothing to do
+	}
+
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
+		// nothing to do
+	}
+
+	public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
+			IWorkbenchPartReference partRef, String changeId) {
+		if (partRef == null)
+			return;
+		IWorkbenchPart part = partRef.getPart(false);
+		if (part == null)
+			return;
+		if (IWorkbenchPage.CHANGE_VIEW_SHOW.equals(changeId)) {
+			if (getPart() != null) // quick check first, plus avoids double setting
+				return;
+	        if (getPartId(part).equals(getPartId()))
+	            setPart(part, true);
+		}
+	}
 }
