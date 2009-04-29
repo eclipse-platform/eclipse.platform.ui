@@ -13,6 +13,7 @@
 
 package org.eclipse.jface.viewers;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
@@ -49,6 +50,8 @@ public abstract class ViewerRow implements Cloneable {
 
 	private static final String KEY_TEXT_LAYOUT = Policy.JFACE
 			+ "styled_label_key_"; //$NON-NLS-1$
+
+	private String[] cachedDataKeys;
 
 	/**
 	 * Get the bounds of the entry at the columnIndex,
@@ -354,7 +357,22 @@ public abstract class ViewerRow implements Cloneable {
 	 * @since 3.4
 	 */
 	public void setStyleRanges(int columnIndex, StyleRange[] styleRanges) {
-		getItem().setData(KEY_TEXT_LAYOUT + columnIndex, styleRanges);
+		getItem().setData(getStyleRangesDataKey(columnIndex), styleRanges);
+	}
+
+	/**
+	 * @param columnIndex
+	 * @return
+	 */
+	private String getStyleRangesDataKey(int columnIndex) {
+		if (cachedDataKeys == null || columnIndex >= cachedDataKeys.length) {
+			cachedDataKeys = new String[getColumnCount()];
+			Assert.isTrue(columnIndex < cachedDataKeys.length);
+			for (int i = 0; i < cachedDataKeys.length; i++) {
+				cachedDataKeys[i] = KEY_TEXT_LAYOUT + i;
+			}
+		}
+		return cachedDataKeys[columnIndex];
 	}
 
 	/**
@@ -368,7 +386,7 @@ public abstract class ViewerRow implements Cloneable {
 	 * @since 3.4
 	 */
 	public StyleRange[] getStyleRanges(int columnIndex) {
-		return (StyleRange[]) getItem().getData(KEY_TEXT_LAYOUT + columnIndex);
+		return (StyleRange[]) getItem().getData(getStyleRangesDataKey(columnIndex));
 	}
 
 	int getWidth(int columnIndex) {
