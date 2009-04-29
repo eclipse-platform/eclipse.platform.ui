@@ -385,7 +385,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			public void run(IProgressMonitor monitor) {
 				try {
 					monitor
-							.subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_clickToSkipHistoryPruning);
+							.subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
 					status.merge(((Workspace) ResourcesPlugin.getWorkspace())
 							.save(true, true, monitor));
 				} catch (CoreException e) {

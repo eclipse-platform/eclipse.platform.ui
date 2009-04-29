@@ -20,7 +20,7 @@ public class IDEWorkbenchMessages extends NLS {
 	// package: org.eclipse.ui.ide
 
 	public static String IDEWorkbenchAdvisor_noPerspective;
-	public static String IDEWorkbenchAdvisor_clickToSkipHistoryPruning;
+	public static String IDEWorkbenchAdvisor_cancelHistoryPruning;
 	
 	public static String IDE_noFileEditorFound;
 	public static String IDE_coreExceptionFileStore;
