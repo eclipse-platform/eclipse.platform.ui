@@ -118,6 +118,17 @@ public class IWorkingSetTest extends UITestCase {
         fWorkingSet.setName(WORKING_SET_NAME_2);
         assertEquals(WORKING_SET_NAME_2, fWorkingSet.getName());
 
+        exceptionThrown = false;
+		try {
+			String name = fWorkingSet.getName();
+			// set same name
+			fWorkingSet.setName(name);
+		} catch (RuntimeException exception) {
+			exceptionThrown = true;
+		}
+		assertFalse("Failed to setName when new name is same as old name",
+				exceptionThrown);
+		
         fWorkingSet.setName("");
         assertEquals("", fWorkingSet.getName());
 

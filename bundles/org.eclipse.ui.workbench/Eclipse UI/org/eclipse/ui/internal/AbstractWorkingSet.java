@@ -91,9 +91,12 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet {
 
 	public void setName(String newName) {
 	    Assert.isNotNull(newName, "Working set name must not be null"); //$NON-NLS-1$
-	    if(manager!=null){
-	    	IWorkingSet wSet=manager.getWorkingSet(newName);
-	    	Assert.isTrue(wSet==null,"working set with same name already registered"); //$NON-NLS-1$
+		if (manager != null) {
+			IWorkingSet wSet = manager.getWorkingSet(newName);
+			if (wSet != this) {
+				Assert.isTrue(wSet == null,
+						"working set with same name already registered"); //$NON-NLS-1$
+			}
 	    }
 	    
 	    name = newName;
