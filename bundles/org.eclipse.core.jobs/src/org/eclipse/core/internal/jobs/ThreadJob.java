@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,6 @@ class ThreadJob extends Job {
 	 */
 	static final Object notifier = new Object();
 
-	private final JobManager manager;
 	/**
 	 * Set to true if this thread job is running in a thread that did
 	 * not own a rule already.  This means it needs to acquire the
@@ -66,9 +65,8 @@ class ThreadJob extends Job {
 	 */
 	private int top;
 
-	ThreadJob(JobManager manager, ISchedulingRule rule) {
+	ThreadJob(ISchedulingRule rule) {
 		super("Implicit Job"); //$NON-NLS-1$
-		this.manager = manager;
 		setSystem(true);
 		setPriority(Job.INTERACTIVE);
 		ruleStack = new ISchedulingRule[2];
