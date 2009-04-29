@@ -1854,15 +1854,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			fSourceViewerDecorationSupport = null;
 		}
 
-		if (fColors != null) {
-			Iterator i= fColors.values().iterator();
-			while (i.hasNext()) {
-				Color color= (Color) i.next();
-				if (!color.isDisposed())
-					color.dispose();
-			}
-			fColors= null;
-		}
 		
 		if (fAncestor != null)
 			fAncestor.dispose();
@@ -1873,7 +1864,17 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		if (fRight != null)
 			fRight.dispose();
 		fRight = null;
-		
+
+		if (fColors != null) {
+			Iterator i= fColors.values().iterator();
+			while (i.hasNext()) {
+				Color color= (Color) i.next();
+				if (!color.isDisposed())
+					color.dispose();
+			}
+			fColors= null;
+		}
+		// don't add anything here, disposing colors should be done last		
 		super.handleDispose(event);
   	}
   	  	  				 		
