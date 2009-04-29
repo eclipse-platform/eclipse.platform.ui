@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,11 +37,11 @@ import org.eclipse.core.runtime.Platform;
  * <pre>
  *   public class MyPackageFragmentTester {
  *       public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
- *           IPackageFragment fragement= (IPackageFragment)receiver;
+ *           IPackageFragment fragment= (IPackageFragment)receiver;
  *	         if ("isDefaultPackage".equals(property)) {
  *               return expectedValue == null
- *               	? fragement.isDefaultPackage()
- *               	: fragement.isDefaultPackage() == ((Boolean)expectedValue).booleanValue();
+ *               	? fragment.isDefaultPackage()
+ *               	: fragment.isDefaultPackage() == ((Boolean)expectedValue).booleanValue();
  *           }
  *           Assert.isTrue(false);
  *           return false;
