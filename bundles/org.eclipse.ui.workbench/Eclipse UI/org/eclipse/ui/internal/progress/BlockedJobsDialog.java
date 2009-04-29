@@ -264,7 +264,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 				: parentShell);
 		blockingMonitor = blocking;
 		setShellStyle(SWT.BORDER | SWT.TITLE | SWT.APPLICATION_MODAL
-				| SWT.RESIZE | SWT.MAX | getDefaultOrientation() | SWT.SHEET);
+				| SWT.RESIZE | SWT.MAX | getDefaultOrientation());
 		// no close button
 		setBlockOnOpen(false);
 		setMessage(blockingStatus.getMessage());
