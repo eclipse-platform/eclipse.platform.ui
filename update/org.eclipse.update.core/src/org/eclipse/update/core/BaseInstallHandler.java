@@ -124,7 +124,7 @@ public class BaseInstallHandler implements IInstallHandler {
 
 	/**
 	 * Called after files corresponding to plug-in entries have been downloaded,
-	 * but before they are actully unpacked and installed.
+	 * but before they are actually unpacked and installed.
 	 * 
 	 * @see IInstallHandler#pluginsDownloaded(IPluginEntry[])
 	 * @since 2.0

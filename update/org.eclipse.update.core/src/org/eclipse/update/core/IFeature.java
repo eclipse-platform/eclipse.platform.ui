@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,7 +186,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	/**
 	 * Returns the feature description.
 	 * 
-	 * @return feature rescription, or <code>null</code>.
+	 * @return feature description, or <code>null</code>.
 	 * @since 2.0 
 	 */
 	public IURLEntry getDescription();
@@ -220,7 +220,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * dependency is a reference to a plug-in required for feature execution
 	 * that is not packaged as part of the feature.
 	 * filtered by the operating system, windowing system and architecture system
-	 * set in <code>Sitemanager</code>
+	 * set in <code>SiteManager</code>
 	 * 
 	 * @return the list of required plug-in dependencies, or an empty array.
 	 * @since 2.0 
@@ -289,9 +289,9 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	/**
 	 * Returns an array of feature references included by this feature
 	 * filtered by the operating system, windowing system and architecture system
-	 * set in <code>Sitemanager</code>
+	 * set in <code>SiteManager</code>
 	 * 
-	 * @return an erray of feature references, or an empty array.
+	 * @return an array of feature references, or an empty array.
 	 * @since 2.0
 	 */
 	public IIncludedFeatureReference[] getIncludedFeatureReferences() throws CoreException;
@@ -300,7 +300,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * Returns an array of feature references included by this feature
 	 * No filtering occurs
 	 * 
-	 * @return an erray of feature references, or an empty array.
+	 * @return an array of feature references, or an empty array.
 	 * @since 2.0
 	 */
 	public IIncludedFeatureReference[] getRawIncludedFeatureReferences() throws CoreException;
@@ -308,9 +308,9 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	/**
 	 * Returns an array of plug-in entries referenced by this feature
 	 * filtered by the operating system, windowing system and architecture system
-	 * set in <code>Sitemanager</code>
+	 * set in <code>SiteManager</code>
 	 * 
-	 * @return an erray of plug-in entries, or an empty array.
+	 * @return an array of plug-in entries, or an empty array.
 	 * @since 2.0
 	 */
 	public IPluginEntry[] getPluginEntries();
@@ -319,7 +319,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * Returns an array of plug-in entries referenced by this feature
 	 * No filtering occurs
 	 * 
-	 * @return an erray of plug-in entries, or an empty array.
+	 * @return an array of plug-in entries, or an empty array.
 	 * @since 2.1
 	 */
 	public IPluginEntry[] getRawPluginEntries();
@@ -335,9 +335,9 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	/**
 	 * Returns an array of non-plug-in entries referenced by this feature
 	 * filtered by the operating system, windowing system and architecture system
-	 * set in <code>Sitemanager</code>
+	 * set in <code>SiteManager</code>
 	 * 
-	 * @return an erray of non-plug-in entries, or an empty array.
+	 * @return an array of non-plug-in entries, or an empty array.
 	 * @since 2.0
 	 */
 	public INonPluginEntry[] getNonPluginEntries();
@@ -346,7 +346,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	 * Returns an array of non-plug-in entries referenced by this feature
 	 * No filtering occurs
 	 * 
-	 * @return an erray of non-plug-in entries, or an empty array.
+	 * @return an array of non-plug-in entries, or an empty array.
 	 * @since 2.1
 	 */
 	public INonPluginEntry[] getRawNonPluginEntries();
@@ -411,7 +411,7 @@ public interface IFeature extends IAdaptable, IPlatformEnvironment {
 	public String getApplication();
 	
 	/**
-	 * Returns an optional identifier of a colocation affinity feature.
+	 * Returns an optional identifier of a co-location affinity feature.
 	 * 
 	 * @return feature identifier, or <code>null</code>.
 	 * @since 2.0

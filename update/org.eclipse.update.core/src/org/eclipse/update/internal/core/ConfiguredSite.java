@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -837,7 +837,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
         	// on Vista you are not allowed to write executable files on virtual directories like "Program Files"
             fileTest = File.createTempFile("writtableArea", ".dll", file); //$NON-NLS-1$ //$NON-NLS-2$
         } catch (IOException e) {
-            //If an exception occured while trying to create the file, it means that it is not writtable
+            //If an exception occurred while trying to create the file, it means that it is not writable
             return false;
         } finally {
             if (fileTest != null)
@@ -1090,7 +1090,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		URL siteURL = null;
 		try {
-			// check if the site exists and is updatable
+			// check if the site exists and is updateable
 			// update configSite
 			URL urlToCheck = new URL(platformString);
 			IPlatformConfiguration runtimeConfig = ConfiguratorUtils.getCurrentPlatformConfiguration();
