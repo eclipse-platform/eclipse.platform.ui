@@ -1513,8 +1513,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 				setExpanded(item, false);
 				Object element = item.getData();
 				if (element != null && level == ALL_LEVELS) {
-					internalPruneChildren(item, element);
-					return;
+					if (optionallyPruneChildren(item, element)) {
+						return;
+					}
 				}
 			}
 
@@ -2537,8 +2538,33 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (widget instanceof Item) {
 			Item ti = (Item) widget;
 			if (!getExpanded(ti)) {
-				internalPruneChildren(ti, parent);
-				return;
+				if (optionallyPruneChildren(ti, parent)) {
+					// children were pruned, nothing left to do
+					return;
+				}
+				// The following code is being executed if children were not pruned.
+				// This is (as of 3.5) only the case for CheckboxTreeViewer.
+				Item[] its = getItems(ti);
+				if (isExpandable(ti, null, parent)) {
+					if (its.length == 0) {
+						// need dummy node
+						newItem(ti, SWT.NULL, -1);
+						return;
+					} else if (its.length == 1 && its[0].getData() == null) {
+						// dummy node exists, nothing left to do
+						return;
+					}
+					// else fall through to normal update code below
+				} else {
+					for (int i = 0; i < its.length; i++) {
+						if (its[i].getData() != null) {
+							disassociate(its[i]);
+						}
+						its[i].dispose();
+					}
+					// nothing left to do
+					return;
+				}
 			}
 		}
 
@@ -2708,7 +2734,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		}
 	}
 
-	private void internalPruneChildren(Item item, Object element) {
+	/** Returns true if children were pruned */
+	/*package*/ boolean optionallyPruneChildren(Item item, Object element) {
 		// need a dummy node if element is expandable;
 		// but try to avoid recreating the dummy node
 		boolean needDummy = isExpandable(item, null, element);
@@ -2730,6 +2757,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		if (needDummy && !haveDummy) {
 			newItem(item, SWT.NULL, -1);
 		}
+		return true;
 	}
 
 	/**

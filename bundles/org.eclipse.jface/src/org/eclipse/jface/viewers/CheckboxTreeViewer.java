@@ -642,4 +642,8 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 			setAllChecked(state, children);
 		}
 	}
+	
+	boolean optionallyPruneChildren(Item item, Object element) {
+		return false;
+	}
 }
