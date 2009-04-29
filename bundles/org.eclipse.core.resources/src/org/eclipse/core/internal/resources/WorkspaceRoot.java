@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceRoot#findContainersForLocation(org.eclipse.core.runtime.IPath)
+	 * @deprecated
 	 */
 	public IContainer[] findContainersForLocation(IPath location) {
 		return findContainersForLocationURI(URIUtil.toURI(location.makeAbsolute()));
@@ -87,6 +88,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 
 	/**
 	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocation(org.eclipse.core.runtime.IPath)
+	 * @deprecated
 	 */
 	public IFile[] findFilesForLocation(IPath location) {
 		return findFilesForLocationURI(URIUtil.toURI(location.makeAbsolute()));
