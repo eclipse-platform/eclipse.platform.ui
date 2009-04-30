@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 220657 Teminate All in ConsoleView.
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
@@ -23,7 +22,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchWindow;
 
 /**
  * Terminates all launches.
@@ -48,34 +46,14 @@ public class TerminateAllAction extends DebugCommandAction implements ILaunchesL
 		getLaunchManager().removeLaunchListener(this);
 		super.dispose();
 	}
-	
-	/**
-	 * Attaches self to the launch manager for updating the enablement state.
-	 * 
-	 * @since 3.5
-	 */
-	private void attachSelfToLaunchManager() {
+
+	public void init(IWorkbenchPart part) {
+		super.init(part);
 		ILaunchManager launchManager = getLaunchManager();
 		launchManager.addLaunchListener(this);
 		// heuristic... rather than updating all the time, just assume there's
 		// something that's not terminated.
 		setEnabled(launchManager.getLaunches().length > 0);
-	}
-
-	public void init(IWorkbenchPart part) {
-		super.init(part);
-		attachSelfToLaunchManager();
-	}
-
-	/**
-	 * Initializes this action for the given workbench window.
-	 * 
-	 * @param window the workbench window that this action is for
-	 * @since 3.5
-	 */
-	public void init(IWorkbenchWindow window) {
-		super.init(window);
-		attachSelfToLaunchManager();
 	}
 
 	private ILaunchManager getLaunchManager() {

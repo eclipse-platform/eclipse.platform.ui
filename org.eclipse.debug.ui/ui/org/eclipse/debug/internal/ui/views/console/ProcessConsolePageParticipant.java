@@ -7,7 +7,6 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 220657 Teminate All in ConsoleView.
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
@@ -25,7 +24,6 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.commands.actions.TerminateAllAction;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -58,7 +56,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 	
 	// actions
 	private ConsoleTerminateAction fTerminate;
-	private TerminateAllAction fTerminateAll;
     private ConsoleRemoveLaunchAction fRemoveTerminated;
 	private ConsoleRemoveAllTerminatedAction fRemoveAllTerminated;
 	private ShowWhenContentChangesAction fStdOut;
@@ -102,8 +99,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
         fRemoveTerminated = new ConsoleRemoveLaunchAction(fConsole.getProcess().getLaunch());
         fRemoveAllTerminated = new ConsoleRemoveAllTerminatedAction();
         fTerminate = new ConsoleTerminateAction(page.getSite().getWorkbenchWindow(), fConsole);
-        fTerminateAll = new TerminateAllAction();
-        fTerminateAll.init(fPage.getSite().getWorkbenchWindow());
         fStdOut = new ShowStandardOutAction();
         fStdErr = new ShowStandardErrorAction();
         
@@ -138,10 +133,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 		    fTerminate.dispose();
 		    fTerminate = null;
 		}
-		if (fTerminateAll != null) {
-			fTerminateAll.dispose();
-			fTerminateAll = null;
-		}
 		if (fStdOut != null) {
 			fStdOut.dispose();
 			fStdOut = null;
@@ -158,7 +149,6 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
      */
     protected void configureToolBar(IToolBarManager mgr) {
 		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fTerminate);
-		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fTerminateAll);
         mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveTerminated);
 		mgr.appendToGroup(IConsoleConstants.LAUNCH_GROUP, fRemoveAllTerminated);
 		mgr.appendToGroup(IConsoleConstants.OUTPUT_GROUP, fStdOut);
