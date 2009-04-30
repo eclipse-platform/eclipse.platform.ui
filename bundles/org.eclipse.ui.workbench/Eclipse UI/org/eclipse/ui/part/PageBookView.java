@@ -1028,26 +1028,25 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	};
 
 	/**
-	 * Make sure that the part is not considered if it is hidden.
+	 * Called when a part is hidden. By default it does nothing, sub-classes to
+	 * override.
+	 * 
 	 * @param part
 	 * @since 3.5
 	 */
 	protected void partHidden(IWorkbenchPart part) {
-		if (part == null || part != getCurrentContributingPart()) {
-			return;
-		}
-		showPageRec(defaultPageRec);
 	}
 
 	/**
-	 * Make sure that the part is not considered if it is hidden.
+	 * Make sure that the part is not considered if it is visible.
+	 * 
 	 * @param part
 	 * @since 3.5
 	 */
 	protected void partVisible(IWorkbenchPart part) {
-		if (part == null || part != getCurrentContributingPart()) {
-			return;
+		if (isImportant(part) && part != getCurrentContributingPart()) {
+			partActivated(part);
 		}
-		partActivated(part);
+
 	}
 }

@@ -275,7 +275,10 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
             return;
         }
         
-	    super.partVisible(part);
+		if (part == null || part != getCurrentContributingPart()) {
+			return;
+		}
+		partActivated(part);
 	}
 	
     /* (non-Javadoc)
