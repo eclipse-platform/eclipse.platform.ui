@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,6 @@
 
 package org.eclipse.jface.viewers;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -23,6 +21,8 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
+
+import org.eclipse.jface.util.Policy;
 
 /**
  * ViewerRow is the abstract superclass of the part that represents items in a
@@ -48,10 +48,11 @@ public abstract class ViewerRow implements Cloneable {
 	 */
 	public static final int BELOW = 2;
 
-	private static final String KEY_TEXT_LAYOUT = Policy.JFACE
-			+ "styled_label_key_"; //$NON-NLS-1$
+	private static final String KEY_TEXT_LAYOUT = Policy.JFACE + "styled_label_key_"; //$NON-NLS-1$
 
-	private String[] cachedDataKeys;
+	private static final String KEY_TEXT_LAYOUT_0 = Policy.JFACE + "styled_label_key_0"; //$NON-NLS-1$
+
+	private static String[] cachedDataKeys;
 
 	/**
 	 * Get the bounds of the entry at the columnIndex,
@@ -365,12 +366,22 @@ public abstract class ViewerRow implements Cloneable {
 	 * @return
 	 */
 	private String getStyleRangesDataKey(int columnIndex) {
-		if (cachedDataKeys == null || columnIndex >= cachedDataKeys.length) {
-			cachedDataKeys = new String[getColumnCount()];
-			Assert.isTrue(columnIndex < cachedDataKeys.length);
-			for (int i = 0; i < cachedDataKeys.length; i++) {
+		if (columnIndex == 0)
+			return KEY_TEXT_LAYOUT_0;
+
+		if (cachedDataKeys == null) {
+			int size = Math.max(10, columnIndex + 1);
+			cachedDataKeys= new String[size];
+			for (int i = 1; i < cachedDataKeys.length; i++) {
 				cachedDataKeys[i] = KEY_TEXT_LAYOUT + i;
 			}
+		} else if (columnIndex >= cachedDataKeys.length) {
+			String[] newCachedDataKeys = new String[columnIndex + 1];
+			System.arraycopy(cachedDataKeys, 0, newCachedDataKeys, 0, cachedDataKeys.length);
+			for (int i = cachedDataKeys.length; i < newCachedDataKeys.length; i++) {
+				newCachedDataKeys[i] = KEY_TEXT_LAYOUT + i;
+			}
+			cachedDataKeys = newCachedDataKeys;
 		}
 		return cachedDataKeys[columnIndex];
 	}
