@@ -414,7 +414,7 @@ public final class SelectionProcessor {
 			if (startColumn == -1) {
 				boolean materializeVirtualSpace= replacement.length() != 0;
 				if (materializeVirtualSpace) {
-					int spaces= visualStartColumn - visual;
+					int spaces= Math.max(0, visualStartColumn - visual);
 					char[] array= new char[spaces];
 					Arrays.fill(array, ' ');
 					return new InsertEdit(info.getOffset() + lineLength, String.valueOf(array) + replacement);
@@ -438,7 +438,7 @@ public final class SelectionProcessor {
 			for (int offset= 0; offset < lineLength; offset++) {
 				if (startColumn == -1 && visual >= visualStartColumn)
 					startColumn= offset;
-				if (visual == visualEndColumn) {
+				if (visual >= visualEndColumn) {
 					endColumn= offset;
 					break;
 				}
@@ -450,45 +450,44 @@ public final class SelectionProcessor {
 			if (startColumn != -1)
 				buf.append(content.substring(startColumn, endColumn == -1 ? lineLength : endColumn));
 			if (endColumn == -1) {
-				int spaces= visualEndColumn - Math.max(visual, visualStartColumn);
+				int spaces= Math.max(0, visualEndColumn - Math.max(visual, visualStartColumn));
 				for (int i= 0; i < spaces; i++)
 					buf.append(' ');
 			}
 		}
 
 		private int computeVisualColumn(final int line, final int column) throws BadLocationException {
-			int visualColumn= 0;
 			IRegion info= fDocument.getLineInformation(line);
-			int lineEnd= info.getLength();
-			int to= Math.min(lineEnd, column);
-			String content= fDocument.get(info.getOffset(), info.getLength());
+			int lineLength= info.getLength();
+			int to= Math.min(lineLength, column);
+			String content= fDocument.get(info.getOffset(), lineLength);
+			int visual= 0;
 			for (int offset= 0; offset < to; offset++) {
 				if (content.charAt(offset) == '\t')
-					visualColumn+= fTabWidth - visualColumn % fTabWidth;
+					visual+= fTabWidth - visual % fTabWidth;
 				else
-					visualColumn++;
+					visual++;
 			}
-			if (column > lineEnd) {
-				visualColumn+= column - lineEnd; // virtual spaces
+			if (column > lineLength) {
+				visual+= column - lineLength; // virtual spaces
 			}
-			return visualColumn;
+			return visual;
 		}
 
 		private int computeCharacterColumn(int line, int visualColumn) throws BadLocationException {
 			IRegion info= fDocument.getLineInformation(line);
 			int lineLength= info.getLength();
 			String content= fDocument.get(info.getOffset(), lineLength);
-			int column= -1;
 			int visual= 0;
 			for (int offset= 0; offset < lineLength; offset++) {
-				if (column == -1 && visual >= visualColumn)
+				if (visual >= visualColumn)
 					return offset;
 				if (content.charAt(offset) == '\t')
 					visual+= fTabWidth - visual % fTabWidth;
 				else
 					visual++;
 			}
-			return lineLength + visualColumn - visual;
+			return lineLength + Math.max(0, visualColumn - visual);
 		}
 	};
 
