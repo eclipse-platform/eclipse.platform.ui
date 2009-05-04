@@ -199,8 +199,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		Exception ex = null;
 		try {
 			Element root = null;
-			DocumentBuilder parser =
-				DocumentBuilderFactory.newInstance().newDocumentBuilder();
+			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			StringReader reader = new StringReader(memento);
 			InputSource source = new InputSource(reader);
@@ -210,14 +209,13 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			String path = root.getAttribute(IConfigurationElementConstants.PATH);
 
 			String message = null;				
-			if (path == null) {
+			if (path == null || IInternalDebugCoreConstants.EMPTY_STRING.equals(path)) {
 				message = DebugCoreMessages.LaunchConfiguration_18;  
-			} else if (localString == null) {
+			} else if (localString == null || IInternalDebugCoreConstants.EMPTY_STRING.equals(localString)) {
 				message = DebugCoreMessages.LaunchConfiguration_19;  
 			}
 			if (message != null) {
-				IStatus s = newStatus(message, DebugException.INTERNAL_ERROR, null);
-				throw new CoreException(s);
+				throw new CoreException(newStatus(message, DebugException.INTERNAL_ERROR, null));
 			}
 			
 			
