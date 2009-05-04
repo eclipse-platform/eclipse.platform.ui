@@ -27,7 +27,9 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  */
 public class Bug43597Test extends UITestCase {
 
-    /**
+    private Font textFont;
+
+	/**
      * Constructor for Bug43597Test.
      * 
      * @param name
@@ -50,8 +52,9 @@ public class Bug43597Test extends UITestCase {
         GridLayout gridLayout = new GridLayout();
         shell.setLayout(gridLayout);
         Text text = new Text(shell, SWT.LEFT);
-        text.setFont(new Font(text.getDisplay(),
-                "Lucida Grande", 13, SWT.NORMAL)); //$NON-NLS-1$
+        textFont = new Font(text.getDisplay(),
+                "Lucida Grande", 13, SWT.NORMAL);
+		text.setFont(textFont); //$NON-NLS-1$
         text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         shell.pack();
         shell.open();
@@ -72,4 +75,14 @@ public class Bug43597Test extends UITestCase {
         shell.close();
         shell.dispose();
     }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.ui.tests.harness.util.UITestCase#doTearDown()
+     */
+	protected void doTearDown() throws Exception {
+		if (textFont != null) {
+			textFont.dispose();
+		}
+		super.doTearDown();
+	}
 }
