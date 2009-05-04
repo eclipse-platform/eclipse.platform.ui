@@ -551,7 +551,7 @@ public class Project extends Container implements IProject {
 				int flags = getFlags(info);
 				if (!exists(flags, true) || !isOpen(flags))
 					return false;
-				if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD && getWorkspace().isAutoBuilding()) {
+				if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD && workspace.isAutoBuilding() && !workspace.getBuildManager().isAutobuildBuildPending()) {
 					//don't need to do an incremental build if all builders respond to autobuild
 					IProjectDescription description = internalGetDescription();
 					if (description == null)

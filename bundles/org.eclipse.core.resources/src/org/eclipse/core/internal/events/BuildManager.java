@@ -794,6 +794,14 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	public void interrupt() {
 		autoBuildJob.interrupt();
 	}
+	
+	/**
+	 * Returns whether an autobuild is pending (requested but not yet completed).
+	 */
+	public boolean isAutobuildBuildPending() {
+		return autoBuildJob.getState() != Job.NONE;
+		
+	}
 
 	/**
 	 * Returns true if the current builder is interested in changes
