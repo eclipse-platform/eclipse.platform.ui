@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
@@ -51,7 +52,7 @@ public class MarkerPathField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.IMarkerField#getValue(org.eclipse.ui.internal.provisional.views.markers.MarkerItem)
 	 */
 	public String getValue(MarkerItem item) {
-		return item.getPath();
+		return TextProcessor.process(item.getPath());
 	}
 
 }
