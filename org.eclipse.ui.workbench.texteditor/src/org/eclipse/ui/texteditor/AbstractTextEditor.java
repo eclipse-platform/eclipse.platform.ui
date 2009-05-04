@@ -260,15 +260,49 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private static final String TAG_CONTRIBUTION_TYPE= "editorContribution"; //$NON-NLS-1$
 
 	/**
-	 * Tags used in the {@link IMemento} when saving and
-	 * restoring editor state.
-	 *
+	 * Tag used in the {@link IMemento} when saving and restoring the editor's selection offset.
+	 * 
 	 * @see #saveState(IMemento)
 	 * @see #restoreState(IMemento)
+	 * @see #doRestoreState(IMemento)
 	 * @since 3.3
 	 */
 	protected static final String TAG_SELECTION_OFFSET= "selectionOffset"; //$NON-NLS-1$
+
+	/**
+	 * Tag used in the {@link IMemento} when saving and restoring the editor's selection length.
+	 * 
+	 * @see #saveState(IMemento)
+	 * @see #restoreState(IMemento)
+	 * @see #doRestoreState(IMemento)
+	 * @since 3.3
+	 */
 	protected static final String TAG_SELECTION_LENGTH= "selectionLength"; //$NON-NLS-1$
+
+	/**
+	 * Tag used in the {@link IMemento} when saving and restoring the editor's top pixel value.
+	 * <p>
+	 * XXX: will become API in 3.6, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=274822
+	 * </p>
+	 * 
+	 * @see #saveState(IMemento)
+	 * @see #restoreState(IMemento)
+	 * @see #doRestoreState(IMemento)
+	 */
+	private static final String TAG_SELECTION_TOP_PIXEL= "selectionTopPixel"; //$NON-NLS-1$
+
+	/**
+	 * Tag used in the {@link IMemento} when saving and restoring the editor's horizontal pixel
+	 * value.
+	 * <p>
+	 * XXX: will become API in 3.6, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=274822
+	 * </p>
+	 * 
+	 * @see #saveState(IMemento)
+	 * @see #restoreState(IMemento)
+	 * @see #doRestoreState(IMemento)
+	 */
+	private static final String TAG_SELECTION_HORIZONTAL_PIXEL= "selectionHorizontalPixel"; //$NON-NLS-1$
 
 
 	/**
@@ -6902,6 +6936,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			memento.putInteger(TAG_SELECTION_OFFSET, ((ITextSelection)selection).getOffset());
 			memento.putInteger(TAG_SELECTION_LENGTH, ((ITextSelection)selection).getLength());
 		}
+		final StyledText textWidget= fSourceViewer.getTextWidget();
+		memento.putInteger(TAG_SELECTION_TOP_PIXEL, textWidget.getTopPixel());
+		memento.putInteger(TAG_SELECTION_HORIZONTAL_PIXEL, textWidget.getHorizontalPixel());
 	}
 
 	/**
@@ -6935,6 +6972,16 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			return;
 
 		doSetSelection(new TextSelection(offset.intValue(), length.intValue()));
+
+		final StyledText textWidget= fSourceViewer.getTextWidget();
+
+		Integer topPixel= memento.getInteger(TAG_SELECTION_TOP_PIXEL);
+		if (topPixel != null)
+			textWidget.setTopPixel(topPixel.intValue());
+
+		Integer horizontalPixel= memento.getInteger(TAG_SELECTION_HORIZONTAL_PIXEL);
+		if (horizontalPixel != null)
+			textWidget.setHorizontalPixel(horizontalPixel.intValue());
 	}
 
 	/*
