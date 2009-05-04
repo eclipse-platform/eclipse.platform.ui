@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -686,6 +687,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
                 text[0] = input.getName();
                 text[1] = input.getToolTipText();
             }
+			if (text[0] != null) {
+				text[0] = TextProcessor.process(text[0]);
+			}
+			if (text[1] != null) {
+				text[1] = TextProcessor.process(text[1]);
+			}
             return text;
         }
 
