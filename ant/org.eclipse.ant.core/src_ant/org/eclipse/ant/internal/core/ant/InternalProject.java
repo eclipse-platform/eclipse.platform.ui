@@ -118,7 +118,7 @@ public class InternalProject extends Project {
 			thrown = ncdfe;
 		}
 		if (thrown != null) {
-			String message= MessageFormat.format(InternalAntMessages.InternalProject_0, new String[]{typeName, thrown.toString()});
+			String message= MessageFormat.format(InternalAntMessages.InternalProject_could_not_create_type, new String[]{typeName, thrown.toString()});
 			throw new BuildException(message, thrown);
 		}
 		// this line is actually unreachable
