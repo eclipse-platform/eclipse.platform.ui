@@ -3964,10 +3964,10 @@ public class TextViewer extends Viewer implements
 				delete();
 				break;
 			case SELECT_ALL: {
-				if (getDocument() != null) {
-					IDocument doc= getDocument();
+				IDocument doc= getDocument();
+				if (doc != null) {
 					if (fTextWidget.getBlockSelection())
-						// hack: use 1000 for the endColumn - StyledText will not select more than what's possible in the viewport.
+						// XXX: performance hack: use 1000 for the endColumn - StyledText will not select more than what's possible in the viewport.
 						setSelection(new BlockTextSelection(doc, 0, 0, doc.getNumberOfLines() - 1, 1000, fTextWidget.getTabs()));
 					else
 						setSelectedRange(0, doc.getLength());
