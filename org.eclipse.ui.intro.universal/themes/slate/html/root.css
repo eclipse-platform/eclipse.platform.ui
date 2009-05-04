@@ -41,11 +41,12 @@ html, body {
 	overflow : auto;
 	overflow-clip: rect(0, auto, auto, 0);
 	background-color : none;
+	background-image : url("../graphics/rootpage/background.jpg");
+	background-position : top left;
+	background-repeat : no-repeat;
 }
 
 #root {
-	min-height : 450px;
-    min-width : 940px;
     background-image : url("../graphics/rootpage/root_banner.jpg");
 	background-position : top left;
 }
