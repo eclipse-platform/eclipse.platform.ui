@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.Test;
@@ -906,6 +908,48 @@ public class BuilderTest extends AbstractBuilderTest {
 		} catch (CoreException e) {
 			fail("99.99", e);
 		}
+	}
+
+	/**
+	 * Tests that a client invoking a manual incremental build before autobuild has had
+	 * a chance to run will block until the build completes.
+	 */
+	public void testIncrementalBuildBeforeAutobuild() {
+		// Create some resource handles
+		IProject project = getWorkspace().getRoot().getProject("PROJECT");
+		final IFile input = project.getFolder(SortBuilder.DEFAULT_UNSORTED_FOLDER).getFile("File.txt");
+		final IFile output = project.getFolder(SortBuilder.DEFAULT_SORTED_FOLDER).getFile("File.txt");
+		try {
+			setAutoBuilding(true);
+			// Create and open a project
+			project.create(getMonitor());
+			project.open(getMonitor());
+			IProjectDescription desc = project.getDescription();
+			ICommand command = desc.newCommand();
+			command.setBuilderName(SortBuilder.BUILDER_NAME);
+			desc.setBuildSpec(new ICommand[] {command});
+			project.setDescription(desc, getMonitor());
+			ensureExistsInWorkspace(input, getRandomContents());
+		} catch (CoreException e) {
+			fail("0.99", e);
+		}
+		waitForBuild();
+		assertTrue("1.0", output.exists());
+
+		//change the file and then immediately perform build
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			input.setContents(new ByteArrayInputStream(new byte[] {5, 4, 3, 2, 1}), IResource.NONE, getMonitor());
+			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			transferStreams(output.getContents(), out, null, null);
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		byte[] result = out.toByteArray();
+		byte[] expected = new byte[] {1, 2, 3, 4, 5};
+		assertEquals("2.0", expected.length, result.length);
+		for (int i = 0; i < expected.length; i++)
+			assertEquals("2.1." + i, expected[i], result[i]);
 	}
 
 	/**
