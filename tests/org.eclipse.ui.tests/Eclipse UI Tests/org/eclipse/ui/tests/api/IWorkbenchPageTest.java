@@ -2498,10 +2498,8 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(1, partHiddenCount);
 		assertEquals(editorRef, partHiddenRef);
 		
-		//Changes to bug#267425 - partHidden is a no-op method, so it won't change to defaultPage
-		//assertEquals(defaultPage, outline.getCurrentPage());
-		assertEquals(page, outline.getCurrentPage());
-		
+		assertEquals(defaultPage, outline.getCurrentPage());
+		//assertEquals(page, outline.getCurrentPage());
 		assertEquals(getMessage(), 0, logCount);
 				
 		assertEquals(0, partVisibleCount);

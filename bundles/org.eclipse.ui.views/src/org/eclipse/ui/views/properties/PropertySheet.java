@@ -100,11 +100,6 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * Whether this property sheet instance is pinned or not 
 	 */
 	private IAction pinPropertySheetAction;
-
-	/**
-	 * Whether this property view instance is hidden or not 
-	 */
-    private boolean hidden;
 	
     /**
      * Creates a property sheet view.
@@ -269,16 +264,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * since 3.4
 	 */
 	protected void partVisible(IWorkbenchPart part) {
-	    if(hidden && this == part){
-            hidden = false;
-            // now we are visible again. Do not need to propagate this event to parent.
-            return;
-        }
-        
-		if (part == null || part != getCurrentContributingPart()) {
-			return;
-		}
-		partActivated(part);
+	    super.partVisible(part);
 	}
 	
     /* (non-Javadoc)
@@ -286,9 +272,6 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * since 3.4
      */
     protected void partHidden(IWorkbenchPart part) {
-        if(this == part){
-            hidden = true;
-        }
         // if we are pinned, then we are not interested if parts are hidden, if
         // our target part is hidden, we should still show whatever content we
         // have been pinned on
@@ -303,13 +286,6 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * adapter and if so, asks it for its contributing part.
      */
     public void partActivated(IWorkbenchPart part) {
-        if(hidden) {
-            if (this == part) {
-                hidden = false;
-            }
-            // If we are hidden (or it's our own event), ignore event.
-            return;
-        }
     	// Look for a declaratively-contributed adapter - including not yet loaded adapter factories.
     	// See bug 86362 [PropertiesView] Can not access AdapterFactory, when plugin is not loaded.
         IContributedContentsView view = (IContributedContentsView) ViewsPlugin.getAdapter(part,
@@ -351,7 +327,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		}
 		
 		// we ignore selection if we are hidden OR selection is coming from another source as the last one
-		if(hidden && (part == null || !part.equals(currentPart))){
+		if(part == null || !part.equals(currentPart)){
 		    return;
 		}
         

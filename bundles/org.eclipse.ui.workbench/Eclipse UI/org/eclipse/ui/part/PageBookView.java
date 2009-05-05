@@ -34,7 +34,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PartInitException;
@@ -134,6 +136,12 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 * The page rec which provided the current page or <code>null</code>
 	 */
 	private PageRec activeRec;
+
+	/**
+	 * If the part is hidden (usually an editor) then store it so we can
+	 * continue to track it when it becomes visible.
+	 */
+	private IWorkbenchPart hiddenPart = null;
 
 	/**
 	 * The action bar property listener.
@@ -736,6 +744,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		if (!isImportant(part)) {
 			return;
 		}
+		hiddenPart = null;
 
 		// Create a page for the part.
 		PageRec rec = getPageRec(part);
@@ -774,6 +783,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		PageRec rec = getPageRec(part);
 		if (rec != null) {
 			removePage(rec);
+		}
+		if (part == hiddenPart) {
+			hiddenPart = null;
 		}
 	}
 
@@ -1028,25 +1040,57 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	};
 
 	/**
-	 * Called when a part is hidden. By default it does nothing, sub-classes to
-	 * override.
-	 * 
+	 * Make sure that the part is not considered if it is hidden.
 	 * @param part
 	 * @since 3.5
 	 */
 	protected void partHidden(IWorkbenchPart part) {
+		if (part == null || part != getCurrentContributingPart()) {
+			return;
+		}
+		// if we've minimized the editor stack, that's no reason to
+		// drop our content
+		if (getSite().getPage().getPartState(
+				getSite().getPage().getReference(part)) == IWorkbenchPage.STATE_MINIMIZED) {
+			return;
+		}
+		// if we're switching from a part source in our own stack,
+		// we also don't want to clear our content.
+		if (part instanceof IViewPart) {
+			final IViewPart[] viewStack = getSite().getPage()
+					.getViewStack(this);
+			if (containsPart(viewStack, part)) {
+				return;
+			}
+		}
+		hiddenPart = part;
+		showPageRec(defaultPageRec);
 	}
 
 	/**
-	 * Make sure that the part is not considered if it is visible.
+	 * @param viewStack
+	 * @param part
+	 * @return <code>true</code> if the part is in the viewStack
+	 */
+	private boolean containsPart(IViewPart[] viewStack, IWorkbenchPart part) {
+		for (int i = 0; i < viewStack.length; i++) {
+			if (viewStack[i] == part) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Make sure that the part is not considered if it is hidden.
 	 * 
 	 * @param part
 	 * @since 3.5
 	 */
 	protected void partVisible(IWorkbenchPart part) {
-		if (isImportant(part) && part != getCurrentContributingPart()) {
-			partActivated(part);
+		if (part == null || part != hiddenPart) {
+			return;
 		}
-
+		partActivated(part);
 	}
 }
