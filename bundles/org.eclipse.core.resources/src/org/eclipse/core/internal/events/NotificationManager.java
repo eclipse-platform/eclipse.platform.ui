@@ -23,6 +23,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	class NotifyJob extends Job {
 		private final IWorkspaceRunnable noop = new IWorkspaceRunnable() {
 			public void run(IProgressMonitor monitor) {
+				// do nothing
 			}
 		};
 
