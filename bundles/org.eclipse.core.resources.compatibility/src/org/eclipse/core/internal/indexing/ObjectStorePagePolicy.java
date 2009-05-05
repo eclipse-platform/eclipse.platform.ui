@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,9 +18,7 @@ public class ObjectStorePagePolicy extends AbstractPagePolicy {
 	public final Page createPage(int pageNumber, byte[] buffer, PageStore pageStore) {
 		if (pageNumber % Page.SIZE == 0) {
 			return new SpaceMapPage(pageNumber, buffer, pageStore);
-		} else {
-			return new ObjectPage(pageNumber, buffer, pageStore);
 		}
+		return new ObjectPage(pageNumber, buffer, pageStore);
 	}
-
 }
