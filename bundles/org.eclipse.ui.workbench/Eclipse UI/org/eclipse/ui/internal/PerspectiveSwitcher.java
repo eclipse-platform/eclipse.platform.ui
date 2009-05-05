@@ -987,8 +987,14 @@ public class PerspectiveSwitcher implements IWindowTrim {
     private PerspectiveBarManager createBarManager(int direction) {
         PerspectiveBarManager barManager = new PerspectiveBarManager(style
                 | direction);
+		// this is the index in which the item for recently perspectives should
+		// be inserted into
+		int perspectiveInsertionIndex = 0;
         if (apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR)) {
 			barManager.add(new PerspectiveBarNewContributionItem(window));
+			// the 'Open Perspective' needs to go first, so we offset the other
+			// perspective entries after it by setting our index to '1'
+			perspectiveInsertionIndex = 1;
 		}
 
         // add an item for all open perspectives
@@ -998,7 +1004,8 @@ public class PerspectiveSwitcher implements IWindowTrim {
             IPerspectiveDescriptor[] perspectives = page
                     .getOpenPerspectives();
             for (int i = 0; i < perspectives.length; i++) {
-                barManager.insert(1, new PerspectiveBarContributionItem(
+				barManager.insert(perspectiveInsertionIndex,
+						new PerspectiveBarContributionItem(
                         perspectives[i], page));
             }
         }
