@@ -23,7 +23,6 @@ public class InternalAntMessages extends NLS {
 	public static String InternalAntRunner_Arguments;
 	public static String InternalAntRunner_Unable_to_instantiate_logger;
 	public static String InternalAntRunner_Could_not_load_the_version_information;
-	public static String InternalAntRunner_Could_not_load_the_version_information__10;
 	public static String InternalAntRunner_Using_file_as_build_log;
 	public static String InternalAntRunner_Could_not_write_to_log_file;
 	public static String InternalAntRunner_BUILD_SUCCESSFUL_1;
