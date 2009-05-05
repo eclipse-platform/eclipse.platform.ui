@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,7 +65,8 @@ public abstract class SharedHeaderFormEditor extends FormEditor {
 
 	/**
 	 * Overrides <code>super</code> to create a form in which to host the tab
-	 * folder. This form will be responsible for managing
+	 * folder. This form will be responsible for creating a common form header. 
+	 * Child pages should not have a header of their own.
 	 * 
 	 * @param parent
 	 *            the page container parent
