@@ -57,6 +57,7 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.menus.CommandMessages;
+import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -248,9 +249,15 @@ public class CommandContributionItem extends ContributionItem {
 					this.workbenchHelpSystem = workbench.getHelpSystem();
 				}
 			} catch (NotDefinedException e) {
-				WorkbenchPlugin
-						.log("Unable to register menu item \"" + getId() //$NON-NLS-1$
-								+ "\", command \"" + contributionParameters.commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
+				StatusManager
+						.getManager()
+						.handle(
+								StatusUtil
+										.newStatus(
+												IStatus.ERROR,
+												"Unable to register menu item \"" + getId() //$NON-NLS-1$
+														+ "\", command \"" + contributionParameters.commandId + "\" not defined", //$NON-NLS-1$ //$NON-NLS-2$
+												null));
 			}
 		}
 
@@ -371,14 +378,22 @@ public class CommandContributionItem extends ContributionItem {
 
 	void createCommand(String commandId, Map parameters) {
 		if (commandId == null) {
-			WorkbenchPlugin.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
-					+ "\", no command id"); //$NON-NLS-1$
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							"Unable to create menu item \"" + getId() //$NON-NLS-1$
+									+ "\", no command id", null)); //$NON-NLS-1$
 			return;
 		}
 		Command cmd = commandService.getCommand(commandId);
 		if (!cmd.isDefined()) {
-			WorkbenchPlugin.log("Unable to create menu item \"" + getId() //$NON-NLS-1$
-					+ "\", command \"" + commandId + "\" not defined"); //$NON-NLS-1$ //$NON-NLS-2$
+			StatusManager
+					.getManager()
+					.handle(
+							StatusUtil
+									.newStatus(
+											IStatus.ERROR,
+											"Unable to create menu item \"" + getId() //$NON-NLS-1$
+													+ "\", command \"" + commandId + "\" not defined", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			return;
 		}
 		command = ParameterizedCommand.generateCommand(cmd, parameters);
@@ -526,8 +541,10 @@ public class CommandContributionItem extends ContributionItem {
 				try {
 					text = command.getCommand().getName();
 				} catch (NotDefinedException e) {
-					WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
-							+ getId(), e);
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(IStatus.ERROR,
+									"Update item failed " //$NON-NLS-1$
+											+ getId(), e));
 				}
 			}
 		}
@@ -568,8 +585,10 @@ public class CommandContributionItem extends ContributionItem {
 				try {
 					text = command.getCommand().getName();
 				} catch (NotDefinedException e) {
-					WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
-							+ getId(), e);
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(IStatus.ERROR,
+									"Update item failed " //$NON-NLS-1$
+											+ getId(), e));
 				}
 			}
 		}
@@ -601,8 +620,10 @@ public class CommandContributionItem extends ContributionItem {
 				try {
 					text = command.getCommand().getName();
 				} catch (NotDefinedException e) {
-					WorkbenchPlugin.log("Update item failed " //$NON-NLS-1$
-							+ getId(), e);
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(IStatus.ERROR,
+									"Update item failed " //$NON-NLS-1$
+											+ getId(), e));
 				}
 			}
 		}
@@ -742,17 +763,25 @@ public class CommandContributionItem extends ContributionItem {
 		try {
 			handlerService.executeCommand(command, event);
 		} catch (ExecutionException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							"Failed to execute item " //$NON-NLS-1$
+									+ getId(), e));
 		} catch (NotDefinedException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							"Failed to execute item " //$NON-NLS-1$
+									+ getId(), e));
 		} catch (NotEnabledException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							"Failed to execute item " //$NON-NLS-1$
+									+ getId(), e));
 		} catch (NotHandledException e) {
-			WorkbenchPlugin.log("Failed to execute item " //$NON-NLS-1$
-					+ getId(), e);
+			StatusManager.getManager().handle(
+					StatusUtil.newStatus(IStatus.ERROR,
+							"Failed to execute item " //$NON-NLS-1$
+									+ getId(), e));
 		}
 	}
 
