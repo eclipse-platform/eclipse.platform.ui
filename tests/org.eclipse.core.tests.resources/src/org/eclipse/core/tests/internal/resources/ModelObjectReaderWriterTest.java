@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -644,6 +644,33 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		assertTrue("4.1", ref[0].getName().equals(ref2[0].getName()));
 		assertTrue("4.2", ref[1].getName().equals(ref2[1].getName()));
 		assertTrue("4.3", ref[2].getName().equals(ref2[2].getName()));
+	}
+
+	// see bug 274437
+	public void testProjectDescription3() throws Throwable {
+		IFileStore tempStore = getTempStore();
+		URI location = tempStore.toURI();
+		/* test write */
+		ProjectDescription description = new ProjectDescription();
+		description.setLocationURI(location);
+		description.setName("MyProjectDescription");
+		ICommand[] commands = new ICommand[1];
+		commands[0] = description.newCommand();
+		commands[0].setBuilderName("MyCommand");
+		commands[0].setArguments(null);
+		description.setBuildSpec(commands);
+
+		writeDescription(tempStore, description);
+
+		/* test read */
+		ProjectDescription description2 = readDescription(tempStore);
+		assertTrue("1.0", description.getName().equals(description2.getName()));
+		assertEquals("2.0", location, description.getLocationURI());
+
+		ICommand[] commands2 = description2.getBuildSpec();
+		assertEquals("3.0", 1, commands2.length);
+		assertEquals("4.0", "MyCommand", commands2[0].getBuilderName());
+		assertEquals("5.0", 0, commands2[0].getArguments().size());
 	}
 
 	public void testProjectDescriptionWithSpaces() throws Throwable {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -189,20 +189,21 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	 */
 	protected void write(String name, Map table, XMLWriter writer) {
 		writer.startTag(name, null);
-		
-		// ensure consistent order of map elements
-		List sorted = new ArrayList(table.keySet());
-		Collections.sort(sorted);
-		
-		for (Iterator it = sorted.iterator(); it.hasNext();) {
-			String key = (String) it.next();
-			Object value = table.get(key);
-			writer.startTag(DICTIONARY, null);
-			{
-				writer.printSimpleTag(KEY, key);
-				writer.printSimpleTag(VALUE, value);
+		if (table != null) {
+			// ensure consistent order of map elements
+			List sorted = new ArrayList(table.keySet());
+			Collections.sort(sorted);
+
+			for (Iterator it = sorted.iterator(); it.hasNext();) {
+				String key = (String) it.next();
+				Object value = table.get(key);
+				writer.startTag(DICTIONARY, null);
+				{
+					writer.printSimpleTag(KEY, key);
+					writer.printSimpleTag(VALUE, value);
+				}
+				writer.endTag(DICTIONARY);
 			}
-			writer.endTag(DICTIONARY);
 		}
 		writer.endTag(name);
 	}
