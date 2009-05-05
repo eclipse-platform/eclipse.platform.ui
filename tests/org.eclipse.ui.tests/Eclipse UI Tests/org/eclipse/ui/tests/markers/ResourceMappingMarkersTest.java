@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
-import org.eclipse.core.runtime.jobs.JobChangeAdapter;
-import org.eclipse.swt.widgets.Display;
+import org.eclipse.core.resources.IMarker;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
 public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
@@ -54,7 +55,6 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 			assertTrue(e.getLocalizedMessage(), false);
 			return;
 		}
-		final boolean[] waiting = new boolean[] { true };
 
 		final MarkersTestMarkersView problemView;
 		try {
@@ -65,34 +65,24 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 			return;
 		}
 
-		IJobChangeListener doneListener = new JobChangeAdapter() {
-			public void done(IJobChangeEvent event) {
-				if (problemView.getCurrentMarkers().length > 0)
-					waiting[0] = false;
-			}
-		};
-
-		problemView.addUpdateFinishListener(doneListener);
-		view.addMarkerToFirstProject();
-		long timeOut = System.currentTimeMillis() + 2000;
-		waiting[0] = problemView.getCurrentMarkers().length == 0;
-
-		Display display = view.getSite().getShell().getDisplay();
-		while (waiting[0] && System.currentTimeMillis() < timeOut) {
-            // Spin the loop until empty
-			while (display.readAndDispatch()) {}
-
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				Thread.currentThread().interrupt();
+		IMarker marker=view.addMarkerToFirstProject();
+		assertNotNull("Marker creation failed", marker);
+		try {
+			Job.getJobManager().join(
+					MarkerContentGenerator.CACHE_UPDATE_FAMILY,
+					new NullProgressMonitor());
+		} catch (OperationCanceledException e) {
+		} catch (InterruptedException e) {
+		}
+		
+		IMarker[] markers=problemView.getCurrentMarkers();
+		boolean markerFound = false;
+		for (int i = 0; i < markers.length; i++) {
+			if(markers[i].equals(marker)){
+				markerFound = true;
+				break;
 			}
 		}
-
-		assertTrue("No markers generated",
-				problemView.getCurrentMarkers().length > 0);
-		problemView.removeUpdateFinishListener(doneListener);
-
+		assertTrue("No markers generated",markerFound);
 	}
-
 }
