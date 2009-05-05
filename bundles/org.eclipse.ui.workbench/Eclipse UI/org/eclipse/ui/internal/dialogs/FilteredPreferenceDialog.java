@@ -20,6 +20,9 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.ScrolledComposite;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.graphics.Font;
@@ -29,6 +32,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
@@ -84,6 +90,16 @@ import org.eclipse.ui.statushandlers.StatusManager;
  */
 public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		implements IWorkbenchPreferenceContainer {
+
+	/**
+	 * 
+	 */
+	private static final int PAGE_MULTIPLIER = 9;
+
+	/**
+	 * 
+	 */
+	private static final int INCREMENT = 10;
 
 	protected class PreferenceFilteredTree extends FilteredTree {
 		/**
@@ -536,6 +552,25 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 						return WorkbenchMessages.FilteredPreferenceDialog_Resize;
 					}
 				});
+				manager.add(new Action() {
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.jface.action.Action#run()
+					 */
+					public void run() {
+						activeKeyScrolling();
+					}
+
+					/*
+					 * (non-Javadoc)
+					 * 
+					 * @see org.eclipse.jface.action.Action#getText()
+					 */
+					public String getText() {
+						return WorkbenchMessages.FilteredPreferenceDialog_Key_Scrolling;
+					}
+				});
 				Menu menu = manager.createContextMenu(getShell());
 				Rectangle bounds = historyManager.getControl().getBounds();
 				Point topLeft = new Point(bounds.x + bounds.width, bounds.y + bounds.height);
@@ -556,6 +591,83 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 		historyManager.update(false);
 
 		return historyManager.getControl();
+	}
+	
+	private boolean keyScrollingEnabled = false;
+	private Listener keyScrollingFilter = null;
+
+	void activeKeyScrolling() {
+		if (keyScrollingFilter == null) {
+			Composite pageParent = getPageContainer().getParent();
+			if (!(pageParent instanceof ScrolledComposite)) {
+				return;
+			}
+			final ScrolledComposite sc = (ScrolledComposite) pageParent;
+			keyScrollingFilter = new Listener() {
+				public void handleEvent(Event event) {
+					if (!keyScrollingEnabled || sc.isDisposed()) {
+						return;
+					}
+					switch (event.keyCode) {
+					case SWT.ARROW_DOWN:
+						sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
+								+ INCREMENT);
+						break;
+					case SWT.ARROW_UP:
+						sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
+								- INCREMENT);
+						break;
+					case SWT.ARROW_LEFT:
+						sc.setOrigin(sc.getOrigin().x - INCREMENT, sc
+								.getOrigin().y);
+						break;
+					case SWT.ARROW_RIGHT:
+						sc.setOrigin(sc.getOrigin().x + INCREMENT, sc
+								.getOrigin().y);
+						break;
+					case SWT.PAGE_DOWN:
+						sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
+								+ PAGE_MULTIPLIER * INCREMENT);
+						break;
+					case SWT.PAGE_UP:
+						sc.setOrigin(sc.getOrigin().x, sc.getOrigin().y
+								- PAGE_MULTIPLIER * INCREMENT);
+						break;
+					case SWT.HOME:
+						sc.setOrigin(0, 0);
+						break;
+					case SWT.END:
+						sc.setOrigin(0, sc.getSize().y);
+						break;
+					default:
+						keyScrollingEnabled = false;
+					}
+					event.type = SWT.None;
+					event.doit = false;
+				}
+			};
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			display.addFilter(SWT.KeyDown, keyScrollingFilter);
+			display.addFilter(SWT.Traverse, keyScrollingFilter);
+			sc.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					removeKeyScrolling();
+				}
+			});
+		}
+		keyScrollingEnabled = true;
+	}
+	
+	void removeKeyScrolling() {
+		if (keyScrollingFilter != null) {
+			keyScrollingEnabled = false;
+			Display display = PlatformUI.getWorkbench().getDisplay();
+			if (display != null) {
+				display.removeFilter(SWT.KeyDown, keyScrollingFilter);
+				display.removeFilter(SWT.Traverse, keyScrollingFilter);
+			}
+			keyScrollingFilter = null;
+		}
 	}
 
 	/*
@@ -585,6 +697,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog
 			showViewHandler.getHandler().dispose();
 			showViewHandler = null;
 		}
+		removeKeyScrolling();
 		history.dispose();
 		return super.close();
 	}
