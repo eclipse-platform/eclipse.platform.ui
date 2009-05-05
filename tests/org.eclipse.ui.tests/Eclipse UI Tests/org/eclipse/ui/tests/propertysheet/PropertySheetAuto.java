@@ -14,7 +14,6 @@ package org.eclipse.ui.tests.propertysheet;
 import java.util.ArrayList;
 import java.util.Random;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
@@ -295,13 +294,15 @@ public class PropertySheetAuto extends UITestCase {
     /** 
      * Supply selection events with a random car selection. None of these should go to
      * the properties view because it is hidden.
+     * <p>
+     * This test invalidated by the fix for 
+     * https://bugs.eclipse.org/bugs/show_bug.cgi?id=267425
+     * </p>
      */
-    public void testInputIfHiddenBug69953() throws Throwable {
+    public void XtestInputIfHiddenBug69953() throws Throwable {
         PropertySheetPerspectiveFactory2.applyPerspective(activePage); 
         PropertySheet propView = (PropertySheet) createTestParts(activePage);
         createCars();
-        ISelection initialSelection = propView.getShowInContext().getSelection();
-        assertNull("Initial selection should be null in properties view", initialSelection);
         
         assertFalse("'Property' view should be hidden", activePage.isPartVisible(propView));
         assertTrue("'Selection provider' view should be visible", activePage
