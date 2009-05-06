@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,14 +15,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.jface.util.Util;
+import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -37,6 +36,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabItem;
 import org.eclipse.ui.internal.presentations.util.AbstractTabItem;
 import org.eclipse.ui.internal.presentations.util.PresentablePartFolder;
@@ -78,8 +78,7 @@ public class BasicPartList extends AbstractTableInformationControl {
         }
     }
 
-    private class BasicStackListLabelProvider extends LabelProvider implements
-            IFontProvider, IColorProvider {
+	private class BasicStackListLabelProvider extends ColumnLabelProvider {
 
 		private Font visibleEditorsFont;
 		private Font invisibleEditorsFont;
@@ -158,10 +157,6 @@ public class BasicPartList extends AbstractTableInformationControl {
             }
         }
 
-		public Color getBackground(Object element) {
-			return null;
-		}
-
 		public Color getForeground(Object element) {
             IPresentablePart presentablePart = (IPresentablePart)element;
 
@@ -173,6 +168,20 @@ public class BasicPartList extends AbstractTableInformationControl {
 			}
 
 			return null;
+		}
+
+		public String getToolTipText(Object element) {
+			if (element instanceof PresentablePart) {
+				PresentablePart part = (PresentablePart) element;
+				IWorkbenchPartReference reference = part.getPane()
+						.getPartReference();
+				return reference.getTitleToolTip();
+			}
+			return null;
+		}
+
+		public boolean useNativeToolTip(Object object) {
+			return true;
 		}
     }
 
@@ -296,6 +305,9 @@ public class BasicPartList extends AbstractTableInformationControl {
         	tableViewer.setComparator(new BasicStackListViewerComparator());
         }
         tableViewer.setLabelProvider(new BasicStackListLabelProvider());
+
+		ColumnViewerToolTipSupport.enableFor(tableViewer);
+
         return tableViewer;
     }
 
