@@ -595,7 +595,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         // Set the view site action bars created by createActions() to the 
         // default page site.
         IActionBars bars = getViewSite().getActionBars();
-        pageActionBars.setGlobalActionHandler(FIND_ACTION, bars.getGlobalActionHandler(FIND_ACTION)); 
+        pageActionBars.setGlobalActionHandler(FIND_ACTION, bars.getGlobalActionHandler(FIND_ACTION));
+        pageActionBars.setGlobalActionHandler(COPY_ACTION, bars.getGlobalActionHandler(COPY_ACTION)); 
 	}
 	
     /**
