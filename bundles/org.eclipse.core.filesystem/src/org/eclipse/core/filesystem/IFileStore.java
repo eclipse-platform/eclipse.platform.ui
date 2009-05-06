@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -379,13 +379,18 @@ public interface IFileStore extends IAdaptable {
 	public void move(IFileStore destination, int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns an open input stream on the contents of this file.  The caller
-	 * is responsible for closing the provided stream when it is no longer
+	 * Returns an open input stream on the contents of this file. The number of
+	 * concurrently open streams depends on the implementation and can be limited.
+	 * The caller is responsible for closing the provided stream when it is no longer
 	 * needed.
 	 * <p>
 	 * The returned stream is not guaranteed to be buffered efficiently.  When reading
 	 * large blocks of data from the stream, a <code>BufferedInputStream</code>
 	 * wrapper should be used, or some other form of content buffering.
+	 * </p>
+	 * <p>
+	 * It depends on the implementation how the limit of concurrently opened streams 
+	 * is handled. <code>CoreException</code> may be thrown, when the limit is exceeded.
 	 * </p>
 	 * 
 	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
@@ -395,26 +400,32 @@ public interface IFileStore extends IAdaptable {
 	 * @return An input stream on the contents of this file.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
-	 * <li> This store does not exist.</li>
+	 * <li>This store does not exist.</li>
 	 * <li>This store represents a directory.</li>
+	 * <li>The limit of concurrently opened streams has been exceeded.</li>
 	 * </ul>
 	 */
 	public InputStream openInputStream(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns an open output stream on the contents of this file.  The caller
-	 * is responsible for closing the provided stream when it is no longer
-	 * needed.  This file need not exist in the underlying file system at the
+	 * Returns an open output stream on the contents of this file. The number of
+	 * concurrently open streams depends on implementation and can be limited.
+	 * The caller is responsible for closing the provided stream when it is no longer
+	 * needed. This file need not exist in the underlying file system at the
 	 * time this method is called.
 	 * <p>
-	 * The returned stream is not guaranteed to be buffered efficiently.  When writing
+	 * The returned stream is not guaranteed to be buffered efficiently. When writing
 	 * large blocks of data to the stream, a <code>BufferedOutputStream</code>
 	 * wrapper should be used, or some other form of content buffering.
 	 * </p>
 	 * <p>
+	 * It depends on the implementation how the limit of concurrently opened streams 
+	 * is handled. <code>CoreException</code> may be thrown, when the limit is exceeded.
+	 * </p>
+	 * <p>
 	 * The {@link EFS#APPEND} update flag controls where
-	 * output is written to the file.  If this flag is specified, content written
-	 * to the stream will be appended to the end of the file.  If this flag is
+	 * output is written to the file. If this flag is specified, content written
+	 * to the stream will be appended to the end of the file. If this flag is
 	 * not specified, the contents of the existing file, if any, is truncated to zero
 	 * and the new output will be written from the start of the file.
 	 * </p>
@@ -428,6 +439,7 @@ public interface IFileStore extends IAdaptable {
 	 * <ul>
 	 * <li>This store represents a directory.</li>
 	 * <li>The parent of this store does not exist.</li>
+	 * <li>The limit of concurrently opened streams has been exceeded.</li>
 	 * </ul>
 	 */
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException;
