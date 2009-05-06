@@ -160,8 +160,6 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 		fgGlobalActionIds.add(FIND_ACTION);
 		fgGlobalActionIds.add(ActionFactory.UNDO.getId());
 		fgGlobalActionIds.add(ActionFactory.REDO.getId());
-		fgGlobalActionIds.add(ActionFactory.NEXT.getId());
-        fgGlobalActionIds.add(ActionFactory.PREVIOUS.getId());
 	}
 
 	/**

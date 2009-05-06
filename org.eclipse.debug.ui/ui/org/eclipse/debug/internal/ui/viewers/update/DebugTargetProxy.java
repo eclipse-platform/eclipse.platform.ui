@@ -10,10 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -25,8 +21,6 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelNavigateProxy;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelNavigateUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -35,7 +29,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 3.2
  */
-public class DebugTargetProxy extends EventHandlerModelProxy implements IModelNavigateProxy {
+public class DebugTargetProxy extends EventHandlerModelProxy {
 
     private IDebugTarget fDebugTarget;
 
@@ -82,7 +76,7 @@ public class DebugTargetProxy extends EventHandlerModelProxy implements IModelNa
 		// select any thread that is already suspended after installation
 		IDebugTarget target = fDebugTarget;
 		if (target != null) {
-			ModelDelta delta = getNextSuspendedThreadDelta(null, false, false);
+			ModelDelta delta = getNextSuspendedThreadDelta(null, false);
 			if (delta == null) {
                 ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
                 ILaunch launch = target.getLaunch();
@@ -97,30 +91,7 @@ public class DebugTargetProxy extends EventHandlerModelProxy implements IModelNa
 		}
 	}
     
-    public void update(final IModelNavigateUpdate update) {
-        new Job("Traverse Debug Model") { //$NON-NLS-1$
-            { setSystem(true); }
-            protected IStatus run(IProgressMonitor monitor) {
-                // Get current thread based on selection
-                IThread currentThread = null;
-                Object element = update.getElement();
-                if (element instanceof IThread) {
-                    currentThread = (IThread)element;
-                }
-                else if (element instanceof IStackFrame) {
-                    currentThread = ((IStackFrame)element).getThread();
-                }  
-                
-                // Calculate next thread and complete update.
-                update.setNextElementDelta( getNextSuspendedThreadDelta(currentThread, update.isReverse(), true) );
-                update.done();
-                
-                return Status.OK_STATUS;
-            }
-        }.schedule();
-    }
-    
-    protected ModelDelta getNextSuspendedThreadDelta(IThread currentThread, boolean reverse, boolean force) {
+    protected ModelDelta getNextSuspendedThreadDelta(IThread currentThread, boolean reverse) {
         IDebugTarget target = fDebugTarget;
         if (target != null) {
             try {
@@ -161,7 +132,7 @@ public class DebugTargetProxy extends EventHandlerModelProxy implements IModelNa
                         ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
                         node = node.addNode(target, targetIndex, IModelDelta.NO_CHANGE, threads.length);
                         node = node.addNode(chosen, threadIndex, IModelDelta.NO_CHANGE | IModelDelta.EXPAND, chosen.getStackFrames().length);
-                        node = node.addNode(frame, 0, IModelDelta.NO_CHANGE | IModelDelta.SELECT | (force ? IModelDelta.FORCE : 0), 0);
+                        node = node.addNode(frame, 0, IModelDelta.NO_CHANGE | IModelDelta.SELECT, 0);
                         return delta;
                     }
                 }

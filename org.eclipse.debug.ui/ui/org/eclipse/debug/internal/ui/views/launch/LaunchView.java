@@ -116,7 +116,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
-import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
 import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.part.IPageBookViewPage;
@@ -492,8 +491,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		fEditSourceAction = new EditSourceLookupPathAction(this);
 		fLookupAction = new LookupSourceAction(this);
 		setAction(FIND_ACTION, new VirtualFindAction((InternalTreeModelViewer) getViewer())); 
-		setAction(ActionFactory.NEXT.getId(), new NextThreadNavAction((TreeModelViewer)getViewer()));
-		setAction(ActionFactory.PREVIOUS.getId(), new PreviousThreadNavAction((TreeModelViewer)getViewer()));
         
         addCapabilityAction(new TerminateCommandAction(), TERMINATE);
         addCapabilityAction(new DisconnectCommandAction(), DISCONNECT);
@@ -599,8 +596,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         // default page site.
         IActionBars bars = getViewSite().getActionBars();
         pageActionBars.setGlobalActionHandler(FIND_ACTION, bars.getGlobalActionHandler(FIND_ACTION)); 
-        pageActionBars.setGlobalActionHandler(ActionFactory.NEXT.getId(), bars.getGlobalActionHandler(ActionFactory.NEXT.getId())); 
-        pageActionBars.setGlobalActionHandler(ActionFactory.PREVIOUS.getId(), bars.getGlobalActionHandler(ActionFactory.PREVIOUS.getId())); 
 	}
 	
     /**
@@ -1024,9 +1019,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         disposeCommandAction(TERMINATE_AND_REMOVE);
         disposeCommandAction(TERMINATE_AND_RELAUNCH);
         disposeCommandAction(TERMINATE_ALL);
-        
-        ((NextThreadNavAction)getAction(ActionFactory.NEXT.getId())).dispose();
-        ((PreviousThreadNavAction)getAction(ActionFactory.PREVIOUS.getId())).dispose();
     }
 
     /**
@@ -1114,8 +1106,6 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
 		menu.add(getAction(FIND_ACTION));
-		menu.add(getAction(ActionFactory.NEXT.getId()));
-		menu.add(getAction(ActionFactory.PREVIOUS.getId()));
 		menu.add(new Separator(IDebugUIConstants.EMPTY_STEP_GROUP));
 		menu.add(new Separator(IDebugUIConstants.STEP_GROUP));
 		menu.add(new GroupMarker(IDebugUIConstants.STEP_INTO_GROUP));
