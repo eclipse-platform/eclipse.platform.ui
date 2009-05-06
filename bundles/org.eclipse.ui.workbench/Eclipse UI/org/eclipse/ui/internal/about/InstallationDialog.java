@@ -136,6 +136,9 @@ public class InstallationDialog extends Dialog implements
 
 	protected static final String ID = "ID"; //$NON-NLS-1$
 	private static final String DIALOG_SETTINGS_SECTION = "InstallationDialogSettings"; //$NON-NLS-1$
+	private final static int TAB_WIDTH_IN_DLUS = 440;
+	private final static int TAB_HEIGHT_IN_DLUS = 320;
+
 	private static String lastSelectedTabId = null;
 	private TabFolder folder;
 	IServiceLocator serviceLocator;
@@ -170,14 +173,6 @@ public class InstallationDialog extends Dialog implements
 				WorkbenchMessages.InstallationDialog_ShellTitle, productName));
 	}
 
-	protected Point getInitialSize() {
-		IDialogSettings section = WorkbenchPlugin.getDefault()
-				.getDialogSettings().getSection(DIALOG_SETTINGS_SECTION);
-		if (section == null)
-			return new Point(600, 768);
-		return super.getInitialSize();
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -202,8 +197,8 @@ public class InstallationDialog extends Dialog implements
 		createFolderItems(folder);
 
 		GridData folderData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		folderData.widthHint = SWT.DEFAULT;
-		folderData.heightHint = SWT.DEFAULT;
+		folderData.widthHint = convertHorizontalDLUsToPixels(TAB_WIDTH_IN_DLUS);
+		folderData.heightHint = convertVerticalDLUsToPixels(TAB_HEIGHT_IN_DLUS);
 		folder.setLayoutData(folderData);
 		folder.addSelectionListener(createFolderSelectionListener());
 		folder.addDisposeListener(new DisposeListener() {
