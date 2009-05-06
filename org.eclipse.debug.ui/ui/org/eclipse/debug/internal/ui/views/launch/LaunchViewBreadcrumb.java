@@ -309,6 +309,11 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
             fBreadcrumbInput = new Input(getPathForSelection(event.getContext())); 
             if ((event.getFlags() & DebugContextEvent.ACTIVATED) != 0) {
                 setInput(getCurrentInput());
+                
+                // If the context was activated, then clear the selection in breadcrumb
+                // so that the activated context will become the active context for the 
+                // window.
+                fViewer.setSelection(StructuredSelection.EMPTY);
             } else {
                 refresh();
             }
