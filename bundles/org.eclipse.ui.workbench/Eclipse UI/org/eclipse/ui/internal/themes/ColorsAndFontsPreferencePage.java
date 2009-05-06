@@ -793,6 +793,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage
 		}, true);
 
         GridData data = new GridData(GridData.FILL_BOTH | GridData.VERTICAL_ALIGN_FILL);
+		data.widthHint = Math.max(285, convertWidthInCharsToPixels(30));
         data.heightHint = Math.max(175, convertHeightInCharsToPixels(10));
         tree.setLayoutData(data);
         myApplyDialogFont(tree.getViewer().getControl());
