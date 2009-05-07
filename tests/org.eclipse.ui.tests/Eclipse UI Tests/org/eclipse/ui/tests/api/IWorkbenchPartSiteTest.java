@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
@@ -117,6 +119,21 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
         site.setSelectionProvider(provider);
         assertEquals(provider, site.getSelectionProvider());
     }
+    
+    public void testINestableService() throws Throwable {
+    	IWorkbenchPart part = createTestPart(fPage);
+    	IWorkbenchPartSite site = part.getSite();
+    	DummyService service = (DummyService) site.getService(DummyService.class);
+
+    	assertTrue(service.isActive());
+    	if(part instanceof IViewPart)
+    		fPage.hideView((IViewPart) part);
+    	else
+    		fPage.closeEditor((IEditorPart) part, false);
+    	assertFalse(service.isActive());
+    	
+    }
+    
 
     /**
      * Creates a test part in the page.	

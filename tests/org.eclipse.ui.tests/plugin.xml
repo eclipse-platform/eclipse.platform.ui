@@ -3975,6 +3975,11 @@
                priorityLevel="activeContexts">
          </variable>
       </sourceProvider>
+      <serviceFactory
+            factoryClass="org.eclipse.ui.tests.api.DummyServiceFactory">
+         <service
+               serviceClass="org.eclipse.ui.tests.api.DummyService"></service>
+      </serviceFactory>
    </extension>   
    <extension
          point="org.eclipse.ui.commands">

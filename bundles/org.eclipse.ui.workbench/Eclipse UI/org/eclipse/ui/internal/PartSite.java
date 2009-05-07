@@ -477,6 +477,10 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	}
 
 	public void activateActionBars(boolean forceVisibility) {
+		if (serviceLocator != null) {
+			serviceLocator.activate();
+		}
+
 		if (actionBars != null) {
 			actionBars.activate(forceVisibility);
 		}
@@ -485,6 +489,9 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	public void deactivateActionBars(boolean forceHide) {
 		if (actionBars != null) {
 			actionBars.deactivate(forceHide);
+		}
+		if (serviceLocator != null) {
+			serviceLocator.deactivate();
 		}
 	}
 
