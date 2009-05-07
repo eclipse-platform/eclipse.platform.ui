@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,11 +206,9 @@ public interface ITextViewer {
 	/* ---------- listeners ------------- */
 
 	/**
-	 * Adds the given view port listener to this viewer. The listener
-	 * is informed about all changes to the visible area of this viewer.
-	 * If the listener is already registered with this viewer, this call
-	 * has no effect.
-	 *
+	 * Adds the given view port listener to this viewer. If the listener is already registered with
+	 * this viewer, this call has no effect.
+	 * 
 	 * @param listener the listener to be added
 	 */
 	void addViewportListener(IViewportListener listener);
