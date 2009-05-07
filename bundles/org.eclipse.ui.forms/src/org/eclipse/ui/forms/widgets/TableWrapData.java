@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 
 /**
- * Layout data used in conjunction with <code>HTMLTableLayout</code>.
+ * Layout data used in conjunction with <code>TableWrapLayout</code>.
  * Children in a composite that uses this layout should call <samp>setLayoutData
  * </samp> and pass an instance of this class to control physical placement in
  * the parent.
