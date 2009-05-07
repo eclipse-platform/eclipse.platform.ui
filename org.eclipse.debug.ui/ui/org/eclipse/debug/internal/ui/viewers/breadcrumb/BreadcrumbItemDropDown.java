@@ -298,13 +298,14 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 			public void handleEvent(Event event) {
 				Widget focusElement= event.widget;
 				boolean isFocusBreadcrumbTreeFocusWidget= focusElement == shell || focusElement instanceof Control && ((Control)focusElement).getShell() == shell;
+				boolean isFocusWidgetParentShell= focusElement instanceof Control && ((Control)focusElement).getShell().getParent() == shell;
 
 				switch (event.type) {
 					case SWT.FocusIn:
 						if (DEBUG)
 							System.out.println("focusIn - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
 
-						if (!isFocusBreadcrumbTreeFocusWidget) {
+						if (!isFocusBreadcrumbTreeFocusWidget && !isFocusWidgetParentShell) {
 							if (DEBUG)
 								System.out.println("==> closing shell since focus in other widget"); //$NON-NLS-1$
 							shell.close();
