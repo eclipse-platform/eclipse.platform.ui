@@ -1779,15 +1779,15 @@ public class ContentProposalAdapter {
 					// the content change was caused by something other than typing.
 					// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=183650
 					case SWT.Modify:
-						if (triggerKeyStroke == null && watchModify) {
+						if (allowsAutoActivate() && watchModify) {
 							if (DEBUG) {
 								dump("Modify event triggers popup open or close", e); //$NON-NLS-1$
 							}
 							watchModify = false;
 							// We are in autoactivation mode, either for specific
 							// characters or for all characters. In either case, 
-							// we should close the proposal popup
-							// if there is no content in the control.
+							// we should close the proposal popup when there is no
+							// content in the control.
 							if (isControlContentEmpty()) {
 								// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=192633
 								closeProposalPopup();
@@ -1804,7 +1804,7 @@ public class ContentProposalAdapter {
 									// modify event does not involve one of them.  See
 									// if any of the autoactivation characters are left
 									// in the content and close the popup if none remain.
-									if (!controlContentContainsAutoActivationCharacter())
+									if (!shouldPopupRemainOpen())
 										closeProposalPopup();
 								}
 							}
@@ -2139,22 +2139,31 @@ public class ContentProposalAdapter {
 	}
 	
 	/*
-	 * Return whether the control content contains explicit auto
-	 * activation characters.  Used to determine whether the popup
-	 * should be closed when no auto activation characters remain.
-	 * Note that this method does *not* return true if autoactivation
-	 * should occur on any character.  In other words, this method
-	 * should not be used to determine whether autoactivation should
-	 * occur at all.
+	 * Return whether a proposal popup should remain open.
+	 * If it was autoactivated by specific characters, and 
+	 * none of those characters remain, then it should not remain
+	 * open.  This method should not be used to determine
+	 * whether autoactivation has occurred or should occur, only whether
+	 * the circumstances would dictate that a popup remain open.
 	 */
-	private boolean controlContentContainsAutoActivationCharacter() {
+	private boolean shouldPopupRemainOpen() {
+		// If we always autoactivate or never autoactivate, it should remain open
 		if (autoActivateString == null || autoActivateString.length() == 0)
-			return false;
+			return true;
 		String content = getControlContentAdapter().getControlContents(getControl());
 		for (int i=0; i<autoActivateString.length(); i++) {
 			if (content.indexOf(autoActivateString.charAt(i)) >= 0)
 				return true;
 		}
 		return false;
+	}
+	
+	/*
+	 * Return whether this adapter is configured for autoactivation, by
+	 * specific characters or by any characters.
+	 */
+	private boolean allowsAutoActivate() {
+		return (autoActivateString != null && autoActivateString.length() > 0) // there are specific autoactivation chars supplied
+		  || (autoActivateString == null && triggerKeyStroke == null);    // we autoactivate on everything
 	}
 }
