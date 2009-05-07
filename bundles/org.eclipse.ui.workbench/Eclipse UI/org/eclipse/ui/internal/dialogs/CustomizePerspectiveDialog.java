@@ -2717,6 +2717,9 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (object instanceof CommandContributionItem) {
 			CommandContributionItem item = (CommandContributionItem) object;
 			ParameterizedCommand command = item.getCommand();
+			if (command == null) {
+				return null;
+			}
 			return command.getId();
 		}
 		if (object instanceof IPerspectiveDescriptor) {
