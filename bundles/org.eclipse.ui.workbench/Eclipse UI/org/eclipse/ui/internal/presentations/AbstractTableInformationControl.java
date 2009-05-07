@@ -11,12 +11,7 @@
 package org.eclipse.ui.internal.presentations;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.TableViewer;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusListener;
@@ -30,6 +25,8 @@ import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.events.TraverseEvent;
+import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -49,6 +46,14 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.jface.viewers.ILabelProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerFilter;
+
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.misc.StringMatcher;
 import org.eclipse.ui.internal.presentations.defaultpresentation.DefaultTabItem;
@@ -320,6 +325,42 @@ public abstract class AbstractTableInformationControl {
                 }
             }
         });
+        
+		fShell.addTraverseListener(new TraverseListener() {
+			public void keyTraversed(TraverseEvent e) {
+				switch (e.detail) {
+				case SWT.TRAVERSE_PAGE_NEXT:
+					e.detail = SWT.TRAVERSE_NONE;
+					e.doit = true;
+					{
+						int n = table.getItemCount();
+						if (n == 0)
+							return;
+
+						int i = table.getSelectionIndex() + 1;
+						if (i >= n)
+							i = 0;
+						table.setSelection(i);
+					}
+					break;
+
+				case SWT.TRAVERSE_PAGE_PREVIOUS:
+					e.detail = SWT.TRAVERSE_NONE;
+					e.doit = true;
+					{
+						int n = table.getItemCount();
+						if (n == 0)
+							return;
+
+						int i = table.getSelectionIndex() - 1;
+						if (i < 0)
+							i = n - 1;
+						table.setSelection(i);
+					}
+					break;
+				}
+			}
+		});
 
         int border = ((shellStyle & SWT.NO_TRIM) == 0) ? 0 : BORDER;
         fShell.setLayout(new BorderFillLayout(border));
@@ -523,6 +564,7 @@ public abstract class AbstractTableInformationControl {
     protected void inputChanged(Object newInput, Object newSelection) {
         fFilterText.setText(""); //$NON-NLS-1$
         fTableViewer.setInput(newInput);
+		selectFirstMatch();
 
         // Resize the table's height accordingly to the new input
         Table viewerTable = fTableViewer.getTable();
