@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,28 +26,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.ErrorHandler;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 public class FormTextModel {
-	
-	/*
-	 * This class prevents parse errors from being written to standard output
-	 */
-	public class ParseErrorHandler implements ErrorHandler {
-
-		public void error(SAXParseException arg0) throws SAXException {
-		}
-
-		public void fatalError(SAXParseException arg0) throws SAXException {
-		}
-
-		public void warning(SAXParseException arg0) throws SAXException {
-		}
-	}
-
 	private static final DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory
 			.newInstance();
 
@@ -123,14 +105,13 @@ public class FormTextModel {
 		try {
 			DocumentBuilder parser = documentBuilderFactory
 					.newDocumentBuilder();
-			parser.setErrorHandler(new ParseErrorHandler());
 			InputSource source = new InputSource(is);
 			Document doc = parser.parse(source);
 			processDocument(doc, expandURLs);
 		} catch (ParserConfigurationException e) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e, " " + e.getMessage()); //$NON-NLS-1$
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e);
 		} catch (SAXException e) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e, " " + e.getMessage()); //$NON-NLS-1$
+			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e);
 		} catch (IOException e) {
 			SWT.error(SWT.ERROR_IO, e);
 		}
