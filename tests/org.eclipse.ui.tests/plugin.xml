@@ -3545,20 +3545,6 @@
             </visibleWhen>
             </command>
       </menuContribution>
-      
-      <!-- The entry below purposely references an unknown command id. This is for
-           testing that invalid commands will not prevent the workbench from
-           starting up, see bug 275301 for details. --> 
-      <menuContribution
-            locationURI="menu:file?after=additions">
-         <command
-               commandId="test275301.unknownCommand"
-               label="Test Bug 275301"
-               style="push">
-         </command>
-      </menuContribution>
-      <!-- End of bug 275301 entry. -->
-           
    </extension>
    <extension
          point="org.eclipse.ui.contexts">
