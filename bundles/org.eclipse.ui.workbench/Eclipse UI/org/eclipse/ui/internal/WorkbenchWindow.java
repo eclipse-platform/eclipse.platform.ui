@@ -1269,6 +1269,8 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		if (perspectiveSwitcher != null) {
 			perspectiveSwitcher.setPerspectiveBarLocation(location);
 		}
+		updateLayoutDataForContents();
+		getShell().layout();
 	}
 
 	/**
@@ -3697,9 +3699,15 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 		// @issue this is not ideal; coolbar and perspective shortcuts should be
 		// separately configurable
+		String perspectiveBarOnTheLeftString = PlatformUI.getPreferenceStore()
+				.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
+		boolean perspectiveBarOnTheLeft = perspectiveBarOnTheLeftString != null
+				&& perspectiveBarOnTheLeftString
+						.equalsIgnoreCase(IWorkbenchPreferenceConstants.LEFT);
+
 		if ((getCoolBarVisible() && getWindowConfigurer().getShowCoolBar())
-				|| (getPerspectiveBarVisible() && getWindowConfigurer()
-						.getShowPerspectiveBar())) {
+				|| (getPerspectiveBarVisible()
+						&& getWindowConfigurer().getShowPerspectiveBar() && !perspectiveBarOnTheLeft)) {
 			if (defaultLayout.getTrim(topBarTrim.getId()) == null) {
 				defaultLayout.addTrim(SWT.TOP, topBarTrim);
 			}
