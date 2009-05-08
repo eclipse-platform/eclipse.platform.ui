@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,12 @@
  *     IBM Corporation - ongoing maintenance
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh2;
-import java.io.*;
+import java.io.FilterInputStream;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.net.NoRouteToHostException;
 import java.net.UnknownHostException;
 
@@ -19,16 +24,23 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.IServerConnection;
 import org.eclipse.team.internal.ccvs.core.connection.CVSAuthenticationException;
-import org.eclipse.team.internal.ccvs.ssh.SSHServerConnection;
-import org.eclipse.team.internal.core.streams.*;
+import org.eclipse.team.internal.core.streams.PollingInputStream;
+import org.eclipse.team.internal.core.streams.PollingOutputStream;
+import org.eclipse.team.internal.core.streams.TimeoutInputStream;
+import org.eclipse.team.internal.core.streams.TimeoutOutputStream;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelExec;
+import com.jcraft.jsch.JSchException;
 
 /**
  * SSH2 connection method. Has the property of defaulting to SSH1 if the server
  * doesn't support SSH2. 
  */
 public class CVSSSH2ServerConnection implements IServerConnection {
+	
+	private static final String SSH1_COMPATIBILITY_CLASS = "org.eclipse.team.internal.ccvs.ssh.SSHServerConnection"; //$NON-NLS-1$
+	
 	private final class SSH2IOException extends IOException {
         private static final long serialVersionUID = 1L;
 
@@ -161,11 +173,12 @@ public class CVSSSH2ServerConnection implements IServerConnection {
 					8192 /*buffersize*/, (timeout>0 ? 1000 : 0) /*writeTimeout*/, (timeout>0 ? 1000 : 0) /*closeTimeout*/), timeout > 0 ? timeout : 1, monitor);
 		} catch (final JSchException e) {
 			if (isSSH2Unsupported(e)) {
-                ssh1 = new SSHServerConnection(location, password);
-                if (ssh1 == null) {
-                    throw new SSH2IOException(e.toString(), e);
-                }
-                ssh1.open(monitor);
+				ssh1 = createSSH1Connection();
+				if (ssh1 == null) {
+					throw new SSH2IOException(
+							CVSSSH2Messages.CVSSSH2ServerConnection_4, e);
+				}
+				ssh1.open(monitor);
             } else {
 			    String message = e.getMessage();
 			    if (JSchSession.isAuthenticationFailure(e)) {
@@ -193,6 +206,43 @@ public class CVSSSH2ServerConnection implements IServerConnection {
  				throw new SSH2IOException(message, e);
 			}
 		}
+	}
+	
+	/**
+	 * Returns SSH-1 connection.
+	 * 
+	 * @return a connection or <code>null</code>, if SSH-1 is not supported
+	 */
+	private IServerConnection createSSH1Connection() {
+		try {
+			return (IServerConnection) Class.forName(SSH1_COMPATIBILITY_CLASS)
+					.getConstructor(
+							new Class[] { ICVSRepositoryLocation.class,
+									String.class }).newInstance(
+							new Object[] { location, password });
+		} catch (IllegalArgumentException e1) {
+			if (Policy.DEBUG)
+				e1.printStackTrace();
+		} catch (SecurityException e1) {
+			if (Policy.DEBUG)
+				e1.printStackTrace();
+		} catch (InstantiationException e1) {
+			if (Policy.DEBUG)
+				e1.printStackTrace();
+		} catch (IllegalAccessException e1) {
+			if (Policy.DEBUG)
+				e1.printStackTrace();
+		} catch (InvocationTargetException e1) {
+			if (Policy.DEBUG)
+				e1.printStackTrace();
+		} catch (NoSuchMethodException e1) {
+			if (Policy.DEBUG)
+				e1.printStackTrace();
+		} catch (ClassNotFoundException e1) {
+			if (Policy.DEBUG)
+				e1.printStackTrace();
+		}
+		return null;
 	}
     
     private boolean isChannelNotOpenError(JSchException ee) {

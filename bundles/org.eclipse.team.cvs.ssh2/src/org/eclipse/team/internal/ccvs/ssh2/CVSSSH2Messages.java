@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,6 +64,7 @@ public class CVSSSH2Messages extends NLS {
 	public static String CVSSSH2ServerConnection_3;
 	public static String CVSSSH2ServerConnection_0;
 	public static String CVSSSH2ServerConnection_1;
+	public static String CVSSSH2ServerConnection_4;
 	public static String CVSSSH2PreferencePage_information;
 	public static String CVSSSH2PreferencePage_error;
 	public static String CVSSSH2PreferencePage_confirmation;
