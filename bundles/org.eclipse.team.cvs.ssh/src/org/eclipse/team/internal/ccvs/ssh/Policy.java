@@ -10,19 +10,16 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ssh;
 
-
-
 import org.eclipse.core.runtime.Platform;
 
 public class Policy {
-	//debug constants
+	// debug constants
 	public static boolean DEBUG_SSH_PROTOCOL = false;
 
 	static {
-		//init debug options
+		// init debug options
 		if (SSHPlugin.getPlugin().isDebugging()) {
 			DEBUG_SSH_PROTOCOL = "true".equalsIgnoreCase(Platform.getDebugOption(SSHPlugin.ID + "/ssh_protocol"));//$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
-
 }
