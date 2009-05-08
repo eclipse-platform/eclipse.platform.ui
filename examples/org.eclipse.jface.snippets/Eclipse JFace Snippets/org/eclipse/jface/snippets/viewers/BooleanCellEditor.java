@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.jface.snippets.viewers;
 
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorDeactivationEvent;
@@ -18,6 +19,7 @@ import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -35,7 +37,21 @@ public class BooleanCellEditor extends CellEditor {
 	private int index;
 	private String restoredText;
 	private Image restoredImage;
+	private KeyListener macSelectionListener = new KeyListener(){
+	
+		public void keyReleased(KeyEvent e) {
+			
+		}
+	
+		public void keyPressed(KeyEvent e) {
+			if( e.character == ' ' ) {
+				button.setSelection(!button.getSelection());	
+			}
+		}
+	};
 
+	private boolean changeOnActivation;
+	
 	/**
 	 * @param parent
 	 */
@@ -103,6 +119,12 @@ public class BooleanCellEditor extends CellEditor {
 			row.setImage(index, restoredImage);
 			row.setText(index, restoredText);
 		}
+
+//TODO Add a way to enable key traversal when CheckBoxes don't get focus
+//		if( Util.isMac() ) {
+//			button.getParent().removeKeyListener(macSelectionListener);
+//		}
+		
 		row = null;
 		restoredImage = null;
 		restoredText = null;
@@ -116,7 +138,17 @@ public class BooleanCellEditor extends CellEditor {
 		restoredText = row.getText(index);
 		row.setImage(index, null);
 		row.setText(index, ""); //$NON-NLS-1$
-		super.activate(activationEvent);
+		
+    	if (activationEvent.eventType != ColumnViewerEditorActivationEvent.TRAVERSAL && changeOnActivation) {
+    		button.setSelection(!button.getSelection());
+    	}
+    	
+//TODO Add a way to enable key traversal when CheckBoxes don't get focus
+//    	if( Util.isMac() ) {
+//    		button.getParent().addKeyListener(macSelectionListener);
+//    	}
+    	
+    	super.activate(activationEvent);
 	}
 
 	/* (non-Javadoc)
@@ -125,6 +157,8 @@ public class BooleanCellEditor extends CellEditor {
 	protected int getDoubleClickTimeout() {
 		return 0;
 	}
-
-
+    
+    public void setChangeOnActivation(boolean changeOnActivation) {
+    	this.changeOnActivation = changeOnActivation;
+    }
 }
