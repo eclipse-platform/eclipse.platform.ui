@@ -7,10 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 164653
- *     Brad Reynolds - bug 167204
- *     Matthew Hall - bug 208858
- *     Matthew Hall - bug 208332
+ *     Brad Reynolds - bugs 164653, 167204
+ *     Matthew Hall - bugs 208858, 208332, 274450
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.list;
@@ -27,12 +25,14 @@ import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * 
- * Abstract implementation of {@link IObservableList}, based on an underlying regular list. 
+ * Abstract implementation of {@link IObservableList}, based on an underlying
+ * regular list.
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ * 
  * @since 1.0
  * 
  */
@@ -42,7 +42,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	protected List wrappedList;
 
 	/**
-	 * Stale state of the list.  Access must occur in the current realm.
+	 * Stale state of the list. Access must occur in the current realm.
 	 */
 	private boolean stale = false;
 
@@ -62,7 +62,8 @@ public abstract class ObservableList extends AbstractObservable implements
 		addListener(ListChangeEvent.TYPE, listener);
 	}
 
-	public synchronized void removeListChangeListener(IListChangeListener listener) {
+	public synchronized void removeListChangeListener(
+			IListChangeListener listener) {
 		removeListener(ListChangeEvent.TYPE, listener);
 	}
 
@@ -71,7 +72,7 @@ public abstract class ObservableList extends AbstractObservable implements
 		super.fireChange();
 		fireEvent(new ListChangeEvent(this, diff));
 	}
-	
+
 	public boolean contains(Object o) {
 		getterCalled();
 		return wrappedList.contains(o);
@@ -84,7 +85,7 @@ public abstract class ObservableList extends AbstractObservable implements
 
 	public boolean equals(Object o) {
 		getterCalled();
-		return wrappedList.equals(o);
+		return o == this || wrappedList.equals(o);
 	}
 
 	public int hashCode() {
@@ -135,45 +136,45 @@ public abstract class ObservableList extends AbstractObservable implements
 		getterCalled();
 		return wrappedList.toString();
 	}
-	
-	/**
-	 * @TrackedGetter
-	 */
-    public Object get(int index) {
-    	getterCalled();
-    	return wrappedList.get(index);
-    }
 
 	/**
 	 * @TrackedGetter
 	 */
-    public int indexOf(Object o) {
-    	getterCalled();
-    	return wrappedList.indexOf(o);
-    }
+	public Object get(int index) {
+		getterCalled();
+		return wrappedList.get(index);
+	}
 
 	/**
 	 * @TrackedGetter
 	 */
-    public int lastIndexOf(Object o) {
-    	getterCalled();
-    	return wrappedList.lastIndexOf(o);
-    }
-
-    // List Iterators
+	public int indexOf(Object o) {
+		getterCalled();
+		return wrappedList.indexOf(o);
+	}
 
 	/**
 	 * @TrackedGetter
 	 */
-    public ListIterator listIterator() {
-    	return listIterator(0);
-    }
+	public int lastIndexOf(Object o) {
+		getterCalled();
+		return wrappedList.lastIndexOf(o);
+	}
+
+	// List Iterators
 
 	/**
 	 * @TrackedGetter
 	 */
-    public ListIterator listIterator(int index) {
-    	getterCalled();
+	public ListIterator listIterator() {
+		return listIterator(0);
+	}
+
+	/**
+	 * @TrackedGetter
+	 */
+	public ListIterator listIterator(int index) {
+		getterCalled();
 		final ListIterator wrappedIterator = wrappedList.listIterator(index);
 		return new ListIterator() {
 
@@ -213,37 +214,36 @@ public abstract class ObservableList extends AbstractObservable implements
 				throw new UnsupportedOperationException();
 			}
 		};
-    }
+	}
 
-
-    public List subList(final int fromIndex, final int toIndex) {
-    	getterCalled();
-    	if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
+	public List subList(final int fromIndex, final int toIndex) {
+		getterCalled();
+		if (fromIndex < 0 || fromIndex > toIndex || toIndex > size()) {
 			throw new IndexOutOfBoundsException();
 		}
-    	return new AbstractObservableList(getRealm()) {
-		
+		return new AbstractObservableList(getRealm()) {
+
 			public Object getElementType() {
 				return ObservableList.this.getElementType();
 			}
-		
+
 			public Object get(int location) {
 				return ObservableList.this.get(fromIndex + location);
 			}
-		
+
 			protected int doGetSize() {
 				return toIndex - fromIndex;
 			}
 		};
-    }
+	}
 
 	protected void getterCalled() {
 		ObservableTracker.getterCalled(this);
 	}
 
-    public Object set(int index, Object element) {
-    	throw new UnsupportedOperationException();
-    }
+	public Object set(int index, Object element) {
+		throw new UnsupportedOperationException();
+	}
 
 	/**
 	 * Moves the element located at <code>oldIndex</code> to
@@ -263,7 +263,8 @@ public abstract class ObservableList extends AbstractObservable implements
 	 *            range <code>0 &lt;= newIndex &lt; size()</code>.
 	 * @return the element that was moved.
 	 * @throws IndexOutOfBoundsException
-	 *             if either argument is out of range (<code>0 &lt;= index &lt; size()</code>).
+	 *             if either argument is out of range (
+	 *             <code>0 &lt;= index &lt; size()</code>).
 	 * @see ListDiffVisitor#handleMove(int, int, Object)
 	 * @see ListDiff#accept(ListDiffVisitor)
 	 * @since 1.1
@@ -282,9 +283,9 @@ public abstract class ObservableList extends AbstractObservable implements
 		return element;
 	}
 
-    public Object remove(int index) {
-    	throw new UnsupportedOperationException();
-    }
+	public Object remove(int index) {
+		throw new UnsupportedOperationException();
+	}
 
 	public boolean add(Object o) {
 		throw new UnsupportedOperationException();
@@ -293,14 +294,14 @@ public abstract class ObservableList extends AbstractObservable implements
 	public void add(int index, Object element) {
 		throw new UnsupportedOperationException();
 	}
-	
+
 	public boolean addAll(Collection c) {
 		throw new UnsupportedOperationException();
 	}
 
-    public boolean addAll(int index, Collection c) {
-    	throw new UnsupportedOperationException();
-    }
+	public boolean addAll(int index, Collection c) {
+		throw new UnsupportedOperationException();
+	}
 
 	public boolean remove(Object o) {
 		throw new UnsupportedOperationException();
@@ -319,7 +320,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	/**
-	 * Returns the stale state.  Must be invoked from the current realm.
+	 * Returns the stale state. Must be invoked from the current realm.
 	 * 
 	 * @return stale state
 	 */
@@ -329,7 +330,7 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	/**
-	 * Sets the stale state.  Must be invoked from the current realm.
+	 * Sets the stale state. Must be invoked from the current realm.
 	 * 
 	 * @param stale
 	 *            The stale state to list. This will fire a stale event if the
@@ -347,16 +348,14 @@ public abstract class ObservableList extends AbstractObservable implements
 	}
 
 	protected void fireChange() {
-		throw new RuntimeException("fireChange should not be called, use fireListChange() instead"); //$NON-NLS-1$
+		throw new RuntimeException(
+				"fireChange should not be called, use fireListChange() instead"); //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
-	 */
+
 	public synchronized void dispose() {
 		super.dispose();
 	}
-	
+
 	public Object getElementType() {
 		return elementType;
 	}

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 208332
+ *     Matthew Hall - bugs 208332, 274450
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.set;
@@ -22,7 +22,7 @@ import org.eclipse.core.databinding.observable.Realm;
 
 /**
  * 
- * Abstract implementation of {@link IObservableSet}. 
+ * Abstract implementation of {@link IObservableSet}.
  * 
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
@@ -51,7 +51,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 		this.wrappedSet = wrappedSet;
 		this.elementType = elementType;
 	}
-	
+
 	public synchronized void addSetChangeListener(ISetChangeListener listener) {
 		addListener(SetChangeEvent.TYPE, listener);
 	}
@@ -66,7 +66,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 
 		fireEvent(new SetChangeEvent(this, diff));
 	}
-	
+
 	public boolean contains(Object o) {
 		getterCalled();
 		return wrappedSet.contains(o);
@@ -79,7 +79,7 @@ public abstract class ObservableSet extends AbstractObservable implements
 
 	public boolean equals(Object o) {
 		getterCalled();
-		return wrappedSet.equals(o);
+		return o == this || wrappedSet.equals(o);
 	}
 
 	public int hashCode() {
@@ -185,23 +185,22 @@ public abstract class ObservableSet extends AbstractObservable implements
 	}
 
 	/**
-	 * @param wrappedSet The wrappedSet to set.
+	 * @param wrappedSet
+	 *            The wrappedSet to set.
 	 */
 	protected void setWrappedSet(Set wrappedSet) {
 		this.wrappedSet = wrappedSet;
 	}
 
 	protected void fireChange() {
-		throw new RuntimeException("fireChange should not be called, use fireSetChange() instead"); //$NON-NLS-1$
+		throw new RuntimeException(
+				"fireChange should not be called, use fireSetChange() instead"); //$NON-NLS-1$
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.provisional.databinding.observable.AbstractObservable#dispose()
-	 */
+
 	public synchronized void dispose() {
 		super.dispose();
 	}
-	
+
 	public Object getElementType() {
 		return elementType;
 	}

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 213145
+ *     Matthew Hall - bugs 213145, 274450
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.conformance;
@@ -53,7 +53,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 
 	protected void setUp() throws Exception {
 		super.setUp();
-		
+
 		collection = (IObservableCollection) getObservable();
 	}
 
@@ -64,7 +64,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.iterator()", collection);
 	}
-	
+
 	public void testIterator_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -80,7 +80,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.size()", collection);
 	}
-	
+
 	public void testSize_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -96,7 +96,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.isEmpty()", collection);
 	}
-	
+
 	public void testIsEmpty_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -112,7 +112,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.contains(...)", collection);
 	}
-	
+
 	public void testContains_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -138,7 +138,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, (CurrentRealm) collection.getRealm());
 	}
-	
+
 	public void testToArray_GetterCalled() throws Exception {
 		assertGetterCalled(new Runnable() {
 			public void run() {
@@ -146,7 +146,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.toArray()", collection);
 	}
-	
+
 	public void testToArray_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -162,7 +162,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.toArray(Object[])", collection);
 	}
-	
+
 	public void testToArrayWithObjectArray_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
@@ -178,13 +178,17 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.equals(Object)", collection);
 	}
-	
+
 	public void testEquals_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {
 				collection.equals(collection);
 			}
 		}, (CurrentRealm) collection.getRealm());
+	}
+
+	public void testEquals_IdentityEquals() throws Exception {
+		assertTrue(collection.equals(collection));
 	}
 
 	public void testHashCode_GetterCalled() throws Exception {
@@ -194,7 +198,7 @@ public class ObservableCollectionContractTest extends ObservableContractTest {
 			}
 		}, "Collection.hashCode()", collection);
 	}
-	
+
 	public void testHashCode_RealmCheck() throws Exception {
 		RealmTester.exerciseCurrent(new Runnable() {
 			public void run() {

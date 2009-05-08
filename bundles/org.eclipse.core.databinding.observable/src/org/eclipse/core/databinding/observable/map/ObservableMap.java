@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 164653
- *     Matthew Hall - bug 226289
+ *     Matthew Hall - bugs 226289, 274450
  *******************************************************************************/
 
 package org.eclipse.core.databinding.observable.map;
@@ -28,6 +28,7 @@ import org.eclipse.core.databinding.observable.Realm;
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ * 
  * @since 1.0
  */
 public class ObservableMap extends AbstractObservable implements IObservableMap {
@@ -35,7 +36,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	protected Map wrappedMap;
 
 	private boolean stale = false;
-	
+
 	/**
 	 * @param wrappedMap
 	 */
@@ -44,14 +45,14 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	}
 
 	/**
-	 * @param realm 
+	 * @param realm
 	 * @param wrappedMap
 	 */
 	public ObservableMap(Realm realm, Map wrappedMap) {
 		super(realm);
 		this.wrappedMap = wrappedMap;
 	}
-	
+
 	public synchronized void addMapChangeListener(IMapChangeListener listener) {
 		addListener(MapChangeEvent.TYPE, listener);
 	}
@@ -80,7 +81,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	protected void fireMapChange(MapDiff diff) {
 		checkRealm();
-		
+
 		// fire general change event first
 		super.fireChange();
 
@@ -128,7 +129,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	}
 
 	/**
-	 * Returns the stale state.  Must be invoked from the current realm.
+	 * Returns the stale state. Must be invoked from the current realm.
 	 * 
 	 * @return stale state
 	 */
@@ -138,7 +139,7 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 	}
 
 	/**
-	 * Sets the stale state.  Must be invoked from the current realm.
+	 * Sets the stale state. Must be invoked from the current realm.
 	 * 
 	 * @param stale
 	 *            The stale state to set. This will fire a stale event if the
@@ -168,6 +169,16 @@ public class ObservableMap extends AbstractObservable implements IObservableMap 
 
 	public void putAll(Map arg0) {
 		throw new UnsupportedOperationException();
+	}
+
+	public boolean equals(Object o) {
+		getterCalled();
+		return o == this || wrappedMap.equals(o);
+	}
+
+	public int hashCode() {
+		getterCalled();
+		return wrappedMap.hashCode();
 	}
 
 	public synchronized void dispose() {

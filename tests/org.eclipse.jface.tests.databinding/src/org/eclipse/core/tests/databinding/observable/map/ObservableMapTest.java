@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Ovidio Mallo - bug 247741
+ *     Matthew Hall - bug 274450
  *******************************************************************************/
 
 package org.eclipse.core.tests.databinding.observable.map;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -79,6 +81,10 @@ public class ObservableMapTest extends TestCase {
 				map.fireMapChange(null);
 			}
 		});
+	}
+
+	public void testEquals() {
+		assertTrue(map.equals(Collections.EMPTY_MAP));
 	}
 
 	static class ObservableMapStub extends ObservableMap {
