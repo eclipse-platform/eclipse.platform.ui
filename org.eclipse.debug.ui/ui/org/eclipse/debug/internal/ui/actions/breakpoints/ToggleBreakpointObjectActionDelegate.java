@@ -75,9 +75,13 @@ public abstract class ToggleBreakpointObjectActionDelegate implements IObjectAct
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ss = (IStructuredSelection) selection;
 			this.fSelection = ss;
-	        IToggleBreakpointsTarget target = 
-	            ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, fSelection);
-			enabled = target != null;
+			// selectionChagned() can sometimes be called before setActivePart().
+			// Guard here against that possibility.
+			if (fPart != null) {
+			    IToggleBreakpointsTarget target = 
+			        ToggleBreakpointsTargetManager.getDefault().getToggleBreakpointsTarget(fPart, fSelection);
+			    enabled = target != null;
+			}
 		}
 		action.setEnabled(enabled);
 	}
