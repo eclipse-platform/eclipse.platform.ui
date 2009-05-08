@@ -1,4 +1,4 @@
-# Debugging options for the org.eclipse.team.cvs.core plugin.
+# Debugging options for the org.eclipse.team.cvs.ssh plugin.
 
 # Turn on debugging for the plugin.
 org.eclipse.team.cvs.ssh/debug=false
