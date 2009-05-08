@@ -80,7 +80,7 @@ public class GenericFileBufferOperationRunner {
 	 *
 	 * @param locations the file buffer locations
 	 * @param operation the operation to be performed
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException in case of error
 	 * @throws OperationCanceledException in case the execution get canceled
 	 */

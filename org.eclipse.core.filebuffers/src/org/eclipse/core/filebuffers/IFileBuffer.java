@@ -123,7 +123,7 @@ public interface IFileBuffer {
 	 * returns <code>false</code> and <code>isSynchronized</code> returns
 	 * <code>true</code>.
 	 *
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @param overwrite indicates whether the underlying file should be overwritten if it is not synchronized with the file system
 	 * @throws CoreException if writing or accessing the underlying file fails
 	 */
@@ -134,7 +134,7 @@ public interface IFileBuffer {
 	 * that call successfully returned, <code>isDirty</code> returns <code>false</code> and
 	 * <code>isSynchronized</code> returns <code>true</code>.
 	 *
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException  if reading or accessing the underlying file fails
 	 */
 	void revert(IProgressMonitor monitor) throws CoreException;
@@ -170,7 +170,7 @@ public interface IFileBuffer {
 	 * underlying file into a state in which it can be modified. If state
 	 * validation is not supported this operation does nothing.
 	 *
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @param computationContext the context in which the validation is performed, e.g., a SWT shell
 	 * @exception CoreException if the underlying file can not be accessed to it's state cannot be changed
 	 */

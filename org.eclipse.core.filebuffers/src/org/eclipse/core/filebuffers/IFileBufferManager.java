@@ -49,7 +49,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 *
 	 * @param location the location of the file to be connected
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException if the file could not successfully be connected
 	 * @deprecated As of 3.3, replaced by {@link #connect(IPath, LocationKind, IProgressMonitor)}
 	 */
@@ -66,7 +66,7 @@ public interface IFileBufferManager {
 	 *
 	 * @param location the location of the file to be connected
 	 * @param locationKind the kind of the given location
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException if the file could not successfully be connected
 	 * @see LocationKind
 	 * @since 3.3
@@ -88,7 +88,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 *
 	 * @param fileStore the file store to be connected
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException if the file could not successfully be connected
 	 * @since 3.3
 	 */
@@ -106,7 +106,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 *
 	 * @param location the location of the file to be disconnected
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException if the file could not successfully be disconnected
 	 * @deprecated As of 3.3, replaced by {@link #disconnect(IPath, LocationKind, IProgressMonitor)}
 	 */
@@ -123,7 +123,7 @@ public interface IFileBufferManager {
 	 *
 	 * @param location the location of the file to be disconnected
 	 * @param locationKind the kind of the given location
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException if the file could not successfully be disconnected
 	 * @see LocationKind
 	 * @since 3.3
@@ -145,7 +145,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 *
 	 * @param fileStore the file store to be disconnected
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @throws CoreException if the file could not successfully be disconnected
 	 * @since 3.3
 	 */
@@ -308,7 +308,7 @@ public interface IFileBufferManager {
 	 * </p>
 	 *
 	 * @param fileBuffers the file buffers to validate
-	 * @param monitor the progress monitor
+	 * @param monitor the progress monitor, or <code>null</code> if progress reporting is not desired
 	 * @param computationContext the context in which the validation is performed, e.g., a SWT shell
 	 * @exception CoreException if the underlying file can not be accessed to it's state cannot be changed
 	 * @since 3.1
