@@ -17,6 +17,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.eclipse.core.runtime.ListenerList;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.accessibility.ACC;
@@ -60,6 +61,7 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TypedListener;
+
 import org.eclipse.ui.forms.HyperlinkSettings;
 import org.eclipse.ui.forms.events.HyperlinkEvent;
 import org.eclipse.ui.forms.events.IHyperlinkListener;
@@ -84,8 +86,8 @@ import org.eclipse.ui.internal.forms.widgets.TextSegment;
  * on the fly.
  * <p>
  * When configured to use formatting XML, the control requires the root element
- * <code>form</code> to be used and requires any ampersand (&) characters in the text to
- * be replaced by the entity <b>&ampamp;</b>. The following tags can be children of the
+ * <code>form</code> to be used and requires any ampersand (&amp;) characters in the text to
+ * be replaced by the entity <b>&amp;amp;</b>. The following tags can be children of the
  * <code>form</code> element:
  * </p>
  * <ul>
