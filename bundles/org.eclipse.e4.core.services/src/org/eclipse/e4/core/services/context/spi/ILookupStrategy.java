@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.context.spi;
 
-import org.eclipse.e4.core.services.context.IContextFunction;
-import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.*;
 
 /**
  * A context strategy for looking up values that are not currently defined
  * in a context. The lookup strategy is consulted by the context after
  * looking for an already defined local value, but before delegating lookup
  * to a parent context.
+ * 
+ * @see EclipseContextFactory#create(IEclipseContext, IEclipseContextStrategy)
  */
 public interface ILookupStrategy extends IEclipseContextStrategy {
 	/**
