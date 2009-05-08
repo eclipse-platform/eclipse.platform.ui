@@ -10,22 +10,27 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.text.Collator;
 import java.util.Comparator;
 
 import org.eclipse.ui.IWorkingSet;
+
+import com.ibm.icu.text.Collator;
 
 /**
  * Compares two working sets by name.
  */
 public class WorkingSetComparator implements Comparator {
 	
-	/**
-	 * Static instance of this class.
-	 * @since 3.2
-	 */
-	public static WorkingSetComparator INSTANCE = new WorkingSetComparator();
+	private static ThreadLocal INSTANCES = new ThreadLocal() {
+		protected synchronized Object initialValue() {
+			return new WorkingSetComparator();
+		}
+	};
 	
+	public static WorkingSetComparator getInstance() {
+		return (WorkingSetComparator) INSTANCES.get();
+	}
+
     private Collator fCollator = Collator.getInstance();
 
     /**

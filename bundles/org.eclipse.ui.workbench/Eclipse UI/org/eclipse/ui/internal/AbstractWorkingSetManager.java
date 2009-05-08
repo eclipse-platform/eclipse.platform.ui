@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IExtension;
@@ -38,15 +39,11 @@ import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionChangeHandler;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.core.commands.common.EventManager;
-
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
@@ -69,8 +66,6 @@ import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
-
-import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
@@ -267,7 +262,8 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
      * @see org.eclipse.ui.IWorkingSetManager
      */
     public IWorkingSet[] getWorkingSets() {
-    		SortedSet visibleSubset = new TreeSet(WorkingSetComparator.INSTANCE);
+		SortedSet visibleSubset = new TreeSet(WorkingSetComparator
+				.getInstance());
     		for (Iterator i = workingSets.iterator(); i.hasNext();) {
 				IWorkingSet workingSet = (IWorkingSet) i.next();
 				if (workingSet.isVisible()) {
@@ -280,7 +276,7 @@ public abstract class AbstractWorkingSetManager extends EventManager implements
 	public IWorkingSet[] getAllWorkingSets() {
 		IWorkingSet[] sets = (IWorkingSet[]) workingSets
 					.toArray(new IWorkingSet[workingSets.size()]);
-		Arrays.sort(sets, WorkingSetComparator.INSTANCE);
+		Arrays.sort(sets, WorkingSetComparator.getInstance());
 		return sets;
 	}
 
