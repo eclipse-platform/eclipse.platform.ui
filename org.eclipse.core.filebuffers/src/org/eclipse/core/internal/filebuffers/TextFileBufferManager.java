@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -506,8 +506,6 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentSetupFailed, t);
 						FileBuffersPlugin.getDefault().getLog().log(status);
-						if (t instanceof VirtualMachineError)
-							throw (VirtualMachineError)t;
 					}
 				};
 				SafeRunner.run(runnable);
@@ -538,8 +536,6 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 					public void handleException(Throwable t) {
 						IStatus status= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.TextFileBufferManager_error_documentFactoryFailed, t);
 						FileBuffersPlugin.getDefault().getLog().log(status);
-						if (t instanceof VirtualMachineError)
-							throw (VirtualMachineError)t;
 					}
 				};
 				SafeRunner.run(runnable);
