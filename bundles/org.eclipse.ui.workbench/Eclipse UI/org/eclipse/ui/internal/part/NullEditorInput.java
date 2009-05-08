@@ -11,9 +11,7 @@
 package org.eclipse.ui.internal.part;
 
 import org.eclipse.core.runtime.Assert;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.internal.EditorReference;
@@ -62,8 +60,13 @@ public class NullEditorInput implements IEditorInput {
      * @see org.eclipse.ui.IEditorInput#getName()
      */
     public String getName() {
-		if (editorReference != null)
-			return editorReference.getName();
+		String result = null;
+		if (editorReference != null) {
+			result = editorReference.internalGetName();
+		}
+		if (result != null) {
+			return result;
+		}
         return ""; //$NON-NLS-1$
     }
 

@@ -279,6 +279,10 @@ public class EditorReference extends WorkbenchPartReference implements
         return name;
     }
 
+	public String internalGetName() {
+		return name;
+	}
+
     public IEditorPart getEditor(boolean restore) {
         return (IEditorPart)getPart(restore);
     }
