@@ -23,7 +23,7 @@ public class DynamicInvalidContributionTest extends DynamicTestCase {
 		super(testName);
 	}
 
-	public void testMenuContribution() throws Exception {
+	public void testInvalidMenuContribution() throws Exception {
 		// open a window
 		IWorkbenchWindow window = openTestWindow();
 		// start up our bundle
