@@ -164,6 +164,7 @@ class SafeRunnableDialog extends ErrorDialog {
 		GridData data = new GridData(GridData.FILL_BOTH
 				| GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL);
 		data.heightHint = convertHeightInCharsToPixels(10);
+		data.horizontalSpan = 2;
 		control.setLayoutData(data);
 		statusListViewer.setContentProvider(getStatusContentProvider());
 		statusListViewer.setLabelProvider(getStatusListLabelProvider());
