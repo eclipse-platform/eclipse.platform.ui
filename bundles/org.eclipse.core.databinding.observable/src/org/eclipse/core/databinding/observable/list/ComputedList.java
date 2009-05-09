@@ -1,13 +1,15 @@
 /************************************************************************************************************
- * Copyright (c) 2007 Matthew Hall and others. All rights reserved. This program and the
- * accompanying materials are made available under the terms of the Eclipse Public License v1.0 which
- * accompanies this distribution, and is available at http://www.eclipse.org/legal/epl-v10.html
+ * Copyright (c) 2007 Matthew Hall and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
  * 
  * Contributors:
  * 		Matthew Hall - initial API and implementation
  * 		IBM Corporation - initial API and implementation
  * 		Brad Reynolds - initial API and implementation (through bug 116920 and bug 147515)
- * 		Matthew Hall - bug 211786
+ * 		Matthew Hall - bugs 211786, 274081
  ***********************************************************************************************************/
 package org.eclipse.core.databinding.observable.list;
 
@@ -23,16 +25,51 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
- * A Lazily calculated list that automatically computes and registers listeners
- * on its dependencies as long as all of its dependencies are IObservable
- * objects
+ * A lazily calculated list that automatically computes and registers listeners
+ * on its dependencies as long as all of its dependencies are
+ * {@link IObservable} objects. Any change to one of the observable dependencies
+ * causes the list to be recomputed.
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ * <p>
+ * Example: compute the fibonacci sequence, up to as many elements as the value
+ * of an {@link IObservableValue} &lt; {@link Integer} &gt;.
+ * </p>
+ * 
+ * <pre>
+ * final IObservableValue count = WritableValue.withValueType(Integer.TYPE);
+ * count.setValue(new Integer(0));
+ * IObservableList fibonacci = new ComputedList() {
+ * 	protected List calculate() {
+ * 		int size = ((Integer) count.getValue()).intValue();
+ * 
+ * 		List result = new ArrayList();
+ * 		for (int i = 0; i &lt; size; i++) {
+ * 			if (i == 0)
+ * 				result.add(new Integer(0));
+ * 			else if (i == 1)
+ * 				result.add(new Integer(1));
+ * 			else {
+ * 				Integer left = (Integer) result.get(i - 2);
+ * 				Integer right = (Integer) result.get(i - 1);
+ * 				result.add(new Integer(left.intValue() + right.intValue()));
+ * 			}
+ * 		}
+ * 		return result;
+ * 	}
+ * };
+ * 
+ * System.out.println(fibonacci); // =&gt; &quot;[]&quot;
+ * 
+ * count.setValue(new Integer(5));
+ * System.out.println(fibonacci); // =&gt; &quot;[0, 1, 1, 2, 3]&quot;
+ * </pre>
  * 
  * @since 1.1
  */
@@ -57,8 +94,8 @@ public abstract class ComputedList extends AbstractObservableList {
 	 * type.
 	 * 
 	 * @param elementType
-	 *            the element type, may be <code>null</code> to indicate
-	 *            unknown element type
+	 *            the element type, may be <code>null</code> to indicate unknown
+	 *            element type
 	 */
 	public ComputedList(Object elementType) {
 		this(Realm.getDefault(), elementType);
@@ -83,8 +120,8 @@ public abstract class ComputedList extends AbstractObservableList {
 	 * @param realm
 	 *            the realm
 	 * @param elementType
-	 *            the element type, may be <code>null</code> to indicate
-	 *            unknown element type
+	 *            the element type, may be <code>null</code> to indicate unknown
+	 *            element type
 	 */
 	public ComputedList(Realm realm, Object elementType) {
 		super(realm);
@@ -187,7 +224,10 @@ public abstract class ComputedList extends AbstractObservableList {
 	}
 
 	/**
-	 * Subclasses must override this method to calculate the list contents.
+	 * Subclasses must override this method to calculate the list contents. Any
+	 * dependencies used to calculate the list must be {@link IObservable}, and
+	 * implementers must use one of the interface methods tagged TrackedGetter
+	 * for ComputedList to recognize it as a dependency.
 	 * 
 	 * @return the object's list.
 	 */

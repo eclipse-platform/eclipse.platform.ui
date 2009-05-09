@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Brad Reynolds - bug 116920
- *     Brad Reynolds - bug 147515
+ *     Brad Reynolds - bugs 116920, 147515
+ *     Matthew Hall - bug 274081
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.value;
 
@@ -19,16 +19,45 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 
 /**
  * A Lazily calculated value that automatically computes and registers listeners
- * on its dependencies as long as all of its dependencies are IObservable
- * objects
+ * on its dependencies as long as all of its dependencies are
+ * {@link IObservable} objects. Any change to one of the observable dependencies
+ * causes the value to be recomputed.
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ * <p>
+ * Example: compute the sum of all elements in an {@link IObservableList} &lt;
+ * {@link Integer} &gt;.
+ * </p>
+ * 
+ * <pre>
+ * final IObservableList addends = WritableValue.withValueType(Integer.TYPE);
+ * addends.add(new Integer(0));
+ * addends.add(new Integer(1));
+ * addends.add(new Integer(2));
+ * 
+ * IObservableValue sum = new ComputedValue() {
+ * 	protected Object calculate() {
+ * 		int sum = 0;
+ * 		for (Iterator it = addends.iterator(); it.hasNext();) {
+ * 			Integer addend = (Integer) it.next();
+ * 			sum += addend.intValue();
+ * 		}
+ * 		return sum;
+ * 	}
+ * };
+ * 
+ * System.out.println(sum.getValue()); // =&gt; 3
+ * 
+ * addends.add(new Integer(10));
+ * System.out.println(sum.getValue()); // =&gt; 13
+ * </pre>
  * 
  * @since 1.0
  */
@@ -150,7 +179,10 @@ public abstract class ComputedValue extends AbstractObservableValue {
 	}
 
 	/**
-	 * Subclasses must override this method to provide the object's value.
+	 * Subclasses must override this method to provide the object's value. Any
+	 * dependencies used to calculate the value must be {@link IObservable}, and
+	 * implementers must use one of the interface methods tagged TrackedGetter
+	 * for ComputedValue to recognize it as a dependency.
 	 * 
 	 * @return the object's value
 	 */

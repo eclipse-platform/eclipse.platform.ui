@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 237703)
+ *     Matthew Hall - bug 274081
  *******************************************************************************/
 package org.eclipse.core.databinding.observable.set;
 
@@ -22,16 +23,48 @@ import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.StaleEvent;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 
 /**
  * A lazily calculated set that automatically computes and registers listeners
- * on its dependencies as long as all of its dependencies are IObservable
- * objects
+ * on its dependencies as long as all of its dependencies are
+ * {@link IObservable} objects. Any change to one of the observable dependencies
+ * causes the set to be recomputed.
  * <p>
  * This class is thread safe. All state accessing methods must be invoked from
  * the {@link Realm#isCurrent() current realm}. Methods for adding and removing
  * listeners may be invoked from any thread.
  * </p>
+ * <p>
+ * Example: compute the set of all primes greater than 1 and less than the value
+ * of an {@link IObservableValue} &lt; {@link Integer} &gt;.
+ * </p>
+ * 
+ * <pre>
+ * final IObservableValue max = WritableValue.withValueType(Integer.TYPE);
+ * max.setValue(new Integer(0));
+ * IObservableSet primes = new ComputedSet() {
+ * 	protected Set calculate() {
+ * 		int maxVal = ((Integer) max.getValue()).intValue();
+ * 
+ * 		Set result = new HashSet();
+ * 		outer: for (int i = 2; i &lt; maxVal; i++) {
+ * 			for (Iterator it = result.iterator(); it.hasNext();) {
+ * 				Integer knownPrime = (Integer) it.next();
+ * 				if (i % knownPrime.intValue() == 0)
+ * 					continue outer;
+ * 			}
+ * 			result.add(new Integer(i));
+ * 		}
+ * 		return result;
+ * 	}
+ * };
+ * 
+ * System.out.println(primes); // =&gt; &quot;[]&quot;
+ * 
+ * max.setValue(new Integer(20));
+ * System.out.println(primes); // =&gt; &quot;[2, 3, 5, 7, 11, 13, 17, 19]&quot;
+ * </pre>
  * 
  * @since 1.2
  */
@@ -181,7 +214,10 @@ public abstract class ComputedSet extends AbstractObservableSet {
 	}
 
 	/**
-	 * Subclasses must override this method to calculate the set contents.
+	 * Subclasses must override this method to calculate the set contents. Any
+	 * dependencies used to calculate the set must be {@link IObservable}, and
+	 * implementers must use one of the interface methods tagged TrackedGetter
+	 * for ComputedSet to recognize it as a dependency.
 	 * 
 	 * @return the object's set.
 	 */
