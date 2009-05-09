@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *         (through WizardPageSupport.java)
  *     Matthew Hall - initial API and implementation (bug 239900)
- *     Matthew Hall - bug 237856
+ *     Matthew Hall - bugs 237856, 275058
  *     Ovidio Mallo - bug 237856
  ******************************************************************************/
 
@@ -40,6 +40,9 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  * Connects the validation result from the given data binding context to the
@@ -55,13 +58,13 @@ public class DialogPageSupport {
 	 * away. Upon any validation result change, the dialog page's error message
 	 * will be updated according to the current validation result.
 	 * 
-	 * @param wizardPage
+	 * @param dialogPage
 	 * @param dbc
 	 * @return an instance of WizardPageSupport
 	 */
-	public static DialogPageSupport create(DialogPage wizardPage,
+	public static DialogPageSupport create(DialogPage dialogPage,
 			DataBindingContext dbc) {
-		return new DialogPageSupport(wizardPage, dbc);
+		return new DialogPageSupport(dialogPage, dbc);
 	}
 
 	private DialogPage dialogPage;
@@ -150,6 +153,11 @@ public class DialogPageSupport {
 				currentStatus = (IStatus) event.diff.getNewValue();
 				currentStatusStale = aggregateStatus.isStale();
 				handleStatusChanged();
+			}
+		});
+		dialogPage.getShell().addListener(SWT.Dispose, new Listener() {
+			public void handleEvent(Event event) {
+				dispose();
 			}
 		});
 		aggregateStatus.addStaleListener(new IStaleListener() {
@@ -296,8 +304,9 @@ public class DialogPageSupport {
 	 * may have attached.
 	 */
 	public void dispose() {
-		aggregateStatus.dispose();
-		if (!uiChanged) {
+		if (aggregateStatus != null)
+			aggregateStatus.dispose();
+		if (dbc != null && !uiChanged) {
 			for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
 					.hasNext();) {
 				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it

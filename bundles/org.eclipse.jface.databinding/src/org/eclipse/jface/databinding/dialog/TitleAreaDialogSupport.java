@@ -10,6 +10,8 @@
  *        (through WizardPageSupport.java)
  *     Matthew Hall - initial API and implementation (bug 239900)
  *     Ben Vitale <bvitale3002@yahoo.com> - bug 263100
+ *     Kai Schlamp - bug 275058
+ *     Matthew Hall - bug 275058
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.dialog;
@@ -37,6 +39,8 @@ import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 
 /**
  * Connects the validation result from the given data binding context to the
@@ -132,6 +136,11 @@ public class TitleAreaDialogSupport {
 
 				currentStatus = (IStatus) event.diff.getNewValue();
 				handleStatusChanged();
+			}
+		});
+		dialog.getShell().addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				dispose();
 			}
 		});
 		currentStatus = (IStatus) aggregateStatus.getValue();
@@ -268,8 +277,9 @@ public class TitleAreaDialogSupport {
 	 * it may have attached.
 	 */
 	public void dispose() {
-		aggregateStatus.dispose();
-		if (!uiChanged) {
+		if (aggregateStatus != null)
+			aggregateStatus.dispose();
+		if (dbc != null && !uiChanged) {
 			for (Iterator it = dbc.getValidationStatusProviders().iterator(); it
 					.hasNext();) {
 				ValidationStatusProvider validationStatusProvider = (ValidationStatusProvider) it
