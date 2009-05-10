@@ -15,6 +15,9 @@ package org.eclipse.jface.viewers;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.accessibility.ACC;
+import org.eclipse.swt.accessibility.AccessibleAdapter;
+import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Point;
@@ -128,7 +131,7 @@ abstract class SWTFocusCellManager {
 
 	abstract ViewerCell getInitialFocusCell();
 
-	private void hookListener(ColumnViewer viewer) {
+	private void hookListener(final ColumnViewer viewer) {
 		Listener listener = new Listener() {
 
 			public void handleEvent(Event event) {
@@ -162,6 +165,34 @@ abstract class SWTFocusCellManager {
 
 		});
 		viewer.getControl().addListener(SWT.FocusIn, listener);
+		viewer.getControl().getAccessible().addAccessibleListener(
+				new AccessibleAdapter() {
+					public void getName(AccessibleEvent event) {
+						ViewerCell cell = getFocusCell();
+						if (cell == null)
+							return;
+						
+						ViewerRow row = cell.getViewerRow();
+						if (row == null)
+							return;
+						
+						Object element = row.getItem().getData();
+						ViewerColumn viewPart = viewer.getViewerColumn(cell
+								.getColumnIndex());
+						
+						if (viewPart == null)
+							return;
+						
+						ColumnLabelProvider labelProvider = (ColumnLabelProvider) viewPart
+								.getLabelProvider();
+						
+						if (labelProvider == null)
+							return;
+						
+						event.result = labelProvider.getText(element);
+					}
+				});
+
 	}
 
 	/**
@@ -190,6 +221,8 @@ abstract class SWTFocusCellManager {
 		}
 		
 		this.cellHighlighter.focusCellChanged(focusCell,oldCell);
+		
+		getViewer().getControl().getAccessible().setFocus(ACC.CHILDID_SELF);
 	}
 
 	ColumnViewer getViewer() {
