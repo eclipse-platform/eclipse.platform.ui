@@ -25,6 +25,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -978,7 +981,10 @@ public class Perspective {
 		presentation.activate(getClientComposite());
 
 		// Ensure that the action bars pick up local overrides
-		updateActionBars();
+		final IMenuManager windowManager = page.getActionBars()
+				.getMenuManager();
+		allowUpdates(windowManager);
+		windowManager.update(false);
 
     	if (useNewMinMax) {
     		fastViewManager.activate();
@@ -1057,11 +1063,33 @@ public class Perspective {
 	}
 
 	/**
+	 * Mark the menu manager as dirty, and process all the children. Actual
+	 * updates of the widgets are deferred until menus are actually shown.
+	 * 
+	 * @param menuManager
+	 *            the manager to process.
+	 */
+	private void allowUpdates(IMenuManager menuManager) {
+		menuManager.markDirty();
+		final IContributionItem[] items = menuManager.getItems();
+		for (int i = 0; i < items.length; i++) {
+			if (items[i] instanceof IMenuManager) {
+				allowUpdates((IMenuManager) items[i]);
+			} else if (items[i] instanceof SubContributionItem) {
+				final IContributionItem innerItem = ((SubContributionItem) items[i])
+						.getInnerItem();
+				if (innerItem instanceof IMenuManager) {
+					allowUpdates((IMenuManager) innerItem);
+				}
+			}
+		}
+	}
+
+	/**
 	 * An 'orphan' perspective is one that was originally created through a
-	 * contribution but whose contributing bundle is no longer available.
-	 * In order to allow it to behave correctly within the environment
-	 * (for Close, Reset...) we turn it into a 'custom' perspective on its
-	 * first activation.
+	 * contribution but whose contributing bundle is no longer available. In
+	 * order to allow it to behave correctly within the environment (for Close,
+	 * Reset...) we turn it into a 'custom' perspective on its first activation.
 	 */
 	private void fixOrphan() {
 		PerspectiveRegistry reg = (PerspectiveRegistry) PlatformUI
