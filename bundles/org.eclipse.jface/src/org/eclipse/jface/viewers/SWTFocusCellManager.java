@@ -60,6 +60,10 @@ abstract class SWTFocusCellManager {
 			CellNavigationStrategy navigationDelegate) {
 		this.viewer = viewer;
 		this.cellHighlighter = focusDrawingDelegate;
+		if( this.cellHighlighter != null ) {
+			this.cellHighlighter.setMgr(this);
+		}
+		
 		this.navigationStrategy = navigationDelegate;
 		hookListener(viewer);
 	}
@@ -200,6 +204,10 @@ abstract class SWTFocusCellManager {
 	 *
 	 */
 	public ViewerCell getFocusCell() {
+		return focusCell;
+	}
+	
+	final ViewerCell _getFocusCell() {
 		return focusCell;
 	}
 

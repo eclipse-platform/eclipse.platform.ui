@@ -19,6 +19,7 @@ package org.eclipse.jface.viewers;
  */
 public abstract class FocusCellHighlighter {
 	private ColumnViewer viewer;
+	private SWTFocusCellManager mgr;
 
 	/**
 	 * @param viewer
@@ -27,10 +28,22 @@ public abstract class FocusCellHighlighter {
 		this.viewer = viewer;
 	}
 
+	void setMgr(SWTFocusCellManager mgr) {
+		this.mgr = mgr;
+	}
+	
 	/**
 	 * @return the focus cell
 	 */
 	public ViewerCell getFocusCell() {
+		// Mgr is normally not null because the highlighter is passed
+		// to the SWTFocusCellManager instance
+		if( mgr != null ) {
+		    // Use this method because it ensure that no
+		    // cell update (which might cause scrolling) happens 
+			return mgr._getFocusCell();	
+		}
+		
 		return viewer.getColumnViewerEditor().getFocusCell();
 	}
 
