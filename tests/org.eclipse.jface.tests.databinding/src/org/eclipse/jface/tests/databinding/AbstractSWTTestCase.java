@@ -37,11 +37,10 @@ public abstract class AbstractSWTTestCase extends AbstractDefaultRealmTestCase {
 	 * @see org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase#tearDown()
 	 */
 	protected void tearDown() throws Exception {
-		super.tearDown();
-		
 		if (shell != null && !shell.isDisposed()) {
 			shell.dispose();
 		}
+		super.tearDown();
 	}
 	
 	/**
