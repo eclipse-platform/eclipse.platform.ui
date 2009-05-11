@@ -203,10 +203,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     // contribution items
     // @issue should obtain from ContributionItemFactory
     private NewWizardMenu newWizardMenu;
-
-    private IContributionItem pinEditorContributionItem;
-
-//    private IContributionItem searchComboItem;
     
     // @issue class is workbench internal
     private StatusLineContributionItem statusLineItem;
@@ -393,7 +389,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             navToolBar.add(backwardHistoryAction);
             navToolBar.add(forwardHistoryAction);
             navToolBar.add(new Separator(IWorkbenchActionConstants.PIN_GROUP));
-            navToolBar.add(pinEditorContributionItem);
+            navToolBar.add(getPinEditorItem());
 
             // Add to the cool bar manager
             coolBar.add(actionBarConfigurer.createToolBarContributionItem(navToolBar,
@@ -793,10 +789,8 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
             resourceListener = null;
         }
 
-        pinEditorContributionItem.dispose();
         showInQuickMenu.dispose();
         newQuickMenu.dispose();
-//        searchComboItem.dispose();
         
         // null out actions to make leak debugging easier
         closeAction = null;
@@ -861,8 +855,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         newQuickMenu = null;
         buildProjectAction = null;
         newWizardMenu = null;
-        pinEditorContributionItem = null;
-//        searchComboItem = null;
         statusLineItem = null;
         prefListener = null;
         propPrefListener = null;
@@ -1146,10 +1138,6 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
         };
         register(newQuickMenu);
 
-        pinEditorContributionItem = ContributionItemFactory.PIN_EDITOR
-                .create(window);
-        
-//        searchComboItem = ContributionItemFactory.HELP_SEARCH.create(window);
     }
 
     /**
@@ -1343,6 +1331,10 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 
         toolBarManager.update(false);
         toolBarItem.update(ICoolBarManager.SIZE);
+    }
+    
+    private IContributionItem getPinEditorItem() {
+    	return ContributionItemFactory.PIN_EDITOR.create(window);
     }
     
     private IContributionItem getCutItem() {
