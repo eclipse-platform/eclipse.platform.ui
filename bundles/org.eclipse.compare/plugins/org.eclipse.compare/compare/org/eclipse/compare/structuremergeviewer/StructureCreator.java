@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,14 +12,24 @@ package org.eclipse.compare.structuremergeviewer;
 
 import java.io.UnsupportedEncodingException;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IEditableContent;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ISharedDocumentAdapter;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.SharedDocumentAdapter;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.Utilities;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.text.*;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.services.IDisposable;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -43,14 +53,14 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		IDocument doc= CompareUI.getDocument(input);
 		if (doc == null) {
 			if (input instanceof IStreamContentAccessor) {
-				IStreamContentAccessor sca= (IStreamContentAccessor) input;			
+				IStreamContentAccessor sca= (IStreamContentAccessor) input;
 				try {
 					contents= Utilities.readString(sca);
 				} catch (CoreException e) {
 					// return null indicates the error.
 					CompareUIPlugin.log(e);
 					return null;
-				}			
+				}
 			}
 			
 			if (contents == null) {
@@ -59,7 +69,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 			}
 			
 			doc= new Document(contents);
-			setupDocument(doc);				
+			setupDocument(doc);
 		}
 		
 		try {
@@ -77,7 +87,11 @@ public abstract class StructureCreator implements IStructureCreator2 {
 		final IStructureComparator[] result = new IStructureComparator[] { null };
 		Runnable runnable = new Runnable() {
 			public void run() {
-				result[0] = internalCreateStructure(element, monitor);
+				try {
+					result[0]= internalCreateStructure(element, monitor);
+				} catch (OperationCanceledException ex) {
+					return;
+				}
 			}
 		};
 		Utilities.runInUIThread(runnable);
@@ -194,7 +208,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	}
 	
 	/**
-	 * Default implementation of save that extracts the contents from 
+	 * Default implementation of save that extracts the contents from
 	 * the document of an {@link IDocumentRange} and sets it on the
 	 * input. If the input is an {@link IEncodedStreamContentAccessor},
 	 * the charset of the input is used to extract the contents from the
@@ -234,11 +248,11 @@ public abstract class StructureCreator implements IStructureCreator2 {
 			}
 			if (encoding == null)
 				encoding= ResourcesPlugin.getEncoding();
-			byte[] bytes;				
+			byte[] bytes;
 			try {
 				bytes= contents.getBytes(encoding);
 			} catch (UnsupportedEncodingException e) {
-				bytes= contents.getBytes();	
+				bytes= contents.getBytes();
 			}
 			bca.setContent(bytes);
 		}
@@ -257,7 +271,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 	
 	/**
 	 * Create an {@link ISharedDocumentAdapter} that will provide the document key for the given input
-	 * object for any {@link DocumentRangeNode} instances whose document is the same as the 
+	 * object for any {@link DocumentRangeNode} instances whose document is the same as the
 	 * provided document.
 	 * @param input the input element
 	 * @param document the document associated with the input element
@@ -308,7 +322,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 
 		// Build the structure
 		IStructureComparator structure= createStructure(input, monitor);
-		if (structure == null)	// we couldn't parse the structure 
+		if (structure == null)	// we couldn't parse the structure
 			return null;		// so we can't find anything
 			
 		// find the path in the tree
@@ -331,7 +345,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 			return null;
 		// Build the structure
 		IStructureComparator structure= getStructure(input);
-		if (structure == null)	// we couldn't parse the structure 
+		if (structure == null)	// we couldn't parse the structure
 			return null;		// so we can't find anything
 			
 		// find the path in the tree
@@ -373,7 +387,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 							IStructureComparator result= find(child, path, index+1);
 							if (result != null)
 								return result;
-						}	
+						}
 					}
 				}
 			}
@@ -408,7 +422,7 @@ public abstract class StructureCreator implements IStructureCreator2 {
 
 	private IDisposable getDisposable(Object object) {
 		if (object instanceof IDisposable) {
-			return (IDisposable) object;	
+			return (IDisposable) object;
 		}
 		if (object instanceof DocumentRangeNode) {
 			DocumentRangeNode node = (DocumentRangeNode) object;
