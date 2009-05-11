@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,7 +50,7 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
                 "testObjectContributions");
         tagIfNecessary("UI - " + selection.size() + " contribution(s)",
                 Dimension.ELAPSED_PROCESS);
-        setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=88274>See Bug 88274</a> ");
+        setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=270795>See Bug 270795</a> ");
         startMeasuring();
         for (int i = 0; i < 5000; i++) {
             tests.assertPopupMenus("1", new String[] { "bogus" }, selection,
