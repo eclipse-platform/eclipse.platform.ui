@@ -570,8 +570,10 @@ public class CommandContributionItem extends ContributionItem {
 			item.setSelection(checkedState);
 		}
 
+		// allow the handler update its enablement
 		boolean shouldBeEnabled = isEnabled();
-		if (item.getEnabled() != shouldBeEnabled) {
+		// disabled command + visibility follows enablement == disposed
+		if (!item.isDisposed() && item.getEnabled() != shouldBeEnabled) {
 			item.setEnabled(shouldBeEnabled);
 		}
 	}
@@ -605,8 +607,10 @@ public class CommandContributionItem extends ContributionItem {
 			item.setSelection(checkedState);
 		}
 
+		// allow the handler update its enablement
 		boolean shouldBeEnabled = isEnabled();
-		if (item.getEnabled() != shouldBeEnabled) {
+		// disabled command + visibility follows enablement == disposed
+		if (!item.isDisposed() && item.getEnabled() != shouldBeEnabled) {
 			item.setEnabled(shouldBeEnabled);
 		}
 	}
@@ -639,8 +643,10 @@ public class CommandContributionItem extends ContributionItem {
 			item.setSelection(checkedState);
 		}
 
+		// allow the handler update its enablement
 		boolean shouldBeEnabled = isEnabled();
-		if (item.getEnabled() != shouldBeEnabled) {
+		// disabled command + visibility follows enablement == disposed
+		if (!item.isDisposed() && item.getEnabled() != shouldBeEnabled) {
 			item.setEnabled(shouldBeEnabled);
 		}
 	}
