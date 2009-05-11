@@ -8,9 +8,22 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * An installation dialog page.
+ * Abstract base implementation for an installation dialog page.
+ * <p>
+ * Clients should extend this class and include the name of the subclass in an
+ * extension contributed to the workbench's installation pages extension point
+ * (named <code>"org.eclipse.ui.installationPages"</code>). For example, the
+ * plug-in's XML markup might contain:
  * 
- * <em>This API is experimental and will change before 3.5 ships</em>
+ * <pre>
+ * &LT;extension point="org.eclipse.ui.installationPages"&GT;
+ *      &LT;page id="com.example.myplugin.installInfo"
+ *         name="Example Details"
+ *         class="com.example.myplugin.MyInstallationPage" /&GT;
+ * &LT;/extension&GT;
+ * </pre>
+ * 
+ * </p>
  * 
  * @since 3.5
  */
@@ -48,20 +61,20 @@ public abstract class InstallationPage extends DialogPage {
 	 *            the message, or <code>null</code> to clear the message
 	 * @param newType
 	 *            the message type
-	 * @since 2.0
 	 */
 	public void setMessage(String newMessage, int newType) {
 		super.setMessage(newMessage, newType);
 	}
 
 	/**
-	 * Set the page container that is hosting this page.  This method
-	 * is typically called by the container itself so that the pages
-	 * have access to the container when registering buttons using
+	 * Set the page container that is hosting this page. This method is
+	 * typically called by the container itself so that the pages have access to
+	 * the container when registering buttons using
 	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
 	 * or performing other container-related tasks.
 	 * 
-	 * @param container the container that is hosting hte page.
+	 * @param container
+	 *            the container that is hosting the page.
 	 */
 	public void setPageContainer(IInstallationPageContainer container) {
 		this.container = container;
@@ -127,8 +140,8 @@ public abstract class InstallationPage extends DialogPage {
 	}
 
 	/**
-	 * Get the page container that is hosting this page.  This method
-	 * is typically used when registering buttons using
+	 * Get the page container that is hosting this page. This method is
+	 * typically used when registering buttons using
 	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
 	 * or performing other container-related tasks.
 	 * 

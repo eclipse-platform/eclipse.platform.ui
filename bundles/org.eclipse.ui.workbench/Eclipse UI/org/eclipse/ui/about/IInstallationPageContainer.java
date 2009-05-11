@@ -17,8 +17,6 @@ import org.eclipse.swt.widgets.Button;
  * Interface for a container that hosts one or more installation pages (
  * {@link InstallationPage}).
  * 
- * <em>This API is experimental and will change before 3.5 ships</em>
- * 
  * @since 3.5
  */
 public interface IInstallationPageContainer {
