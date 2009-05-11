@@ -17,25 +17,24 @@ import org.eclipse.ui.IWorkbenchPropertyPage;
 /**
  * Abstract base implementation of a workbench property page (
  * <code>IWorkbenchPropertyPage</code>). The implementation is a JFace
- * preference page with an adapatable element.
+ * preference page with an adaptable element.
  * <p>
- * Subclasses must implement the <code>createContents</code> framework method
- * to supply the property page's main control.
+ * Subclasses must implement the <code>createContents</code> framework method to
+ * supply the property page's main control.
  * </p>
  * <p>
  * Subclasses should extend the <code>doComputeSize</code> framework method to
  * compute the size of the page's control.
  * </p>
  * <p>
- * Subclasses may override the <code>performOk</code>,
- * <code>performApply</code>,<code>performDefaults</code>,
- * <code>performCancel</code>, and <code>performHelp</code> framework
- * methods to react to the standard button events.
+ * Subclasses may override the <code>performOk</code>, <code>performApply</code>,<code>performDefaults</code>, <code>performCancel</code>, and
+ * <code>performHelp</code> framework methods to react to the standard button
+ * events.
  * </p>
  * <p>
- * Subclasses may call the <code>noDefaultAndApplyButton</code> framework
- * method before the page's control has been created to suppress the standard
- * Apply and Defaults buttons.
+ * Subclasses may call the <code>noDefaultAndApplyButton</code> framework method
+ * before the page's control has been created to suppress the standard Apply and
+ * Defaults buttons.
  * </p>
  * 
  * @see IWorkbenchPropertyPage
