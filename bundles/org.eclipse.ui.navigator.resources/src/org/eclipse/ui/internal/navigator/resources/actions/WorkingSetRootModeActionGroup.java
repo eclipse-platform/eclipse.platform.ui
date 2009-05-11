@@ -113,6 +113,10 @@ public class WorkingSetRootModeActionGroup extends ActionGroup {
 	 * @see ActionGroup#fillActionBars(IActionBars)
 	 */
 	public void fillActionBars(IActionBars actionBars) {
+		// Can happen if called here before we get the first call 
+		// to setShowTopLevelWorkingSets().  See bug 275197.
+		if (actions == null)
+			return;
 		synchronized (this) {
 			if (!hasContributedToViewMenu) {
 				contributeToViewMenu(actionBars.getMenuManager()); 
