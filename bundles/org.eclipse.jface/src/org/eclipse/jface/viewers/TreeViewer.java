@@ -916,6 +916,11 @@ public class TreeViewer extends AbstractTreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#handleTreeExpand(org.eclipse.swt.events.TreeEvent)
 	 */
 	protected void handleTreeExpand(TreeEvent event) {
+	    // Fix for Bug 271744 because windows expanding doesn't fire a focus lost
+		if( isCellEditorActive() ) {
+			applyEditorValue();
+		}
+		
 		if (contentProviderIsLazy) {
 			if (event.item.getData() != null) {
 				Item[] children = getChildren(event.item);
@@ -930,6 +935,16 @@ public class TreeViewer extends AbstractTreeViewer {
 			return;
 		}
 		super.handleTreeExpand(event);
+	}
+	
+	protected void handleTreeCollapse(TreeEvent event) {
+		// Fix for Bug 271744 because windows is firing collapse before
+		// focus lost event
+		if( isCellEditorActive() ) {
+			applyEditorValue();
+		}
+		
+		super.handleTreeCollapse(event);
 	}
 
 	/* (non-Javadoc)
