@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Nikolay Botev - bug 240651
- *     Biorn Biornstad - bug 267454
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -817,34 +816,5 @@ public class EditorReference extends WorkbenchPartReference implements
         }
         
         return part;
-	}
-	
-	public final IWorkbenchPart getPart(boolean restore) {
-		IWorkbenchPart oldPart = part;
-		
-		if (super.getPart(restore) == null) {
-			return null;
-		}
-		
-		if (part != oldPart) {
-			// The editor was restored by this invocation
-			// Also restore other editors with same ID and input, bug #267454
-
-			IEditorReference[] editors = null;
-			try {
-				editors = manager.findEditors(getEditorInput(), getId(),
-						IWorkbenchPage.MATCH_INPUT | IWorkbenchPage.MATCH_ID);
-			} catch (PartInitException e1) {
-				WorkbenchPlugin.log(e1);
-				return part;
-			}
-			for (int i = 0; i < editors.length; i++) {
-				if (editors[i] != this) {
-					editors[i].getPart(true);
-				}
-			}
-		}
-		
-		return part;
 	}
 }

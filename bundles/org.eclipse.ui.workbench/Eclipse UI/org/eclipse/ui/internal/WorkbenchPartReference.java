@@ -574,7 +574,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
         fireInternalPropertyChange(id);
     }
 
-    public IWorkbenchPart getPart(boolean restore) {
+    public final IWorkbenchPart getPart(boolean restore) {
         if (isDisposed()) {
             return null;
         }
