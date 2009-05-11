@@ -78,13 +78,18 @@ public class DebugTargetProxy extends EventHandlerModelProxy {
 		if (target != null) {
 			ModelDelta delta = getNextSuspendedThreadDelta(null, false);
 			if (delta == null) {
-                ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-                ILaunch launch = target.getLaunch();
-                int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
-                int targetIndex = indexOf(target.getLaunch().getChildren(), target);
-                delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
-                ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
-                node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, -1);
+                try {
+                    ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
+                    ILaunch launch = target.getLaunch();
+                    int launchIndex = indexOf(manager.getLaunches(), target.getLaunch());
+                    int targetIndex = indexOf(target.getLaunch().getChildren(), target);
+                    delta = new ModelDelta(manager, IModelDelta.NO_CHANGE);
+                    ModelDelta node = delta.addNode(launch, launchIndex, IModelDelta.NO_CHANGE, target.getLaunch().getChildren().length);
+                    node = node.addNode(target, targetIndex, IModelDelta.EXPAND | IModelDelta.SELECT, target.getThreads().length);
+                } catch (DebugException e) {
+                    // In case of exception do not fire delta
+                    return;
+                } 
 			}
 			// expand the target if no suspended thread
 			fireModelChanged(delta);
