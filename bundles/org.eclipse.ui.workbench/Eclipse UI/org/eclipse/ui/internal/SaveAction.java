@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISaveablesSource;
@@ -100,4 +101,16 @@ public class SaveAction extends BaseSaveAction implements IBackgroundSaveListene
 	public void handleBackgroundSaveStarted() {
 		updateState();
 	}
+
+	public void setEnabled(boolean enabled) {
+		super.setEnabled(enabled);
+		IWorkbenchWindow window = getWorkbenchWindow();
+		if (window != null) {
+			Shell shell = window.getShell();
+			if (shell != null && !shell.isDisposed()) {
+				shell.setModified(enabled);
+			}
+		}
+	}
+
 }
