@@ -912,11 +912,11 @@ public class BuilderTest extends AbstractBuilderTest {
 
 	/**
 	 * Tests that a client invoking a manual incremental build before autobuild has had
-	 * a chance to run will block until the build completes.
+	 * a chance to run will block until the build completes. See bug 275879.
 	 */
 	public void testIncrementalBuildBeforeAutobuild() {
 		// Create some resource handles
-		IProject project = getWorkspace().getRoot().getProject("PROJECT");
+		final IProject project = getWorkspace().getRoot().getProject("PROJECT");
 		final IFile input = project.getFolder(SortBuilder.DEFAULT_UNSORTED_FOLDER).getFile("File.txt");
 		final IFile output = project.getFolder(SortBuilder.DEFAULT_SORTED_FOLDER).getFile("File.txt");
 		try {
@@ -937,11 +937,15 @@ public class BuilderTest extends AbstractBuilderTest {
 		assertTrue("1.0", output.exists());
 
 		//change the file and then immediately perform build
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		final ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
-			input.setContents(new ByteArrayInputStream(new byte[] {5, 4, 3, 2, 1}), IResource.NONE, getMonitor());
-			project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
-			transferStreams(output.getContents(), out, null, null);
+			getWorkspace().run(new IWorkspaceRunnable() {
+				public void run(IProgressMonitor monitor) throws CoreException {
+					input.setContents(new ByteArrayInputStream(new byte[] {5, 4, 3, 2, 1}), IResource.NONE, getMonitor());
+					project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+					transferStreams(output.getContents(), out, null, null);
+				}
+			}, getMonitor());
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}

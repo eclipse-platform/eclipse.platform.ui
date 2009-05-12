@@ -540,10 +540,7 @@ public class Project extends Container implements IProject {
 				}
 			}
 			/**
-			 * Returns whether this project should be built for a given trigger. Note we
-			 * can't optimize the general case here because the build manager can change
-			 * the trigger depending on the presence of a built state. All we can do here
-			 * are certain optimizations when auto-build is enabled
+			 * Returns whether this project should be built for a given trigger. 
 			 * @return <code>true</code> if the build should proceed, and <code>false</code> otherwise.
 			 */
 			private boolean shouldBuild() {
@@ -551,19 +548,6 @@ public class Project extends Container implements IProject {
 				int flags = getFlags(info);
 				if (!exists(flags, true) || !isOpen(flags))
 					return false;
-				if (trigger == IncrementalProjectBuilder.INCREMENTAL_BUILD && workspace.isAutoBuilding() && !workspace.getBuildManager().isAutobuildBuildPending()) {
-					//don't need to do an incremental build if all builders respond to autobuild
-					IProjectDescription description = internalGetDescription();
-					if (description == null)
-						return false;
-					ICommand[] commands = description.getBuildSpec();
-					for (int i = 0; i < commands.length; i++) {
-						if (!commands[i].isBuilding(IncrementalProjectBuilder.AUTO_BUILD))
-							return true;
-					}
-					//all builders respond to autobuild, so no need for incremental build
-					return false;
-				}
 				return true;
 			}
 
