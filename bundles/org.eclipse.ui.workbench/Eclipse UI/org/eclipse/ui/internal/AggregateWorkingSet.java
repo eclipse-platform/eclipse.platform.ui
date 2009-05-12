@@ -215,9 +215,8 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		IWorkingSet[] localComponents = getComponentsInternal();
-		
 		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_REMOVE)) {
+			IWorkingSet[] localComponents = getComponentsInternal();
 			for (int i = 0; i < localComponents.length; i++) {
 				IWorkingSet set = localComponents[i];
 				if (set.equals(event.getOldValue())) {
@@ -230,6 +229,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements
 			}
 		} else if (property
 				.equals(IWorkingSetManager.CHANGE_WORKING_SET_CONTENT_CHANGE)) {
+			IWorkingSet[] localComponents = getComponentsInternal();
 			for (int i = 0; i < localComponents.length; i++) {
 				IWorkingSet set = localComponents[i];
 				if (set.equals(event.getNewValue())) {
