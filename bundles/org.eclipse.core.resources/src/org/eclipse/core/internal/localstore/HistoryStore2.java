@@ -156,28 +156,42 @@ public class HistoryStore2 implements IHistoryStore {
 			tree.accept(new Bucket.Visitor() {
 				public int visit(Entry fileEntry) {
 					if (monitor.isCanceled())
-						return RETURN;
+						return STOP;
 					entryCount[0] += fileEntry.getOccurrences();
 					applyPolicy((HistoryEntry) fileEntry, maxStates, minimumTimestamp);
-					return monitor.isCanceled() ? RETURN : CONTINUE;
+					// remove unreferenced blobs, when blobsToRemove size is greater than 100
+					removeUnreferencedBlobs(100);
+					return monitor.isCanceled() ? STOP : CONTINUE;
 				}
 			}, Path.ROOT, BucketTree.DEPTH_INFINITE);
 			if (Policy.DEBUG_HISTORY) {
 				Policy.debug("Time to apply history store policies: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.debug("Total number of history store entries: " + entryCount[0]); //$NON-NLS-1$
 			}
-			start = System.currentTimeMillis();
-			// remove unreferenced blobs
-			blobStore.deleteBlobs(blobsToRemove);
-			if (Policy.DEBUG_HISTORY)
-				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$			
-			blobsToRemove = new HashSet();
+			// remove all remaining unreferenced blobs
+			removeUnreferencedBlobs(0);
 		} catch (Exception e) {
 			String message = Messages.history_problemsCleaning;
 			ResourceStatus status = new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, null, message, e);
 			Policy.log(status);
 		} finally {
 			monitor.done();
+		}
+	}
+	
+	/*
+	 * Remove blobs from the blobStore. When the size of blobsToRemove exceeds the limit,
+	 * remove the given blobs from blobStore. If the limit is zero or negative, remove blobs
+	 * regardless of the limit.
+	 */
+	void removeUnreferencedBlobs(int limit) {
+		if (limit <= 0 || limit <= blobsToRemove.size()) {
+			long start = System.currentTimeMillis();
+			// remove unreferenced blobs
+			blobStore.deleteBlobs(blobsToRemove);
+			if (Policy.DEBUG_HISTORY)
+				Policy.debug("Time to remove " + blobsToRemove.size() + " unreferenced blobs: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$			
+			blobsToRemove = new HashSet();
 		}
 	}
 
