@@ -87,22 +87,27 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		int count = parentDelta.getChildCount();
 		if (count > 0) {
 		    setModelChildCount(parentPath, count);
-		    int viewCount = modelToViewChildCount(parentPath, count);
-	        int modelIndex = count - 1;
-	        int viewIndex = viewCount - 1;
+		    int modelIndex = count - 1;
+		    if (delta.getIndex() != -1) {
+		    	// assume addition at end, unless index specified by delta
+		    	modelIndex = delta.getIndex();
+		    }
 			if (shouldFilter(parentPath, element)) {
 				addFilteredIndex(parentPath, modelIndex, element);
 				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-					System.out.println("[filtered] handleAdd(" + delta.getElement() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+					System.out.println("[filtered] handleAdd(" + delta.getElement() + ") > modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$
 				}
+				// it was filtered so the child count does not change
 			} else {
 				if (isFiltered(parentPath, modelIndex)) {
 					clearFilteredChild(parentPath, modelIndex);
 				}
+				int viewCount = modelToViewChildCount(parentPath, count);
 				if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
 					System.out.println("handleAdd(" + delta.getElement() + ") viewIndex: " + viewCount + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				getViewer().setChildCount(parentPath, viewCount);
+				int viewIndex = modelToViewIndex(parentPath, modelIndex);
 				getViewer().replace(parentPath, viewIndex, element);
 				TreePath childPath = parentPath.createChildPath(element);
 				updateHasChildren(childPath);
