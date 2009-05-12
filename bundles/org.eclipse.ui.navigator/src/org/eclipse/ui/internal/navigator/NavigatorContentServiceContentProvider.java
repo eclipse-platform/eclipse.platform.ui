@@ -162,7 +162,7 @@ public class NavigatorContentServiceContentProvider implements
 
 					if (overridingExtensions.length > 0) { 
 						localSet = pipelineChildren(anInputElement,
-								overridingExtensions, localSet);						
+								overridingExtensions, localSet, ELEMENTS);						
 					}
 					finalElementsSet.addAll(localSet);
 				}
@@ -253,7 +253,7 @@ public class NavigatorContentServiceContentProvider implements
 					if (overridingExtensions.length > 0) {
 						// TODO: could pass tree path through pipeline						
 						localSet = pipelineChildren(aParentElement,
-								overridingExtensions, localSet);
+								overridingExtensions, localSet, !ELEMENTS);
 					}
 					finalChildrenSet.addAll(localSet);
 				}
@@ -283,6 +283,8 @@ public class NavigatorContentServiceContentProvider implements
 		return finalChildrenSet.toArray();
 	}
 
+	private static final boolean ELEMENTS = true;
+	
 	/**
 	 * Query each of <code>theOverridingExtensions</code> for children, and
 	 * then pipe them through the Pipeline content provider.
@@ -299,7 +301,7 @@ public class NavigatorContentServiceContentProvider implements
 	 */
 	private ContributorTrackingSet pipelineChildren(Object aParentOrPath,
 			NavigatorContentExtension[] theOverridingExtensions,
-			ContributorTrackingSet theCurrentChildren) {
+			ContributorTrackingSet theCurrentChildren, boolean elements) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
 		ContributorTrackingSet pipelinedChildren = theCurrentChildren;
@@ -311,8 +313,13 @@ public class NavigatorContentServiceContentProvider implements
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
 				
-				pipelinedContentProvider.getPipelinedChildren(aParentOrPath,
-						pipelinedChildren);
+				if (elements) {
+					pipelinedContentProvider.getPipelinedElements(aParentOrPath,
+							pipelinedChildren);
+				} else {
+					pipelinedContentProvider.getPipelinedChildren(aParentOrPath,
+							pipelinedChildren);
+				}
 				
 				//pipelinedChildren.setContributor(null);
 				
@@ -320,7 +327,7 @@ public class NavigatorContentServiceContentProvider implements
 						.getOverridingExtensionsForTriggerPoint(aParentOrPath);
 				if (overridingExtensions.length > 0) {
 					pipelinedChildren = pipelineChildren(aParentOrPath,
-							overridingExtensions, pipelinedChildren);
+							overridingExtensions, pipelinedChildren, elements);
 				}
 			}
 		}
