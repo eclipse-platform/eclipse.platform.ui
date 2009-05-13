@@ -2535,8 +2535,16 @@ public class TextViewer extends Viewer implements
 			int endVirtuals= computeVirtualChars(endOffset, endX, avgCharWidth);
 			
 			IDocument document= getDocument();
-			startOffset= widgetOffset2ModelOffset(startOffset);
-			endOffset= widgetOffset2ModelOffset(endOffset);
+			Point modelSelection= widgetSelection2ModelSelection(new Point(startOffset, endOffset - startOffset));
+			if (modelSelection == null)
+				return TextSelection.emptySelection();
+			startOffset= modelSelection.x;
+			endOffset= modelSelection.x + modelSelection.y;
+
+			// Special case for Select All
+			if (startOffset == 0 && endOffset == document.getLength())
+				return new TextSelection(document, startOffset, endOffset);
+
 			try {
 				int startLine= document.getLineOfOffset(startOffset);
 				int endLine= document.getLineOfOffset(endOffset);
