@@ -17,6 +17,7 @@ import java.util.List;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextPrintOptions;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -86,6 +87,7 @@ import org.eclipse.jface.text.source.ChangeRulerColumn;
 import org.eclipse.jface.text.source.CompositeRuler;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.IAnnotationAccessExtension2;
+import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.IAnnotationModel;
 import org.eclipse.jface.text.source.IChangeRulerColumn;
 import org.eclipse.jface.text.source.IOverviewRuler;
@@ -154,6 +156,24 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  */
 public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
+	/**
+	 * Command ID of the command to display a sticky ruler hover for the current caret location.
+	 * Value <code>"org.eclipse.ui.edit.text.showChangeRulerInformation"</code>).
+	 * 
+	 * @since 3.5
+	 */
+	//TODO: move to ITextEditorActionDefinitionIds and make API
+	private static final String SHOW_CHANGE_RULER_INFORMATION_ID= "org.eclipse.ui.edit.text.showChangeRulerInformation"; //$NON-NLS-1$
+	
+	/**
+	 * Name of the action displaying a sticky ruler hover for the current caret location.
+	 *
+	 * Value: <code>"ShowChangeRulerInformation"</code>
+	 * @since 3.5
+	 */
+	//TODO: move to ITextEditorActionConstants and make API
+	private static final String SHOW_CHANGE_RULER_INFORMATION= "ShowChangeRulerInformation"; //$NON-NLS-1$
+	
 	/**
 	 * Preference key for showing the line number ruler.
 	 */
@@ -277,7 +297,11 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	 * @since 3.3
 	 */
 	private boolean fIsDerivedStateValidated= false;
-
+	/**
+	 * The focused information presenter, or <code>null</code> if not created yet.
+	 * @since 3.5
+	 */
+	private FocusedInformationPresenter fInformationPresenter;
 
 	/*
 	 * Workaround for IllegalAccessError thrown because we are accessing
@@ -332,6 +356,10 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		fLineNumberRulerColumn= null;
 		fLineColumn= null;
 
+		if (fInformationPresenter != null) {
+			fInformationPresenter.uninstall();
+			fInformationPresenter= null;
+		}
 		super.dispose();
 	}
 
@@ -1215,7 +1243,62 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		// Override print action to provide additional options
 		if (getAction(ITextEditorActionConstants.PRINT).isEnabled() && getSourceViewer() instanceof ITextViewerExtension8)
 			createPrintAction();
+		
+		action= new ResourceAction(TextEditorMessages.getBundleForConstructedKeys(), "Editor.ShowChangeRulerInformation.", IAction.AS_PUSH_BUTTON) { //$NON-NLS-1$
+			public void run() {
+				showChangeRulerInformation();
+			}
+		};
+		action.setActionDefinitionId(SHOW_CHANGE_RULER_INFORMATION_ID);
+		setAction(SHOW_CHANGE_RULER_INFORMATION, action);
 	}
+
+	/**
+	 * Opens a sticky change ruler hover for the caret line. Does nothing if no change hover is
+	 * available.
+	 * 
+	 * @since 3.5
+	 */
+	private void showChangeRulerInformation() {
+		IVerticalRuler ruler= getVerticalRuler();
+		if (!(ruler instanceof CompositeRuler) || fLineColumn == null)
+			return;
+		
+		CompositeRuler compositeRuler= (CompositeRuler) ruler;
+		
+		// fake a mouse move (some hovers rely on this to determine the hovered line):
+		int x= fLineColumn.getControl().getLocation().x;
+		
+		ISourceViewer sourceViewer= getSourceViewer();
+		StyledText textWidget= sourceViewer.getTextWidget();
+		int caretOffset= textWidget.getCaretOffset();
+		int caretLine= textWidget.getLineAtOffset(caretOffset);
+		int y= textWidget.getLinePixel(caretLine);
+		
+		compositeRuler.setLocationOfLastMouseButtonActivity(x, y);
+		
+		IAnnotationHover hover= fLineColumn.getHover();
+		if (hover == null)
+			return;
+		
+		int modelCaretOffset= widgetOffset2ModelOffset(sourceViewer, caretOffset);
+		if (modelCaretOffset == -1)
+			return;
+		
+		IDocument document= sourceViewer.getDocument();
+		if (document == null)
+			return;
+		
+		try {
+			int line= document.getLineOfOffset(modelCaretOffset);
+			if (fInformationPresenter == null) {
+				fInformationPresenter= new FocusedInformationPresenter(sourceViewer, getSourceViewerConfiguration());
+			}
+			fInformationPresenter.openFocusedAnnotationHover(hover, line);
+		} catch (BadLocationException e) {
+			return;
+		}
+    }
 
 	/**
 	 * Creates and registers the print action.

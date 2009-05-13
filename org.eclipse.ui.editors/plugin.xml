@@ -129,6 +129,12 @@
             description="%command.revisions.idToggle.description"
             id="org.eclipse.ui.editors.revisions.id.toggle">
       </command>
+      <command
+            name="%command.showChangeRulerInformation.name"
+            description="%command.showChangeRulerInformation.description"
+	        categoryId="org.eclipse.ui.category.textEditor"
+            id="org.eclipse.ui.edit.text.showChangeRulerInformation">
+      </command>
    </extension>
    
    <extension
