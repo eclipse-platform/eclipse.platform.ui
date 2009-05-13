@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -45,6 +46,9 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
@@ -381,20 +385,72 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		final MultiStatus status = new MultiStatus(
 				IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 				IDEWorkbenchMessages.ProblemSavingWorkbench, null);
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			public void run(IProgressMonitor monitor) {
-				try {
-					monitor
-							.subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
-					status.merge(((Workspace) ResourcesPlugin.getWorkspace())
-							.save(true, true, monitor));
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
-				}
-			}
-		};
 		try {
-			new ProgressMonitorJobsDialog(null).run(true, true, runnable);
+			final ProgressMonitorJobsDialog p = new ProgressMonitorJobsDialog(null) {
+
+				/*
+				 * (non-Javadoc)
+				 * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#createDetailsButton(org.eclipse.swt.widgets.Composite)
+				 */
+				protected void createButtonsForButtonBar(Composite parent) {
+					super.createButtonsForButtonBar(parent);
+					registerCancelButtonListener();
+				}
+
+				public void registerCancelButtonListener() {
+					cancel.addSelectionListener(new SelectionAdapter() {
+						public void widgetSelected(SelectionEvent e) {
+							subTaskLabel.setText(""); //$NON-NLS-1$
+						}
+					});
+				}
+			};
+
+			IRunnableWithProgress runnable = new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) {
+					try {
+						monitor = new ProgressMonitorWrapper(monitor) {
+							private double total = 0;
+
+							/*
+							 * (non-Javadoc)
+							 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#internalWorked(double)
+							 */
+							public void internalWorked(double work) {
+								super.internalWorked(work);
+								total += work;
+								updateProgressDetails();
+							}
+
+							/*
+							 * (non-Javadoc)
+							 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#worked(int)
+							 */
+							public void worked(int work) {
+								super.worked(work);
+								total += work;
+								updateProgressDetails();
+							}
+
+							private void updateProgressDetails() {
+								if (!isCanceled() && total == 4 /* right before history compacting */)
+									subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
+								if (total == 5 /* history compacting finished */) {
+									subTask(""); //$NON-NLS-1$
+									p.setCancelable(false);
+								}
+							}
+						};
+
+						status.merge(((Workspace) ResourcesPlugin
+								.getWorkspace()).save(true, true, monitor));
+					} catch (CoreException e) {
+						status.merge(e.getStatus());
+					}
+				}
+			};
+
+			p.run(true, true, runnable);
 		} catch (InvocationTargetException e) {
 			status
 					.merge(new Status(IStatus.ERROR,
