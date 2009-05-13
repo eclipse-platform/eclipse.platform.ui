@@ -31,6 +31,10 @@ import org.eclipse.compare.internal.ViewerSwitchingCancelled;
 import org.eclipse.compare.structuremergeviewer.Differencer;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
 import org.eclipse.compare.structuremergeviewer.ICompareInputChangeListener;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.IExecutionListener;
+import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -67,6 +71,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 
 /**
  * An abstract compare and merge viewer with two side-by-side content areas
@@ -287,6 +294,10 @@ public abstract class ContentMergeViewer extends ContentViewer
 
 	private boolean fIsLeftDirty;
 	private boolean fIsRightDirty;
+
+	private boolean fIsSaving;
+	private ICommandService fCommandService;
+	private IExecutionListener fExecutionListener;
 	
 	private CompareHandlerService fHandlerService;
 
@@ -360,6 +371,41 @@ public abstract class ContentMergeViewer extends ContentViewer
 		
 		fIsLeftDirty = false;
 		fIsRightDirty = false;
+
+		fIsSaving = false;
+		fCommandService = (ICommandService)PlatformUI.getWorkbench().getAdapter(ICommandService.class);
+		if (fCommandService != null) {
+			fCommandService.addExecutionListener(getExecutionListener());
+		}
+	}
+
+	private IExecutionListener getExecutionListener() {
+		if (fExecutionListener == null) {
+			fExecutionListener = new IExecutionListener() {
+				public void preExecute(String commandId, ExecutionEvent event) {
+					if (IWorkbenchCommandConstants.FILE_SAVE.equals(commandId)
+							|| IWorkbenchCommandConstants.FILE_SAVE_ALL.equals(commandId))
+						fIsSaving = true;
+				}
+
+				public void postExecuteSuccess(String commandId, Object returnValue) {
+					if (IWorkbenchCommandConstants.FILE_SAVE.equals(commandId)
+							|| IWorkbenchCommandConstants.FILE_SAVE_ALL.equals(commandId))
+						fIsSaving= false;
+				}
+
+				public void postExecuteFailure(String commandId, ExecutionException exception) {
+					if (IWorkbenchCommandConstants.FILE_SAVE.equals(commandId)
+							|| IWorkbenchCommandConstants.FILE_SAVE_ALL.equals(commandId))
+						fIsSaving= false;
+				}
+
+				public void notHandled(String commandId, NotHandledException exception) {
+					// not needed
+				}
+			};
+		}
+		return fExecutionListener;
 	}
 	
 	//---- hooks ---------------------
@@ -991,6 +1037,12 @@ public abstract class ContentMergeViewer extends ContentViewer
 			fHVSashCursor= null;
 		}
 		
+		if (fCommandService != null) {
+			fCommandService.removeExecutionListener(fExecutionListener);
+			fCommandService = null;
+			fExecutionListener = null;
+		}
+
 		super.handleDispose(event);
   	}
   	
@@ -1227,7 +1279,7 @@ public abstract class ContentMergeViewer extends ContentViewer
 	protected void handleCompareInputChange() {
 		// before setting the new input we have to save the old
 		Object input = getInput();
-		if (isLeftDirty() || isRightDirty()) {
+		if (!fIsSaving && (isLeftDirty() || isRightDirty())) {
 			
 			if (Utilities.RUNNING_TESTS) {
 				if (Utilities.TESTING_FLUSH_ON_COMPARE_INPUT_CHANGE) {
