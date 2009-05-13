@@ -339,10 +339,11 @@ public class CocoaUIEnhancer implements IStartup {
 			try {
 				Object fieldValue = wrapPointer(NSWindowToolbarButton);
 				NSButton toolbarButton = (NSButton) invokeMethod(NSWindow.class, nsWindow, "standardWindowButton", new Object[] {fieldValue});
-
-				toolbarButton.setTarget(delegate);
-				invokeMethod(NSControl.class, toolbarButton, "setAction",
-						new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
+				if (toolbarButton != null) {
+					toolbarButton.setTarget(delegate);
+					invokeMethod(NSControl.class, toolbarButton, "setAction",
+							new Object[] { wrapPointer(sel_toolbarButtonClicked_) });
+				}
 			} catch (Exception e) {
 				// theoretically, one of SecurityException,Illegal*Exception,InvocationTargetException,NoSuch*Exception
 				// not expected to happen at all.
