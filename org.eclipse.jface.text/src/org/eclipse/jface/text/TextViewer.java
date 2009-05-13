@@ -2483,8 +2483,10 @@ public class TextViewer extends Viewer implements
 				int endLineLength= endLineInfo.getLength();
 				int endVirtuals= Math.max(0, s.getEndColumn() - endLineLength);
 				
-				int startOffset= modelOffset2WidgetOffset(startLineInfo.getOffset() + s.getStartColumn() - startVirtuals);
-				int endOffset= modelOffset2WidgetOffset(endLineInfo.getOffset() + s.getEndColumn() - endVirtuals);
+				IRegion startRegion= new Region(startLineInfo.getOffset() + s.getStartColumn() - startVirtuals, 0);
+				int startOffset= modelRange2ClosestWidgetRange(startRegion).getOffset();
+				IRegion endRegion= new Region(endLineInfo.getOffset() + s.getEndColumn() - endVirtuals, 0);
+				int endOffset= modelRange2ClosestWidgetRange(endRegion).getOffset();
 				Point clientAreaOrigin= new Point(fTextWidget.getHorizontalPixel(), fTextWidget.getTopPixel());
 				Point startLocation= Geometry.add(clientAreaOrigin, fTextWidget.getLocationAtOffset(startOffset));
 				int averageCharWidth= getAverageCharWidth();
