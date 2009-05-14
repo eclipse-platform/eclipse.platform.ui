@@ -17,10 +17,11 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.internal.WorkbenchMessages;
 
 /**
  * This class parses the structure of the Shell and finds necessary widgets.
@@ -96,16 +97,24 @@ public class StatusDialogUtil {
 		return (Composite)((Composite)controls[0]).getChildren()[2];
 	}
 	
-	public static ToolItem getSupportToolItem(){
+	public static Link getSupportLink() {
 		Composite c = getButtonBar();
-		if(c == null || c.isDisposed()){
+		if (c == null || c.isDisposed()) {
 			return null;
 		}
-		ToolBar toolbar = (ToolBar) c.getChildren()[0];
-		if (toolbar.getItemCount() == 0){
-			return null;
+		Composite linkArea = (Composite) c.getChildren()[0];
+		for (int i = 0; i < linkArea.getChildren().length; i++) {
+			Widget w = linkArea.getChildren()[i];
+			if (w instanceof Link) {
+				if (((Link) w)
+						.getText()
+						.equals(
+								WorkbenchMessages.WorkbenchStatusDialog_SupportHyperlink)) {
+					return (Link) w;
+				}
+			}
 		}
-		return toolbar.getItem(0);
+		return null;
 	}
 	
 	public static Button getActionButton(){

@@ -1085,7 +1085,8 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchStatusDialog_CopyThisReport;
 	public static String WorkbenchStatusDialog_ExplanationLabel;
 	public static String WorkbenchStatusDialog_NotAvailable;
-	public static String WorkbenchStatusDialog_Support;
+	public static String WorkbenchStatusDialog_SupportTooltip;
+	public static String WorkbenchStatusDialog_SupportHyperlink;
 	public static String WorkbenchStatusDialog_StatusLabel;
 	public static String WorkbenchStatusDialog_TimestampNotAvailable;
 	public static String WorkbenchStatusDialog_StatusWithChildren;
@@ -1099,6 +1100,9 @@ public class WorkbenchMessages extends NLS {
 	public static String StackTraceSupportArea_CausedBy;
 	public static String StackTraceSupportArea_Title;
 	
+	public static String ErrorLogUtil_ShowErrorLogTooltip;
+	public static String ErrorLogUtil_ShowErrorLogHyperlink;
+
 	// WorkingSetConfigurationBlock
 	public static String WorkingSetConfigurationBlock_SelectWorkingSet_button;
 	public static String WorkingSetConfigurationBlock_WorkingSetText_name;
@@ -1115,6 +1119,5 @@ public class WorkbenchMessages extends NLS {
 	public static String Util_listNull;
 
 
-	public static String ErrorLogUtil_ShowErrorLog;
 	
 }

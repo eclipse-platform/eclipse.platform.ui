@@ -15,8 +15,6 @@ package org.eclipse.ui.internal;
  * only within the Eclipse UI and Eclipse UI Standard Components projects.
  */
 public interface IWorkbenchGraphicConstants {
-	
-	public final static String IMG_DTOOL_SHOW_SUPPORT = "IMG_DTOOL_SHOW_SUPPORT";  //$NON-NLS-1$
 
     public final static String IMG_ETOOL_IMPORT_WIZ = "IMG_ETOOL_IMPORT_WIZ"; //$NON-NLS-1$
 

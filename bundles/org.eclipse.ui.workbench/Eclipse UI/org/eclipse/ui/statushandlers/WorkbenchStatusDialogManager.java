@@ -58,14 +58,12 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -81,14 +79,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.progress.ProgressManager;
@@ -542,7 +539,7 @@ public class WorkbenchStatusDialogManager {
 		 * Status dialog button should be aligned SWT.END. 
 		 */
 		protected void setButtonLayoutData(Button button) {
-			GridData data = new GridData(SWT.END, SWT.FILL, false, false);
+			GridData data = new GridData(SWT.END, SWT.CENTER, false, false);
 			int widthHint = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH);
 			Point minSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT, true);
 			data.widthHint = Math.max(widthHint, minSize.x);
@@ -622,8 +619,8 @@ public class WorkbenchStatusDialogManager {
 			if(!modalitySwitch){
 				trayOpened = false;
 			}
-			if (launchTrayButton != null && !launchTrayButton.isDisposed()) {
-				launchTrayButton.setEnabled(supportTray.providesSupport() && !trayOpened);
+			if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
+				launchTrayLink.setEnabled(supportTray.providesSupport() && !trayOpened);
 			}
 		}
 		
@@ -1054,9 +1051,10 @@ public class WorkbenchStatusDialogManager {
 	private SupportTray supportTray = new WorkbenchStatusDialogManager.SupportTray();
 
 	/**
-	 * Toolbar on the left botom corner. Allows for opening support tray.
+	 * Composite on the left bottom corner. Allows for opening support tray &
+	 * Error Log.
 	 */
-	private ToolBar toolBar;
+	private Composite linkComposite;
 	
 	/**
 	 * 
@@ -1066,13 +1064,13 @@ public class WorkbenchStatusDialogManager {
 	/**
 	 * This item is used to launch support tray
 	 */
-	private ToolItem launchTrayButton;
+	private Link launchTrayLink;
 	
 	/**
 	 * This fields contains indicator if link to ErrorLog view should be
 	 * present.
 	 */
-	private ToolItem showErrorLogButton;
+	private Link showErrorLogLink;
 
 	/**
 	 * This flag indicates if the dialog is switching modality. For now it is
@@ -1330,7 +1328,7 @@ public class WorkbenchStatusDialogManager {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
 
-		toolBar = createSupportToolbar(composite);
+		linkComposite = createLinkComposite(composite);
 
 		// Add the buttons to the button bar.
 		createButtonsForButtonBar(composite);
@@ -1449,52 +1447,60 @@ public class WorkbenchStatusDialogManager {
 	 *            A parent composite on which all components should be placed.
 	 * @return the report control
 	 */
-	private ToolBar createSupportToolbar(Composite parent) {
-		ToolBar toolBar = new ToolBar(parent, SWT.FLAT | SWT.NO_FOCUS);
-		((GridLayout) parent.getLayout()).numColumns++;
-		GridData layoutData = new GridData(SWT.BEGINNING, SWT.FILL, true, false);
-		toolBar.setLayoutData(layoutData);
-		final Cursor cursor = new Cursor(parent.getDisplay(), SWT.CURSOR_HAND);
-		toolBar.setCursor(cursor);
-		toolBar.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				cursor.dispose();
+	private Composite createLinkComposite(Composite parent) {
+		Composite linkArea = new Composite(parent, SWT.NONE) {
+
+			// the composite should be as small as possible when there is no
+			// additional controls on it
+			public Point computeSize(int wHint, int hHint, boolean changed) {
+				Point newSize = super.computeSize(wHint, hHint, changed); 
+				if (getChildren().length == 0) {
+					newSize.x = 0;
+					newSize.y = 0;
+				}
+				return newSize;
 			}
-		});
-		toolBar.setEnabled(false);
-		return toolBar;
+
+		};
+		GridLayout layout = new GridLayout();
+		layout.marginHeight = 0;
+		layout.marginWidth = 0;
+		layout.verticalSpacing = 0;
+		linkArea.setLayout(layout);
+
+		((GridLayout) parent.getLayout()).numColumns++;
+
+		GridData layoutData = new GridData(SWT.BEGINNING, SWT.CENTER, true,
+				false);
+		linkArea.setLayoutData(layoutData);
+		return linkArea;
 	}
 
 	/**
 	 * Creates a button with a report image. This is only used if there is an
 	 * image available.
 	 */
-	private ToolItem createShowSupportToolItem(ToolBar parent) {
-		ImageDescriptor descriptor = WorkbenchImages
-				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_DTOOL_SHOW_SUPPORT);
-		final Image image = new Image(parent.getDisplay(), descriptor
-				.getImageData());
+	private Link createGetSupportLink() {
+		// no support
+		if (!supportTray.providesSupport() || hideSupportButton) {
+			return null;
+		}
 
-		ToolItem toolItem = new ToolItem(parent, SWT.NONE);
-		toolItem.setImage(image);
-		toolItem
-				.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_Support);
-		toolItem.addSelectionListener(new SelectionAdapter() {
+		Link link = new Link(linkComposite, SWT.NONE);
+		link.setText(WorkbenchMessages.WorkbenchStatusDialog_SupportHyperlink);
+		link.setToolTipText(WorkbenchMessages.WorkbenchStatusDialog_SupportTooltip);
+		link.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				openTray(supportTray);
 			}
 		});
-		toolItem.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				image.dispose();
-			}
-		});
-		return toolItem;
+		Dialog.applyDialogFont(link);
+		return link;
 	}
 
-	private ToolItem createShowErrorLogToolItem(IViewDescriptor descriptor) {
-		ToolItem toolItem = new ToolItem(toolBar, SWT.NONE);
-		toolItem.addSelectionListener(new SelectionAdapter(){
+	private Link createShowErrorLogLink() {
+		Link link = new Link(linkComposite, SWT.NONE);
+		link.addSelectionListener(new SelectionAdapter(){
 			public void widgetSelected(SelectionEvent e) {
 				try {
 					Workbench.getInstance().getActiveWorkbenchWindow()
@@ -1505,16 +1511,10 @@ public class WorkbenchStatusDialogManager {
 				}
 			}
 		});
-		final Image image = descriptor.getImageDescriptor().createImage();
-		toolItem.setImage(image);
-		toolItem.setToolTipText(WorkbenchMessages.ErrorLogUtil_ShowErrorLog);
-		toolItem.addDisposeListener(new DisposeListener(){
-			public void widgetDisposed(DisposeEvent e) {
-				image.dispose();
-				
-			}
-		});
-		return toolItem;
+		link.setText(WorkbenchMessages.ErrorLogUtil_ShowErrorLogHyperlink);
+		link.setToolTipText(WorkbenchMessages.ErrorLogUtil_ShowErrorLogTooltip);
+		Dialog.applyDialogFont(link);
+		return link;
 	}
 
 	/**
@@ -2032,8 +2032,8 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private void openTray(DialogTray tray) throws IllegalStateException,
 			UnsupportedOperationException {
-		if (launchTrayButton != null) {
-			launchTrayButton.setEnabled(false);
+		if (launchTrayLink != null) {
+			launchTrayLink.setEnabled(false);
 		}
 		this.dialog.openTray(tray);
 		trayOpened = true;
@@ -2271,42 +2271,41 @@ public class WorkbenchStatusDialogManager {
 		Button gotoButton = dialog.getButton(GOTO_ACTION_ID);
 		if (gotoButton != null) {
 			IAction gotoAction = getGotoAction();
-			boolean hasValidGotoAction = (gotoAction != null) && (gotoAction.getText() != null);
+			boolean hasValidGotoAction = (gotoAction != null)
+					&& (gotoAction.getText() != null);
 			if (hasValidGotoAction) {
-				hideButton(gotoButton,false);
+				hideButton(gotoButton, false);
 				gotoButton.setText(gotoAction.getText());
-				
+
 				((GridData) gotoButton.getLayoutData()).widthHint = gotoButton
 						.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
 				gotoButton.getParent().layout();
-			}
-			else	
-				hideButton(gotoButton,true);
+			} else
+				hideButton(gotoButton, true);
 		}
 		// and tray enablement button
 		if (supportTray.providesSupport() && !hideSupportButton) {
-			if(launchTrayButton == null || launchTrayButton.isDisposed()){
-				launchTrayButton = createShowSupportToolItem(toolBar);
+			if(launchTrayLink == null || launchTrayLink.isDisposed()){
+				launchTrayLink = createGetSupportLink();
 			}
-			launchTrayButton.setEnabled(!trayOpened);
+			launchTrayLink.setEnabled(!trayOpened);
 		} else {
-			if(launchTrayButton != null && !launchTrayButton.isDisposed()){
-				launchTrayButton.dispose();
-				launchTrayButton = null;
+			if(launchTrayLink != null && !launchTrayLink.isDisposed()){
+				launchTrayLink.dispose();
+				launchTrayLink = null;
 			}
 		}
 		IViewDescriptor descriptor = shouldDisplayLinkToErrorLog();
 		if (descriptor != null) {
-			if (showErrorLogButton == null || showErrorLogButton.isDisposed()) {
-				showErrorLogButton = createShowErrorLogToolItem(descriptor);
+			if (showErrorLogLink == null || showErrorLogLink.isDisposed()) {
+				showErrorLogLink = createShowErrorLogLink();
 			}
 		} else {
-			if (showErrorLogButton != null && !showErrorLogButton.isDisposed()) {
-				showErrorLogButton.dispose();
+			if (showErrorLogLink != null && !showErrorLogLink.isDisposed()) {
+				showErrorLogLink.dispose();
 			}
 		}
-		toolBar.getParent().layout();
-		toolBar.setEnabled(toolBar.getItemCount() > 0);
+		linkComposite.getParent().layout();
 	}
 
 	private IViewDescriptor shouldDisplayLinkToErrorLog(){

@@ -35,9 +35,9 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
@@ -177,7 +177,7 @@ public class StatusDialogManagerTest extends TestCase {
 		wsdm.addStatusAdapter(sa, false);
 
 		// open support
-		selectWidget(StatusDialogUtil.getSupportToolItem());
+		selectWidget(StatusDialogUtil.getSupportLink());
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), true);
 
 		assertNotNull(support[0]);
@@ -405,8 +405,8 @@ public class StatusDialogManagerTest extends TestCase {
 		assertEquals(ACTION_NAME, actionButton.getText());
 
 		// be sure that support button is not created
-		ToolItem supportItem = StatusDialogUtil.getSupportToolItem();
-		assertNull(supportItem);
+		Link supportLink = StatusDialogUtil.getSupportLink();
+		assertNull(supportLink);
 	}
 
 	/**
@@ -702,11 +702,11 @@ public class StatusDialogManagerTest extends TestCase {
 			final StatusAdapter[] passed) {
 		Point sizeBefore = StatusDialogUtil.getStatusShell().getSize();
 		// be sure that support button is enabled
-		ToolItem supportItem = StatusDialogUtil.getSupportToolItem();
-		assertNotNull(supportItem);
-		assertTrue(supportItem.isEnabled());
+		Link supportLink = StatusDialogUtil.getSupportLink();
+		assertNotNull(supportLink);
+		assertTrue(supportLink.isEnabled());
 
-		selectWidget(supportItem);
+		selectWidget(supportLink);
 		Point sizeAfter = StatusDialogUtil.getStatusShell().getSize();
 		assertEquals(statusAdapter, passed[0]);
 		assertTrue(sizeAfter.x > sizeBefore.x);

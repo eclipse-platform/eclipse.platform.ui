@@ -207,6 +207,7 @@ public class StatusPart {
 			}
 		});
 		button.setImage(descriptor.getImageDescriptor().createImage());
-		button.setToolTipText(WorkbenchMessages.ErrorLogUtil_ShowErrorLog);
+		button
+				.setToolTipText(WorkbenchMessages.ErrorLogUtil_ShowErrorLogTooltip);
     }
 }
