@@ -81,6 +81,7 @@ public class PopupMenuExtender implements IMenuListener2,
 	
 	private ArrayList actionContributionCache = new ArrayList();
 	private ArrayList managerContributionCache = new ArrayList();
+	private boolean cleanupNeeded = false;
 
     /**
      * Construct a new menu extender.
@@ -310,6 +311,7 @@ public class PopupMenuExtender implements IMenuListener2,
 					.getWorkbench();
 			if (workbench instanceof Workbench) {
 				final Workbench realWorkbench = (Workbench) workbench;
+				runCleanUp(realWorkbench);
 				ISelection input = null;
 				if ((bitSet & INCLUDE_EDITOR_INPUT) != 0) {
 					if (part instanceof IEditorPart) {
@@ -371,6 +373,7 @@ public class PopupMenuExtender implements IMenuListener2,
 	 */
     public final void menuAboutToHide(final IMenuManager mgr) {
     	gatherContributions(mgr);
+		cleanupNeeded = true;
     	// Remove this menu as a visible menu.
     	final IWorkbenchPartSite site = part.getSite();
     	if (site != null) {
@@ -383,13 +386,21 @@ public class PopupMenuExtender implements IMenuListener2,
 				workbench.getDisplay().asyncExec(new Runnable() {
 					public void run() {
 						final Workbench realWorkbench = (Workbench) workbench;
-						realWorkbench.removeShowingMenus(getMenuIds(), null, null);
-				    	cleanUpContributionCache();
+						runCleanUp(realWorkbench);
 					}
 				});
 			}
     	}
     }
+
+	private void runCleanUp(Workbench realWorkbench) {
+		if (!cleanupNeeded) {
+			return;
+		}
+		cleanupNeeded = false;
+		realWorkbench.removeShowingMenus(getMenuIds(), null, null);
+		cleanUpContributionCache();
+	}
 
 	private void gatherContributions(final IMenuManager mgr) {
 		final IContributionItem[] items = mgr.getItems();
