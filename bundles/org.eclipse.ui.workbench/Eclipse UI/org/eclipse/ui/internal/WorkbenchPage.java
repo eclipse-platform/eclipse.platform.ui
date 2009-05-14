@@ -3386,6 +3386,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 			zoomOut();
 		}
 
+		// Close any open Fast View
+		hideFastView();
+
         MultiStatus result = new MultiStatus(
                 PlatformUI.PLUGIN_ID,
                 IStatus.OK,
