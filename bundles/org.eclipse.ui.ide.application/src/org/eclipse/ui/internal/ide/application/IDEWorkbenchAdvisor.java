@@ -433,8 +433,10 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 							}
 
 							private void updateProgressDetails() {
-								if (!isCanceled() && total == 4 /* right before history compacting */)
+								if (!isCanceled() && total == 4 /* right before history compacting */){
 									subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
+									p.setCancelable(true);
+								}
 								if (total == 5 /* history compacting finished */) {
 									subTask(""); //$NON-NLS-1$
 									p.setCancelable(false);
@@ -450,7 +452,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				}
 			};
 
-			p.run(true, true, runnable);
+			p.run(true, false, runnable);
 		} catch (InvocationTargetException e) {
 			status
 					.merge(new Status(IStatus.ERROR,
