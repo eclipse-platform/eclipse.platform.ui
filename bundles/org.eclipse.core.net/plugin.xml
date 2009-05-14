@@ -3,7 +3,7 @@
 <plugin>
    <extension-point id="authenticator" name="Authenticator" schema="schema/authenticator.exsd"/>
    <extension
-         point="org.eclipse.core.runtime.preferences">
+         point="org.eclipse.equinox.preferences.preferences">
       <initializer
             class="org.eclipse.core.internal.net.PreferenceInitializer">
       </initializer>
