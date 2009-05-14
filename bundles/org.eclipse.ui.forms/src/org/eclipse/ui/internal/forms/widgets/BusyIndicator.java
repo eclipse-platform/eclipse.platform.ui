@@ -19,11 +19,12 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
@@ -33,144 +34,16 @@ import org.osgi.framework.Bundle;
 
 public final class BusyIndicator extends Canvas {
 
-	class BusyThread extends Thread {
-		Rectangle bounds;
-		Display display;
-		GC offScreenImageGC;
-		Image offScreenImage;
-		Image timage;
-		boolean stop;
-		
-		private BusyThread(Rectangle bounds, Display display, GC offScreenImageGC, Image offScreenImage) {
-			this.bounds = bounds;
-			this.display = display;
-			this.offScreenImageGC = offScreenImageGC;
-			this.offScreenImage = offScreenImage;
-		}
-		
-		public void run() {
-			try {
-				/*
-				 * Create an off-screen image to draw on, and fill it with
-				 * the shell background.
-				 */
-				FormUtil.setAntialias(offScreenImageGC, SWT.ON);
-				display.syncExec(new Runnable() {
-					public void run() {
-						if (!isDisposed())
-							drawBackground(offScreenImageGC, 0, 0,
-									bounds.width,
-									bounds.height);
-					}
-				});
-				if (isDisposed())
-					return;
-
-				/*
-				 * Create the first image and draw it on the off-screen
-				 * image.
-				 */
-				int imageDataIndex = 0;
-				ImageData imageData;
-				synchronized (BusyIndicator.this) {
-					timage = getImage(imageDataIndex);
-					imageData = timage.getImageData();
-					offScreenImageGC.drawImage(timage, 0, 0,
-							imageData.width, imageData.height, imageData.x,
-							imageData.y, imageData.width, imageData.height);
-				}
-
-				/*
-				 * Now loop through the images, creating and drawing
-				 * each one on the off-screen image before drawing it on
-				 * the shell.
-				 */
-				while (!stop && !isDisposed() && timage != null) {
-
-					/*
-					 * Fill with the background color before
-					 * drawing.
-					 */
-					final ImageData fimageData = imageData;
-					display.syncExec(new Runnable() {
-						public void run() {
-							if (!isDisposed()) {
-								drawBackground(offScreenImageGC, fimageData.x,
-										fimageData.y, fimageData.width,
-										fimageData.height);
-							}
-						}
-					});
-
-					synchronized (BusyIndicator.this) {
-						imageDataIndex = (imageDataIndex + 1) % IMAGE_COUNT;
-						timage = getImage(imageDataIndex);
-						imageData = timage.getImageData();
-						offScreenImageGC.drawImage(timage, 0, 0,
-								imageData.width, imageData.height,
-								imageData.x, imageData.y, imageData.width,
-								imageData.height);
-					}
-
-					/* Draw the off-screen image to the shell. */
-					animationImage = offScreenImage;
-					display.syncExec(new Runnable() {
-						public void run() {
-							if (!isDisposed())
-								redraw();
-						}
-					});
-					/*
-					 * Sleep for the specified delay time 
-					 */
-					try {
-						Thread.sleep(MILLISECONDS_OF_DELAY);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-
-
-				}
-			} catch (Exception e) {
-			} finally {
-				if (!display.isDisposed()) {
-					display.syncExec(new Runnable() {
-						public void run() {
-							if (offScreenImage != null
-									&& !offScreenImage.isDisposed())
-								offScreenImage.dispose();
-							if (offScreenImageGC != null
-									&& !offScreenImageGC.isDisposed())
-								offScreenImageGC.dispose();
-						}
-					});
-				}
-				clearImages();
-			}
-			if (busyThread == null && !display.isDisposed())
-				display.syncExec(new Runnable() {
-					public void run() {
-						animationImage = null;
-						if (!isDisposed())
-							redraw();
-					}
-				});
-		}
-		
-		public void setStop(boolean stop) {
-			this.stop = stop;
-		}
-	}
-
 	private static final int MARGIN = 0;	
 	private static final int IMAGE_COUNT = 8;
 	private static final int MILLISECONDS_OF_DELAY = 180; 
 	private Image[] imageCache;
-	protected Image image;
-
-	protected Image animationImage;
-
-	protected BusyThread busyThread;
+	private Image image;
+	
+	private Display dpy;
+	private Runnable timer;
+	private boolean busy;
+	private int imageIndex;
 	
 	/**
 	 * BusyWidget constructor comment.
@@ -181,16 +54,36 @@ public final class BusyIndicator extends Canvas {
 	 *            int
 	 */
 	public BusyIndicator(Composite parent, int style) {
-		super(parent, style);
+		super(parent, style | SWT.DOUBLE_BUFFERED);
+		
+		dpy = getDisplay();
+		timer = new Runnable() {
+			public void run () {
+				if (isDisposed()) return;
+				redraw();
+				if (!BusyIndicator.this.busy) return;
+				update();
+				if (isDisposed()) return;
+				imageIndex = (imageIndex + 1) % IMAGE_COUNT;
+				dpy.timerExec(MILLISECONDS_OF_DELAY, this);
+			}
+		};
 
 		addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				onPaint(event);
 			}
 		});
+		
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				clearImages();
+			}
+		});
 	}
 
 	public Point computeSize(int wHint, int hHint, boolean changed) {
+//		checkWidget();
 		Point size = new Point(0, 0);
 		if (image != null) {
 			Rectangle ibounds = image.getBounds();
@@ -215,31 +108,6 @@ public final class BusyIndicator extends Canvas {
 	}
 
 	/**
-	 * Creates a thread to animate the image.
-	 */
-	protected synchronized void createBusyThread() {
-		if (busyThread != null)
-			return;
-
-		Rectangle bounds = getImage(0).getBounds();
-		Display display = getDisplay();
-		Image offScreenImage = new Image(display, bounds.width, bounds.height);
-		GC offScreenImageGC = new GC(offScreenImage);
-		busyThread = new BusyThread(bounds, display, offScreenImageGC, offScreenImage);
-		busyThread.setPriority(Thread.NORM_PRIORITY + 2);
-		busyThread.setDaemon(true);
-		busyThread.start();
-	}
-
-	public void dispose() {
-		if (busyThread != null) {
-			busyThread.setStop(true);
-			busyThread = null;
-		}
-		super.dispose();
-	}
-
-	/**
 	 * Return the image or <code>null</code>.
 	 */
 	public Image getImage() {
@@ -252,23 +120,27 @@ public final class BusyIndicator extends Canvas {
 	 * @return boolean
 	 */
 	public boolean isBusy() {
-		return (busyThread != null);
+		return busy;
 	}
 
 	/*
 	 * Process the paint event
 	 */
-	protected void onPaint(PaintEvent event) {
-		if (animationImage != null && animationImage.isDisposed()) {
-			animationImage = null;
-		}
+	void onPaint(PaintEvent event) {
 		Rectangle rect = getClientArea();
 		if (rect.width == 0 || rect.height == 0)
 			return;
 
-		GC gc = event.gc;
-		Image activeImage = animationImage != null ? animationImage : image;
+		Image activeImage;
+		if (isBusy()) {
+			activeImage = getImage(imageIndex);
+		} else {
+			clearImages();
+			activeImage = image;
+		}
+
 		if (activeImage != null) {
+			GC gc = event.gc;
 			Rectangle ibounds = activeImage.getBounds();
 			gc.drawImage(activeImage, rect.width / 2 - ibounds.width / 2,
 					rect.height / 2 - ibounds.height / 2);
@@ -282,15 +154,10 @@ public final class BusyIndicator extends Canvas {
 	 *            boolean
 	 */
 	public synchronized void setBusy(boolean busy) {
-		if (busy) {
-			if (busyThread == null)
-				createBusyThread();
-		} else {
-			if (busyThread != null) {
-				busyThread.setStop(true);
-				busyThread = null;
-			}
-		}
+		if (this.busy == busy) return;
+		this.busy = busy;
+		imageIndex = 0;
+		dpy.asyncExec(timer);
 	}
 
 	/**
@@ -303,7 +170,6 @@ public final class BusyIndicator extends Canvas {
 		}
 	}
 	
-
 	private ImageDescriptor createImageDescriptor(String relativePath) {
 		Bundle bundle = Platform.getBundle("org.eclipse.ui.forms"); //$NON-NLS-1$
 		URL url = FileLocator.find(bundle, new Path(relativePath),null);
@@ -316,7 +182,7 @@ public final class BusyIndicator extends Canvas {
 		}
 	}
 
-	private synchronized Image getImage(int index) {
+	private Image getImage(int index) {
 		if (imageCache == null) {
 			imageCache = new Image[IMAGE_COUNT];
 		}
@@ -327,9 +193,7 @@ public final class BusyIndicator extends Canvas {
 		return imageCache[index];
 	}
 	
-	private synchronized void clearImages() {
-		if (busyThread != null  && !isDisposed())
-			return;
+	private void clearImages() {
 		if (imageCache != null) {
 			for (int index = 0; index < IMAGE_COUNT; index++) {
 				if (imageCache[index] != null && !imageCache[index].isDisposed()) {
