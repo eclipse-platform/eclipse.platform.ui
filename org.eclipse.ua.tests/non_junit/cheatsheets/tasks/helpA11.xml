@@ -9,7 +9,7 @@
       <description>
          Test that topics and subtopics can be filtered.
       </description>
-      <subitem label="Launch Help by selecting Help-&gt;Help Contents from the menu. You should see a book called &quot;tests&quot; in the bookshelf." skip="false">
+      <subitem label="Launch Help by selecting Help-&gt;Help Contents from the menu. You should see a book called &quot;User Assistance Tests&quot; in the bookshelf." skip="false">
       </subitem>
       <subitem label="Open the topic &quot;filter&quot; in the book &quot;tests&quot;." skip="false">
       </subitem>
@@ -45,5 +45,23 @@
       <description>
          Search for &quot;plugin invalid is installed&quot;. Verify that Dynamic Content (potential hit) shows at or near the top of the search hits.
       </description>
+   </item>
+   <item
+         title="Non Filtered Topic with Children">
+      <description>
+         Locate the topic &quot;Non filtered topic with children and custom icon&quot; in User Assistance Tests/filter.
+      </description>
+      <subitem
+            label="Verify that the icon is a flashlight  and changes to an eclipse logo when the topic is expanded.">
+      </subitem>
+      <subitem
+            label="Verify that there is a child topic &quot;Child of non filtered topic with custon icon&quot; and that it can be opened.">
+      </subitem>
+      <subitem
+            label="Verify that the breadcrumb for this child topic is correct.">
+      </subitem>
+      <subitem
+            label="Press the show in table of contents button and verify that the correct topic shows in the TOC view.">
+      </subitem>
    </item>
 </cheatsheet>

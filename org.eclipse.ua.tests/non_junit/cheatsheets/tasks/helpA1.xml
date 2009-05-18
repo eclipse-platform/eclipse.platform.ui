@@ -15,7 +15,7 @@
       </subitem>
       <subitem label="Choose &quot;Help&quot; on the left.  This should show help preference page on the right" skip="false">
       </subitem>
-      <subitem label="On Windows and Linux help uses an embedded browser by default, and the preference should contain a dropdown to use the help browser or external browser. Leave this set to use the help browser. On Mac ensure that this option is omitted since an external browser is always used." skip="false">
+      <subitem label="On Windows, Linux and Mac OS help uses an embedded browser by default, and the preference should contain a dropdown to use the help browser or external browser. Leave this set to use the help browser. On HP/UX and AIX ensure that this option is omitted since an external browser is always used." skip="false">
       </subitem>
       <subitem label="Hit OK to close the preferences dialog." skip="false">
       </subitem>
@@ -30,7 +30,7 @@
          <command serialization="org.eclipse.ui.window.preferences" confirm="false">
          </command>
       </subitem>
-      <subitem label="Set the dropdown for &quot;Open Help Contents&quot; to  &quot;In an External browser&quot; if on a platform other than Mac.  Follow hyperlink to Workbench Browsers preference page.  Choose a browser to use, Click &quot;OK&quot;." skip="false">
+      <subitem label="Set the dropdown for &quot;Open Help Contents&quot; to  &quot;In an External browser&quot; if on a platform other than HP/UX or AIX.  Follow hyperlink to Workbench Browsers preference page.  Choose a browser to use, Click &quot;OK&quot;." skip="false">
       </subitem>
       <subitem label="Choose &quot;Help&quot;-&gt;&quot;Help Contents&quot; from the workbench menu, ensure a browser selected opens and displays Help" skip="false">
       </subitem>

@@ -5,6 +5,13 @@
          Test help preferences
       </description>
    </intro>
+   <item
+         skip="true"
+         title="Notes for Mac OS Users">
+      <description>
+         Newer Macintosh systems do not have a help key and any steps in the tests where you are asked to push the help key do not apply.
+      </description>
+   </item>
    <item title="Default preferences" dialog="false" skip="false">
       <description>
          Tests for default help preferences
@@ -32,7 +39,11 @@
       </subitem>
       <subitem label="Click &quot;Package Explorer View&quot; link.  This should launch help web browser, and display &quot;Package Explorer View&quot; document on the right and the list of related topics on the left.  The link called &quot;Package Explorer View&quot; should be selected." skip="false">
       </subitem>
-      <subitem label="Open help preferences, press &quot;F1&quot;  (Ctrl+F1 on GTK, Help on Mac).  An infopop should open." skip="false">
+      <subitem label="Open help preferences" skip="false">
+         <command serialization="org.eclipse.ui.window.preferences" confirm="false">
+         </command>
+      </subitem>
+      <subitem label="Press &quot;F1&quot;  (Ctrl+F1 on GTK, Help on Mac).  An infopop should open." skip="false">
       </subitem>
       <subitem
             label="Change help preferences to open  help view documents - in a browser.">

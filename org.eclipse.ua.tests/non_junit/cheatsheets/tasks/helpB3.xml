@@ -5,6 +5,12 @@
          Basic tests for search
       </description>
    </intro>
+   <item
+         title="Open Help Browser">
+      <description>
+         Press Help/Help contents to open the help browser
+      </description>
+   </item>
    <item title="Simple search" dialog="false" skip="false">
       <description>
          In the Search entry field enter the word &quot;participation&quot; without the double quotes. The navigation frame should turn to the Search Results view, and if this was the first time you search the docs, you should see the indexing progress monitor in that page. When indexing is finished (or right away if other searches were performed before) you should get the results.
@@ -31,6 +37,27 @@
          Click on each result. You should see the page for that result open.
       </description>
    </item>
+   <item
+         title="Quick Search">
+      <description>
+         Test the quick search feature
+      </description>
+      <subitem
+            label="With one of the pages corresponding to a search result open press &quot;Show in table of contents&quot; and verify that the TOC shows and the correct item is highlighted.">
+      </subitem>
+      <subitem
+            label="In the TOC select the parent of the highlighted element">
+      </subitem>
+      <subitem
+            label="Press the button that looks like a flashlight and verify that a dialog opens.">
+      </subitem>
+      <subitem
+            label="Verify that the input is set to &quot;participation&quot; and hit &quot;OK&quot;">
+      </subitem>
+      <subitem
+            label="Verify that the search resutls are redisplayed and that there are far fewer results which include the page that is currently displayed.">
+      </subitem>
+   </item>
    <item title="Narrow Search" dialog="false" skip="false">
       <description>
          Let&apos;s narrow the results by book.
@@ -51,7 +78,7 @@
    </item>
    <item title="Search again" dialog="false" skip="false">
       <description>
-         Search again for the same word, &quot;Workspace save participation&quot;. You should see fewer results.
+         Search again for the same word, &quot;Workspace save participation&quot;. You should see fewer results than were returned by the unscoped search.
       </description>
    </item>
    <item title="Select an item" dialog="false" skip="false">

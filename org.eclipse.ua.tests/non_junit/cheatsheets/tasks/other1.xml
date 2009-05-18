@@ -17,8 +17,8 @@
 <br/>Key Assist
 <br/>Tips and Tricks
 <br/>Cheat Sheets
+<br/>Check for updates
 <br/>Install new software
-<br/>Installation information
 <br/>About Eclipse SDK
       </description>
    </item>
@@ -79,19 +79,10 @@
                serialization="org.eclipse.ui.help.aboutAction"/>
       </subitem>
       <subitem
-            label="Press the Feature Details Button. Verify that a Dialog with a list of feature opens.">
+            label="Press the Installation Details Button. Verify that a Dialog opens with five tabs - Installed Software, Installation History, Features, Plug-Ins, Configuration. Look at each tab to make sure that each one has content.">
       </subitem>
       <subitem
-            label="Exit the Feature Details Dialog">
-      </subitem>
-      <subitem
-            label="Press the Plug-in Details button and verify that a dialog showing a list of plug-ins opens.">
-      </subitem>
-      <subitem
-            label="Exit the plug-in details dialog.">
-      </subitem>
-      <subitem
-            label="Exit the About Dialog">
+            label="Exit both dialogs">
       </subitem>
    </item>
 </cheatsheet>

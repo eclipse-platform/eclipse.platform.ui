@@ -36,7 +36,7 @@
       </description>
       <subitem label="Turn off showing all topics. Verify that PDE Guide disappeared, since it is does not belong to enabled workbench capabilities" skip="false">
       </subitem>
-      <subitem label="Perform search for &quot;PDE&quot;. Verify search results were redisplayed and there are no or next to no results." skip="false">
+      <subitem label="Perform search for &quot;PDE&quot;. Verify search results were redisplayed and there are not as many results." skip="false">
       </subitem>
    </item>
    <item title="Restore all capabilities" dialog="true" skip="false">
