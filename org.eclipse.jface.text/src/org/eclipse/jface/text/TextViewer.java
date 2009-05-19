@@ -2541,10 +2541,6 @@ public class TextViewer extends Viewer implements
 			startOffset= modelSelection.x;
 			endOffset= modelSelection.x + modelSelection.y;
 
-			// Special case for Select All
-			if (startOffset == 0 && endOffset == document.getLength())
-				return new TextSelection(document, startOffset, endOffset);
-
 			try {
 				int startLine= document.getLineOfOffset(startOffset);
 				int endLine= document.getLineOfOffset(endOffset);
