@@ -2521,9 +2521,9 @@ public class TextViewer extends Viewer implements
 	 */
 	public ISelection getSelection() {
 		if (fTextWidget != null && fTextWidget.getBlockSelection()) {
-			int[] ranges= fTextWidget.getSelectionRanges();
-			int startOffset= ranges[0];
-			int endOffset= ranges[ranges.length - 2] + ranges[ranges.length - 1];
+			Point sel = fTextWidget.getSelection();
+			int startOffset= sel.x;
+			int endOffset= sel.y;
 			
 			// getBlockSelectionBounds returns pixel coordinates relative to document
 			Rectangle bounds= fTextWidget.getBlockSelectionBounds();
@@ -3755,9 +3755,12 @@ public class TextViewer extends Viewer implements
 				return;
 		}
 		
-		if (fTextWidget.getBlockSelection() && fTextWidget.getSelectionRanges().length > 2 && (e.text == null || e.text.length() < 2)) {
-			verifyEventInBlockSelection(e);
-			return;
+		if (fTextWidget.getBlockSelection() && (e.text == null || e.text.length() < 2)) {
+			Point sel = fTextWidget.getSelection();
+			if (fTextWidget.getLineAtOffset(sel.x) != fTextWidget.getLineAtOffset(sel.y)) {
+				verifyEventInBlockSelection(e);
+				return;
+			}
 		}
 
 		IRegion modelRange= event2ModelRange(e);
