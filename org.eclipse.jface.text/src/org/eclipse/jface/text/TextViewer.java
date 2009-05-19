@@ -2542,10 +2542,8 @@ public class TextViewer extends Viewer implements
 			endOffset= modelSelection.x + modelSelection.y;
 
 			// Special case for Select All
-			if (startOffset == 0 && endOffset == document.getLength()) {
-				int lastLine= document.getNumberOfLines() - 1;
-				return new BlockTextSelection(document, 0, 0, lastLine, computeLongestLineLength(document, 0, lastLine), fTextWidget.getTabs());
-			}
+			if (startOffset == 0 && endOffset == document.getLength())
+				return new TextSelection(document, startOffset, endOffset);
 
 			try {
 				int startLine= document.getLineOfOffset(startOffset);
@@ -2566,26 +2564,6 @@ public class TextViewer extends Viewer implements
 			return TextSelection.emptySelection();
 
 		return new TextSelection(getDocument(), p.x, p.y);
-	}
-
-	/**
-	 * Computes and returns the longest line for the given arguments.
-	 * 
-	 * @param document the document
-	 * @param firstLine the first line to consider
-	 * @param lastLine the last line to consider
-	 * @return the length of the longest line
-	 * @since 3.5
-	 */
-	private int computeLongestLineLength(IDocument document, int firstLine, int lastLine) {
-		int lineLength= 0;
-		for (int i= firstLine; i <= lastLine; i++)
-			try {
-				lineLength= Math.max(lineLength, document.getLineInformation(i).getLength());
-			} catch (BadLocationException e) {
-				// ignore: lineLength stays untouched
-			}
-		return lineLength;
 	}
 
 	/**
@@ -3998,10 +3976,10 @@ public class TextViewer extends Viewer implements
 			case SELECT_ALL: {
 				IDocument doc= getDocument();
 				if (doc != null) {
-					if (fTextWidget.getBlockSelection()) {
-						int lastLine= doc.getNumberOfLines() - 1;
-						setSelection(new BlockTextSelection(doc, 0, 0, lastLine, computeLongestLineLength(doc, 0, lastLine), fTextWidget.getTabs()));
-					} else
+					if (fTextWidget.getBlockSelection())
+						// XXX: performance hack: use 1000 for the endColumn - StyledText will not select more than what's possible in the viewport.
+						setSelection(new BlockTextSelection(doc, 0, 0, doc.getNumberOfLines() - 1, 1000, fTextWidget.getTabs()));
+					else
 						setSelectedRange(0, doc.getLength());
 				}
 				break;
