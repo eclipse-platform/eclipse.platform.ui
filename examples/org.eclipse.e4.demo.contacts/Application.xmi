@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:MApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../org.eclipse.e4.ui.model.workbench/model/Application.ecore">
+  <windows name="Main" x="100" y="100" width="800" height="600">
+    <menu>
+      <items xsi:type="application:MMenuItem" name="File">
+        <menu>
+          <items xsi:type="application:MMenuItem" id="" name="Exit" command="//@command.0"/>
+        </menu>
+      </items>
+      <items xsi:type="application:MMenuItem" id="" name="Theme">
+        <menu>
+          <items xsi:type="application:MMenuItem" id="" name="Theme" tooltip="Change the theme" command="//@command.1"/>
+        </menu>
+      </items>
+    </menu>
+    <children policy="VerticalComposite">
+      <toolBar>
+        <items xsi:type="application:MToolBarItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_add.png" name="" tooltip="Add User"/>
+        <items xsi:type="application:MToolBarItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_delete.png" name="" tooltip="Delete User"/>
+      </toolBar>
+      <children xsi:type="application:MSashForm" policy="HorizontalSash">
+        <children xsi:type="application:MStack">
+          <children xsi:type="application:MContributedPart" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" name="Contacts List" tooltip="Contacts List" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView"/>
+        </children>
+        <children xsi:type="application:MStack">
+          <children xsi:type="application:MContributedPart" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" name="Details" tooltip="Details" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView"/>
+        </children>
+        <weights>30</weights>
+        <weights>70</weights>
+      </children>
+    </children>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="//@command.0"/>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ThemeHandler" command="//@command.1"/>
+  </windows>
+  <command id="contacts.exit" name="Exit"/>
+  <command id="contacts.theme" name="Theme"/>
+</application:MApplication>
