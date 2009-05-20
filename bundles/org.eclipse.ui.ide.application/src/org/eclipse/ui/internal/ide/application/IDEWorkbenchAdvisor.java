@@ -432,13 +432,18 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 								updateProgressDetails();
 							}
 
+							public void beginTask(String name, int totalWork) {
+								super.beginTask(name, totalWork);
+								subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_preHistoryCompaction);
+							}
+
 							private void updateProgressDetails() {
-								if (!isCanceled() && total == 4 /* right before history compacting */){
+								if (!isCanceled() && Math.abs(total - 4.0) < 0.0001 /* right before history compacting */){
 									subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
 									p.setCancelable(true);
 								}
-								if (total == 5 /* history compacting finished */) {
-									subTask(""); //$NON-NLS-1$
+								if (Math.abs(total - 5.0) < 0.0001 /* history compacting finished */) {
+									subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_postHistoryCompaction);
 									p.setCancelable(false);
 								}
 							}

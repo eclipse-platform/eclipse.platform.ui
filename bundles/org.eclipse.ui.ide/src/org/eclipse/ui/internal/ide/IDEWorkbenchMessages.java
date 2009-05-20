@@ -21,6 +21,8 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String IDEWorkbenchAdvisor_noPerspective;
 	public static String IDEWorkbenchAdvisor_cancelHistoryPruning;
+	public static String IDEWorkbenchAdvisor_preHistoryCompaction;
+	public static String IDEWorkbenchAdvisor_postHistoryCompaction;
 	
 	public static String IDE_noFileEditorFound;
 	public static String IDE_coreExceptionFileStore;
