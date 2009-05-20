@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
  * Tests the CSS class and Id rules
  */
 
-public class IdClassLabelColorTest extends CSSTestCase {
+public class IdClassLabelColorTest extends CSSSWTTestCase {
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);

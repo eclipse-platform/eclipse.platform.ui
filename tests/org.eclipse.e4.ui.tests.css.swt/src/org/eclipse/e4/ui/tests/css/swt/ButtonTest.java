@@ -19,15 +19,16 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
-public class ButtonTest extends CSSTestCase {
+public class ButtonTest extends CSSSWTTestCase {
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
-		
+	CSSEngine engine;	
+	
 	protected Button createTestButton(String styleSheet) {
 		Display display = Display.getDefault();
-		CSSEngine engine = createEngine(styleSheet, display);
+		engine = createEngine(styleSheet, display);
 		
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -37,7 +38,7 @@ public class ButtonTest extends CSSTestCase {
 		Composite panel = new Composite(shell, SWT.NONE);
 		panel.setLayout(new FillLayout());
 
-		Button buttonToTest = new Button(panel, SWT.NONE);
+		Button buttonToTest = new Button(panel, SWT.CHECK);
 		buttonToTest.setText("Some button text");
 
 		// Apply styles
@@ -47,6 +48,26 @@ public class ButtonTest extends CSSTestCase {
 		return buttonToTest;
 	}
 	
+	protected Button createTestArrowButton(String styleSheet) {
+		Display display = Display.getDefault();
+		engine = createEngine(styleSheet, display);
+		
+		// Create widgets
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		FillLayout layout = new FillLayout();
+		shell.setLayout(layout);
+
+		Composite panel = new Composite(shell, SWT.NONE);
+		panel.setLayout(new FillLayout());
+
+		Button buttonToTest = new Button(panel, SWT.ARROW);
+
+		// Apply styles
+		engine.applyStyles(shell, true);
+
+		shell.pack();
+		return buttonToTest;
+	}
 	
 	public void testColor() throws Exception {
 		Button buttonToTest = createTestButton("Button { background-color: #FF0000; color: #0000FF }");
@@ -79,4 +100,38 @@ public class ButtonTest extends CSSTestCase {
 		assertEquals(SWT.ITALIC, fontData.getStyle());		
 	}
 	
+	public void testSelectedPseudo() throws Exception {
+		Button buttonToTest = createTestButton("Button { color: #FF0000; }\n" + 
+				"Button:selected { color: #0000FF; }");
+		assertEquals(RED, buttonToTest.getForeground().getRGB());
+		buttonToTest.setSelection(true);
+		engine.applyStyles(buttonToTest.getShell(), true);
+		assertEquals(BLUE, buttonToTest.getForeground().getRGB());
+	}
+	
+	public void testAlignment() throws Exception {
+		Button buttonToTest = createTestButton("Button { alignment: right; }");		
+		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
+		
+		clearAndApply(engine, buttonToTest, "Button { alignment: left; }");
+		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
+		
+		clearAndApply(engine, buttonToTest, "Button { alignment: center; }");
+		assertEquals(SWT.CENTER, buttonToTest.getAlignment());
+	}
+
+	public void testArrowAlignment() throws Exception {
+		Button buttonToTest = createTestArrowButton("Button { alignment: up; }");		
+		assertEquals(SWT.UP, buttonToTest.getAlignment());
+		
+		clearAndApply(engine, buttonToTest, "Button { alignment: down; }");
+		assertEquals(SWT.DOWN, buttonToTest.getAlignment());
+		
+		clearAndApply(engine, buttonToTest, "Button { alignment: left; }");
+		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
+		
+		clearAndApply(engine, buttonToTest, "Button { alignment: right; }");
+		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
+	}
+
 }

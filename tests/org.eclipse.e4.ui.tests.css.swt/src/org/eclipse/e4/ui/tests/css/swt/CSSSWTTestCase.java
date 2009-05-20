@@ -18,8 +18,9 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Widget;
 
-public class CSSTestCase extends TestCase {
+public class CSSSWTTestCase extends TestCase {
 	
 	public CSSEngine createEngine(String styleSheet, Display display) {
 		CSSEngine engine = new CSSSWTEngineImpl(display);
@@ -36,5 +37,28 @@ public class CSSTestCase extends TestCase {
 			fail(e.getMessage());
 		}
 		return engine;
+	
+	}
+	
+	/**
+	 * Parse and apply the style sheet, forgetting previous style sheets applied.
+	 * This is helpful for reusing the same engine but writing independent tests.
+	 * Styles are applied down the widget hierarchy.
+	 * @param engine the engine
+	 * @param widget the start of the widget hierarchy
+	 * @param styleSheet a string style sheet
+	 */
+	public void clearAndApply(CSSEngine engine, Widget widget, String styleSheet) {
+
+		//Forget all previous styles
+		engine.reset();
+
+		try {
+			engine.parseStyleSheet(new StringReader(styleSheet));
+		} catch (IOException e) {
+			fail(e.getMessage());
+		}
+		
+		engine.applyStyles(widget, true, true);
 	}
 }

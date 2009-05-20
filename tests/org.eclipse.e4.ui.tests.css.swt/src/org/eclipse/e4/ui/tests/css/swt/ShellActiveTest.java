@@ -15,7 +15,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class ShellActiveTest extends CSSTestCase {
+public class ShellActiveTest extends CSSSWTTestCase {
 	
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);

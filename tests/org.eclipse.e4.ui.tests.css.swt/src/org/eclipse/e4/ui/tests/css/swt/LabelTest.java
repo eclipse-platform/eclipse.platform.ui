@@ -19,15 +19,17 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-public class LabelTest extends CSSTestCase {
+public class LabelTest extends CSSSWTTestCase {
 
 	static final RGB RED = new RGB(255, 0, 0);
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
+	
+	CSSEngine engine;
 		
 	protected Label createTestLabel(String styleSheet) {
 		Display display = Display.getDefault();
-		CSSEngine engine = createEngine(styleSheet, display);
+		engine = createEngine(styleSheet, display);
 		
 		// Create widgets
 		Shell shell = new Shell(display, SWT.SHELL_TRIM);
@@ -77,5 +79,16 @@ public class LabelTest extends CSSTestCase {
 		assertEquals(1, labelToTest.getFont().getFontData().length);
 		FontData fontData = labelToTest.getFont().getFontData()[0];
 		assertEquals(SWT.ITALIC, fontData.getStyle());		
+	}
+	
+	public void testAlignment() throws Exception {
+		Label labelToTest = createTestLabel("Label { alignment: right }");
+		assertEquals(SWT.RIGHT, labelToTest.getAlignment());
+		
+		clearAndApply(engine, labelToTest, "Label { alignment: left; }");
+		assertEquals(SWT.LEFT, labelToTest.getAlignment());
+		
+		clearAndApply(engine, labelToTest, "Label { alignment: center; }");
+		assertEquals(SWT.CENTER, labelToTest.getAlignment());
 	}
 }
