@@ -375,7 +375,7 @@ book from Eclipse (Platform Plug-in Developer Guide) is displayed and &quot;Show
   </li>
   <li>
 
-<p  >Open the book titled &quot;Tests&quot;,</p>
+<p  >Open the book titled &quot;User Assistance Tests&quot;,</p>
 
   </li>
   <li>
@@ -408,6 +408,7 @@ command line. Open Help.</p>
 
 <p  >Verify
 Help UI is rendered right to left.</p>
+<p>Verify that each page of Intro is usable.</p>
 
 <h3>Scenario E: Accessibility</h3>
 
@@ -446,9 +447,9 @@ colors and fonts: </p>
 <p  >Observe
 if the colors and fonts match your system settings. Window backgrounds for
 navigation views (Contents/Search Results/Links/Bookmarks) should match the
-system window color (usually white on Windows and gray on Linux). The toolbars
-should match the button face co lour (usually gray). The font should match the
-system icon font. Highlight co lour should match the system highlight co lour.</p>
+system background color (usually white on Windows and Linux). The toolbars
+should match the button face colour (usually gray). The font should match the
+system icon font. Highlight colour should match the system highlight colour.</p>
 
 <p  >Change
 your system colors/font settings and see if the changes take effect.</p>
@@ -484,14 +485,11 @@ UP arrow. <br>
 - To expand/collapse a tree node press RIGHT/LEFT arrow. <br>
 - Press Enter to select a topic and have its content displayed <br>
 - To scroll all the way up/down press HOME/END. <br>
-- To go back/forward press ALT-LEFT/RIGHT ARROW <br>
 - To go to the next frame (there are quite a number of frames in the help
 system) press CTRL-TAB (On <span >Mozilla</span> 1.2 press
 Ctrl-F6). <br>
 - To move to previous frame, press SHIFT-CTRL-TAB (On <span >Mozilla</span>
 &gt;1.2 press Ctrl-Shift-F6).<br>
-- To move to content frame, press ALT-K, and press Tab to place focus inside
-the topic<br>
 - To print the current page or active frame, press CTRL-P.</p>
 
 <p ><o:p>&nbsp;</o:p></p>
@@ -500,15 +498,11 @@ the topic<br>
 >infopop</span> keyboard accessibility: </p>
 
 <p  >Press
-F1 (on GTK - Ctrl-F1, on carbon - Help key) in the workbench Navigator view
-(Resources perspective). This should launch the <span >infopop</span>
-with some text and two related links. Focus should be on the first link
-(&quot;Views&quot;). Click and the help view should open to the selected topic.</p>
-
-<p  >Get
-back to the workbench and press F1 again, in the Navigator view. When the <span
->infopop</span> comes up, press down/up arrows (or tab) to cycle
-around the links. Press Esc to dismiss the <span >infopop</span>.</p>
+F1 (on GTK - Ctrl-F1, on carbon - Help key) in the workbench Package Explorer view
+. This should open the <span >Related Topics</span> section of the Help view
+with some text and related links. Tabbing once should focus on the first link
+(&quot;Views&quot;). Use tab and ctrl-Tab to move up and down the links.
+Click on a link and the help view should open to the selected topic.</p>
 
 <p  >On
 Windows, use Windows Narrator (or JAWS if <span >installed )</span>,
@@ -527,7 +521,7 @@ href="http://dev.eclipse.org/viewcvs/index.cgi/%7Echeckout%7E/org.eclipse.platfo
 
 <p  style='mso-list:l0 level1 lfo27;tab-stops:.5in'>Assuming
 eclipse is installed as d:\eclipse, change directory to d:\eclipse and run the
-following command: java -cp plugins/org.eclipse.help.base_3.1.0.jar <span
+following command: java -cp plugins/org.eclipse.help.base_3*.jar <span
 >org.eclipse.help.standalone.Infocenter</span> -command start -data
 <span >infocenter</span> -port 8888</p>
 
@@ -552,7 +546,7 @@ plugins/org.eclipse.help.base_3.1.0.jar <span >org.eclipse.help.standalone.Infoc
 
 <p  style='mso-list:l0 level1 lfo28;tab-stops:.5in'>Assuming
 eclipse is installed as d:\eclipse, change directory to d:\eclipse and run the
-following command: java -cp plugins/org.eclipse.help.base_3.1.0.jar <span
+following command, replacing the '*' with the actual plugin version information if testing on Windows: java -cp plugins/org.eclipse.help.base_3*.jar <span
 >org.eclipse.help.standalone.Help</span> -command <span
 >displayHelp</span> -data standalone</p>
 
@@ -563,7 +557,7 @@ with the exception of <span >infopop</span> and active help.</p>
 
 <p  >Shutdown
 the standalone help by running: java -cp
-plugins/org.eclipse.help.base_3.1.0.jar <span >org.eclipse.help.standalone.Help</span>
+plugins/org.eclipse.help.base_3*.jar <span >org.eclipse.help.standalone.Help</span>
 -command shutdown -data standalone</p>
 
 <h4>F3: Basic help <span >ui</span> (any browser with <span
