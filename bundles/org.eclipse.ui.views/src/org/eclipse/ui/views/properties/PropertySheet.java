@@ -245,7 +245,11 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		// See Bug 252887...explicitly exclude the Help view as a
 		// participant
 		boolean isHelpView = "org.eclipse.help.ui.HelpView".equals(part.getSite().getId()); //$NON-NLS-1$
-		return !isPinned() && part != this && !isHelpView;
+		
+		// Don't interfere with other property views
+		boolean isPropertyView = getSite().getId().equals(part.getSite().getId());
+		
+		return !isPinned() && !isPropertyView && !isHelpView;
     }
 
     /* (non-Javadoc)
