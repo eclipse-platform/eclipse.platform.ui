@@ -52,8 +52,13 @@ public class TestContentProvider implements ITreeContentProvider,
 	
 	public static TestExtensionTreeData _modelRoot;
 	
+	public static boolean _dieOnSetInput;
+	public static boolean _diedOnSetInput;
+	
 	public TestContentProvider() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_CHANGE);
+		_dieOnSetInput = false;
+		_diedOnSetInput = false;
 	}
 
 	public Object[] getElements(Object inputElement) {
@@ -144,6 +149,8 @@ public class TestContentProvider implements ITreeContentProvider,
 	}
 
 	public void inputChanged(Viewer aViewer, Object oldInput, Object newInput) {
+		if (_dieOnSetInput)
+			_diedOnSetInput = true;
 		if (oldInput != null && !oldInput.equals(newInput))
 			rootElements.clear();
 		viewer = (StructuredViewer)aViewer;

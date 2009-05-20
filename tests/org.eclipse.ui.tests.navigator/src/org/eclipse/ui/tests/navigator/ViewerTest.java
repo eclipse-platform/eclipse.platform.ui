@@ -10,11 +10,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.eclipse.ui.tests.harness.util.EditorTestHelper;
+import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
 
 public class ViewerTest extends NavigatorTestBase {
 
@@ -39,5 +40,16 @@ public class ViewerTest extends NavigatorTestBase {
 		assertEquals(TEST_VIEWER_HELP_CONTEXT, context);
 	}
 
-	
+	// Bug 275932 [CommonNavigator] Window close throws exception in
+	// ObservableCollectionTreeContentProvider
+	public void testDispose() throws Exception {
+		refreshViewer();
+		_viewer.expandAll();
+
+		TestContentProvider._dieOnSetInput = true;
+		EditorTestHelper.showView(_navigatorInstanceId, false);
+
+		assertFalse(TestContentProvider._diedOnSetInput);
+	}
+
 }

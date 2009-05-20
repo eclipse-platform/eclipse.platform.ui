@@ -144,6 +144,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 
 	private boolean labelProviderInitialized;
 
+	private boolean isDisposed;
+	
 	/**
 	 * @param aViewerId
 	 *            The viewer id for this content service; normally from the
@@ -344,11 +346,17 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 		getActivationService().removeExtensionActivationListener(this);
 		assistant.dispose();
+		isDisposed = true;
 	}
 
 	protected void updateService(Viewer aViewer, Object anOldInput,
 			Object aNewInput) {
 
+		// Prevents the world from being started again once we have been disposed.  In 
+		// the dispose process, the ContentViewer will call setInput() on the
+		// NavigatorContentServiceContentProvider, which gets us here
+		if (isDisposed)
+			return;
 		synchronized (this) {
 
 			if (structuredViewerManager == null) {
