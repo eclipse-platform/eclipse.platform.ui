@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBorderSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyClassificationSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyFontSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
@@ -121,6 +122,10 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("unselected-image-visible", CSSPropertyUnselectedImageVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyUnselectedImageVisibleSWTHandler.class,
 				CSSPropertyUnselectedImageVisibleSWTHandler.INSTANCE);
+		//Register SWT CSS Property Alignment
+		super.registerCSSProperty("alignment", CSSPropertyAlignmentSWTHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyAlignmentSWTHandler.class,
+				CSSPropertyAlignmentSWTHandler.INSTANCE);
 	}
 
 }
