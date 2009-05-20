@@ -78,12 +78,11 @@ public class AntClasspathLabelProvider implements ILabelProvider, IColorProvider
 			StringBuffer label= new StringBuffer(entry.getLabel());
 			if (element instanceof GlobalClasspathEntries) {
                 if (((GlobalClasspathEntries)element).getType() == ClasspathModel.ANT_HOME) {
-            
     				AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
     				String defaultAntHome= prefs.getDefaultAntHome();
     				String currentAntHome= fBlock.getAntHome();
     				label.append(" ("); //$NON-NLS-1$
-    				if (defaultAntHome.equals(currentAntHome)) {
+    				if (defaultAntHome == null || defaultAntHome.equals(currentAntHome)) {
     					label.append(AntPreferencesMessages.AntClasspathLabelProvider_0);
     				} else {
     					label.append(fBlock.getAntHome());	

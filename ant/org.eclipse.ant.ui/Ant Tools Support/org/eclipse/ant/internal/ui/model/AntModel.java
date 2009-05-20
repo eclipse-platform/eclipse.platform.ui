@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -471,13 +471,13 @@ public class AntModel implements IAntModel {
     private void processAntHome(boolean finished) {
         AntCorePreferences prefs= AntCorePlugin.getPlugin().getPreferences();
         String antHome= prefs.getAntHome();
-        if (finished) {
+        if (finished || antHome == null) {
             System.getProperties().remove("ant.home"); //$NON-NLS-1$
             System.getProperties().remove("ant.library.dir"); //$NON-NLS-1$
         } else {
-            System.setProperty("ant.home", antHome); //$NON-NLS-1$
-            File antLibDir= new File(antHome, "lib"); //$NON-NLS-1$
-            System.setProperty("ant.library.dir", antLibDir.getAbsolutePath()); //$NON-NLS-1$
+    		System.setProperty("ant.home", antHome); //$NON-NLS-1$
+        	File antLibDir= new File(antHome, "lib"); //$NON-NLS-1$
+        	System.setProperty("ant.library.dir", antLibDir.getAbsolutePath()); //$NON-NLS-1$
         }
     }
     

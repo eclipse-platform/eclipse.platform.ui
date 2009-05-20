@@ -428,22 +428,34 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 	 * @return the default set of classpath entries defining the Ant classpath
 	 */
 	public IAntClasspathEntry[] getDefaultAntHomeEntries() {
-		if (defaultAntHomeEntries== null) {
+		if (defaultAntHomeEntries == null) {
 			ServiceTracker tracker = new ServiceTracker(AntCorePlugin.getPlugin().getBundle().getBundleContext(), PackageAdmin.class.getName(), null);
 			tracker.open();
 			try {
 				List result = new ArrayList(29);
 				PackageAdmin packageAdmin = (PackageAdmin) tracker.getService();
 				if (packageAdmin != null) {
-					ExportedPackage exportedPackage = packageAdmin.getExportedPackage("org.apache.tools.ant"); //$NON-NLS-1$
-					if (exportedPackage != null) {
-						Bundle bundle = exportedPackage.getExportingBundle();
-						if (bundle != null) {
+					ExportedPackage[] exportedPackage = packageAdmin.getExportedPackages("org.apache.tools.ant"); //$NON-NLS-1$
+					Bundle bundle = null;
+					for (int i = 0; i < exportedPackage.length; i++) {
+						bundle = exportedPackage[i].getExportingBundle();
+						if(bundle == null) {
+							continue;
+						}
+						try {
 							addLibraries(bundle, result);
+							if(result.size() > 0) {
+								break;
+							}
+						}
+						catch(IOException ioe) {
+							AntCorePlugin.log(ioe); // maintain logging
+							result.clear();
+							/*continue to try other providers if an exception occurs*/
 						}
 					}
 				}
-				defaultAntHomeEntries= (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
+				defaultAntHomeEntries = (IAntClasspathEntry[]) result.toArray(new IAntClasspathEntry[result.size()]);
 			} finally {
 				tracker.close();
 			}
@@ -816,11 +828,15 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 		 }
 		 return urls;
 	 }
-
-	/*
+	 
+	/**
 	 * Add the libraries contributed by the Ant plug-in, to the classpath.
+	 * @param source
+	 * @param destination
+	 * @throws IOException 
+	 * @throws MalformedURLException
 	 */
-	private void addLibraries(Bundle source, List destination) {
+	private void addLibraries(Bundle source, List destination) throws IOException, MalformedURLException {
 		ManifestElement[] libraries = null;
 		try {
 			libraries = ManifestElement.parseHeader(Constants.BUNDLE_CLASSPATH, (String) source.getHeaders("").get(Constants.BUNDLE_CLASSPATH)); //$NON-NLS-1$
@@ -829,18 +845,14 @@ public class AntCorePreferences implements org.eclipse.core.runtime.Preferences.
 			AntCorePlugin.getPlugin().getLog().log(status);
 			return;
 		}
-		if (libraries == null)
+		if (libraries == null) {
 			return;
+		}
+		URL url = null;
 		for (int i = 0; i < libraries.length; i++) {
-			try {
-				URL url = FileLocator.toFileURL(source.getEntry(libraries[i].getValue()));
-				File urlFile = new File(url.getPath());
-				url = new URL("file:" +  urlFile.getAbsolutePath()); //$NON-NLS-1$
-				destination.add(new AntClasspathEntry(url));
-			} catch (Exception e) {
-				// if the URL does not have a valid format, just log and ignore the exception
-				IStatus status = new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, AntCorePlugin.ERROR_MALFORMED_URL, InternalCoreAntMessages.AntCorePreferences_Malformed_URL__1, e);
-				AntCorePlugin.getPlugin().getLog().log(status);
+			url = source.getEntry(libraries[i].getValue());
+			if(url != null) {
+				destination.add(new AntClasspathEntry(FileLocator.toFileURL(url)));
 			}
 		}
 	}
