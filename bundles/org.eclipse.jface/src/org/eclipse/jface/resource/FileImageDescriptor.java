@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.internal.JFaceActivator;
+import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTException;
@@ -212,7 +212,7 @@ class FileImageDescriptor extends ImageDescriptor {
 		if (resource == null)
 			return null;
 		try {
-			if (JFaceActivator.getBundleContext() == null) {// Stand-alone case
+			if (!InternalPolicy.OSGI_AVAILABLE) {// Stand-alone case
 
 				return new Path(resource.getFile()).toOSString();
 			}

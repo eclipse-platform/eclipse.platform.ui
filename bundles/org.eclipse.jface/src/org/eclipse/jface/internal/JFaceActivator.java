@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,12 +27,14 @@ public class JFaceActivator implements BundleActivator {
 	 */
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
+		InternalPolicy.OSGI_AVAILABLE = true;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
 	 */
 	public void stop(BundleContext context) throws Exception {
+		InternalPolicy.OSGI_AVAILABLE = false;
 		bundleContext = null;
 	}
 
