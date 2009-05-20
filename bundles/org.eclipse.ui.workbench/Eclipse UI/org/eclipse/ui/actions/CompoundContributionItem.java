@@ -13,13 +13,11 @@ package org.eclipse.ui.actions;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
-import org.eclipse.jface.action.IMenuListener2;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * A compound contribution is a contribution item consisting of a
@@ -31,15 +29,11 @@ public abstract class CompoundContributionItem extends ContributionItem {
 
     private boolean dirty = true;
 
-	private IMenuListener2 menuListener = new IMenuListener2() {
+    private IMenuListener menuListener = new IMenuListener() {
         public void menuAboutToShow(IMenuManager manager) {
             manager.markDirty();
             dirty = true;
         }
-
-		public void menuAboutToHide(IMenuManager manager) {
-			disposeOldItems();
-		}
     };
     
     private IContributionItem[] oldItems;
@@ -97,30 +91,16 @@ public abstract class CompoundContributionItem extends ContributionItem {
     protected abstract IContributionItem[] getContributionItems();
     
     private IContributionItem[] getContributionItemsToFill() {
-		oldItems = getContributionItems();
-		return oldItems;
-	}
-
-	private void disposeOldItems() {
-		if (oldItems == null) {
-			return;
-		}
-		final Display display = PlatformUI.getWorkbench().getDisplay();
-		final IContributionItem[] itemsToDispose = oldItems;
-		oldItems = null;
-		final Runnable dispose = new Runnable() {
-			public void run() {
-				if (display.isDisposed()) {
-					return;
-				}
-				for (int i = 0; i < itemsToDispose.length; i++) {
-					IContributionItem oldItem = itemsToDispose[i];
-					oldItem.dispose();
-				}
-			}
-		};
-		display.asyncExec(dispose);
-	}
+        if (oldItems != null) {
+            for (int i = 0; i < oldItems.length; i++) {
+                IContributionItem oldItem = oldItems[i];
+                oldItem.dispose();
+            }
+            oldItems = null;
+        }
+        oldItems = getContributionItems();
+        return oldItems;
+    }
     
     /* (non-Javadoc)
      * @see org.eclipse.jface.action.ContributionItem#isDirty()
