@@ -95,7 +95,6 @@ public class ListView implements IDisposable {
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
-	@Override
 	public void dispose() {
 		// TODO Auto-generated method stub
 
