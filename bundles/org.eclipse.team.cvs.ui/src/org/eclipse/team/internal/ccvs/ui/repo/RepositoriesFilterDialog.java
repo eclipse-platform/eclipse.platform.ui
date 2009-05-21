@@ -17,6 +17,8 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
+import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
+import org.eclipse.ui.PlatformUI;
 
 public class RepositoriesFilterDialog extends TrayDialog {
 
@@ -49,7 +51,7 @@ public class RepositoriesFilterDialog extends TrayDialog {
 		initializeValues();
 
 		// set F1 help
-//		PlatformUI.getWorkbench().getHelpSystem().setHelp(topLevel, IHelpContextIds.REPOSITORY_FILTER_DIALOG);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IHelpContextIds.REPOSITORY_FILTER_DIALOG);
 		Dialog.applyDialogFont(parent);
 		return composite;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ public interface IHelpContextIds {
 	public static final String COMMIT_SET_DIALOG = PREFIX + "commit_set_dialog_context"; //$NON-NLS-1$
     public static final String TAG_UNCOMMITED_PROMPT = PREFIX + "tag_uncommmited_dialog_context"; //$NON-NLS-1$
     public static final String ALTERNATIVE_REPOSITORY_DIALOG = PREFIX + "alternative_repository_dialog_context"; //$NON-NLS-1$
+    public static final String REPOSITORY_FILTER_DIALOG = PREFIX + "repository_filter_dialog_context"; //$NON-NLS-1$
 	
 	// Different uses of the TagSelectionDialog
 	public static final String REPLACE_TAG_SELECTION_DIALOG = PREFIX + "replace_tag_selection_dialog_context"; //$NON-NLS-1$
