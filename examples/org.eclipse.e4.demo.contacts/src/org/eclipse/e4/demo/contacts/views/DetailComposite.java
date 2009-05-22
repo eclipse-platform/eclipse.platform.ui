@@ -71,7 +71,7 @@ public class DetailComposite extends Composite {
 				SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
 		setBackground(bgColor);
 
-		// Name
+		// General
 		final Composite composite = createComposite(this);
 		composite.setBackground(bgColor);
 
