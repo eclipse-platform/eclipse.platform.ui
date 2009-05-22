@@ -14,10 +14,15 @@ package org.eclipse.e4.demo.contacts.views;
 
 import java.net.URL;
 
+import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.demo.contacts.model.Contact;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
@@ -32,31 +37,21 @@ import org.eclipse.swt.widgets.Text;
 
 public class DetailComposite extends Composite {
 
-	private final Text fullNameText;
-	private final Text companyText;
-	private final Text jobTitleText;
-	private final Text emailText;
-	private final Text webPageText;
-	private final Text phoneText;
-	private final Text mobileText;
-	private final Text streetText;
-	private final Text cityText;
-	private final Text zipText;
-	private final Text stateText;
-	private final Text countryText;
-	private final Text noteText;
-
 	private final Color bgColor;
 	private Label imageLabel;
 
 	private Image dummyPortrait;
 	private boolean generalGroup;
 
+	private final DataBindingContext dbc;
+	private final WritableValue contactValue = new WritableValue();
+
 	public DetailComposite(final Composite parent, final int style,
 			final boolean isEnabled, final ModifyListener modifyListener,
 			final Contact contact) {
 
 		super(parent, style);
+		dbc = new DataBindingContext();
 
 		URL url = FileLocator.find(Platform
 				.getBundle("org.eclipse.e4.demo.contacts"), new Path(
@@ -78,33 +73,62 @@ public class DetailComposite extends Composite {
 		composite.setBackground(bgColor);
 
 		createSeparator(composite, "General");
-		fullNameText = createText(composite, "Full Name:");
-		companyText = createText(composite, "Company:");
-		jobTitleText = createText(composite, "Job Title:");
-		noteText = createText(composite, "Note:");
+		Text fullNameText = createText(composite, "Full Name:", null);
+		dbc.bindValue(SWTObservables.observeText(fullNameText, SWT.Modify),
+				new ComputedValue() {
+
+					@Override
+					protected Object calculate() {
+						Object firstName = PojoObservables.observeDetailValue(
+								contactValue, "firstName", String.class)
+								.getValue();
+						Object lastName = PojoObservables.observeDetailValue(
+								contactValue, "lastName", String.class)
+								.getValue();
+						if (firstName != null && lastName != null) {
+							return firstName + " " + lastName;
+						} else {
+							return "";
+						}
+					}
+				});
+
+		createText(composite, "Company:", "company");
+		createText(composite, "Job Title:", "jobTitle");
+		createText(composite, "Note:", "note");
 
 		createVerticalSpace(composite);
 
 		// Business Address
 		createSeparator(composite, "Business Address ");
-		streetText = createText(composite, "Street:");
-		cityText = createText(composite, "City:");
-		zipText = createText(composite, "ZIP:");
-		stateText = createText(composite, "State/Prov:");
-		countryText = createText(composite, "Country:");
+		createText(composite, "Street:", "street");
+		createText(composite, "City:", "city");
+		createText(composite, "ZIP:", "zip");
+		createText(composite, "State/Prov:", "state");
+		createText(composite, "Country:", "country");
 		createVerticalSpace(composite);
 
 		// Business Phone
 		createSeparator(composite, "Business Phones ");
-		phoneText = createText(composite, "Phone:");
-		mobileText = createText(composite, "Mobile:");
+		createText(composite, "Phone:", "phone");
+		createText(composite, "Mobile:", "mobile");
 		createVerticalSpace(composite);
 
 		// Business Internet
 		createSeparator(composite, "Business Internet");
-		emailText = createText(composite, "Email:");
-		webPageText = createText(composite, "Web Page:");
+		createText(composite, "Email:", "email");
+		createText(composite, "Web Page:", "webPage");
 		createVerticalSpace(composite);
+
+		// Bind the image
+
+		// This has to be improved using data binding. Could'd not find out how
+		// to deal with layouting the image so far
+
+		// dbc.bindValue(SWTObservables.observeImage(imageLabel),
+		// PojoObservables
+		// .observeDetailValue(contactValue, "scaledImage", Image.class));
+
 	}
 
 	private void createSeparator(Composite parent, String text) {
@@ -142,7 +166,8 @@ public class DetailComposite extends Composite {
 		return composite;
 	}
 
-	private Text createText(final Composite parent, final String labelText) {
+	private Text createText(final Composite parent, final String labelText,
+			final String property) {
 		final Label label = new Label(parent, SWT.NONE);
 		label.setText(labelText);
 		label.setBackground(bgColor);
@@ -159,6 +184,10 @@ public class DetailComposite extends Composite {
 		} else {
 			gridData2.horizontalSpan = 1;
 			if (labelText.equals("Full Name:")) {
+				// This has to be improved using data binding. Could'd not find
+				// out how
+				// to deal with layouting the image so far
+
 				imageLabel = new Label(parent, SWT.NONE);
 				imageLabel.setImage(dummyPortrait);
 				GridData gridData3 = new GridData();
@@ -167,29 +196,20 @@ public class DetailComposite extends Composite {
 			}
 		}
 		text.setLayoutData(gridData2);
+
+		if (property != null) {
+			dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
+					PojoObservables.observeDetailValue(contactValue, property,
+							String.class));
+		}
+
 		return text;
 	}
 
-	private static String toOriginalOrEmpty(final String s) {
-		return (s != null) ? s : "";
-	}
-
 	public void update(final Contact contact) {
-		fullNameText.setText(toOriginalOrEmpty(contact.toString()));
-		companyText.setText(toOriginalOrEmpty(contact.getCompany()));
-		jobTitleText.setText(toOriginalOrEmpty(contact.getJobTitle()));
-		noteText.setText(toOriginalOrEmpty(contact.getNote()));
-		streetText.setText(toOriginalOrEmpty(contact.getStreet()));
-		cityText.setText(toOriginalOrEmpty(contact.getCity()));
-		zipText.setText(toOriginalOrEmpty(contact.getZip()));
-		stateText.setText(toOriginalOrEmpty(contact.getState()));
-		countryText.setText(toOriginalOrEmpty(contact.getCountry()));
-		phoneText.setText(toOriginalOrEmpty(contact.getPhone()));
-		mobileText.setText(toOriginalOrEmpty(contact.getMobile()));
-		emailText
-				.setText(DetailComposite.toOriginalOrEmpty(contact.getEmail()));
-		webPageText.setText(DetailComposite.toOriginalOrEmpty(contact
-				.getWebPage()));
+		contactValue.setValue(contact);
+		// This has to be improved using data binding. Could'd not find out how
+		// to deal with layouting the image so far
 		if (contact.getScaledImage() == null) {
 			imageLabel.setImage(dummyPortrait);
 		} else {

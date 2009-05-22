@@ -12,15 +12,22 @@
 
 package org.eclipse.e4.demo.contacts.views;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.eclipse.core.databinding.beans.PojoObservables;
+import org.eclipse.core.databinding.observable.Observables;
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
@@ -47,7 +54,6 @@ public class ListView implements IDisposable {
 		contactsViewer = new TableViewer(tableComposite, SWT.FULL_SELECTION);
 		contactsViewer.getTable().setHeaderVisible(true);
 		contactsViewer.getTable().setLinesVisible(true);
-		contactsViewer.setContentProvider(new ArrayContentProvider());
 		contactsViewer.setComparator(new ContactViewerComparator());
 
 		contactsViewer
@@ -68,13 +74,6 @@ public class ListView implements IDisposable {
 		firstNameColumn.getColumn().setText("First name");
 		tableColumnLayout.setColumnData(firstNameColumn.getColumn(),
 				new ColumnWeightData(40));
-		firstNameColumn.setLabelProvider(new ColumnLabelProvider() {
-
-			@Override
-			public String getText(final Object element) {
-				return ((Contact) element).getFirstName();
-			}
-		});
 
 		// Last name column
 		final TableViewerColumn lastNameColumn = new TableViewerColumn(
@@ -82,15 +81,23 @@ public class ListView implements IDisposable {
 		lastNameColumn.getColumn().setText("Last name");
 		tableColumnLayout.setColumnData(lastNameColumn.getColumn(),
 				new ColumnWeightData(60));
-		lastNameColumn.setLabelProvider(new ColumnLabelProvider() {
 
-			@Override
-			public String getText(final Object element) {
-				return ((Contact) element).getLastName();
-			}
-		});
-		contactsViewer.setInput(ContactsRepositoryFactory
-				.getContactsRepository().getAllContacts());
+		List<Contact> contactList = new ArrayList<Contact>(
+				ContactsRepositoryFactory.getContactsRepository()
+						.getAllContacts());
+		IObservableList observableList = Observables
+				.staticObservableList(contactList);
+		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+
+		contactsViewer.setContentProvider(contentProvider);
+
+		IObservableMap[] attributes = PojoObservables.observeMaps(
+				contentProvider.getKnownElements(), Contact.class,
+				new String[] { "firstName", "lastName" });
+		contactsViewer.setLabelProvider(new ObservableMapLabelProvider(
+				attributes));
+
+		contactsViewer.setInput(observableList);
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
