@@ -17,6 +17,7 @@ import java.net.URL;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -28,6 +29,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -45,6 +47,7 @@ public class DetailComposite extends Composite {
 
 	private final DataBindingContext dbc;
 	private final WritableValue contactValue = new WritableValue();
+	private final IObservableValue scaledImage;
 
 	public DetailComposite(final Composite parent, final int style,
 			final boolean isEnabled, final ModifyListener modifyListener,
@@ -121,14 +124,29 @@ public class DetailComposite extends Composite {
 		createVerticalSpace(composite);
 
 		// Bind the image
+		this.scaledImage = new ComputedValue() {
+			@Override
+			protected Object calculate() {
+				Image image = (Image) PojoObservables.observeDetailValue(
+						contactValue, "image", Image.class).getValue();
+				if (image == null) {
+					image = dummyPortrait;
+				}
+				ImageData imageData = image.getImageData();
+				double ratio = imageData.height / 99.0;
+				int width = (int) (imageData.width / ratio);
+				if (width > 80) {
+					width = 80;
+				}
+				ImageData scaledImageData = imageData.scaledTo(width, 99);
+				return new Image(Display.getCurrent(), scaledImageData);
+			}
+		};
 
-		// This has to be improved using data binding. Could'd not find out how
-		// to deal with layouting the image so far
+		dbc.bindValue(scaledImage, PojoObservables.observeDetailValue(
+				contactValue, "image", Image.class));
 
-		// dbc.bindValue(SWTObservables.observeImage(imageLabel),
-		// PojoObservables
-		// .observeDetailValue(contactValue, "scaledImage", Image.class));
-
+		dbc.bindValue(SWTObservables.observeImage(imageLabel), scaledImage);
 	}
 
 	private void createSeparator(Composite parent, String text) {
@@ -176,7 +194,7 @@ public class DetailComposite extends Composite {
 		label.setLayoutData(gridData);
 
 		final Text text = new Text(parent, SWT.BORDER);
-		// text.setEnabled(isEnabled);
+
 		GridData gridData2 = new GridData(GridData.FILL_HORIZONTAL);
 		gridData2.horizontalIndent = 0;
 		if (!generalGroup) {
@@ -184,12 +202,8 @@ public class DetailComposite extends Composite {
 		} else {
 			gridData2.horizontalSpan = 1;
 			if (labelText.equals("Full Name:")) {
-				// This has to be improved using data binding. Could'd not find
-				// out how
-				// to deal with layouting the image so far
-
+				// The label image is set with data binding
 				imageLabel = new Label(parent, SWT.NONE);
-				imageLabel.setImage(dummyPortrait);
 				GridData gridData3 = new GridData();
 				gridData3.verticalSpan = 4;
 				imageLabel.setLayoutData(gridData3);
@@ -208,15 +222,5 @@ public class DetailComposite extends Composite {
 
 	public void update(final Contact contact) {
 		contactValue.setValue(contact);
-		// This has to be improved using data binding. Could'd not find out how
-		// to deal with layouting the image so far
-		if (contact.getScaledImage() == null) {
-			imageLabel.setImage(dummyPortrait);
-		} else {
-			imageLabel.setImage(contact.getScaledImage());
-		}
-		imageLabel.pack();
-		imageLabel.update();
-		imageLabel.redraw();
 	}
 }

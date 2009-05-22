@@ -42,6 +42,7 @@ public class Contact {
 	private String phone;
 	private String mobile;
 	private String note;
+	private Image image;
 
 	public String getNote() {
 		return note;
@@ -49,17 +50,6 @@ public class Contact {
 
 	public void setNote(String comment) {
 		this.note = comment;
-	}
-
-	private Image image;
-	private Image scaledImage;
-
-	public Image getScaledImage() {
-		return scaledImage;
-	}
-
-	public void setScaledImage(Image scaledImage) {
-		this.scaledImage = scaledImage;
 	}
 
 	public Image getImage() {
@@ -326,19 +316,9 @@ public class Contact {
 					ByteArrayInputStream is = new ByteArrayInputStream(
 							imageBytes);
 					ImageData imageData = new ImageData(is);
-					double ratio = imageData.height / 99.0;
-					int width = (int) (imageData.width / ratio);
-					if (width > 80)
-						width = 80;
-					ImageData ScaledImageData = imageData.scaledTo(width, 99);
-
 					image = new Image(Display.getCurrent(), imageData);
-					scaledImage = new Image(Display.getCurrent(),
-							ScaledImageData);
-
 					continue;
 				}
-
 			}
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
