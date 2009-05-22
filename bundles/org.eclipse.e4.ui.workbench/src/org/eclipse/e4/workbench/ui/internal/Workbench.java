@@ -92,8 +92,7 @@ public class Workbench implements IWorkbench {
 	private ReflectionContributionFactory contributionFactory;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
-			PackageAdmin packageAdmin, URI workbenchXmiURI,
-			IEclipseContext applicationContext,
+			PackageAdmin packageAdmin, IEclipseContext applicationContext,
 			IWorkbenchWindowHandler windowHandler) {
 		this.windowHandler = windowHandler;
 		exceptionHandler = new ExceptionHandler();
@@ -126,13 +125,15 @@ public class Workbench implements IWorkbench {
 		globalContext = createContext(applicationContext, registry,
 				exceptionHandler, contributionFactory);
 		globalContext.set(IWorkbench.class.getName(), this);
+	}
 
-		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
-			createWorkbenchModel(URI.createFileURI(workbenchData
-					.getAbsolutePath()), workbenchXmiURI);
-		} else {
-			createWorkbenchModel(null, workbenchXmiURI);
-		}
+	public void setWorkbenchModel(MApplication<MWindow<?>> model) {
+		workbench = model;
+		init();
+	}
+
+	public void setWorkbenchModelURI(URI workbenchXmiURI) {
+		createWorkbenchModel(workbenchXmiURI);
 	}
 
 	public static IEclipseContext createContext(
@@ -212,7 +213,12 @@ public class Workbench implements IWorkbench {
 	}
 
 	private MApplication<? extends MWindow> createWorkbenchModel(
-			URI restoreLocation, URI applicationDefinitionInstance) {
+			URI applicationDefinitionInstance) {
+		URI restoreLocation = null;
+		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
+			restoreLocation = URI
+					.createFileURI(workbenchData.getAbsolutePath());
+		}
 		long restoreLastModified = restoreLocation == null ? 0L : new File(
 				restoreLocation.toFileString()).lastModified();
 
@@ -259,10 +265,10 @@ public class Workbench implements IWorkbench {
 			Resource resource = new XMIResourceImpl();
 			workbench = loadDefaultModel(applicationDefinitionInstance);
 			resource.getContents().add((EObject) workbench);
-			resource.setURI(URI.createFileURI(workbenchData.getAbsolutePath()));
+			resource.setURI(restoreLocation);
 		}
 
-		init(workbench);
+		init();
 
 		return workbench;
 	}
@@ -319,7 +325,7 @@ public class Workbench implements IWorkbench {
 		return null;
 	}
 
-	private void init(MApplication<? extends MWindow> workbench2) {
+	private void init() {
 		// Capture the MApplication into the context
 		globalContext.set(MApplication.class.getName(), workbench);
 

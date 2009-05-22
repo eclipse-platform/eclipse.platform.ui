@@ -21,8 +21,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
-import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.WorkbenchFactory;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.equinox.app.IApplication;
@@ -42,10 +40,6 @@ public class WorkbenchApplication implements IApplication {
 			throws Exception {
 
 		final Display display = new Display();
-		final WorkbenchFactory workbenchFactory = new WorkbenchFactory(
-				Activator.getDefault().getInstanceLocation(), Activator
-						.getDefault().getBundleAdmin(), RegistryFactory
-						.getRegistry());
 		String appURI = null;
 		String[] args = (String[]) applicationContext.getArguments().get(
 				"application.args"); //$NON-NLS-1$
@@ -76,8 +70,9 @@ public class WorkbenchApplication implements IApplication {
 							serviceContext, null);
 					appContext.set(IContextConstants.DEBUG_STRING,
 							"application"); //$NON-NLS-1$
-					appContext.set(IResourceUtiltities.class.getName(), new ResourceUtility(Activator
-							.getDefault().getBundleAdmin()));
+					appContext.set(IResourceUtiltities.class.getName(),
+							new ResourceUtility(Activator.getDefault()
+									.getBundleAdmin()));
 					if (cssURI != null) {
 						WorkbenchStylingSupport.initializeStyling(display,
 								cssURI, appContext);
@@ -85,8 +80,12 @@ public class WorkbenchApplication implements IApplication {
 						WorkbenchStylingSupport
 								.initializeNullStyling(appContext);
 					}
-					IWorkbench wb = workbenchFactory.create(
-							initialWorkbenchDefinitionInstance, appContext, new WorkbenchWindowHandler());
+					Workbench wb = new Workbench(Activator.getDefault()
+							.getInstanceLocation(), RegistryFactory
+							.getRegistry(), Activator.getDefault()
+							.getBundleAdmin(), appContext,
+							new WorkbenchWindowHandler());
+					wb.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
 					wb.run();
 				} catch (ThreadDeath th) {
 					throw th;

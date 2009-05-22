@@ -23,8 +23,7 @@ import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchStylingSupport;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
-import org.eclipse.e4.workbench.ui.IWorkbench;
-import org.eclipse.e4.workbench.ui.WorkbenchFactory;
+import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -47,7 +46,7 @@ public class RunApplicationTest extends TestCase {
 	private BundleContext bundleContext;
 	private ServiceTracker instanceAppContext;
 	private ServiceTracker bundleTracker;
-	private IWorkbench workbench;
+	private Workbench workbench;
 	private IEclipseContext applicationContext;
 	private Display display;
 
@@ -134,9 +133,6 @@ public class RunApplicationTest extends TestCase {
 
 			public void run() {
 				display = new Display();
-				final WorkbenchFactory workbenchFactory = new WorkbenchFactory(
-						getInstanceLocation(), getBundleAdmin(),
-						RegistryFactory.getRegistry());
 				final URI initialWorkbenchDefinitionInstance = URI
 						.createPlatformPluginURI(uri, true);
 				Realm.runWithDefault(SWTObservables.getRealm(display),
@@ -163,10 +159,14 @@ public class RunApplicationTest extends TestCase {
 									WorkbenchStylingSupport
 											.initializeNullStyling(applicationContext);
 
-									workbench = workbenchFactory.create(
-											initialWorkbenchDefinitionInstance,
+									workbench = new Workbench(
+											getInstanceLocation(),
+											RegistryFactory.getRegistry(),
+											getBundleAdmin(),
 											applicationContext,
 											new WorkbenchWindowHandler());
+									workbench
+											.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
 
 									workbench.run();
 								} catch (ThreadDeath th) {
