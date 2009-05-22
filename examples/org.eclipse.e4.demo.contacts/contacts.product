@@ -3,7 +3,6 @@
 
 <product name="E4 Contacs Demo" id="org.eclipse.e4.demo.contacts.product" application="org.eclipse.e4.ui.workbench.swt.application" useFeatures="false" includeLaunchers="true">
 
-
    <configIni use="default">
    </configIni>
 
@@ -13,7 +12,11 @@
 
    <windowImages/>
 
-
+   <splash
+      location="org.eclipse.e4.demo.contacts"
+      startupProgressRect="5,275,445,15"
+      startupMessageRect="7,252,445,20"
+      startupForegroundColor="FFFFFF" />
    <launcher>
       <solaris/>
       <win useIco="false">
@@ -21,10 +24,8 @@
       </win>
    </launcher>
 
-
    <vm>
    </vm>
-
 
    <plugins>
       <plugin id="com.ibm.icu"/>
