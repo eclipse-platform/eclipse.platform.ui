@@ -30,13 +30,18 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 
 	private static final String LIBRARY_NAME = "gnomeproxy-1.0.0"; //$NON-NLS-1$
 
+	private static final String ENABLE_GNOME = Activator.ID + ".enableGnome"; //$NON-NLS-1$
+
 	private static boolean isGnomeLibLoaded = false;
 
 	static {
 		// We have to load this here otherwise gconf seems to have problems
 		// causing hangs and various other bad behavior,
 		// please don't move this to be initialized on another thread.
-		loadGnomeLib();
+		String value = System.getProperty(ENABLE_GNOME);
+		if ("".equals(value) || "true".equals(value)) { //$NON-NLS-1$ //$NON-NLS-2$
+			loadGnomeLib();
+		}
 	}
 
 	public UnixProxyProvider() {
