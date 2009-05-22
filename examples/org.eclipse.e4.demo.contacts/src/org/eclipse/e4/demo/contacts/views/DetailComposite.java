@@ -149,6 +149,16 @@ public class DetailComposite extends Composite {
 				currentImage = new Image(Display.getCurrent(), scaledImageData);
 				return currentImage;
 			}
+
+			@Override
+			public void dispose() {
+				if (currentImage != null) {
+					currentImage.dispose();
+					currentImage = null;
+				}
+				super.dispose();
+			}
+
 		};
 
 		dbc.bindValue(scaledImage, PojoObservables.observeDetailValue(
@@ -159,6 +169,13 @@ public class DetailComposite extends Composite {
 				.bindValue(SWTObservables.observeImage(imageLabel),
 						scaledImage, new UpdateValueStrategy(
 								UpdateValueStrategy.POLICY_NEVER), null);
+	}
+
+	@Override
+	public void dispose() {
+		dummyPortrait.dispose();
+		scaledImage.dispose();
+		super.dispose();
 	}
 
 	private void createSeparator(Composite parent, String text) {
