@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -260,6 +260,10 @@ public abstract class FieldEditor {
      * <p>
      * Subclasses must implement this method to create the controls
      * for this field editor.
+     * </p>
+     * <p>
+     * Note this method may be called by the constructor, so it must not access
+     * fields on the receiver object because they will not be fully initialized.
      * </p>
      *
      * @param parent the composite used as a parent for the basic controls;
