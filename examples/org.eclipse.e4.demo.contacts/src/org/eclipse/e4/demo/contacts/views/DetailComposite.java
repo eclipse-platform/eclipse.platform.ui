@@ -15,6 +15,7 @@ package org.eclipse.e4.demo.contacts.views;
 import java.net.URL;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -125,12 +126,14 @@ public class DetailComposite extends Composite {
 
 		// Bind the image
 		this.scaledImage = new ComputedValue() {
+			private Image currentImage;
+
 			@Override
 			protected Object calculate() {
 				Image image = (Image) PojoObservables.observeDetailValue(
 						contactValue, "image", Image.class).getValue();
 				if (image == null) {
-					image = dummyPortrait;
+					return dummyPortrait;
 				}
 				ImageData imageData = image.getImageData();
 				double ratio = imageData.height / 99.0;
@@ -139,14 +142,23 @@ public class DetailComposite extends Composite {
 					width = 80;
 				}
 				ImageData scaledImageData = imageData.scaledTo(width, 99);
-				return new Image(Display.getCurrent(), scaledImageData);
+				if (currentImage != null) {
+					currentImage.dispose();
+					currentImage = null;
+				}
+				currentImage = new Image(Display.getCurrent(), scaledImageData);
+				return currentImage;
 			}
 		};
 
 		dbc.bindValue(scaledImage, PojoObservables.observeDetailValue(
-				contactValue, "image", Image.class));
+				contactValue, "image", Image.class), new UpdateValueStrategy(
+				UpdateValueStrategy.POLICY_NEVER), null);
 
-		dbc.bindValue(SWTObservables.observeImage(imageLabel), scaledImage);
+		dbc
+				.bindValue(SWTObservables.observeImage(imageLabel),
+						scaledImage, new UpdateValueStrategy(
+								UpdateValueStrategy.POLICY_NEVER), null);
 	}
 
 	private void createSeparator(Composite parent, String text) {
