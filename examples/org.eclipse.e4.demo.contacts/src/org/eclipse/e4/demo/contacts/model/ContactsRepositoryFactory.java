@@ -12,11 +12,11 @@
 
 package org.eclipse.e4.demo.contacts.model;
 
-import org.eclipse.e4.demo.contacts.model.internal.DemoContactsRepository;
+import org.eclipse.e4.demo.contacts.model.internal.VCardContactsRepository;
 
 public class ContactsRepositoryFactory {
 
-	private static final IContactsRepository CONTACTS_REPOSITORY = new DemoContactsRepository();
+	private static final IContactsRepository CONTACTS_REPOSITORY = new VCardContactsRepository();
 
 	public static IContactsRepository getContactsRepository() {
 		return CONTACTS_REPOSITORY;

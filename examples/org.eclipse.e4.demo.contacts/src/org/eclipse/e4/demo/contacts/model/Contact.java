@@ -12,21 +12,8 @@
 
 package org.eclipse.e4.demo.contacts.model;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.StringTokenizer;
-
-import org.eclipse.osgi.internal.signedcontent.Base64;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Display;
 
-@SuppressWarnings("restriction")
 public class Contact {
 	private String firstName;
 	private String lastName;
@@ -44,25 +31,9 @@ public class Contact {
 	private String note;
 	private Image image;
 
-	public String getNote() {
-		return note;
-	}
-
-	public void setNote(String comment) {
-		this.note = comment;
-	}
-
-	public Image getImage() {
-		return image;
-	}
-
-	public void setImage(Image image) {
-		this.image = image;
-	}
-
 	public Contact() {
 	}
-
+	
 	public String getFirstName() {
 		return firstName;
 	}
@@ -167,183 +138,24 @@ public class Contact {
 		this.mobile = businessMobile;
 	}
 
+	public String getNote() {
+		return note;
+	}
+
+	public void setNote(String comment) {
+		this.note = comment;
+	}
+
+	public Image getImage() {
+		return image;
+	}
+
+	public void setImage(Image image) {
+		this.image = image;
+	}
+
 	@Override
 	public String toString() {
 		return firstName + " " + lastName;
-	}
-
-	public void saveAsVCard(String fileName) {
-		String charSet = "CHARSET="
-				+ java.nio.charset.Charset.defaultCharset().name();
-		String vCard = "BEGIN:VCARD" + "\nVERSION:2.1" + "\nN;" + charSet + ":"
-				+ lastName + ";" + firstName + "\nFN;" + charSet + ":"
-				+ firstName + " " + lastName + "\nORG;" + charSet + ":"
-				+ company + "\nTITLE:" + jobTitle + "\nTEL;WORK;VOICE:" + phone
-				+ "\nTEL;CELL;VOICE:" + mobile + "\nADR;WORK;" + charSet + ":"
-				+ ";;" + street + ";" + city + ";" + state + ";" + zip + ";"
-				+ country + "\nURL;WORK:" + webPage + "\nEMAIL;PREF;INTERNET:"
-				+ email + "\nEND:VCARD\n";
-
-		PrintWriter out;
-		try {
-			out = new PrintWriter(fileName);
-			out.println(vCard);
-			out.close();
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
-
-	public void readFromVCard(String fileName) {
-		BufferedReader bufferedReader = null;
-		String charSet = "Windows-1252";
-
-		// First try to guess the char set
-		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(fileName)));
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				int index = line.indexOf("CHARSET=");
-				if (index != -1) {
-					int endIndex = index + 8;
-					while (line.charAt(endIndex) != ':'
-							&& line.charAt(endIndex) != ';') {
-						endIndex += 1;
-					}
-					charSet = line.substring(index + 8, endIndex);
-					break;
-				}
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if (bufferedReader != null) {
-					bufferedReader.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
-		// Then parse the vCard
-		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(fileName), charSet));
-			String line;
-			String value;
-			while ((line = bufferedReader.readLine()) != null) {
-				value = getVCardValue(line, "N");
-				if (value != null) {
-					int separator = value.indexOf(";");
-					lastName = value.substring(0, separator);
-					firstName = value.substring(separator + 1);
-					continue;
-				}
-				value = getVCardValue(line, "TEL;WORK");
-				if (value != null) {
-					phone = value;
-					continue;
-				}
-				value = getVCardValue(line, "TEL;CELL");
-				if (value != null) {
-					mobile = value;
-					continue;
-				}
-				value = getVCardValue(line, "ADR;WORK");
-				if (value != null) {
-					StringTokenizer tokenizer = new StringTokenizer(value, ";");
-					if (tokenizer.hasMoreElements()) {
-						street = tokenizer.nextToken();
-					}
-					if (tokenizer.hasMoreElements()) {
-						city = tokenizer.nextToken();
-					}
-					if (tokenizer.hasMoreElements()) {
-						zip = tokenizer.nextToken();
-					}
-					// if (tokenizer.hasMoreElements()) {
-					// state = tokenizer.nextToken();
-					// }
-					if (tokenizer.hasMoreElements()) {
-						country = tokenizer.nextToken();
-					}
-					continue;
-				}
-				value = getVCardValue(line, "EMAIL;PREF;INTERNET");
-				if (value != null) {
-					email = value;
-					continue;
-				}
-				value = getVCardValue(line, "URL;WORK");
-				if (value != null) {
-					webPage = value;
-					continue;
-				}
-				value = getVCardValue(line, "ORG");
-				if (value != null) {
-					company = value;
-					continue;
-				}
-				value = getVCardValue(line, "TITLE");
-				if (value != null) {
-					jobTitle = value;
-					continue;
-				}
-				value = getVCardValue(line, "NOTE");
-				if (value != null) {
-					note = value;
-					continue;
-				}
-				value = getVCardValue(line, "PHOTO;TYPE=JPEG;ENCODING=BASE64");
-				if (value != null) {
-					line = bufferedReader.readLine();
-					String base64 = "";
-					while (line != null && line.length() > 0
-							&& line.charAt(0) == ' ') {
-						base64 += line.trim();
-						line = bufferedReader.readLine();
-					}
-					byte[] imageBytes = Base64.decode(base64.getBytes());
-					ByteArrayInputStream is = new ByteArrayInputStream(
-							imageBytes);
-					ImageData imageData = new ImageData(is);
-					image = new Image(Display.getCurrent(), imageData);
-					continue;
-				}
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if (bufferedReader != null) {
-					bufferedReader.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-	}
-
-	private String getVCardValue(String line, String token) {
-		if (line.startsWith(token + ":") || line.startsWith(token + ";")) {
-			String value = line.substring(line.indexOf(":") + 1);
-			return value;
-		}
-		return null;
 	}
 }
