@@ -13,7 +13,6 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
@@ -23,7 +22,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -67,7 +65,6 @@ public class StackModelFactory extends SWTPartFactory {
 
 		Widget parentWidget = getParentWidget(part);
 		if (parentWidget instanceof Composite) {
-			IEclipseContext parentContext = getContextForParent(part);
 
 			// HACK!! Set up the close button style based on the 'Policy'
 			// Perhaps this should be CSS-based ?
@@ -104,10 +101,8 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.setSimple(false);
 			ctf.setTabHeight(20);
 			newWidget = ctf;
-			final IEclipseContext folderContext = EclipseContextFactory.create(
-					parentContext, UISchedulerStrategy.getInstance());
+			final IEclipseContext folderContext = part.getContext();
 			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
-			part.setContext(folderContext);
 			final IEclipseContext toplevelContext = getToplevelContext(part);
 			final IStylingEngine engine = (IStylingEngine) folderContext
 					.get(IStylingEngine.class.getName());

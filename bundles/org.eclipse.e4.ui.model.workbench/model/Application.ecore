@@ -20,6 +20,8 @@
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
         upperBound="-1" eType="#//MCommand" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
+        transient="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MPart" eSuperTypes="#//MApplicationElement">
     <eTypeParameters name="P">

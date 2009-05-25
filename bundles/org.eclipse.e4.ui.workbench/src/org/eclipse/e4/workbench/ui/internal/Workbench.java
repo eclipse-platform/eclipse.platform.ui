@@ -38,6 +38,7 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.services.ContextCommandService;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
+import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MCommand;
@@ -55,6 +56,8 @@ import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -80,7 +83,7 @@ public class Workbench implements IWorkbench {
 	private ResourceSetImpl resourceSet;
 
 	public IEclipseContext getContext() {
-		return globalContext;
+		return workbenchContext;
 	}
 
 	// UI Construction...
@@ -88,7 +91,7 @@ public class Workbench implements IWorkbench {
 	private int rv;
 
 	private ExceptionHandler exceptionHandler;
-	private IEclipseContext globalContext;
+	private IEclipseContext workbenchContext;
 	private ReflectionContributionFactory contributionFactory;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
@@ -122,9 +125,9 @@ public class Workbench implements IWorkbench {
 		resourceSet.getPackageRegistry().put(WorkbenchPackage.eNS_URI,
 				WorkbenchPackage.eINSTANCE);
 
-		globalContext = createContext(applicationContext, registry,
+		workbenchContext = createWorkbenchContext(applicationContext, registry,
 				exceptionHandler, contributionFactory);
-		globalContext.set(IWorkbench.class.getName(), this);
+		workbenchContext.set(IWorkbench.class.getName(), this);
 	}
 
 	public void setWorkbenchModel(MApplication<MWindow<?>> model) {
@@ -136,7 +139,7 @@ public class Workbench implements IWorkbench {
 		createWorkbenchModel(workbenchXmiURI);
 	}
 
-	public static IEclipseContext createContext(
+	public static IEclipseContext createWorkbenchContext(
 			final IEclipseContext applicationContext,
 			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
 			IContributionFactory contributionFactory) {
@@ -327,11 +330,12 @@ public class Workbench implements IWorkbench {
 
 	private void init() {
 		// Capture the MApplication into the context
-		globalContext.set(MApplication.class.getName(), workbench);
+		workbenchContext.set(MApplication.class.getName(), workbench);
+		workbench.setContext(workbenchContext);
 
 		// fill in commands
 		System.err.println("workbench init commands"); //$NON-NLS-1$
-		ECommandService cs = (ECommandService) globalContext
+		ECommandService cs = (ECommandService) workbenchContext
 				.get(ECommandService.class.getName());
 		Category cat = cs.getCategory(MApplication.class.getName());
 		cat.define("Application Category", null); //$NON-NLS-1$
@@ -342,6 +346,69 @@ public class Workbench implements IWorkbench {
 			Command command = cs.getCommand(id);
 			command.define(name, null, cat);
 		}
+
+		// take care of generating the contexts.
+		for (MWindow window : (EList<? extends MWindow>) workbench.getWindows()) {
+			initializeContext(workbenchContext, window);
+		}
+		workbench.eAdapters().add(new AdapterImpl() {
+			@Override
+			public void notifyChanged(Notification msg) {
+				if (ApplicationPackage.Literals.MAPPLICATION__WINDOWS
+						.equals(msg.getFeature())
+						&& msg.getEventType() == Notification.ADD) {
+					MPart<?> added = (MPart<?>) msg.getNewValue();
+					initializeContext(workbenchContext, added);
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the context chain. It both creates the chain for the current
+	 * model, and adds eAdapters so it can add new contexts when new model items
+	 * are added.
+	 * 
+	 * @param parentContext
+	 *            The parent context
+	 * @param part
+	 *            needs a context created
+	 */
+	public static void initializeContext(IEclipseContext parentContext,
+			MPart<?> part) {
+		final IEclipseContext context;
+		if (part.getContext() != null) {
+			context = part.getContext();
+		} else {
+			context = EclipseContextFactory.create(parentContext,
+					UISchedulerStrategy.getInstance());
+		}
+
+		// fill in the interfaces, so MContributedPart.class.getName() will
+		// return the model element, for example.
+		final Class[] interfaces = part.getClass().getInterfaces();
+		for (Class intf : interfaces) {
+			System.err.println("add intf: " + intf.getName()); //$NON-NLS-1$
+			context.set(intf.getName(), part);
+		}
+
+		part.setContext(context);
+
+		// take care of generating the contexts.
+		for (MPart<?> child : (EList<MPart<?>>) part.getChildren()) {
+			initializeContext(context, child);
+		}
+		part.eAdapters().add(new AdapterImpl() {
+			@Override
+			public void notifyChanged(Notification msg) {
+				if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg
+						.getFeature())
+						&& msg.getEventType() == Notification.ADD) {
+					MPart<?> added = (MPart<?>) msg.getNewValue();
+					initializeContext(context, added);
+				}
+			}
+		});
 	}
 
 	public int run() {
@@ -461,8 +528,8 @@ public class Workbench implements IWorkbench {
 
 	private void createGUI(MWindow wbw) {
 		if (renderer == null) {
-			renderer = new PartRenderer(contributionFactory, globalContext);
-			initializeRenderer(registry, renderer, globalContext,
+			renderer = new PartRenderer(contributionFactory, workbenchContext);
+			initializeRenderer(registry, renderer, workbenchContext,
 					contributionFactory);
 
 		}

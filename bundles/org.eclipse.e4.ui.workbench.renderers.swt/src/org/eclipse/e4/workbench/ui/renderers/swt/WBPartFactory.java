@@ -11,7 +11,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
@@ -19,7 +18,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -55,13 +53,10 @@ public class WBPartFactory extends SWTPartFactory {
 			bindWidget(part, newWidget);
 
 			// set up context
-			IEclipseContext localContext = EclipseContextFactory.create(
-					parentContext, UISchedulerStrategy.getInstance());
+			IEclipseContext localContext = part.getContext();
 			localContext
 					.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
-			part.setContext(localContext);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
-			localContext.set(MWindow.class.getName(), part);
 
 			// Add the shell into the WBW's context
 			localContext.set(Shell.class.getName(), wbwShell);
@@ -70,7 +65,7 @@ public class WBPartFactory extends SWTPartFactory {
 			if (part instanceof MWorkbenchWindow) {
 				// TrimmedLayout tl = new TrimmedLayout(wbwShell);
 				// wbwShell.setLayout(tl);
-				localContext.set(MWorkbenchWindow.class.getName(), part);
+				// localContext.set(MWorkbenchWindow.class.getName(), part);
 			} else {
 				wbwShell.setLayout(new FillLayout());
 			}

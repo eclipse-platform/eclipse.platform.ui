@@ -54,7 +54,7 @@ public class MWindowTest extends TestCase {
 			IEclipseContext serviceContext = EclipseContextFactory
 					.createServiceContext(Activator.getDefault().getBundle()
 							.getBundleContext());
-			appContext = Workbench.createContext(serviceContext,
+			appContext = Workbench.createWorkbenchContext(serviceContext,
 					RegistryFactory.getRegistry(), null, null);
 			MApplication<MWindow<?>> app = ApplicationFactory.eINSTANCE
 					.createMApplication();

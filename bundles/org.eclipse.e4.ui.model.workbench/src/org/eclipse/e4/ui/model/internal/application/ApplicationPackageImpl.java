@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.8 2009/03/17 16:41:43 pwebster Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.9 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -227,20 +227,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	private static boolean isInited = false;
 
 	/**
-	 * Creates, registers, and initializes the <b>Package</b> for this
-	 * model, and for any others upon which it depends.  Simple
-	 * dependencies are satisfied by calling this method on all
-	 * dependent packages before doing anything else.  This method drives
-	 * initialization for interdependent packages directly, in parallel
-	 * with this package, itself.
-	 * <p>Of this package and its interdependencies, all packages which
-	 * have not yet been registered by their URI values are first created
-	 * and registered.  The packages are then initialized in two steps:
-	 * meta-model objects for all of the packages are created before any
-	 * are initialized, since one package's meta-model objects may refer to
-	 * those of another.
-	 * <p>Invocation of this method will not affect any packages that have
-	 * already been initialized.
+	 * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
+	 * 
+	 * <p>This method is used to initialize {@link ApplicationPackage#eINSTANCE} when that field is accessed.
+	 * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #eNS_URI
@@ -252,7 +242,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		if (isInited) return (ApplicationPackage)EPackage.Registry.INSTANCE.getEPackage(ApplicationPackage.eNS_URI);
 
 		// Obtain or create and register package
-		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.getEPackage(eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.getEPackage(eNS_URI) : new ApplicationPackageImpl());
+		ApplicationPackageImpl theApplicationPackage = (ApplicationPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof ApplicationPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new ApplicationPackageImpl());
 
 		isInited = true;
 
@@ -270,6 +260,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		// Mark meta-data to indicate it can't be changed
 		theApplicationPackage.freeze();
 
+  
+		// Update the registry and return the package
+		EPackage.Registry.INSTANCE.put(ApplicationPackage.eNS_URI, theApplicationPackage);
 		return theApplicationPackage;
 	}
 
@@ -325,6 +318,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 */
 	public EReference getMApplication_Command() {
 		return (EReference)mApplicationEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMApplication_Context() {
+		return (EAttribute)mApplicationEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -839,6 +841,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		mApplicationEClass = createEClass(MAPPLICATION);
 		createEReference(mApplicationEClass, MAPPLICATION__WINDOWS);
 		createEReference(mApplicationEClass, MAPPLICATION__COMMAND);
+		createEAttribute(mApplicationEClass, MAPPLICATION__CONTEXT);
 
 		mPartEClass = createEClass(MPART);
 		createEReference(mPartEClass, MPART__MENU);
@@ -1042,6 +1045,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		g1 = createEGenericType(mApplicationEClass_W);
 		initEReference(getMApplication_Windows(), g1, null, "windows", null, 1, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getMApplication_Command(), this.getMCommand(), null, "command", null, 1, -1, MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMApplication_Context(), this.getIEclipseContext(), "context", null, 0, 1, MApplication.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mPartEClass, MPart.class, "MPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getMPart_Menu(), this.getMMenu(), null, "menu", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$

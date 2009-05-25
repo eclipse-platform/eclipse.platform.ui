@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.7 2009/03/15 21:26:03 bbokowski Exp $
+ * $Id: ApplicationPackage.java,v 1.8 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -158,13 +158,22 @@ public interface ApplicationPackage extends EPackage {
 	int MAPPLICATION__COMMAND = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MAPPLICATION__CONTEXT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
 	 * The number of structural features of the '<em>MApplication</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MAPPLICATION_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MAPPLICATION_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MPartImpl <em>MPart</em>}' class.
@@ -2025,6 +2034,17 @@ public interface ApplicationPackage extends EPackage {
 	EReference getMApplication_Command();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MApplication#getContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplication#getContext()
+	 * @see #getMApplication()
+	 * @generated
+	 */
+	EAttribute getMApplication_Context();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPart <em>MPart</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2662,6 +2682,14 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference MAPPLICATION__COMMAND = eINSTANCE.getMApplication_Command();
+
+		/**
+		 * The meta object literal for the '<em><b>Context</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MAPPLICATION__CONTEXT = eINSTANCE.getMApplication_Context();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MPartImpl <em>MPart</em>}' class.
