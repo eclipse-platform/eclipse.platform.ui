@@ -25,7 +25,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -75,17 +74,21 @@ public class VCardContactsRepository implements IContactsRepository {
 	public void removeContact(final Contact contact) {
 		contacts.remove(contact);
 	}
-	
+
 	private void saveAsVCard(Contact contact, String fileName) {
 		String charSet = "CHARSET="
 				+ java.nio.charset.Charset.defaultCharset().name();
 		String vCard = "BEGIN:VCARD" + "\nVERSION:2.1" + "\nN;" + charSet + ":"
-				+ contact.getLastName() + ";" + contact.getFirstName() + "\nFN;" + charSet + ":"
-				+ contact.getFirstName() + " " + contact.getLastName() + "\nORG;" + charSet + ":"
-				+ contact.getCompany() + "\nTITLE:" + contact.getJobTitle() + "\nTEL;WORK;VOICE:" + contact.getPhone()
-				+ "\nTEL;CELL;VOICE:" + contact.getMobile() + "\nADR;WORK;" + charSet + ":"
-				+ ";;" + contact.getStreet() + ";" + contact.getCity() + ";" + contact.getState() + ";" + contact.getZip() + ";"
-				+ contact.getCountry() + "\nURL;WORK:" + contact.getWebPage() + "\nEMAIL;PREF;INTERNET:"
+				+ contact.getLastName() + ";" + contact.getFirstName()
+				+ "\nFN;" + charSet + ":" + contact.getFirstName() + " "
+				+ contact.getLastName() + "\nORG;" + charSet + ":"
+				+ contact.getCompany() + "\nTITLE:" + contact.getJobTitle()
+				+ "\nTEL;WORK;VOICE:" + contact.getPhone()
+				+ "\nTEL;CELL;VOICE:" + contact.getMobile() + "\nADR;WORK;"
+				+ charSet + ":" + ";;" + contact.getStreet() + ";"
+				+ contact.getCity() + ";" + contact.getState() + ";"
+				+ contact.getZip() + ";" + contact.getCountry() + "\nURL;WORK:"
+				+ contact.getWebPage() + "\nEMAIL;PREF;INTERNET:"
 				+ contact.getEmail() + "\nEND:VCARD\n";
 
 		PrintWriter out;
@@ -148,9 +151,20 @@ public class VCardContactsRepository implements IContactsRepository {
 			while ((line = bufferedReader.readLine()) != null) {
 				value = getVCardValue(line, "N");
 				if (value != null) {
-					int separator = value.indexOf(";");
-					contact.setLastName(value.substring(0, separator));
-					contact.setFirstName(value.substring(separator + 1));
+					String[] result = value.split(";");
+
+					if (result.length > 0) {
+						contact.setLastName(result[0]);
+					}
+					if (result.length > 1) {
+						contact.setFirstName(result[1]);
+					}
+					if (result.length > 2) {
+						contact.setMiddleName(result[2]);
+					}
+					if (result.length > 3) {
+						contact.setTitle(result[3]);
+					}
 					continue;
 				}
 				value = getVCardValue(line, "TEL;WORK");
@@ -165,21 +179,22 @@ public class VCardContactsRepository implements IContactsRepository {
 				}
 				value = getVCardValue(line, "ADR;WORK");
 				if (value != null) {
-					StringTokenizer tokenizer = new StringTokenizer(value, ";");
-					if (tokenizer.hasMoreElements()) {
-						contact.setStreet(tokenizer.nextToken());
+					String[] result = value.split(";");
+
+					if (result.length > 2) {
+						contact.setStreet(result[2]);
 					}
-					if (tokenizer.hasMoreElements()) {
-						contact.setCity(tokenizer.nextToken());
+					if (result.length > 3) {
+						contact.setCity(result[3]);
 					}
-					if (tokenizer.hasMoreElements()) {
-						contact.setZip(tokenizer.nextToken());
+					if (result.length > 4) {
+						contact.setState(result[4]);
 					}
-					// if (tokenizer.hasMoreElements()) {
-					// state = tokenizer.nextToken();
-					// }
-					if (tokenizer.hasMoreElements()) {
-						contact.setCountry(tokenizer.nextToken());
+					if (result.length > 5) {
+						contact.setZip(result[5]);
+					}
+					if (result.length > 6) {
+						contact.setCountry(result[6]);
 					}
 					continue;
 				}
@@ -221,7 +236,8 @@ public class VCardContactsRepository implements IContactsRepository {
 					ByteArrayInputStream is = new ByteArrayInputStream(
 							imageBytes);
 					ImageData imageData = new ImageData(is);
-					contact.setImage(new Image(Display.getCurrent(), imageData));
+					contact
+							.setImage(new Image(Display.getCurrent(), imageData));
 					continue;
 				}
 			}

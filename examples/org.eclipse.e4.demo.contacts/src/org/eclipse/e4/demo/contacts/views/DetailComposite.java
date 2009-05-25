@@ -78,22 +78,42 @@ public class DetailComposite extends Composite {
 
 		createSeparator(composite, "General");
 		Text fullNameText = createText(composite, "Full Name:", null);
+
+		final IObservableValue titleObservableValue = PojoObservables
+				.observeDetailValue(contactValue, "title", String.class);
+		final IObservableValue firstNameObservableValue = PojoObservables
+				.observeDetailValue(contactValue, "firstName", String.class);
+		final IObservableValue middleNameObservableValue = PojoObservables
+				.observeDetailValue(contactValue, "middleName", String.class);
+		final IObservableValue lastNameObservableValue = PojoObservables
+				.observeDetailValue(contactValue, "lastName", String.class);
+
 		dbc.bindValue(SWTObservables.observeText(fullNameText, SWT.Modify),
 				new ComputedValue() {
 
 					@Override
 					protected Object calculate() {
-						Object firstName = PojoObservables.observeDetailValue(
-								contactValue, "firstName", String.class)
-								.getValue();
-						Object lastName = PojoObservables.observeDetailValue(
-								contactValue, "lastName", String.class)
-								.getValue();
-						if (firstName != null && lastName != null) {
-							return firstName + " " + lastName;
-						} else {
-							return "";
+						StringBuilder fullName = new StringBuilder();
+						if (checkEmptyString(titleObservableValue.getValue())) {
+							fullName.append(titleObservableValue.getValue());
+							fullName.append(" ");
 						}
+						if (checkEmptyString(firstNameObservableValue
+								.getValue())) {
+							fullName
+									.append(firstNameObservableValue.getValue());
+							fullName.append(" ");
+						}
+						if (checkEmptyString(middleNameObservableValue
+								.getValue())) {
+							fullName.append(middleNameObservableValue
+									.getValue());
+							fullName.append(" ");
+						}
+						if (checkEmptyString(lastNameObservableValue.getValue())) {
+							fullName.append(lastNameObservableValue.getValue());
+						}
+						return fullName.toString();
 					}
 				});
 
@@ -167,6 +187,14 @@ public class DetailComposite extends Composite {
 				.bindValue(SWTObservables.observeImage(imageLabel),
 						scaledImage, new UpdateValueStrategy(
 								UpdateValueStrategy.POLICY_NEVER), null);
+	}
+
+	public boolean checkEmptyString(Object testString) {
+		if (testString == null || !(testString instanceof String)
+				|| ((String) testString).trim().length() == 0) {
+			return false;
+		}
+		return true;
 	}
 
 	@Override

@@ -22,8 +22,15 @@ class ContactViewerComparator extends ViewerComparator {
 	public int compare(final Viewer viewer, final Object obj1, final Object obj2) {
 
 		if (obj1 instanceof Contact && obj2 instanceof Contact) {
-			return ((Contact) obj1).getLastName().compareTo(
-					((Contact) obj2).getLastName());
+			String lastName1 = ((Contact) obj1).getLastName();
+			String lastName2 = ((Contact) obj2).getLastName();
+			if (lastName1 == null) {
+				lastName1 = "";
+			}
+			if (lastName2 == null) {
+				lastName2 = "";
+			}
+			return lastName1.compareTo(lastName2);
 		} else {
 			throw new IllegalArgumentException("Can only compare two Contacts.");
 		}
