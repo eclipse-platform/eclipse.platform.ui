@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -306,8 +306,10 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 
 
 	/**
-	 * Returns whether this tab is dirty. It is up to clients to set/reset and consult
-	 * this attribute as required. By default, a tab is initialized to dirty.
+	 * Returns if this tab has pending changes that need to be saved.
+	 * 
+	 * It is up to clients to set/reset and consult this attribute as required. 
+	 * By default, a tab is initialized to dirty for backwards compatibility.
 	 * 
 	 * @return whether this tab is dirty
 	 * @since 2.1
@@ -317,10 +319,13 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	}
 
 	/**
-	 * Sets the dirty state of the tab. It is up to clients to set/reset and consult
-	 * this attribute as required. By default, a tab is initialized to dirty.
+	 * Sets the dirty state of the tab. Setting this flag allows clients to 
+	 * explicitly say whether this tab has pending changes or not.
 	 * 
-	 * @param dirty whether this tab is dirty
+	 * It is up to clients to set/reset and consult this attribute as required. 
+	 * By default, a tab is initialized to dirty for backwards compatibility.
+	 * 
+	 * @param dirty what to set the dirty flag to
 	 * @since 2.1
 	 */
 	protected void setDirty(boolean dirty) {
