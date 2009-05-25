@@ -163,10 +163,6 @@ public class DetailComposite extends Composite {
 
 		};
 
-		dbc.bindValue(scaledImage, PojoObservables.observeDetailValue(
-				contactValue, "image", Image.class), new UpdateValueStrategy(
-				UpdateValueStrategy.POLICY_NEVER), null);
-
 		dbc
 				.bindValue(SWTObservables.observeImage(imageLabel),
 						scaledImage, new UpdateValueStrategy(
