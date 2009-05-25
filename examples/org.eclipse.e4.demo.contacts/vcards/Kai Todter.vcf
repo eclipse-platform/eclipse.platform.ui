@@ -11,7 +11,7 @@ TEL;CELL;VOICE:+49 (173) 7068910
 ADR;WORK;PREF:;;Otto-Hahn-Ring 6;Munich;;81739;Germany
 LABEL;WORK;PREF;ENCODING=QUOTED-PRINTABLE:Otto-Hahn-Ring 6=0D=0A=
 =0D=0A=
-81739  Munich
+81739  Munich  state
 ADR;HOME:;;Isarweg 24;Ottobrunn;;85521;Germany
 LABEL;HOME;ENCODING=QUOTED-PRINTABLE:Isarweg 24=0D=0A=
 =0D=0A=
@@ -70,5 +70,5 @@ PHOTO;TYPE=JPEG;ENCODING=BASE64:
  HywDMp/2jyF/Acn8KK7HQrBU0Hzrk5keNrudhyTnnH8vyorojRja7djNzd7I/9k=
 
 X-MS-OL-DESIGN;CHARSET=utf-8:<card xmlns="http://schemas.microsoft.com/office/outlook/12/electronicbusinesscards" ver="1.0" layout="left" bgcolor="ffffff"><img xmlns="" align="tleft" area="32" use="photo"/><fld xmlns="" prop="name" align="left" dir="ltr" style="b" color="000000" size="10"/><fld xmlns="" prop="org" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="title" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="telwork" align="left" dir="ltr" color="000000" size="8"><label align="right" color="626262">Work</label></fld><fld xmlns="" prop="telcell" align="left" dir="ltr" color="000000" size="8"><label align="right" color="626262">Mobile</label></fld><fld xmlns="" prop="telhome" align="left" dir="ltr" color="000000" size="8"><label align="right" color="626262">Home</label></fld><fld xmlns="" prop="email" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="email2" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="addrwork" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="addrhome" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="webwork" align="left" dir="ltr" color="000000" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/><fld xmlns="" prop="blank" size="8"/></card>
-REV:20090519T082113Z
+REV:20090525T152731Z
 END:VCARD
