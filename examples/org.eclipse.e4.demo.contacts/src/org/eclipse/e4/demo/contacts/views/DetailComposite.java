@@ -125,13 +125,15 @@ public class DetailComposite extends Composite {
 		createVerticalSpace(composite);
 
 		// Bind the image
+		final IObservableValue imageObservableValue = PojoObservables
+				.observeDetailValue(contactValue, "image", Image.class);
+
 		this.scaledImage = new ComputedValue() {
 			private Image currentImage;
 
 			@Override
 			protected Object calculate() {
-				Image image = (Image) PojoObservables.observeDetailValue(
-						contactValue, "image", Image.class).getValue();
+				Image image = (Image) imageObservableValue.getValue();
 				if (image == null) {
 					return dummyPortrait;
 				}
