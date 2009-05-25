@@ -71,14 +71,14 @@ public class ListView implements IDisposable {
 		// First name column
 		final TableViewerColumn firstNameColumn = new TableViewerColumn(
 				contactsViewer, SWT.NONE);
-		firstNameColumn.getColumn().setText("First name");
+		firstNameColumn.getColumn().setText("First Name");
 		tableColumnLayout.setColumnData(firstNameColumn.getColumn(),
 				new ColumnWeightData(40));
 
 		// Last name column
 		final TableViewerColumn lastNameColumn = new TableViewerColumn(
 				contactsViewer, SWT.NONE);
-		lastNameColumn.getColumn().setText("Last name");
+		lastNameColumn.getColumn().setText("Last Name");
 		tableColumnLayout.setColumnData(lastNameColumn.getColumn(),
 				new ColumnWeightData(60));
 
