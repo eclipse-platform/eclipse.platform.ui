@@ -9,11 +9,15 @@ import org.eclipse.swt.widgets.Shell;
 public class WorkbenchWindowHandler implements IWorkbenchWindowHandler {
 
 	public void dispose(Object appWindow) {
-		((Shell)appWindow).dispose();
+		if (appWindow != null) {
+			((Shell) appWindow).dispose();
+		}
 	}
 
 	public void open(Object appWindow) {
-		((Shell)appWindow).open();
+		if (appWindow != null) {
+			((Shell) appWindow).open();
+		}
 	}
 
 	public void setBounds(Object appWindow, int x, int y, int width, int height) {
@@ -24,17 +28,19 @@ public class WorkbenchWindowHandler implements IWorkbenchWindowHandler {
 		if (y == 0 && SWT.getPlatform().equals("carbon")) { //$NON-NLS-1$
 			y = 20;
 		}
-		((Shell)appWindow).setBounds(x, y, width, height);
+		((Shell) appWindow).setBounds(x, y, width, height);
 	}
 
 	public void layout(Object appWindow) {
-		((Composite) appWindow).layout(true);
+		if (appWindow != null) {
+			((Composite) appWindow).layout(true);
+		}
 	}
 
 	public void runEvenLoop(Object appWindow) {
 		Shell window = (Shell) appWindow;
 		Display display = window.getDisplay();
-		
+
 		while (appWindow != null && !window.isDisposed()) {
 			try {
 				if (!display.readAndDispatch()) {
@@ -44,13 +50,14 @@ public class WorkbenchWindowHandler implements IWorkbenchWindowHandler {
 				e.printStackTrace();
 			}
 		}
-		
+
 		display.update();
 	}
 
 	public void close(Object widget) {
-		// needs proper closing protocol
-		 ((Shell) widget).close();
+		if (widget != null) {
+			((Shell) widget).close();
+		}
 	}
 
 }

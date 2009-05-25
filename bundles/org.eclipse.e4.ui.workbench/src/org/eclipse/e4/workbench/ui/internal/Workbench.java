@@ -78,7 +78,6 @@ public class Workbench implements IWorkbench {
 	private static final boolean saveAndRestore = true;
 	private File workbenchData;
 	private IWorkbenchWindowHandler windowHandler;
-	private Object appWindow;
 	private final IExtensionRegistry registry;
 	private ResourceSetImpl resourceSet;
 
@@ -283,7 +282,10 @@ public class Workbench implements IWorkbench {
 		MApplication<MWindow> app = (MApplication<MWindow>) resource
 				.getContents().get(0);
 
-		processPartContributions(resource, app.getWindows().get(0));
+		final EList<MWindow> windows = app.getWindows();
+		for (MWindow window : windows) {
+			processPartContributions(resource, window);
+		}
 
 		return app;
 	}
@@ -412,24 +414,12 @@ public class Workbench implements IWorkbench {
 	}
 
 	public int run() {
-		MWindow wbw = workbench.getWindows().get(0);
-		createGUI(wbw);
+		final EList<? extends MWindow> windows = workbench.getWindows();
+		for (MWindow wbw : windows) {
+			createGUI(wbw);
+		}
 
-		rv = 0;
-		// TODO get access to IApplicationContext to call applicationRunning()
-		// Platform.endSplash();
-
-		// A position of 0 is not possible on OS-X because then the title-bar is
-		// hidden
-		// below the MMenu-Bar
-		windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw
-				.getWidth(), wbw.getHeight());
-		windowHandler.layout(appWindow);
-
-		windowHandler.open(appWindow);
-		initializeHandlers();
-
-		windowHandler.runEvenLoop(appWindow);
+		windowHandler.runEvenLoop(workbench.getWindows().get(0).getWidget());
 
 		if (workbenchData != null && saveAndRestore && workbench != null) {
 			try {
@@ -448,13 +438,6 @@ public class Workbench implements IWorkbench {
 		}
 
 		return rv;
-	}
-
-	private void initializeHandlers() {
-		EList<? extends MWindow> windows = workbench.getWindows();
-		for (MWindow<MPart<?>> window : windows) {
-			processHandlers(window);
-		}
 	}
 
 	private void processHandlers(MPart<MPart<?>> part) {
@@ -526,7 +509,7 @@ public class Workbench implements IWorkbench {
 		}
 	}
 
-	private void createGUI(MWindow wbw) {
+	public void createGUI(MWindow wbw) {
 		if (renderer == null) {
 			renderer = new PartRenderer(contributionFactory, workbenchContext);
 			initializeRenderer(registry, renderer, workbenchContext,
@@ -535,12 +518,30 @@ public class Workbench implements IWorkbench {
 		}
 
 		renderer.createGui(wbw);
-		appWindow = wbw.getWidget();
+		Object appWindow = wbw.getWidget();
+
+		rv = 0;
+		// TODO get access to IApplicationContext to call
+		// applicationRunning()
+		// Platform.endSplash();
+
+		// A position of 0 is not possible on OS-X because then the
+		// title-bar is
+		// hidden
+		// below the MMenu-Bar
+		windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw
+				.getWidth(), wbw.getHeight());
+		windowHandler.layout(appWindow);
+
+		windowHandler.open(appWindow);
+		processHandlers(wbw);
 	}
 
 	public void close() {
-		if (appWindow != null)
-			windowHandler.dispose(appWindow);
+		final EList<? extends MWindow> windows = workbench.getWindows();
+		for (MWindow window : windows) {
+			windowHandler.dispose(window.getWidget());
+		}
 	}
 
 	// public Display getDisplay() {
@@ -552,6 +553,6 @@ public class Workbench implements IWorkbench {
 	}
 
 	public Object getWindow() {
-		return appWindow;
+		return workbench.getWindows().get(0).getWidget();
 	}
 }
