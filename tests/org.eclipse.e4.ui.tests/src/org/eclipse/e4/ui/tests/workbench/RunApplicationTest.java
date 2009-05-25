@@ -167,7 +167,7 @@ public class RunApplicationTest extends TestCase {
 											new WorkbenchWindowHandler());
 									workbench
 											.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
-
+									workbench.createUIFromModel();
 									workbench.run();
 								} catch (ThreadDeath th) {
 									throw th;

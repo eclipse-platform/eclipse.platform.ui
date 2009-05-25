@@ -86,6 +86,7 @@ public class WorkbenchApplication implements IApplication {
 							.getBundleAdmin(), appContext,
 							new WorkbenchWindowHandler());
 					wb.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
+					wb.createUIFromModel();
 					wb.run();
 				} catch (ThreadDeath th) {
 					throw th;

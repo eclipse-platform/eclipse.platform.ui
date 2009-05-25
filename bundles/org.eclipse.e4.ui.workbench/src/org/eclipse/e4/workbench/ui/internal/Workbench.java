@@ -413,12 +413,17 @@ public class Workbench implements IWorkbench {
 		});
 	}
 
-	public int run() {
+	/**
+	 * Should be called prior to running the e4 workench.
+	 */
+	public void createUIFromModel() {
 		final EList<? extends MWindow> windows = workbench.getWindows();
 		for (MWindow wbw : windows) {
 			createGUI(wbw);
 		}
+	}
 
+	public int run() {
 		windowHandler.runEvenLoop(workbench.getWindows().get(0).getWidget());
 
 		if (workbenchData != null && saveAndRestore && workbench != null) {
