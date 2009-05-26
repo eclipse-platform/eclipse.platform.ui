@@ -158,12 +158,10 @@ public class DetailComposite extends Composite {
 					return dummyPortrait;
 				}
 				ImageData imageData = image.getImageData();
-				double ratio = imageData.height / 99.0;
+				double ratio = imageData.width / 80.0;
 				int width = (int) (imageData.width / ratio);
-				if (width > 80) {
-					width = 80;
-				}
-				ImageData scaledImageData = imageData.scaledTo(width, 99);
+				int height = (int) (imageData.height / ratio);
+				ImageData scaledImageData = imageData.scaledTo(width, height);
 				if (currentImage != null) {
 					currentImage.dispose();
 					currentImage = null;
