@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.examples.css.editor;
 
@@ -23,9 +24,11 @@ import java.util.Date;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
+import org.eclipse.e4.ui.css.core.exceptions.DOMExceptionImpl;
 import org.eclipse.e4.ui.css.core.serializers.CSSHTMLSerializerConfiguration;
 import org.eclipse.e4.ui.css.core.serializers.CSSSerializer;
 import org.eclipse.e4.ui.css.core.serializers.CSSSerializerConfiguration;
+import org.w3c.dom.DOMException;
 
 /**
  * Abstract CSS Editor.
@@ -219,9 +222,27 @@ public abstract class AbstractCSSEditor {
 	 * @param e
 	 */
 	protected void handleExceptions(Exception e) {
+		//Don't bother reporting property errors since you get them on every keystroke
+		//but the last when typing a property name
+		if(isPropertyValueError(e))
+			return;
 		e.printStackTrace();
 	}
 
+	/**
+	 * Return true if @e is a property value exception.
+	 * These will happen as the user types, so ignore them since
+	 * they often represent a word the user hasn't finished yet.
+	 * @param e the exception to be tested
+	 * @return true if @e is a property value exception
+	 */
+	protected boolean isPropertyValueError(Exception e) {
+		if(! (e instanceof DOMExceptionImpl))
+			return false;
+		DOMExceptionImpl domE = (DOMExceptionImpl) e;
+		return domE.code == DOMException.INVALID_ACCESS_ERR;
+	}
+	
 	protected File getBaseStyleDir() {
 		if (isHTMLSelector())
 			return new File(getBaseStyleDirName() + "/html");
