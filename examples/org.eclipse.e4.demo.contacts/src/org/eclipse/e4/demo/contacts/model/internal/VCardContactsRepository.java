@@ -102,6 +102,16 @@ public class VCardContactsRepository implements IContactsRepository {
 		}
 	}
 
+	/**
+	 * Reads a Contact from a VCard. This method cannot parse a generic VCard,
+	 * but can only parse VCards created with Microsoft Outlook. The intention
+	 * is not to provide a generic VCard reader but an easy way to get contact
+	 * data (including pictures) in the repository.
+	 * 
+	 * @param fileName
+	 *            the vcard file
+	 * @return the created Contact
+	 */
 	public Contact readFromVCard(String fileName) {
 		Contact contact = new Contact();
 		BufferedReader bufferedReader = null;
