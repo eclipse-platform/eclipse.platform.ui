@@ -153,19 +153,21 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 						}
 					}
 				}
-				StringBuffer buffer = new StringBuffer();
 				VirtualElement[] children = modelRoot.getChildren();
-				for (int i = 0; i < children.length; i++) {
-					if (children[i] != null) {
-						copy(children[i], buffer, 0);
+				if (children != null) {
+					StringBuffer buffer = new StringBuffer();
+					for (int i = 0; i < children.length; i++) {
+						if (children[i] != null) {
+							copy(children[i], buffer, 0);
+						}
 					}
-				}
-				TextTransfer plainTextTransfer = TextTransfer.getInstance();
-				Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
-				try {
-					doCopy(clipboard, plainTextTransfer, buffer);
-				} finally {
-					clipboard.dispose();
+					TextTransfer plainTextTransfer = TextTransfer.getInstance();
+					Clipboard clipboard= new Clipboard(fViewer.getControl().getDisplay());		
+					try {
+						doCopy(clipboard, plainTextTransfer, buffer);
+					} finally {
+						clipboard.dispose();
+					}
 				}
 			}
 			
