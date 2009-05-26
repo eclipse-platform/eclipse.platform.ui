@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,9 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.ui.internal.editors.text;
-
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +43,6 @@ import org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage.Enumerat
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
-import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
 
 /**
  * The preference page for setting the editor options.
@@ -55,6 +52,17 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  * @since 2.1
  */
 public class AccessibilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
+
+	// FIXME: remove in 3.6, see https://bugs.eclipse.org/277864
+	private static final String PREFIX= "org.eclipse.ui."; //$NON-NLS-1$
+
+	// FIXME: in 3.6 move to ITextEditorHelpContextIds, see https://bugs.eclipse.org/277864
+	/**
+	 * Id for the text editor preference page. Value:
+	 * <code>"org.eclipse.ui.text_editor_preference_page_context"</code>.
+	 */
+	private static final String ACCESSIBILITY_PREFERENCE_PAGE= PREFIX + "accessibility_preference_page_context"; //$NON-NLS-1$
+
 
 	private abstract class Initializer {
 
@@ -380,7 +388,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.TEXT_EDITOR_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ACCESSIBILITY_PREFERENCE_PAGE);
 	}
 
 	private Control createAppearancePage(Composite parent) {
