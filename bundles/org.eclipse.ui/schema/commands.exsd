@@ -804,9 +804,7 @@ This element has been replaced with a preference.  If your application needs to 
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         &lt;p&gt;
 2.1
-&lt;/p&gt;
       </documentation>
    </annotation>
 

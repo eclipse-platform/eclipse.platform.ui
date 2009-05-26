@@ -103,7 +103,7 @@ An accelerator set declares what scope it is applicable for by listing the scope
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         Release 2.0
+         2.0
       </documentation>
    </annotation>
 

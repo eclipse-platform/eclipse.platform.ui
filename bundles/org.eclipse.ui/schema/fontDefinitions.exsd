@@ -115,7 +115,7 @@ Only one or neither of value or defaultsTo may be used.
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         Release 2.1
+         2.1
       </documentation>
    </annotation>
 

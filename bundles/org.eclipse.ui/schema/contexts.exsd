@@ -96,9 +96,7 @@ The &lt;code&gt;org.eclipse.ui.contexts&lt;/code&gt; extension point is used to 
          <meta.section type="since"/>
       </appinfo>
       <documentation>
-         &lt;p&gt;
 3.0
-&lt;/p&gt;
       </documentation>
    </annotation>
 

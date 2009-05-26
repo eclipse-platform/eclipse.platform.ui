@@ -3,7 +3,7 @@
 <schema targetNamespace="org.eclipse.ui">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.ui" id="helpSupport" name="HelpSupport"/>
+         <meta.schema plugin="org.eclipse.ui" id="helpSupport" name="Help Support"/>
       </appInfo>
       <documentation>
          This extension point is for contributing the help system UI. The platform should be configured with no more than one help system UI.
