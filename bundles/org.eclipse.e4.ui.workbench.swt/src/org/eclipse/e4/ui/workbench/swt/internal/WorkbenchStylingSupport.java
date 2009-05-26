@@ -28,14 +28,16 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class WorkbenchStylingSupport {
 
-	static void initializeStyling(Display display, String cssURI, IEclipseContext appContext) {
+	public static void initializeStyling(Display display, String cssURI,
+			IEclipseContext appContext) {
 		// Instantiate SWT CSS Engine
 		try {
 			Class engineClass = Class
 					.forName("org.eclipse.e4.ui.css.nebula.engine.CSSNebulaEngineImpl"); //$NON-NLS-1$
-			Constructor ctor = engineClass.getConstructor(new Class[] { Display.class,
-					Boolean.TYPE });
-			final Object engine = ctor.newInstance(new Object[] { display, Boolean.TRUE });
+			Constructor ctor = engineClass.getConstructor(new Class[] {
+					Display.class, Boolean.TYPE });
+			final Object engine = ctor.newInstance(new Object[] { display,
+					Boolean.TRUE });
 			display.setData("org.eclipse.e4.ui.css.core.engine", engine); //$NON-NLS-1$
 
 			Class errorHandlerClass = Class
@@ -61,18 +63,23 @@ public class WorkbenchStylingSupport {
 			appContext.set(IStylingEngine.class.getName(),
 					new IStylingEngine() {
 						public void setClassname(Object widget, String classname) {
-							((Widget)widget).setData("org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+							((Widget) widget)
+									.setData(
+											"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
 							try {
-								applyStyles.invoke(engine, new Object[]{widget, Boolean.TRUE});
+								applyStyles.invoke(engine, new Object[] {
+										widget, Boolean.TRUE });
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
 
 						public void setId(Object widget, String id) {
-							((Widget)widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+							((Widget) widget).setData(
+									"org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
 							try {
-								applyStyles.invoke(engine, new Object[]{widget, Boolean.TRUE});
+								applyStyles.invoke(engine, new Object[] {
+										widget, Boolean.TRUE });
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -80,25 +87,26 @@ public class WorkbenchStylingSupport {
 					});
 
 		} catch (Throwable e) {
-			System.err.println("Warning - could not initialize CSS styling (but the applicationCSS property has a value) : " + e.toString()); //$NON-NLS-1$
+			System.err
+					.println("Warning - could not initialize CSS styling (but the applicationCSS property has a value) : " + e.toString()); //$NON-NLS-1$
 			initializeNullStyling(appContext);
 		}
 	}
 
 	/**
-	 * For use when there is no real styling engine present.
-	 * Has no behaviour but conforms to IStylingEngine API.
+	 * For use when there is no real styling engine present. Has no behaviour
+	 * but conforms to IStylingEngine API.
+	 * 
 	 * @param appContext
 	 */
 	public static void initializeNullStyling(IEclipseContext appContext) {
-		appContext.set(IStylingEngine.class.getName(),
-				new IStylingEngine() {
-					public void setClassname(Object widget, String classname) {
-					}
+		appContext.set(IStylingEngine.class.getName(), new IStylingEngine() {
+			public void setClassname(Object widget, String classname) {
+			}
 
-					public void setId(Object widget, String id) {
-					}
-				});		
+			public void setId(Object widget, String id) {
+			}
+		});
 	}
 
 }
