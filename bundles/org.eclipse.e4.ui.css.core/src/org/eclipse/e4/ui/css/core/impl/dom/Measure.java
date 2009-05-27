@@ -81,7 +81,7 @@ public class Measure extends CSSValueImpl {
 			return CSS_CUSTOM;  //TODO don't think this is right, see bug #278139
 		}
 		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
+		throw new UnsupportedOperationException("NOT YET IMPLEMENTED - LexicalUnit type: " + value.getLexicalUnitType());
 	}
 	
 	/*
