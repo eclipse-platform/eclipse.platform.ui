@@ -77,6 +77,8 @@ public class Measure extends CSSValueImpl {
 			return CSS_URI;
 		case LexicalUnit.SAC_PERCENTAGE:
 			return CSS_PERCENTAGE;
+		case LexicalUnit.SAC_OPERATOR_COMMA:
+			return CSS_CUSTOM;  //TODO don't think this is right
 		}
 		// TODO Auto-generated method stub
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");

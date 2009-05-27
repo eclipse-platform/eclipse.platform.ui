@@ -30,5 +30,6 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(ShellTest.class);
 		addTestSuite(ButtonTest.class);
 		addTestSuite(ShellActiveTest.class);
+		addTestSuite(GradientTest.class);
 	}
 }

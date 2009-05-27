@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties;
 
@@ -17,6 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
@@ -77,8 +79,7 @@ public class GradientBackgroundListener implements Listener {
 			colors.add(color);
 
 		}
-		fillGradient(gc, new Rectangle(0, 0, size.x, size.y), colors, grad
-				.getPercents(), true);
+		fillGradient(gc, new Rectangle(0, 0, size.x, size.y), colors, CSSSWTColorHelper.getPercents(grad), true);
 		gc.dispose();
 		for (Iterator iterator = colors.iterator(); iterator.hasNext();) {
 			Color c = (Color) iterator.next();
@@ -98,7 +99,7 @@ public class GradientBackgroundListener implements Listener {
 	 * @param gradientVertical
 	 */
 	private static void fillGradient(GC gc, Rectangle rect,
-			List gradientColors, List gradientPercents, boolean gradientVertical) {
+			List gradientColors, int[] gradientPercents, boolean gradientVertical) {
 		Color background = (Color) gradientColors
 				.get(gradientColors.size() - 1);
 		if (gradientColors.size() == 1) {
@@ -109,14 +110,14 @@ public class GradientBackgroundListener implements Listener {
 			Color lastColor = (Color) gradientColors.get(0);
 			int pos = (gradientVertical) ? rect.y : rect.x;
 			int loopCount = Math.min(gradientColors.size() - 1,
-					gradientPercents.size());
+					gradientPercents.length);
 			for (int i = 0; i < loopCount; ++i) {
 				gc.setForeground(lastColor);
 				lastColor = (Color) gradientColors.get(i + 1);
 				if (lastColor == null)
 					lastColor = background;
 				gc.setBackground(lastColor);
-				int grpercent = ((Integer) gradientPercents.get(i)).intValue();
+				int grpercent = ((Integer) gradientPercents[i]).intValue();
 				if (gradientVertical) {
 					final int gradientHeight = (grpercent * rect.height / 100)
 							- (pos - rect.y);

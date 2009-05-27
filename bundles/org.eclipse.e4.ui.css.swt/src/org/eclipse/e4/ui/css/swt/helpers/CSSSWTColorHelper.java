@@ -92,10 +92,14 @@ public class CSSSWTColorHelper {
 		Gradient gradient = new Gradient();
 		for (int i = 0; i < list.getLength(); i++) {
 			CSSValue value = list.item(i);
-			if (value.getCssText().equals("gradient"))
-				continue;
 			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-				switch (((CSSPrimitiveValue) value).getPrimitiveType()) {
+				short primType = ((CSSPrimitiveValue) value).getPrimitiveType();
+
+				//Skip the keyword "gradient"
+				if(primType == CSSPrimitiveValue.CSS_IDENT && value.getCssText().equals("gradient"))
+					continue;
+				
+				switch (primType) {
 				case CSSPrimitiveValue.CSS_IDENT:
 				case CSSPrimitiveValue.CSS_STRING:
 				case CSSPrimitiveValue.CSS_RGBCOLOR:
@@ -123,28 +127,48 @@ public class CSSSWTColorHelper {
 	}
 			
 	public static int[] getPercents(Gradient grad) {
-		//If exactly one more color than percent, just return the percents
-		if(grad.getPercents().size() == grad.getRGBs().size() + 1) {
+		//There should be exactly one more RGBs. than percent,
+		//in which case just return the percents as array
+		if(grad.getRGBs().size() == grad.getPercents().size() + 1) {
 			int[] percents = new int[grad.getPercents().size()];
 			for (int i = 0; i < percents.length; i++) {
-				percents[i] = ((Integer) grad.getPercents().get(i)).intValue();
+				int value = ((Integer) grad.getPercents().get(i)).intValue();
+				if(value < 0 || value > 100) {
+					//TODO this should be an exception because bad source format
+					return getDefaultPercents(grad);
+				}
+				percents[i] = value;
 			}
 			return percents;
-		}	
+		} else {
+			//We can get here if either:
+			//  A: the percents are empty (legal) or
+			//  B: size mismatches (error)
+			//  TODO this should be an exception because bad source format
+
+			return getDefaultPercents(grad);
+		}
+	}
 		
-		//If no percents, then compute as mid values based on number of colors
-		if(grad.getPercents().isEmpty()) {
-			int[] percents = new int[grad.getRGBs().size() - 1];
-			int increment = 100 / grad.getRGBs().size();
-			for (int i = 0; i < percents.length; i++) {
-				percents[i] = (i + 1) * increment;
-			}
-			return percents;			
+	/*
+	 * Compute and return a default array of percentages based on number of colors
+	 *   o If two colors, {100}
+	 *   o if three colors, {50, 100}
+	 *   o if four colors, {33, 67, 100}
+	 */
+	private static int[] getDefaultPercents(Gradient grad) {
+		//Needed to avoid /0 in increment calc
+		if(grad.getRGBs().size() == 1) {
+			return new int[0];
 		}
 		
-		//mismatch between colors and percents
-		//TODO this should be an exception because bad source format
-		return new int[0];
+		int[] percents = new int[grad.getRGBs().size() - 1];
+		float increment = 100f / (grad.getRGBs().size() - 1); 
+		
+		for (int i = 0; i < percents.length; i++) {
+			percents[i] = Math.round((i + 1) * increment);
+		}
+		return percents;			
 	}
 
 	public static RGBColor getRGBColor(Color color) {
