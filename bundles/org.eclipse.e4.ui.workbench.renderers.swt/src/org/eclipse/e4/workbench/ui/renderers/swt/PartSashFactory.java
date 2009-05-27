@@ -64,7 +64,7 @@ public class PartSashFactory extends SWTPartFactory {
 			// If it's not already initialized the set them all ==
 			if (weightList.size() != kids.size()) {
 				for (int i = weightList.size(); i < kids.size(); i++) {
-					weightList.add(new Integer(100 + i));
+					weightList.add(new Integer(100));
 				}
 			}
 
