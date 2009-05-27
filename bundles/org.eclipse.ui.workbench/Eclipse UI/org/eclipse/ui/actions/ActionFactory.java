@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
+
 import org.eclipse.jface.action.IAction;
-import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -954,7 +957,6 @@ public abstract class ActionFactory {
             }
             IWorkbenchAction action = new OpenPreferencesAction(window);
             action.setId(getId());
-			action.setActionDefinitionId(getCommandId());
             return action;
         }
     };
