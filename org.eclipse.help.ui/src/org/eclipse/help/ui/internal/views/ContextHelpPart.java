@@ -26,6 +26,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
+import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.help.ui.internal.ExecuteCommandAction;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
@@ -41,6 +42,7 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
@@ -68,11 +70,12 @@ import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.Section;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 
 public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private ReusableHelpPart parent;
 
-	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$	
+	private static final String HELP_KEY = "org.eclipse.ui.help"; //$NON-NLS-1$
 	
 	private static final String MORE_HREF = "__more__"; //$NON-NLS-1$
 
@@ -276,7 +279,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			updateSearchExpression(null, lastControl);
 	}
 
-	public void handleActivation(IContextProvider provider, IContext context, 
+	public void handleActivation(IContextProvider provider, IContext context,
 			Control c,
 			IWorkbenchPart part, boolean isExplicitRequest) {
 		if (text.isDisposed())
@@ -291,12 +294,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		lastProvider = provider;
 		lastContext = context;
 		lastPart = part;
-		if (provider!=null) {
-			// A provider will take precedence over a passed in context
-		    IContext providerContext = provider.getContext(c);
-		    if (providerContext != null) {
-			    lastContext = providerContext;
-		    }
+		if (provider!= null && (context==null || ((context instanceof Context) && IWorkbenchHelpContextIds.MISSING.equals(((Context)context).getId())))) {
+			lastContext = provider.getContext(c);
 		}
 		updateSearchExpression();
 
@@ -324,7 +323,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		if (isExplicitRequest) {
 			lastUpdate = System.currentTimeMillis();
 			return false;
-		} 
+		}
 		if (lastUpdate == 0) {
 			return false;
 		}
@@ -337,7 +336,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		String title = null;
 		if (lastContext != null && lastContext instanceof IContext2) {
 			IContext2 c2 = (IContext2)lastContext;
-			title = c2.getTitle(); 
+			title = c2.getTitle();
 		}
 		if (title==null && lastPart != null)
 			title = NLS.bind(Messages.ContextHelpPart_aboutP, lastPart
@@ -356,7 +355,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	private void updateText(String helpText) {
 		try {
 			text.setText(helpText != null ? helpText : defaultText,
-					helpText != null, 
+					helpText != null,
 					false);
 			getSection().layout();
 			getManagedForm().reflow(true);
@@ -389,7 +388,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		String[] searchTerms = computeSearchTerms(c);
 		
 		StringBuffer buff = new StringBuffer();
-		for (int i = 0; i < searchTerms.length; i++) {	
+		for (int i = 0; i < searchTerms.length; i++) {
 			if (buff.length() > 0)
 				buff.append(" OR "); //$NON-NLS-1$
 			buff.append('"');
@@ -540,7 +539,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 					sbuf.append("\" indent=\"21\">"); //$NON-NLS-1$
 					sbuf.append("<a href=\"command://"); //$NON-NLS-1$
 					sbuf.append(commands[i].getSerialization());
-					sbuf.append("\">"); //$NON-NLS-1$	 		
+					sbuf.append("\">"); //$NON-NLS-1$
 					sbuf.append(EscapeUtils.escapeSpecialChars(commands[i].getLabel()));
 					sbuf.append("</a>"); //$NON-NLS-1$
 					sbuf.append("</li>"); //$NON-NLS-1$
@@ -577,7 +576,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 						sbuf.append("\" alt=\""); //$NON-NLS-1$
 						sbuf.append(EscapeUtils.escapeSpecialChars(tcat));
 					}
-					sbuf.append("\">"); //$NON-NLS-1$	 		
+					sbuf.append("\">"); //$NON-NLS-1$
 					sbuf.append(EscapeUtils.escapeSpecialChars(link.getLabel()));
 					sbuf.append("</a>"); //$NON-NLS-1$
 					sbuf.append("</li>"); //$NON-NLS-1$
@@ -601,7 +600,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			sbuf.append(MORE_HREF);
 			sbuf.append("\">"); //$NON-NLS-1$
 			String searchForMessage = NLS.bind(Messages.ContextHelpPart_searchFor, phrase);
-			sbuf.append(EscapeUtils.escapeSpecialChars(searchForMessage)); 
+			sbuf.append(EscapeUtils.escapeSpecialChars(searchForMessage));
 			sbuf.append("</a></p>"); //$NON-NLS-1$
 		}
 		sbuf.append("</form>"); //$NON-NLS-1$
@@ -651,7 +650,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 		String decodedString = styledText.replaceAll("<@#\\$b>", "<b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = decodedString.replaceAll("</@#\\$b>", "</b>"); //$NON-NLS-1$ //$NON-NLS-2$
 		decodedString = EscapeUtils.escapeSpecialCharsLeavinggBold(decodedString);
-		decodedString = decodedString.replaceAll("\r\n|\n|\r", "<br/>");  //$NON-NLS-1$ //$NON-NLS-2$		
+		decodedString = decodedString.replaceAll("\r\n|\n|\r", "<br/>");  //$NON-NLS-1$ //$NON-NLS-2$
 		return decodedString;
 	}
 
