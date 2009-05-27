@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MSashFormImpl.java,v 1.1 2009/02/03 14:25:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -22,6 +22,7 @@ import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
@@ -74,7 +75,7 @@ public class MSashFormImpl<P extends MPart<?>> extends MPartImpl<P> implements M
 	 */
 	public EList<Integer> getWeights() {
 		if (weights == null) {
-			weights = new EDataTypeUniqueEList<Integer>(Integer.class, this, ApplicationPackage.MSASH_FORM__WEIGHTS);
+			weights = new EDataTypeEList<Integer>(Integer.class, this, ApplicationPackage.MSASH_FORM__WEIGHTS);
 		}
 		return weights;
 	}

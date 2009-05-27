@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.9 2009/04/13 19:47:35 emoffatt Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.10 2009/05/25 14:29:18 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -1067,7 +1067,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEClass(mStackEClass, MStack.class, "MStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(mSashFormEClass, MSashForm.class, "MSashForm", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getMSashForm_Weights(), ecorePackage.getEInt(), "weights", null, 0, -1, MSashForm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMSashForm_Weights(), ecorePackage.getEInt(), "weights", null, 0, -1, MSashForm.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mContributedPartEClass, MContributedPart.class, "MContributedPart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

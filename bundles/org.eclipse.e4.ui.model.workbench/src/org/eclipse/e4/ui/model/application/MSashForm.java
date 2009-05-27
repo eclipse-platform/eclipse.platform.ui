@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MSashForm.java,v 1.1 2009/02/03 14:25:34 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -42,7 +42,7 @@ public interface MSashForm<P extends MPart<?>> extends MPart<P> {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Weights</em>' attribute list.
 	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMSashForm_Weights()
-	 * @model
+	 * @model unique="false"
 	 * @generated
 	 */
 	EList<Integer> getWeights();
