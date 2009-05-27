@@ -72,8 +72,8 @@
         <eTypeArguments/>
       </eBounds>
     </eTypeParameters>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weights" upperBound="-1"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weights" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eGenericSuperTypes eClassifier="#//MPart">
       <eTypeArguments eTypeParameter="#//MSashForm/P"/>
     </eGenericSuperTypes>
