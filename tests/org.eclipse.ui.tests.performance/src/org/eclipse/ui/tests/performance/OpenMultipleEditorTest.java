@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
     }
     
     protected void runTest() throws Throwable {
-    	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=179578>See Bug 179578</a>");
+    	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=270797>See Bug 270797</a>");
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		IWorkbenchPage activePage = window.getActivePage();
         
