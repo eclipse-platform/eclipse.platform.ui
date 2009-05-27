@@ -31,10 +31,6 @@ import org.eclipse.swt.widgets.Display;
 /**
  * CSS SWT Engine implementation which configure CSSEngineImpl to apply styles
  * to SWT widgets.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 

@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation     
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.css2;
 
@@ -14,6 +15,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.AbstractCSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.GradientBackgroundListener;
 import org.eclipse.swt.custom.CTabFolder;
@@ -69,7 +71,14 @@ public class CSSPropertyBackgroundSWTHandler extends
 		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
 					control.getDisplay());
-			GradientBackgroundListener.handle(control, grad);
+			if (control instanceof CTabFolder && "selected".equals(pseudo)) {
+					((CTabFolder) control).setSelectionBackground(
+							CSSSWTColorHelper.getSWTColors(grad, control.getDisplay()),
+							CSSSWTColorHelper.getPercents(grad),
+							true);
+			} else {
+				GradientBackgroundListener.handle(control, grad);
+			}
 		}
 	}
 

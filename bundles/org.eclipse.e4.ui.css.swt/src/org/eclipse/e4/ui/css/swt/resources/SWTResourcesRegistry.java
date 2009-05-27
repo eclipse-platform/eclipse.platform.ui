@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.resources;
 
@@ -61,19 +62,22 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 	public void registerResource(Object type, Object key, Object resource) {
 		if (resource == null)
 			return;
+//		String hit = getResource(type, key) != null
+//			? " hit "
+//			: " ";
 		//TODO replace with eclipse logging
-//		if (logger.isDebugEnabled()) {
-//			if (resource instanceof Color) {
-//				logger.debug("Cache SWT Color key=" + key);
-//			} else if (resource instanceof Cursor) {
-//				logger.debug("Cache SWT Cursor key=" + key);
-//			} else if (resource instanceof Font) {
-//				logger.debug("Cache SWT Font key=" + key);
-//			} else if (resource instanceof Image) {
-//				logger.debug("Cache SWT Image key=" + key);
-//			} else
-//				logger.debug("Cache Resource key=" + key);
-//		}
+//		if (resource instanceof Color) {
+//			System.out.println("key class = " + key.getClass());
+//			System.out.println("Cache " + hit + "SWT Color key= " + key);
+//		} else if (resource instanceof Cursor) {
+//			System.out.println("Cache" + hit + "SWT Cursor key=" + key);
+//		} else if (resource instanceof Font) {
+//			System.out.println("Cache" + hit + "SWT Font key=" + key);
+//		} else if (resource instanceof Image) {
+//			System.out.println("Cache" + hit + "SWT Image key=" + key);
+//		} else
+//			System.out.println("Cache" + hit + "Resource key=" + key);
+			
 		super.registerResource(type, key, resource);
 	}
 

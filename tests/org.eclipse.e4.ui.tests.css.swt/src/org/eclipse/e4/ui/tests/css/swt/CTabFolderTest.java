@@ -9,10 +9,13 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.tests.css.swt;
 
+import java.lang.reflect.Field;
+
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
@@ -72,10 +75,11 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(BLUE, folderToTest.getForeground().getRGB());
 	}
 
-//	public void testGradientColor() throws Exception {
-//		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { background-color: #FF0000  #0000FF }");
-//		assertEquals(BLUE, folderToTest.getSelectionBackground());
-//	}
+	public void testGradientColor() throws Exception {
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder:selected { background-color: #FF0000 #0000FF}");
+		assertEquals(RED, getSelectionBackgroundBegin(folderToTest).getRGB()); //gradient begin		
+		assertEquals(BLUE, folderToTest.getSelectionBackground().getRGB()); //gradient end
+	}
 
 	public void testSelectedPseudo() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder(
@@ -238,4 +242,23 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(null, engine.retrieveCSSProperty(shell, "unselected-close-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "unselected-image-visible", null));
 	}	
+	
+	private Color getSelectionBackgroundBegin(CTabFolder folder) {
+		//CTabFolder doesn't provide a getter for this so we need to dig via reflection
+		try {
+			Field field = folder.getClass().getDeclaredField("selectionGradientColors");
+			field.setAccessible(true);
+			return ((Color[]) field.get(folder))[0];
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchFieldException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
+	}
 }

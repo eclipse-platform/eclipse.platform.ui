@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
@@ -109,6 +110,41 @@ public class CSSSWTColorHelper {
 			}
 		}
 		return gradient;
+	}
+
+	public static Color[] getSWTColors(Gradient grad, Display display) {
+		//TODO watch out for leaking Colors, need to cache them in the resource registry
+		Color[] colors = new Color[grad.getRGBs().size()];
+		for (int i = 0; i < colors.length; i++) {
+			RGB rgb = (RGB) grad.getRGBs().get(i);
+			colors[i] = new Color(display, rgb.red, rgb.green, rgb.blue);
+		}
+		return colors;
+	}
+			
+	public static int[] getPercents(Gradient grad) {
+		//If exactly one more color than percent, just return the percents
+		if(grad.getPercents().size() == grad.getRGBs().size() + 1) {
+			int[] percents = new int[grad.getPercents().size()];
+			for (int i = 0; i < percents.length; i++) {
+				percents[i] = ((Integer) grad.getPercents().get(i)).intValue();
+			}
+			return percents;
+		}	
+		
+		//If no percents, then compute as mid values based on number of colors
+		if(grad.getPercents().isEmpty()) {
+			int[] percents = new int[grad.getRGBs().size() - 1];
+			int increment = 100 / grad.getRGBs().size();
+			for (int i = 0; i < percents.length; i++) {
+				percents[i] = (i + 1) * increment;
+			}
+			return percents;			
+		}
+		
+		//mismatch between colors and percents
+		//TODO this should be an exception because bad source format
+		return new int[0];
 	}
 
 	public static RGBColor getRGBColor(Color color) {
