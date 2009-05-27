@@ -165,6 +165,7 @@ public class RenderingTestCase extends TestCase {
 				// Capture the expected 'invariant' results
 				SWTResult expectedResults = createSWTResultTree(modelRoot);
 
+				Workbench.initializeContext(appContext, modelRoot);
 				Object o = renderer.createGui(modelRoot);
 				assertTrue("No widget rendered for: " + modelRoot.toString(),
 						o != null);

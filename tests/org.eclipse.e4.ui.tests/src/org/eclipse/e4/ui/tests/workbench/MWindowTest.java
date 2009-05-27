@@ -114,6 +114,7 @@ public class MWindowTest extends TestCase {
 
 					public void run() {
 						IEclipseContext context = getAppContext();
+						Workbench.initializeContext(context, window);
 						PartRenderer renderer = new PartRenderer(getCFactory(),
 								context);
 						Workbench.initializeRenderer(RegistryFactory
@@ -136,6 +137,7 @@ public class MWindowTest extends TestCase {
 				new Runnable() {
 					public void run() {
 						IEclipseContext context = getAppContext();
+						Workbench.initializeContext(context, window);
 						PartRenderer renderer = new PartRenderer(getCFactory(),
 								context);
 						Workbench.initializeRenderer(RegistryFactory
@@ -169,6 +171,7 @@ public class MWindowTest extends TestCase {
 				new Runnable() {
 					public void run() {
 						IEclipseContext context = getAppContext();
+						Workbench.initializeContext(context, window);
 						PartRenderer renderer = new PartRenderer(getCFactory(),
 								context);
 						Workbench.initializeRenderer(RegistryFactory

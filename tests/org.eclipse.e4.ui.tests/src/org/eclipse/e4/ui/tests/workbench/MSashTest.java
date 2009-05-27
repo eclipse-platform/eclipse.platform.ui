@@ -93,25 +93,27 @@ public class MSashTest extends RenderingTestCase {
 		// test the model
 		Integer sf1 = (Integer) sf.getWeights().get(0);
 		Integer sf2 = (Integer) sf.getWeights().get(1);
-		checkRatio("Model", sf1, sf2, baseRatio);
+		checkRatio("MSashForm", sf1, sf2, baseRatio);
 
 		// test the SashForm
 		SashForm sfw = (SashForm) sf.getWidget();
 		int[] sfwWghts = sfw.getWeights();
-		checkRatio("SashForm", sfwWghts[0], sfwWghts[1], baseRatio);
+		checkRatio("SWT SashForm", sfwWghts[0], sfwWghts[1], baseRatio);
 
 		// Test the controls (assume vertical for now)
 		Composite c1 = (Composite) sfw.getChildren()[0];
 		Composite c2 = (Composite) sfw.getChildren()[1];
-		checkRatio("Bounds", c1.getSize().y, c2.getSize().y, baseRatio);
+		checkRatio("Control Bounds", c1.getSize().y, c2.getSize().y, baseRatio);
 	}
 
-	private boolean checkRatio(String msg, int num, int div, double baseRatio) {
+	private void checkRatio(String label, int num, int div, double baseRatio) {
 		double ratio = (double) num / (double) div;
-		System.out
-				.println(msg + " Ratio: " + num + " / " + div + " = " + ratio);
+		System.out.println(label + " Ratio: " + num + " / " + div + " = "
+				+ ratio);
 
-		return true;
+		double TOLERANCE = 0.1;
+		boolean withinTolerance = Math.abs(ratio - baseRatio) < TOLERANCE;
+		assertTrue("Ratio mismatch on" + label + "weights", withinTolerance);
 	}
 
 	private MWindow<MPart<?>> createSashWithNViews(int n) {
