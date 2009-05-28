@@ -16,6 +16,7 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -325,7 +326,16 @@ public class StackModelFactory extends SWTPartFactory {
 						// that logic expects this
 						Control ctrl = item.getControl();
 						if (ctrl == null) {
-							renderer.createGui(selPart);
+							if (selPart instanceof MContribution) {
+								// if the MContribution has an object, that
+								// means
+								// we're in the middle of creating it
+								if (((MContribution) selPart).getObject() == null) {
+									renderer.createGui(selPart);
+								}
+							} else {
+								renderer.createGui(selPart);
+							}
 						}
 
 						ctf.setSelection(item);
