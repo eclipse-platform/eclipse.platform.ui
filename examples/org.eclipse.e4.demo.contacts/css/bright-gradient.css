@@ -22,61 +22,60 @@ Tree {
 }
 
 SashForm {
-	background-color: rgb(48, 48, 48);
+	background-color: white;
 }
 
 Composite Label {
-	color: white;
+	color: black;
 }
 
 Composite Composite {
-	background-color: #101010 #373737 60%;
+	background-color: #e8e8e8 #cccccc 60%;
 }
 
 DetailComposite {
-	background-color: #101010 #373737 60%;
+	background-color: #e8e8e8 #cccccc 60%;
 }
 
 Composite Text {
-	background-color: rgb(100, 100, 100);
-	color: white;
-	border: 5;
+	background-color: white;
+	color: black;
 }
 
 Label {
-	color: rgb(240, 240, 240);
+	color: black;
 }
 
 #SeparatorLabel {
-	color: #f08d00;
+	color: #964600;
 }
 
 Table,Text#output {
-	background-color: #202020 #373737 60%;
-	color: rgb(240, 240, 240);
+	background-color: #e8e8e8 #cccccc 60%;
+	color: black;
 	font: Verdana 8px;
 }
 
 ToolBar {
-	background-color: #777777 #373737 #202020 50% 50%;
+	background-color: #ffffff #cccccc #dddddd 50% 50%;
 	color: white;
 	font: Verdana 8px;
 }
 
 CTabFolder {
-	color: rgb(150, 150, 150);
+	color: black;
 	font: Verdana 8px;
 	simple: true;
 }
 
 CTabFolder:selected {
-	background-color: #4a4a4a #101010 60%;
+	background-color: #cccccc #e8e8e8 60%;
 	font-weight: normal;
 	font: Verdana 8px;
 }
 
 CTabFolder.active:selected {
-	background-color: #777777 #373737 #101010 50% 50%;
+	background-color: #ffffff #cccccc #dddddd 50% 50%;
 	color: #ff5500;
 	font: bold;
 }

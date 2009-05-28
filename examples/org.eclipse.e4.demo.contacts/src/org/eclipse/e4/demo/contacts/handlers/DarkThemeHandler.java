@@ -12,8 +12,11 @@
 
 package org.eclipse.e4.demo.contacts.handlers;
 
-public class ThemeHandler {
-	public void execute() {
-		System.out.println("ThemeHandler.execute(): Not implemented yet");
+import org.eclipse.e4.workbench.ui.IWorkbench;
+
+public class DarkThemeHandler {
+
+	public void execute(IWorkbench workbench) {
+		ThemeUtil.switchTheme(workbench, "dark-gradient.css");
 	}
 }

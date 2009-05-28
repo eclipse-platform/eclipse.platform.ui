@@ -9,7 +9,8 @@
       </items>
       <items xsi:type="application:MMenuItem" id="" name="Theme">
         <menu>
-          <items xsi:type="application:MMenuItem" id="" name="Theme" tooltip="Change the theme" command="//@command.1"/>
+          <items xsi:type="application:MMenuItem" id="" name="Dark Theme" tooltip="Change the theme to dark" command="//@command.1"/>
+          <items xsi:type="application:MMenuItem" id="" name="Bright Theme" tooltip="Change the theme to bight" command="//@command.2"/>
         </menu>
       </items>
     </menu>
@@ -30,8 +31,10 @@
       </children>
     </children>
     <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="//@command.0"/>
-    <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ThemeHandler" command="//@command.1"/>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler" command="//@command.1"/>
+    <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.BrightThemeHandler" command="//@command.2"/>
   </windows>
   <command id="contacts.exit" name="Exit"/>
-  <command id="contacts.theme" name="Theme"/>
+  <command id="contacts.darktheme" name="Dark Theme"/>
+  <command id="contacts.brighttheme" name="Bright Theme"/>
 </application:MApplication>
