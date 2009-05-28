@@ -7,7 +7,6 @@ Bundle-Activator: org.eclipse.e4.ui.examples.css.Activator
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.e4.ui.css.core,
- org.eclipse.e4.ui.css.jface,
  org.eclipse.e4.ui.css.swt,
  org.eclipse.swt,
  org.w3c.css.sac,
