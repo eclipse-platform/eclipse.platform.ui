@@ -53,7 +53,7 @@ public class ListView implements IDisposable {
 		// Table viewer
 		contactsViewer = new TableViewer(tableComposite, SWT.FULL_SELECTION);
 		contactsViewer.getTable().setHeaderVisible(true);
-		contactsViewer.getTable().setLinesVisible(true);
+		// contactsViewer.getTable().setLinesVisible(true);
 		contactsViewer.setComparator(new ContactViewerComparator());
 
 		contactsViewer

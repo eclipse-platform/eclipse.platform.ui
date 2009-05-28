@@ -32,7 +32,7 @@
          </property>
          <property
                name="applicationCSS"
-               value="platform:/plugin/org.eclipse.e4.demo.contacts/css/dark.css">
+               value="platform:/plugin/org.eclipse.e4.demo.contacts/css/dark-gradient.css">
          </property>
          <property
                name="startupForegroundColor"

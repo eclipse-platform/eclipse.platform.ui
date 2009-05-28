@@ -28,7 +28,6 @@ import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
@@ -40,7 +39,6 @@ import org.eclipse.swt.widgets.Text;
 
 public class DetailComposite extends Composite {
 
-	private final Color bgColor;
 	private Label imageLabel;
 
 	private Image dummyPortrait;
@@ -53,8 +51,10 @@ public class DetailComposite extends Composite {
 	public DetailComposite(final Composite parent, final int style,
 			final boolean isEnabled, final ModifyListener modifyListener,
 			final Contact contact) {
-
 		super(parent, style);
+
+		parent.getShell().setBackgroundMode(SWT.INHERIT_DEFAULT);
+
 		dbc = new DataBindingContext();
 
 		URL url = FileLocator.find(Platform
@@ -68,13 +68,9 @@ public class DetailComposite extends Composite {
 		final GridLayout layout = new GridLayout(1, false);
 		layout.verticalSpacing = 5;
 		setLayout(layout);
-		bgColor = Display.getCurrent().getSystemColor(
-				SWT.COLOR_TITLE_INACTIVE_BACKGROUND_GRADIENT);
-		setBackground(bgColor);
 
 		// General
 		final Composite composite = createComposite(this);
-		composite.setBackground(bgColor);
 
 		createSeparator(composite, "General");
 		Text fullNameText = createText(composite, "Full Name:", null);
@@ -155,10 +151,10 @@ public class DetailComposite extends Composite {
 			protected Object calculate() {
 				Image image = (Image) imageObservableValue.getValue();
 				if (image == null) {
-					return dummyPortrait;
+					image = dummyPortrait;
 				}
 				ImageData imageData = image.getImageData();
-				double ratio = imageData.width / 80.0;
+				double ratio = imageData.height / 75.0;
 				int width = (int) (imageData.width / ratio);
 				int height = (int) (imageData.height / ratio);
 				ImageData scaledImageData = imageData.scaledTo(width, height);
@@ -206,18 +202,21 @@ public class DetailComposite extends Composite {
 		generalGroup = text.equals("General");
 
 		final Label label = new Label(parent, SWT.NONE);
-		label.setBackground(bgColor);
 		label.setText(text + "     ");
 		label.setForeground(Display.getCurrent().getSystemColor(
 				SWT.COLOR_DARK_BLUE));
 		label.setData("org.eclipse.e4.ui.css.id", "SeparatorLabel");
-		final Label separator = new Label(parent, SWT.SEPARATOR
-				| SWT.HORIZONTAL);
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gridData.horizontalIndent = -100;
-		gridData.verticalIndent = 5;
-		gridData.horizontalSpan = 2;
-		separator.setLayoutData(gridData);
+		gridData.horizontalSpan = 3;
+		label.setLayoutData(gridData);
+
+		// final Label separator = new Label(parent, SWT.SEPARATOR
+		// | SWT.HORIZONTAL);
+		// GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		// gridData.horizontalIndent = -100;
+		// gridData.verticalIndent = 5;
+		// gridData.horizontalSpan = 2;
+		// separator.setLayoutData(gridData);
 	}
 
 	private void createVerticalSpace(Composite parent) {
@@ -225,7 +224,7 @@ public class DetailComposite extends Composite {
 
 		label2.setVisible(false);
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
-		gridData.horizontalSpan = 4;
+		gridData.horizontalSpan = 3;
 		label2.setLayoutData(gridData);
 	}
 
@@ -240,13 +239,14 @@ public class DetailComposite extends Composite {
 	private Text createText(final Composite parent, final String labelText,
 			final String property) {
 		final Label label = new Label(parent, SWT.NONE);
-		label.setText(labelText);
-		label.setBackground(bgColor);
+		label.setText(labelText + "   "); // the extra space is due to a bug in
+		// font formatting when using css
+		// styling
 		GridData gridData = new GridData(GridData.HORIZONTAL_ALIGN_FILL);
 		gridData.horizontalIndent = 20;
 		label.setLayoutData(gridData);
 
-		final Text text = new Text(parent, SWT.BORDER);
+		final Text text = new Text(parent, SWT.NONE);
 
 		GridData gridData2 = new GridData(GridData.FILL_HORIZONTAL);
 		gridData2.horizontalIndent = 0;
