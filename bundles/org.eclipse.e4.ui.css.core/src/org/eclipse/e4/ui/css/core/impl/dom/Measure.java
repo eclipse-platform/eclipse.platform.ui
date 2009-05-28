@@ -52,9 +52,10 @@ public class Measure extends CSSValueImpl {
 	 * @see org.w3c.dom.css.CSSPrimitiveValue#getStringValue()
 	 */
 	public String getStringValue() throws DOMException {
-		if((value.getLexicalUnitType() == LexicalUnit.SAC_IDENT)
-				|| (value.getLexicalUnitType() == LexicalUnit.SAC_STRING_VALUE)
-				|| (value.getLexicalUnitType() == LexicalUnit.SAC_URI))
+		short lexicalUnit = value.getLexicalUnitType();
+		if((lexicalUnit == LexicalUnit.SAC_IDENT)
+				|| (lexicalUnit == LexicalUnit.SAC_STRING_VALUE)
+				|| (lexicalUnit == LexicalUnit.SAC_URI))
 			return value.getStringValue();
 		// TODO There are more cases to catch of getLexicalUnitType()
 		throw new UnsupportedOperationException("NOT YET IMPLEMENTED");
@@ -68,8 +69,6 @@ public class Measure extends CSSValueImpl {
 		switch (value.getLexicalUnitType()) {
 		case LexicalUnit.SAC_IDENT:
 			return CSS_IDENT;
-		case LexicalUnit.SAC_PIXEL:
-			return CSS_PX;
 		case LexicalUnit.SAC_INTEGER:
 		case LexicalUnit.SAC_REAL:
 			return CSS_NUMBER;
@@ -77,6 +76,14 @@ public class Measure extends CSSValueImpl {
 			return CSS_URI;
 		case LexicalUnit.SAC_PERCENTAGE:
 			return CSS_PERCENTAGE;
+		case LexicalUnit.SAC_PIXEL:
+			return CSS_PX;
+		case LexicalUnit.SAC_CENTIMETER:
+			return CSS_CM;
+		case LexicalUnit.SAC_EM:
+			return CSS_EMS;
+		case LexicalUnit.SAC_INCH:
+			return CSS_IN;
 		case LexicalUnit.SAC_STRING_VALUE:
 			return CSS_STRING;
 		case LexicalUnit.SAC_OPERATOR_COMMA:
@@ -91,8 +98,18 @@ public class Measure extends CSSValueImpl {
 	 * @see org.w3c.dom.css.CSSValue#getCssText()
 	 */
 	public String getCssText() {
-		if(getPrimitiveType() == CSS_NUMBER)
+		switch (value.getLexicalUnitType()) {
+		case LexicalUnit.SAC_INTEGER:
 			return String.valueOf(value.getIntegerValue());
+		case LexicalUnit.SAC_REAL:
+			return String.valueOf(value.getFloatValue());
+		case LexicalUnit.SAC_PERCENTAGE:
+		case LexicalUnit.SAC_PIXEL:
+		case LexicalUnit.SAC_CENTIMETER:
+		case LexicalUnit.SAC_EM:
+		case LexicalUnit.SAC_INCH:
+			return String.valueOf(value.getFloatValue()) + value.getDimensionUnitText();
+		}
 		return value.getStringValue();
 	}
 }

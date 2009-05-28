@@ -5,9 +5,9 @@ import junit.framework.TestSuite;
 
 import org.eclipse.e4.ui.tests.css.core.parser.CascadeTest;
 import org.eclipse.e4.ui.tests.css.core.parser.FontFaceRulesTest;
-import org.eclipse.e4.ui.tests.css.core.parser.MediaRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.RGBColorImplTest;
 import org.eclipse.e4.ui.tests.css.core.parser.StyleRuleTest;
+import org.eclipse.e4.ui.tests.css.core.parser.ValueTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ViewCSSTest;
 
 public class CssCoreTestSuite extends TestSuite {
@@ -24,6 +24,7 @@ public class CssCoreTestSuite extends TestSuite {
 		addTestSuite(RGBColorImplTest.class);
 		addTestSuite(StyleRuleTest.class);
 		addTestSuite(ViewCSSTest.class);
+		addTestSuite(ValueTest.class);
 		// $JUnit-END$
 	}
 }
