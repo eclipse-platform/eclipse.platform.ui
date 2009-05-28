@@ -134,6 +134,9 @@ public class Workbench implements IWorkbench {
 		init();
 	}
 
+	// this could be it
+	// and that's all, folks
+
 	public void setWorkbenchModelURI(URI workbenchXmiURI) {
 		createWorkbenchModel(workbenchXmiURI);
 	}
