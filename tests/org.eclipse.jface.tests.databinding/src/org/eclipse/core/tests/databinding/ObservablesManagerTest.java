@@ -16,8 +16,10 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ObservablesManager;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IDisposeListener;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -96,6 +98,18 @@ public class ObservablesManagerTest extends AbstractDefaultRealmTestCase {
 
 		assertTrue(targetOv.disposeCalled);
 		assertTrue(modelOv.disposeCalled);
+	}
+
+	public void testDispose_Bug277966_NPEWhenManagedObservableAlreadyDisposed() {
+		ObservablesManager manager = new ObservablesManager();
+
+		// NPE only occurs when explicitly managing (i.e. not through a
+		// DataBindingContext) observables where hashCode() is a tracked getter
+		IObservable observable = new WritableList();
+		manager.addObservable(observable);
+		observable.dispose();
+
+		manager.dispose();
 	}
 
 	private static class FlagOnDisposeObservableValue implements

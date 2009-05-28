@@ -14,13 +14,13 @@
 package org.eclipse.core.databinding;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.ObservableTracker;
+import org.eclipse.core.internal.databinding.IdentitySet;
 import org.eclipse.core.internal.databinding.Pair;
 
 /**
@@ -34,8 +34,8 @@ import org.eclipse.core.internal.databinding.Pair;
  */
 public class ObservablesManager {
 
-	private Set managedObservables = new HashSet();
-	private Set excludedObservables = new HashSet();
+	private Set managedObservables = new IdentitySet();
+	private Set excludedObservables = new IdentitySet();
 	private Map contexts = new HashMap();
 
 	/**
@@ -104,7 +104,7 @@ public class ObservablesManager {
 	 * Disposes of this manager and all observables that it manages.
 	 */
 	public void dispose() {
-		Set observables = new HashSet();
+		Set observables = new IdentitySet();
 		observables.addAll(managedObservables);
 		for (Iterator it = contexts.keySet().iterator(); it.hasNext();) {
 			DataBindingContext context = (DataBindingContext) it.next();
