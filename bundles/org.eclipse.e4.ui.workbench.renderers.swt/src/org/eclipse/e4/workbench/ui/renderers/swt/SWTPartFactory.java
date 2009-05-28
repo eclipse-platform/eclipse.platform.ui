@@ -26,7 +26,6 @@ import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
-import org.eclipse.e4.workbench.ui.ILegacyHook;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.emf.common.notify.Notification;
@@ -58,19 +57,6 @@ public abstract class SWTPartFactory extends PartFactory {
 		Widget widget = (Widget) widgetObject;
 		Menu swtMenu;
 
-		if (menu != null && menu.getId() != null
-				&& menu.getId().equals("org.eclipse.ui.main.menu")) { //$NON-NLS-1$
-			menu.getItems().clear();
-			// Pre-populate the main menu
-			ILegacyHook lh = (ILegacyHook) context.get(ILegacyHook.class
-					.getName());
-			if (part.getContext() != null) {
-				lh.loadMenu(part.getContext(), menu);
-			} else {
-				lh.loadMenu(context, menu);
-			}
-		}
-
 		if (widget instanceof MenuItem) {
 			swtMenu = new Menu(((MenuItem) widget).getParent().getShell(),
 					SWT.DROP_DOWN);
@@ -98,15 +84,6 @@ public abstract class SWTPartFactory extends PartFactory {
 
 	public Object createToolBar(MPart<?> part, Object widgetObject,
 			MToolBar toolbar) {
-
-		if (toolbar != null && toolbar.getId() != null
-				&& toolbar.getId().equals("org.eclipse.ui.main.toolbar") //$NON-NLS-1$
-				&& toolbar.getItems().size() == 0) {
-			// Pre-populate the main toolbar
-			ILegacyHook lh = (ILegacyHook) context.get(ILegacyHook.class
-					.getName());
-			lh.loadToolbar(toolbar);
-		}
 
 		int orientation = SWT.HORIZONTAL;
 		Composite composite = (Composite) widgetObject;

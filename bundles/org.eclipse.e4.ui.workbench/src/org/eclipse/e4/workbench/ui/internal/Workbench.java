@@ -126,10 +126,10 @@ public class Workbench implements IWorkbench {
 
 		workbenchContext = createWorkbenchContext(applicationContext, registry,
 				exceptionHandler, contributionFactory);
-		workbenchContext.set(IWorkbench.class.getName(), this);
+		workbenchContext.set(Workbench.class.getName(), this);
 	}
 
-	public void setWorkbenchModel(MApplication<MWindow<?>> model) {
+	public void setWorkbenchModel(MApplication<? extends MWindow> model) {
 		workbench = model;
 		init();
 	}
@@ -514,7 +514,7 @@ public class Workbench implements IWorkbench {
 		}
 	}
 
-	public void createGUI(MWindow wbw) {
+	public void createGUI(MPart part) {
 		if (renderer == null) {
 			renderer = new PartRenderer(contributionFactory, workbenchContext);
 			initializeRenderer(registry, renderer, workbenchContext,
@@ -522,24 +522,27 @@ public class Workbench implements IWorkbench {
 
 		}
 
-		renderer.createGui(wbw);
-		Object appWindow = wbw.getWidget();
+		renderer.createGui(part);
+		if (part instanceof MWindow) {
+			MWindow wbw = (MWindow) part;
+			Object appWindow = wbw.getWidget();
+			rv = 0;
 
-		rv = 0;
-		// TODO get access to IApplicationContext to call
-		// applicationRunning()
-		// Platform.endSplash();
+			// TODO get access to IApplicationContext to call
+			// applicationRunning()
+			// Platform.endSplash();
 
-		// A position of 0 is not possible on OS-X because then the
-		// title-bar is
-		// hidden
-		// below the MMenu-Bar
-		windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw
-				.getWidth(), wbw.getHeight());
-		windowHandler.layout(appWindow);
+			// A position of 0 is not possible on OS-X because then the
+			// title-bar is
+			// hidden
+			// below the MMenu-Bar
+			windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw
+					.getWidth(), wbw.getHeight());
+			windowHandler.layout(appWindow);
 
-		windowHandler.open(appWindow);
-		processHandlers(wbw);
+			windowHandler.open(appWindow);
+			processHandlers(wbw);
+		}
 	}
 
 	public void close() {
