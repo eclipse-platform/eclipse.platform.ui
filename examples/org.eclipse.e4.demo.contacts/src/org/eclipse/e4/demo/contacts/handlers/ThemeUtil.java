@@ -27,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
 public class ThemeUtil {
 
 	public static void switchTheme(IWorkbench workbench, final String css) {
-		System.out.println("ThemeUtil.execute(): " + workbench);
 		if (workbench instanceof Workbench) {
 			Workbench wb = (Workbench) workbench;
 			final Shell shell = (Shell) wb.getWindow();
