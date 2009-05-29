@@ -29,7 +29,7 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(IdClassLabelColorTest.class);
 		addTestSuite(ShellTest.class);
 		addTestSuite(ButtonTest.class);
-		addTestSuite(ShellActiveTest.class);
+//		addTestSuite(ShellActiveTest.class);  //TODO see bug #273582 
 		addTestSuite(GradientTest.class);
 	}
 }

@@ -43,7 +43,7 @@ public class LabelTest extends CSSSWTTestCase {
 		labelToTest.setText("Some label text");
 
 		// Apply styles
-		engine.applyStyles(shell, true);
+		engine.applyStyles(labelToTest, true);
 
 		shell.pack();
 		return labelToTest;
@@ -85,18 +85,19 @@ public class LabelTest extends CSSSWTTestCase {
 		Label labelToTest = createTestLabel("Label { alignment: right }");
 		assertEquals(SWT.RIGHT, labelToTest.getAlignment());
 		
-		clearAndApply(engine, labelToTest, "Label { alignment: left; }");
+		labelToTest = createTestLabel("Label { alignment: center; }");
+		assertEquals(SWT.CENTER, labelToTest.getAlignment());
+
+		labelToTest = createTestLabel("Label { alignment: left; }");
 		assertEquals(SWT.LEFT, labelToTest.getAlignment());
 		
-		clearAndApply(engine, labelToTest, "Label { alignment: center; }");
-		assertEquals(SWT.CENTER, labelToTest.getAlignment());
 	}
 	
 	public void testAlignment2() throws Exception {
 		Label labelToTest = createTestLabel("Label { alignment: trail }");
 		assertEquals(SWT.TRAIL, labelToTest.getAlignment());
 		
-		clearAndApply(engine, labelToTest, "Label { alignment: lead; }");
+		labelToTest = createTestLabel("Label { alignment: lead; }");
 		assertEquals(SWT.LEAD, labelToTest.getAlignment());
 	}
 }

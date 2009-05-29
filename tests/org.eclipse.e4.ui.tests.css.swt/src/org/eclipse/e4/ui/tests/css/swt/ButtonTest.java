@@ -113,10 +113,10 @@ public class ButtonTest extends CSSSWTTestCase {
 		Button buttonToTest = createTestButton("Button { alignment: right; }");		
 		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
 		
-		clearAndApply(engine, buttonToTest, "Button { alignment: left; }");
+		buttonToTest = createTestButton("Button { alignment: left; }");
 		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
 		
-		clearAndApply(engine, buttonToTest, "Button { alignment: center; }");
+		buttonToTest = createTestButton("Button { alignment: center; }");
 		assertEquals(SWT.CENTER, buttonToTest.getAlignment());
 	}
 	
@@ -124,7 +124,7 @@ public class ButtonTest extends CSSSWTTestCase {
 		Button buttonToTest = createTestButton("Button { alignment: trail; }");
 		assertEquals(SWT.TRAIL, buttonToTest.getAlignment());
 		
-		clearAndApply(engine, buttonToTest, "Button { alignment: lead; }");
+		buttonToTest = createTestButton("Button { alignment: lead; }");
 		assertEquals(SWT.LEAD, buttonToTest.getAlignment());
 	}
 
@@ -132,13 +132,13 @@ public class ButtonTest extends CSSSWTTestCase {
 		Button buttonToTest = createTestArrowButton("Button { alignment: up; }");		
 		assertEquals(SWT.UP, buttonToTest.getAlignment());
 		
-		clearAndApply(engine, buttonToTest, "Button { alignment: down; }");
+		buttonToTest = createTestArrowButton("Button { alignment: down; }");
 		assertEquals(SWT.DOWN, buttonToTest.getAlignment());
 		
-		clearAndApply(engine, buttonToTest, "Button { alignment: left; }");
+		buttonToTest = createTestArrowButton("Button { alignment: left; }");
 		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
 		
-		clearAndApply(engine, buttonToTest, "Button { alignment: right; }");
+		buttonToTest = createTestArrowButton("Button { alignment: right; }");
 		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
 	}
 
