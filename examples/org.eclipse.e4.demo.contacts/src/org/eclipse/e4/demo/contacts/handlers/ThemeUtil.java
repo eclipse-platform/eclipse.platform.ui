@@ -34,8 +34,7 @@ public class ThemeUtil {
 			final CSSEngine engine = (CSSEngine) display
 					.getData("org.eclipse.e4.ui.css.core.engine");
 
-			display.asyncExec(new Runnable() {
-
+			display.syncExec(new Runnable() {
 				public void run() {
 					try {
 						URL url = FileLocator.resolve(new URL(
