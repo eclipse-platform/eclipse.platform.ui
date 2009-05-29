@@ -221,7 +221,7 @@ public class Workbench implements IWorkbench {
 	private MApplication<? extends MWindow> createWorkbenchModel(
 			URI applicationDefinitionInstance) {
 		URI restoreLocation = null;
-		if (workbenchData != null && workbenchData.exists() && saveAndRestore) {
+		if (workbenchData != null && saveAndRestore) {
 			restoreLocation = URI
 					.createFileURI(workbenchData.getAbsolutePath());
 		}
