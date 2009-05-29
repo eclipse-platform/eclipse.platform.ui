@@ -127,6 +127,7 @@ public class Workbench implements IWorkbench {
 		workbenchContext = createWorkbenchContext(applicationContext, registry,
 				exceptionHandler, contributionFactory);
 		workbenchContext.set(Workbench.class.getName(), this);
+		workbenchContext.set(IWorkbench.class.getName(), this);
 	}
 
 	public void setWorkbenchModel(MApplication<? extends MWindow> model) {
