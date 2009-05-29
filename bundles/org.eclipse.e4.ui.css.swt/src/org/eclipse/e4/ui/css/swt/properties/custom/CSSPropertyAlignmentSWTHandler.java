@@ -31,8 +31,12 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 			String stringValue = value.getCssText().toLowerCase();
 			if ("left".equals(stringValue)){
 				button.setAlignment(SWT.LEFT);
+			} else if ("lead".equals(stringValue)){
+				button.setAlignment(SWT.LEAD);
 			} else if ("right".equals(stringValue)){
 				button.setAlignment(SWT.RIGHT);
+			} else if ("trail".equals(stringValue)){
+				button.setAlignment(SWT.TRAIL);
 			} else if ("center".equals(stringValue)){
 				button.setAlignment(SWT.CENTER);
 			} else if ("up".equals(stringValue)){
@@ -47,8 +51,12 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 			String stringValue = value.getCssText().toLowerCase();
 			if ("left".equals(stringValue)){
 				label.setAlignment(SWT.LEFT);
+			} else if ("lead".equals(stringValue)){
+				label.setAlignment(SWT.LEAD);
 			} else if ("right".equals(stringValue)){
 				label.setAlignment(SWT.RIGHT);
+			} else if ("trail".equals(stringValue)){
+				label.setAlignment(SWT.TRAIL);
 			} else if ("center".equals(stringValue)){
 				label.setAlignment(SWT.CENTER);
 			} 
@@ -61,8 +69,8 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 		if (control instanceof Button) {
 			Button button = (Button)control;
 			switch(button.getAlignment()){
-			case SWT.RIGHT: return "right";
-			case SWT.LEFT: return "left";
+			case SWT.RIGHT: return "right";  //Note same value as SWT.TRAIL
+			case SWT.LEFT: return "left";  //Note same value as SWT.LEAD
 			case SWT.CENTER: return "center";
 			case SWT.UP: return "up";
 			case SWT.DOWN: return "down";
@@ -71,8 +79,8 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 		else if (control instanceof Label) {
 			Label label = (Label)control;
 			switch(label.getAlignment()){
-			case SWT.RIGHT: return "right";
-			case SWT.LEFT: return "left";
+			case SWT.RIGHT: return "right";  //Note same value as SWT.TRAIL
+			case SWT.LEFT: return "left";  //Note same value as SWT.LEAD
 			case SWT.CENTER: return "center";
 			}
 		}

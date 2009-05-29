@@ -91,4 +91,12 @@ public class LabelTest extends CSSSWTTestCase {
 		clearAndApply(engine, labelToTest, "Label { alignment: center; }");
 		assertEquals(SWT.CENTER, labelToTest.getAlignment());
 	}
+	
+	public void testAlignment2() throws Exception {
+		Label labelToTest = createTestLabel("Label { alignment: trail }");
+		assertEquals(SWT.TRAIL, labelToTest.getAlignment());
+		
+		clearAndApply(engine, labelToTest, "Label { alignment: lead; }");
+		assertEquals(SWT.LEAD, labelToTest.getAlignment());
+	}
 }

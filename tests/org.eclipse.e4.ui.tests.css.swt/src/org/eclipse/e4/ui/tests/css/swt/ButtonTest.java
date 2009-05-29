@@ -14,9 +14,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Shell;
 
 public class ButtonTest extends CSSSWTTestCase {
@@ -118,6 +118,14 @@ public class ButtonTest extends CSSSWTTestCase {
 		
 		clearAndApply(engine, buttonToTest, "Button { alignment: center; }");
 		assertEquals(SWT.CENTER, buttonToTest.getAlignment());
+	}
+	
+	public void testAlignment2() throws Exception {
+		Button buttonToTest = createTestButton("Button { alignment: trail; }");
+		assertEquals(SWT.TRAIL, buttonToTest.getAlignment());
+		
+		clearAndApply(engine, buttonToTest, "Button { alignment: lead; }");
+		assertEquals(SWT.LEAD, buttonToTest.getAlignment());
 	}
 
 	public void testArrowAlignment() throws Exception {
