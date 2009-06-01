@@ -31,5 +31,10 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(ButtonTest.class);
 //		addTestSuite(ShellActiveTest.class);  //TODO see bug #273582 
 		addTestSuite(GradientTest.class);
+		
+		// text-transform tests
+		addTestSuite(ButtonTextTransformTest.class);
+		addTestSuite(LabelTextTransformTest.class);
+		addTestSuite(TextTextTransformTest.class);
 	}
 }
