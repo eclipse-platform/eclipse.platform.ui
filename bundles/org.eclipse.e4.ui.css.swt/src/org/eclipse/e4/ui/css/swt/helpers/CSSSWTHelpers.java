@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2009 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,7 +11,7 @@
 package org.eclipse.e4.ui.css.swt.helpers;
 
 import org.eclipse.e4.ui.css.core.dom.properties.CSSBorderProperties;
-import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -21,6 +21,7 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSPrimitiveValue;
+import org.w3c.dom.css.CSSValue;
 
 /**
  * SWT Helper to transform CSS w3c object (org.w3c.dom.css.RGBColor....) into
@@ -40,9 +41,26 @@ public class CSSSWTHelpers {
 
 	/*--------------- SWT Border Helper -----------------*/
 
-	public static PaintListener createBorderPaintListener(
-			final Control control, final IResourcesRegistry resourcesRegistry) {
+	public static PaintListener createBorderPaintListener(final CSSEngine engine,
+			final Control control) {
 		return new PaintListener() {
+			
+			/**
+			 * Converts the specified CSS value into an SWT Color instance. If
+			 * the conversion process fails, <code>null</code> will be returned.
+			 * 
+			 * @param value the CSS value to convert
+			 * @return the Color corresponding to the provided RGB values, or <code>null</code> if the conversion process failed
+			 */
+			private Color convert(CSSValue value) {
+				try {
+					return (Color) engine.convert(value, Color.class, control.getDisplay());
+				} catch (Exception e) {
+					engine.handleExceptions(e);
+					return null;
+				}
+			}
+			
 			public void paintControl(PaintEvent e) {
 				CSSBorderProperties border = (CSSBorderProperties) control
 						.getData(CSSSWTConstants.CONTROL_CSS2BORDER_KEY);
@@ -53,8 +71,7 @@ public class CSSSWTHelpers {
 				CSSPrimitiveValue value = border.getColor();
 				if (value == null)
 					return;
-				Color color = CSSSWTColorHelper.getSWTColor(value, control
-						.getDisplay());
+				Color color = convert(value);
 				if (color != null)
 					gc.setForeground(color);
 				Rectangle rect = control.getBounds();
