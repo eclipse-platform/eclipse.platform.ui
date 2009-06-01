@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *      IBM Corporation - initial API and implementation
+ *      Remy Chi Jian Suen <remy.suen@gmail.com> - bug 137650
  *******************************************************************************/
 
 package org.eclipse.e4.ui.css.swt.properties.custom;
