@@ -2521,9 +2521,9 @@ public class TextViewer extends Viewer implements
 	 */
 	public ISelection getSelection() {
 		if (fTextWidget != null && fTextWidget.getBlockSelection()) {
-			Point sel = fTextWidget.getSelection();
-			int startOffset= sel.x;
-			int endOffset= sel.y;
+			int[] ranges= fTextWidget.getSelectionRanges();
+			int startOffset= ranges[0];
+			int endOffset= ranges[ranges.length - 2] + ranges[ranges.length - 1];
 			
 			// getBlockSelectionBounds returns pixel coordinates relative to document
 			Rectangle bounds= fTextWidget.getBlockSelectionBounds();
