@@ -155,7 +155,7 @@ public abstract class InstallationPage extends DialogPage {
 	 * {@link IInstallationPageContainer#registerPageButton(InstallationPage, Button)}
 	 * or performing other container-related tasks.
 	 * 
-	 * @return the container that is hosting hte page.
+	 * @return the container that is hosting the page.
 	 */
 	protected IInstallationPageContainer getPageContainer() {
 		return container;
