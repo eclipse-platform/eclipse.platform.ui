@@ -17,6 +17,8 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
@@ -25,6 +27,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
@@ -48,6 +51,31 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 */
 	private TestPropertySheetPage testPropertySheetPage = new TestPropertySheetPage();
 	private SelectionProviderView selectionProviderView;
+	
+	/**
+	 * An exception of an error status that has been logged by the platform.
+	 */
+	private Exception e;
+	
+	/**
+	 * A log listener to monitor the platform's log for any error statuses. As
+	 * many listeners are notified of events through a SafeRunner, errors caused
+	 * by mishandling of events are not propagated back to our test methods.
+	 */
+	private ILogListener logListener = new ILogListener() {		
+		public void logging(IStatus status, String plugin) {
+			// check if it's an error
+			if (status.getSeverity() == IStatus.ERROR) {
+				// retrieve the underlying exception and wrap it if possible
+				Throwable t = status.getException();
+				if (t != null) {
+					e = new Exception(t);
+				} else {
+					e = new Exception(status.getMessage());	
+				}
+			}
+		}
+	};
 	
 	private IProject project;
 
@@ -86,6 +114,10 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	protected void doTearDown() throws Exception {
 	    activePage.resetPerspective();         
 		super.doTearDown();
+		// reset the exception to null
+		e = null;
+		// remove our log listener
+		Platform.removeLogListener(logListener);
 		Platform.getAdapterManager().unregisterAdapters(testPropertySheetPage,
 				PropertySheet.class);
 		testPropertySheetPage = null;
@@ -354,5 +386,108 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		// verify that the page is not a non-standard property sheet page
 		assertFalse("The 'Properties' view should still be on the content of the 'Project Explorer' rendering a tabbed property sheet",
 				propertySheet.getCurrentPage() instanceof PropertySheetPage);
+	}
+	
+	/**
+	 * Tests bug 278514. If a view that contributes to the 'Properties' view and
+	 * the 'Properties' view is opened is opened in one perspective and the page
+	 * then switches to another perspective where the contributing view is there
+	 * but not the 'Properties' view, an NPE is thrown.
+	 * <p>
+	 * <ol>
+	 * <li>close all perspectives</li>
+	 * <li>open perspective A</li>
+	 * <li>open contributing view</li>
+	 * <li>switch to perspective B</li>
+	 * <li>open contributing view</li>
+	 * <li>open 'Properties' view</li>
+	 * <li>set a selection in the contributing view so the 'Properties' view
+	 * shows something</li>
+	 * <li>switch back to perspective A</li>
+	 * <li>NPE is thrown</li>
+	 * </ol>
+	 * </p>
+	 * 
+	 * @param viewId the id of the contributing view
+	 * @param standardPage <code>true</code> if the contributing view contributes properties without specifying a custom page, <code>false</code> otherwise
+	 * @throws Exception if an exception occurred while switching perspectives
+	 */
+	private void testBug278514(String viewId, boolean standardPage) throws Exception {
+		// close all perspectives
+		activePage.closeAllPerspectives(false, false);
+
+		// open the 'Resource' perspective
+		IPerspectiveDescriptor desc = activePage.getWorkbenchWindow().getWorkbench()
+				.getPerspectiveRegistry().findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+		activePage.setPerspective(desc);
+		
+		// hide all 'Properties' view instances, if any
+		IViewReference[] viewReferences = activePage.getViewReferences();
+		for (int i = 0; i < viewReferences.length; i++) {
+			if (IPageLayout.ID_PROP_SHEET.equals(viewReferences[i].getId())) {
+				activePage.hideView(viewReferences[i]);
+			}
+		}
+
+		// show the view that will contribute to the 'Properties' view
+		activePage.showView(viewId);
+		
+		// open another perspective
+		PropertySheetPerspectiveFactory.applyPerspective(activePage);
+		
+		// show the 'Properties' view
+		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
+		
+		// create a project for properties rendering purposes
+        project = FileUtil.createProject("projectToSelect");
+        ISelection selection = new StructuredSelection(project);
+
+		// show the contributing view
+		IViewPart contributingView = activePage.showView(viewId);
+        // have the contributing view select the created project, this should populate the 'Properties' view
+        contributingView.getSite().getSelectionProvider().setSelection(selection);
+
+        if (standardPage) {
+            // verify that the contributing view uses standard property sheet page
+    		assertTrue("The 'Properties' view should be showing the content of the contributing view (" + contributingView.getTitle() + ") in a regular property page",
+    				propertySheet.getCurrentPage() instanceof PropertySheetPage);	
+        } else {
+            // verify that the contributing view uses non-standard property sheet page
+    		assertFalse("The 'Properties' view should be showing the content of the contributing view (" + contributingView.getTitle() + ") in a non-standard customiezd page",
+    				propertySheet.getCurrentPage() instanceof PropertySheetPage);        	
+        }
+		
+        // add our log listener so we can monitor for failures when switching perspectives
+		Platform.addLogListener(logListener);
+		// switch the perspective, the original bug threw an NPE within a listener
+		activePage.setPerspective(desc);
+		
+		if (e != null) {
+			// if we caught an exception in our log listener, throw it so this test fails
+			throw e;
+		}
+	}
+
+	/**
+	 * Tests bug 278514 using a view that contributes to the 'Properties' view
+	 * without using a customized page. This test uses the 'Navigator' view to
+	 * achieve this.
+	 * 
+	 * @see #testBug278514(String, boolean)
+	 */
+	public void testBug278514NormalProperties() throws Exception {
+		testBug278514(IPageLayout.ID_RES_NAV, true);
+	}
+
+	/**
+	 * Tests bug 278514 using a view that contributes to the 'Properties' view
+	 * that uses a custom properties page. This test uses the 'Project Explorer' 
+	 * view to achieve this. The 'Project Explorer' renders content within the
+	 * 'Properties' view using tabbed properties.
+	 * 
+	 * @see #testBug278514(String, boolean)
+	 */
+	public void testBug278514TabbedProperties() throws Exception {
+		testBug278514(IPageLayout.ID_PROJECT_EXPLORER, false);
 	}
 }

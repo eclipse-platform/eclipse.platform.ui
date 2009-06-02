@@ -1073,6 +1073,9 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	 * @return <code>true</code> if the part is in the viewStack
 	 */
 	private boolean containsPart(IViewPart[] viewStack, IWorkbenchPart part) {
+		if (viewStack == null) {
+			return false;
+		}
 		for (int i = 0; i < viewStack.length; i++) {
 			if (viewStack[i] == part) {
 				return true;
