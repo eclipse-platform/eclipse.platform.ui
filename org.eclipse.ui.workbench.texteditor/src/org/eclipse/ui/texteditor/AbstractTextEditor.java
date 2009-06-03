@@ -733,8 +733,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			if (BLOCK_SELECTION_MODE_FONT.equals(property) && isBlockSelectionModeEnabled()) {
 				Font blockFont= JFaceResources.getFont(BLOCK_SELECTION_MODE_FONT);
-				disposeFont();
 				setFont(fSourceViewer, blockFont);
+				disposeFont();
 				return;
 			}
 			if (getFontPropertyPreferenceKey().equals(property) && !isBlockSelectionModeEnabled()) {
