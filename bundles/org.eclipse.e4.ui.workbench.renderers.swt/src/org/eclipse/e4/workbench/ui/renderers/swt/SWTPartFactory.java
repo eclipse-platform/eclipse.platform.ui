@@ -30,6 +30,7 @@ import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -93,8 +94,12 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 		ToolBar swtToolBar = new ToolBar(composite, SWT.FLAT | orientation);
 		swtToolBar.setData(PartFactory.OWNING_ME, toolbar);
-		for (MToolBarItem toolBarItem : toolbar.getItems()) {
-			createToolBarItem(part, swtToolBar, toolBarItem);
+
+		EList<MToolBarItem> items = toolbar.getItems();
+		if (items != null && items.size() > 0) {
+			for (MToolBarItem toolBarItem : toolbar.getItems()) {
+				createToolBarItem(part, swtToolBar, toolBarItem);
+			}
 		}
 
 		return swtToolBar;

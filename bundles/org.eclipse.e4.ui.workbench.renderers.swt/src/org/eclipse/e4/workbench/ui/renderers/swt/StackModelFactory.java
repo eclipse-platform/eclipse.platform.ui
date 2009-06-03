@@ -91,12 +91,6 @@ public class StackModelFactory extends SWTPartFactory {
 			ctf.setMaximizeVisible(showMinMax);
 			ctf.setMinimizeVisible(showMinMax);
 
-			// Create a single ViewForm class in which to host -all- views
-			// ViewForm vf = new ViewForm(ctf, SWT.NONE);
-			// Label vfLabel = new Label(vf, SWT.NONE);
-			//			vfLabel.setText("This is a test"); //$NON-NLS-1$
-			// vf.setTopLeft(vfLabel);
-
 			bindWidget(part, ctf);
 			ctf.setVisible(true);
 			ctf.setSimple(false);
@@ -377,10 +371,15 @@ public class StackModelFactory extends SWTPartFactory {
 	private ToolBar getToolbar(MItemPart<?> part) {
 		if (part.getToolBar() == null && part.getMenu() == null)
 			return null;
-
-		MToolBar tbModel = part.getToolBar();
 		CTabFolder ctf = (CTabFolder) getParentWidget(part);
-		ToolBar tb = (ToolBar) createToolBar(part.getParent(), ctf, tbModel);
+
+		ToolBar tb;
+		MToolBar tbModel = part.getToolBar();
+		if (tbModel != null) {
+			tb = (ToolBar) createToolBar(part.getParent(), ctf, tbModel);
+		} else {
+			tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
+		}
 
 		// View menu (if any)
 		if (part.getMenu() != null) {
@@ -388,7 +387,6 @@ public class StackModelFactory extends SWTPartFactory {
 		}
 
 		tb.pack();
-		System.out.println("TB size = " + tb.getSize()); //$NON-NLS-1$
 		return tb;
 	}
 
