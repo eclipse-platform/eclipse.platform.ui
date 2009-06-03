@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,7 +56,7 @@ public class AvailableDetailPanesAction extends Action implements IMenuCreator {
 		
 		public void run() {
 			// Don't change panes unless the user is selecting a different pane than the one currently displayed
-			if (!isChecked() && !fDetailPaneContainer.getCurrentPaneID().equals(fPaneID)){
+			if (isChecked() && !fDetailPaneContainer.getCurrentPaneID().equals(fPaneID)){
 				DetailPaneManager.getDefault().setPreferredDetailPane(fPossiblePaneIDs, fPaneID);
 				fDetailPaneContainer.refreshDetailPaneContents();
 			}
