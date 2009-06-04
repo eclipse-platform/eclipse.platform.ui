@@ -70,7 +70,7 @@ public abstract class SWTPartFactory extends PartFactory {
 			((Decorations) widget).setMenuBar(swtMenu);
 		} else if (widget instanceof Control) {
 			swtMenu = new Menu((Control) widget);
-			((Control) widget).setMenu(swtMenu);
+			// ((Control) widget).setMenu(swtMenu);
 		} else {
 			throw new IllegalArgumentException(
 					"The widget must be MenuItem, Decorations, or Control but is: " //$NON-NLS-1$
