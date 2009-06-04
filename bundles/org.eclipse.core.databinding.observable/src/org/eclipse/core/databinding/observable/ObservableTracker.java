@@ -112,12 +112,17 @@ public class ObservableTracker {
 		return (IObservable[]) observableSet
 				.toArray(new IObservable[observableSet.size()]);
 	}
-	
+
 	/**
 	 * Invokes the given runnable, and returns the set of IObservables that were
 	 * created by the runnable. If the runnable calls this method recursively,
 	 * the result will not contain IObservables that were created within the
 	 * inner runnable.
+	 * <p>
+	 * <em>NOTE: As of 1.2 (Eclipse 3.5), there are unresolved problems with this API, see
+	 * <a href="https://bugs.eclipse.org/278550">bug 278550</a>. If we cannot
+	 * find a way to make this API work, it will be deprecated as of 3.6.</em>
+	 * </p>
 	 * 
 	 * @param runnable
 	 *            runnable to execute
