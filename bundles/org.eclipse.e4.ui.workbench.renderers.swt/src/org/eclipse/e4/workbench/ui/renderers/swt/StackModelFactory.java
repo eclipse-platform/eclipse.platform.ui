@@ -364,6 +364,17 @@ public class StackModelFactory extends SWTPartFactory {
 
 			ctf.setTopRight(tb, SWT.RIGHT);
 			ctf.layout(true);
+
+			// TBD In 3.x views listening on the "parent" get an intermediary
+			// composite parented of the CTabFolder, but in E4 they get
+			// the CTabFolder itself.
+			// The layout() call above generates resize messages for children,
+			// but not for the CTabFlder itself. Hence, children listening for
+			// this message on the parent don't receive notifications in E4.
+			// For now, send an explicit Resize message to the CTabFolder
+			// listeners.
+			// The enhancement request 279263 suggests a more general solution.
+			ctf.notifyListeners(SWT.Resize, null);
 		}
 
 	}
