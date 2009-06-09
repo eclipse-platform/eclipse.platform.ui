@@ -303,7 +303,7 @@ public class StackModelFactory extends SWTPartFactory {
 			}
 		});
 
-		((EObject) me).eAdapters().add(new AdapterImpl() {
+		((EObject) me).eAdapters().add(0, new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
 				if (ApplicationPackage.Literals.MPART__ACTIVE_CHILD.equals(msg
