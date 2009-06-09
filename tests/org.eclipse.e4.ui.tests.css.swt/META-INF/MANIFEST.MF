@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: e4 css swt tests
+Bundle-Name: e4 css swt tests (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.tests.css.swt; singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.e4.ui.tests.css.swt.Activator

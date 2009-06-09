@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Ui Workbench Plug-in
+Bundle-Name: Ui Workbench Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Require-Bundle: org.eclipse.e4.ui.model.workbench;bundle-version="0.9.0";visibility:=reexport,

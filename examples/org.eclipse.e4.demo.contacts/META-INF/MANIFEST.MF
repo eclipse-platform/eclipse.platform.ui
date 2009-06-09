@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Contacts Plug-in
+Bundle-Name: Contacts Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.demo.contacts;singleton:=true
 Bundle-Version: 0.9.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

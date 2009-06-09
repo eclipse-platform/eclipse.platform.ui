@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Css Examples Plug-in
+Bundle-Name: Css Examples Plug-in (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.examples.css
 Bundle-Version: 0.9.0.qualifier
 Bundle-Activator: org.eclipse.e4.ui.examples.css.Activator
