@@ -69,31 +69,30 @@ public class StackModelFactory extends SWTPartFactory {
 
 			// HACK!! Set up the close button style based on the 'Policy'
 			// Perhaps this should be CSS-based ?
+			// TODO: Yes, see bug #279854
+
 			boolean showCloseAlways = false;
-			boolean showMinMax = false;
 			int styleModifier = 0;
 			if (part.getPolicy() != null && part.getPolicy().length() > 0) {
 				String policy = part.getPolicy();
 				if (policy.indexOf("ViewStack") >= 0) { //$NON-NLS-1$
 					styleModifier = SWT.CLOSE;
-					showMinMax = true;
 				}
 				if (policy.indexOf("EditorStack") >= 0) { //$NON-NLS-1$
 					styleModifier = SWT.CLOSE;
 					showCloseAlways = true;
-					showMinMax = true;
 				}
 			}
 
+			// TODO see bug #267434, SWT.BORDER should be determined from CSS
 			final CTabFolder ctf = new CTabFolder((Composite) parentWidget,
 					SWT.BORDER | styleModifier);
 			ctf.setUnselectedCloseVisible(showCloseAlways);
-			ctf.setMaximizeVisible(showMinMax);
-			ctf.setMinimizeVisible(showMinMax);
 
 			bindWidget(part, ctf);
 			ctf.setVisible(true);
-			ctf.setSimple(false);
+
+			// TODO bug #279856 - this should be set from CSS
 			ctf.setTabHeight(20);
 			newWidget = ctf;
 			final IEclipseContext folderContext = part.getContext();
