@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Widget;
 public class WorkbenchStylingSupport {
 
 	public static void initializeStyling(Display display, String cssURI,
-			IEclipseContext appContext) {
+			String resourceURI, IEclipseContext appContext) {
 		// Instantiate SWT CSS Engine
 		try {
 			Class engineClass = Class
@@ -48,6 +48,37 @@ public class WorkbenchStylingSupport {
 					.forName("org.eclipse.e4.ui.css.core.impl.engine.CSSErrorHandlerImpl"); //$NON-NLS-1$
 			setErrorHandler.invoke(engine, new Object[] { errorHandlerImplClass
 					.newInstance() });
+
+			// Create the OSGi resource locator
+
+			if (resourceURI != null) {
+				Class resourceLocatorClass = Class
+						.forName("org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator"); //$NON-NLS-1$
+				Constructor resourceLocatorConst = resourceLocatorClass
+						.getConstructor(new Class[] { String.class });
+				final Object resourceLocator = resourceLocatorConst
+						.newInstance(new Object[] { resourceURI.toString() });
+				display.setData(
+						"org.eclipse.e4.ui.css.core.resourceURL", resourceURI); //$NON-NLS-1$		
+
+				// engine.getResourcesLocatorManager().registerResourceLocator(IResourceLocator);
+				Method getResourcesLocatorManagerMethod = engineClass
+						.getMethod("getResourcesLocatorManager", new Class[] {}); //$NON-NLS-1$
+				Object resourceRegistryManager = getResourcesLocatorManagerMethod
+						.invoke(engine, new Object[] {});
+
+				Class iResourceLocatorClass = Class
+						.forName("org.eclipse.e4.ui.css.core.util.resources.IResourceLocator"); //$NON-NLS-1$
+
+				Method registerResourceLocatorMethod = resourceRegistryManager
+						.getClass()
+						.getMethod(
+								"registerResourceLocator", new Class[] { iResourceLocatorClass }); //$NON-NLS-1$
+				registerResourceLocatorMethod.invoke(resourceRegistryManager,
+						new Object[] { resourceLocator });
+			}
+
+			// Lookup the style sheet
 
 			URL url = FileLocator.resolve(new URL(cssURI.toString()));
 			display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		

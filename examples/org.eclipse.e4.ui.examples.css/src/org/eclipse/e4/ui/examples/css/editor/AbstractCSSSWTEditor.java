@@ -17,8 +17,11 @@ import org.eclipse.e4.ui.css.core.css2.CSS2FontPropertiesHelpers;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.examples.css.Activator;
 import org.eclipse.e4.ui.examples.css.editor.AbstractCSSEditor;
 import org.eclipse.e4.ui.css.core.serializers.CSSSerializerConfiguration;
+import org.eclipse.e4.ui.css.core.util.impl.resources.FileResourcesLocatorImpl;
+import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
 import org.eclipse.e4.ui.css.swt.dom.SWTElementProvider;
 import org.eclipse.e4.ui.css.swt.dom.html.SWTHTMLElementProvider;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
@@ -527,7 +530,10 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 	 * @see org.eclipse.e4.ui.core.css.examples.csseditors.AbstractCSSEditor#createCSSEngine()
 	 */
 	protected CSSEngine createCSSEngine() {
-		return new CSSSWTEngineImpl(shell.getDisplay());
+		CSSEngine engine = new CSSSWTEngineImpl(shell.getDisplay());
+		engine.getResourcesLocatorManager().registerResourceLocator(
+				new FileResourcesLocatorImpl());
+		return engine;
 	}
 
 	/*

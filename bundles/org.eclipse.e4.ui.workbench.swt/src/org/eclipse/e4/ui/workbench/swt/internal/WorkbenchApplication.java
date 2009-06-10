@@ -54,6 +54,9 @@ public class WorkbenchApplication implements IApplication {
 		}
 		final String cssURI = product == null ? null : product
 				.getProperty("applicationCSS"); //$NON-NLS-1$;
+		final String cssResourcesURI = product == null ? null : product
+				.getProperty("applicationCSSResources"); //$NON-NLS-1$;
+
 		Assert.isNotNull(appURI, "-applicationXMI argument missing"); //$NON-NLS-1$
 		final URI initialWorkbenchDefinitionInstance = URI
 				.createPlatformPluginURI(appURI, true);
@@ -75,7 +78,7 @@ public class WorkbenchApplication implements IApplication {
 									.getBundleAdmin()));
 					if (cssURI != null) {
 						WorkbenchStylingSupport.initializeStyling(display,
-								cssURI, appContext);
+								cssURI, cssResourcesURI, appContext);
 					} else {
 						WorkbenchStylingSupport
 								.initializeNullStyling(appContext);

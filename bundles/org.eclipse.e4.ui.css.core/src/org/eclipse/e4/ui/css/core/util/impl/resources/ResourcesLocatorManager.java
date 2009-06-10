@@ -37,7 +37,6 @@ public class ResourcesLocatorManager implements IResourcesLocatorManager {
 
 	public ResourcesLocatorManager() {		
 		registerResourceLocator(new HttpResourcesLocatorImpl());
-		registerResourceLocator(new FileResourcesLocatorImpl());
 	}
 
 	/*
