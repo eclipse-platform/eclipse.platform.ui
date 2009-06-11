@@ -16,6 +16,7 @@ import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MItemPart;
@@ -25,6 +26,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.services.EHandlerService;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
@@ -183,15 +185,27 @@ public abstract class SWTPartFactory extends PartFactory {
 	}
 
 	protected boolean canExecuteItem(Display display, final MHandledItem item) {
-		IEclipseContext context = getFocusContext(display);
-		EHandlerService hs = (EHandlerService) context
+		IEclipseContext execContext = null;
+		Object o = context.get(IServiceConstants.ACTIVE_PART);
+		if (o instanceof MContributedPart) {
+			execContext = ((MContributedPart) o).getContext();
+		} else {
+			execContext = getFocusContext(display);
+		}
+		EHandlerService hs = (EHandlerService) execContext
 				.get(EHandlerService.class.getName());
 		return hs.canExecute(item.getCommand().getId());
 	}
 
 	protected Object executeItem(Display display, final MHandledItem item) {
-		IEclipseContext context = getFocusContext(display);
-		EHandlerService hs = (EHandlerService) context
+		IEclipseContext execContext = null;
+		Object o = context.get(IServiceConstants.ACTIVE_PART);
+		if (o instanceof MContributedPart) {
+			execContext = ((MContributedPart) o).getContext();
+		} else {
+			execContext = getFocusContext(display);
+		}
+		EHandlerService hs = (EHandlerService) execContext
 				.get(EHandlerService.class.getName());
 		return hs.executeHandler(item.getCommand().getId());
 	}

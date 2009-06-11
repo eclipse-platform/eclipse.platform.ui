@@ -163,6 +163,17 @@ public class Workbench implements IWorkbench {
 				new ContextCommandService(mainContext));
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS,
 				new ActiveContextsFunction());
+		mainContext.set(IServiceConstants.ACTIVE_PART,
+				new ActivePartLookupFunction());
+		mainContext.runAndTrack(new Runnable() {
+			public void run() {
+				Object o = mainContext.get(IServiceConstants.ACTIVE_PART);
+				if (o instanceof MContributedPart<?>) {
+					mainContext.set(IServiceConstants.ACTIVE_PART_ID,
+							((MContributedPart<?>) o).getId());
+				}
+			}
+		}, IServiceConstants.ACTIVE_PART_ID);
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction
 
