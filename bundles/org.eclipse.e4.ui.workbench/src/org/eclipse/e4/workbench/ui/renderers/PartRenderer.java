@@ -30,6 +30,61 @@ public class PartRenderer {
 	// a given widget
 	public static final String FACTORY = "partFactory"; //$NON-NLS-1$
 
+	// Life Cycle listeners
+	private AdapterImpl visibilityListener = new AdapterImpl() {
+		@Override
+		public void notifyChanged(Notification msg) {
+			if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg
+					.getFeature())) {
+				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
+
+				// If the parent isn't displayed who cares?
+				MPart<?> parent = changedPart.getParent();
+				PartFactory parentFactory = getFactoryFor(parent);
+				if (parentFactory == null)
+					return;
+
+				if (changedPart.isVisible()) {
+					System.out.println("visible -> true"); //$NON-NLS-1$
+
+					// Note that the 'createGui' protocol calls 'childAdded'
+					createGui(changedPart);
+				} else {
+					System.out.println("visible -> false"); //$NON-NLS-1$
+
+					// Note that the 'createGui' protocol calls 'childRemoved'
+					removeGui(changedPart);
+				}
+			}
+		}
+	};
+
+	private AdapterImpl childrenListener = new AdapterImpl() {
+		@Override
+		public void notifyChanged(Notification msg) {
+			if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg
+					.getFeature())) {
+				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
+				PartFactory factory = getFactoryFor(changedPart);
+
+				// If the parent isn't in the UI then who cares?
+				if (factory == null)
+					return;
+
+				if (msg.getEventType() == Notification.ADD) {
+					System.out.println("Child Added"); //$NON-NLS-1$
+					MPart added = (MPart) msg.getNewValue();
+					createGui(added);
+				} else if (msg.getEventType() == Notification.REMOVE) {
+					System.out.println("Child Removed"); //$NON-NLS-1$
+					MPart removed = (MPart) msg.getOldValue();
+					if (removed.isVisible())
+						removeGui(removed);
+				}
+			}
+		}
+	};
+
 	private final IContributionFactory contributionFactory;
 	private final IEclipseContext context;
 
@@ -44,6 +99,9 @@ public class PartRenderer {
 	}
 
 	public Object createGui(MPart element) {
+		// Life-cycle hooks
+		installLifeCycleHooks(element);
+
 		if (!element.isVisible())
 			return null;
 
@@ -72,6 +130,32 @@ public class PartRenderer {
 		}
 
 		return newWidget;
+	}
+
+	public void removeGui(MPart element) {
+		PartFactory factory = getFactoryFor(element);
+		assert (factory != null);
+
+		MPart parent = element.getParent();
+		PartFactory parentFactory = getFactoryFor(parent);
+		if (parentFactory != null) {
+			parentFactory.childRemoved(element.getParent(), element);
+		}
+		factory.disposeWidget(element);
+	}
+
+	/**
+	 * @param element
+	 *            an element that's been seen by createGui
+	 */
+	private void installLifeCycleHooks(MPart element) {
+		// Handle visibility changes
+		if (!((EObject) element).eAdapters().contains(visibilityListener))
+			((EObject) element).eAdapters().add(visibilityListener);
+
+		// Handle children
+		if (!((EObject) element).eAdapters().contains(childrenListener))
+			((EObject) element).eAdapters().add(childrenListener);
 	}
 
 	protected Object createWidget(MPart element) {
@@ -135,42 +219,6 @@ public class PartRenderer {
 		PartFactory factory = (PartFactory) getFactoryFor(element);
 		if (factory != null)
 			factory.hookControllerLogic(element);
-
-		// Handle 'adds'
-		((EObject) element).eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg
-						.getFeature())
-						&& msg.getEventType() == Notification.ADD) {
-					MPart parent = (MPart) msg.getNotifier();
-					PartFactory parentFactory = getFactoryFor(parent);
-					if (parentFactory == null)
-						return;
-
-					MPart added = (MPart) msg.getNewValue();
-					parentFactory.childAdded(parent, added);
-				}
-			}
-		});
-
-		// Handle 'removes'
-		((EObject) element).eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg
-						.getFeature())
-						&& msg.getEventType() == Notification.REMOVE) {
-					MPart<?> parent = (MPart<?>) msg.getNotifier();
-					PartFactory parentFactory = getFactoryFor(parent);
-					if (parentFactory == null)
-						return;
-
-					MPart<?> removed = (MPart<?>) msg.getOldValue();
-					parentFactory.childRemoved(parent, removed);
-				}
-			}
-		});
 	}
 
 	protected void setFactoryFor(MPart element, PartFactory factory) {

@@ -10,19 +10,17 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import java.util.List;
-
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.databinding.EMFObservables;
@@ -31,6 +29,8 @@ import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabFolderListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
-public class StackModelFactory extends SWTPartFactory {
+public class StackModelFactory extends LazyStackFactory {
 
 	Image viewMenuImage;
 
@@ -95,6 +95,7 @@ public class StackModelFactory extends SWTPartFactory {
 			// TODO bug #279856 - this should be set from CSS
 			ctf.setTabHeight(20);
 			newWidget = ctf;
+
 			final IEclipseContext folderContext = part.getContext();
 			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
 			final IEclipseContext toplevelContext = getToplevelContext(part);
@@ -124,29 +125,20 @@ public class StackModelFactory extends SWTPartFactory {
 	}
 
 	public void postProcess(MPart<?> part) {
+		super.postProcess(part);
+
 		if (!(part instanceof MStack))
 			return;
 
 		CTabFolder ctf = (CTabFolder) part.getWidget();
-		CTabItem[] items = ctf.getItems();
 		MPart<?> selPart = ((MStack) part).getActiveChild();
+		if (selPart == null)
+			return;
 
-		// If there's none defined then pick the first
-		if (selPart == null && part.getChildren().size() > 0) {
-			((MStack) part).setActiveChild((MItemPart<?>) part.getChildren()
-					.get(0));
-			// selPart = (MPart) part.getChildren().get(0);
-		} else {
-			for (int i = 0; i < items.length; i++) {
-				MPart<?> me = (MPart<?>) items[i].getData(OWNING_ME);
-				if (selPart == me) {
-					// Ensure the part is created
-					if (items[i].getControl() == null)
-						renderer.createGui(selPart);
-
-					ctf.setSelection(items[i]);
-				}
-			}
+		// Find the tab associated with the part and set it as the selection
+		CTabItem selItem = findItemForPart(part, selPart);
+		if (selItem != null) {
+			ctf.setSelection(selItem);
 		}
 	}
 
@@ -178,23 +170,6 @@ public class StackModelFactory extends SWTPartFactory {
 			Control ctrl = (Control) element.getWidget();
 			if (ctrl != null) {
 				showTab((MItemPart<?>) element);
-			}
-		}
-	}
-
-	@Override
-	public <P extends MPart<?>> void processContents(MPart<P> me) {
-		Widget parentWidget = getParentWidget(me);
-		if (parentWidget == null)
-			return;
-
-		// Lazy Loading: here we only create the CTabItems, not the parts
-		// themselves; they get rendered when the tab gets selected
-		List<P> parts = me.getChildren();
-		if (parts != null) {
-			for (MPart<?> childME : parts) {
-				if (childME.isVisible())
-					childAdded(me, childME);
 			}
 		}
 	}
@@ -290,6 +265,13 @@ public class StackModelFactory extends SWTPartFactory {
 			}
 		});
 
+		ctf.addCTabFolderListener(new CTabFolderListener() {
+			public void itemClosed(CTabFolderEvent event) {
+				MPart part = (MPart) event.item.getData(PartFactory.OWNING_ME);
+				part.setVisible(false);
+			}
+		});
+
 		// Detect activation...picks up cases where the user clicks on the
 		// (already active) tab
 		ctf.addListener(SWT.Activate, new Listener() {
@@ -313,24 +295,6 @@ public class StackModelFactory extends SWTPartFactory {
 							.getWidget();
 					CTabItem item = findItemForPart(sm, selPart);
 					if (item != null) {
-						// Lazy Loading: we create the control here if necessary
-						// Note that this will result in a second call to
-						// 'childAdded' but
-						// that logic expects this
-						Control ctrl = item.getControl();
-						if (ctrl == null) {
-							if (selPart instanceof MContribution) {
-								// if the MContribution has an object, that
-								// means
-								// we're in the middle of creating it
-								if (((MContribution) selPart).getObject() == null) {
-									renderer.createGui(selPart);
-								}
-							} else {
-								renderer.createGui(selPart);
-							}
-						}
-
 						ctf.setSelection(item);
 					}
 				}
@@ -343,14 +307,6 @@ public class StackModelFactory extends SWTPartFactory {
 		Control ctrl = (Control) part.getWidget();
 		CTabItem cti = findItemForPart(part.getParent(), part);
 		cti.setControl(ctrl);
-		// // HACK! reparent the control under the ViewForm
-		// ViewForm vf = (ViewForm) ctf.getChildren()[0];
-		// Label lbl = (Label) vf.getTopLeft();
-		//		lbl.setText("This is view: " + part.getName()); //$NON-NLS-1$
-		//
-		// cti.setControl(vf);
-		// ctrl.setParent(vf);
-		// vf.setContent(ctrl);
 
 		ToolBar tb = getToolbar(part);
 		if (tb != null) {

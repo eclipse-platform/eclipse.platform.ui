@@ -134,4 +134,7 @@ public abstract class PartFactory {
 		}
 	}
 
+	public void removeGui(MPart element, Object widget) {
+	}
+
 }

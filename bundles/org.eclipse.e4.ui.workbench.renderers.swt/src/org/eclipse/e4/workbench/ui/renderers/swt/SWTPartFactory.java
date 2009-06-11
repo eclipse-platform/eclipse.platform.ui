@@ -284,6 +284,19 @@ public abstract class SWTPartFactory extends PartFactory {
 		((Widget) widget).setData(OWNING_ME, me);
 	}
 
+	public Object unbindWidget(MPart<?> me) {
+		Widget widget = (Widget) me.getWidget();
+		if (widget != null) {
+			me.setWidget(null);
+			widget.setData(OWNING_ME, null);
+		}
+
+		// Clear the factory reference
+		me.setOwner(null);
+
+		return widget;
+	}
+
 	protected Widget getParentWidget(MPart<?> element) {
 		return (element.getParent() instanceof MPart) ? (Widget) ((MPart<?>) (element
 				.getParent())).getWidget()
@@ -292,9 +305,10 @@ public abstract class SWTPartFactory extends PartFactory {
 
 	public void disposeWidget(MPart<?> part) {
 		Widget curWidget = (Widget) part.getWidget();
-		part.setWidget(null);
-		if (curWidget != null)
+		if (curWidget != null && !curWidget.isDisposed()) {
+			unbindWidget(part);
 			curWidget.dispose();
+		}
 	}
 
 	public void hookControllerLogic(final MPart<?> me) {
@@ -304,7 +318,8 @@ public abstract class SWTPartFactory extends PartFactory {
 		widget.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				MPart<?> model = (MPart<?>) e.widget.getData(OWNING_ME);
-				model.setWidget(null);
+				if (model != null)
+					model.setWidget(null);
 			}
 		});
 
