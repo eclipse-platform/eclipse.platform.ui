@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.core.databinding.observable.Realm;
@@ -37,15 +36,22 @@ public class UISchedulerStrategy implements ISchedulerStrategy {
 			final IRunAndTrack runnable, final String name,
 			final int eventType, final Object[] args) {
 		final boolean[] result = new boolean[1];
-		Realm.getDefault().asyncExec(new Runnable() {
+		Realm realm = Realm.getDefault();
+		if (realm == null)
+			return false;
+		realm.asyncExec(new Runnable() {
 			public void run() {
 				result[0] = runnable.notify(context, name, eventType, args);
 			}
 		});
+		// TODO this return value is bogus because the runnable has not run yet.
 		return result[0];
 	}
 
 	public void schedule(Runnable runnable) {
-		Realm.getDefault().asyncExec(runnable);
+		Realm realm = Realm.getDefault();
+		if (realm == null)
+			return;
+		realm.asyncExec(runnable);
 	}
 }
