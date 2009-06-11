@@ -225,7 +225,8 @@ public class StackModelFactory extends LazyStackFactory {
 			public void notifyChanged(Notification msg) {
 				MPart<?> sm = (MPart<?>) msg.getNotifier();
 				if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
-						.getFeature())) {
+						.getFeature())
+						&& !cti.isDisposed()) {
 					Image image = getImage(sm);
 					cti.setImage(image);
 				}
