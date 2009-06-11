@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -43,6 +43,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.ListenerList;
 
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.jface.internal.text.ResizableShellSupport;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 
@@ -188,6 +189,10 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		setColor(fContentComposite, foreground, background);
 
 		createStatusComposite(statusFieldText, toolBarManager, foreground, background);
+		
+		if (fResizable) {
+			ResizableShellSupport.makeResizable(fShell);
+		}
 	}
 
 	private void createStatusComposite(final String statusFieldText, final ToolBarManager toolBarManager, Color foreground, Color background) {
@@ -555,6 +560,12 @@ public abstract class AbstractInformationControl implements IInformationControl,
 		if (fStatusComposite != null)
 			trim.height+= fStatusComposite.computeSize(SWT.DEFAULT, SWT.DEFAULT).y;
 
+		if (fResizable) {
+			GridLayout shellLayout= (GridLayout) fShell.getLayout();
+			int w= shellLayout.marginWidth;
+			int h= shellLayout.marginHeight;
+			Geometry.expand(trim, w, w, h, h);
+		}
 		return trim;
 	}
 

@@ -63,6 +63,7 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.SWTKeySupport;
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
 import org.eclipse.jface.internal.text.InformationControlReplacer;
+import org.eclipse.jface.internal.text.ResizableShellSupport;
 import org.eclipse.jface.internal.text.TableOwnerDrawSupport;
 import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
@@ -601,6 +602,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		layout.marginHeight= 0;
 		layout.verticalSpacing= 1;
 		fProposalShell.setLayout(layout);
+		ResizableShellSupport.makeResizable(fProposalShell);
 
 		if (fContentAssistant.isStatusLineVisible()) {
 			createMessageText();
@@ -974,7 +976,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 */
 	public boolean hasFocus() {
 		if (Helper.okToUse(fProposalShell)) {
-			if ((fProposalShell.isFocusControl() || fProposalTable.isFocusControl()))
+			if ((fProposalShell.getDisplay().getActiveShell() == fProposalShell))
 				return true;
 			/*
 			 * We have to delegate this query to the additional info controller
