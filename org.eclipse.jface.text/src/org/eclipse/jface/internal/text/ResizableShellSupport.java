@@ -136,6 +136,7 @@ public class ResizableShellSupport {
 		public void mouseUp(MouseEvent e) {
 			fOriginalMouseLoc= null;
 			fOriginalShellBounds= null;
+			fShell.setFocus(); // focus should not stay in shell trim
 		}
 		
 		/*
