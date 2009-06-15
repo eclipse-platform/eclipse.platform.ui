@@ -29,8 +29,8 @@ import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabFolderListener;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -266,8 +266,8 @@ public class StackModelFactory extends LazyStackFactory {
 			}
 		});
 
-		ctf.addCTabFolderListener(new CTabFolderListener() {
-			public void itemClosed(CTabFolderEvent event) {
+		ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
+			public void close(CTabFolderEvent event) {
 				MPart part = (MPart) event.item.getData(PartFactory.OWNING_ME);
 				part.setVisible(false);
 			}
