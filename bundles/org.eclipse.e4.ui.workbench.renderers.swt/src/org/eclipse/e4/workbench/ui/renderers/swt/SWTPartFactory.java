@@ -214,9 +214,13 @@ public abstract class SWTPartFactory extends PartFactory {
 			final MHandledItem handledItem) {
 		int style = SWT.PUSH;
 		if (handledItem instanceof MMenuItem) {
-			if (((MMenuItem) handledItem).isSeparator()) {
+			final MMenuItem mItem = (MMenuItem) handledItem;
+			if (mItem.isSeparator()) {
+				if (!mItem.isVisible()) {
+					return;
+				}
 				style = SWT.SEPARATOR;
-			} else if (((MMenuItem) handledItem).getMenu() != null) {
+			} else if (mItem.getMenu() != null) {
 				style = SWT.CASCADE;
 			}
 		}

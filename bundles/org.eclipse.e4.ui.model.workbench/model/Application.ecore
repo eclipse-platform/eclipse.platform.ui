@@ -111,6 +111,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MMenuItem" eSuperTypes="#//MHandledItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="separator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MToolBarItem" eSuperTypes="#//MHandledItem"/>
   <eClassifiers xsi:type="ecore:EClass" name="MItemContainer" abstract="true" eSuperTypes="#//MApplicationElement">
