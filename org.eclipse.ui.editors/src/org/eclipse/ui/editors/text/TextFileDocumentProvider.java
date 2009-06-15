@@ -312,7 +312,7 @@ public class TextFileDocumentProvider implements IDocumentProvider, IDocumentPro
 		public void underlyingFileMoved(IFileBuffer file, IPath newLocation) {
 			IWorkspace workspace=ResourcesPlugin.getWorkspace();
 			IFile newFile= workspace.getRoot().getFile(newLocation);
-			IEditorInput input= newFile == null ? null : new FileEditorInput(newFile);
+			IEditorInput input= new FileEditorInput(newFile);
 			List list= new ArrayList(fElementStateListeners);
 			Iterator e= list.iterator();
 			while (e.hasNext()) {
