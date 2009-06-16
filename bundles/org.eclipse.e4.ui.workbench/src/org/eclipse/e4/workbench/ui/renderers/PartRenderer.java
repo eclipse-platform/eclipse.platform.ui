@@ -137,6 +137,9 @@ public class PartRenderer {
 		assert (factory != null);
 
 		MPart parent = element.getParent();
+		if (parent == null)
+			return;
+
 		PartFactory parentFactory = getFactoryFor(parent);
 		if (parentFactory != null) {
 			parentFactory.childRemoved(element.getParent(), element);
