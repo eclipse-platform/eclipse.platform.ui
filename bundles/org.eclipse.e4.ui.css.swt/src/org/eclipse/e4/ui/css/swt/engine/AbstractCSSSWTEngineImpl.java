@@ -87,8 +87,7 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		super.registerCSSValueConverter(CSSValueSWTImageConverterImpl.INSTANCE);
 
 		if (lazyApplyingStyles) {
-			new CSSSWTApplyStylesListener(Display.findDisplay(Thread
-					.currentThread()), this);
+			new CSSSWTApplyStylesListener(display, this);
 		}
 	}
 
