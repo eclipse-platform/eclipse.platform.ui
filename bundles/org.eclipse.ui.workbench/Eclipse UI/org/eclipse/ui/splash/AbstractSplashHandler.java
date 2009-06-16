@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,9 +19,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.WorkbenchAdvisor;
 
 /**
- * Baseclass for splash implementations. Please note that methods on this class
+ * Base class for splash implementations. Please note that methods on this class
  * will be invoked while the Workbench is being instantiated. As such, any
- * resource provided by the workbench plug-in cannot be guarenteed to be
+ * resource provided by the workbench plug-in cannot be guaranteed to be
  * available to this class while executing. No attempt should be made to access
  * {@link IWorkbench} or any subordinate interfaces or resources.
  * 
@@ -80,7 +80,7 @@ public abstract class AbstractSplashHandler {
 	 * <code>true</code>. Because this property defaults to <code>false</code>
 	 * RCP developers must set this property via a
 	 * <code>plugin_customization.ini</code> file or by setting the preference
-	 * on the Platform UI perference store in the
+	 * on the Platform UI preference store in the
 	 * {@link WorkbenchAdvisor#initialize(org.eclipse.ui.application.IWorkbenchConfigurer)}
 	 * method if they wish to have progress reported on startup.
 	 * </p>
