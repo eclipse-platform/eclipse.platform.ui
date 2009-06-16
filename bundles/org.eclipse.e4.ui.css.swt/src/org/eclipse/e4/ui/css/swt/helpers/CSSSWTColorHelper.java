@@ -8,6 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation
+ *     Kai Toedter - added radial gradient support
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
@@ -32,11 +33,13 @@ public class CSSSWTColorHelper {
 	}
 
 	public static Color getSWTColor(CSSValue value, Display display) {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
+		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return null;
+		}
 		RGB rgb = getRGB((CSSPrimitiveValue) value);
-		if (rgb == null)
+		if (rgb == null) {
 			return null;
+		}
 		Color color = new Color(display, rgb.red, rgb.green, rgb.blue);
 		return color;
 	}
@@ -57,8 +60,9 @@ public class CSSSWTColorHelper {
 	}
 
 	public static RGB getRGB(CSSValue value) {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
+		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return null;
+		}
 		return getRGB((CSSPrimitiveValue) value);
 	}
 
@@ -95,17 +99,27 @@ public class CSSSWTColorHelper {
 			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 				short primType = ((CSSPrimitiveValue) value).getPrimitiveType();
 
-				//Skip the keyword "gradient"
-				if(primType == CSSPrimitiveValue.CSS_IDENT && value.getCssText().equals("gradient"))
-					continue;
-				
+				if (primType == CSSPrimitiveValue.CSS_IDENT) {
+					if (value.getCssText().equals("gradient")) {
+						// Skip the keyword "gradient"
+						continue;
+					} else if (value.getCssText().equals("linear")) {
+						gradient.setLinear(true);
+						continue;
+					} else if (value.getCssText().equals("radial")) {
+						gradient.setLinear(false);
+						continue;
+					}
+				}
+
 				switch (primType) {
 				case CSSPrimitiveValue.CSS_IDENT:
 				case CSSPrimitiveValue.CSS_STRING:
 				case CSSPrimitiveValue.CSS_RGBCOLOR:
 					RGB rgb = getRGB((CSSPrimitiveValue) value);
-					if (rgb != null)
+					if (rgb != null) {
 						gradient.addRGB(rgb);
+					}
 					break;
 				case CSSPrimitiveValue.CSS_PERCENTAGE:
 					gradient.addPercent(getPercent((CSSPrimitiveValue) value));
@@ -117,7 +131,8 @@ public class CSSSWTColorHelper {
 	}
 
 	public static Color[] getSWTColors(Gradient grad, Display display) {
-		//TODO watch out for leaking Colors, need to cache them in the resource registry
+		// TODO watch out for leaking Colors, need to cache them in the resource
+		// registry
 		Color[] colors = new Color[grad.getRGBs().size()];
 		for (int i = 0; i < colors.length; i++) {
 			RGB rgb = (RGB) grad.getRGBs().get(i);
@@ -125,50 +140,50 @@ public class CSSSWTColorHelper {
 		}
 		return colors;
 	}
-			
+
 	public static int[] getPercents(Gradient grad) {
-		//There should be exactly one more RGBs. than percent,
-		//in which case just return the percents as array
-		if(grad.getRGBs().size() == grad.getPercents().size() + 1) {
+		// There should be exactly one more RGBs. than percent,
+		// in which case just return the percents as array
+		if (grad.getRGBs().size() == grad.getPercents().size() + 1) {
 			int[] percents = new int[grad.getPercents().size()];
 			for (int i = 0; i < percents.length; i++) {
 				int value = ((Integer) grad.getPercents().get(i)).intValue();
-				if(value < 0 || value > 100) {
-					//TODO this should be an exception because bad source format
+				if (value < 0 || value > 100) {
+					// TODO this should be an exception because bad source
+					// format
 					return getDefaultPercents(grad);
 				}
 				percents[i] = value;
 			}
 			return percents;
 		} else {
-			//We can get here if either:
-			//  A: the percents are empty (legal) or
-			//  B: size mismatches (error)
-			//  TODO this should be an exception because bad source format
+			// We can get here if either:
+			// A: the percents are empty (legal) or
+			// B: size mismatches (error)
+			// TODO this should be an exception because bad source format
 
 			return getDefaultPercents(grad);
 		}
 	}
-		
+
 	/*
-	 * Compute and return a default array of percentages based on number of colors
-	 *   o If two colors, {100}
-	 *   o if three colors, {50, 100}
-	 *   o if four colors, {33, 67, 100}
+	 * Compute and return a default array of percentages based on number of
+	 * colors o If two colors, {100} o if three colors, {50, 100} o if four
+	 * colors, {33, 67, 100}
 	 */
 	private static int[] getDefaultPercents(Gradient grad) {
-		//Needed to avoid /0 in increment calc
-		if(grad.getRGBs().size() == 1) {
+		// Needed to avoid /0 in increment calc
+		if (grad.getRGBs().size() == 1) {
 			return new int[0];
 		}
-		
+
 		int[] percents = new int[grad.getRGBs().size() - 1];
-		float increment = 100f / (grad.getRGBs().size() - 1); 
-		
+		float increment = 100f / (grad.getRGBs().size() - 1);
+
 		for (int i = 0; i < percents.length; i++) {
 			percents[i] = Math.round((i + 1) * increment);
 		}
-		return percents;			
+		return percents;
 	}
 
 	public static RGBColor getRGBColor(Color color) {

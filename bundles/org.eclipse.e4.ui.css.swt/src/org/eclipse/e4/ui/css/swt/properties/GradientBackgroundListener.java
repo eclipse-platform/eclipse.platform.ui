@@ -8,9 +8,16 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation
+ *     Kai Toedter - added radial gradient support
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties;
 
+import java.awt.Graphics2D;
+import java.awt.Paint;
+import java.awt.RadialGradientPaint;
+import java.awt.geom.Point2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,6 +30,8 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
@@ -32,7 +41,7 @@ import org.eclipse.swt.widgets.Listener;
 
 public class GradientBackgroundListener implements Listener {
 	private Gradient grad;
-	private Control control;
+	private final Control control;
 	private static Map handlers = new HashMap();
 
 	private GradientBackgroundListener(Control control, Gradient grad) {
@@ -47,8 +56,7 @@ public class GradientBackgroundListener implements Listener {
 		if (handler == null) {
 			handler = new GradientBackgroundListener(control, grad);
 			handlers.put(control, handler);
-		}
-		else {
+		} else {
 			handler.grad = grad;
 			handler.handleEvent(null);
 		}
@@ -56,8 +64,9 @@ public class GradientBackgroundListener implements Listener {
 
 	public void handleEvent(Event event) {
 		Point size = control.getSize();
-		if (size.x <= 0 || size.y <= 0)
+		if (size.x <= 0 || size.y <= 0) {
 			return;
+		}
 		/*
 		 * Dispose the old background image.
 		 */
@@ -69,21 +78,44 @@ public class GradientBackgroundListener implements Listener {
 		/*
 		 * Draw the new background.
 		 */
-		Image newImage = new Image(control.getDisplay(), size.x, size.y);
-		GC gc = new GC(newImage);
-		List colors = new ArrayList();
-		for (Iterator iterator = grad.getRGBs().iterator(); iterator.hasNext();) {
-			RGB rgb = (RGB) iterator.next();
-			Color color = new Color(control.getDisplay(), rgb.red, rgb.green,
-					rgb.blue);
-			colors.add(color);
 
-		}
-		fillGradient(gc, new Rectangle(0, 0, size.x, size.y), colors, CSSSWTColorHelper.getPercents(grad), true);
-		gc.dispose();
-		for (Iterator iterator = colors.iterator(); iterator.hasNext();) {
-			Color c = (Color) iterator.next();
-			c.dispose(); // Dispose colors too.
+		Image newImage;
+
+		if (grad.isRadial()) {
+			List<java.awt.Color> colors = new ArrayList<java.awt.Color>();
+			for (Iterator iterator = grad.getRGBs().iterator(); iterator
+					.hasNext();) {
+				RGB rgb = (RGB) iterator.next();
+				java.awt.Color color = new java.awt.Color(rgb.red, rgb.green,
+						rgb.blue);
+				colors.add(color);
+			}
+
+			BufferedImage image = getBufferedImage(size.x, size.y, colors,
+					CSSSWTColorHelper.getPercents(grad));
+			// long startTime = System.currentTimeMillis();
+			ImageData imagedata = convertToSWT(image);
+			// System.out.println("Conversion took "
+			// + (System.currentTimeMillis() - startTime) + " ms");
+			newImage = new Image(control.getDisplay(), imagedata);
+		} else {
+			newImage = new Image(control.getDisplay(), size.x, size.y);
+			GC gc = new GC(newImage);
+			List colors = new ArrayList();
+			for (Iterator iterator = grad.getRGBs().iterator(); iterator
+					.hasNext();) {
+				RGB rgb = (RGB) iterator.next();
+				Color color = new Color(control.getDisplay(), rgb.red,
+						rgb.green, rgb.blue);
+				colors.add(color);
+			}
+			fillGradient(gc, new Rectangle(0, 0, size.x, size.y), colors,
+					CSSSWTColorHelper.getPercents(grad), true);
+			gc.dispose();
+			for (Iterator iterator = colors.iterator(); iterator.hasNext();) {
+				Color c = (Color) iterator.next();
+				c.dispose(); // Dispose colors too.
+			}
 		}
 		/*
 		 * Set the new background.
@@ -96,15 +128,18 @@ public class GradientBackgroundListener implements Listener {
 	 * and percentages.
 	 * 
 	 * @param gc @param rect @param gradientColors @param gradientPercents
+	 * 
 	 * @param gradientVertical
 	 */
 	private static void fillGradient(GC gc, Rectangle rect,
-			List gradientColors, int[] gradientPercents, boolean gradientVertical) {
+			List gradientColors, int[] gradientPercents,
+			boolean gradientVertical) {
 		Color background = (Color) gradientColors
 				.get(gradientColors.size() - 1);
 		if (gradientColors.size() == 1) {
-			if (gradientColors.get(0) != null)
+			if (gradientColors.get(0) != null) {
 				gc.setBackground((Color) gradientColors.get(0));
+			}
 			gc.fillRectangle(rect.x, rect.y, rect.width, rect.height);
 		} else {
 			Color lastColor = (Color) gradientColors.get(0);
@@ -114,8 +149,9 @@ public class GradientBackgroundListener implements Listener {
 			for (int i = 0; i < loopCount; ++i) {
 				gc.setForeground(lastColor);
 				lastColor = (Color) gradientColors.get(i + 1);
-				if (lastColor == null)
+				if (lastColor == null) {
 					lastColor = background;
+				}
 				gc.setBackground(lastColor);
 				int grpercent = ((Integer) gradientPercents[i]).intValue();
 				if (gradientVertical) {
@@ -141,5 +177,58 @@ public class GradientBackgroundListener implements Listener {
 				gc.fillRectangle(pos, rect.y, rect.width - pos, rect.height);
 			}
 		}
+	}
+
+	/**
+	 * Returns a BufferedImage that renders a radial gradient. This is a
+	 * workaround since SWT does not support radial gradients yet.
+	 * 
+	 * @param width
+	 *            image width
+	 * @param height
+	 *            image height
+	 * @param colors
+	 *            a list of colors that define the gradients
+	 * @param percents
+	 *            a list of percents that define the percents of above colors
+	 * @return the image
+	 */
+	protected BufferedImage getBufferedImage(int width, int height,
+			List<java.awt.Color> colors, int[] percents) {
+		java.awt.Color[] colorArray = colors.toArray(new java.awt.Color[] {});
+		float[] fractions = new float[percents.length + 1];
+		fractions[0] = 0.0f;
+		for (int i = 1; i <= percents.length; i++) {
+			fractions[i] = percents[i - 1] / 100.0f;
+		}
+		BufferedImage image = new BufferedImage(width, height,
+				BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2 = (Graphics2D) image.getGraphics();
+
+		Paint p = new RadialGradientPaint(new Point2D.Double(width / 2.0, 0),
+				width, new Point2D.Double(width / 2.0, 0.0), fractions,
+				colorArray, RadialGradientPaint.CycleMethod.NO_CYCLE);
+		g2.setPaint(p);
+		g2.fillRect(0, 0, width, height);
+		return image;
+	}
+
+	/**
+	 * Converts a AWT BufferedImage to an SWT ImageData. This is a workaround
+	 * since SWT does not support radial gradients yet.
+	 * 
+	 * @param bufferedImage
+	 *            the source AWT BufferedImage
+	 * @return the converted SWT ImageData
+	 */
+	private ImageData convertToSWT(BufferedImage bufferedImage) {
+		int[] bufferedImageData = ((DataBufferInt) bufferedImage.getData()
+				.getDataBuffer()).getData();
+		ImageData imageData = new ImageData(bufferedImage.getWidth(),
+				bufferedImage.getHeight(), 24, new PaletteData(0xff0000,
+						0x00ff00, 0x0000ff));
+		imageData.setPixels(0, 0, bufferedImageData.length, bufferedImageData,
+				0);
+		return imageData;
 	}
 }

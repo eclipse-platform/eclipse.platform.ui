@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Kai Toedter - added radial gradient support
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom.properties;
 
@@ -22,8 +23,24 @@ import java.util.List;
  */
 public class Gradient {
 
-	private List rgbs = new ArrayList();
-	private List percents = new ArrayList();
+	private final List rgbs = new ArrayList();
+	private final List percents = new ArrayList();
+
+	private boolean isLinear = true;
+
+	/* TODO: enhance Gradient with focus points */
+
+	public void setLinear(boolean linear) {
+		isLinear = linear;
+	}
+
+	public boolean isLinear() {
+		return isLinear;
+	}
+
+	public boolean isRadial() {
+		return !isLinear;
+	}
 
 	public void addRGB(Object rgb) {
 		rgbs.add(rgb);
