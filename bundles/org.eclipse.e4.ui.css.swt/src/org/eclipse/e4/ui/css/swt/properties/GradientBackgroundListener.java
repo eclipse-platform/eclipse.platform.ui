@@ -13,11 +13,10 @@
 package org.eclipse.e4.ui.css.swt.properties;
 
 import java.awt.Graphics2D;
-import java.awt.Paint;
-import java.awt.RadialGradientPaint;
 import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
+import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -42,7 +41,7 @@ import org.eclipse.swt.widgets.Listener;
 public class GradientBackgroundListener implements Listener {
 	private Gradient grad;
 	private final Control control;
-	private static Map handlers = new HashMap();
+	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<Control, GradientBackgroundListener>();
 
 	private GradientBackgroundListener(Control control, Gradient grad) {
 		this.grad = grad;
@@ -51,8 +50,7 @@ public class GradientBackgroundListener implements Listener {
 	}
 
 	public static void handle(Control control, Gradient grad) {
-		GradientBackgroundListener handler = (GradientBackgroundListener) handlers
-				.get(control);
+		GradientBackgroundListener handler = handlers.get(control);
 		if (handler == null) {
 			handler = new GradientBackgroundListener(control, grad);
 			handlers.put(control, handler);
@@ -101,7 +99,7 @@ public class GradientBackgroundListener implements Listener {
 		} else {
 			newImage = new Image(control.getDisplay(), size.x, size.y);
 			GC gc = new GC(newImage);
-			List colors = new ArrayList();
+			List<Color> colors = new ArrayList<Color>();
 			for (Iterator iterator = grad.getRGBs().iterator(); iterator
 					.hasNext();) {
 				RGB rgb = (RGB) iterator.next();
@@ -112,8 +110,9 @@ public class GradientBackgroundListener implements Listener {
 			fillGradient(gc, new Rectangle(0, 0, size.x, size.y), colors,
 					CSSSWTColorHelper.getPercents(grad), true);
 			gc.dispose();
-			for (Iterator iterator = colors.iterator(); iterator.hasNext();) {
-				Color c = (Color) iterator.next();
+			for (Iterator<Color> iterator = colors.iterator(); iterator
+					.hasNext();) {
+				Color c = iterator.next();
 				c.dispose(); // Dispose colors too.
 			}
 		}
@@ -132,23 +131,22 @@ public class GradientBackgroundListener implements Listener {
 	 * @param gradientVertical
 	 */
 	private static void fillGradient(GC gc, Rectangle rect,
-			List gradientColors, int[] gradientPercents,
+			List<Color> gradientColors, int[] gradientPercents,
 			boolean gradientVertical) {
-		Color background = (Color) gradientColors
-				.get(gradientColors.size() - 1);
+		Color background = gradientColors.get(gradientColors.size() - 1);
 		if (gradientColors.size() == 1) {
 			if (gradientColors.get(0) != null) {
-				gc.setBackground((Color) gradientColors.get(0));
+				gc.setBackground(gradientColors.get(0));
 			}
 			gc.fillRectangle(rect.x, rect.y, rect.width, rect.height);
 		} else {
-			Color lastColor = (Color) gradientColors.get(0);
+			Color lastColor = gradientColors.get(0);
 			int pos = (gradientVertical) ? rect.y : rect.x;
 			int loopCount = Math.min(gradientColors.size() - 1,
 					gradientPercents.length);
 			for (int i = 0; i < loopCount; ++i) {
 				gc.setForeground(lastColor);
-				lastColor = (Color) gradientColors.get(i + 1);
+				lastColor = gradientColors.get(i + 1);
 				if (lastColor == null) {
 					lastColor = background;
 				}
@@ -205,10 +203,39 @@ public class GradientBackgroundListener implements Listener {
 				BufferedImage.TYPE_INT_RGB);
 		Graphics2D g2 = (Graphics2D) image.getGraphics();
 
-		Paint p = new RadialGradientPaint(new Point2D.Double(width / 2.0, 0),
-				width, new Point2D.Double(width / 2.0, 0.0), fractions,
-				colorArray, RadialGradientPaint.CycleMethod.NO_CYCLE);
-		g2.setPaint(p);
+		// The following code tries to instantiate a
+		// java.awt.RadialGradientPaint that is only available in Java 6 and
+		// higher. Since the BREE is set to J2SE-1.5, reflection is used. If
+		// this code is run with a Java version below 6, the radial gradient is
+		// replaced by a flat background color (the first color in the color
+		// array)
+		try {
+			Class<?> radialGradientPaintClass = Class
+					.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
+			Class<?>[] classes = radialGradientPaintClass.getClasses();
+			int i;
+			for (i = 0; i < classes.length; i++) {
+				if ("java.awt.MultipleGradientPaint.CycleMethod" //$NON-NLS-1$
+				.equals(classes[i].getCanonicalName())) {
+					break;
+				}
+			}
+			Constructor<?> ctor = radialGradientPaintClass
+					.getConstructor(new Class[] { java.awt.geom.Point2D.class,
+							float.class, java.awt.geom.Point2D.class,
+							float[].class, java.awt.Color[].class, classes[i] });
+
+			final Object radialGradientPaint = ctor.newInstance(new Object[] {
+					new Point2D.Double(width / 2.0, 0), width,
+					new Point2D.Double(width / 2.0, 0.0), fractions,
+					colorArray, classes[i].getEnumConstants()[0] });
+			g2.setPaint((java.awt.Paint) radialGradientPaint);
+		} catch (Exception e) {
+			System.err
+					.println("Warning - radial gradients are only supported in Java 6 and higher, using flat background color instead"); //$NON-NLS-1$
+			g2.setColor(colorArray[0]);
+		}
+
 		g2.fillRect(0, 0, width, height);
 		return image;
 	}
