@@ -8,13 +8,15 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackage.java,v 1.4 2009/02/04 21:18:32 pwebster Exp $
+ * $Id: WorkbenchPackage.java,v 1.5 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -602,6 +604,126 @@ public interface WorkbenchPackage extends EPackage {
 
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.MMenuItemRendererImpl <em>MMenu Item Renderer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.internal.workbench.MMenuItemRendererImpl
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMMenuItemRenderer()
+	 * @generated
+	 */
+	int MMENU_ITEM_RENDERER = 4;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__OWNER = ApplicationPackage.MMENU_ITEM__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__ID = ApplicationPackage.MMENU_ITEM__ID;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__ICON_URI = ApplicationPackage.MMENU_ITEM__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__NAME = ApplicationPackage.MMENU_ITEM__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__TOOLTIP = ApplicationPackage.MMENU_ITEM__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__COMMAND = ApplicationPackage.MMENU_ITEM__COMMAND;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__MENU = ApplicationPackage.MMENU_ITEM__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__SEPARATOR = ApplicationPackage.MMENU_ITEM__SEPARATOR;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__VISIBLE = ApplicationPackage.MMENU_ITEM__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__RENDERER = ApplicationPackage.MMENU_ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>MMenu Item Renderer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER_FEATURE_COUNT = ApplicationPackage.MMENU_ITEM_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '<em>IContribution Item</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see java.lang.Object
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getIContributionItem()
+	 * @generated
+	 */
+	int ICONTRIBUTION_ITEM = 5;
+
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.MWorkbenchWindow <em>MWorkbench Window</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -684,6 +806,38 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getMWorkbench_CurWBW();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.MMenuItemRenderer <em>MMenu Item Renderer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>MMenu Item Renderer</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MMenuItemRenderer
+	 * @generated
+	 */
+	EClass getMMenuItemRenderer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.workbench.MMenuItemRenderer#getRenderer <em>Renderer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Renderer</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MMenuItemRenderer#getRenderer()
+	 * @see #getMMenuItemRenderer()
+	 * @generated
+	 */
+	EAttribute getMMenuItemRenderer_Renderer();
+
+	/**
+	 * Returns the meta object for data type '{@link java.lang.Object <em>IContribution Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>IContribution Item</em>'.
+	 * @see java.lang.Object
+	 * @model instanceClass="java.lang.Object" serializeable="false"
+	 * @generated
+	 */
+	EDataType getIContributionItem();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -778,6 +932,34 @@ public interface WorkbenchPackage extends EPackage {
 		 * @generated
 		 */
 		EReference MWORKBENCH__CUR_WBW = eINSTANCE.getMWorkbench_CurWBW();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.MMenuItemRendererImpl <em>MMenu Item Renderer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.internal.workbench.MMenuItemRendererImpl
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMMenuItemRenderer()
+		 * @generated
+		 */
+		EClass MMENU_ITEM_RENDERER = eINSTANCE.getMMenuItemRenderer();
+
+		/**
+		 * The meta object literal for the '<em><b>Renderer</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MMENU_ITEM_RENDERER__RENDERER = eINSTANCE.getMMenuItemRenderer_Renderer();
+
+		/**
+		 * The meta object literal for the '<em>IContribution Item</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see java.lang.Object
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getIContributionItem()
+		 * @generated
+		 */
+		EDataType ICONTRIBUTION_ITEM = eINSTANCE.getIContributionItem();
 
 	}
 

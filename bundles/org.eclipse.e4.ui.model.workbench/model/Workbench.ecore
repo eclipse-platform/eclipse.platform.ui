@@ -46,4 +46,10 @@
         eType="#//MWorkbenchWindow" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="curWBW" eType="#//MWorkbenchWindow"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MMenuItemRenderer" eSuperTypes="Application.ecore#//MMenuItem">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="renderer" eType="#//IContributionItem"
+        transient="true"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="IContributionItem" instanceClassName="java.lang.Object"
+      serializable="false"/>
 </ecore:EPackage>

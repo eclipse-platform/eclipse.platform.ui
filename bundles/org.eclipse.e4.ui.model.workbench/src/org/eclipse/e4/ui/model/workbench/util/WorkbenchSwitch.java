@@ -8,15 +8,17 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchSwitch.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.workbench.util;
 
 import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 
@@ -134,6 +136,16 @@ public class WorkbenchSwitch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case WorkbenchPackage.MMENU_ITEM_RENDERER: {
+				MMenuItemRenderer mMenuItemRenderer = (MMenuItemRenderer)theEObject;
+				T result = caseMMenuItemRenderer(mMenuItemRenderer);
+				if (result == null) result = caseMMenuItem(mMenuItemRenderer);
+				if (result == null) result = caseMHandledItem(mMenuItemRenderer);
+				if (result == null) result = caseMItem(mMenuItemRenderer);
+				if (result == null) result = caseMApplicationElement(mMenuItemRenderer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -195,6 +207,21 @@ public class WorkbenchSwitch<T> {
 	 * @generated
 	 */
 	public T caseMWorkbench(MWorkbench object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>MMenu Item Renderer</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>MMenu Item Renderer</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMMenuItemRenderer(MMenuItemRenderer object) {
 		return null;
 	}
 
@@ -270,6 +297,36 @@ public class WorkbenchSwitch<T> {
 	 * @generated
 	 */
 	public <P extends MPart<?>> T caseMWindow(MWindow<P> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>MHandled Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>MHandled Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMHandledItem(MHandledItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>MMenu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>MMenu Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMMenuItem(MMenuItem object) {
 		return null;
 	}
 

@@ -8,13 +8,15 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchAdapterFactory.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.workbench.util;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 
@@ -100,6 +102,10 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 				return createMWorkbenchAdapter();
 			}
 			@Override
+			public Adapter caseMMenuItemRenderer(MMenuItemRenderer object) {
+				return createMMenuItemRendererAdapter();
+			}
+			@Override
 			public Adapter caseMApplicationElement(MApplicationElement object) {
 				return createMApplicationElementAdapter();
 			}
@@ -118,6 +124,14 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public <P extends MPart<?>> Adapter caseMWindow(MWindow<P> object) {
 				return createMWindowAdapter();
+			}
+			@Override
+			public Adapter caseMHandledItem(MHandledItem object) {
+				return createMHandledItemAdapter();
+			}
+			@Override
+			public Adapter caseMMenuItem(MMenuItem object) {
+				return createMMenuItemAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -196,6 +210,20 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.workbench.MMenuItemRenderer <em>MMenu Item Renderer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.workbench.MMenuItemRenderer
+	 * @generated
+	 */
+	public Adapter createMMenuItemRendererAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MApplicationElement <em>MApplication Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -262,6 +290,34 @@ public class WorkbenchAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMWindowAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledItem <em>MHandled Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem
+	 * @generated
+	 */
+	public Adapter createMHandledItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>MMenu Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MMenuItem
+	 * @generated
+	 */
+	public Adapter createMMenuItemAdapter() {
 		return null;
 	}
 

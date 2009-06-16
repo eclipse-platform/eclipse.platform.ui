@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -25,6 +26,7 @@ import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
+import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
@@ -34,6 +36,9 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -212,7 +217,51 @@ public abstract class SWTPartFactory extends PartFactory {
 
 	private void createMenuItem(MPart<?> part, final Menu parentMenu,
 			final MHandledItem handledItem) {
+
 		int style = SWT.PUSH;
+		if (handledItem instanceof MMenuItemRenderer) {
+			final MenuItem newMenuItem = new MenuItem(parentMenu, style);
+			newMenuItem.setData(handledItem);
+			newMenuItem.setText(handledItem.getId());
+			final IContributionItem renderer = (IContributionItem) ((MMenuItemRenderer) handledItem)
+					.getRenderer();
+			final ArrayList<IMenuListener> fakeListeners = new ArrayList<IMenuListener>();
+			final MenuManager fakeManager = new MenuManager() {
+				/*
+				 * (non-Javadoc)
+				 * 
+				 * @see
+				 * org.eclipse.jface.action.MenuManager#addMenuListener(org.
+				 * eclipse.jface.action.IMenuListener)
+				 */
+				@Override
+				public void addMenuListener(IMenuListener listener) {
+					fakeListeners.add(listener);
+				}
+			};
+			fakeManager.add(renderer);
+			parentMenu.addListener(SWT.Show, new Listener() {
+				public void handleEvent(Event event) {
+					final MenuItem[] items = parentMenu.getItems();
+					int idx = 0;
+					for (; idx < items.length && items[idx] != newMenuItem; idx++)
+						;
+					idx++;
+					for (int i = idx; i < items.length
+							&& !(items[i].getData() instanceof MHandledItem); i++) {
+						items[i].dispose();
+					}
+					final IMenuListener[] array = fakeListeners
+							.toArray(new IMenuListener[fakeListeners.size()]);
+					for (IMenuListener im : array) {
+						im.menuAboutToShow(fakeManager);
+					}
+					renderer.fill(parentMenu, idx);
+				}
+			});
+			return;
+		}
+
 		if (handledItem instanceof MMenuItem) {
 			final MMenuItem mItem = (MMenuItem) handledItem;
 			if (mItem.isSeparator()) {
@@ -226,6 +275,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		}
 
 		final MenuItem newMenuItem = new MenuItem(parentMenu, style);
+		newMenuItem.setData(handledItem);
 		if (style != SWT.SEPARATOR) {
 			newMenuItem.setText(handledItem.getName());
 			newMenuItem.setImage(getImage(handledItem));

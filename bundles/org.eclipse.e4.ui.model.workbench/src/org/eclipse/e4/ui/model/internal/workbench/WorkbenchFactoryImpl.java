@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: WorkbenchFactoryImpl.java,v 1.3 2009/02/03 14:25:36 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.workbench.*;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 
@@ -71,8 +72,35 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 			case WorkbenchPackage.MWORKBENCH_WINDOW: return createMWorkbenchWindow();
 			case WorkbenchPackage.MPERSPECTIVE: return createMPerspective();
 			case WorkbenchPackage.MWORKBENCH: return createMWorkbench();
+			case WorkbenchPackage.MMENU_ITEM_RENDERER: return createMMenuItemRenderer();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object createFromString(EDataType eDataType, String initialValue) {
+		switch (eDataType.getClassifierID()) {
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String convertToString(EDataType eDataType, Object instanceValue) {
+		switch (eDataType.getClassifierID()) {
+			default:
+				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -104,6 +132,16 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 	public MWorkbench createMWorkbench() {
 		MWorkbenchImpl mWorkbench = new MWorkbenchImpl();
 		return mWorkbench;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMenuItemRenderer createMMenuItemRenderer() {
+		MMenuItemRendererImpl mMenuItemRenderer = new MMenuItemRendererImpl();
+		return mMenuItemRenderer;
 	}
 
 	/**

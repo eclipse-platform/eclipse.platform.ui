@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackageImpl.java,v 1.4 2009/05/25 14:29:18 pwebster Exp $
+ * $Id: WorkbenchPackageImpl.java,v 1.5 2009/06/15 19:13:16 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.ApplicationPackage;
 
 import org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl;
 
+import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MProxyPart;
 import org.eclipse.e4.ui.model.workbench.MWorkbench;
@@ -23,7 +24,9 @@ import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
 import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 
+import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -65,6 +68,20 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * @generated
 	 */
 	private EClass mWorkbenchEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass mMenuItemRendererEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType iContributionItemEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -216,6 +233,33 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getMMenuItemRenderer() {
+		return mMenuItemRendererEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMMenuItemRenderer_Renderer() {
+		return (EAttribute)mMenuItemRendererEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getIContributionItem() {
+		return iContributionItemEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public WorkbenchFactory getWorkbenchFactory() {
 		return (WorkbenchFactory)getEFactoryInstance();
 	}
@@ -250,6 +294,12 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		mWorkbenchEClass = createEClass(MWORKBENCH);
 		createEReference(mWorkbenchEClass, MWORKBENCH__WB_WINDOWS);
 		createEReference(mWorkbenchEClass, MWORKBENCH__CUR_WBW);
+
+		mMenuItemRendererEClass = createEClass(MMENU_ITEM_RENDERER);
+		createEAttribute(mMenuItemRendererEClass, MMENU_ITEM_RENDERER__RENDERER);
+
+		// Create data types
+		iContributionItemEDataType = createEDataType(ICONTRIBUTION_ITEM);
 	}
 
 	/**
@@ -307,6 +357,7 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		g2 = createEGenericType(mPerspectiveEClass_P);
 		g1.getETypeArguments().add(g2);
 		mPerspectiveEClass.getEGenericSuperTypes().add(g1);
+		mMenuItemRendererEClass.getESuperTypes().add(theApplicationPackage.getMMenuItem());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(mWorkbenchWindowEClass, MWorkbenchWindow.class, "MWorkbenchWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -326,6 +377,12 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		initEClass(mWorkbenchEClass, MWorkbench.class, "MWorkbench", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getMWorkbench_WbWindows(), this.getMWorkbenchWindow(), null, "wbWindows", null, 0, -1, MWorkbench.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getMWorkbench_CurWBW(), this.getMWorkbenchWindow(), null, "curWBW", null, 0, 1, MWorkbench.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(mMenuItemRendererEClass, MMenuItemRenderer.class, "MMenuItemRenderer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getMMenuItemRenderer_Renderer(), this.getIContributionItem(), "renderer", null, 0, 1, MMenuItemRenderer.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		// Initialize data types
+		initEDataType(iContributionItemEDataType, Object.class, "IContributionItem", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		// Create resource
 		createResource(eNS_URI);
