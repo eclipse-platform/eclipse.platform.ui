@@ -29,18 +29,14 @@ Composite Label {
 	color: white;
 }
 
-Composite Composite {
-	background-color: #101010 #373737 60%;
-}
-
-DetailComposite {
-	background-color: #101010 #373737 60%;
+#DetailView  {
+	/* background-color: -webkit-gradient(radial, 45 45, 10, 52 50, 30, from(#A7D30C), to(rgba(1,159,98,0)), color-stop(90%, #019F62)) */
+	background-color: gradient radial #575757 #101010 60%; 
 }
 
 Composite Text {
 	background-color: rgb(100, 100, 100);
 	color: white;
-	border: 5;
 }
 
 Label {
@@ -51,8 +47,8 @@ Label {
 	color: #f08d00;
 }
 
-Table,Text#output {
-	background-color: #202020 #373737 60%;
+Table {
+	background-color: gradient radial #575757 #101010 100%;
 	color: rgb(240, 240, 240);
 	font: Verdana 8px;
 }
@@ -71,12 +67,9 @@ CTabFolder {
 
 CTabFolder:selected {
 	background-color: #4a4a4a #101010 60%;
-	font-weight: normal;
 	font: Verdana 8px;
 }
 
 CTabFolder.active:selected {
 	background-color: #777777 #373737 #101010 50% 50%;
-	color: #ff5500;
-	font: bold;
 }

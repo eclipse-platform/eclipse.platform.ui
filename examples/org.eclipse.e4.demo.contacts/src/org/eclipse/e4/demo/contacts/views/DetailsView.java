@@ -22,6 +22,7 @@ public class DetailsView {
 	private final DetailComposite detailComposite;
 
 	public DetailsView(Composite parent) {
+		parent.setData("org.eclipse.e4.ui.css.id", "DetailView");
 		detailComposite = new DetailComposite(parent, SWT.NONE, false, null,
 				null);
 
