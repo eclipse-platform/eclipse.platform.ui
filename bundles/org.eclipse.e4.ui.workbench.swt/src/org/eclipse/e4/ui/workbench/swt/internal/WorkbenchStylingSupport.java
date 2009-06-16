@@ -12,13 +12,17 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 //import java.io.InputStream;
+import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
+import org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator;
+import org.eclipse.e4.ui.css.nebula.engine.CSSNebulaEngineImpl;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -30,98 +34,51 @@ public class WorkbenchStylingSupport {
 
 	public static void initializeStyling(Display display, String cssURI,
 			String resourceURI, IEclipseContext appContext) {
+
 		// Instantiate SWT CSS Engine
-		try {
-			Class engineClass = Class
-					.forName("org.eclipse.e4.ui.css.nebula.engine.CSSNebulaEngineImpl"); //$NON-NLS-1$
-			Constructor ctor = engineClass.getConstructor(new Class[] {
-					Display.class, Boolean.TYPE });
-			final Object engine = ctor.newInstance(new Object[] { display,
-					Boolean.TRUE });
-			display.setData("org.eclipse.e4.ui.css.core.engine", engine); //$NON-NLS-1$
-
-			Class errorHandlerClass = Class
-					.forName("org.eclipse.e4.ui.css.core.engine.CSSErrorHandler"); //$NON-NLS-1$
-			Method setErrorHandler = engineClass.getMethod(
-					"setErrorHandler", new Class[] { errorHandlerClass }); //$NON-NLS-1$
-			Class errorHandlerImplClass = Class
-					.forName("org.eclipse.e4.ui.css.core.impl.engine.CSSErrorHandlerImpl"); //$NON-NLS-1$
-			setErrorHandler.invoke(engine, new Object[] { errorHandlerImplClass
-					.newInstance() });
-
-			// Create the OSGi resource locator
-
-			if (resourceURI != null) {
-				Class resourceLocatorClass = Class
-						.forName("org.eclipse.e4.ui.css.core.util.impl.resources.OSGiResourceLocator"); //$NON-NLS-1$
-				Constructor resourceLocatorConst = resourceLocatorClass
-						.getConstructor(new Class[] { String.class });
-				final Object resourceLocator = resourceLocatorConst
-						.newInstance(new Object[] { resourceURI.toString() });
-				display.setData(
-						"org.eclipse.e4.ui.css.core.resourceURL", resourceURI); //$NON-NLS-1$		
-
-				// engine.getResourcesLocatorManager().registerResourceLocator(IResourceLocator);
-				Method getResourcesLocatorManagerMethod = engineClass
-						.getMethod("getResourcesLocatorManager", new Class[] {}); //$NON-NLS-1$
-				Object resourceRegistryManager = getResourcesLocatorManagerMethod
-						.invoke(engine, new Object[] {});
-
-				Class iResourceLocatorClass = Class
-						.forName("org.eclipse.e4.ui.css.core.util.resources.IResourceLocator"); //$NON-NLS-1$
-
-				Method registerResourceLocatorMethod = resourceRegistryManager
-						.getClass()
-						.getMethod(
-								"registerResourceLocator", new Class[] { iResourceLocatorClass }); //$NON-NLS-1$
-				registerResourceLocatorMethod.invoke(resourceRegistryManager,
-						new Object[] { resourceLocator });
+		final CSSEngine engine = new CSSNebulaEngineImpl(display, true);
+		engine.setErrorHandler(new CSSErrorHandler() {
+			public void error(Exception e) {
+				e.printStackTrace();
 			}
+		});
 
-			// Lookup the style sheet
+		// Create the OSGi resource locator
+		if (resourceURI != null) {
+			engine.getResourcesLocatorManager().registerResourceLocator(
+					new OSGiResourceLocator(resourceURI.toString()));
+		}
 
+		// Lookup the style sheet
+
+		try {
 			URL url = FileLocator.resolve(new URL(cssURI.toString()));
 			display.setData("org.eclipse.e4.ui.css.core.cssURL", url); //$NON-NLS-1$		
 
 			InputStream stream = url.openStream();
-			Method parseStyleSheet = engineClass.getMethod(
-					"parseStyleSheet", new Class[] { InputStream.class }); //$NON-NLS-1$
-			parseStyleSheet.invoke(engine, new Object[] { stream });
+			engine.parseStyleSheet(stream);
 			stream.close();
-
-			final Method applyStyles = engineClass.getMethod(
-					"applyStyles", new Class[] { Object.class, Boolean.TYPE }); //$NON-NLS-1$
-			appContext.set(IStylingEngine.class.getName(),
-					new IStylingEngine() {
-						public void setClassname(Object widget, String classname) {
-							((Widget) widget)
-									.setData(
-											"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
-							try {
-								applyStyles.invoke(engine, new Object[] {
-										widget, Boolean.TRUE });
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-
-						public void setId(Object widget, String id) {
-							((Widget) widget).setData(
-									"org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
-							try {
-								applyStyles.invoke(engine, new Object[] {
-										widget, Boolean.TRUE });
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					});
-
-		} catch (Throwable e) {
-			System.err
-					.println("Warning - could not initialize CSS styling (but the applicationCSS property has a value) : " + e.toString()); //$NON-NLS-1$
-			initializeNullStyling(appContext);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+
+		appContext.set(IStylingEngine.class.getName(), new IStylingEngine() {
+			public void setClassname(Object widget, String classname) {
+				((Widget) widget).setData(
+						"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
+				engine.applyStyles(widget, true);
+			}
+
+			public void setId(Object widget, String id) {
+				((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
+				engine.applyStyles(widget, true);
+			}
+		});
+
 	}
 
 	/**
