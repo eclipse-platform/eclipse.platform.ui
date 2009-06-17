@@ -45,6 +45,7 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
+import org.eclipse.jface.text.contentassist.IContentAssistantExtension2;
 import org.eclipse.jface.text.contentassist.IContentAssistantExtension4;
 import org.eclipse.jface.text.formatter.FormattingContext;
 import org.eclipse.jface.text.formatter.FormattingContextProperties;
@@ -374,7 +375,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		fContentAssistant= configuration.getContentAssistant(this);
 		if (fContentAssistant != null) {
 			fContentAssistant.install(this);
-			if (fContentAssistant instanceof IContentAssistantExtension4)
+			if (fContentAssistant instanceof IContentAssistantExtension2 && fContentAssistant instanceof IContentAssistantExtension4)
 				fContentAssistantFacade= new ContentAssistantFacade(fContentAssistant);
 			fContentAssistantInstalled= true;
 		}

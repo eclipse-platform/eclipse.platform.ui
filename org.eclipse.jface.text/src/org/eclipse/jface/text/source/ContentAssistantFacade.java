@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public final class ContentAssistantFacade {
 	 * @param contentAssistant the content assistant which implements {@link IContentAssistantExtension2} and {@link IContentAssistantExtension4}
 	 */
 	public ContentAssistantFacade(IContentAssistant contentAssistant) {
-		Assert.isLegal(contentAssistant instanceof IContentAssistantExtension4 && contentAssistant instanceof IContentAssistantExtension4);
+		Assert.isLegal(contentAssistant instanceof IContentAssistantExtension2 && contentAssistant instanceof IContentAssistantExtension4);
 		fContentAssistant= contentAssistant;
 	}
 
