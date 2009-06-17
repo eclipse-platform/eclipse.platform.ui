@@ -16,32 +16,24 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 abstract class Computation {
 	Map dependencies = new HashMap();
 
+	void addDependency(IEclipseContext context, String name) {
+		Set properties = (Set) dependencies.get(context);
+		if (properties == null) {
+			properties = new HashSet();
+			dependencies.put(context, properties);
+		}
+		properties.add(name);
+	}
+
 	final void clear(IEclipseContext context, String name) {
 		doClear();
 		stopListening(context, name);
-	}
-
-	private void stopListening(IEclipseContext context, String name) {
-		if (EclipseContext.DEBUG)
-			System.out.println(toString() + " no longer listening"); //$NON-NLS-1$
-
-		if (name == null) {
-			dependencies.remove(context);
-			return;
-		}
-		Set properties = (Set) dependencies.get(context);
-		if (properties != null) {
-			((EclipseContext) context).listeners.remove(this); // XXX
-			// IEclipseContext
-			properties.remove(name);
-		}
 	}
 
 	protected void doClear() {
@@ -49,6 +41,11 @@ abstract class Computation {
 
 	protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
 	}
+
+	/**
+	 * Computations must define equals because they are stored in a set.
+	 */
+	public abstract boolean equals(Object arg0);
 
 	final void handleInvalid(IEclipseContext context, String name, int eventType) {
 		Set names = (Set) dependencies.get(context);
@@ -61,15 +58,10 @@ abstract class Computation {
 		}
 	}
 
-	void startListening() {
-		if (EclipseContext.DEBUG)
-			System.out.println(toString() + " now listening to: " //$NON-NLS-1$
-					+ mapToString(dependencies));
-		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
-			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
-			c.listeners.add(this);
-		}
-	}
+	/**
+	 * Computations must define hashCode because they are stored in a set.
+	 */
+	public abstract int hashCode();
 
 	private String mapToString(Map map) {
 		StringBuffer result = new StringBuffer('{');
@@ -93,13 +85,30 @@ abstract class Computation {
 		return result.toString();
 	}
 
-	void addDependency(IEclipseContext context, String name) {
-		Set properties = (Set) dependencies.get(context);
-		if (properties == null) {
-			properties = new HashSet();
-			dependencies.put(context, properties);
+	void startListening() {
+		if (EclipseContext.DEBUG)
+			System.out.println(toString() + " now listening to: " //$NON-NLS-1$
+					+ mapToString(dependencies));
+		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
+			EclipseContext c = (EclipseContext) it.next(); // XXX IEclipseContex
+			c.listeners.add(this);
 		}
-		properties.add(name);
+	}
+
+	private void stopListening(IEclipseContext context, String name) {
+		if (EclipseContext.DEBUG)
+			System.out.println(toString() + " no longer listening"); //$NON-NLS-1$
+
+		if (name == null) {
+			dependencies.remove(context);
+			return;
+		}
+		Set properties = (Set) dependencies.get(context);
+		if (properties != null) {
+			((EclipseContext) context).listeners.remove(this); // XXX
+			// IEclipseContext
+			properties.remove(name);
+		}
 	}
 
 }
