@@ -42,6 +42,23 @@ public class GradientBackgroundListener implements Listener {
 	private Gradient grad;
 	private final Control control;
 	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<Control, GradientBackgroundListener>();
+	private static boolean isRadialSupported;
+
+	static {
+		// The following code tries to instantiate a
+		// java.awt.RadialGradientPaint that is only available in Java 6 and
+		// higher. Since the BREE is set to J2SE-1.5, reflection is used.
+		try {
+			Class<?> radialGradientPaintClass = Class
+					.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
+			isRadialSupported = true;
+		} catch (Exception e) {
+			System.err
+					.println("Warning - radial gradients are only supported in Java 6 and higher, using linear gradient instead"); //$NON-NLS-1$
+			isRadialSupported = false;
+		}
+
+	}
 
 	private GradientBackgroundListener(Control control, Gradient grad) {
 		this.grad = grad;
@@ -79,7 +96,9 @@ public class GradientBackgroundListener implements Listener {
 
 		Image newImage;
 
-		if (grad.isRadial()) {
+		// If Java 5 or lower is used, radial gradients are not supported yet
+		// and they will be replaced by linear gradients
+		if (grad.isRadial() && isRadialSupported) {
 			List<java.awt.Color> colors = new ArrayList<java.awt.Color>();
 			for (Iterator iterator = grad.getRGBs().iterator(); iterator
 					.hasNext();) {
@@ -191,7 +210,7 @@ public class GradientBackgroundListener implements Listener {
 	 *            a list of percents that define the percents of above colors
 	 * @return the image
 	 */
-	protected BufferedImage getBufferedImage(int width, int height,
+	private BufferedImage getBufferedImage(int width, int height,
 			List<java.awt.Color> colors, int[] percents) {
 		java.awt.Color[] colorArray = colors.toArray(new java.awt.Color[] {});
 		float[] fractions = new float[percents.length + 1];
@@ -208,7 +227,7 @@ public class GradientBackgroundListener implements Listener {
 		// higher. Since the BREE is set to J2SE-1.5, reflection is used. If
 		// this code is run with a Java version below 6, the radial gradient is
 		// replaced by a flat background color (the first color in the color
-		// array)
+		// array).
 		try {
 			Class<?> radialGradientPaintClass = Class
 					.forName("java.awt.RadialGradientPaint"); //$NON-NLS-1$
