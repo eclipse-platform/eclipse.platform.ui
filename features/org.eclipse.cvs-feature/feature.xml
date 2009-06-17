@@ -39,14 +39,7 @@
          download-size="0"
          install-size="0"
          version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.eclipse.team.cvs.ssh"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+         unpack="false"/>   
 
    <plugin
          id="org.eclipse.team.cvs.ssh2"
