@@ -323,9 +323,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				return IFile.ENCODING_UTF_16BE;
 			if (first == 0xFF && second == 0xFE)
 				return IFile.ENCODING_UTF_16LE;
-			int third = (input.read() & 0xFF);
+			int third = input.read();
 			if (third == -1)
 				return IFile.ENCODING_UNKNOWN;
+			third &= 0xFF;
 			//look for the UTF-8 BOM
 			if (first == 0xEF && second == 0xBB && third == 0xBF)
 				return IFile.ENCODING_UTF_8;
