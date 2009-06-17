@@ -13,8 +13,8 @@ package org.eclipse.e4.core.services.internal.context;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 
@@ -29,6 +29,22 @@ public class ContextDynamicTest extends TestCase {
 
 	public ContextDynamicTest(String name) {
 		super(name);
+	}
+	
+	public void testReplaceFunctionWithStaticValue() {
+		IEclipseContext parent = EclipseContextFactory.create();
+		IEclipseContext context = EclipseContextFactory.create(parent, null);
+		assertNull(context.getLocal("bar"));
+		context.set("bar", "baz1");
+		context.set("bar", new IContextFunction() {
+			public Object compute(IEclipseContext context, Object[] arguments) {
+				return "baz1";
+			}
+		});
+		parent.set("bar", "baz2");
+		assertEquals("baz1", context.get("bar"));
+		context.set("bar", "baz3");
+		assertEquals("baz3", context.get("bar"));
 	}
 
 	/**
