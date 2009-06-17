@@ -30,6 +30,9 @@ public class CSSSWTConstants {
 	public static final String CSS_ID_KEY = "org.eclipse.e4.ui.css.id";
 
 	
+	//HACK non API - see bug #267434
+	public static final String MARGIN_WRAPPER_KEY = "org.eclipse.e4.ui.css.swt.marginWrapper";
+
 	/**
 	 * Constant used to store {@link CSSBorderProperties} instance into SWT
 	 * control data.

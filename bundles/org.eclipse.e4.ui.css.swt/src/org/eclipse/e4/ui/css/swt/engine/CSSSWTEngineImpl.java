@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2009 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.engine;
 
@@ -14,11 +15,13 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBackgroundHand
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBorderHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyClassificationHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
+import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBackgroundSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBorderSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyClassificationSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyFontSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyMarginSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
@@ -68,6 +71,9 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		// Register SWT CSS Property Font Handler
 		super.registerCSSPropertyHandler(ICSSPropertyFontHandler.class,
 				CSSPropertyFontSWTHandler.INSTANCE);
+		// Register SWT CSS Property Margin Handler
+		super.registerCSSPropertyHandler(ICSSPropertyMarginHandler.class,
+				CSSPropertyMarginSWTHandler.INSTANCE);
 
 		// Register XML CSS Property Background Handler
 		super.registerCSSPropertyHandler(ICSSPropertyBackgroundHandler.class,

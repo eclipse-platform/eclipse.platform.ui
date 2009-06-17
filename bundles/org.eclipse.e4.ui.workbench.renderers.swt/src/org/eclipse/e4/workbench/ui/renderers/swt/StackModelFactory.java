@@ -84,9 +84,14 @@ public class StackModelFactory extends LazyStackFactory {
 				}
 			}
 
+			Composite stylingWrapper = createWrapperForStyling((Composite) parentWidget);
+
 			// TODO see bug #267434, SWT.BORDER should be determined from CSS
-			final CTabFolder ctf = new CTabFolder((Composite) parentWidget,
-					SWT.BORDER | styleModifier);
+			final CTabFolder ctf = new CTabFolder(stylingWrapper, SWT.BORDER
+					| styleModifier);
+
+			configureForStyling(ctf);
+
 			ctf.setUnselectedCloseVisible(showCloseAlways);
 
 			bindWidget(part, ctf);

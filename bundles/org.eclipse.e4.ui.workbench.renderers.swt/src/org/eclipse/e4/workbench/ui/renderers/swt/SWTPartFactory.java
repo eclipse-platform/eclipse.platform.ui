@@ -46,6 +46,8 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -433,5 +435,37 @@ public abstract class SWTPartFactory extends PartFactory {
 	@Override
 	public void childAdded(MPart<?> parentElement, MPart<?> element) {
 		// TODO Auto-generated method stub
+	}
+
+	/*
+	 * HACK: Create a wrapper composite with appropriate layout for the purpose
+	 * of styling margins. See bug #280632
+	 */
+	protected Composite createWrapperForStyling(Composite parentWidget) {
+		Composite layoutHolder = new Composite(parentWidget, SWT.NONE);
+		addLayoutForStyling(layoutHolder);
+		layoutHolder.setData("org.eclipse.e4.ui.css.swt.marginWrapper", true); //$NON-NLS-1$
+		return layoutHolder;
+	}
+
+	/*
+	 * HACK: Add layout information to the composite for the purpose of styling
+	 * margins. See bug #280632
+	 */
+	protected void addLayoutForStyling(Composite composite) {
+		GridLayout gl = new GridLayout(1, true);
+		composite.setLayout(gl);
+		gl.horizontalSpacing = 0;
+		gl.verticalSpacing = 0;
+		gl.marginHeight = 0;
+		gl.marginWidth = 0;
+	}
+
+	/*
+	 * HACK: Prep the control with layout information for the purpose of styling
+	 * margins. See bug #280632
+	 */
+	protected void configureForStyling(Control control) {
+		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 	}
 }
