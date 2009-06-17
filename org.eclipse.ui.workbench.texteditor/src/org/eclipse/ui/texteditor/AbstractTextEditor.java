@@ -16,7 +16,6 @@
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -218,6 +217,7 @@ import org.eclipse.ui.texteditor.rulers.RulerColumnDescriptor;
 import org.eclipse.ui.texteditor.rulers.RulerColumnPreferenceAdapter;
 import org.eclipse.ui.texteditor.rulers.RulerColumnRegistry;
 
+
 /**
  * Abstract base implementation of a text editor.
  * <p>
@@ -281,28 +281,24 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 	/**
 	 * Tag used in the {@link IMemento} when saving and restoring the editor's top pixel value.
-	 * <p>
-	 * XXX: will become API in 3.6, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=274822
-	 * </p>
 	 * 
 	 * @see #saveState(IMemento)
 	 * @see #restoreState(IMemento)
 	 * @see #doRestoreState(IMemento)
+	 * @since 3.6
 	 */
-	private static final String TAG_SELECTION_TOP_PIXEL= "selectionTopPixel"; //$NON-NLS-1$
+	protected static final String TAG_SELECTION_TOP_PIXEL= "selectionTopPixel"; //$NON-NLS-1$
 
 	/**
 	 * Tag used in the {@link IMemento} when saving and restoring the editor's horizontal pixel
 	 * value.
-	 * <p>
-	 * XXX: will become API in 3.6, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=274822
-	 * </p>
 	 * 
 	 * @see #saveState(IMemento)
 	 * @see #restoreState(IMemento)
 	 * @see #doRestoreState(IMemento)
+	 * @since 3.6
 	 */
-	private static final String TAG_SELECTION_HORIZONTAL_PIXEL= "selectionHorizontalPixel"; //$NON-NLS-1$
+	protected static final String TAG_SELECTION_HORIZONTAL_PIXEL= "selectionHorizontalPixel"; //$NON-NLS-1$
 
 
 	/**
