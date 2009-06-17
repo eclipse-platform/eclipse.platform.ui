@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,6 @@ import org.osgi.framework.*;
  */
 public class PlatformActivator extends Plugin implements BundleActivator {
 	private static BundleContext context;
-	private ServiceRegistration entryLocatorRegistration;
 
 	public static BundleContext getContext() {
 		return context;
@@ -35,8 +34,6 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	}
 
 	public void stop(BundleContext runtimeContext) {
-		// unregister the EntryLocator to prevent the Framework from calling it
-		unregisterEntryLocator();
 		// Stop the platform orderly.		
 		InternalPlatform.getDefault().stop(runtimeContext);
 		InternalPlatform.getDefault().setRuntimeInstance(null);
@@ -45,12 +42,5 @@ public class PlatformActivator extends Plugin implements BundleActivator {
 	private void startAppContainer() {
 		// just using a class out of app admin to force it to lazy-start
 		CommandLineArgs.getApplicationArgs();
-	}
-
-	private void unregisterEntryLocator() {
-		if (entryLocatorRegistration != null) {
-			entryLocatorRegistration.unregister();
-			entryLocatorRegistration = null;
-		}
 	}
 }
