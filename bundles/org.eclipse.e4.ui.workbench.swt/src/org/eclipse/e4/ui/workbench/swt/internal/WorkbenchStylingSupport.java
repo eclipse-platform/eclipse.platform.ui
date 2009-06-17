@@ -77,6 +77,11 @@ public class WorkbenchStylingSupport {
 				((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
 				engine.applyStyles(widget, true);
 			}
+
+			public void style(Object widget) {
+				engine.applyStyles(widget, true);
+			}
+
 		});
 
 	}
@@ -93,6 +98,9 @@ public class WorkbenchStylingSupport {
 			}
 
 			public void setId(Object widget, String id) {
+			}
+
+			public void style(Object widget) {
 			}
 		});
 	}

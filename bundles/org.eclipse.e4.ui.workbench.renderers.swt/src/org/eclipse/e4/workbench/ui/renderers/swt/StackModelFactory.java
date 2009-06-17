@@ -170,6 +170,9 @@ public class StackModelFactory extends LazyStackFactory {
 			Control ctrl = (Control) element.getWidget();
 			if (ctrl != null) {
 				showTab((MItemPart<?>) element);
+				IStylingEngine engine = (IStylingEngine) context
+						.get(IStylingEngine.class.getName());
+				engine.style(ctrl);
 			}
 		}
 	}
