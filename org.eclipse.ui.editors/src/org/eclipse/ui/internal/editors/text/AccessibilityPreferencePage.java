@@ -43,6 +43,8 @@ import org.eclipse.ui.internal.editors.text.AccessibilityPreferencePage.Enumerat
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 
+import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 
 /**
  * The preference page for setting the editor options.
@@ -52,16 +54,6 @@ import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
  * @since 2.1
  */
 public class AccessibilityPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
-
-	// FIXME: remove in 3.6, see https://bugs.eclipse.org/277864
-	private static final String PREFIX= "org.eclipse.ui."; //$NON-NLS-1$
-
-	// FIXME: in 3.6 move to ITextEditorHelpContextIds, see https://bugs.eclipse.org/277864
-	/**
-	 * Id for the text editor preference page. Value:
-	 * <code>"org.eclipse.ui.text_editor_preference_page_context"</code>.
-	 */
-	private static final String ACCESSIBILITY_PREFERENCE_PAGE= PREFIX + "accessibility_preference_page_context"; //$NON-NLS-1$
 
 
 	private abstract class Initializer {
@@ -388,7 +380,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 	 */
 	public void createControl(Composite parent) {
 		super.createControl(parent);
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ACCESSIBILITY_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), ITextEditorHelpContextIds.ACCESSIBILITY_PREFERENCE_PAGE);
 	}
 
 	private Control createAppearancePage(Composite parent) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,40 +29,48 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	 * Id for the text editor preference page.
 	 * Value: <code>"org.eclipse.ui.text_editor_preference_page_context"</code>.
 	 */
-	public static final String TEXT_EDITOR_PREFERENCE_PAGE= PREFIX + "text_editor_preference_page_context"; //$NON-NLS-1$
+	String TEXT_EDITOR_PREFERENCE_PAGE= PREFIX + "text_editor_preference_page_context"; //$NON-NLS-1$
 
 	/**
 	 * Help context id for the Spelling preference page.
 	 * Value: <code>"org.eclipse.ui.spelling_preference_page_context"</code>.
 	 * @since 3.4
 	 */
-	public static final String SPELLING_PREFERENCE_PAGE= PREFIX + "spelling_preference_page_context"; //$NON-NLS-1$
+	String SPELLING_PREFERENCE_PAGE= PREFIX + "spelling_preference_page_context"; //$NON-NLS-1$
 
 
 	/**
 	 * Id for the text editor.
 	 * Value: <code>"org.eclipse.ui.text_editor_context"</code>.
 	 */
-	public static final String TEXT_EDITOR= PREFIX + "text_editor_context"; //$NON-NLS-1$
+	String TEXT_EDITOR= PREFIX + "text_editor_context"; //$NON-NLS-1$
 
 	/**
 	 * Help context id for the "Add Bookmark" action.
 	 * Value: <code>"org.eclipse.ui.bookmark_action_context"</code>
 	 * @since 3.0
 	 */
-	public static final String BOOKMARK_ACTION= PREFIX + IDEActionFactory.BOOKMARK.getId() + ACTION_POSTFIX;
+	String BOOKMARK_ACTION= PREFIX + IDEActionFactory.BOOKMARK.getId() + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the Add Task action.
 	 * Value: <code>"org.eclipse.ui.addTask_action_context"</code>
 	 * @since 3.0
 	 */
-	public static final String ADD_TASK_ACTION= PREFIX + IDEActionFactory.ADD_TASK.getId() + ACTION_POSTFIX;
+	String ADD_TASK_ACTION= PREFIX + IDEActionFactory.ADD_TASK.getId() + ACTION_POSTFIX;
 
 	/**
 	 * Help context id for the "Change Encoding..." action.
 	 * Value: <code>"org.eclipse.ui.ChangeEncoding_action_context"</code>
 	 * @since 3.1
 	 */
-	public static final String CHANGE_ENCODING= PREFIX + ITextEditorActionConstants.CHANGE_ENCODING  + ACTION_POSTFIX;
+	String CHANGE_ENCODING= PREFIX + ITextEditorActionConstants.CHANGE_ENCODING + ACTION_POSTFIX;
+
+	/**
+	 * Id for the text editor preference page. Value:
+	 * <code>"org.eclipse.ui.accessibility_preference_page_context"</code>.
+	 * @since 3.6
+	 */
+	String ACCESSIBILITY_PREFERENCE_PAGE= PREFIX + "accessibility_preference_page_context"; //$NON-NLS-1$
+	
 }
