@@ -542,8 +542,10 @@ public abstract class Plugin implements BundleActivator {
 	 * XXX deprecate use the service and cache as needed
 	 */
 	public void setDebugging(boolean value) {
-		if (bundle == null)
+		if (bundle == null) {
 			this.debug = value;
+			return;
+		}
 		String key = bundle.getSymbolicName() + "/debug"; //$NON-NLS-1$
 		final DebugOptions options = getDebugOptions();
 		if (options == null)
