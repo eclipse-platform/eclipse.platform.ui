@@ -97,8 +97,6 @@ public class StackModelFactory extends LazyStackFactory {
 			bindWidget(part, ctf);
 			ctf.setVisible(true);
 
-			// TODO bug #279856 - this should be set from CSS
-			ctf.setTabHeight(20);
 			newWidget = ctf;
 
 			final IEclipseContext folderContext = part.getContext();
