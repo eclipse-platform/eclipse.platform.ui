@@ -10,7 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
@@ -25,6 +29,7 @@ import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -41,6 +46,12 @@ import org.eclipse.swt.widgets.Widget;
  * Render a Window or Workbench Window.
  */
 public class WBPartFactory extends SWTPartFactory {
+	@In
+	Logger logger;
+
+	public WBPartFactory() {
+		super();
+	}
 
 	public Object createWidget(MPart<?> part) {
 		final Widget newWidget;
@@ -71,7 +82,18 @@ public class WBPartFactory extends SWTPartFactory {
 			}
 			if (((MWindow<?>) part).getName() != null)
 				wbwShell.setText(((MWindow<?>) part).getName());
-
+			String uri = ((MWindow<?>) part).getIconURI();
+			if (uri != null) {
+				try {
+					Image image = ImageDescriptor.createFromURL(new URL(uri))
+							.createImage();
+					wbwShell.setImage(image);
+				} catch (MalformedURLException e) {
+					// invalid image in model, so don't set an image
+					if (logger != null)
+						logger.error(e);
+				}
+			}
 		} else {
 			newWidget = null;
 		}
