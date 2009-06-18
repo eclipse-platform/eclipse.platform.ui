@@ -179,6 +179,18 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "minimized", null));
 	}
 	
+	public void testTabHeight() throws Exception {
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { tab-height: 30 }");
+		assertEquals(30, folderToTest.getTabHeight());
+		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40 }");
+		assertEquals(40, folderToTest.getTabHeight());
+		
+		//negative test to ensure we don't try to interpret a list
+		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40 50 }");
+		assertNotSame(40, folderToTest.getTabHeight());
+		assertNotSame(50, folderToTest.getTabHeight());
+	}
+
 	public void testSingle() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { single: true}");
 		assertEquals(true, folderToTest.getSingle());
