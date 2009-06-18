@@ -17,7 +17,6 @@ import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Map;
-
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
@@ -115,17 +114,15 @@ public class Workbench implements IWorkbench {
 		// Register the appropriate resource factory to handle all file
 		// extensions.
 		//
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()
-				.put(Resource.Factory.Registry.DEFAULT_EXTENSION,
-						new XMIResourceFactoryImpl());
+		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
+				Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
 
 		// Register the package to ensure it is available during loading.
 		//
-		resourceSet.getPackageRegistry().put(WorkbenchPackage.eNS_URI,
-				WorkbenchPackage.eINSTANCE);
+		resourceSet.getPackageRegistry().put(WorkbenchPackage.eNS_URI, WorkbenchPackage.eINSTANCE);
 
-		workbenchContext = createWorkbenchContext(applicationContext, registry,
-				exceptionHandler, contributionFactory);
+		workbenchContext = createWorkbenchContext(applicationContext, registry, exceptionHandler,
+				contributionFactory);
 		workbenchContext.set(Workbench.class.getName(), this);
 		workbenchContext.set(IWorkbench.class.getName(), this);
 	}
@@ -142,35 +139,30 @@ public class Workbench implements IWorkbench {
 		createWorkbenchModel(workbenchXmiURI);
 	}
 
-	public static IEclipseContext createWorkbenchContext(
-			final IEclipseContext applicationContext,
+	public static IEclipseContext createWorkbenchContext(final IEclipseContext applicationContext,
 			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
 			IContributionFactory contributionFactory) {
-		final IEclipseContext mainContext = EclipseContextFactory.create(
-				applicationContext, UISchedulerStrategy.getInstance());
+		final IEclipseContext mainContext = EclipseContextFactory.create(applicationContext,
+				UISchedulerStrategy.getInstance());
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), mainContext));
 		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
 
 		// setup for commands and handlers
 		if (contributionFactory != null) {
-			mainContext.set(IContributionFactory.class.getName(),
-					contributionFactory);
+			mainContext.set(IContributionFactory.class.getName(), contributionFactory);
 		}
 		mainContext.set(CommandManager.class.getName(), new CommandManager());
 		mainContext.set(ContextManager.class.getName(), new ContextManager());
-		mainContext.set(ECommandService.class.getName(),
-				new ContextCommandService(mainContext));
-		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS,
-				new ActiveContextsFunction());
-		mainContext.set(IServiceConstants.ACTIVE_PART,
-				new ActivePartLookupFunction());
+		mainContext.set(ECommandService.class.getName(), new ContextCommandService(mainContext));
+		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
+		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
 		mainContext.runAndTrack(new Runnable() {
 			public void run() {
 				Object o = mainContext.get(IServiceConstants.ACTIVE_PART);
 				if (o instanceof MContributedPart<?>) {
-					mainContext.set(IServiceConstants.ACTIVE_PART_ID,
-							((MContributedPart<?>) o).getId());
+					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MContributedPart<?>) o)
+							.getId());
 				}
 			}
 		}, IServiceConstants.ACTIVE_PART_ID);
@@ -181,10 +173,8 @@ public class Workbench implements IWorkbench {
 				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$
 		for (IConfigurationElement contribution : contributions) {
 			try {
-				for (IConfigurationElement serviceElement : contribution
-						.getChildren("service")) { //$NON-NLS-1$
-					Object factory = contribution
-							.createExecutableExtension("class"); //$NON-NLS-1$
+				for (IConfigurationElement serviceElement : contribution.getChildren("service")) { //$NON-NLS-1$
+					Object factory = contribution.createExecutableExtension("class"); //$NON-NLS-1$
 					String apiClassname = serviceElement.getAttribute("api"); //$NON-NLS-1$
 					mainContext.set(apiClassname, factory);
 				}
@@ -196,8 +186,8 @@ public class Workbench implements IWorkbench {
 
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
-		mainContext.set(IServiceConstants.SELECTION,
-				new ActiveChildOutputFunction(IServiceConstants.SELECTION));
+		mainContext.set(IServiceConstants.SELECTION, new ActiveChildOutputFunction(
+				IServiceConstants.SELECTION));
 		mainContext.set(IServiceConstants.INPUT, new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				Class adapterType = null;
@@ -212,8 +202,7 @@ public class Workbench implements IWorkbench {
 					IAdapterManager adapters = (IAdapterManager) applicationContext
 							.get(IAdapterManager.class.getName());
 					if (adapters != null) {
-						Object adapted = adapters.loadAdapter(newValue,
-								adapterType.getName());
+						Object adapted = adapters.loadAdapter(newValue, adapterType.getName());
 						if (adapted != null) {
 							newInput = adapted;
 						}
@@ -222,47 +211,36 @@ public class Workbench implements IWorkbench {
 				return newInput;
 			}
 		});
-		mainContext.set(IServiceConstants.ACTIVE_SHELL,
-				new ActiveChildLookupFunction(IServiceConstants.ACTIVE_SHELL,
-						LOCAL_ACTIVE_SHELL));
+		mainContext.set(IServiceConstants.ACTIVE_SHELL, new ActiveChildLookupFunction(
+				IServiceConstants.ACTIVE_SHELL, LOCAL_ACTIVE_SHELL));
 
 		return mainContext;
 	}
 
-	private MApplication<? extends MWindow> createWorkbenchModel(
-			URI applicationDefinitionInstance) {
+	private MApplication<? extends MWindow> createWorkbenchModel(URI applicationDefinitionInstance) {
 		URI restoreLocation = null;
 		if (workbenchData != null && saveAndRestore) {
-			restoreLocation = URI
-					.createFileURI(workbenchData.getAbsolutePath());
+			restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
 		}
-		long restoreLastModified = restoreLocation == null ? 0L : new File(
-				restoreLocation.toFileString()).lastModified();
+		long restoreLastModified = restoreLocation == null ? 0L : new File(restoreLocation
+				.toFileString()).lastModified();
 
 		long appLastModified = 0L;
 
 		ResourceSetImpl resourceSetImpl = new ResourceSetImpl();
-		Map<String, ?> attributes = resourceSetImpl
-				.getURIConverter()
-				.getAttributes(
-						applicationDefinitionInstance,
-						Collections
-								.singletonMap(
-										URIConverter.OPTION_REQUESTED_ATTRIBUTES,
-										Collections
-												.singleton(URIConverter.ATTRIBUTE_TIME_STAMP)));
+		Map<String, ?> attributes = resourceSetImpl.getURIConverter().getAttributes(
+				applicationDefinitionInstance,
+				Collections.singletonMap(URIConverter.OPTION_REQUESTED_ATTRIBUTES, Collections
+						.singleton(URIConverter.ATTRIBUTE_TIME_STAMP)));
 		Object timestamp = attributes.get(URIConverter.ATTRIBUTE_TIME_STAMP);
 		if (timestamp instanceof Long) {
 			appLastModified = ((Long) timestamp).longValue();
 		} else if (applicationDefinitionInstance.isPlatformPlugin()) {
 			try {
-				java.net.URL url = new java.net.URL(
-						applicationDefinitionInstance.toString());
-				Object[] obj = PlatformURLPluginConnection.parse(url.getFile()
-						.trim(), url);
+				java.net.URL url = new java.net.URL(applicationDefinitionInstance.toString());
+				Object[] obj = PlatformURLPluginConnection.parse(url.getFile().trim(), url);
 				Bundle b = (Bundle) obj[0];
-				URLConnection openConnection = b.getResource((String) obj[1])
-						.openConnection();
+				URLConnection openConnection = b.getResource((String) obj[1]).openConnection();
 				appLastModified = openConnection.getLastModified();
 			} catch (Exception e) {
 				// ignore
@@ -274,11 +252,10 @@ public class Workbench implements IWorkbench {
 
 		if (restore) {
 			System.err.println("Restoring workbench: " + restoreLocation); //$NON-NLS-1$
-			workbench = (MApplication<MWindow>) resourceSetImpl.getResource(
-					restoreLocation, true).getContents().get(0);
+			workbench = (MApplication<MWindow>) resourceSetImpl.getResource(restoreLocation, true)
+					.getContents().get(0);
 		} else {
-			System.err
-					.println("Initializing workbench: " + applicationDefinitionInstance); //$NON-NLS-1$
+			System.err.println("Initializing workbench: " + applicationDefinitionInstance); //$NON-NLS-1$
 			Resource resource = new XMIResourceImpl();
 			workbench = loadDefaultModel(applicationDefinitionInstance);
 			resource.getContents().add((EObject) workbench);
@@ -290,12 +267,9 @@ public class Workbench implements IWorkbench {
 		return workbench;
 	}
 
-	private MApplication<? extends MWindow> loadDefaultModel(
-			URI defaultModelPath) {
-		Resource resource = new ResourceSetImpl().getResource(defaultModelPath,
-				true);
-		MApplication<MWindow> app = (MApplication<MWindow>) resource
-				.getContents().get(0);
+	private MApplication<? extends MWindow> loadDefaultModel(URI defaultModelPath) {
+		Resource resource = new ResourceSetImpl().getResource(defaultModelPath, true);
+		MApplication<MWindow> app = (MApplication<MWindow>) resource.getContents().get(0);
 
 		final EList<MWindow> windows = app.getWindows();
 		for (MWindow window : windows) {
@@ -308,12 +282,10 @@ public class Workbench implements IWorkbench {
 	private void processPartContributions(Resource resource, MWindow mWindow) {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		String extId = "org.eclipse.e4.workbench.parts"; //$NON-NLS-1$
-		IConfigurationElement[] parts = registry
-				.getConfigurationElementsFor(extId);
+		IConfigurationElement[] parts = registry.getConfigurationElementsFor(extId);
 
 		for (int i = 0; i < parts.length; i++) {
-			MContributedPart<?> part = ApplicationFactory.eINSTANCE
-					.createMContributedPart();
+			MContributedPart<?> part = ApplicationFactory.eINSTANCE.createMContributedPart();
 			part.setName(parts[i].getAttribute("label")); //$NON-NLS-1$
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
@@ -323,8 +295,7 @@ public class Workbench implements IWorkbench {
 					+ parts[i].getAttribute("class")); //$NON-NLS-1$
 			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$
 
-			MPart parent = (MPart) findObject(resource.getAllContents(),
-					parentId);
+			MPart parent = (MPart) findObject(resource.getAllContents(), parentId);
 			if (parent != null) {
 				parent.getChildren().add(part);
 			}
@@ -371,8 +342,7 @@ public class Workbench implements IWorkbench {
 		workbench.eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MAPPLICATION__WINDOWS
-						.equals(msg.getFeature())
+				if (ApplicationPackage.Literals.MAPPLICATION__WINDOWS.equals(msg.getFeature())
 						&& msg.getEventType() == Notification.ADD) {
 					MPart<?> added = (MPart<?>) msg.getNewValue();
 					initializeContext(workbenchContext, added);
@@ -391,14 +361,13 @@ public class Workbench implements IWorkbench {
 	 * @param part
 	 *            needs a context created
 	 */
-	public static void initializeContext(IEclipseContext parentContext,
-			MPart<?> part) {
+	public static void initializeContext(IEclipseContext parentContext, MPart<?> part) {
 		final IEclipseContext context;
 		if (part.getContext() != null) {
 			context = part.getContext();
 		} else {
-			context = EclipseContextFactory.create(parentContext,
-					UISchedulerStrategy.getInstance());
+			context = EclipseContextFactory
+					.create(parentContext, UISchedulerStrategy.getInstance());
 		}
 
 		// fill in the interfaces, so MContributedPart.class.getName() will
@@ -418,8 +387,7 @@ public class Workbench implements IWorkbench {
 		part.eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg
-						.getFeature())
+				if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())
 						&& msg.getEventType() == Notification.ADD) {
 					MPart<?> added = (MPart<?>) msg.getNewValue();
 					initializeContext(context, added);
@@ -463,14 +431,12 @@ public class Workbench implements IWorkbench {
 	private void processHandlers(MPart<MPart<?>> part) {
 		IEclipseContext context = part.getContext();
 		if (context != null) {
-			EHandlerService hs = (EHandlerService) context
-					.get(EHandlerService.class.getName());
+			EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
 			EList<MHandler> handlers = part.getHandlers();
 			for (MHandler handler : handlers) {
 				String commandId = handler.getCommand().getId();
 				if (handler.getObject() == null) {
-					handler.setObject(contributionFactory.create(handler
-							.getURI(), context));
+					handler.setObject(contributionFactory.create(handler.getURI(), context));
 				}
 				hs.activateHandler(commandId, handler.getObject());
 			}
@@ -493,8 +459,8 @@ public class Workbench implements IWorkbench {
 	 * @param f
 	 *            the IContributionFactory already provided to <code>r</code>
 	 */
-	public static void initializeRenderer(IExtensionRegistry registry,
-			PartRenderer r, IEclipseContext context, IContributionFactory f) {
+	public static void initializeRenderer(IExtensionRegistry registry, PartRenderer r,
+			IEclipseContext context, IContributionFactory f) {
 		// add the factories from the extension point, sort by dependency
 		// * Need to make the EP more declarative to avoid aggressive
 		// loading
@@ -517,13 +483,13 @@ public class Workbench implements IWorkbench {
 		for (int i = 0; i < factories.length; i++) {
 			PartFactory factory = null;
 			try {
-				factory = (PartFactory) factories[i]
-						.createExecutableExtension("class"); //$NON-NLS-1$
+				factory = (PartFactory) factories[i].createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
 			if (factory != null) {
 				factory.init(r, context, f);
+				ContextInjectionFactory.inject(factory, context);
 				r.addPartFactory(factory);
 			}
 		}
@@ -532,8 +498,7 @@ public class Workbench implements IWorkbench {
 	public void createGUI(MPart part) {
 		if (renderer == null) {
 			renderer = new PartRenderer(contributionFactory, workbenchContext);
-			initializeRenderer(registry, renderer, workbenchContext,
-					contributionFactory);
+			initializeRenderer(registry, renderer, workbenchContext, contributionFactory);
 
 		}
 
@@ -551,8 +516,8 @@ public class Workbench implements IWorkbench {
 			// title-bar is
 			// hidden
 			// below the MMenu-Bar
-			windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw
-					.getWidth(), wbw.getHeight());
+			windowHandler.setBounds(appWindow, wbw.getX(), wbw.getY(), wbw.getWidth(), wbw
+					.getHeight());
 			windowHandler.layout(appWindow);
 
 			windowHandler.open(appWindow);
