@@ -66,6 +66,10 @@
                name="applicationCSS"
                value="platform:/plugin/org.eclipse.e4.demo.e4photo/css/e4photo.css">
          </property>
+         <property
+               name="applicationCSSResources"
+               value="platform:/plugin/org.eclipse.e4.demo.e4photo/images/">
+         </property>
       </product>
    </extension>
 
