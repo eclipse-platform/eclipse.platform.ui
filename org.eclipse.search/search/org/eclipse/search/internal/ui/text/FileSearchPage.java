@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -254,8 +253,8 @@ public class FileSearchPage extends AbstractTextSearchViewPage implements IAdapt
 
 	public void setSortOrder(int sortOrder) {
 		fCurrentSortOrder= sortOrder;
-		DecoratingLabelProvider lpWrapper= (DecoratingLabelProvider) getViewer().getLabelProvider();
-		((FileLabelProvider) lpWrapper.getLabelProvider()).setOrder(sortOrder);
+		DecoratingFileSearchLabelProvider lpWrapper= (DecoratingFileSearchLabelProvider)getViewer().getLabelProvider();
+		((FileLabelProvider)lpWrapper.getStyledStringProvider()).setOrder(sortOrder);
 		getViewer().refresh();
 		getSettings().put(KEY_SORTING, fCurrentSortOrder);
 	}
