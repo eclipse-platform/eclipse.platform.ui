@@ -1,7 +1,6 @@
 package org.eclipse.e4.core.services;
 
 import java.awt.Dialog;
-
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -41,7 +40,7 @@ public interface IStatusHandler {
 	 * </p>
 	 * <p>
 	 * Due to the fact that use of <code>BLOCK</code> will block any thread,
-	 * care should be taken in this use of this flag.
+	 * care should be taken in using this flag.
 	 * </p>
 	 */
 	public static final int BLOCK = 0x04;
