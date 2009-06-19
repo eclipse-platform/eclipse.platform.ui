@@ -50,6 +50,7 @@ import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
@@ -213,6 +214,8 @@ public class Workbench implements IWorkbench {
 		});
 		mainContext.set(IServiceConstants.ACTIVE_SHELL, new ActiveChildLookupFunction(
 				IServiceConstants.ACTIVE_SHELL, LOCAL_ACTIVE_SHELL));
+
+		initializeNullStyling(mainContext);
 
 		return mainContext;
 	}
@@ -542,5 +545,24 @@ public class Workbench implements IWorkbench {
 
 	public Object getWindow() {
 		return workbench.getWindows().get(0).getWidget();
+	}
+
+	/*
+	 * For use when there is no real styling engine present. Has no behaviour
+	 * but conforms to IStylingEngine API.
+	 * 
+	 * @param appContext
+	 */
+	private static void initializeNullStyling(IEclipseContext appContext) {
+		appContext.set(IStylingEngine.class.getName(), new IStylingEngine() {
+			public void setClassname(Object widget, String classname) {
+			}
+
+			public void setId(Object widget, String id) {
+			}
+
+			public void style(Object widget) {
+			}
+		});
 	}
 }

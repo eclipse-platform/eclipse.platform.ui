@@ -77,11 +77,8 @@ public class WorkbenchApplication implements IApplication {
 							new ResourceUtility(Activator.getDefault()
 									.getBundleAdmin()));
 					if (cssURI != null) {
-						WorkbenchStylingSupport.initializeStyling(display,
+						CSSStylingSupport.initializeStyling(display,
 								cssURI, cssResourcesURI, appContext);
-					} else {
-						WorkbenchStylingSupport
-								.initializeNullStyling(appContext);
 					}
 					Workbench wb = new Workbench(Activator.getDefault()
 							.getInstanceLocation(), RegistryFactory

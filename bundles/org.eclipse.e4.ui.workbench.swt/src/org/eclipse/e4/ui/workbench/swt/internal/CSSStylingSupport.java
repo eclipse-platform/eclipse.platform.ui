@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  *
  */
-public class WorkbenchStylingSupport {
+public class CSSStylingSupport {
 
 	public static void initializeStyling(Display display, String cssURI,
 			String resourceURI, IEclipseContext appContext) {
@@ -84,25 +84,6 @@ public class WorkbenchStylingSupport {
 
 		});
 
-	}
-
-	/**
-	 * For use when there is no real styling engine present. Has no behaviour
-	 * but conforms to IStylingEngine API.
-	 * 
-	 * @param appContext
-	 */
-	public static void initializeNullStyling(IEclipseContext appContext) {
-		appContext.set(IStylingEngine.class.getName(), new IStylingEngine() {
-			public void setClassname(Object widget, String classname) {
-			}
-
-			public void setId(Object widget, String id) {
-			}
-
-			public void style(Object widget) {
-			}
-		});
 	}
 
 }

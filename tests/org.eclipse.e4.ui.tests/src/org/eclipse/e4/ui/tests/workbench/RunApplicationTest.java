@@ -20,7 +20,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
-import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchStylingSupport;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -155,9 +154,6 @@ public class RunApplicationTest extends TestCase {
 													.getName(),
 													new ResourceUtility(
 															getBundleAdmin()));
-
-									WorkbenchStylingSupport
-											.initializeNullStyling(applicationContext);
 
 									workbench = new Workbench(
 											getInstanceLocation(),
