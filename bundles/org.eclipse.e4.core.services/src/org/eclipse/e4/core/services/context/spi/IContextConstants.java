@@ -21,7 +21,7 @@ import org.eclipse.e4.core.services.context.IEclipseContextAware;
  */
 public interface IContextConstants {
 	/**
-	 * Default prefix for the fields to be injected.
+	 * Default prefix for the fields to be injected (value "di_").
 	 * <p>
 	 * For example, if the context has an object under the name "log", the
 	 * object will be injected into the field named "diLog".
@@ -31,7 +31,7 @@ public interface IContextConstants {
 
 	/**
 	 * The name of the method to be called when a context is injected into the
-	 * object.
+	 * object (value "contextSet").
 	 * <p>
 	 * This method will be called after all other injection calls are done. As
 	 * such it can be used to perform all calculations based on multiple
@@ -47,7 +47,7 @@ public interface IContextConstants {
 	public static final String INJECTION_SET_CONTEXT_METHOD = "contextSet"; //$NON-NLS-1$
 
 	/**
-	 * Default prefix for the methods to be injected.
+	 * Default prefix for the methods to be injected (value "set").
 	 * <p>
 	 * For example, if the context has an object under the name "log", the
 	 * object will be injected into the method named "setLog".

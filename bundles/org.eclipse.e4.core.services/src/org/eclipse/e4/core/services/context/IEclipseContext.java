@@ -101,8 +101,51 @@ public interface IEclipseContext {
 	 */
 	public void remove(String name);
 
+	/**
+	 * Executes a runnable within this context. If the runnable accesses any
+	 * values in this context during its execution, the runnable will be
+	 * executed again after any of those values change. Only the context values
+	 * accessed during the most recent invocation of the runnable are tracked.
+	 * <p>
+	 * This method allows a client to keep some external state synchronized with
+	 * one or more values in this context. For this synchronization to work
+	 * correctly, the runnable should perform its synchronization purely as a
+	 * function of values in the context. If the runnable relies on mutable
+	 * values that are external to the context, it will not be updated correctly
+	 * when that external state changes.
+	 * </p>
+	 * <p>
+	 * The runnable is not guaranteed to be executed synchronously with the
+	 * context change that triggers its execution. Thus the context state at the
+	 * time of the runnable's execution may not match the context state at the
+	 * time of the relevant context change.
+	 * </p>
+	 * <p>
+	 * The runnable does not need to be explicitly unregistered from this
+	 * context when it is no longer interested in tracking changes. If a
+	 * subsequent invocation of this runnable does not access any values in this
+	 * context, it is automatically unregistered from change tracking on this
+	 * context. Thus a provided runnable should be implemented to return
+	 * immediately when change tracking is no longer needed.
+	 * </p>
+	 * 
+	 * @param runnable
+	 *            The runnable to execute and register for change tracking
+	 */
 	public void runAndTrack(final Runnable runnable);
 
+	/**
+	 * Executes a runnable within this context. This is a more advanced variant
+	 * of {@link #runAndTrack(Runnable)} that provides additional information to
+	 * the runnable. Apart from the additional data passed to the runnable, this
+	 * method has the same contract as {@link #runAndTrack(Runnable)}.
+	 * 
+	 * @param runnable
+	 *            The runnable to execute and register for change tracking
+	 * @param args
+	 *            Argument to be supplied to the runnable each time it executes.
+	 * @see IRunAndTrack
+	 */
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
 
 	/**

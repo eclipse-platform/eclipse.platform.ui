@@ -12,7 +12,7 @@
 package org.eclipse.e4.core.services.context.spi;
 
 /**
- * This is a marker interface. All strategies passed to the context should 
+ * This is a marker interface. All strategies passed to the context must
  * implement this interface.
  */
 public interface IEclipseContextStrategy {

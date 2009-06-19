@@ -21,34 +21,45 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 public interface IRunAndTrack {
 
 	/**
-	 * Initial direct call to @
-	 * {@link IEclipseContext#runAndTrack(IRunAndTrack, Object[])}
+	 * A change event type (value "0"), indicating that this runnable has just
+	 * been registered with a context.
+	 * 
+	 * @see IEclipseContext#runAndTrack(IRunAndTrack, Object[])
 	 */
 	public int INITIAL = 0;
 
 	/**
-	 * Element has been added to the context.
+	 * A change event type (value "1"), indicating that a context value has been
+	 * added.
 	 */
 	public int ADDED = 1;
 
 	/**
-	 * Element has been removed from the context.
+	 * A change event type (value "2"), indicating that a context value has been
+	 * removed.
 	 */
 	public int REMOVED = 2;
 
 	/**
-	 * Context is being disposed.
+	 * A change event type (value "3") indicating that the context is being
+	 * disposed.
 	 */
 	public int DISPOSE = 3;
 
 	/**
-	 * The trackable operation is notified of a context change.
+	 * Executes this runnable. The reason for the execution is provided in the
+	 * <code>eventType</code> argument.
 	 * 
+	 * @param context
+	 *            The context that triggered this notification
 	 * @param name
-	 *            name of the service changed
+	 *            name of the context value that changed
 	 * @param eventType
-	 *            describes type of the change, see {@link #ADDED},
-	 *            {@link #REMOVED}
+	 *            describes the type of change, one of {@link #INITIAL},
+	 *            {@link #ADDED}, {@link #REMOVED}, or {@link #DISPOSE}
+	 * @param args
+	 *            The arguments that were supplied when this runnable was
+	 *            registered with the context
 	 */
 	public boolean notify(IEclipseContext context, String name, int eventType, Object[] args);
 }
