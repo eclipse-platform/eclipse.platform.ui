@@ -101,7 +101,11 @@ public class RunAndTrackTest extends TestCase {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
 			}
-		}, ACTIVE_PART_ID);
+			@Override
+			public String toString() {
+				return ACTIVE_PART_ID;
+			}
+		});
 
 		final IEclipseContext[] parts = createNextLevel(windows[0], "part", 2);
 		assertEquals("part0", workbenchContext.get(ACTIVE_PART));
@@ -130,7 +134,11 @@ public class RunAndTrackTest extends TestCase {
 				final Object part = windows[0].get(ACTIVE_PART);
 				windows[0].set(ACTIVE_PART_ID, part);
 			}
-		}, ACTIVE_PART_ID);
+			@Override
+			public String toString() {
+				return ACTIVE_PART_ID;
+			}
+		});
 
 		final IEclipseContext[] mainSashes = createNextLevel(windows[0],
 				"mainSash", 2);

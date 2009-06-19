@@ -113,7 +113,7 @@ public class EclipseContextTest extends TestCase {
 				runCounter++;
 				value[0] = context.get("foo");
 			}
-		}, "runnable");
+		});
 		assertEquals(1, runCounter);
 		assertEquals(null, value[0]);
 		context.set("foo", "bar");

@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -89,9 +90,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		 * @see java.lang.Object#hashCode()
 		 */
 		public int hashCode() {
-			final int prime = 31;
-			int result = prime + ((name == null) ? 0 : name.hashCode());
-			return prime * result + ((runnable == null) ? 0 : runnable.hashCode());
+			return runnable.hashCode();
 		}
 
 		/*
@@ -106,26 +105,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			TrackableComputation other = (TrackableComputation) obj;
-			if (name == null) {
-				if (other.name != null)
-					return false;
-			} else if (!name.equals(other.name))
-				return false;
-			if (runnable == null) {
-				if (other.runnable != null)
-					return false;
-			} else if (!runnable.equals(other.runnable))
-				return false;
-			return true;
+			return this.runnable.equals(((TrackableComputation) obj).runnable);
 		}
 
-		private final String name;
-		Runnable runnable;
+		final Runnable runnable;
 
-		TrackableComputation(Runnable runnable, String name) {
+		TrackableComputation(Runnable runnable) {
 			this.runnable = runnable;
-			this.name = name;
+			Assert.isNotNull(runnable);
 		}
 
 		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
@@ -150,7 +137,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 
 		public String toString() {
-			return name;
+			return runnable.toString();
 		}
 	}
 
@@ -366,8 +353,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		schedule(computation, null, IRunAndTrack.INITIAL, args);
 	}
 
-	public void runAndTrack(final Runnable runnable, String name) {
-		TrackableComputation computation = new TrackableComputation(runnable, name);
+	public void runAndTrack(final Runnable runnable) {
+		TrackableComputation computation = new TrackableComputation(runnable);
 		schedule(computation);
 	}
 

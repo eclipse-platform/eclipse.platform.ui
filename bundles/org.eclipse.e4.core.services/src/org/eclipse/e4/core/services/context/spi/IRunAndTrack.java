@@ -14,7 +14,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
  * Extended version of a runnable that can be used with the
- * {@link IEclipseContext#runAndTrack(Runnable, String)}. This version gets more
+ * {@link IEclipseContext#runAndTrack(IRunAndTrack, Object[])} version gets more
  * detailed information on the change, such as the service name and the event
  * type.
  */
@@ -22,7 +22,7 @@ public interface IRunAndTrack {
 
 	/**
 	 * Initial direct call to @
-	 * {@link IEclipseContext#runAndTrack(Runnable, String)}.
+	 * {@link IEclipseContext#runAndTrack(IRunAndTrack, Object[])}
 	 */
 	public int INITIAL = 0;
 
@@ -50,6 +50,5 @@ public interface IRunAndTrack {
 	 *            describes type of the change, see {@link #ADDED},
 	 *            {@link #REMOVED}
 	 */
-	public boolean notify(IEclipseContext context, String name, int eventType,
-			Object[] args);
+	public boolean notify(IEclipseContext context, String name, int eventType, Object[] args);
 }

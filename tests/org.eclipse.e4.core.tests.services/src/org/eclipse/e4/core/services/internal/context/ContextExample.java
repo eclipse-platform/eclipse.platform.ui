@@ -25,6 +25,7 @@ public class ContextExample {
 	class Crayon {
 		@In
 		IPaletteService pallete;
+
 		public void draw() {
 			if (pallete == null)
 				System.out.println("No palette");
@@ -32,18 +33,22 @@ public class ContextExample {
 				System.out.println("My pen is:  " + pallete.getColor());
 		}
 	}
+
 	static enum Color {
 		RED, BLUE, YELLOW, GREEN, ORANGE, PURPLE;
 	}
-	
+
 	interface IPaletteService {
 		public Color getColor();
 	}
-	class PaletteImpl implements IPaletteService{
+
+	class PaletteImpl implements IPaletteService {
 		private final Color color;
+
 		PaletteImpl(Color color) {
 			this.color = color;
 		}
+
 		public Color getColor() {
 			return color;
 		}
@@ -52,20 +57,20 @@ public class ContextExample {
 	static class ComplementaryColor implements IContextFunction {
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			switch ((Color) context.get("color")) {
-				case RED :
-					return Color.GREEN;
-				case GREEN :
-					return Color.RED;
-				case BLUE :
-					return Color.ORANGE;
-				case ORANGE :
-					return Color.BLUE;
-				case YELLOW :
-					return Color.PURPLE;
-				case PURPLE :
-					return Color.YELLOW;
-				default :
-					return null;
+			case RED:
+				return Color.GREEN;
+			case GREEN:
+				return Color.RED;
+			case BLUE:
+				return Color.ORANGE;
+			case ORANGE:
+				return Color.BLUE;
+			case YELLOW:
+				return Color.PURPLE;
+			case PURPLE:
+				return Color.YELLOW;
+			default:
+				return null;
 			}
 		}
 	}
@@ -92,16 +97,17 @@ public class ContextExample {
 		ContextInjectionFactory.inject(crayon, context);
 		crayon.draw();
 	}
-	
+
 	public void runWithService() {
-		ServiceRegistration reg = TestActivator.bundleContext.registerService(IPaletteService.class.getName(), new PaletteImpl(Color.BLUE), null);
-		IEclipseContext context = EclipseContextFactory.createServiceContext(TestActivator.bundleContext);
+		ServiceRegistration reg = TestActivator.bundleContext.registerService(IPaletteService.class
+				.getName(), new PaletteImpl(Color.BLUE), null);
+		IEclipseContext context = EclipseContextFactory
+				.createServiceContext(TestActivator.bundleContext);
 		Crayon crayon = new Crayon();
 		ContextInjectionFactory.inject(crayon, context);
 		crayon.draw();
 		reg.unregister();
 		crayon.draw();
-		
 
 	}
 
@@ -114,21 +120,29 @@ public class ContextExample {
 		System.out.println(child.get("complement"));
 
 	}
+
 	public void run3() {
-//		IEclipseContext context = EclipseContextFactory.create();
-//		Object[] args = new Object[] {IResource.class};
-//		IResource[] resources = context.get("Selection", args);
+		// IEclipseContext context = EclipseContextFactory.create();
+		// Object[] args = new Object[] {IResource.class};
+		// IResource[] resources = context.get("Selection", args);
 	}
+
 	double total = 0;
+
 	public void price() {
 		final IEclipseContext context = EclipseContextFactory.create();
 		context.set("price", 19.99);
 		context.set("tax", 0.05);
-		context.runAndTrack(new Runnable(){
+		context.runAndTrack(new Runnable() {
 			public void run() {
-				total = (Double)context.get("price") * (1.0 + (Double)context.get("tax"));
+				total = (Double) context.get("price") * (1.0 + (Double) context.get("tax"));
 			}
-		}, "calculator");
+
+			@Override
+			public String toString() {
+				return "calculator";
+			}
+		});
 		print(total);
 		context.set("tax", 0.07);
 		print(total);

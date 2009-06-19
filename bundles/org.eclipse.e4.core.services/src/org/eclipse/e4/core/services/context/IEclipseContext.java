@@ -52,8 +52,8 @@ public interface IEclipseContext {
 	 * <code>null</code> if no such value is defined or computable by this
 	 * context, or if the assigned value is <code>null</code>.
 	 * <p>
-	 * If the value associated with this name is an {@link IContextFunction}, this
-	 * method will evaluate
+	 * If the value associated with this name is an {@link IContextFunction},
+	 * this method will evaluate
 	 * {@link IContextFunction#compute(IEclipseContext, Object[])} with zero
 	 * arguments.
 	 * </p>
@@ -69,8 +69,8 @@ public interface IEclipseContext {
 	 * <code>null</code> if no such value is defined or computable by this
 	 * context.
 	 * <p>
-	 * If the value associated with this name is an {@link IContextFunction}, this
-	 * method will evaluate
+	 * If the value associated with this name is an {@link IContextFunction},
+	 * this method will evaluate
 	 * {@link IContextFunction#compute(IEclipseContext, Object[])} with the
 	 * provided arguments.
 	 * </p>
@@ -101,17 +101,15 @@ public interface IEclipseContext {
 	 */
 	public void remove(String name);
 
-	// TBD should this be a part of IEclipseContext or a separate convenience
-	// method?
-	public void runAndTrack(final Runnable runnable, String name);
+	public void runAndTrack(final Runnable runnable);
 
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args);
 
 	/**
 	 * Sets a value to be associated with a given name in this context. The
-	 * value may be an arbitrary object, or it may be an {@link IContextFunction}.
-	 * In the case of a function, subsequent invocations of
-	 * {@link #get(String)} with the same name will invoke
+	 * value may be an arbitrary object, or it may be an
+	 * {@link IContextFunction}. In the case of a function, subsequent
+	 * invocations of {@link #get(String)} with the same name will invoke
 	 * {@link IContextFunction#compute(IEclipseContext, Object[])} to obtain the
 	 * value. The value may be <code>null</code>.
 	 * <p>
