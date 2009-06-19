@@ -154,7 +154,14 @@ public class MWindowTest extends TestCase {
 						SashForm sash = (SashForm) controls[0];
 						Control[] sashChildren = sash.getChildren();
 						assertEquals(1, sashChildren.length);
-						CTabFolder folder = (CTabFolder) sashChildren[0];
+
+						// HACK: see bug #280632 - always a composite around
+						// CTabFolder so can implement margins
+						Composite marginHolder = (Composite) sashChildren[0];
+						assertEquals(1, marginHolder.getChildren().length);
+						CTabFolder folder = (CTabFolder) marginHolder
+								.getChildren()[0];
+
 						assertEquals(1, folder.getItemCount());
 						Control c = folder.getItem(0).getControl();
 						assertTrue(c instanceof Composite);
