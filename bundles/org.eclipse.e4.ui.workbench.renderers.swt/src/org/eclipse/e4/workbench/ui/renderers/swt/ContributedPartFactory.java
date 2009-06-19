@@ -61,7 +61,7 @@ public class ContributedPartFactory extends SWTPartFactory {
 						contributedPart.setPersistedState((String) state);
 					}
 				}
-			}, ""); //$NON-NLS-1$
+			});
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 			Object newPart = contributionFactory.create(contributedPart
 					.getURI(), localContext);

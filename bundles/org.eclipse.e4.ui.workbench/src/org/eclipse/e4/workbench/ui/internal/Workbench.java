@@ -166,7 +166,15 @@ public class Workbench implements IWorkbench {
 							.getId());
 				}
 			}
-		}, IServiceConstants.ACTIVE_PART_ID);
+
+			/*
+			 * For debugging purposes only
+			 */
+			@Override
+			public String toString() {
+				return IServiceConstants.ACTIVE_PART_ID;
+			}
+		});
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction
 

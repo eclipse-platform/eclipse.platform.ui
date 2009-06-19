@@ -125,7 +125,7 @@ public class StackModelFactory extends LazyStackFactory {
 						engine.setClassname(ctf, "inactive"); //$NON-NLS-1$
 					}
 				}
-			}, ""); //$NON-NLS-1$
+			});
 		}
 
 		return newWidget;
