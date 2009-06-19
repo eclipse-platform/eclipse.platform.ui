@@ -13,7 +13,6 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -96,7 +95,15 @@ public abstract class SWTPartFactory extends PartFactory {
 			MToolBar toolbar) {
 
 		int orientation = SWT.HORIZONTAL;
-		Composite composite = (Composite) widgetObject;
+		Composite composite = null;
+		while (!(widgetObject instanceof Composite)
+				&& widgetObject instanceof Control) {
+			widgetObject = ((Control) widgetObject).getParent();
+		}
+		if (!(widgetObject instanceof Composite)) {
+			return null;
+		}
+		composite = (Composite) widgetObject;
 		if (composite.getLayout() instanceof RowLayout) {
 			RowLayout rl = (RowLayout) composite.getLayout();
 			orientation = rl.type;
