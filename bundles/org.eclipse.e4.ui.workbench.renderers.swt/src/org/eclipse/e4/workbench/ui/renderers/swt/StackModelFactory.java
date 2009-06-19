@@ -11,6 +11,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
@@ -53,6 +54,9 @@ import org.eclipse.swt.widgets.Widget;
 public class StackModelFactory extends LazyStackFactory {
 
 	Image viewMenuImage;
+
+	@In
+	IStylingEngine stylingEngine;
 
 	public StackModelFactory() {
 		super();
@@ -173,9 +177,7 @@ public class StackModelFactory extends LazyStackFactory {
 			Control ctrl = (Control) element.getWidget();
 			if (ctrl != null) {
 				showTab((MItemPart<?>) element);
-				IStylingEngine engine = (IStylingEngine) context
-						.get(IStylingEngine.class.getName());
-				engine.style(ctrl);
+				stylingEngine.style(ctrl);
 			}
 		}
 	}
