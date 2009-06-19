@@ -37,7 +37,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Composite;
 
 public class Thumbnails {
@@ -58,9 +57,6 @@ public class Thumbnails {
 		parent.setLayout(new FillLayout());
 		gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
 		gallery.setData("org.eclipse.e4.ui.css.id", "thumbnails");
-
-		Image itemImage = new Image(parent.getDisplay(), Program.findProgram("jpg")
-				.getImageData());
 
 		gallery.setGroupRenderer(new NoGroupRenderer());
 
