@@ -154,7 +154,7 @@ public class DetailComposite extends Composite {
 					image = dummyPortrait;
 				}
 				ImageData imageData = image.getImageData();
-				double ratio = imageData.height / 75.0;
+				double ratio = imageData.height / 68.0;
 				int width = (int) (imageData.width / ratio);
 				int height = (int) (imageData.height / ratio);
 				ImageData scaledImageData = imageData.scaledTo(width, height);
@@ -203,8 +203,6 @@ public class DetailComposite extends Composite {
 
 		final Label label = new Label(parent, SWT.NONE);
 		label.setText(text + "     ");
-		label.setForeground(Display.getCurrent().getSystemColor(
-				SWT.COLOR_DARK_BLUE));
 		label.setData("org.eclipse.e4.ui.css.id", "SeparatorLabel");
 		GridData gridData = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		gridData.horizontalSpan = 3;
