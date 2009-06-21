@@ -9,32 +9,21 @@
  * Contributors:
  *     Kai Tödter - initial implementation
  ******************************************************************************/
-Text {
-	font: Verdana 8px;
-}
-
 Label {
 	font: Verdana 8px;
-}
-
-Tree {
-	font: Verdana 8px;
-}
-
-SashForm {
-	background-color: #dddddd;
+	color: black;
 }
 
 Composite Label {
 	color: black;
 }
 
-Composite Composite {
-	background-color: #e8e8e8 #cccccc 60%;
+#SeparatorLabel {
+	color: #1d659f;
 }
 
-DetailComposite {
-	background-color: #e8e8e8 #cccccc 60%;
+Text {
+	font: Verdana 8px;
 }
 
 Composite Text {
@@ -42,15 +31,15 @@ Composite Text {
 	color: black;
 }
 
-Label {
-	color: black;
+SashForm {
+	background-color: #dddddd;
 }
 
-#SeparatorLabel {
-	color: #964600;
+#DetailView {
+	background-color: #e8e8e8 #cccccc 60%;
 }
 
-Table,Text#output {
+Table {
 	background-color: #e8e8e8 #cccccc 60%;
 	color: black;
 	font: Verdana 8px;
@@ -76,6 +65,6 @@ CTabFolder:selected {
 
 CTabFolder.active:selected {
 	background-color: #ffffff #cccccc #dddddd 50% 50%;
-	color: #ff5500;
+	color: #1d659f;
 	font: bold;
 }
