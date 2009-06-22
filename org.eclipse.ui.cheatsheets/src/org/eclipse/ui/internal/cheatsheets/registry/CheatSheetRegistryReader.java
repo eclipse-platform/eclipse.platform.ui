@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2008 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -169,7 +169,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
 	protected Map taskExplorers = new HashMap();
 	protected Map taskEditors = new HashMap();
-
+	private Map nestedCategoryIds = new HashMap();
+	
 	/**
 	 *	Create an instance of this class.
 	 */
@@ -355,6 +356,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 
 		// Traverse down into parent category.	
 		if (categoryPath != null) {
+			nestedCategoryIds.put(category.getId(), category);
 			for (int i = 0; i < categoryPath.length; i++) {
 				CheatSheetCollectionElement tempElement = getChildWithID(parent, categoryPath[i]);
 				if (tempElement == null) {
@@ -372,8 +374,13 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		if (test != null)
 			return;
 
-		if (parent != null)
-			createCollectionElement(parent, category.getPluginId(), category.getId(), category.getLabel());
+		if (parent != null) {
+			CheatSheetCollectionElement collectionElement = 
+				createCollectionElement(parent, category.getPluginId(), category.getId(), category.getLabel());
+			if (categoryPath != null) {
+				nestedCategoryIds.put(category.getId(), collectionElement);
+			}
+		}
 	}
 
 	/**
@@ -386,7 +393,8 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	 */
 	private void finishCheatSheet(CheatSheetElement element, IConfigurationElement config, CheatSheetCollectionElement result) {
 		CheatSheetCollectionElement currentResult = (CheatSheetCollectionElement) result;
-		StringTokenizer familyTokenizer = new StringTokenizer(getCategoryStringFor(config), CATEGORY_SEPARATOR);
+		String category = getCategoryStringFor(config);
+		StringTokenizer familyTokenizer = new StringTokenizer(category, CATEGORY_SEPARATOR);
 
 		// use the period-separated sections of the current CheatSheet's category
 		// to traverse through the NamedSolution "tree" that was previously created
@@ -396,17 +404,24 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 		while (familyTokenizer.hasMoreElements()) {
 			CheatSheetCollectionElement tempCollectionElement = getChildWithID(currentCollectionElement, familyTokenizer.nextToken());
 
-			if (tempCollectionElement == null) { // can't find the path; bump it to uncategorized
+			if (tempCollectionElement == null) { // can't find the path; look for a simple path
+
 				moveToOther = true;
 				break;
 			}
 			currentCollectionElement = tempCollectionElement;
 		}
 
-		if (moveToOther)
-			moveElementToUncategorizedCategory(currentResult, element);
-		else
+		if (moveToOther) {
+			if (nestedCategoryIds.containsKey(category)) {
+				currentCollectionElement = (CheatSheetCollectionElement) nestedCategoryIds.get(category);
+				currentCollectionElement.add(element);
+			} else {
+			    moveElementToUncategorizedCategory(currentResult, element);
+			}
+		} else {
 			currentCollectionElement.add(element);
+		}
 	}
 
 	/**
@@ -422,6 +437,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 			}
 			deferCheatSheets = null;
 		}
+		nestedCategoryIds = null;
 	}
 
 	/**
