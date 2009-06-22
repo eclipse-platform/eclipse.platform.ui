@@ -72,7 +72,6 @@ public class WatchExpression implements IWatchExpression {
 			 * @see org.eclipse.debug.core.model.IWatchExpressionListener#watchEvaluationFinished(org.eclipse.debug.core.model.IWatchExpressionResult)
 			 */
 			public void watchEvaluationFinished(IWatchExpressionResult result) {
-				setPending(false);
 				setResult(result);
 			}
 		};
@@ -129,8 +128,10 @@ public class WatchExpression implements IWatchExpression {
 	public void setResult(IWatchExpressionResult result) {
 		synchronized (this) {
 			fResult= result;
+			fPending = false;
 		}
-		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.CONTENT));
+		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.STATE)); // pending state
+		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.CONTENT)); // value change
 	}
 
 	/**
@@ -257,7 +258,7 @@ public class WatchExpression implements IWatchExpression {
 	/**
 	 * @see org.eclipse.debug.core.model.IWatchExpression#isPending()
 	 */
-	public boolean isPending() {
+	public synchronized boolean isPending() {
 		return fPending;
 	}
 	
@@ -268,7 +269,9 @@ public class WatchExpression implements IWatchExpression {
 	 * 		flagged as pending
 	 */
 	protected void setPending(boolean pending) {
-		fPending= pending;
+		synchronized (this) {
+			fPending= pending;
+		}
 		fireEvent(new DebugEvent(this, DebugEvent.CHANGE, DebugEvent.STATE));
 	}
 
