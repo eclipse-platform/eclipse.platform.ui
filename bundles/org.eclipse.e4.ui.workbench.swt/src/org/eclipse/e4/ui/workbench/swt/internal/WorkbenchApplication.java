@@ -76,16 +76,16 @@ public class WorkbenchApplication implements IApplication {
 					appContext.set(IResourceUtiltities.class.getName(),
 							new ResourceUtility(Activator.getDefault()
 									.getBundleAdmin()));
-					if (cssURI != null) {
-						CSSStylingSupport.initializeStyling(display,
-								cssURI, cssResourcesURI, appContext);
-					}
 					Workbench wb = new Workbench(Activator.getDefault()
 							.getInstanceLocation(), RegistryFactory
 							.getRegistry(), Activator.getDefault()
 							.getBundleAdmin(), appContext,
 							new WorkbenchWindowHandler());
 					wb.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
+					if (cssURI != null) {
+						CSSStylingSupport.initializeStyling(display, cssURI,
+								cssResourcesURI, appContext);
+					}
 					wb.createUIFromModel();
 					wb.run();
 				} catch (ThreadDeath th) {
