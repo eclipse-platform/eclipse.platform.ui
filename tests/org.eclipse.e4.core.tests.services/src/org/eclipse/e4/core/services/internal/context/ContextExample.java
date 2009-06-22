@@ -13,7 +13,10 @@ package org.eclipse.e4.core.services.internal.context;
 
 import java.text.NumberFormat;
 import org.eclipse.e4.core.services.annotations.In;
-import org.eclipse.e4.core.services.context.*;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IContextFunction;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.tests.services.TestActivator;
 import org.osgi.framework.ServiceRegistration;
@@ -54,7 +57,7 @@ public class ContextExample {
 		}
 	}
 
-	static class ComplementaryColor implements IContextFunction {
+	static class ComplementaryColor extends ContextFunction {
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			switch ((Color) context.get("color")) {
 			case RED:

@@ -13,10 +13,9 @@ package org.eclipse.e4.core.services.internal.context;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
-import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 
 /**
@@ -64,7 +63,7 @@ public class ComputedValueLimitationTest extends TestCase {
 		}
 	}
 	
-	public class CalcColor implements IContextFunction {
+	public class CalcColor extends ContextFunction {
 
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			int useArg = ExtenralFactor.useChild();

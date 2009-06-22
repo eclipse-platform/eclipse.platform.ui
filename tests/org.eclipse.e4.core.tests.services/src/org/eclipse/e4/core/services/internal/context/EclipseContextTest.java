@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import junit.framework.TestCase;
-import org.eclipse.e4.core.services.context.*;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IContextFunction;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 public class EclipseContextTest extends TestCase {
 
-	private static class ComputedValueBar implements IContextFunction {
+	private static class ComputedValueBar extends ContextFunction {
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			return context.get("bar");
 		}
