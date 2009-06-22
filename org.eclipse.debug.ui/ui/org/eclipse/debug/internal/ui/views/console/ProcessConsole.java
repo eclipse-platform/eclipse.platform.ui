@@ -79,6 +79,7 @@ import org.eclipse.ui.console.PatternMatchEvent;
 import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
+import org.eclipse.ui.progress.UIJob;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -450,13 +451,15 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
         final String newName = computeName();
         String name = getName();
         if (!name.equals(newName)) {
-            Runnable r = new Runnable() {
-                public void run() {
-                    setName(newName);
-                    warnOfContentChange();
-                }
-            };
-            DebugUIPlugin.getStandardDisplay().asyncExec(r);
+        	UIJob job = new UIJob("Update console title") { //$NON-NLS-1$
+				public IStatus runInUIThread(IProgressMonitor monitor) {
+					 ProcessConsole.this.setName(newName);
+	                 warnOfContentChange();
+	                 return Status.OK_STATUS;
+				}
+			};
+			job.setSystem(true);
+			job.schedule();
         }
     }
 
