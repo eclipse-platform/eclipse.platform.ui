@@ -90,11 +90,12 @@ public class InjectionFilter implements IFilter {
 		String relativePath = FilterUtils.getRelativePathPrefix(req);
 		StringBuffer script = new StringBuffer();
 		StringBuffer disabledContent = new StringBuffer();
-		script.append(CssUtil.createCssIncludes(cssIncludes));
+		script.append(CssUtil.createCssIncludes(cssIncludes, FilterUtils.getRelativePathPrefix(req)));
 		if (addDisabled) {
 			if (needsLiveHelp) {
 				script.append(disabledBook3);
-				script.append("../content/PLUGINS_ROOT/org.eclipse.help/"); //$NON-NLS-1$
+				script.append(relativePath);
+				script.append("content/org.eclipse.help/"); //$NON-NLS-1$
 				script.append(disabledBook4);
 			}
 			appendDisabled(disabledContent, upLevels, addNarrow, relativePath);
@@ -115,7 +116,8 @@ public class InjectionFilter implements IFilter {
 			return;
 		buff.append("<div id=\"help-disabledTopic\">"); //$NON-NLS-1$
 		buff.append("<img src=\""); //$NON-NLS-1$
-		buff.append("../content/PLUGINS_ROOT/org.eclipse.help.webapp/"); //$NON-NLS-1$
+		buff.append(relativePath);
+		buff.append("content/org.eclipse.help.webapp/"); //$NON-NLS-1$
 		buff.append("advanced/images/e_show_all.gif\" border=\"0\" align=\"bottom\">&nbsp;"); //$NON-NLS-1$		
 		buff.append(message);
 		buff.append("<br><hr></div>"); //$NON-NLS-1$

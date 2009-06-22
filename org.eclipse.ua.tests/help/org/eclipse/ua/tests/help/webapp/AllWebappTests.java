@@ -28,6 +28,7 @@ public class AllWebappTests extends TestSuite {
 		suite.addTestSuite(BrowserIdentificationTest.class);
 		suite.addTestSuite(TopicPathTest.class);
 		suite.addTestSuite(FilterTest.class);
+		suite.addTestSuite(PluginsRootReplacement.class);
 		suite.addTestSuite(UrlUtilsTests.class);
 		suite.addTestSuite(LocaleTest.class);
 		suite.addTestSuite(RestrictedTopicParameter.class);

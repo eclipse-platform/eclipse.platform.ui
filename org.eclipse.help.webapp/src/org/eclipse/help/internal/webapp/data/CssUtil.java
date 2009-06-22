@@ -17,6 +17,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.util.ProductPreferences;
 
 /**
  * Utility class for parsing the CSS preferences
@@ -24,7 +25,7 @@ import org.eclipse.help.internal.base.HelpBasePlugin;
 
 public class CssUtil {
 	
-	private final static String cssLink1 = "<link rel=\"stylesheet\" href=\"../content/PLUGINS_ROOT"; //$NON-NLS-1$
+	private final static String cssLink1 = "<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
 	private static final String cssLink2 = "\" type=\"text/css\"></link>\n"; //$NON-NLS-1$
 	
 	private static String replaceParameters(String input) {
@@ -61,15 +62,23 @@ public class CssUtil {
 		}
 	}
 	
-	public static String createCssIncludes(List cssFiles) {
+	public static String createCssIncludes(List cssFiles, String backPath) {
 		StringBuffer script = new StringBuffer();
 		for (Iterator iter = cssFiles.iterator(); iter.hasNext();) {
 			String cssPath = (String) iter.next();
 			script.append(cssLink1);
-			script.append(cssPath);
+			script.append(fixCssPath(cssPath, backPath));
 			script.append(cssLink2);
 		}
 		return script.toString();
+	}
+	
+	/*
+	 * Substitute for PLUGINS_ROOT and PRODUCT_PLUGIN
+	 */
+	private static String fixCssPath(String path, String prefix) {
+		String newPath = ProductPreferences.resolveSpecialIdentifiers(path);
+		return prefix + "content" + newPath; //$NON-NLS-1$
 	}
 
 }

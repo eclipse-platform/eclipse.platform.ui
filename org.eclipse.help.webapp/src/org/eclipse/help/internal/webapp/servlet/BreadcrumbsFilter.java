@@ -30,9 +30,10 @@ import org.eclipse.help.webapp.IFilter;
  */
 public class BreadcrumbsFilter implements IFilter {
 
-	private static final String HEAD_CONTENT =
-			"\n<link rel=\"stylesheet\" href=\"../content/PLUGINS_ROOT/" + HelpWebappPlugin.PLUGIN_ID + "/advanced/breadcrumbs.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>"  //$NON-NLS-1$//$NON-NLS-2$
-			+ "\n<script type=\"text/javascript\" src=\"../content/PLUGINS_ROOT/" + HelpPlugin.PLUGIN_ID + "/livehelp.js\"> </script>"; //$NON-NLS-1$ //$NON-NLS-2$
+	private static final String HEAD_CONTENT1 = "\n<link rel=\"stylesheet\" href=\""; //$NON-NLS-1$
+	private static final String HEAD_CONTENT2 = "/content/" + HelpWebappPlugin.PLUGIN_ID + "/advanced/breadcrumbs.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>"  //$NON-NLS-1$ //$NON-NLS-2$
+		+ "\n<script type=\"text/javascript\" src=\""; //$NON-NLS-1$
+	private static final String HEAD_CONTENT3 = "/content/" + HelpPlugin.PLUGIN_ID + "/livehelp.js\"> </script>"; //$NON-NLS-1$ //$NON-NLS-2$ 
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.help.internal.webapp.servlet.IFilter#filter(javax.servlet.http.HttpServletRequest, java.io.OutputStream)
@@ -75,9 +76,12 @@ public class BreadcrumbsFilter implements IFilter {
 		if (path != null && path.length > 1) {
 			try {
 			boolean isNarrow = "/ntopic".equals(req.getServletPath()); //$NON-NLS-1$
+				String backpath = getBackpath(pathInfo);
 				String bodyContent = getBodyContent(path,
-						getBackpath(pathInfo), isNarrow, locale);
-				return new FilterHTMLHeadAndBodyOutputStream(out, HEAD_CONTENT
+						backpath, isNarrow, locale);
+				String headContent = HEAD_CONTENT1 + backpath + HEAD_CONTENT2 + backpath +
+				    HEAD_CONTENT3;
+				return new FilterHTMLHeadAndBodyOutputStream(out, headContent
 						.getBytes("ASCII"), bodyContent); //$NON-NLS-1$
 			} 
 			catch (Exception e) {

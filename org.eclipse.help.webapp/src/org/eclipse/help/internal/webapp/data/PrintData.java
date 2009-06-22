@@ -306,6 +306,6 @@ public class PrintData extends RequestData {
 	private String getCssIncludes() {
 		List css = new ArrayList();
 		CssUtil.addCssFiles("topic_css", css); //$NON-NLS-1$
-		return CssUtil.createCssIncludes(css);
+		return CssUtil.createCssIncludes(css, "../"); //$NON-NLS-1$
 	}
 }
