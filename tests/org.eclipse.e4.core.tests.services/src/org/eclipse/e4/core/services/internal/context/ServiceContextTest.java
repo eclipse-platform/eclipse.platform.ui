@@ -80,6 +80,18 @@ public class ServiceContextTest extends TestCase {
 			((IDisposable)context).dispose();
 		super.tearDown();
 	}
+	
+	public void testDeclarativeService() {
+		IEclipseContext context = EclipseContextFactory.createServiceContext(TestActivator.bundleContext);
+		assertNull(context.get("sum"));
+		context.set("x", 1);
+		context.set("y", 2);
+		int result = (Integer)context.get("sum");
+		assertEquals("1.0", 3, result);
+		context.set("x", 5);
+		result = (Integer)context.get("sum");
+		assertEquals("1.0", 7, result);
+	}
 
 	/**
 	 * Tests accessing OSGi services through a child context that is not aware of them.

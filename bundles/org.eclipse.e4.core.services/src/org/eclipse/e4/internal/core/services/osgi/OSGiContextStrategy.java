@@ -10,11 +10,19 @@
  *******************************************************************************/
 package org.eclipse.e4.internal.core.services.osgi;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.WeakHashMap;
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
 
@@ -25,11 +33,11 @@ import org.osgi.util.tracker.ServiceTrackerCustomizer;
  */
 public class OSGiContextStrategy implements ILookupStrategy, IDisposable, ServiceTrackerCustomizer {
 	class ServiceData {
-		//the service name
+		// the service name
 		String name;
 
 		ServiceTracker tracker;
-		//the contexts using this service (IEclipseContext -> null)
+		// the contexts using this service (IEclipseContext -> null)
 		final Map users = new WeakHashMap();
 
 		ServiceData(String name) {
@@ -57,7 +65,8 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		Object newValue = bundleContext.getService(reference);
 		if (newValue == null)
 			return null;
-		//for performance we store the concrete service object with each context that requested it
+		// for performance we store the concrete service object with each
+		// context that requested it
 		ServiceData data = (ServiceData) services.get(name);
 		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
 			((IEclipseContext) it.next()).set(name, newValue);
@@ -65,14 +74,14 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 	}
 
 	/**
-	 * Discards any services that are no longer used by any strongly
-	 * reachable contexts.
+	 * Discards any services that are no longer used by any strongly reachable
+	 * contexts.
 	 */
 	private void cleanReferences() {
 		synchronized (services) {
 			for (Iterator it = services.values().iterator(); it.hasNext();) {
 				ServiceData data = (ServiceData) it.next();
-				//if there are no more references, discard the service
+				// if there are no more references, discard the service
 				if (data.users.isEmpty()) {
 					data.tracker.close();
 					it.remove();
@@ -98,10 +107,23 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		cleanReferences();
 		ServiceData data = (ServiceData) services.get(name);
 		if (data == null) {
+			// see if there is an IContextFunction registered for this name
+			try {
+				ServiceReference[] refs = bundleContext.getServiceReferences(
+						IContextFunction.SERVICE_NAME, "(" //$NON-NLS-1$
+								+ IContextFunction.SERVICE_CONTEXT_KEY + '=' + name + ')');
+				if (refs != null && refs.length > 0)
+					return bundleContext.getService(refs[0]);
+			} catch (InvalidSyntaxException e) {
+				// the name is not a valid service name, so just carry on
+			}
+
+			// create a tracker to retrieve the service with the given name
 			data = new ServiceData(name);
 			data.tracker = new ServiceTracker(bundleContext, name, this);
 			services.put(name, data);
-			//just opening a tracker will cause values to be set by the tracker callback methods
+			// just opening a tracker will cause values to be set by the tracker
+			// callback methods
 			data.tracker.open();
 		}
 		data.addContext(originatingContext);
@@ -117,7 +139,7 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 
 	public void removedService(ServiceReference reference, Object service) {
 		String name = serviceName(reference);
-		//must set to null rather than removing so injection continues to work
+		// must set to null rather than removing so injection continues to work
 		ServiceData data = (ServiceData) services.get(name);
 		for (Iterator it = data.users.keySet().iterator(); it.hasNext();)
 			((IEclipseContext) it.next()).set(name, null);
