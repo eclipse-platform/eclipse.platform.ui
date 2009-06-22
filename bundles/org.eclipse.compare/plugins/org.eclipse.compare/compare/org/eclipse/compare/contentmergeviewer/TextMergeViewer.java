@@ -413,7 +413,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	private ContributorInfo fLeftContributor;
 	private ContributorInfo fRightContributor;
 	private ContributorInfo fAncestorContributor;
-	private boolean isRefreshing;
+	private int isRefreshing = 0;
 	private int fSynchronziedScrollPosition;
 	private ActionContributionItem fNextChange;
 	private ActionContributionItem fPreviousChange;
@@ -2919,7 +2919,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	}
 
 	private boolean isRefreshing() {
-		return isRefreshing;
+		return isRefreshing > 0;
 	}
 
 	private ContributorInfo createLegInfoFor(Object element, char leg) {
@@ -4967,7 +4967,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	}
 
 	private void beginRefresh() {
-		isRefreshing = true;
+		isRefreshing++;
 		fLeftContributor.cacheSelection(fLeft);
 		fRightContributor.cacheSelection(fRight);
 		fAncestorContributor.cacheSelection(fAncestor);
@@ -4978,7 +4978,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	}
 	
 	private void endRefresh() {
-		isRefreshing = false;
+		isRefreshing--;
 		fLeftContributor.cacheSelection(null);
 		fRightContributor.cacheSelection(null);
 		fAncestorContributor.cacheSelection(null);
