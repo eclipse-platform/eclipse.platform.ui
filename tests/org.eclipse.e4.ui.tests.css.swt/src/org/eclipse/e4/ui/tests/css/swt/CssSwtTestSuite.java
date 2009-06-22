@@ -26,6 +26,7 @@ public class CssSwtTestSuite extends TestSuite {
 	public CssSwtTestSuite() {
 		addTestSuite(LabelTest.class);
 		addTestSuite(CTabFolderTest.class);
+		addTestSuite(CTabItemTest.class);
 		addTestSuite(IdClassLabelColorTest.class);
 		addTestSuite(ShellTest.class);
 		addTestSuite(ButtonTest.class);

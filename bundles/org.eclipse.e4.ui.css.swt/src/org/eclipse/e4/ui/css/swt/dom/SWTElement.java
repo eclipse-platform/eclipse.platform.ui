@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2009 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
@@ -193,15 +194,35 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	public int getLength() {
 		Widget widget = getWidget();
+		int childCount = 0;
 		if (widget instanceof Composite) {
-			return ((Composite) widget).getChildren().length;
+			childCount = ((Composite) widget).getChildren().length;
+			
+			if (widget instanceof CTabFolder) {
+				// if it's a CTabFolder, include the child items in the count
+				childCount += ((CTabFolder) widget).getItemCount();
+			}
 		}
-		return 0;
+		return childCount;
 	}
 
 	public Node item(int index) {
 		Widget widget = getWidget();
 		if (widget instanceof Composite) {
+			if (widget instanceof CTabFolder) {
+				// retrieve the child control or child item depending on the
+				// index
+				CTabFolder folder = (CTabFolder) widget;
+				int length = folder.getChildren().length;
+				if (index >= length) {
+					Widget w = folder.getItem(index - length);
+					return getElement(w);
+				} else {
+					Widget w = folder.getChildren()[index];
+					return getElement(w);
+				}
+			}
+			
 			Widget w = ((Composite) widget).getChildren()[index];
 			return getElement(w);
 		}

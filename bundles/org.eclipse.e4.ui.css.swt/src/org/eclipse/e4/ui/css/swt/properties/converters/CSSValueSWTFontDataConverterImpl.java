@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2009 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.converters;
 
@@ -16,6 +17,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterCo
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
@@ -53,6 +55,11 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 			if (context instanceof Control) {
 				Control control = (Control) context;
 				Font font = control.getFont();
+				fontData = CSSSWTFontHelper.getFirstFontData(font);
+			}
+			if (context instanceof CTabItem) {
+				CTabItem item = (CTabItem) context;
+				Font font = item.getFont();
 				fontData = CSSSWTFontHelper.getFirstFontData(font);
 			}
 			if (context instanceof Font) {

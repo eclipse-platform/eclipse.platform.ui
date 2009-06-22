@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2009 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     IBM Corporation
+ *     Remy Chi Jian Suen <remy.suen@gmail.com>
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.helpers;
 
@@ -18,6 +19,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontPropertiesImpl;
 import org.eclipse.e4.ui.css.core.engine.CSSElementContext;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.widgets.Control;
@@ -58,21 +60,25 @@ public class CSSSWTFontHelper {
 	}
 
 	/**
-	 * Get CSS2FontProperties from Control stored into Data of Control. If
-	 * CSS2FontProperties doesn't exist, create it from Font of Control and
-	 * store it into Data of Control.
+	 * Get CSS2FontProperties from the widget. If
+	 * CSS2FontProperties doesn't exist, create it from the widget's font, if it
+	 * has one, and then store it in the widget's data if applicable.
 	 * 
-	 * @param control
-	 * @return
+	 * @param widget the widget to retrieve CSS2 font properties from
+	 * @return the font properties of the specified widget, or <code>null</code> if none
 	 */
-	public static CSS2FontProperties getCSS2FontProperties(Control control,
+	public static CSS2FontProperties getCSS2FontProperties(Widget widget,
+			CSSElementContext context) {
+		return getCSS2FontProperties(getFont(widget), context);
+	}
+
+	public static CSS2FontProperties getCSS2FontProperties(Font font,
 			CSSElementContext context) {
 		// Search into Data of Control if CSS2FontProperties exist.
 		CSS2FontProperties fontProperties = CSS2FontPropertiesHelpers
 				.getCSS2FontProperties(context);
-		if (fontProperties == null) {
+		if (fontProperties == null && font != null) {
 			// CSS2FontProperties doesn't exist, create it
-			Font font = control.getFont();
 			fontProperties = getCSS2FontProperties(font);
 			// store into ClientProperty the CSS2FontProperties
 			CSS2FontPropertiesHelpers.setCSS2FontProperties(fontProperties,
@@ -199,13 +205,13 @@ public class CSSSWTFontHelper {
 	}
 
 	/**
-	 * Return CSS Value font-family from Control Font
+	 * Return CSS Value font-family from the widget's font, if it has a font
 	 * 
-	 * @param control
+	 * @param widget
 	 * @return
 	 */
-	public static String getFontFamily(Control control) {
-		return getFontFamily(control.getFont());
+	public static String getFontFamily(Widget widget) {
+		return getFontFamily(getFont(widget));
 	}
 
 	/**
@@ -228,13 +234,13 @@ public class CSSSWTFontHelper {
 	}
 
 	/**
-	 * Return CSS Value font-size from Control Font
+	 * Return CSS Value font-size the widget's font, if it has a font
 	 * 
-	 * @param control
+	 * @param widget
 	 * @return
 	 */
-	public static String getFontSize(Control control) {
-		return getFontSize(control.getFont());
+	public static String getFontSize(Widget widget) {
+		return getFontSize(getFont(widget));
 	}
 
 	/**
@@ -255,13 +261,13 @@ public class CSSSWTFontHelper {
 	}
 
 	/**
-	 * Return CSS Value font-style from SWT Font
+	 * Return CSS Value font-style from the widget's font, if it has a font
 	 * 
-	 * @param control
+	 * @param widget
 	 * @return
 	 */
-	public static String getFontStyle(Control control) {
-		return getFontStyle(control.getFont());
+	public static String getFontStyle(Widget widget) {
+		return getFontStyle(getFont(widget));
 	}
 
 	/**
@@ -289,13 +295,13 @@ public class CSSSWTFontHelper {
 	}
 
 	/**
-	 * Return CSS Value font-weight from Control Font
+	 * Return CSS Value font-weight from the widget's font, if it has a font
 	 * 
-	 * @param control
+	 * @param widget
 	 * @return
 	 */
-	public static String getFontWeight(Control control) {
-		return getFontWeight(control.getFont());
+	public static String getFontWeight(Widget widget) {
+		return getFontWeight(getFont(widget));
 	}
 
 	/**
@@ -387,5 +393,15 @@ public class CSSSWTFontHelper {
 		if (fontDatas == null || fontDatas.length < 1)
 			return null;
 		return fontDatas[0];
+	}
+	
+	private static Font getFont(Widget widget) {
+		if (widget instanceof CTabItem) {
+			return ((CTabItem) widget).getFont();
+		} else if (widget instanceof Control) {
+			return ((Control) widget).getFont();
+		} else {
+			return null;
+		}
 	}
 }

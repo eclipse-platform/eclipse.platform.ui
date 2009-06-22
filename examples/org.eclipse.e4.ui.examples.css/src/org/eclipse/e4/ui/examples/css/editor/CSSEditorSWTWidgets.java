@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.examples.css.editor;
 
+import org.eclipse.e4.ui.css.swt.dom.SWTElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -79,10 +80,12 @@ public class CSSEditorSWTWidgets extends AbstractCSSSWTEditor {
 		tabFolder.setUnselectedImageVisible(true);
 				
 		CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NONE);
-		tabItem1.setText("Tab 1");
+		tabItem1.setText("Busy");
+		SWTElement.setCSSClass(tabItem1, "busy");
 		
 		CTabItem tabItem2 = new CTabItem(tabFolder, SWT.NONE);
-		tabItem2.setText("Tab 2");
+		tabItem2.setText("Modified");
+		SWTElement.setCSSClass(tabItem2, "modified");
 		
 		tabFolder.setSelection(0);
 	}
