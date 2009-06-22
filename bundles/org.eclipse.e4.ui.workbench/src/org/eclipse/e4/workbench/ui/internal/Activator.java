@@ -27,7 +27,7 @@ public class Activator implements BundleActivator {
 	/**
 	 * The bundle symbolic name.
 	 */
-	public static final String PI_WORKBENCH = "org.eclipse.e4.ui.worbkench"; //$NON-NLS-1$
+	public static final String PI_WORKBENCH = "org.eclipse.e4.ui.workbench"; //$NON-NLS-1$
 
 	private static Activator activator;
 
