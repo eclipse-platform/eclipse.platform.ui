@@ -15,7 +15,7 @@
     <br/><br/>Verify that each step performs as indicated in the description, that the description 
     for each step is visible and that all steps can be completed.
     </description>
-  </intro>
+  </intro>  <item title="Formatting in subitems. ">     <description>Verifies that subitems can be formatted. </description>      <subitem skip = "true">         <description>Verify this subitem contains a <b>bold</b> word</description>      </subitem>     <subitem skip = "true">         <description>Verify line breaks<br/>Next line<br/>Another line</description>      </subitem>  </item> 
   <item title="Select which view to open">
      <description>Select a view which will be opened in the following steps. Pick either, they work
      equally well.</description>
