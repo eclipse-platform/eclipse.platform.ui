@@ -13,12 +13,13 @@ package org.eclipse.e4.workbench.ui.renderers;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
@@ -34,8 +35,7 @@ public class PartRenderer {
 	private AdapterImpl visibilityListener = new AdapterImpl() {
 		@Override
 		public void notifyChanged(Notification msg) {
-			if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg
-					.getFeature())) {
+			if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg.getFeature())) {
 				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
 
 				// If the parent isn't displayed who cares?
@@ -45,12 +45,12 @@ public class PartRenderer {
 					return;
 
 				if (changedPart.isVisible()) {
-					System.out.println("visible -> true"); //$NON-NLS-1$
+					Activator.trace(Policy.DEBUG_RENDERER, "visible -> true", null); //$NON-NLS-1$
 
 					// Note that the 'createGui' protocol calls 'childAdded'
 					createGui(changedPart);
 				} else {
-					System.out.println("visible -> false"); //$NON-NLS-1$
+					Activator.trace(Policy.DEBUG_RENDERER, "visible -> false", null); //$NON-NLS-1$
 
 					// Note that the 'createGui' protocol calls 'childRemoved'
 					removeGui(changedPart);
@@ -62,8 +62,7 @@ public class PartRenderer {
 	private AdapterImpl childrenListener = new AdapterImpl() {
 		@Override
 		public void notifyChanged(Notification msg) {
-			if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg
-					.getFeature())) {
+			if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())) {
 				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
 				PartFactory factory = getFactoryFor(changedPart);
 
@@ -72,11 +71,11 @@ public class PartRenderer {
 					return;
 
 				if (msg.getEventType() == Notification.ADD) {
-					System.out.println("Child Added"); //$NON-NLS-1$
+					Activator.trace(Policy.DEBUG_RENDERER, "Child Added", null); //$NON-NLS-1$
 					MPart added = (MPart) msg.getNewValue();
 					createGui(added);
 				} else if (msg.getEventType() == Notification.REMOVE) {
-					System.out.println("Child Removed"); //$NON-NLS-1$
+					Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
 					MPart removed = (MPart) msg.getOldValue();
 					if (removed.isVisible())
 						removeGui(removed);
@@ -88,8 +87,7 @@ public class PartRenderer {
 	private final IContributionFactory contributionFactory;
 	private final IEclipseContext context;
 
-	public PartRenderer(IContributionFactory contributionFactory,
-			IEclipseContext context) {
+	public PartRenderer(IContributionFactory contributionFactory, IEclipseContext context) {
 		this.contributionFactory = contributionFactory;
 		this.context = context;
 	}
@@ -180,8 +178,7 @@ public class PartRenderer {
 					factory.createMenu(element, newWidget, element.getMenu());
 				}
 				if (element.getToolBar() != null) {
-					factory.createToolBar(element, newWidget, element
-							.getToolBar());
+					factory.createToolBar(element, newWidget, element.getToolBar());
 				}
 				return newWidget;
 			}
@@ -192,8 +189,7 @@ public class PartRenderer {
 
 	protected void processHandlers(MPart<?> element) {
 		for (MHandler contributedHandler : element.getHandlers()) {
-			if (contributedHandler.getURI() != null
-					&& contributedHandler.getObject() == null) {
+			if (contributedHandler.getURI() != null && contributedHandler.getObject() == null) {
 				contributedHandler.setObject(contributionFactory.create(
 						contributedHandler.getURI(), context));
 			}

@@ -12,7 +12,14 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.core.services.ISchedulingExecutor;
 import org.eclipse.osgi.service.datalocation.Location;
-import org.osgi.framework.*;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugTrace;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -28,6 +35,10 @@ public class Activator implements BundleActivator {
 	private ServiceRegistration executorTracker;
 	private ServiceTracker locationTracker;
 	private ServiceTracker pkgAdminTracker;
+
+	private ServiceTracker debugTracker;
+
+	private DebugTrace trace;
 
 	/**
 	 * Get the default activator.
@@ -52,8 +63,7 @@ public class Activator implements BundleActivator {
 		if (pkgAdminTracker == null) {
 			if (context == null)
 				return null;
-			pkgAdminTracker = new ServiceTracker(context, PackageAdmin.class
-					.getName(), null);
+			pkgAdminTracker = new ServiceTracker(context, PackageAdmin.class.getName(), null);
 			pkgAdminTracker.open();
 		}
 		return (PackageAdmin) pkgAdminTracker.getService();
@@ -105,8 +115,8 @@ public class Activator implements BundleActivator {
 	public void start(BundleContext context) throws Exception {
 		activator = this;
 		this.context = context;
-		executorTracker = context.registerService(
-				ISchedulingExecutor.SERVICE_NAME, new JobExecutor(), null);
+		executorTracker = context.registerService(ISchedulingExecutor.SERVICE_NAME,
+				new JobExecutor(), null);
 	}
 
 	public void stop(BundleContext context) throws Exception {
@@ -122,6 +132,31 @@ public class Activator implements BundleActivator {
 			executorTracker.unregister();
 			executorTracker = null;
 		}
+		if (debugTracker != null) {
+			trace = null;
+			debugTracker.close();
+			debugTracker = null;
+		}
 	}
 
+	public DebugOptions getDebugOptions() {
+		if (debugTracker == null) {
+			if (context == null)
+				return null;
+			debugTracker = new ServiceTracker(context, DebugOptions.class.getName(), null);
+			debugTracker.open();
+		}
+		return (DebugOptions) debugTracker.getService();
+	}
+
+	public DebugTrace getTrace() {
+		if (trace == null) {
+			trace = getDebugOptions().newDebugTrace(PI_WORKBENCH);
+		}
+		return trace;
+	}
+
+	public static void trace(String option, String msg, Throwable error) {
+		activator.getTrace().trace(option, msg, error);
+	}
 }

@@ -143,6 +143,10 @@ public class Workbench implements IWorkbench {
 	public static IEclipseContext createWorkbenchContext(final IEclipseContext applicationContext,
 			IExtensionRegistry registry, IExceptionHandler exceptionHandler,
 			IContributionFactory contributionFactory) {
+		Activator
+				.trace(
+						Policy.DEBUG_CONTEXTS,
+						"createWorkbenchContext: initialize the workbench context with needed services", null); //$NON-NLS-1$
 		final IEclipseContext mainContext = EclipseContextFactory.create(applicationContext,
 				UISchedulerStrategy.getInstance());
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
@@ -185,6 +189,8 @@ public class Workbench implements IWorkbench {
 				for (IConfigurationElement serviceElement : contribution.getChildren("service")) { //$NON-NLS-1$
 					Object factory = contribution.createExecutableExtension("class"); //$NON-NLS-1$
 					String apiClassname = serviceElement.getAttribute("api"); //$NON-NLS-1$
+					Activator.trace(Policy.DEBUG_CONTEXTS, "createWorkbenchContext: created " //$NON-NLS-1$
+							+ factory + " for " + apiClassname, null); //$NON-NLS-1$
 					mainContext.set(apiClassname, factory);
 				}
 			} catch (CoreException e) {
@@ -262,11 +268,13 @@ public class Workbench implements IWorkbench {
 		boolean restore = restoreLastModified > appLastModified;
 
 		if (restore) {
-			System.err.println("Restoring workbench: " + restoreLocation); //$NON-NLS-1$
+			Activator
+					.trace(Policy.DEBUG_WORKBENCH, "Restoring workbench: " + restoreLocation, null); //$NON-NLS-1$
 			workbench = (MApplication<MWindow>) resourceSetImpl.getResource(restoreLocation, true)
 					.getContents().get(0);
 		} else {
-			System.err.println("Initializing workbench: " + applicationDefinitionInstance); //$NON-NLS-1$
+			Activator.trace(Policy.DEBUG_WORKBENCH,
+					"Initializing workbench: " + applicationDefinitionInstance, null); //$NON-NLS-1$
 			Resource resource = new XMIResourceImpl();
 			workbench = loadDefaultModel(applicationDefinitionInstance);
 			resource.getContents().add((EObject) workbench);
@@ -328,12 +336,13 @@ public class Workbench implements IWorkbench {
 	}
 
 	private void init() {
+		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
 		// Capture the MApplication into the context
 		workbenchContext.set(MApplication.class.getName(), workbench);
 		workbench.setContext(workbenchContext);
 
 		// fill in commands
-		System.err.println("workbench init commands"); //$NON-NLS-1$
+		Activator.trace(Policy.DEBUG_CMDS, "Initialize service from model", null); //$NON-NLS-1$
 		ECommandService cs = (ECommandService) workbenchContext
 				.get(ECommandService.class.getName());
 		Category cat = cs.getCategory(MApplication.class.getName());
@@ -381,11 +390,14 @@ public class Workbench implements IWorkbench {
 					.create(parentContext, UISchedulerStrategy.getInstance());
 		}
 
+		Activator.trace(Policy.DEBUG_CONTEXTS, "initializeContext(" //$NON-NLS-1$
+				+ parentContext.toString() + ", " + part + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
 		// fill in the interfaces, so MContributedPart.class.getName() will
 		// return the model element, for example.
 		final Class[] interfaces = part.getClass().getInterfaces();
 		for (Class intf : interfaces) {
-			System.err.println("add intf: " + intf.getName()); //$NON-NLS-1$
+			Activator.trace(Policy.DEBUG_CONTEXTS, "Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
+					+ part.getClass().getName(), null);
 			context.set(intf.getName(), part);
 		}
 
@@ -418,12 +430,13 @@ public class Workbench implements IWorkbench {
 	}
 
 	public int run() {
+		Activator.trace(Policy.DEBUG_WORKBENCH, "running event loop", null); //$NON-NLS-1$
 		windowHandler.runEvenLoop(workbench.getWindows().get(0).getWidget());
 
 		if (workbenchData != null && saveAndRestore && workbench != null) {
 			try {
-				System.err.println("Saving workbench: " //$NON-NLS-1$
-						+ ((EObject) workbench).eResource().getURI());
+				Activator.trace(Policy.DEBUG_WORKBENCH, "Saving workbench: " //$NON-NLS-1$
+						+ ((EObject) workbench).eResource().getURI(), null);
 				// workbenchData.getParentFile().mkdirs();
 				// workbenchData.createNewFile();
 				// FileOutputStream fos = new FileOutputStream(workbenchData);

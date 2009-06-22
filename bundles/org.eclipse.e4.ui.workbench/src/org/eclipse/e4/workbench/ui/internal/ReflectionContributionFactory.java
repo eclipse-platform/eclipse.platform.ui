@@ -20,7 +20,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -59,14 +58,13 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	 * java.lang.String, java.lang.String,
 	 * org.eclipse.e4.core.services.context.IEclipseContext, java.lang.Object)
 	 */
-	public Object call(Object object, String uriString, String methodName,
-			IEclipseContext context, Object defaultValue) {
+	public Object call(Object object, String uriString, String methodName, IEclipseContext context,
+			Object defaultValue) {
 		if (uriString != null) {
 			URI uri = URI.createURI(uriString);
 			if (uri.segmentCount() > 3) {
 				String prefix = uri.segment(2);
-				IContributionFactorySpi factory = (IContributionFactorySpi) languages
-						.get(prefix);
+				IContributionFactorySpi factory = (IContributionFactorySpi) languages.get(prefix);
 				return factory.call(object, methodName, context, defaultValue);
 			}
 		}
@@ -109,8 +107,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			});
 
 			// Find the first satisfiable method
-			for (Iterator<Method> iter = toSort.iterator(); iter.hasNext()
-					&& targetMethod == null;) {
+			for (Iterator<Method> iter = toSort.iterator(); iter.hasNext() && targetMethod == null;) {
 				Method next = iter.next();
 
 				boolean satisfiable = true;
@@ -142,7 +139,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		Class<?>[] paramKeys = targetMethod.getParameterTypes();
 
 		try {
-			System.err.println("calling: " + methodName); //$NON-NLS-1$
+			Activator.trace(Policy.DEBUG_CMDS, "calling: " + methodName, null); //$NON-NLS-1$
 			Object[] params = new Object[paramKeys.length];
 			for (int i = 0; i < params.length; i++) {
 				if (IEclipseContext.class.equals(paramKeys[i])) {
@@ -172,8 +169,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 		if (bundle != null) {
 			if (uri.segmentCount() > 3) {
 				String prefix = uri.segment(2);
-				IContributionFactorySpi factory = (IContributionFactorySpi) languages
-						.get(prefix);
+				IContributionFactorySpi factory = (IContributionFactorySpi) languages.get(prefix);
 				StringBuffer resource = new StringBuffer(uri.segment(3));
 				for (int i = 4; i < uri.segmentCount(); i++) {
 					resource.append('/');
@@ -195,16 +191,12 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	private void processLanguages() {
 		languages = new HashMap<String, Object>();
 		String extId = "org.eclipse.e4.languages"; //$NON-NLS-1$
-		IConfigurationElement[] languageElements = registry
-				.getConfigurationElementsFor(extId);
+		IConfigurationElement[] languageElements = registry.getConfigurationElementsFor(extId);
 		for (int i = 0; i < languageElements.length; i++) {
 			IConfigurationElement languageElement = languageElements[i];
 			try {
-				languages
-						.put(
-								languageElement.getAttribute("name"), //$NON-NLS-1$
-								languageElement
-										.createExecutableExtension("contributionFactory")); //$NON-NLS-1$
+				languages.put(languageElement.getAttribute("name"), //$NON-NLS-1$
+						languageElement.createExecutableExtension("contributionFactory")); //$NON-NLS-1$
 			} catch (InvalidRegistryObjectException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
