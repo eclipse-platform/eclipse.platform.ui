@@ -1023,7 +1023,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		if (!fDirty)
 			fDirtyViewers.clear();
 		if (oldDirty != dirty)
-			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(oldDirty), new Boolean(dirty));
+			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, Boolean.valueOf(oldDirty), Boolean.valueOf(dirty));
 	}
 	
 	private void setDirty(Object source, boolean dirty) {
@@ -1036,7 +1036,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		boolean newDirty= fDirty || fDirtyViewers.size() > 0;
 		if (DEBUG) System.out.println("setDirty("+source+", "+dirty+"): " + newDirty); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		if (oldDirty != newDirty)
-			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, new Boolean(oldDirty), new Boolean(newDirty));
+			Utilities.firePropertyChange(fListenerList, this, DIRTY_STATE, Boolean.valueOf(oldDirty), Boolean.valueOf(newDirty));
 	}
 	
 	/* (non Javadoc)
