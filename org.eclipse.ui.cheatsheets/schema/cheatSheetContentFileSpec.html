@@ -20,7 +20,7 @@ DTD fragments (<a href="cheatSheetContentFileSpec.exsd">machine readable XML sch
 <p></p>
 <p class="code SchemaDtd">&lt;!ELEMENT <a name="e.cheatsheet">cheatsheet</a> (<a href="#e.intro">intro</a> , <a href="#e.item">item</a>+)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST cheatsheet</p>
-<p class="code SchemaDtdAttlist">title&nbsp;CDATA #REQUIRED&gt;</p>
+<p class="code SchemaDtdAttlist">title&nbsp;CDATA #REQUIRED</p>&gt;</p>
 <p></p>
 <p class="ConfigMarkupElementDesc">
 The root element of a cheatsheet.</p>
@@ -30,7 +30,7 @@ The root element of a cheatsheet.</p>
 </ul>
 <br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.intro">intro</a> (<a href="#e.description">description</a>)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST intro</p>
-<p class="code SchemaDtdAttlist">contextId&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">href&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p class="code SchemaDtdAttlist">contextId&nbsp;CDATA #IMPLIED</p><p class="code SchemaDtdAttlist">href&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p>&gt;</p>
 <p></p>
 <p class="ConfigMarkupElementDesc">
 The &lt;intro&gt; element is used to define the introductory text to be displayed when the cheat sheet is opened.</p>
@@ -60,7 +60,7 @@ whitespace immediately before the &lt;<b>/description</b>&gt; tag.</p>
 <br><br>
 <p class="code SchemaDtd">&lt;!ELEMENT <a name="e.item">item</a> (<a href="#e.description">description</a> , (<a href="#e.action">action</a> | <a href="#e.command">command</a> | <a href="#e.perform-when">perform-when</a> | (<a href="#e.subitem">subitem</a> | <a href="#e.conditional-subitem">conditional-subitem</a> | <a href="#e.repeated-subitem">repeated-subitem</a>)*) , <a href="#e.onCompletion">onCompletion</a>?)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST item</p>
-<p class="code SchemaDtdAttlist">title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">dialog&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">contextId&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">href&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p class="code SchemaDtdAttlist">title&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</p><p class="code SchemaDtdAttlist">dialog&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"</p><p class="code SchemaDtdAttlist">skip&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"</p><p class="code SchemaDtdAttlist">contextId&nbsp;CDATA #IMPLIED</p><p class="code SchemaDtdAttlist">href&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p>&gt;</p>
 <p></p>
 <div class="ConfigMarkupElementDesc">
 <p>Each &lt;item&gt; element describes one top-level step in a cheat sheet. An
@@ -95,9 +95,9 @@ based on cheat sheet variables whose value are acquired in earlier steps.</p></d
 <li><b>contextId</b> - The optional help context id of the documentation for this cheat sheet step. If supplied, context help for the given&nbsp; fully-qualified context id is shown to the user (typically in a small pop-up window) when they clicks the step's help link. If this attribute is supplied, the <b>href</b> attribute should not be supplied (<b>href</b> will be ignored if both are present).</li>
 <li><b>href</b> - The optional help document describing this cheat sheet step. If supplied, this help document is shown to the user (typically in a help browser shown in a separate window) when they clicks the step's help link. If this attribute is supplied, the <b>contextId</b> attribute should not be supplied (<b>href</b> will be ignored if both are present).</li>
 </ul>
-<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.subitem">subitem</a> (<a href="#e.action">action</a> | <a href="#e.command">command</a> | <a href="#e.perform-when">perform-when</a>)?&gt;</p>
+<br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.subitem">subitem</a> (<a href="#e.description">description</a>? , (<a href="#e.action">action</a> | <a href="#e.command">command</a> | <a href="#e.perform-when">perform-when</a>)?)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST subitem</p>
-<p class="code SchemaDtdAttlist">label&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">skip&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">when&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p class="code SchemaDtdAttlist">label&nbsp;CDATA #REQUIRED</p><p class="code SchemaDtdAttlist">skip&nbsp;&nbsp;(true | false) "false"</p><p class="code SchemaDtdAttlist">when&nbsp;&nbsp;CDATA #IMPLIED</p>&gt;</p>
 <p></p>
 <div class="ConfigMarkupElementDesc">
 <p>Each &lt;subitem&gt; element describes a sub-step in a cheat sheet. A &lt;subitem&gt;
@@ -114,7 +114,8 @@ that they have successfully completed the step.</p>
 given item can be performed in any order. All sub-items within an item have to
 be completed or skipped before progressing to the next item. (Which means
 actions that must be performed in a required sequence should not be represented
-as sub-items.)</p></div>
+as sub-items.)</p>
+<p>Since version 3.4 a description has been allowed in a subitem in place of the label attribute, which allows for formatting tags to be used.</p></div>
 <br>
 <ul class="ConfigMarkupAttlistDesc">
 <li><b>label</b> - The title of the cheat sheet sub-item. If the string
@@ -124,7 +125,9 @@ as sub-items.)</p></div>
     in the context of the execution of the cheat sheet, or the empty string for
     variables that are unbound. The values of the variables are as of the
     beginning of the execution of the main step (when the &lt;item&gt; element
-    is elaborated), rather than when the individual sub-step are run.</li>
+    is elaborated), rather than when the individual sub-step are run.
+    
+  A subitem may have either a label or a description element but not both. A description element may contain the formating tags such as &lt;b&gt;, &lt;/b&gt; or &lt;br/&gt;.</li>
 <li><b>skip</b> - if &quot;true&quot; this sub-step can be
     skipped. The UI generally shows a button that the user can press to indicate
     that they are skipping this sub-step.</li>
@@ -135,7 +138,7 @@ as sub-items.)</p></div>
 </ul>
 <br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.conditional-subitem">conditional-subitem</a> (<a href="#e.subitem">subitem</a>+)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST conditional-subitem</p>
-<p class="code SchemaDtdAttlist">condition&nbsp;CDATA #REQUIRED&gt;</p>
+<p class="code SchemaDtdAttlist">condition&nbsp;CDATA #REQUIRED</p>&gt;</p>
 <p></p>
 <div class="ConfigMarkupElementDesc">
 <p>Each &lt;conditional-subitem&gt; element describes a single sub-step whose
@@ -171,7 +174,7 @@ equivalent to
 </ul>
 <br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.repeated-subitem">repeated-subitem</a> (<a href="#e.subitem">subitem</a>)&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST repeated-subitem</p>
-<p class="code SchemaDtdAttlist">values&nbsp;CDATA #REQUIRED&gt;</p>
+<p class="code SchemaDtdAttlist">values&nbsp;CDATA #REQUIRED</p>&gt;</p>
 <p></p>
 <div class="ConfigMarkupElementDesc">
 <p>Each &lt;repeated-subitem&gt; element describes a sub-item that expands into
@@ -214,7 +217,7 @@ then the item expands to something equivalent to:
 </ul>
 <br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.action">action</a> EMPTY&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST action</p>
-<p class="code SchemaDtdAttlist">class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">pluginId&nbsp;&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">paramN&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">confirm&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">required&nbsp;&nbsp;(true | false) "true"<p class="code SchemaDtdAttlist">translate&nbsp;CDATA #IMPLIED&gt;</p>
+<p class="code SchemaDtdAttlist">class&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #REQUIRED</p><p class="code SchemaDtdAttlist">pluginId&nbsp;&nbsp;CDATA #REQUIRED</p><p class="code SchemaDtdAttlist">paramN&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p><p class="code SchemaDtdAttlist">confirm&nbsp;&nbsp;&nbsp;(true | false) "false"</p><p class="code SchemaDtdAttlist">when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p><p class="code SchemaDtdAttlist">required&nbsp;&nbsp;(true | false) "true"</p><p class="code SchemaDtdAttlist">translate&nbsp;CDATA #IMPLIED</p>&gt;</p>
 <p></p>
 <p class="ConfigMarkupElementDesc">
 Each &lt;action&gt; element describes an action in a cheat sheet.</p>
@@ -258,7 +261,7 @@ Examples:
 </ul>
 <br><p class="code SchemaDtd">&lt;!ELEMENT <a name="e.command">command</a> EMPTY&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST command</p>
-<p class="code SchemaDtdAttlist">serialization&nbsp;CDATA #REQUIRED<p class="code SchemaDtdAttlist">returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"<p class="code SchemaDtdAttlist">when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED<p class="code SchemaDtdAttlist">required&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "true"<p class="code SchemaDtdAttlist">translate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED&gt;</p>
+<p class="code SchemaDtdAttlist">serialization&nbsp;CDATA #REQUIRED</p><p class="code SchemaDtdAttlist">returns&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p><p class="code SchemaDtdAttlist">confirm&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "false"</p><p class="code SchemaDtdAttlist">when&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p><p class="code SchemaDtdAttlist">required&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(true | false) "true"</p><p class="code SchemaDtdAttlist">translate&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;CDATA #IMPLIED</p>&gt;</p>
 <p></p>
 <div class="ConfigMarkupElementDesc">
 <p>Each &lt;command&gt; element describes an command in a cheat sheet.
@@ -309,7 +312,7 @@ the cheat sheet variable <i>var</i> at the time this step was completed.</p>
 <br><br>
 <p class="code SchemaDtd">&lt;!ELEMENT <a name="e.perform-when">perform-when</a> (<a href="#e.action">action</a> | <a href="#e.command">command</a>)+&gt;</p>
 <p class="code SchemaDtd">&lt;!ATTLIST perform-when</p>
-<p class="code SchemaDtdAttlist">condition&nbsp;CDATA #REQUIRED&gt;</p>
+<p class="code SchemaDtdAttlist">condition&nbsp;CDATA #REQUIRED</p>&gt;</p>
 <p></p>
 <div class="ConfigMarkupElementDesc">
 <p>Each &lt;perform-when&gt; element describes an action in a cheat sheet.

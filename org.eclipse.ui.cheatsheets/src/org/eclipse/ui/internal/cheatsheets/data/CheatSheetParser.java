@@ -394,6 +394,19 @@ public class CheatSheetParser implements IStatusContainer {
 			throw new CheatSheetParserException(message);
 		}
 	}
+	
+	private void handleSubItemDescription(SubItem subItem, Node startNode) throws CheatSheetParserException {
+		Assert.isNotNull(subItem);
+		Assert.isNotNull(startNode);
+
+		Node descriptionNode = findNode(startNode, IParserTags.DESCRIPTION);
+		
+		if(descriptionNode != null) {
+			String text = handleMarkedUpText(descriptionNode, startNode, IParserTags.DESCRIPTION);
+			subItem.setLabel(text);
+			subItem.setFormatted(true);
+		} 
+	}
 
 	private String handleMarkedUpText(Node nodeContainingText, Node startNode, String nodeName ) {
 		NodeList nodes = nodeContainingText.getChildNodes();	
@@ -781,8 +794,6 @@ public class CheatSheetParser implements IStatusContainer {
 		Assert.isTrue(subItemNode.getNodeName().equals(IParserTags.SUBITEM));
 
 		SubItem subItem = new SubItem();
-
-		handleSubItemAttributes(subItem, subItemNode);
 		
 		IncompatibleSiblingChecker checker = new IncompatibleSiblingChecker(this, subItemNode);
 
@@ -797,6 +808,15 @@ public class CheatSheetParser implements IStatusContainer {
 				handleExecutable(subItem, node, new CheatSheetCommand());
 			} else if(node.getNodeName().equals(IParserTags.PERFORMWHEN)) {
 				handlePerformWhen(subItem, node);
+			} else if (node.getNodeName().equals(IParserTags.DESCRIPTION)) {
+				if (subItem.isFormatted()) {
+					String message = NLS.bind(
+							Messages.ERROR_PARSING_MULTIPLE_DESCRIPTION,
+							(new Object[] { node.getNodeName() }));
+					addStatus(IStatus.ERROR, message, null);
+				} else {
+					handleSubItemDescription(subItem, node);
+				}
 			} else {
 				if(node.getNodeType() != Node.TEXT_NODE && node.getNodeType() != Node.COMMENT_NODE ) {
 					String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ELEMENT, (new Object[] {node.getNodeName(), subItemNode.getNodeName()}));
@@ -804,14 +824,13 @@ public class CheatSheetParser implements IStatusContainer {
 				}
 			}
 		}
+		handleSubItemAttributes(subItem, subItemNode);
 		item.addSubItem(subItem);
 	}
 
 	private void handleSubItemAttributes(SubItem subItem, Node subItemNode) throws CheatSheetParserException {
 		Assert.isNotNull(subItem);
 		Assert.isNotNull(subItemNode);
-
-		boolean label = false;
 
 		NamedNodeMap attributes = subItemNode.getAttributes();
 		if (attributes != null) {
@@ -822,7 +841,6 @@ public class CheatSheetParser implements IStatusContainer {
 					continue;
 
 				if (attributeName.equals(IParserTags.LABEL)) {
-					label = true;
 					subItem.setLabel(attribute.getNodeValue());
 				} else if (attributeName.equals(IParserTags.SKIP)) {
 					subItem.setSkip(attribute.getNodeValue().equals(TRUE_STRING));
@@ -835,7 +853,7 @@ public class CheatSheetParser implements IStatusContainer {
 			}
 		}
 
-		if(!label) {
+		if(subItem.getLabel() == null) {
 			String message = NLS.bind(Messages.ERROR_PARSING_NO_LABEL, (new Object[] {subItemNode.getNodeName()}));
 			throw new CheatSheetParserException(message);
 		}

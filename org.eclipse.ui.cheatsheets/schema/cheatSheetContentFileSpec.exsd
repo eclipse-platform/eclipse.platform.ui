@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui.cheatsheets">
+<schema targetNamespace="org.eclipse.ui.cheatsheets" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheat_sheet_schema" name="Cheat Sheet Content File XML Format"/>
@@ -189,14 +189,18 @@ given item can be performed in any order. All sub-items within an item have to
 be completed or skipped before progressing to the next item. (Which means
 actions that must be performed in a required sequence should not be represented
 as sub-items.)&lt;/p&gt;
+&lt;p&gt;Since version 3.4 a description has been allowed in a subitem in place of the label attribute, which allows for formatting tags to be used.&lt;/p&gt;
          </documentation>
       </annotation>
       <complexType>
-         <choice minOccurs="0" maxOccurs="1">
-            <element ref="action"/>
-            <element ref="command"/>
-            <element ref="perform-when"/>
-         </choice>
+         <sequence>
+            <element ref="description" minOccurs="0" maxOccurs="1"/>
+            <choice minOccurs="0" maxOccurs="1">
+               <element ref="action"/>
+               <element ref="command"/>
+               <element ref="perform-when"/>
+            </choice>
+         </sequence>
          <attribute name="label" type="string" use="required">
             <annotation>
                <documentation>
@@ -208,6 +212,8 @@ as sub-items.)&lt;/p&gt;
     variables that are unbound. The values of the variables are as of the
     beginning of the execution of the main step (when the &amp;lt;item&amp;gt; element
     is elaborated), rather than when the individual sub-step are run.
+    
+  A subitem may have either a label or a description element but not both. A description element may contain the formating tags such as &amp;lt;b&amp;gt;, &amp;lt;/b&amp;gt; or &amp;lt;br/&amp;gt;.
                </documentation>
                <appInfo>
                   <meta.attribute translatable="true"/>
@@ -641,23 +647,7 @@ demonstrates the use of commands, perform-when and conditional subitems.&lt;/p&g
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>

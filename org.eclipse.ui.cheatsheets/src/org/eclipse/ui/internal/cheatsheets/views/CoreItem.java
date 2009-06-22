@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2007 IBM Corporation and others.
+ * Copyright (c) 2002, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,13 +147,22 @@ public class CoreItem extends ViewItem {
 		} else {
 			labelText = sub.getLabel();
 		}
-		Text subitemLabel = new Text(buttonComposite, SWT.READ_ONLY + SWT.WRAP);
-		subitemLabel.setText(labelText);
+		Control subItemLabel;
+		if (sub.isFormatted()) {
+			FormText formText = page.getToolkit().createFormText(buttonComposite, false);
+			formText.setText(labelText, labelText.startsWith(IParserTags.FORM_START_TAG), false);
+			formText.setBackground(itemColor);
+			subItemLabel = formText;
+		} else { 
+			Text text = new Text(buttonComposite, SWT.READ_ONLY + SWT.WRAP);
+			text.setText(labelText);
+			text.setBackground(itemColor);
+			subItemLabel = text;
+		}
 		TableWrapData labelData = new TableWrapData();
 		labelData.indent = LABEL_MARGIN;
-		subitemLabel.setLayoutData(labelData);
-		subitemLabel.setBackground(itemColor);
-		holder.setSubitemLabel(subitemLabel);
+		subItemLabel.setLayoutData(labelData);
+		holder.setSubitemLabel(subItemLabel);
 		added++;
 		
 		// Add some space to the right of the label
