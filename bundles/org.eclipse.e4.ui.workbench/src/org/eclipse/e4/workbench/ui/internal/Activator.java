@@ -157,6 +157,14 @@ public class Activator implements BundleActivator {
 	}
 
 	public static void trace(String option, String msg, Throwable error) {
+		final DebugOptions debugOptions = activator.getDebugOptions();
+		if (debugOptions.isDebugEnabled()
+				&& debugOptions.getBooleanOption(PI_WORKBENCH + option, false)) {
+			System.out.println(msg);
+			if (error != null) {
+				error.printStackTrace(System.out);
+			}
+		}
 		activator.getTrace().trace(option, msg, error);
 	}
 }
