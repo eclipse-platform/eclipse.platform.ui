@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,10 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
@@ -47,6 +50,7 @@ import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * Manages <code>debugModelContextBindings</code> extensions.
@@ -329,16 +333,18 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			final List activations = (List) fLanuchToContextActivations.remove(launch);
 			fLaunchToModelIds.remove(launch);
 			if (activations != null) {
-				Runnable r = new Runnable() {
-					public void run() {
+				UIJob job = new UIJob("Deactivate debug contexts") { //$NON-NLS-1$
+					public IStatus runInUIThread(IProgressMonitor monitor) {
 						Iterator iterator = activations.iterator();
 						while (iterator.hasNext()) {
 							IContextActivation activation = (IContextActivation) iterator.next();
 							activation.getContextService().deactivateContext(activation);
 						}
+						return Status.OK_STATUS;
 					}
 				};
-				DebugUIPlugin.getStandardDisplay().asyncExec(r);
+				job.setSystem(true);
+				job.schedule();
 			}
 			
 		}
