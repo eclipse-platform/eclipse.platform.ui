@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -53,7 +53,9 @@ public class BreakpointContainer extends PlatformObject    {
                     IAdaptable empty = emptyCategories[i];
                     BreakpointContainer container = (BreakpointContainer) fCategoriesToContainers.get(empty);
                     if (container == null) {
-                        container = new BreakpointContainer(empty, nesting[0], null);
+                    	IBreakpointOrganizer[] siblings = new IBreakpointOrganizer[nesting.length - 1];
+                    	System.arraycopy(nesting, 1, siblings, 0, siblings.length);
+                        container = new BreakpointContainer(empty, nesting[0], siblings);
                         fCategoriesToContainers.put(empty, container);
                     }
                 }
