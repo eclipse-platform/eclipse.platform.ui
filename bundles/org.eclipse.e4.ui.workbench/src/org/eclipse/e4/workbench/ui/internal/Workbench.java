@@ -181,24 +181,6 @@ public class Workbench implements IWorkbench {
 		});
 		// EHandlerService comes from a ContextFunction
 		// EContextService comes from a ContextFunction
-
-		IConfigurationElement[] contributions = registry
-				.getConfigurationElementsFor("org.eclipse.e4.services"); //$NON-NLS-1$
-		for (IConfigurationElement contribution : contributions) {
-			try {
-				for (IConfigurationElement serviceElement : contribution.getChildren("service")) { //$NON-NLS-1$
-					Object factory = contribution.createExecutableExtension("class"); //$NON-NLS-1$
-					String apiClassname = serviceElement.getAttribute("api"); //$NON-NLS-1$
-					Activator.trace(Policy.DEBUG_CONTEXTS, "createWorkbenchContext: created " //$NON-NLS-1$
-							+ factory + " for " + apiClassname, null); //$NON-NLS-1$
-					mainContext.set(apiClassname, factory);
-				}
-			} catch (CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
 		mainContext.set(IServiceConstants.SELECTION, new ActiveChildOutputFunction(

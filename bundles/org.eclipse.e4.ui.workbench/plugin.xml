@@ -22,13 +22,4 @@
          </adapter>
       </factory>
    </extension>
-   <extension
-         point="org.eclipse.e4.services">
-      <servicefactory
-            class="org.eclipse.e4.workbench.ui.ProgressMonitorFunction">
-         <service
-               api="org.eclipse.core.runtime.IProgressMonitor">
-         </service>
-      </servicefactory>
-   </extension>
 </plugin>
