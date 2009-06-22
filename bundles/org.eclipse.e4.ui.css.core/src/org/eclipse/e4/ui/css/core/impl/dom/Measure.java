@@ -86,6 +86,8 @@ public class Measure extends CSSValueImpl {
 			return CSS_IN;
 		case LexicalUnit.SAC_STRING_VALUE:
 			return CSS_STRING;
+		case LexicalUnit.SAC_DIMENSION:
+			return CSS_DIMENSION;
 		case LexicalUnit.SAC_OPERATOR_COMMA:
 			return CSS_CUSTOM;  //TODO don't think this is right, see bug #278139
 		}

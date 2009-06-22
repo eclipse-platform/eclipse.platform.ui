@@ -180,15 +180,20 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	}
 	
 	public void testTabHeight() throws Exception {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { tab-height: 30 }");
+		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { tab-height: 30px }");
 		assertEquals(30, folderToTest.getTabHeight());
-		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40 }");
+		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40px }");
 		assertEquals(40, folderToTest.getTabHeight());
 		
 		//negative test to ensure we don't try to interpret a list
-		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40 50 }");
+		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40px 50px }");
 		assertNotSame(40, folderToTest.getTabHeight());
 		assertNotSame(50, folderToTest.getTabHeight());
+		
+		//negative test for ambiguous unit value
+		folderToTest = createTestCTabFolder("CTabFolder { tab-height: 40 }");
+		assertNotSame(40, folderToTest.getTabHeight());
+
 	}
 
 	public void testSingle() throws Exception {

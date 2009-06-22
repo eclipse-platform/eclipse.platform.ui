@@ -24,14 +24,15 @@ public class CSSPropertyCTabFolderTabHeightHandler extends
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if ((value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
+		if (! (control instanceof CTabFolder))
+			return;
+		
+		if ((value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) && 
+				( ((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_PX) ) {
 			int height = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PX);
-			if (control instanceof CTabFolder) {
 				CTabFolder folder = (CTabFolder) control;
 				folder.setTabHeight(height);
 			}
-		}
-		
 	}
 
 	@Override
