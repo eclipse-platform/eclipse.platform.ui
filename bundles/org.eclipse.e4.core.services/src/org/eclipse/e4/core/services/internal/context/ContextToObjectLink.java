@@ -13,8 +13,12 @@ package org.eclipse.e4.core.services.internal.context;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
@@ -71,12 +75,14 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	public ContextToObjectLink(IEclipseContext context, String fieldPrefix, String setMethodPrefix) {
 		this.context = context;
 		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : INJECTION_FIELD_PREFIX;
-		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix : INJECTION_SET_METHOD_PREFIX;
+		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix
+				: INJECTION_SET_METHOD_PREFIX;
 
 		fieldPrefixLength = this.fieldPrefix.length();
 	}
 
-	public boolean notify(final IEclipseContext context, final String name, final int eventType, final Object[] args) {
+	public boolean notify(final IEclipseContext context, final String name, final int eventType,
+			final Object[] args) {
 		if (eventType == IRunAndTrack.DISPOSE) {
 			for (Iterator it = userObjects.iterator(); it.hasNext();) {
 				Object object = (Object) it.next();
@@ -87,28 +93,30 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		Processor processor = new Processor(isSetter) {
 			void processField(final Field field, String injectName, boolean optional) {
 				switch (eventType) {
-					case IRunAndTrack.INITIAL :
-						String key = findKey(injectName, field.getType());
-						if (key != null) {
-							setField(args[0], field, context.get(key));
-						} else {
-							if (!optional) {
-								throw new IllegalStateException("Could not set " + field + " because of missing: " + injectName);
-							}
+				case IRunAndTrack.INITIAL:
+					String key = findKey(injectName, field.getType());
+					if (key != null) {
+						setField(args[0], field, context.get(key));
+					} else {
+						if (!optional) {
+							throw new IllegalStateException("Could not set " + field
+									+ " because of missing: " + injectName);
 						}
-						break;
-					case IRunAndTrack.ADDED :
-						String injectKey = findKey(name, field.getType());
-						if (injectKey != null)
-							setField(userObject, field, context.get(injectKey));
-						break;
-					case IRunAndTrack.REMOVED :
-						if (keyMatches(name, injectName) || field.getType().getName().equals(name))
-							setField(userObject, field, null);
-						break;
-					case IRunAndTrack.DISPOSE :
-					default :
-						logWarning(userObject, new IllegalArgumentException("Unknown event type: " + eventType));
+					}
+					break;
+				case IRunAndTrack.ADDED:
+					String injectKey = findKey(name, field.getType());
+					if (injectKey != null)
+						setField(userObject, field, context.get(injectKey));
+					break;
+				case IRunAndTrack.REMOVED:
+					if (keyMatches(name, injectName) || field.getType().getName().equals(name))
+						setField(userObject, field, null);
+					break;
+				case IRunAndTrack.DISPOSE:
+				default:
+					logWarning(userObject, new IllegalArgumentException("Unknown event type: "
+							+ eventType));
 				}
 			}
 
@@ -118,36 +126,40 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					return;
 				candidateName = candidateName.substring(setMethodPrefix.length());
 				Class[] parameterTypes = method.getParameterTypes();
-				//only inject methods with a single parameter
+				// only inject methods with a single parameter
 				if (parameterTypes.length != 1)
 					return;
 				switch (eventType) {
-					case IRunAndTrack.INITIAL :
-						//when initializing we want to inject every method that has a match in the context
-						String key = findKey(candidateName, parameterTypes[0]);
-						if (key != null) {
-							setMethod(userObject, method, context.get(key, parameterTypes));
-						} else {
-							if (!optional) {
-								throw new IllegalStateException("Could not invoke " + method + " because of missing: " + candidateName);
-							}
+				case IRunAndTrack.INITIAL:
+					// when initializing we want to inject every method that has
+					// a match in the context
+					String key = findKey(candidateName, parameterTypes[0]);
+					if (key != null) {
+						setMethod(userObject, method, context.get(key, parameterTypes));
+					} else {
+						if (!optional) {
+							throw new IllegalStateException("Could not invoke " + method
+									+ " because of missing: " + candidateName);
 						}
-						break;
-					case IRunAndTrack.ADDED :
-						//on add event, only inject the method corresponding to the added context key
-						if (keyMatches(name, candidateName)) {
-							key = findKey(name, parameterTypes[0]);
-							setMethod(userObject, method, context.get(key, parameterTypes));
-						}
-						break;
-					case IRunAndTrack.REMOVED :
-						if (keyMatches(name, candidateName))
-							setMethod(userObject, method, null);
-						break;
-					case IRunAndTrack.DISPOSE :
-						break;
-					default :
-						logWarning(userObject, new IllegalArgumentException("Unknown event type: " + eventType));
+					}
+					break;
+				case IRunAndTrack.ADDED:
+					// on add event, only inject the method corresponding to the
+					// added context key
+					if (keyMatches(name, candidateName)) {
+						key = findKey(name, parameterTypes[0]);
+						setMethod(userObject, method, context.get(key, parameterTypes));
+					}
+					break;
+				case IRunAndTrack.REMOVED:
+					if (keyMatches(name, candidateName))
+						setMethod(userObject, method, null);
+					break;
+				case IRunAndTrack.DISPOSE:
+					break;
+				default:
+					logWarning(userObject, new IllegalArgumentException("Unknown event type: "
+							+ eventType));
 				}
 			}
 
@@ -173,7 +185,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			public void processOutMethod(Method m, final String name) {
 				final IEclipseContext outputContext = (IEclipseContext) context.get("outputs");
 				if (outputContext == null) {
-					throw new IllegalStateException("No output context available for @Out " + m + " in " + userObject);
+					throw new IllegalStateException("No output context available for @Out " + m
+							+ " in " + userObject);
 				}
 				if (eventType == IRunAndTrack.INITIAL) {
 					Object value;
@@ -189,7 +202,13 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 							value = m.invoke(userObject, new Object[0]);
 						}
 						outputContext.set(name, value);
-						userObject.getClass().getMethod("addPropertyChangeListener", new Class[] {String.class, PropertyChangeListener.class}).invoke(userObject, new Object[] {name, new PropertyChangeListenerImplementation(name, outputContext)});
+						userObject.getClass().getMethod("addPropertyChangeListener",
+								new Class[] { String.class, PropertyChangeListener.class }).invoke(
+								userObject,
+								new Object[] {
+										name,
+										new PropertyChangeListenerImplementation(name,
+												outputContext) });
 					} catch (Exception ex) {
 						throw new RuntimeException(ex);
 					}
@@ -225,11 +244,14 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
 			try {
-				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations", new Class[0]).invoke(method, new Object[0]);
+				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations",
+						new Class[0]).invoke(method, new Object[0]);
 				for (int j = 0; j < annotations.length; j++) {
 					Object annotation = annotations[j];
 					try {
-						String annotationName = ((Class) annotation.getClass().getMethod("annotationType", new Class[0]).invoke(annotation, new Object[0])).getName();
+						String annotationName = ((Class) annotation.getClass().getMethod(
+								"annotationType", new Class[0]).invoke(annotation, new Object[0]))
+								.getName();
 						if (annotationName.endsWith(".PreDestroy")) {
 							callDispose(object, method);
 							return;
@@ -354,15 +376,20 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			boolean inject = candidateName.startsWith(setMethodPrefix);
 			boolean optional = false;
 			try {
-				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations", new Class[0]).invoke(method, new Object[0]);
+				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations",
+						new Class[0]).invoke(method, new Object[0]);
 				for (int j = 0; j < annotations.length; j++) {
 					Object annotation = annotations[j];
 					try {
-						String annotationName = ((Class) annotation.getClass().getMethod("annotationType", new Class[0]).invoke(annotation, new Object[0])).getName();
+						String annotationName = ((Class) annotation.getClass().getMethod(
+								"annotationType", new Class[0]).invoke(annotation, new Object[0]))
+								.getName();
 						if (annotationName.endsWith(".Inject") || annotationName.endsWith(".In")) {
 							inject = true;
 							try {
-								optional = ((Boolean) annotation.getClass().getMethod("optional", new Class[0]).invoke(annotation, new Object[0])).booleanValue();
+								optional = ((Boolean) annotation.getClass().getMethod("optional",
+										new Class[0]).invoke(annotation, new Object[0]))
+										.booleanValue();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -396,21 +423,27 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			boolean inject = false;
 			boolean optional = true;
 			try {
-				Object[] annotations = (Object[]) field.getClass().getMethod("getAnnotations", new Class[0]).invoke(field, new Object[0]);
+				Object[] annotations = (Object[]) field.getClass().getMethod("getAnnotations",
+						new Class[0]).invoke(field, new Object[0]);
 				for (int j = 0; j < annotations.length; j++) {
 					Object annotation = annotations[j];
 					try {
-						String annotationName = ((Class) annotation.getClass().getMethod("annotationType", new Class[0]).invoke(annotation, new Object[0])).getName();
+						String annotationName = ((Class) annotation.getClass().getMethod(
+								"annotationType", new Class[0]).invoke(annotation, new Object[0]))
+								.getName();
 						if (annotationName.endsWith(".Inject") || annotationName.endsWith(".In")) {
 							inject = true;
 							try {
-								optional = ((Boolean) annotation.getClass().getMethod("optional", new Class[0]).invoke(annotation, new Object[0])).booleanValue();
+								optional = ((Boolean) annotation.getClass().getMethod("optional",
+										new Class[0]).invoke(annotation, new Object[0]))
+										.booleanValue();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						} else if (annotationName.endsWith(".Named")) {
 							try {
-								injectName = (String) annotation.getClass().getMethod("value", new Class[0]).invoke(annotation, new Object[0]);
+								injectName = (String) annotation.getClass().getMethod("value",
+										new Class[0]).invoke(annotation, new Object[0]);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -418,7 +451,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 							inject = true;
 							String resourceName = null;
 							try {
-								resourceName = (String) annotation.getClass().getMethod("name", new Class[0]).invoke(annotation, new Object[0]);
+								resourceName = (String) annotation.getClass().getMethod("name",
+										new Class[0]).invoke(annotation, new Object[0]);
 							} catch (Exception e) {
 								logWarning(field, e);
 							}
@@ -539,7 +573,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			wasAccessible = false;
 		}
 		try {
-			method.invoke(userObject, new Object[] {value});
+			method.invoke(userObject, new Object[] { value });
 		} catch (IllegalArgumentException e) {
 			logWarning(method, e);
 			return false;
