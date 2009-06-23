@@ -53,6 +53,7 @@ public class ExifTable {
 	private Logger logger;
 
 	public ExifTable() {
+		super();
 	}
 
 	@Out
