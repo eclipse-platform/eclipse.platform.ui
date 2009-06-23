@@ -110,6 +110,10 @@ public class StackModelFactory extends LazyStackFactory {
 					.get(IStylingEngine.class.getName());
 			folderContext.runAndTrack(new Runnable() {
 				public void run() {
+					// this will cause the tracker to be removed because no
+					// context values are accessed
+					if (ctf.isDisposed())
+						return;
 					IEclipseContext currentActive = toplevelContext;
 					IEclipseContext child;
 					while (currentActive != folderContext
