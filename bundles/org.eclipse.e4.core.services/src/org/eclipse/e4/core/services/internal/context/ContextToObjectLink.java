@@ -89,7 +89,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				findAndCallDispose(object, object.getClass());
 			}
 		}
-		boolean isSetter = (eventType == IRunAndTrack.ADDED);
+		boolean isSetter = (eventType == IRunAndTrack.ADDED || eventType == IRunAndTrack.INITIAL);
 		Processor processor = new Processor(isSetter) {
 			void processField(final Field field, String injectName, boolean optional) {
 				switch (eventType) {
