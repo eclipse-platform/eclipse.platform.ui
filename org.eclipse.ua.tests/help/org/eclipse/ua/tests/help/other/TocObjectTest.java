@@ -13,6 +13,7 @@ package org.eclipse.ua.tests.help.other;
 import junit.framework.TestCase;
 
 import org.eclipse.help.ITopic;
+import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.toc.Toc;
 
 public class TocObjectTest extends TestCase {
@@ -67,6 +68,14 @@ public class TocObjectTest extends TestCase {
 		ITopic topic = toc.getTopic(PATH);
 		assertNotNull(topic);
 		assertEquals(topic.getLabel(), TOPIC_LABEL_2);
+	}
+	
+	public void testGetTopicNull() {
+		UserToc	utoc = new UserToc(TITLE_1, null, true);
+		Toc toc = new Toc(utoc);
+		ITopic emptyTopic = toc.getTopic(null);
+		assertTrue(emptyTopic.getChildren().length == 0);
+		assertTrue(emptyTopic.isEnabled(HelpEvaluationContext.getContext()));
 	}
 	
 }
