@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.css.core.utils.NumberUtils;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpers;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -177,6 +178,9 @@ public class SWTElement extends ElementAdapter implements NodeList {
 
 	public Node getParentNode() {
 		Widget widget = getWidget();
+		if (widget instanceof CTabItem) {
+			return getElement(((CTabItem) widget).getParent());
+		}
 		if (widget instanceof Control) {
 			Control control = (Control) widget;
 			Composite parent = control.getParent();
