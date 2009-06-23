@@ -27,6 +27,7 @@ public class AllOtherCheatSheetTests {
 		suite.addTestSuite(TestEscape.class);
 		suite.addTestSuite(TestCheatSheetManager.class);
 		suite.addTestSuite(TestCheatSheetCollection.class);
+		suite.addTestSuite(TestCheatSheetCategories.class);
 		//$JUnit-END$
 		return suite;
 	}

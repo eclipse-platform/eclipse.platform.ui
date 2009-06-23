@@ -155,11 +155,11 @@
          </description>
       </cheatsheet>
       <category
-            id="org.eclipse.ua.tests.category979978139"
+            id="org.eclipse.ua.tests.category.suite"
             name="User Assistance Tests">
       </category>
       <cheatsheet
-            category="org.eclipse.ua.tests.category979978139"
+            category="org.eclipse.ua.tests.category.suite"
             composite="true"
             contentFile="non_junit/cheatsheets/uaTests.xml"
             id="org.eclipse.ua.tests.cheatsheet1052183668"
@@ -181,6 +181,25 @@
             contentFile="non_junit/cheatsheets/tasks/placeholder.xml"
             id="org.eclipse.ua.tests.cheatsheet.placeholder"
             name="Placeholder cheatsheet">
+      </cheatsheet>
+      <category
+            id="org.eclipse.ua.tests.subcategory"
+            name="Subcategory"
+            parentCategory="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat">
+      </category>
+       <cheatsheet
+            category="org.eclipse.ua.tests.subcategory"
+            composite="false"
+            contentFile="non_junit/cheatsheets/tasks/placeholder.xml"
+            id="org.eclipse.ua.tests.cheatsheet.subcategory.simple"
+            name="Cheatsheet in subcategory, non qualified name">
+      </cheatsheet>
+       <cheatsheet
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat/org.eclipse.ua.tests.subcategory"
+            composite="false"
+            contentFile="non_junit/cheatsheets/tasks/placeholder.xml"
+            id="org.eclipse.ua.tests.cheatsheet.subcategory.qualified"
+            name="Cheatsheet in subcategory, qualified name">
       </cheatsheet>
    </extension>
 
