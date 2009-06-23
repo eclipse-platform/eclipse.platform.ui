@@ -92,6 +92,10 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 
 	public boolean containsKey(String name, IEclipseContext context) {
 		cleanReferences();
+		// first look for a registered IContextFunction matching the name
+		if (getContextFunction(name) != null)
+			return true;
+		// next, look for a matching service
 		return bundleContext.getServiceReference(name) != null;
 	}
 
@@ -107,17 +111,10 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		cleanReferences();
 		ServiceData data = (ServiceData) services.get(name);
 		if (data == null) {
-			// see if there is an IContextFunction registered for this name
-			try {
-				ServiceReference[] refs = bundleContext.getServiceReferences(
-						IContextFunction.SERVICE_NAME, "(" //$NON-NLS-1$
-								+ IContextFunction.SERVICE_CONTEXT_KEY + '=' + name + ')');
-				if (refs != null && refs.length > 0)
-					return bundleContext.getService(refs[0]);
-			} catch (InvalidSyntaxException e) {
-				// the name is not a valid service name, so just carry on
-			}
-
+			// first look for a registered IContextFunction matching the name
+			ServiceReference ref = getContextFunction(name);
+			if (ref != null)
+				return bundleContext.getService(ref);
 			// create a tracker to retrieve the service with the given name
 			data = new ServiceData(name);
 			data.tracker = new ServiceTracker(bundleContext, name, this);
@@ -128,6 +125,23 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 		}
 		data.addContext(originatingContext);
 		return data.tracker.getService();
+	}
+
+	/**
+	 * Returns an IContextFunction service that computes values for the given
+	 * name, or <code>null</code> if there is no matching service.
+	 */
+	private ServiceReference getContextFunction(String name) {
+		try {
+			ServiceReference[] refs = bundleContext.getServiceReferences(
+					IContextFunction.SERVICE_NAME, "(" + IContextFunction.SERVICE_CONTEXT_KEY + '=' //$NON-NLS-1$
+							+ name + ')');
+			if (refs != null && refs.length > 0)
+				return refs[0];
+		} catch (InvalidSyntaxException e) {
+			// the name is not a valid service name, so just carry on
+		}
+		return null;
 	}
 
 	public void modifiedService(ServiceReference reference, Object service) {
