@@ -30,6 +30,7 @@ public class Toc extends UAElement implements IToc {
 	public static final String ATTRIBUTE_LINK_TO = "link_to"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ID = "id"; //$NON-NLS-1$
 	public static final String ATTRIBUTE_ICON= "icon"; //$NON-NLS-1$
+	public static final String ATTRIBUTE_SORT= "sort"; //$NON-NLS-1$
 
 	private ITocContribution contribution;
 	private ITopic topic;
@@ -98,6 +99,10 @@ public class Toc extends UAElement implements IToc {
 	public String getIcon(){
 		return getAttribute(ATTRIBUTE_ICON);
 	}
+	
+	public boolean isSorted(){
+		return "true".equalsIgnoreCase(getAttribute(ATTRIBUTE_SORT)); //$NON-NLS-1$
+	}
 
 	/*
 	 * Returns a mapping of all topic hrefs to ITopics.
@@ -135,10 +140,10 @@ public class Toc extends UAElement implements IToc {
 						return getTopics();
 					}
 					public boolean isEnabled(IEvaluationContext context) {
-						return isEnabled(context);
+						return Toc.this.isEnabled(context);
 					}
 					public IUAElement[] getChildren() {
-						return getChildren();
+						return new IUAElement[0];
 					}
 				};
 			}

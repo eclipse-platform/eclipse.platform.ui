@@ -81,6 +81,10 @@ public class TocManager {
 				}
 			}
 			tocs = (Toc[])orderedTocs.toArray(new Toc[orderedTocs.size()]);
+			TopicSorter topicSorter = new TopicSorter();
+			for (int i = 0; i < tocs.length; i++) {
+				topicSorter.sortChildren(tocs[i]);
+			}
 			tocsByLocale.put(locale, tocs);
 			long stop = System.currentTimeMillis();
 			if (HelpPlugin.DEBUG_TOC) {

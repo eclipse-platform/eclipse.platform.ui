@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.help" id="toc" name="Table of Contents (TOC)"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          For registering an online help contribution for an individual plug-in.
 
@@ -26,9 +26,9 @@ point and specify TOC file(s).&lt;/li&gt;
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
@@ -56,9 +56,9 @@ point and specify TOC file(s).&lt;/li&gt;
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -81,10 +81,14 @@ point and specify TOC file(s).&lt;/li&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc link_to CDATA #IMPLIED &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc label CDATA #REQUIRED &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc topic CDATA #IMPLIED &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc sort CDATA #IMPLIED &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST toc icon CDATA #IMPLIED &gt;&lt;/tt&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT topic (topic | anchor | link )*
 &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic label CDATA #REQUIRED &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic href CDATA #IMPLIED &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic sort CDATA #IMPLIED &gt;&lt;/tt&gt;
+&lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic icon CDATA #IMPLIED &gt;&lt;/tt&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT anchor EMPTY &gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST anchor id ID&amp;nbsp; #REQUIRED &gt;&lt;/tt&gt;
 &lt;p&gt;&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT link EMPTY &gt;&lt;/tt&gt;
@@ -121,6 +125,9 @@ file as well.
 /&gt;&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;nbsp; ...&lt;/tt&gt;
 &lt;br&gt;&lt;tt&gt;&amp;lt;/topic&gt;&lt;/tt&gt;
+&lt;p&gt; If the sort attribute is true child topics will be sorted alphabetically.&lt;/p&gt;&lt;p&gt; The
+optional icon attribute allows the use of a different icon as defined by a 
+&amp;lt; tocIcon &amp;gt; element in an org.eclipse.help.toc extension.&lt;/p&gt;
 &lt;p&gt;&lt;b&gt;The link element&lt;/b&gt;
 &lt;p&gt;The link element allows to link Table of Contents defined in another
 toc file.&amp;nbsp; All the topics from the toc file specified in the toc attribute
@@ -145,8 +152,11 @@ an anchor as follows:
 &lt;p&gt;&lt;b&gt;The toc element&lt;/b&gt;
 &lt;p&gt;The toc element is a Table of Contents that groups topics and other
 elements defined in this file.&amp;nbsp; The label identifies the table of
-contents to the user, when it is displayed to the user.&amp;nbsp; The optional topic
-attribute is the path to a topic file describing the TOC.&amp;nbsp; The optional
+contents to the user, when it is displayed to the user.&amp;nbsp;&lt;/p&gt;&lt;p&gt; The optional topic
+attribute is the path to a topic file describing the TOC.&amp;nbsp; &lt;/p&gt;
+&lt;p&gt; If the sort attribute is true child topics will be sorted alphabetically.&lt;/p&gt;&lt;p&gt; The
+optional icon attribute allows the use of a different icon as defined by a 
+&amp;lt; tocIcon &amp;gt; element in an org.eclipse.help.toc extension.&lt;/p&gt;&lt;p&gt;The optional
 link_to attribute allows for linking toc from this file into another toc
 file being higher in the navigation hierarchy.&amp;nbsp; The value of the link_to
 attribute must specify an anchor in another toc file. To link toc from
@@ -163,9 +173,9 @@ API&quot;/&gt;&lt;/tt&gt;
 &lt;/p&gt;
 &lt;br&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="primary" type="boolean" use="default" value="false">
@@ -205,9 +215,9 @@ or not primary and intended to be integrated into another table of contents.
                <documentation>
                   the implementation class for the toc provider.  This class must implement the &lt;samp&gt;org.eclipse.help.AbstractTocProvider&lt;/samp&gt; interface.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractTocProvider"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -249,9 +259,9 @@ or not primary and intended to be integrated into another table of contents.
                <documentation>
                   The path of an icon to be used for a toc or topic whose chidren have been expanded.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="closedIcon" type="string">
@@ -259,9 +269,9 @@ or not primary and intended to be integrated into another table of contents.
                <documentation>
                   The path of an icon to be used for a toc or topic whose chidren have been expanded. If no provided openIcon will be used.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="leafIcon" type="string">
@@ -269,9 +279,9 @@ or not primary and intended to be integrated into another table of contents.
                <documentation>
                   The path of an icon to be used for a toc or topic without children. If not provided openIcon will be used.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="altText" type="string">
@@ -279,18 +289,18 @@ or not primary and intended to be integrated into another table of contents.
                <documentation>
                   Text that will be used in the &quot;alt&quot; attribute for the img tag in the web presentation.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of using the &lt;samp&gt;toc&lt;/samp&gt; extension point.
 
@@ -378,9 +388,9 @@ to plugin directory.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          An implementation of &lt;samp&gt;org.eclipse.help.AbstractTocProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;tocProvider&lt;/samp&gt; is used.
       </documentation>
@@ -388,18 +398,18 @@ to plugin directory.
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The default implementation of the help system UI supplied with the Eclipse platform fully supports this extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2000, 2006 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
