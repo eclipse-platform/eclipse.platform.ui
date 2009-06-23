@@ -65,9 +65,9 @@ public class ObjectBasic {
 	}
 
 	public void contextDisposed(IEclipseContext context) {
-		if (context != context)
+		if (this.context != context)
 			throw new IllegalArgumentException("Unexpected context");
-		context = null;
+		this.context = null;
 		disposed = true;
 	}
 
