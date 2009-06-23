@@ -61,7 +61,6 @@
    <extension
          point="org.eclipse.ui.intro.configExtension">
       <theme
-            default="true"
             id="org.eclipse.ui.intro.universal.circles"
             name="%theme.name.circles"
             path="$nl$/themes/circles"
@@ -182,6 +181,7 @@
             		  value="$theme$graphics/icons/etool/wb48.gif"/>       
       </theme> 
       <theme
+            default="true"
             id="org.eclipse.ui.intro.universal.slate"
             name="%theme.name.slate"
             path="$nl$/themes/slate"
