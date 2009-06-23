@@ -83,6 +83,7 @@ public class ServiceContextTest extends TestCase {
 	
 	public void testDeclarativeService() {
 		IEclipseContext context = EclipseContextFactory.createServiceContext(TestActivator.bundleContext);
+		assertTrue(context.containsKey("sum"));
 		assertNull(context.get("sum"));
 		context.set("x", 1);
 		context.set("y", 2);
