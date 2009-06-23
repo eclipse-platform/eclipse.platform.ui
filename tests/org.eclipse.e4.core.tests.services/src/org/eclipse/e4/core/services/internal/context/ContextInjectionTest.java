@@ -10,10 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.IDisposable;
+
+import junit.framework.AssertionFailedError;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
+import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -67,6 +71,49 @@ public class ContextInjectionTest extends TestCase {
 
 		// check post processing
 		assertTrue(userObject.isFinalized());
+	}
+	
+	/**
+	 * Tests that fields are injected before methods.
+	 */
+	public void testFieldMethodOrder() {
+		final AssertionFailedError[] error = new AssertionFailedError[1];
+		class Injected {
+			@In
+			Object injectedField;
+			Object methodValue;
+			@In
+			public void setInjectedMethod(Object arg) {
+				try {
+					assertTrue(injectedField!=null);
+				} catch (AssertionFailedError e) {
+					error[0] = e;
+				}
+				methodValue=arg;
+			}
+		}
+		IEclipseContext context = EclipseContextFactory.create();
+		Object fieldValue = new Object();
+		Object methodValue = new Object();
+		context.set("injectedField", fieldValue);
+		context.set("injectedMethod", methodValue);
+		Injected object = new Injected();
+		ContextInjectionFactory.inject(object, context);
+		if (error[0] != null)
+			throw error[0];
+		assertEquals(fieldValue, object.injectedField);
+		assertEquals(methodValue, object.methodValue);
+		
+		//removing method value, the field should still have value
+		context.remove("injectedMethod");
+		if (error[0] != null)
+			throw error[0];
+		assertEquals(fieldValue, object.injectedField);
+		assertNull(object.methodValue);
+		
+		((IDisposable)context).dispose();
+		if (error[0] != null)
+			throw error[0];
 	}
 	
 	public void testOptionalInjection() {
