@@ -50,6 +50,16 @@ public class TocValidator {
 			return href; }
 	}
 	
+	public static abstract class Filter {
+	     abstract public boolean isIncluded(String href);
+	}
+	
+	public static class PassThroughFilter extends Filter {
+		public boolean isIncluded(String href) {
+			return true;
+		}
+	}
+	
 	/**
 	 * Checks the validity of all <code>href</code> attributes on <code>topic</code> elements in the toc and the
 	 * <code>topic</code> attribute on the <code>toc</code> element if there is one. Also checks validity of any
@@ -63,10 +73,14 @@ public class TocValidator {
 	 * @throws ParserConfigurationException
 	 */
 	public static ArrayList validate(String[] hrefs) throws IOException, SAXException, ParserConfigurationException{
+		return filteredValidate(hrefs, new PassThroughFilter());
+	}
+	
+	public static ArrayList filteredValidate (String[] hrefs, Filter filter) throws IOException, SAXException, ParserConfigurationException{
 		TocValidator v = new TocValidator();
 		ArrayList result = new ArrayList();
 		for (int i = 0; i < hrefs.length; i++)
-			v.processToc(hrefs[i], null, result);
+			v.processToc(hrefs[i], null, result, filter);
 		return result;
 	}
 	
@@ -78,7 +92,8 @@ public class TocValidator {
 	/* Checks validity of all links in a given toc. If all links are valid, an empty ArrayList is returned.
 	 * Otherwise an ArrayList of BrokenLink objects is returned.
 	 */
-	private void processToc(String href, String plugin, ArrayList result) throws IOException, SAXException, ParserConfigurationException {
+	private void processToc(String href, String plugin, ArrayList result, Filter filter) 
+	               throws IOException, SAXException, ParserConfigurationException {
 		String path;
 		if (href.startsWith("/")) { //$NON-NLS-1$
 			href = href.substring(1);
@@ -102,19 +117,19 @@ public class TocValidator {
 			System.out.println("Starting toc: " + key); //$NON-NLS-1$
 		processedTocs.put(key, new Object());
 		TocContribution contribution = parser.parse(new TocFile(plugin,path, true, "en", null, null)); //$NON-NLS-1$
-		process(contribution.getToc(), plugin, path, result);
+		process(contribution.getToc(), plugin, path, result, filter);
 	}
 	
 	/* Checks validity of all links in the given IUAElement and recursively calls itself to check all children.
 	 * If there are any links to other tocs, calls the processToc method to validate them. If any broken links
 	 * are found, an appropriate BrokenLink object will be added to the result ArrayList.
 	 */
-	private void process(IUAElement element, String plugin, String path, ArrayList result) throws SAXException, ParserConfigurationException {
+	private void process(IUAElement element, String plugin, String path, ArrayList result, Filter filter) throws SAXException, ParserConfigurationException {
 		String href;
 		if (element instanceof ILink) {
 			href = ((ILink)element).getToc();
 			try {
-				processToc(href, plugin, result);
+				processToc(href, plugin, result, filter);
 			} catch (IOException e) {
 				result.add(new BrokenLink("/" + plugin + "/" + path, href)); //$NON-NLS-1$ //$NON-NLS-2$
 			}
@@ -124,14 +139,14 @@ public class TocValidator {
 				href = ((IToc)element).getTopic(null).getHref();
 			else
 				href = ((IHelpResource)element).getHref();
-			if (href != null)
+			if (href != null && filter.isIncluded(href))
 				if (!checkLink(href, plugin)) {
 					result.add(new BrokenLink("/" + plugin + "/" + path, href)); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 		}
 		IUAElement [] children = element.getChildren();
 		for (int i = 0; i < children.length; i++)
-			process(children[i], plugin, path, result);
+			process(children[i], plugin, path, result, filter);
 	}
 
 	/* Checks validity of a given link from a toc in a given plug-in.
