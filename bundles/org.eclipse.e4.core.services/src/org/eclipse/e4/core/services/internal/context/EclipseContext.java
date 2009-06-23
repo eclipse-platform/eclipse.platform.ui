@@ -210,14 +210,13 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
-	Set listeners = new HashSet();
+	final Set listeners = new HashSet();
 
 	final Map localValueComputations = Collections.synchronizedMap(new HashMap());
 	final Map localValues = Collections.synchronizedMap(new HashMap());
 
-	IEclipseContext parent;
-
-	private IEclipseContextStrategy strategy;
+	final IEclipseContext parent;
+	private final IEclipseContextStrategy strategy;
 
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.parent = parent;
