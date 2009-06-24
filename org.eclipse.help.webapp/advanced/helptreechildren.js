@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ function updateTree(xml) {
     var nodes = tocData.childNodes;
     selectedNode = null;
     mergeChildren(treeRoot, nodes);
-    if (selectedNode != null) {
+    if (selectedNode !== null) {
         // Focusing on the last child will increase the chance that it is visible
         if (!highlightSelectedNode) {
             focusOnDeepestVisibleChild(selectedNode, false);
@@ -57,11 +57,14 @@ function mergeChildren(treeItem, nodes) {
         childContainer = findChild(treeItem, "DIV");
     }
     var childAdded = false;
-    var hasPlaceholder = childContainer != null && childContainer.className == "unopened";
+    var hasPlaceholder = childContainer !== null && childContainer.className == "unopened";
+    var existingChildren = hasExistingChildren(childContainer);
     if (nodes) {  
         for (var i = 0; i < nodes.length; i++) {
             var node = nodes[i];
-            if (node.tagName == "node") {
+            // If the children of this node have already been evaluated
+            // and the child XML node has no children we can safely skip it 
+            if (node.tagName == "node" && (!existingChildren || node.childNodes.length > 0)) {
                 if (hasPlaceholder) {
                     // Remove the loading message
                     treeItem.removeChild(childContainer);
@@ -74,37 +77,44 @@ function mergeChildren(treeItem, nodes) {
                     setAccessibilityRole(childContainer, WAI_GROUP);
                     treeItem.appendChild(childContainer);
                 }
-                var title = node.getAttribute("title");
+                var id = node.getAttribute("id");  
+                var childItem = null;
                 var isLeaf = node.getAttribute("is_leaf");
-                var href = node.getAttribute("href");
-                var id = node.getAttribute("id");
-                var openImage = null;                
-                var closedImage = null; 
-                var imageAltText = "";
-                if (node.getAttribute("openImage")) {
-                    openImage = "../topic" + node.getAttribute("openImage");
-                    imageAltText = node.getAttribute("imageAlt");
-                } else {
-                    openImage = node.getAttribute("image");
-                    if (openImage) {
-                        imageAltText = getAltText(openImage);
-                        openImage = imagesDirectory + "/" + openImage + ".gif";
-                    }
-                }              
-                if (node.getAttribute("closedImage")) {
-                    closedImage = "../topic" + node.getAttribute("closedImage");
+                if (existingChildren) {
+                    childItem = findChildById(childContainer, id);
                 }
-                var childItem = mergeChild(childContainer, id, title, href, openImage, closedImage, imageAltText, isLeaf);
-                var isSelected = node.getAttribute("is_selected");
+                if (childItem === null) {                    
+                    var title = node.getAttribute("title");
+                    var href = node.getAttribute("href");
+                    var openImage = null;                
+                    var closedImage = null; 
+                    var imageAltText = "";
+                    if (node.getAttribute("openImage")) {
+                        openImage = "../topic" + node.getAttribute("openImage");
+                        imageAltText = node.getAttribute("imageAlt");
+                    } else {
+                        openImage = node.getAttribute("image");
+                        if (openImage) {
+                            imageAltText = getAltText(openImage);
+                            openImage = imagesDirectory + "/" + openImage + ".gif";
+                        }
+                    }              
+                    if (node.getAttribute("closedImage")) {
+                        closedImage = "../topic" + node.getAttribute("closedImage");
+                    }             
+                   childItem = addChild(childContainer, id, title, href, openImage, closedImage, imageAltText, isLeaf);           
+                }
+               
                 if (!isLeaf) {
                     mergeChildren(childItem, node.childNodes);
-                }
+                } 
+                var isSelected = node.getAttribute("is_selected");                   
                 if (isSelected) {
                     selectedNode = childItem;
                     highlightSelectedNode = node.getAttribute("is_highlighted");
                 }
                 childAdded = true;
-            } 
+            }
         }   
      }
 
@@ -120,8 +130,19 @@ function mergeChildren(treeItem, nodes) {
      }  
 }
 
-// Create a child if one with this if does not exist  
-function mergeChild(treeItem, id, name, href, image, closedImage, imageAltText, isLeaf) {  
+function hasExistingChildren(container) {
+    var children = container.childNodes;
+    if (children !== null) {
+        for (var i = 0; i < children.length; i++) {
+            if (children[i].nodeid) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
+function findChildById(treeItem, id) {
     var children = treeItem.childNodes;
     if (children !== null) {
         for (var i = 0; i < children.length; i++) {
@@ -130,7 +151,11 @@ function mergeChild(treeItem, id, name, href, image, closedImage, imageAltText, 
             }
         }
     }
-        
+    return null;
+}
+
+// Create a child of treeItem
+function addChild(treeItem, id, name, href, image, closedImage, imageAltText, isLeaf) {        
     var childItem = document.createElement("DIV");
     // roots should have a className of "root" to prevent indentation
     if (treeItem.id == "tree_root") {
@@ -200,7 +225,7 @@ function mergeChild(treeItem, id, name, href, image, closedImage, imageAltText, 
 
 function setLoadingMessage(treeItem, message) {   
     var placeholderDiv = findChild(treeItem, "DIV");
-    if (placeholderDiv !== null && placeholderDiv.childNodes.length == 0) {      
+    if (placeholderDiv !== null && placeholderDiv.childNodes.length === 0) {      
         var msg = document.createTextNode(message);
         placeholderDiv.appendChild(msg);
     }
