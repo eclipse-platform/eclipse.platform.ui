@@ -49,7 +49,7 @@ function highlight(){
 	}
 	currentHighlight = defaultHighlight;
 	
-	if(document.body.innerHTML.length < 50000){
+	if(document.body.innerHTML.length < 50000 && !isIE){
 		for(i=0; i<keywords.length; i++){
 		    firstNodeHighlighted=false;
 			word=keywords[i].toLowerCase();
