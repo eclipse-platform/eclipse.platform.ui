@@ -151,7 +151,7 @@ public class Workbench implements IWorkbench {
 				UISchedulerStrategy.getInstance());
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), mainContext));
-		mainContext.set(IContextConstants.DEBUG_STRING, "globalContext"); //$NON-NLS-1$
+		mainContext.set(IContextConstants.DEBUG_STRING, "workbenchContext"); //$NON-NLS-1$
 
 		// setup for commands and handlers
 		if (contributionFactory != null) {
