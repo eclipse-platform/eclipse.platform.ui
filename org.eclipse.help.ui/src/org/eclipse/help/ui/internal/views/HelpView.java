@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -56,8 +56,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		reusableHelpPart.createControl(parent, toolkit);
 		reusableHelpPart.setDefaultContextHelpText(Messages.HelpView_defaultText); 
 		reusableHelpPart.showPage(getFirstPage());
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
 		if (window == null)
 			return;
 		IWorkbenchPage page = window.getActivePage();
@@ -69,8 +68,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	}
 
 	public void dispose() {
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = getSite().getPage().getWorkbenchWindow();
 		IPartService service = window.getPartService();
 		if (monitoredPart != null) {
 			uninstallSelectionListener(monitoredPart);
@@ -97,8 +95,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 		IActionBars actionBars = site.getActionBars();
 		reusableHelpPart.init(actionBars, actionBars.getToolBarManager(),
 				actionBars.getStatusLineManager(), memento);
-		IWorkbenchWindow window = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow window = site.getPage().getWorkbenchWindow();
 		IPartService service = window.getPartService();
 		service.addPartListener(this);
 	}
@@ -210,7 +207,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void partActivated(final IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
-			hook(true);
+			hook(true, partRef);
 			selectionChanged(null);
 		} else {
 			handlePartActivation(partRef);
@@ -225,7 +222,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void partBroughtToTop(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
-			hook(true);
+			hook(true, partRef);
 			selectionChanged(null);
 		}
 	}
@@ -256,7 +253,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void partHidden(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = false;
-			hook(false);
+			hook(false, partRef);
 		}
 	}
 
@@ -276,7 +273,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void partOpened(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
-			hook(true);
+			hook(true, partRef);
 			selectionChanged(null);
 		}
 	}
@@ -289,15 +286,14 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void partVisible(IWorkbenchPartReference partRef) {
 		if (isThisPart(partRef)) {
 			visible = true;
-			hook(true);
+			hook(true, partRef);
 			selectionChanged(null);
 		}
 	}
 
-	private void hook(boolean doHook) {
+	private void hook(boolean doHook, IWorkbenchPartReference partref) {
 		if (doHook) {
-			IWorkbenchWindow window = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
+			IWorkbenchWindow window = partref.getPage().getWorkbenchWindow();
 			IPartService service = window.getPartService();
 			IWorkbenchPartReference aref = service.getActivePartReference();
 			if (aref != null)
