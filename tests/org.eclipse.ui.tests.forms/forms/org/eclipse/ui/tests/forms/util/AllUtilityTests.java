@@ -32,5 +32,6 @@ public class AllUtilityTests extends TestSuite {
 		addTestSuite(FormImagesTests.class);
 		addTestSuite(FormFontsTests.class);
 		addTestSuite(FormColorsTests.class);
+		addTestSuite(FormToolkitTest.class);
 	}
 }
