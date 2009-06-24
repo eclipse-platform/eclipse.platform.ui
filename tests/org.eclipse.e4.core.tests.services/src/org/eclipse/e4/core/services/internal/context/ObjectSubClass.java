@@ -10,18 +10,24 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-
 
 /**
  * Test class to check injection mechanism into classes with inheritance
  */
 public class ObjectSubClass extends ObjectSuperClass {
-	/*package*/Integer di_Integer;
+	/* package */Integer di_Integer;
 	private Object myObject;
 
 	public int setObjectCalled;
+	public int setOverriddenCalled;
 	public int setSubFinalized;
+	public int postConstructSetObjectCalled;
+	public int postConstructSetOverriddenCalled;
+	public int subPostConstructCount;
+	public int subPreDestroyCount;
 
 	public ObjectSubClass() {
 		super();
@@ -32,6 +38,10 @@ public class ObjectSubClass extends ObjectSuperClass {
 	public void setObjectViaMethod(Object object) {
 		myObject = object;
 		setObjectCalled++;
+	}
+
+	public void setOverriddenMethod(Object o) {
+		setOverriddenCalled++;
 	}
 
 	public void contextSet(IEclipseContext context) {
@@ -50,4 +60,23 @@ public class ObjectSubClass extends ObjectSuperClass {
 	public int getFinalizedCount() {
 		return setSubFinalized;
 	}
+
+	public int getOverriddenCount() {
+		return setOverriddenCalled;
+	}
+
+	@PostConstruct
+	public void subPostConstruct() {
+		postConstructSetObjectCalled = setObjectCalled;
+		postConstructSetStringCalled = setStringCalled;
+		postConstructSetOverriddenCalled = setOverriddenCalled;
+		subPostConstructCount++;
+	}
+
+	@PreDestroy
+	public void subPreDestroy() {
+		subPreDestroyCount++;
+
+	}
+
 }

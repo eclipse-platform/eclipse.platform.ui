@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
@@ -17,21 +19,19 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  */
 public class ObjectSuperClass {
 
-	private String di_String;
 	protected IEclipseContext context;
+	private String di_String;
 	private String myString;
 
-	public int setStringCalled;
+	public int postConstructSetStringCalled;
 	public int setFinalizedCalled;
+	public int setStringCalled;
+	public int superPostConstructCount;
+	public int superPreDestroyCount;
 
 	public ObjectSuperClass() {
 		setStringCalled = 0;
 		setFinalizedCalled = 0;
-	}
-
-	public void setStringViaMethod(String string) {
-		myString = string;
-		setStringCalled++;
 	}
 
 	public void contextSet(IEclipseContext context) {
@@ -39,19 +39,40 @@ public class ObjectSuperClass {
 		setFinalizedCalled++;
 	}
 
-	public String getString() {
-		return di_String;
-	}
-
 	public IEclipseContext getContext() {
 		return context;
+	}
+
+	public int getFinalizedCalled() {
+		return setFinalizedCalled;
+	}
+
+	public String getString() {
+		return di_String;
 	}
 
 	public String getStringViaMethod() {
 		return myString;
 	}
 
-	public int getFinalizedCalled() {
-		return setFinalizedCalled;
+	public void setOverriddenMethod(Object o) {
+
+	}
+
+	public void setStringViaMethod(String string) {
+		myString = string;
+		setStringCalled++;
+	}
+
+	@PostConstruct
+	public void superPostConstruct() {
+		// record setter invocation counts at time of post construct invocation
+		postConstructSetStringCalled = setStringCalled;
+		superPostConstructCount++;
+	}
+
+	@PreDestroy
+	public void superPreDestroy() {
+		superPreDestroyCount++;
 	}
 }
