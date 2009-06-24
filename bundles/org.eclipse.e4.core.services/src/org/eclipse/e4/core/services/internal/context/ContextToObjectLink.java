@@ -17,8 +17,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -231,7 +233,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				throw new IllegalArgumentException();
 			Object userObject = args[0];
 			processor.setObject(userObject);
-			walkClassHierarchy(userObject.getClass(), processor);
+			processClassHierarchy(userObject.getClass(), processor);
 
 			WeakReference ref = new WeakReference(userObject);
 			synchronized (userObjects) {
@@ -242,7 +244,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			for (int i = 0; i < objectsCopy.length; i++) {
 				Object userObject = objectsCopy[i];
 				processor.setObject(userObject);
-				walkClassHierarchy(userObject.getClass(), processor);
+				processClassHierarchy(userObject.getClass(), processor);
 			}
 		}
 		return (!userObjects.isEmpty());
@@ -363,20 +365,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	/**
 	 * For setters: we set fields first, them methods. Otherwise, clear methods first, fields next
 	 */
-	private void walkClassHierarchy(Class objectsClass, Processor processor) {
-		// process superclass first
-		Class superClass = objectsClass.getSuperclass();
-		if (!superClass.getName().equals(JAVA_OBJECT)) {
-			walkClassHierarchy(superClass, processor);
-		}
-		ProcessMethodsResult processMethodsResult;
-		if (processor.isSetter) {
-			processFields(objectsClass, processor);
-			processMethodsResult = processMethods(objectsClass, processor);
-		} else {
-			processMethodsResult = processMethods(objectsClass, processor);
-			processFields(objectsClass, processor);
-		}
+	private void processClassHierarchy(Class objectsClass, Processor processor) {
+		ProcessMethodsResult processMethodsResult = new ProcessMethodsResult();
+		processClass(objectsClass, processor, processMethodsResult);
 		for (Iterator it = processMethodsResult.postConstructMethods.iterator(); it.hasNext();) {
 			Method m = (Method) it.next();
 			processor.processPostConstructMethod(m);
@@ -400,16 +391,47 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		}
 	}
 
+	private void processClass(Class objectsClass, Processor processor, ProcessMethodsResult result) {
+		if (processor.isSetter) {
+			processFields(objectsClass, processor);
+			processMethods(objectsClass, processor, result);
+		} else {
+			processMethods(objectsClass, processor, result);
+			processFields(objectsClass, processor);
+		}
+		// recurse on superclass
+		Class superClass = objectsClass.getSuperclass();
+		if (!superClass.getName().equals(JAVA_OBJECT)) {
+			processClass(superClass, processor, result);
+		}
+	}
+
 	static class ProcessMethodsResult {
 		List postConstructMethods = new ArrayList();
 		List outMethods = new ArrayList();
+		Set seenMethods = new HashSet();
+
+		boolean seen(Method method) {
+			// uniquely identify methods by name+parameter types
+			StringBuffer sig = new StringBuffer();
+			sig.append(method.getName());
+			Class[] parms = method.getParameterTypes();
+			for (int i = 0; i < parms.length; i++) {
+				sig.append(parms[i]);
+				sig.append(',');
+			}
+			return !seenMethods.add(sig.toString());
+		}
 	}
 
-	private ProcessMethodsResult processMethods(Class objectsClass, Processor processor) {
+	private ProcessMethodsResult processMethods(Class objectsClass, Processor processor,
+			ProcessMethodsResult result) {
 		Method[] methods = objectsClass.getDeclaredMethods();
-		ProcessMethodsResult result = new ProcessMethodsResult();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
+			// don't process methods already visited in subclasses
+			if (result.seen(method))
+				continue;
 			if (isPostConstruct(method)) {
 				result.postConstructMethods.add(method);
 				continue;
