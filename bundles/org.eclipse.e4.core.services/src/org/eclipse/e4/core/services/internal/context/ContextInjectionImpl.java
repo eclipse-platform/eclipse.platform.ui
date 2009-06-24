@@ -10,30 +10,26 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
- * The first character of the service name is not case-sensitive; rest is case-sensitive:
- * <default_prefix>Log <-> Log <-> log
+ * Context injection implementation. See the class comment of {@link ContextInjectionFactory} for
+ * details on the injection algorithm.
  */
 public class ContextInjectionImpl implements IContextConstants {
 
+	final protected String fieldPrefix;
+	final protected int fieldPrefixLength;
 	/**
 	 * We keep one injector per context.
 	 */
 	private Map injectors = new HashMap(); // IEclipseContext -> injector
 
-	final static private Class[] contextNotifySignature = new Class[] {IEclipseContext.class};
-
-	final protected String fieldPrefix;
 	final protected String setMethodPrefix;
-
-	final protected int fieldPrefixLength;
 
 	public ContextInjectionImpl() {
 		this(INJECTION_FIELD_PREFIX, INJECTION_SET_METHOD_PREFIX);
@@ -41,7 +37,8 @@ public class ContextInjectionImpl implements IContextConstants {
 
 	public ContextInjectionImpl(String fieldPrefix, String setMethodPrefix) {
 		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : INJECTION_FIELD_PREFIX;
-		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix : INJECTION_SET_METHOD_PREFIX;
+		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix
+				: INJECTION_SET_METHOD_PREFIX;
 
 		fieldPrefixLength = this.fieldPrefix.length();
 	}
@@ -56,46 +53,6 @@ public class ContextInjectionImpl implements IContextConstants {
 				injectors.put(context, link);
 			}
 		}
-		context.runAndTrack(link, new Object[] {userObject});
-
-		// trigger post-injection processing
-		notifyUserMethod(INJECTION_SET_CONTEXT_METHOD, userObject, context);
-	}
-
-	private void notifyUserMethod(String methodName, Object userObject, IEclipseContext newContext) {
-		// perform post-injection processing
-		Class objectClass = userObject.getClass();
-		boolean wasAccessible = true;
-		Method method = null;
-		try {
-			method = objectClass.getMethod(methodName, contextNotifySignature);
-			if (!method.isAccessible()) {
-				method.setAccessible(true);
-				wasAccessible = false;
-			}
-			method.invoke(userObject, new Object[] {newContext});
-		} catch (SecurityException e) {
-			logWarning(userObject, e);
-		} catch (NoSuchMethodException e) {
-			// fine - nothing to call
-		} catch (IllegalArgumentException e) {
-			logWarning(userObject, e);
-		} catch (IllegalAccessException e) {
-			logWarning(userObject, e);
-		} catch (InvocationTargetException e) {
-			logWarning(userObject, e);
-		} finally {
-			if (!wasAccessible && method != null)
-				method.setAccessible(false);
-		}
-	}
-
-	private void logWarning(Object destination, Exception e) {
-		System.out.println("Injection failed " + destination.toString());
-		if (e != null)
-			e.printStackTrace();
-		// TBD convert this into real logging
-		//		String msg = NLS.bind("Injection failed", destination.toString());
-		//		RuntimeLog.log(new Status(IStatus.WARNING, IRuntimeConstants.PI_COMMON, 0, msg, e));
+		context.runAndTrack(link, new Object[] { userObject });
 	}
 }

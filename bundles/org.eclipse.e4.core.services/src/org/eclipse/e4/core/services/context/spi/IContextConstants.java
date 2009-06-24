@@ -23,23 +23,22 @@ public interface IContextConstants {
 	/**
 	 * Default prefix for the fields to be injected (value "di_").
 	 * <p>
-	 * For example, if the context has an object under the name "log", the
-	 * object will be injected into the field named "diLog".
+	 * For example, if the context has an object under the name "log", the object will be injected
+	 * into the field named "diLog".
 	 * </p>
 	 */
 	public static final String INJECTION_FIELD_PREFIX = "di_"; //$NON-NLS-1$
 
 	/**
-	 * The name of the method to be called when a context is injected into the
-	 * object (value "contextSet").
+	 * The name of the method to be called when a context is injected into the object (value
+	 * "contextSet").
 	 * <p>
-	 * This method will be called after all other injection calls are done. As
-	 * such it can be used to perform all calculations based on multiple
-	 * injected values.
+	 * This method will be called after all other injection calls are done. As such it can be used
+	 * to perform all calculations based on multiple injected values.
 	 * </p>
 	 * <p>
-	 * For convenience the definition of this method is present in the
-	 * {@link IEclipseContextAware} interface.
+	 * For convenience the definition of this method is present in the {@link IEclipseContextAware}
+	 * interface.
 	 * </p>
 	 * 
 	 * @see IEclipseContextAware#contextSet(IEclipseContext)
@@ -47,18 +46,33 @@ public interface IContextConstants {
 	public static final String INJECTION_SET_CONTEXT_METHOD = "contextSet"; //$NON-NLS-1$
 
 	/**
+	 * The name of the method to be called when a context that was injected into an object is
+	 * disposed (value "contextDisposed").
+	 * <p>
+	 * This method will be called during disposal of the context that the user object was injected
+	 * into.
+	 * </p>
+	 * <p>
+	 * For convenience the definition of this method is present in the {@link IEclipseContextAware}
+	 * interface.
+	 * </p>
+	 * 
+	 * @see IEclipseContextAware#contextDisposed(IEclipseContext)
+	 */
+	public static final String INJECTION_DISPOSE_CONTEXT_METHOD = "contextDisposed"; //$NON-NLS-1$
+
+	/**
 	 * Default prefix for the methods to be injected (value "set").
 	 * <p>
-	 * For example, if the context has an object under the name "log", the
-	 * object will be injected into the method named "setLog".
+	 * For example, if the context has an object under the name "log", the object will be injected
+	 * into the method named "setLog".
 	 * </p>
 	 */
 	public static final String INJECTION_SET_METHOD_PREFIX = "set"; //$NON-NLS-1$
 
 	/**
-	 * A context key identifying a value to use in debug statements for a
-	 * context. A computed value can be used to embed more complex information
-	 * in debug statements.
+	 * A context key identifying a value to use in debug statements for a context. A computed value
+	 * can be used to embed more complex information in debug statements.
 	 */
 	public static final String DEBUG_STRING = "DEBUG_STRING"; //$NON-NLS-1$
 
