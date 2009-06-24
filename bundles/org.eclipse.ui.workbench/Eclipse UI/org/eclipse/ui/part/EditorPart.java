@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.part;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
@@ -143,9 +144,8 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
     public String getTitleToolTip() {
         if (editorInput == null) {
 			return super.getTitleToolTip();
-		} else {
-			return editorInput.getToolTipText();
 		}
+		return editorInput.getToolTipText();
     }
 
     /* (non-Javadoc)
@@ -221,6 +221,7 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * @see #setInputWithNotify(IEditorInput)
      */
     protected void setInput(IEditorInput input) {
+    	Assert.isLegal(input != null);
         editorInput = input;
     }
     
@@ -238,10 +239,9 @@ public abstract class EditorPart extends WorkbenchPart implements IEditorPart {
      * @param input the editor input
      */
     protected void setInputWithNotify(IEditorInput input) {
-        if (input != editorInput) {
-            editorInput = input;
-            firePropertyChange(PROP_INPUT);
-        }
+		Assert.isLegal(input != null);
+        editorInput = input;
+        firePropertyChange(PROP_INPUT);
     }
 
     /* (non-Javadoc)
