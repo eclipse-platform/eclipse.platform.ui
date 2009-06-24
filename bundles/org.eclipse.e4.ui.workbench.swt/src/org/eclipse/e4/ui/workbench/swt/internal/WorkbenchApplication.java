@@ -84,7 +84,7 @@ public class WorkbenchApplication implements IApplication {
 					wb.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
 					if (cssURI != null) {
 						CSSStylingSupport.initializeStyling(display, cssURI,
-								cssResourcesURI, appContext);
+								cssResourcesURI, wb.getContext());
 					}
 					wb.createUIFromModel();
 					wb.run();
