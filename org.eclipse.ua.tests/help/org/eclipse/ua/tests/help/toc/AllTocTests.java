@@ -34,6 +34,7 @@ public class AllTocTests extends TestSuite {
 		addTest(TocLinkChecker.suite());
 		addTestSuite(TopicFinderTest.class);
 		addTestSuite(TocSortingTest.class);
+		addTestSuite(TopicSortingTest.class);
 		addTestSuite(TocIconTest.class);
 		addTestSuite(TocIconPathTest.class);
 		addTestSuite(TocProviderTest.class);

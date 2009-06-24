@@ -74,11 +74,6 @@ public class TopicSorter {
 				element.appendChild((UAElement)children[i]);
 			}
 		}
-		// sort children's children
-		for (int i=0; i< children.length;++i) {
-			ITopic child = children[i];
-			sort((UAElement)children[i], child.getSubtopics());
-		}
 	}
 }
 
