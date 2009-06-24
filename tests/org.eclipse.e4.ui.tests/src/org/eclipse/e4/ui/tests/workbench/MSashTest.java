@@ -80,10 +80,10 @@ public class MSashTest extends RenderingTestCase {
 		sfw.layout(true);
 		testWeights(sf, 75, 25);
 
-		// sf.getWeights().clear();
-		// sf.getWeights().add(new Integer(40));
-		// sf.getWeights().add(new Integer(60));
-		// testWeights(sf, 40, 60);
+		sf.getWeights().clear();
+		sf.getWeights().add(new Integer(40));
+		sf.getWeights().add(new Integer(60));
+		testWeights(sf, 40, 60);
 	}
 
 	private void testWeights(MSashForm sf, double w1, double w2) {

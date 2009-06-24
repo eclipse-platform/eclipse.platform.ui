@@ -12,8 +12,11 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.Iterator;
 import java.util.List;
-
+import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MSashForm;
+import org.eclipse.emf.common.notify.Notification;
+import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -57,7 +60,7 @@ public class PartSashFactory extends SWTPartFactory {
 				return;
 
 			// set the weights of the sashes
-			SashForm sashForm = (SashForm) part.getWidget();
+			final SashForm sashForm = (SashForm) part.getWidget();
 			org.eclipse.e4.ui.model.application.MSashForm<?> sashPart = (org.eclipse.e4.ui.model.application.MSashForm<?>) part;
 			List<Integer> weightList = sashPart.getWeights();
 
@@ -80,6 +83,19 @@ public class PartSashFactory extends SWTPartFactory {
 				sashForm.setWeights(weights);
 			}
 
+			// add an adapter to the model sash form so we can respond to model
+			// changes and apply the weight changes to the widget
+			sashPart.eAdapters().add(new AdapterImpl() {
+				@Override
+				public void notifyChanged(Notification msg) {
+					if (ApplicationPackage.Literals.MSASH_FORM__WEIGHTS
+							.equals(msg.getFeature())
+							&& msg.getNewValue() != null) {
+						synchWeightsToModel(sashForm);
+					}
+				}
+			});
+
 			// add a size change listener to each child so we can recalculate
 			// the
 			// weights on a change...
@@ -94,6 +110,50 @@ public class PartSashFactory extends SWTPartFactory {
 						synchWeights((Control) e.widget);
 					}
 				});
+			}
+		}
+	}
+
+	/**
+	 * Synchronizes the weights of the specified sash form to the underlying
+	 * model.
+	 * 
+	 * @param sf
+	 *            the sash form to synchronize
+	 */
+	private void synchWeightsToModel(SashForm sf) {
+		// retrieve the model
+		MSashForm<?> sfm = (MSashForm<?>) sf.getData(OWNING_ME);
+		// get the weights of the widget and the model model
+		int[] ctrlWeights = sf.getWeights();
+		EList<Integer> modelWeights = sfm.getWeights();
+
+		// check that the size is in the same, when the model is modified,
+		// values may be added individually, in this case, we want to change
+		// only when the final value has been added because if the number of
+		// weights do not match the underlying number of child controls, an
+		// exception is thrown by SWT
+		if (ctrlWeights.length == modelWeights.size()) {
+			// only overwrite if the values are different, or else we will have
+			// an infinite loop
+			boolean overWrite = false;
+			int i = 0;
+			for (Iterator<Integer> weightIter = modelWeights.iterator(); weightIter
+					.hasNext();) {
+				Integer integer = weightIter.next();
+				if (integer.intValue() != ctrlWeights[i++]) {
+					overWrite = true;
+					break;
+				}
+			}
+
+			if (overWrite) {
+				// reset the control's weights to match the weight
+				int[] weights = new int[modelWeights.size()];
+				for (i = 0; i < weights.length; i++) {
+					weights[i] = modelWeights.get(i);
+				}
+				sf.setWeights(weights);
 			}
 		}
 	}
