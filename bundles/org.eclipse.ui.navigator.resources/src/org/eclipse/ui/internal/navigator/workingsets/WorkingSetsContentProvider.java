@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,9 @@ package org.eclipse.ui.internal.navigator.workingsets;
 
 import java.util.Map;
 import java.util.WeakHashMap;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -99,12 +102,22 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 					case WORKING_SETS :
 						return ((AggregateWorkingSet) workingSet).getComponents();
 					case PROJECTS :
-						return workingSet.getElements();
+						return getWorkingSetElements(workingSet);
 				}
 			}
-			return workingSet.getElements();
+			return getWorkingSetElements(workingSet);
 		}
 		return NO_CHILDREN;
+	}
+
+	private IAdaptable[] getWorkingSetElements(IWorkingSet workingSet) {
+		IAdaptable[] children = workingSet.getElements();
+		for (int i = 0; i < children.length; i++) {
+			Object resource = children[i].getAdapter(IResource.class);
+			if (resource instanceof IProject)
+				children[i] = (IProject) resource;
+		}
+		return children;
 	}
 
 	public Object getParent(Object element) {
@@ -162,7 +175,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 				IWorkingSet[] components = aggregateSet.getComponents();
 
 				for (int componentIndex = 0; componentIndex < components.length; componentIndex++) {
-					IAdaptable[] elements = components[componentIndex].getElements();
+					IAdaptable[] elements = getWorkingSetElements(components[componentIndex]);
 					for (int elementsIndex = 0; elementsIndex < elements.length; elementsIndex++) {
 						parents.put(elements[elementsIndex], components[componentIndex]);
 					}
@@ -170,7 +183,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 				}
 			} else {
-				IAdaptable[] elements = workingSet.getElements();
+				IAdaptable[] elements = getWorkingSetElements(workingSet);
 				for (int elementsIndex = 0; elementsIndex < elements.length; elementsIndex++) {
 					parents.put(elements[elementsIndex], workingSet);
 				}
