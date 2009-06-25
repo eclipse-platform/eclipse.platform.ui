@@ -96,7 +96,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				WeakReference ref = (WeakReference) it.next();
 				Object referent = ref.get();
 				if (referent != null)
-					findAndCallDispose(referent, referent.getClass());
+					findAndCallDispose(referent, referent.getClass(), new ProcessMethodsResult());
 			}
 		}
 		boolean isSetter = (eventType == IRunAndTrack.ADDED || eventType == IRunAndTrack.INITIAL);
@@ -250,7 +250,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		return (!userObjects.isEmpty());
 	}
 
-	private void findAndCallDispose(Object object, Class objectsClass) {
+	private void findAndCallDispose(Object object, Class objectsClass, ProcessMethodsResult result) {
 		// 1. Try a method with dispose annotation
 		Method[] methods = objectsClass.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
@@ -267,8 +267,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 								"annotationType", new Class[0]).invoke(annotation, new Object[0])) //$NON-NLS-1$
 								.getName();
 						if (annotationName.endsWith(".PreDestroy")) { //$NON-NLS-1$
-							callDispose(object, method, null);
-							return;
+							if (!result.seen(method))
+								callDispose(object, method, null);
 						}
 					} catch (Exception ex) {
 						logWarning(method, ex);
@@ -283,8 +283,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			Method dispose = objectsClass.getDeclaredMethod(
 					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD,
 					new Class[] { IEclipseContext.class });
-			callDispose(object, dispose, new Object[] { context });
-			return;
+			// only call this method if we haven't found any other dispose methods yet
+			if (!result.seen(dispose) && result.seenMethods.isEmpty())
+				callDispose(object, dispose, new Object[] { context });
 		} catch (SecurityException e) {
 			// ignore
 		} catch (NoSuchMethodException e) {
@@ -294,7 +295,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		try {
 			Method dispose = objectsClass.getDeclaredMethod(
 					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD, new Class[0]);
-			callDispose(object, dispose, null);
+			// only call this method if we haven't found any other dispose methods yet
+			if (!result.seen(dispose) && result.seenMethods.isEmpty())
+				callDispose(object, dispose, null);
 			return;
 		} catch (SecurityException e) {
 			// ignore
@@ -305,7 +308,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		// 4. Try dispose()
 		try {
 			Method dispose = objectsClass.getDeclaredMethod("dispose", null); //$NON-NLS-1$
-			callDispose(object, dispose, null);
+			// only call this method if we haven't found any other dispose methods yet
+			if (!result.seen(dispose) && result.seenMethods.isEmpty())
+				callDispose(object, dispose, null);
 			return;
 		} catch (SecurityException e) {
 			// ignore
@@ -313,10 +318,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			// ignore
 		}
 
-		// 5. Nothing found yet, try the superclass:
+		// 5. Recurse on superclass
 		Class superClass = objectsClass.getSuperclass();
 		if (!superClass.getName().equals(JAVA_OBJECT)) {
-			findAndCallDispose(object, superClass);
+			findAndCallDispose(object, superClass, result);
 		}
 	}
 
