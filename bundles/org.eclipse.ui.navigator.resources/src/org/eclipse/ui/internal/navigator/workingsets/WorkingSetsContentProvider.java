@@ -14,9 +14,14 @@ import java.util.Map;
 import java.util.WeakHashMap;
 
 import org.eclipse.core.runtime.IAdaptable;
+
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
+
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
@@ -52,7 +57,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 	private WorkingSetHelper helper;
 	private IAggregateWorkingSet workingSetRoot;
-	private IExtensionStateModel extensionStateModel;	
+	private IExtensionStateModel extensionStateModel;
 	private CommonNavigator projectExplorer;
 	private CommonViewer viewer;
 	
@@ -65,20 +70,20 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 			if(SHOW_TOP_LEVEL_WORKING_SETS.equals(event.getProperty())) {
 				updateRootMode();
 			}
-		} 
+		}
 
 	};
 	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.ICommonContentProvider#init(org.eclipse.ui.navigator.ICommonContentExtensionSite)
-	 */  
+	 */
 	public void init(ICommonContentExtensionSite aConfig) {
 		NavigatorContentService cs = (NavigatorContentService) aConfig.getService();
 		viewer = (CommonViewer) cs.getViewer();
 		projectExplorer = viewer.getCommonNavigator();
 		
-		extensionStateModel = aConfig.getExtensionStateModel(); 
+		extensionStateModel = aConfig.getExtensionStateModel();
 		extensionStateModel.addPropertyChangeListener(rootModeListener);
 		updateRootMode();
 		
@@ -87,14 +92,14 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.IMementoAware#restoreState(org.eclipse.ui.IMemento)
 	 */
-	public void restoreState(IMemento aMemento) { 
+	public void restoreState(IMemento aMemento) {
 		
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.navigator.IMementoAware#saveState(org.eclipse.ui.IMemento)
 	 */
-	public void saveState(IMemento aMemento) { 
+	public void saveState(IMemento aMemento) {
 		
 	}
 
@@ -106,12 +111,22 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 					case ProjectExplorer.WORKING_SETS :
 						return ((IAggregateWorkingSet) workingSet).getComponents();
 					case ProjectExplorer.PROJECTS :
-						return workingSet.getElements();
+						return getWorkingSetElements(workingSet);
 				}
 			}
-			return workingSet.getElements();
+			return getWorkingSetElements(workingSet);
 		}
 		return NO_CHILDREN;
+	}
+
+	private IAdaptable[] getWorkingSetElements(IWorkingSet workingSet) {
+		IAdaptable[] children = workingSet.getElements();
+		for (int i = 0; i < children.length; i++) {
+			Object resource = children[i].getAdapter(IResource.class);
+			if (resource instanceof IProject)
+				children[i] = (IProject) resource;
+		}
+		return children;
 	}
 
 	public Object getParent(Object element) {
@@ -138,12 +153,12 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 			IWorkingSet rootSet = (IWorkingSet) newInput;
 			helper = new WorkingSetHelper(rootSet);
 		}
-	} 
+	}
  
 	private void updateRootMode() {
 		if( extensionStateModel.getBooleanProperty(SHOW_TOP_LEVEL_WORKING_SETS) )
 			projectExplorer.setRootMode(ProjectExplorer.WORKING_SETS);
-		else 
+		else
 			projectExplorer.setRootMode(ProjectExplorer.PROJECTS);
 	}
 
@@ -169,7 +184,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 				IWorkingSet[] components = aggregateSet.getComponents();
 
 				for (int componentIndex = 0; componentIndex < components.length; componentIndex++) {
-					IAdaptable[] elements = components[componentIndex].getElements();
+					IAdaptable[] elements = getWorkingSetElements(components[componentIndex]);
 					for (int elementsIndex = 0; elementsIndex < elements.length; elementsIndex++) {
 						parents.put(elements[elementsIndex], components[componentIndex]);
 					}
@@ -177,7 +192,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 
 				}
 			} else {
-				IAdaptable[] elements = workingSet.getElements();
+				IAdaptable[] elements = getWorkingSetElements(workingSet);
 				for (int elementsIndex = 0; elementsIndex < elements.length; elementsIndex++) {
 					parents.put(elements[elementsIndex], workingSet);
 				}
