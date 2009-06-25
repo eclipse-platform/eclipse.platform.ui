@@ -29,7 +29,7 @@ public class ProcessProxy extends EventHandlerModelProxy {
         }
 
 		protected void handleChange(DebugEvent event) {
-			fireDelta(IModelDelta.STATE);        			
+			fireProcessDelta(IModelDelta.STATE);        			
         }
 
         protected void handleCreate(DebugEvent event) {
@@ -37,25 +37,26 @@ public class ProcessProxy extends EventHandlerModelProxy {
         }
 
 		protected void handleTerminate(DebugEvent event) {
-			fireDelta(IModelDelta.STATE | IModelDelta.UNINSTALL);
+			fireProcessDelta(IModelDelta.STATE | IModelDelta.UNINSTALL);
 		}
         
-        private void fireDelta(int flags) {
-			ModelDelta delta = null;
-        	synchronized (ProcessProxy.this) {
-        		if (!isDisposed()) {
-                    delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
-                    ModelDelta node = delta;
-                    node = node.addNode(fProcess.getLaunch(), IModelDelta.NO_CHANGE);
-                    node.addNode(fProcess, flags);        			
-        		}
-			}
-        	if (delta != null && !isDisposed()) {
-        		fireModelChanged(delta);
-        	}        	
-        }
         
     };
+
+    private void fireProcessDelta(int flags) {
+        ModelDelta delta = null;
+        synchronized (ProcessProxy.this) {
+            if (!isDisposed()) {
+                delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+                ModelDelta node = delta;
+                node = node.addNode(fProcess.getLaunch(), IModelDelta.NO_CHANGE);
+                node.addNode(fProcess, flags);                  
+            }
+        }
+        if (delta != null && !isDisposed()) {
+            fireModelChanged(delta);
+        }           
+    }
 
     /* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.update.EventHandlerModelProxy#dispose()
@@ -85,14 +86,18 @@ public class ProcessProxy extends EventHandlerModelProxy {
 		// select process if in run mode
 		IProcess process = fProcess;
 		if (process != null) {
-			ILaunch launch = process.getLaunch();
-			if (launch != null && ILaunchManager.RUN_MODE.equals(launch.getLaunchMode())) {
-				// select the process
-				ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
-				ModelDelta node = delta.addNode(process.getLaunch(), IModelDelta.NO_CHANGE);
-				node = node.addNode(process, IModelDelta.SELECT);
-				fireModelChanged(delta);					
-			}
+		    if (process.isTerminated()) {
+	            fireProcessDelta(IModelDelta.UNINSTALL);
+		    } else {
+    			ILaunch launch = process.getLaunch();
+    			if (launch != null && ILaunchManager.RUN_MODE.equals(launch.getLaunchMode())) {
+    				// select the process
+    				ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.NO_CHANGE);
+    				ModelDelta node = delta.addNode(process.getLaunch(), IModelDelta.NO_CHANGE);
+    				node = node.addNode(process, IModelDelta.SELECT);
+    				fireModelChanged(delta);					
+    			}
+		    }
 		}
 	}
 }
