@@ -43,6 +43,8 @@ public class CSSStylingSupport {
 			}
 		});
 
+		display.setData("org.eclipse.e4.ui.css.core.engine", engine);
+
 		// Create the OSGi resource locator
 		if (resourceURI != null) {
 			engine.getResourcesLocatorManager().registerResourceLocator(
