@@ -115,47 +115,33 @@ public class VCardContactsRepository implements IContactsRepository {
 	public Contact readFromVCard(String fileName) {
 		Contact contact = new Contact();
 		BufferedReader bufferedReader = null;
-		String charSet = "Windows-1252";
+		String charSet = "Cp1252";
 
-		// First try to guess the char set
-		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(fileName)));
-			String line;
-			while ((line = bufferedReader.readLine()) != null) {
-				int index = line.indexOf("CHARSET=");
-				if (index != -1) {
-					int endIndex = index + 8;
-					while (line.charAt(endIndex) != ':'
-							&& line.charAt(endIndex) != ';') {
-						endIndex += 1;
-					}
-					charSet = line.substring(index + 8, endIndex);
-					break;
-				}
-			}
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		/*
+		 * irst try to guess the char set (currently not working under some JVMs
+		 */
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} finally {
-			try {
-				if (bufferedReader != null) {
-					bufferedReader.close();
-				}
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
+		/*
+		 * try { bufferedReader = new BufferedReader(new InputStreamReader( new
+		 * FileInputStream(fileName))); String line; while ((line =
+		 * bufferedReader.readLine()) != null) { int index =
+		 * line.indexOf("CHARSET="); if (index != -1) { int endIndex = index +
+		 * 8; while (line.charAt(endIndex) != ':' && line.charAt(endIndex) !=
+		 * ';') { endIndex += 1; } charSet = line.substring(index + 8,
+		 * endIndex); break; } } } catch (FileNotFoundException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace();
+		 * 
+		 * } catch (IOException e) { // TODO Auto-generated catch block
+		 * e.printStackTrace(); } finally { try { if (bufferedReader != null) {
+		 * bufferedReader.close(); } } catch (IOException e) { // TODO
+		 * Auto-generated catch block e.printStackTrace(); } }
+		 */
 
 		// Then parse the vCard
 		try {
-			bufferedReader = new BufferedReader(new InputStreamReader(
-					new FileInputStream(fileName), charSet));
+			InputStreamReader inputStreamReader = new InputStreamReader(
+					new FileInputStream(fileName), charSet);
+			bufferedReader = new BufferedReader(inputStreamReader);
 			String line;
 			String value;
 			while ((line = bufferedReader.readLine()) != null) {
