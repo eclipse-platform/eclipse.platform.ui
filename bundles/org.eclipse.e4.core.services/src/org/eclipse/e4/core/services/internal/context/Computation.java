@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.e4.core.services.internal.context;
 
 import java.util.HashMap;
@@ -25,7 +24,7 @@ abstract class Computation {
 	void addDependency(IEclipseContext context, String name) {
 		Set properties = (Set) dependencies.get(context);
 		if (properties == null) {
-			properties = new HashSet();
+			properties = new HashSet(4);
 			dependencies.put(context, properties);
 		}
 		properties.add(name);
