@@ -69,11 +69,11 @@ import org.eclipse.e4.core.services.internal.context.ContextInjectionImpl;
  * </p>
  * <p>
  * When a context is disposed, the injection factory will attempt to notify all injected objects by
- * calling a disposal method. At most one disposal method will be invoked, according to the
- * following lookup order:
+ * calling a disposal method. Disposal methods are identified by the
+ * <code>org.eclipse.e4.core.services.annotations.PreDestroy</code> annotation. If no annotated
+ * methods are found on the class or its superclasses, at most one non-annotated disposal method
+ * will be invoked, according to the following lookup order:
  * <ul>
- * <li>A zero-argument method on the injected object with the
- * <code>org.eclipse.e4.core.services.annotations.PreDestroy</code> annotation</li>
  * <li>The method with signature void contextDisposed(IEclipseContext context);</li>
  * <li>The method with signature void contextDisposed();</li>
  * <li>The method with signature void dispose();</li>
