@@ -158,9 +158,10 @@ public class ContextInjectionTest extends TestCase {
 	}
 
 	/**
-	 * TODO fix
+	 * Tests that a class with multiple pre-destroy methods has those methods invoked at the correct
+	 * time.
 	 */
-	public void _testInheritedPreDestroy() {
+	public void testInheritedPreDestroy() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("OverriddenMethod", new Object());
 		context.set("StringViaMethod", "");
@@ -175,7 +176,23 @@ public class ContextInjectionTest extends TestCase {
 		((IDisposable) context).dispose();
 		assertEquals(1, userObject.superPreDestroyCount);
 		assertEquals(1, userObject.subPreDestroyCount);
+	}
 
+	/**
+	 * Tests that a class with a @PreDestroy method that is overridden by a subclass.
+	 */
+	public void testOverriddenPreDestroy() {
+		IEclipseContext context = EclipseContextFactory.create();
+		context.set("OverriddenMethod", new Object());
+		context.set("StringViaMethod", "");
+		context.set("ObjectViaMethod", new Object());
+		ObjectSubClass userObject = new ObjectSubClass();
+		ContextInjectionFactory.inject(userObject, context);
+		assertEquals(0, userObject.overriddenPreDestroyCount);
+		context.set("OverriddenMethod", new Object());
+		assertEquals(0, userObject.overriddenPreDestroyCount);
+		((IDisposable) context).dispose();
+		assertEquals(1, userObject.overriddenPreDestroyCount);
 	}
 
 	/**

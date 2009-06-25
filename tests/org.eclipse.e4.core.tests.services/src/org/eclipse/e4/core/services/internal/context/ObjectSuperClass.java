@@ -75,4 +75,10 @@ public class ObjectSuperClass {
 	public void superPreDestroy() {
 		superPreDestroyCount++;
 	}
+
+	@PreDestroy()
+	public void overriddenPreDestroy() {
+		//
+	}
+
 }

@@ -28,6 +28,7 @@ public class ObjectSubClass extends ObjectSuperClass {
 	public int postConstructSetOverriddenCalled;
 	public int subPostConstructCount;
 	public int subPreDestroyCount;
+	public int overriddenPreDestroyCount;
 
 	public ObjectSubClass() {
 		super();
@@ -77,6 +78,11 @@ public class ObjectSubClass extends ObjectSuperClass {
 	public void subPreDestroy() {
 		subPreDestroyCount++;
 
+	}
+
+	@PreDestroy()
+	public void overriddenPreDestroy() {
+		overriddenPreDestroyCount++;
 	}
 
 }
