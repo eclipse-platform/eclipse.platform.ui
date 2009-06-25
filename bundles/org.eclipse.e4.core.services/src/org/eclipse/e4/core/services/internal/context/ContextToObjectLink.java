@@ -284,7 +284,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD,
 					new Class[] { IEclipseContext.class });
 			// only call this method if we haven't found any other dispose methods yet
-			if (!result.seen(dispose) && result.seenMethods.isEmpty())
+			if (result.seenMethods.isEmpty() && !result.seen(dispose))
 				callDispose(object, dispose, new Object[] { context });
 		} catch (SecurityException e) {
 			// ignore
@@ -296,7 +296,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			Method dispose = objectsClass.getDeclaredMethod(
 					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD, new Class[0]);
 			// only call this method if we haven't found any other dispose methods yet
-			if (!result.seen(dispose) && result.seenMethods.isEmpty())
+			if (result.seenMethods.isEmpty() && !result.seen(dispose))
 				callDispose(object, dispose, null);
 			return;
 		} catch (SecurityException e) {
@@ -309,7 +309,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		try {
 			Method dispose = objectsClass.getDeclaredMethod("dispose", null); //$NON-NLS-1$
 			// only call this method if we haven't found any other dispose methods yet
-			if (!result.seen(dispose) && result.seenMethods.isEmpty())
+			if (result.seenMethods.isEmpty() && !result.seen(dispose))
 				callDispose(object, dispose, null);
 			return;
 		} catch (SecurityException e) {
