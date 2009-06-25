@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.core.resources" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.core.resources" id="natures" name="Project Natures"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The workspace supports the notion of project natures 
 (or &quot;natures&quot; for short&quot;).  A nature associates lifecycle 
@@ -72,6 +72,11 @@ equally suitable for a given file), the content type having affinity with any of
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="runtime"/>
@@ -102,9 +107,9 @@ equally suitable for a given file), the content type having affinity with any of
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -120,9 +125,9 @@ equally suitable for a given file), the content type having affinity with any of
 
    <element name="run">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <sequence>
@@ -134,9 +139,9 @@ equally suitable for a given file), the content type having affinity with any of
                   the fully-qualified name of a class which implements 
 &lt;samp&gt;org.eclipse.core.resources.IProjectNature&lt;/samp&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.core.resources.IProjectNature"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -144,9 +149,9 @@ equally suitable for a given file), the content type having affinity with any of
 
    <element name="parameter">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
@@ -185,9 +190,9 @@ equally suitable for a given file), the content type having affinity with any of
                <documentation>
                   the fully-qualified id of another nature extension that this nature extension requires.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.natures/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -200,9 +205,9 @@ equally suitable for a given file), the content type having affinity with any of
                <documentation>
                   the fully-qualified id of an incremental project builder extension that this nature controls.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.builders/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -227,18 +232,18 @@ equally suitable for a given file), the content type having affinity with any of
                <documentation>
                   the fully-qualified id of a content type associated to this nature.
                </documentation>
-               <appinfo>
-                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.runtime.contentTypes/@id"/>
-               </appinfo>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.core.contenttype.contentTypes/content-type/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Following is an example of three nature configurations.  The
 waterNature and fireNature belong
@@ -285,9 +290,9 @@ of these natures would be &quot;com.xyz.coolplugin.fireNature&quot;, &quot;com.x
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The value of the class attribute must represent an 
 implementor of 
@@ -301,11 +306,10 @@ on &lt;samp&gt;org.eclipse.core.resources.IWorkspace&lt;/samp&gt;.
    </annotation>
 
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The platform itself does not have any predefined natures. 
 Particular product installs may include natures as required.
@@ -313,11 +317,11 @@ Particular product installs may include natures as required.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which 
 accompanies 
