@@ -406,10 +406,7 @@ public final class SelectionProcessor {
 					endColumn= offset;
 					break;
 				}
-				if (content.charAt(offset) == '\t')
-					visual+= fTabWidth - visual % fTabWidth;
-				else
-					visual++;
+				visual+= visualSizeIncrement(content.charAt(offset), visual);
 			}
 			if (startColumn == -1) {
 				boolean materializeVirtualSpace= replacement.length() != 0;
@@ -442,10 +439,7 @@ public final class SelectionProcessor {
 					endColumn= offset;
 					break;
 				}
-				if (content.charAt(offset) == '\t')
-					visual+= fTabWidth - visual % fTabWidth;
-				else
-					visual++;
+				visual+= visualSizeIncrement(content.charAt(offset), visual);
 			}
 			if (startColumn != -1)
 				buf.append(content.substring(startColumn, endColumn == -1 ? lineLength : endColumn));
@@ -462,15 +456,10 @@ public final class SelectionProcessor {
 			int to= Math.min(lineLength, column);
 			String content= fDocument.get(info.getOffset(), lineLength);
 			int visual= 0;
-			for (int offset= 0; offset < to; offset++) {
-				if (content.charAt(offset) == '\t')
-					visual+= fTabWidth - visual % fTabWidth;
-				else
-					visual++;
-			}
-			if (column > lineLength) {
+			for (int offset= 0; offset < to; offset++)
+				visual+= visualSizeIncrement(content.charAt(offset), visual);
+			if (column > lineLength)
 				visual+= column - lineLength; // virtual spaces
-			}
 			return visual;
 		}
 
@@ -482,12 +471,27 @@ public final class SelectionProcessor {
 			for (int offset= 0; offset < lineLength; offset++) {
 				if (visual >= visualColumn)
 					return offset;
-				if (content.charAt(offset) == '\t')
-					visual+= fTabWidth - visual % fTabWidth;
-				else
-					visual++;
+				visual+= visualSizeIncrement(content.charAt(offset), visual);
 			}
 			return lineLength + Math.max(0, visualColumn - visual);
+		}
+
+		/**
+		 * Returns the increment in visual length represented by <code>character</code> given the
+		 * current visual length. The visual length is <code>1</code> unless <code>character</code>
+		 * is a tabulator (<code>\t</code>).
+		 * 
+		 * @param character the character the length of which to compute
+		 * @param visual the current visual length
+		 * @return the increment in visual length represented by <code>character</code>, which is in
+		 *         <code>[0,fTabWidth]</code>
+		 */
+		private int visualSizeIncrement(char character, int visual) {
+			if (character != '\t')
+				return 1;
+			if (fTabWidth <= 0)
+				return 0;
+			return fTabWidth - visual % fTabWidth;
 		}
 	};
 
@@ -517,11 +521,11 @@ public final class SelectionProcessor {
 	 * Creates a new processor on the given document and using the given tab width.
 	 * 
 	 * @param document the document
-	 * @param tabWidth the tabulator width in space equivalents
+	 * @param tabWidth the tabulator width in space equivalents, must be <code>&gt;=0</code>
 	 */
 	public SelectionProcessor(IDocument document, int tabWidth) {
 		Assert.isNotNull(document);
-		Assert.isTrue(tabWidth > 0);
+		Assert.isTrue(tabWidth >= 0);
 		fDocument= document;
 		fTabWidth= tabWidth;
 	}
