@@ -119,7 +119,7 @@ public class ValueComputation extends Computation {
 			throw new CycleException(this.toString());
 		}
 		Computation oldComputation = (Computation) EclipseContext.currentComputation.get(); // XXX
-																							// IEclipseContext
+		// IEclipseContext
 		EclipseContext.currentComputation.set(this); // XXX IEclipseContext
 		computing = true;
 		try {
@@ -140,6 +140,8 @@ public class ValueComputation extends Computation {
 		StringBuffer result = new StringBuffer();
 		result.append("VC(");
 		result.append(context);
+		result.append('/');
+		result.append(originatingContext);
 		result.append(',');
 		result.append(name);
 		result.append(')');

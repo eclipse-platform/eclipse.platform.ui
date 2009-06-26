@@ -199,9 +199,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	/**
-	 * TODO Can this really be static? Couldn't there be multiple computations
-	 * ongoing in a single thread? For example a computation could recursively
-	 * cause another context lookup and therefore a nested computation.
+	 * TODO Can this really be static? Couldn't there be multiple computations ongoing in a single
+	 * thread? For example a computation could recursively cause another context lookup and
+	 * therefore a nested computation.
 	 */
 	static ThreadLocal currentComputation = new ThreadLocal();
 
@@ -221,7 +221,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.parent = parent;
 		this.strategy = strategy;
-		set(IContextConstants.DEBUG_STRING, "Anonymous Context"); //$NON-NLS-1$
 		set(PARENT, parent);
 	}
 
@@ -284,11 +283,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		// if we found something, compute the concrete value and return
 		if (result != null) {
 			if (result instanceof IContextFunction) {
-				if (EclipseContext.DEBUG)
-					System.out
-							.println("creating new value computation for " + name + " in " + this + " from " + originatingContext); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				ValueComputation valueComputation = new ValueComputation(this, originatingContext,
 						name, ((IContextFunction) result));
+				if (EclipseContext.DEBUG)
+					System.out.println("created " + valueComputation);
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
 				result = valueComputation.get(arguments);
 			}
@@ -376,16 +374,19 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	public void set(String name, Object value) {
-		localValues.put(name, value);
-		invalidate(name, IRunAndTrack.ADDED);
+		boolean containsKey = localValues.containsKey(name);
+		Object oldValue = localValues.put(name, value);
+		if (!containsKey || value != oldValue) {
+			invalidate(name, IRunAndTrack.ADDED);
+		}
 	}
 
 	/**
-	 * Returns a string representation of this context for debugging purposes
-	 * only.
+	 * Returns a string representation of this context for debugging purposes only.
 	 */
 	public String toString() {
-		return (String) get(IContextConstants.DEBUG_STRING);
+		Object debugString = localValues.get(IContextConstants.DEBUG_STRING);
+		return debugString instanceof String ? ((String) debugString) : "Anonymous Context";
 	}
 
 	private void trackAccess(String name) {

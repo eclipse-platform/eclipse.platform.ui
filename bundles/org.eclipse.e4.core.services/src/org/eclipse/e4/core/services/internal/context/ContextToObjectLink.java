@@ -197,14 +197,13 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			}
 
 			public void processOutMethod(Method m, final String name) {
-				final IEclipseContext outputContext = (IEclipseContext) notifyContext
-						.get("outputs");
+				final EclipseContext outputContext = (EclipseContext) notifyContext.get("outputs");
 				if (eventType == IRunAndTrack.INITIAL) {
 					if (outputContext == null) {
 						throw new IllegalStateException("No output context available for @Out " + m
 								+ " in " + userObject);
 					}
-					Object value;
+					final Object value;
 					try {
 						if (!m.isAccessible()) {
 							m.setAccessible(true);
@@ -216,7 +215,12 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 						} else {
 							value = m.invoke(userObject, new Object[0]);
 						}
-						outputContext.set(name, value);
+						// this has to be done asynchronously, see bug 281659
+						outputContext.schedule(new Runnable() {
+							public void run() {
+								outputContext.set(name, value);
+							}
+						});
 						userObject.getClass().getMethod("addPropertyChangeListener",
 								new Class[] { String.class, PropertyChangeListener.class }).invoke(
 								userObject,

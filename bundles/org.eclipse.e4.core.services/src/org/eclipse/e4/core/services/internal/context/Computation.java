@@ -95,15 +95,17 @@ abstract class Computation {
 	}
 
 	private void stopListening(IEclipseContext context, String name) {
-		if (EclipseContext.DEBUG)
-			System.out.println(toString() + " no longer listening"); //$NON-NLS-1$
 
 		if (name == null) {
+			if (EclipseContext.DEBUG)
+				System.out.println(toString() + " no longer listening to " + context); //$NON-NLS-1$
 			dependencies.remove(context);
 			return;
 		}
 		Set properties = (Set) dependencies.get(context);
 		if (properties != null) {
+			if (EclipseContext.DEBUG)
+				System.out.println(toString() + " no longer listening to " + context + "," + name); //$NON-NLS-1$
 			((EclipseContext) context).listeners.remove(this); // XXX
 			// IEclipseContext
 			properties.remove(name);
