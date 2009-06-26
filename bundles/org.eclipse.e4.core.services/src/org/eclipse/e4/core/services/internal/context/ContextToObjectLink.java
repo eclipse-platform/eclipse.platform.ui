@@ -116,7 +116,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					break;
 				case IRunAndTrack.ADDED:
 					String injectKey = findKey(name, field.getType());
-					if (injectKey != null)
+					if (injectKey != null
+							&& (keyMatches(name, injectName) || field.getType().getName().equals(
+									name)))
 						setField(userObject, field, notifyContext.get(injectKey));
 					break;
 				case IRunAndTrack.REMOVED:
