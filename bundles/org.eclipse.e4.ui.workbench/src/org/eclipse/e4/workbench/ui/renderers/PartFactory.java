@@ -124,7 +124,8 @@ public abstract class PartFactory {
 		IEclipseContext partContext = part.getContext();
 		while (parent != null) {
 			IEclipseContext parentContext = parent.getContext();
-			parent.setActiveChild(part);
+			if (parent.getActiveChild() != part)
+				parent.setActiveChild(part);
 			if (parentContext != null) {
 				parentContext.set(IServiceConstants.ACTIVE_CHILD, partContext);
 				partContext = parentContext;

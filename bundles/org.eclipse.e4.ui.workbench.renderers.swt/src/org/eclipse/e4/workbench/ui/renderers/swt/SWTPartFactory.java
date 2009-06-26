@@ -54,11 +54,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartFactory extends PartFactory {
+
+	private static Shell limbo;
 
 	public Object createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
 		Widget widget = (Widget) widgetObject;
@@ -368,6 +371,11 @@ public abstract class SWTPartFactory extends PartFactory {
 
 	public void disposeWidget(MPart<?> part) {
 		Widget curWidget = (Widget) part.getWidget();
+
+		// If we're disposing a control find its 'outermost'
+		if (curWidget instanceof Control)
+			curWidget = getOutermost((Control) curWidget);
+
 		if (curWidget != null && !curWidget.isDisposed()) {
 			unbindWidget(part);
 			curWidget.dispose();
@@ -427,7 +435,95 @@ public abstract class SWTPartFactory extends PartFactory {
 	 */
 	@Override
 	public void childAdded(MPart<?> parentElement, MPart<?> element) {
-		// TODO Auto-generated method stub
+		if (parentElement != null && element != null)
+			return;
+		// if the new part already has a Control then re-parent it under the
+		// element
+		if (element.getWidget() instanceof Control
+				&& parentElement.getWidget() instanceof Composite) {
+			Composite parentComp = (Composite) parentElement.getWidget();
+			Control ctrl = (Control) element.getWidget();
+			locallyShow(parentComp, ctrl);
+		} else if (element.isVisible()) {
+			// Ensure the widget for the element exists
+			renderer.createGui(element);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.PartFactory#childRemoved(org.eclipse
+	 * .e4.ui.model.application.MPart,
+	 * org.eclipse.e4.ui.model.application.MPart)
+	 */
+	@Override
+	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
+		super.childRemoved(parentElement, child);
+
+		if (child.getWidget() instanceof Control) {
+			Control ctrl = (Control) child.getWidget();
+			locallyHide(ctrl);
+		}
+	}
+
+	private Control getOutermost(Control ctrl) {
+		// Find the 'outermost' Composite that is *not* bound
+		// to a model element
+		Composite curComposite = ctrl.getParent();
+		Control outerMost = ctrl;
+		while (curComposite != null
+				&& curComposite.getData(PartFactory.OWNING_ME) == null
+				&& !(curComposite instanceof Shell)) {
+			outerMost = curComposite;
+			curComposite = curComposite.getParent();
+		}
+
+		return outerMost;
+	}
+
+	/**
+	 * Restore an existing control to the UI by reparenting it (from 'limbo')
+	 * under its new owner
+	 * 
+	 * @param parent
+	 *            The composite to place the control under
+	 * @param ctrl
+	 *            The control to be restored
+	 */
+	private void locallyShow(Composite parent, Control ctrl) {
+		// Find the 'outermost' Composite that is *not* bound
+		// to a model element
+		Control toReparent = getOutermost(ctrl);
+
+		// Prevent No-ops
+		if (toReparent.getParent() != parent) {
+			toReparent.setParent(parent);
+			parent.layout(true);
+		}
+	}
+
+	/**
+	 * If a model element containing a widget is removed from its parent we have
+	 * to remove the control immediately from its parent's structure (to get the
+	 * layout correct) so we'll place it in 'limbo' (an invisible shell).
+	 * 
+	 * @param ctrl
+	 */
+	private void locallyHide(Control ctrl) {
+		if (limbo == null) {
+			limbo = new Shell(ctrl.getShell(), SWT.NONE);
+			limbo.setVisible(false);
+		}
+
+		// Find the 'outermost' Composite that is *not* bound
+		// to a model element
+		Control toReparent = getOutermost(ctrl);
+
+		Composite curParent = toReparent.getParent();
+		toReparent.setParent(limbo);
+		curParent.layout(true);
 	}
 
 	/*

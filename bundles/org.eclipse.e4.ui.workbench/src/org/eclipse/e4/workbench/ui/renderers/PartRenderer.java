@@ -40,7 +40,7 @@ public class PartRenderer {
 
 				// If the parent isn't displayed who cares?
 				MPart<?> parent = changedPart.getParent();
-				PartFactory parentFactory = getFactoryFor(parent);
+				PartFactory parentFactory = parent != null ? getFactoryFor(parent) : null;
 				if (parentFactory == null)
 					return;
 
@@ -73,12 +73,30 @@ public class PartRenderer {
 				if (msg.getEventType() == Notification.ADD) {
 					Activator.trace(Policy.DEBUG_RENDERER, "Child Added", null); //$NON-NLS-1$
 					MPart added = (MPart) msg.getNewValue();
-					createGui(added);
+					// Adding invisible elements is a NO-OP as far as the
+					// renderer is concerned
+					if (!added.isVisible()) {
+						installLifeCycleHooks(added);
+						return;
+					}
+
+					// OK, we have a new -visible- part we either have to create
+					// it or host it under the correct parent
+					if (added.getWidget() == null)
+						// NOTE: createGui will call 'childAdded' if successful
+						createGui(added);
+					else {
+						factory.childAdded(changedPart, added);
+					}
 				} else if (msg.getEventType() == Notification.REMOVE) {
 					Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
 					MPart removed = (MPart) msg.getOldValue();
-					if (removed.isVisible())
-						removeGui(removed);
+					// Removing invisible elements is a NO-OP as far as the
+					// renderer is concerned
+					if (!removed.isVisible())
+						return;
+
+					factory.childRemoved(changedPart, removed);
 				}
 			}
 		}
@@ -130,18 +148,22 @@ public class PartRenderer {
 		return newWidget;
 	}
 
-	public void removeGui(MPart element) {
+	/**
+	 * @param element
+	 */
+	public void removeGui(MPart<?> element) {
 		PartFactory factory = getFactoryFor(element);
 		assert (factory != null);
 
-		MPart parent = element.getParent();
-		if (parent == null)
+		MPart<?> parent = element.getParent();
+		PartFactory parentFactory = parent != null ? getFactoryFor(parent) : null;
+		if (parentFactory == null)
 			return;
 
-		PartFactory parentFactory = getFactoryFor(parent);
-		if (parentFactory != null) {
-			parentFactory.childRemoved(element.getParent(), element);
-		}
+		// Remove the child from its current parent's -Composite- this does NOT
+		// mean removing the model element from its parent's model
+		parentFactory.childRemoved(element.getParent(), element);
+
 		factory.disposeWidget(element);
 	}
 
@@ -149,7 +171,7 @@ public class PartRenderer {
 	 * @param element
 	 *            an element that's been seen by createGui
 	 */
-	private void installLifeCycleHooks(MPart element) {
+	private void installLifeCycleHooks(MPart<?> element) {
 		// Handle visibility changes
 		if (!((EObject) element).eAdapters().contains(visibilityListener))
 			((EObject) element).eAdapters().add(visibilityListener);
@@ -159,7 +181,7 @@ public class PartRenderer {
 			((EObject) element).eAdapters().add(childrenListener);
 	}
 
-	protected Object createWidget(MPart element) {
+	protected Object createWidget(MPart<?> element) {
 		// Iterate through the factories until one actually creates the widget
 		for (Iterator iterator = partFactories.iterator(); iterator.hasNext();) {
 			PartFactory factory = (PartFactory) iterator.next();

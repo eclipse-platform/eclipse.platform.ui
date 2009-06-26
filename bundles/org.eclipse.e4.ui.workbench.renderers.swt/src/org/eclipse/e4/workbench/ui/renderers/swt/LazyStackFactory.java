@@ -11,7 +11,6 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.List;
-
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -70,9 +69,23 @@ public abstract class LazyStackFactory extends SWTPartFactory {
 		if (parts != null) {
 			for (MPart<?> childME : parts) {
 				if (childME.isVisible())
-					childAdded(me, childME);
+					internalChildAdded(me, childME);
 			}
 		}
+	}
+
+	/**
+	 * This method is necessary to allow the parent container to show
+	 * affordances (i.e. tabs) for child elements -without- creating them (as
+	 * simply calling 'createChild' would)
+	 * 
+	 * @param parentME
+	 *            The parent model element
+	 * @param childME
+	 *            The child to show the affordance for
+	 */
+	protected void internalChildAdded(MPart parentME, MPart childME) {
+		// NO-OP
 	}
 
 	@Override
@@ -110,6 +123,7 @@ public abstract class LazyStackFactory extends SWTPartFactory {
 					MPart<?> selPart = stack.getActiveChild();
 					if (selPart != null && selPart.getWidget() == null)
 						renderer.createGui(selPart);
+					// activate(selPart);
 				}
 			}
 		});

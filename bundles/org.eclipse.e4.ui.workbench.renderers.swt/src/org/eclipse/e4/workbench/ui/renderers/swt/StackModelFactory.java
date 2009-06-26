@@ -153,28 +153,33 @@ public class StackModelFactory extends LazyStackFactory {
 		}
 	}
 
+	protected void internalChildAdded(final MPart parentElement, MPart element) {
+		MItemPart<?> itemPart = (MItemPart<?>) element;
+		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
+		int createFlags = 0;
+
+		// if(element instanceof View && ((View)element).isCloseable())
+		// createFlags = createFlags | SWT.CLOSE;
+
+		CTabItem cti = findItemForPart(parentElement, element);
+		if (cti == null)
+			cti = new CTabItem(ctf, createFlags);
+
+		cti.setData(OWNING_ME, element);
+		cti.setText(itemPart.getName());
+		cti.setImage(getImage(element));
+		cti.setControl((Control) element.getWidget());
+
+		// Hook up special logic to synch up the Tab Items
+		hookTabControllerLogic(parentElement, element, cti);
+	}
+
 	@Override
 	public void childAdded(final MPart<?> parentElement, MPart<?> element) {
 		super.childAdded(parentElement, element);
 
 		if (element instanceof MItemPart<?>) {
-			MItemPart<?> itemPart = (MItemPart<?>) element;
-			CTabFolder ctf = (CTabFolder) parentElement.getWidget();
-			int createFlags = 0;
-
-			// if(element instanceof View && ((View)element).isCloseable())
-			// createFlags = createFlags | SWT.CLOSE;
-
-			CTabItem cti = findItemForPart(parentElement, element);
-			if (cti == null)
-				cti = new CTabItem(ctf, createFlags);
-
-			cti.setData(OWNING_ME, element);
-			cti.setText(itemPart.getName());
-			cti.setImage(getImage(element));
-
-			// Hook up special logic to synch up the Tab Items
-			hookTabControllerLogic(parentElement, element, cti);
+			internalChildAdded(parentElement, element);
 
 			// Lazy Loading: On the first pass through this method the
 			// part's control will be null (we're just creating the tabs
@@ -308,7 +313,8 @@ public class StackModelFactory extends LazyStackFactory {
 							.getWidget();
 					CTabItem item = findItemForPart(sm, selPart);
 					if (item != null) {
-						ctf.setSelection(item);
+						if (ctf.getSelection() != item)
+							ctf.setSelection(item);
 					}
 				}
 			}
