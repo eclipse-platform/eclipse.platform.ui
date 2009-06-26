@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import java.beans.PropertyChangeListener;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.annotations.In;
+import org.eclipse.e4.core.services.annotations.Out;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -193,6 +195,40 @@ public class ContextInjectionTest extends TestCase {
 		assertEquals(0, userObject.overriddenPreDestroyCount);
 		((IDisposable) context).dispose();
 		assertEquals(1, userObject.overriddenPreDestroyCount);
+	}
+
+	public void testOutMethod() {
+		class Injected extends ObjectSuperClass {
+			private String input;
+
+			@SuppressWarnings("unused")
+			@In
+			private void setInput(String input) {
+				this.input = input;
+
+			}
+
+			@SuppressWarnings("unused")
+			@Out
+			private String getOutput() {
+				return input;
+			}
+
+			public void addPropertyChangeListener(String propertyName,
+					PropertyChangeListener listener) {
+			}
+		}
+		IEclipseContext parent = EclipseContextFactory.create();
+		IEclipseContext context = EclipseContextFactory.create(parent, null);
+		IEclipseContext outputContent = EclipseContextFactory.create();
+		context.set("outputs", outputContent);
+		parent.set("OverriddenMethod", new Object());
+		parent.set("StringViaMethod", "oldValue");
+		context.set("input", "Hello");
+		Injected object = new Injected();
+		ContextInjectionFactory.inject(object, context);
+		assertEquals("Hello", outputContent.get("output"));
+		parent.set("StringViaMethod", "value");
 	}
 
 	/**
