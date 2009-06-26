@@ -199,11 +199,11 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			public void processOutMethod(Method m, final String name) {
 				final IEclipseContext outputContext = (IEclipseContext) notifyContext
 						.get("outputs");
-				if (outputContext == null) {
-					throw new IllegalStateException("No output context available for @Out " + m
-							+ " in " + userObject);
-				}
 				if (eventType == IRunAndTrack.INITIAL) {
+					if (outputContext == null) {
+						throw new IllegalStateException("No output context available for @Out " + m
+								+ " in " + userObject);
+					}
 					Object value;
 					try {
 						if (!m.isAccessible()) {
