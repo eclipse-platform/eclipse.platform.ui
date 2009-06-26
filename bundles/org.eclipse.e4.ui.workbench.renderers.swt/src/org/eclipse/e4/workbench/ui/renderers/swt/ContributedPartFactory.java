@@ -43,11 +43,12 @@ public class ContributedPartFactory extends SWTPartFactory {
 			bindWidget(part, newWidget);
 			final MContributedPart<?> contributedPart = (MContributedPart<?>) part;
 			final IEclipseContext localContext = part.getContext();
-			localContext.set(IContextConstants.DEBUG_STRING, "ContributedPart"); //$NON-NLS-1$
+			localContext.set(IContextConstants.DEBUG_STRING,
+					"CP-" + contributedPart.getName()); //$NON-NLS-1$
 			final IEclipseContext outputContext = EclipseContextFactory.create(
 					null, UISchedulerStrategy.getInstance());
 			outputContext.set(IContextConstants.DEBUG_STRING,
-					"ContributedPart-output"); //$NON-NLS-1$
+					"CP-output-" + contributedPart.getName()); //$NON-NLS-1$
 			localContext.set(Composite.class.getName(), newComposite);
 			localContext.set(IServiceConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
