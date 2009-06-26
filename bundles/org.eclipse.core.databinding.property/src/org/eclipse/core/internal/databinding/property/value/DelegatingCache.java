@@ -7,13 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 262269
+ *     Matthew Hall - bugs 262269, 281727
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
 
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -51,7 +50,7 @@ abstract class DelegatingCache {
 			this.masterElements = new IdentityObservableSet(realm, elements
 					.getElementType());
 			this.masterElementValues = delegate.observeDetail(masterElements);
-			this.cachedValues = new HashMap();
+			this.cachedValues = new IdentityMap();
 
 			masterElementValues.addMapChangeListener(this);
 		}
