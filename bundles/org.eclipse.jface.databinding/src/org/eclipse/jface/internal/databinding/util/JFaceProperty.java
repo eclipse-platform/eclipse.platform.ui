@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 278314
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.util;
 
@@ -16,7 +17,7 @@ import java.lang.reflect.Method;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.SimplePropertyEvent;
+import org.eclipse.core.databinding.property.NativePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -55,25 +56,19 @@ public class JFaceProperty extends SimpleValueProperty {
 		return fieldName;
 	}
 
-	class Listener implements IPropertyChangeListener, INativePropertyListener {
-		private final ISimplePropertyListener simpleListener;
-
-		/**
-		 * @param listener
-		 */
+	class Listener extends NativePropertyListener implements
+			IPropertyChangeListener {
 		public Listener(ISimplePropertyListener listener) {
-			simpleListener = listener;
+			super(JFaceProperty.this, listener);
 		}
 
 		public void propertyChange(PropertyChangeEvent event) {
 			if (event.getProperty().equals(JFaceProperty.this.property)) {
-				simpleListener.handleEvent(new SimplePropertyEvent(
-						SimplePropertyEvent.CHANGE, event.getSource(),
-						JFaceProperty.this, null));
+				fireChange(event.getSource(), null);
 			}
 		}
 
-		public void addTo(Object model) {
+		protected void doAddTo(Object model) {
 			try {
 				addPropertyListenerMethod.invoke(model, new Object[] { this });
 			} catch (Exception e) {
@@ -81,7 +76,7 @@ public class JFaceProperty extends SimpleValueProperty {
 			}
 		}
 
-		public void removeFrom(Object model) {
+		protected void doRemoveFrom(Object model) {
 			try {
 				removePropertyListenerMethod.invoke(model,
 						new Object[] { this });
