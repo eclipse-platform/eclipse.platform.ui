@@ -138,7 +138,7 @@ public class ValueComputation extends Computation {
 
 	public String toString() {
 		StringBuffer result = new StringBuffer();
-		result.append("VC(");
+		result.append("ValueComputation(");
 		result.append(context);
 		result.append('/');
 		result.append(originatingContext);
