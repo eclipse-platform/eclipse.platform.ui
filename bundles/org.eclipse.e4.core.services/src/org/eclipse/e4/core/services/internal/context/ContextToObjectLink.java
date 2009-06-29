@@ -221,13 +221,12 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 								outputContext.set(name, value);
 							}
 						});
-						userObject.getClass().getMethod("addPropertyChangeListener",
-								new Class[] { String.class, PropertyChangeListener.class }).invoke(
-								userObject,
-								new Object[] {
-										name,
-										new PropertyChangeListenerImplementation(name,
-												outputContext) });
+						
+						Method addListener = userObject.getClass().getMethod(
+								"addPropertyChangeListener",
+								new Class[] { String.class, PropertyChangeListener.class });
+						callMethod(userObject, addListener, new Object[] { name,
+								new PropertyChangeListenerImplementation(name, outputContext) });
 					} catch (Exception ex) {
 						throw new RuntimeException(ex);
 					}
@@ -274,7 +273,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 								.getName();
 						if (annotationName.endsWith(".PreDestroy")) { //$NON-NLS-1$
 							if (!result.seen(method))
-								callDispose(object, method, null);
+								callMethod(object, method, null);
 						}
 					} catch (Exception ex) {
 						logWarning(method, ex);
@@ -291,7 +290,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					new Class[] { IEclipseContext.class });
 			// only call this method if we haven't found any other dispose methods yet
 			if (result.seenMethods.isEmpty() && !result.seen(dispose))
-				callDispose(object, dispose, new Object[] { context });
+				callMethod(object, dispose, new Object[] { context });
 		} catch (SecurityException e) {
 			// ignore
 		} catch (NoSuchMethodException e) {
@@ -303,7 +302,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD, new Class[0]);
 			// only call this method if we haven't found any other dispose methods yet
 			if (result.seenMethods.isEmpty() && !result.seen(dispose))
-				callDispose(object, dispose, null);
+				callMethod(object, dispose, null);
 			return;
 		} catch (SecurityException e) {
 			// ignore
@@ -316,7 +315,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			Method dispose = objectsClass.getDeclaredMethod("dispose", null); //$NON-NLS-1$
 			// only call this method if we haven't found any other dispose methods yet
 			if (result.seenMethods.isEmpty() && !result.seen(dispose))
-				callDispose(object, dispose, null);
+				callMethod(object, dispose, null);
 			return;
 		} catch (SecurityException e) {
 			// ignore
@@ -331,7 +330,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		}
 	}
 
-	private void callDispose(Object object, Method m, Object[] args) {
+	private void callMethod(Object object, Method m, Object[] args) {
 		try {
 			if (!m.isAccessible()) {
 				m.setAccessible(true);
@@ -688,5 +687,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		// String msg = NLS.bind("Injection failed", destination.toString());
 		// RuntimeLog.log(new Status(IStatus.WARNING,
 		// IRuntimeConstants.PI_COMMON, 0, msg, e));
+	}
+
+	public String toString() {
+		return "InjectionTracker(" + context + ')';
 	}
 }
