@@ -42,6 +42,10 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class HandledContributionItem extends ContributionItem {
+	/**
+	 * item refresh time in milliseconds.
+	 */
+	private static final int VISIBLE_ITEM_REFRESH = 2000;
 	private MHandledItem model;
 	private Widget widget;
 	private Listener menuItemListener;
@@ -120,6 +124,16 @@ public class HandledContributionItem extends ContributionItem {
 		update(null);
 		updateIcons();
 		addModelListener();
+		widget.getDisplay().timerExec(VISIBLE_ITEM_REFRESH, new Runnable() {
+			public void run() {
+				if (widget == null || widget.isDisposed()) {
+					return;
+				}
+				ToolItem item = (ToolItem) widget;
+				item.setEnabled(canExecuteItem(widget.getDisplay()));
+				widget.getDisplay().timerExec(VISIBLE_ITEM_REFRESH, this);
+			}
+		});
 	}
 
 	/**
