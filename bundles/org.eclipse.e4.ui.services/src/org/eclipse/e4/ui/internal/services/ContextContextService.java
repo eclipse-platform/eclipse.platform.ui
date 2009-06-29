@@ -46,6 +46,9 @@ public class ContextContextService implements EContextService {
 				.getLocal(LOCAL_CONTEXTS);
 		if (locals == null) {
 			locals = new HashSet<String>();
+		} else {
+			//copy the set so the change is propagated
+			locals = new HashSet(locals);
 		}
 		locals.add(id);
 		eclipseContext.set(LOCAL_CONTEXTS, locals);
@@ -62,6 +65,8 @@ public class ContextContextService implements EContextService {
 		Set<String> locals = (Set<String>) eclipseContext
 				.getLocal(LOCAL_CONTEXTS);
 		if (locals != null) {
+			//copy the set so the change is propagated
+			locals = new HashSet(locals);
 			locals.remove(id);
 			eclipseContext.set(LOCAL_CONTEXTS, locals);
 		}
