@@ -66,7 +66,10 @@ public final class JSONObject {
 	}
 
 	public String[] getStrings(String name) {
-		return (String[]) map.get(name);
+		List result = (List) map.get(name);
+		if (result == null)
+			return null;
+		return (String[]) result.toArray(new String[result.size()]);
 	}
 
 	private static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -156,15 +159,13 @@ public final class JSONObject {
 		Map map = new HashMap();
 		while (true) {
 			if (it.current() != '"')
-				throw error(
-						"expected a string start '\"' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
+				throw error("expected a string start '\"' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
 			String key = parseString(it);
 			if (map.containsKey(key))
 				throw error("' already defined" + "key '" + key, it); //$NON-NLS-1$ //$NON-NLS-2$
 			parseWhitespace(it);
 			if (it.current() != ':')
-				throw error(
-						"expected a pair separator ':' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
+				throw error("expected a pair separator ':' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
 			it.next();
 			parseWhitespace(it);
 			Object value = parseValue(it);
@@ -177,8 +178,7 @@ public final class JSONObject {
 			}
 
 			if (it.current() != '}')
-				throw error(
-						"expected an object close '}' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
+				throw error("expected an object close '}' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
 			break;
 		}
 		it.next();
@@ -205,8 +205,7 @@ public final class JSONObject {
 			}
 
 			if (it.current() != ']')
-				throw error(
-						"expected an array close ']' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
+				throw error("expected an array close ']' but was '" + it.current() + "'", it); //$NON-NLS-1$ //$NON-NLS-2$
 			break;
 		}
 		it.next();
@@ -227,8 +226,7 @@ public final class JSONObject {
 	private static Object parseNumber(CharacterIterator it) {
 		StringBuffer buffer = new StringBuffer();
 		char c = it.current();
-		while (Character.isDigit(c) || c == '-' || c == '+' || c == '.' || c == 'e'
-				|| c == 'E') {
+		while (Character.isDigit(c) || c == '-' || c == '+' || c == '.' || c == 'e' || c == 'E') {
 			buffer.append(c);
 			c = it.next();
 		}
@@ -248,8 +246,7 @@ public final class JSONObject {
 		StringBuffer buffer = new StringBuffer();
 		while (c != '"') {
 			if (Character.isISOControl(c))
-				throw error(
-						"illegal iso control character: '" + Integer.toHexString(c) + "'", it); //$NON-NLS-1$ //$NON-NLS-2$);
+				throw error("illegal iso control character: '" + Integer.toHexString(c) + "'", it); //$NON-NLS-1$ //$NON-NLS-2$);
 
 			if (c == '\\') {
 				c = it.next();
