@@ -28,6 +28,8 @@ public class ServicesTestSuite extends TestSuite {
 		addTestSuite(ContextInjectionTest.class);
 		addTestSuite(ContextInjectionDisposeTest.class);
 		addTestSuite(ContextDynamicTest.class);
+		addTestSuite(JSONObjectTest.class);
+		addTestSuite(ReparentingTest.class);
 		addTestSuite(RunAndTrackTest.class);
 	}
 }
