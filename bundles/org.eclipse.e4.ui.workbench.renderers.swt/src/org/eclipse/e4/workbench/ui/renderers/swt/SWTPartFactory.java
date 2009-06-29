@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MItem;
@@ -25,17 +23,16 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
-import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -49,14 +46,9 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartFactory extends PartFactory {
@@ -67,28 +59,25 @@ public abstract class SWTPartFactory extends PartFactory {
 		Widget widget = (Widget) widgetObject;
 		Menu swtMenu;
 
-		if (widget instanceof MenuItem) {
-			swtMenu = new Menu(((MenuItem) widget).getParent().getShell(),
-					SWT.DROP_DOWN);
-			((MenuItem) widget).setMenu(swtMenu);
-		} else if (widget instanceof ToolItem) {
-			swtMenu = new Menu(((ToolItem) widget).getParent().getShell(),
-					SWT.POP_UP);
-		} else if (widget instanceof Decorations) {
-			swtMenu = new Menu((Decorations) widget, SWT.BAR);
+		MenuManager manager = new MenuManager();
+
+		if (widget instanceof Decorations) {
+			swtMenu = manager.createMenuBar((Decorations) widgetObject);
 			((Decorations) widget).setMenuBar(swtMenu);
 		} else if (widget instanceof Control) {
-			swtMenu = new Menu((Control) widget);
+			swtMenu = manager.createContextMenu((Control) widget);
 			// ((Control) widget).setMenu(swtMenu);
 		} else {
 			throw new IllegalArgumentException(
 					"The widget must be MenuItem, Decorations, or Control but is: " //$NON-NLS-1$
 							+ widgetObject);
 		}
+		swtMenu.setData(PartFactory.OWNING_ME, menu);
 		for (MMenuItem menuItem : menu.getItems()) {
-			createMenuItem(part, swtMenu, menuItem);
+			createMenuItem(part, manager, menuItem);
 		}
 
+		manager.update(true);
 		return swtMenu;
 	}
 
@@ -109,225 +98,63 @@ public abstract class SWTPartFactory extends PartFactory {
 			RowLayout rl = (RowLayout) composite.getLayout();
 			orientation = rl.type;
 		}
-		ToolBar swtToolBar = new ToolBar(composite, SWT.FLAT | orientation);
+
+		ToolBarManager manager = new ToolBarManager(SWT.FLAT | orientation);
+		ToolBar swtToolBar = manager.createControl(composite);
 		swtToolBar.setData(PartFactory.OWNING_ME, toolbar);
 
 		EList<MToolBarItem> items = toolbar.getItems();
 		if (items != null && items.size() > 0) {
 			for (MToolBarItem toolBarItem : toolbar.getItems()) {
-				createToolBarItem(part, swtToolBar, toolBarItem);
+				createToolBarItem(part, manager, toolBarItem);
 			}
 		}
 
+		manager.update(true);
 		return swtToolBar;
 	}
 
-	private IEclipseContext getFocusContext(Display display) {
-		// find the first useful part in the model
-		Control control = display.getFocusControl();
-		Object partObj = null;
-		while (control != null && !(partObj instanceof MPart<?>)) {
-			partObj = control.getData(OWNING_ME);
-			control = control.getParent();
-		}
-		if (partObj == null) {
-			return context;
-		}
-		// get the applicable context (or parent)
-		MPart<?> part = (MPart<?>) partObj;
-		return getContext(part);
-	}
-
-	private void createToolBarItem(MPart<?> part, ToolBar swtTB,
+	private void createToolBarItem(MPart<?> part, ToolBarManager manager,
 			final MToolBarItem toolBarItem) {
-		int style = SWT.PUSH;
-		final ToolItem newToolItem = new ToolItem(swtTB, style);
-
-		if (toolBarItem.getName() != null)
-			newToolItem.setText(toolBarItem.getName());
-		newToolItem.setToolTipText(toolBarItem.getTooltip());
-		newToolItem.setImage(getImage(toolBarItem));
-		newToolItem.setData(PartFactory.OWNING_ME, toolBarItem);
-
-		toolBarItem.eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MITEM__NAME.equals(msg
-						.getFeature())) {
-					final MHandledItem i = (MHandledItem) msg.getNotifier();
-					newToolItem.getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							if (!newToolItem.isDisposed()) {
-								newToolItem.setText(i.getName());
-								newToolItem.getParent().pack();
-							}
-						}
-					});
-				} else if (ApplicationPackage.Literals.MITEM__ICON_URI
-						.equals(msg.getFeature())) {
-					final MHandledItem i = (MHandledItem) msg.getNotifier();
-					newToolItem.getDisplay().asyncExec(new Runnable() {
-						public void run() {
-							if (!newToolItem.isDisposed()) {
-								newToolItem.setImage(getImage(i));
-								newToolItem.getParent().pack();
-							}
-						}
-					});
-				}
-			}
-		});
-
-		if (toolBarItem.getCommand() != null) {
-			newToolItem.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					if (canExecuteItem(newToolItem.getDisplay(), toolBarItem)) {
-						executeItem(newToolItem.getDisplay(), toolBarItem);
-					}
-				}
-			});
-			newToolItem.getDisplay().timerExec(250, new Runnable() {
-				public void run() {
-					if (newToolItem.isDisposed()) {
-						return;
-					}
-					newToolItem.setEnabled(canExecuteItem(newToolItem
-							.getDisplay(), toolBarItem));
-					newToolItem.getDisplay().timerExec(100, this);
-				}
-			});
-		}
+		manager.add(new HandledContributionItem(toolBarItem, context));
 	}
 
-	protected boolean canExecuteItem(Display display, final MHandledItem item) {
-		IEclipseContext context = getFocusContext(display);
-		EHandlerService hs = (EHandlerService) context
-				.get(EHandlerService.class.getName());
-		return hs.canExecute(item.getCommand().getId());
-	}
-
-	protected Object executeItem(Display display, final MHandledItem item) {
-		IEclipseContext context = getFocusContext(display);
-		EHandlerService hs = (EHandlerService) context
-				.get(EHandlerService.class.getName());
-		return hs.executeHandler(item.getCommand().getId());
-	}
-
-	private void createMenuItem(MPart<?> part, final Menu parentMenu,
+	private void createMenuItem(MPart<?> part, final MenuManager manager,
 			final MHandledItem handledItem) {
-
-		int style = SWT.PUSH;
 		if (handledItem instanceof MMenuItemRenderer) {
-			final MenuItem newMenuItem = new MenuItem(parentMenu, style);
-			newMenuItem.setData(handledItem);
-			newMenuItem.setText(handledItem.getId());
 			final IContributionItem renderer = (IContributionItem) ((MMenuItemRenderer) handledItem)
 					.getRenderer();
-			final ArrayList<IMenuListener> fakeListeners = new ArrayList<IMenuListener>();
-			final MenuManager fakeManager = new MenuManager() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see
-				 * org.eclipse.jface.action.MenuManager#addMenuListener(org.
-				 * eclipse.jface.action.IMenuListener)
-				 */
-				@Override
-				public void addMenuListener(IMenuListener listener) {
-					fakeListeners.add(listener);
-				}
-			};
-			fakeManager.add(renderer);
-			parentMenu.addListener(SWT.Show, new Listener() {
-				public void handleEvent(Event event) {
-					final MenuItem[] items = parentMenu.getItems();
-					int idx = 0;
-					for (; idx < items.length && items[idx] != newMenuItem; idx++)
-						;
-					idx++;
-					for (int i = idx; i < items.length
-							&& !(items[i].getData() instanceof MHandledItem); i++) {
-						items[i].dispose();
-					}
-					final IMenuListener[] array = fakeListeners
-							.toArray(new IMenuListener[fakeListeners.size()]);
-					for (IMenuListener im : array) {
-						im.menuAboutToShow(fakeManager);
-					}
-					renderer.fill(parentMenu, idx);
-				}
-			});
+			manager.add(renderer);
 			return;
 		}
 
 		if (handledItem instanceof MMenuItem) {
 			final MMenuItem mItem = (MMenuItem) handledItem;
+			final String id = mItem.getId();
 			if (mItem.isSeparator()) {
 				if (!mItem.isVisible()) {
-					return;
+					if (id != null) {
+						manager.add(new GroupMarker(id));
+					}
+				} else {
+					if (id == null) {
+						manager.add(new Separator());
+					} else {
+						manager.add(new Separator(id));
+					}
 				}
-				style = SWT.SEPARATOR;
+				return;
 			} else if (mItem.getMenu() != null) {
-				style = SWT.CASCADE;
+				MenuManager item = new MenuManager(mItem.getName(), id);
+				manager.add(item);
+				for (MMenuItem menuItem : mItem.getMenu().getItems()) {
+					createMenuItem(part, item, menuItem);
+				}
+				return;
 			}
 		}
 
-		final MenuItem newMenuItem = new MenuItem(parentMenu, style);
-		newMenuItem.setData(handledItem);
-		if (style != SWT.SEPARATOR) {
-			newMenuItem.setText(handledItem.getName());
-			newMenuItem.setImage(getImage(handledItem));
-			newMenuItem.setEnabled(true);
-			handledItem.eAdapters().add(new AdapterImpl() {
-				@Override
-				public void notifyChanged(Notification msg) {
-					if (ApplicationPackage.Literals.MITEM__NAME.equals(msg
-							.getFeature())) {
-						final MHandledItem i = (MHandledItem) msg.getNotifier();
-						newMenuItem.getDisplay().asyncExec(new Runnable() {
-							public void run() {
-								if (!newMenuItem.isDisposed()) {
-									newMenuItem.setText(i.getName());
-								}
-							}
-						});
-					} else if (ApplicationPackage.Literals.MITEM__ICON_URI
-							.equals(msg.getFeature())) {
-						final MHandledItem i = (MHandledItem) msg.getNotifier();
-						newMenuItem.getDisplay().asyncExec(new Runnable() {
-							public void run() {
-								if (!newMenuItem.isDisposed()) {
-									newMenuItem.setImage(getImage(i));
-								}
-							}
-						});
-					}
-				}
-			});
-		}
-
-		if (handledItem.getMenu() != null) {
-			createMenu(part, newMenuItem, handledItem.getMenu());
-		}
-		if (handledItem.getCommand() != null) {
-			newMenuItem.addListener(SWT.Selection, new Listener() {
-				public void handleEvent(Event event) {
-					if (canExecuteItem(newMenuItem.getDisplay(), handledItem)) {
-						executeItem(newMenuItem.getDisplay(), handledItem);
-					}
-				}
-			});
-			parentMenu.addListener(SWT.Show, new Listener() {
-
-				public void handleEvent(Event event) {
-					if (newMenuItem.isDisposed()) {
-						return;
-					}
-					newMenuItem.setEnabled(canExecuteItem(newMenuItem
-							.getDisplay(), handledItem));
-				}
-			});
-		}
+		manager.add(new HandledContributionItem(handledItem, context));
 	}
 
 	public <P extends MPart<?>> void processContents(MPart<P> me) {
