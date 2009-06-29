@@ -42,6 +42,9 @@ import org.eclipse.help.webapp.IFilter;
  * Performs transfer of data from eclipse to a jsp/servlet
  */
 public class EclipseConnector {
+	public interface INotFoundCallout {
+		public void notFound(String url);
+	}
 	private static final String errorPageBegin = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
 			+ "<html><head>\n" //$NON-NLS-1$
 			+ "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" //$NON-NLS-1$
@@ -58,6 +61,7 @@ public class EclipseConnector {
 			new DynamicXHTMLFilter() };
 
 	private ServletContext context;
+	private static INotFoundCallout notFoundCallout = null; // For JUnit Testing
 	 
  	public EclipseConnector(ServletContext context) {
 		this.context= context;
@@ -70,6 +74,7 @@ public class EclipseConnector {
 			String url = getURL(req);
 			if (url == null)
 				return;
+		    //System.out.println("Transfer " + url); //$NON-NLS-1$
 			// Redirect if the request includes PLUGINS_ROOT and is not a content request
 			int index = url.lastIndexOf(HelpURLConnection.PLUGINS_ROOT);
 			if (index!= -1 && url.indexOf("content/" + HelpURLConnection.PLUGINS_ROOT) == -1) {  //$NON-NLS-1$
@@ -110,6 +115,9 @@ public class EclipseConnector {
 				is = con.getInputStream();
 			} catch (IOException ioe) {
 			    pageNotFound = true;
+			    if (notFoundCallout != null) {
+			    	notFoundCallout.notFound(url);
+			    }
 				if (requiresErrorPage(lowerCaseuRL)) { 
 					// Try to load the error page if defined
 		            String errorPage = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, "page_not_found", null, null); //$NON-NLS-1$
@@ -329,5 +337,9 @@ public class EclipseConnector {
 		if (url.startsWith("/")) //$NON-NLS-1$
 			url = url.substring(1);
 		return url;
+	}
+	
+	public static void setNotFoundCallout(INotFoundCallout callout) {
+		notFoundCallout = callout;
 	}
 }

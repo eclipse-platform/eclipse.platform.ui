@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+      <servlet
+            alias="/linkcheck"
+            class="org.eclipse.ua.tests.doc.internal.LinkCheckServlet"
+            httpcontextId="org.eclipse.help.webapp.help">
+      </servlet>
+       <serviceSelector
+            filter="(other.info=org.eclipse.help)">
+      </serviceSelector>
+   </extension>   
+   <extension
+         point="org.eclipse.ui.actionSets">
+      <actionSet
+            id="org.eclipse.help.pageloader.actionSet"
+            label="Link Check Action Set"
+            visible="true">
+         <action
+               class="org.eclipse.ua.tests.doc.internal.actions.LoadTocAction"
+               id="org.eclipse.ua.tests.loadToc"
+               label="Check TOC links"
+               menubarPath="help/group.tutorials"
+               style="push">
+         </action>
+      </actionSet>
+   </extension>
+   
+
+</plugin>
