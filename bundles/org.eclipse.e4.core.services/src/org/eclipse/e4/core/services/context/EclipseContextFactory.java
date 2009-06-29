@@ -19,31 +19,28 @@ import org.eclipse.e4.internal.core.services.osgi.OSGiContextStrategy;
 import org.osgi.framework.BundleContext;
 
 /**
- * A factory for creating a simple context instance. Simple contexts must be
- * filled in programmatically by calling
- * {@link IEclipseContext#set(String, Object)} to provide context values, or by
- * providing an {@link ILookupStrategy} to be used to initialize values not
- * currently defined in the context.
+ * A factory for creating a simple context instance. Simple contexts must be filled in
+ * programmatically by calling {@link IEclipseContext#set(String, Object)} to provide context
+ * values, or by providing an {@link ILookupStrategy} to be used to initialize values not currently
+ * defined in the context.
  */
 public final class EclipseContextFactory {
 
 	/**
-	 * Creates and returns a new empty context with no parent, using the default
-	 * context strategy.
+	 * Creates and returns a new empty context with no parent, using the default context strategy.
 	 * 
 	 * @return A new empty context with no parent context.
 	 */
 	static public IEclipseContext create() {
-		return new EclipseContext(null, null);
+		return create(null, null);
 	}
 
 	/**
-	 * Creates and returns a new empty context with the given parent and
-	 * strategy.
+	 * Creates and returns a new empty context with the given parent and strategy.
 	 * 
 	 * @param parent
-	 *            The context parent to delegate lookup of values not defined in
-	 *            the returned context.
+	 *            The context parent to delegate lookup of values not defined in the returned
+	 *            context.
 	 * @param strategy
 	 *            The context strategy to use in this context
 	 * @return A new empty context with the given parent and strategy
@@ -60,7 +57,7 @@ public final class EclipseContextFactory {
 	 * @return A context containing all OSGi services
 	 */
 	public static IEclipseContext createServiceContext(BundleContext bundleContext) {
-		IEclipseContext result = new EclipseContext(null, new OSGiContextStrategy(bundleContext));
+		IEclipseContext result = create(null, new OSGiContextStrategy(bundleContext));
 		result.set(IContextConstants.DEBUG_STRING,
 				"OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
 		return result;
