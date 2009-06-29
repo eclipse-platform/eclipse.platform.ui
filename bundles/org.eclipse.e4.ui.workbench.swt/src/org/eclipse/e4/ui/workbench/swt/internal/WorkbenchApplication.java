@@ -72,7 +72,7 @@ public class WorkbenchApplication implements IApplication {
 					IEclipseContext appContext = EclipseContextFactory.create(
 							serviceContext, null);
 					appContext.set(IContextConstants.DEBUG_STRING,
-							"application"); //$NON-NLS-1$
+							"WorkbenchAppContext"); //$NON-NLS-1$
 					appContext.set(IResourceUtiltities.class.getName(),
 							new ResourceUtility(Activator.getDefault()
 									.getBundleAdmin()));
