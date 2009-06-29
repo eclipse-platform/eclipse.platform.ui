@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 265561
+ *     Matthew Hall - bugs 265561, 278311
  ******************************************************************************/
 
 package org.eclipse.core.databinding.property;
@@ -36,7 +36,7 @@ public interface INativePropertyListener {
 	 * property source.
 	 * 
 	 * @param source
-	 *            the property source
+	 *            the property source (may be null)
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void addTo(Object source);
@@ -46,7 +46,7 @@ public interface INativePropertyListener {
 	 * property source.
 	 * 
 	 * @param source
-	 *            the property source
+	 *            the property source (may be null)
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public void removeFrom(Object source);
