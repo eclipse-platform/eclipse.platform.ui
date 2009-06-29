@@ -151,7 +151,7 @@ public class Workbench implements IWorkbench {
 				UISchedulerStrategy.getInstance());
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), mainContext));
-		mainContext.set(IContextConstants.DEBUG_STRING, "workbenchContext"); //$NON-NLS-1$
+		mainContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
 
 		// setup for commands and handlers
 		if (contributionFactory != null) {
@@ -354,9 +354,8 @@ public class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Create the context chain. It both creates the chain for the current
-	 * model, and adds eAdapters so it can add new contexts when new model items
-	 * are added.
+	 * Create the context chain. It both creates the chain for the current model, and adds eAdapters
+	 * so it can add new contexts when new model items are added.
 	 * 
 	 * @param parentContext
 	 *            The parent context
@@ -370,6 +369,7 @@ public class Workbench implements IWorkbench {
 		} else {
 			context = EclipseContextFactory
 					.create(parentContext, UISchedulerStrategy.getInstance());
+			context.set(IContextConstants.DEBUG_STRING, "PartContext(" + part + ')'); //$NON-NLS-1$
 		}
 
 		Activator.trace(Policy.DEBUG_CONTEXTS, "initializeContext(" //$NON-NLS-1$
@@ -551,8 +551,8 @@ public class Workbench implements IWorkbench {
 	}
 
 	/*
-	 * For use when there is no real styling engine present. Has no behaviour
-	 * but conforms to IStylingEngine API.
+	 * For use when there is no real styling engine present. Has no behaviour but conforms to
+	 * IStylingEngine API.
 	 * 
 	 * @param appContext
 	 */
