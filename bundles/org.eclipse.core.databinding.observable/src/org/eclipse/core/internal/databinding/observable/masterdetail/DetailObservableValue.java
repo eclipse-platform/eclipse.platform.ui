@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 164653, 147515
  *     Ovidio Mallo - bug 241318
- *     Matthew Hall - bugs 247875, 246782, 249526, 268022
+ *     Matthew Hall - bugs 247875, 246782, 249526, 268022, 251424
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
 
@@ -73,24 +73,25 @@ public class DetailObservableValue extends AbstractObservableValue implements
 			}
 		});
 
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				updateInnerObservableValue();
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			updateInnerObservableValue();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					Object oldValue = doGetValue();
-					updateInnerObservableValue();
-					fireValueChange(Diffs.createValueDiff(oldValue,
-							doGetValue()));
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				Object oldValue = doGetValue();
+				updateInnerObservableValue();
+				fireValueChange(Diffs.createValueDiff(oldValue, doGetValue()));
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 		}
 	};
 
@@ -103,12 +104,13 @@ public class DetailObservableValue extends AbstractObservableValue implements
 		if (currentOuterValue == null) {
 			innerObservableValue = null;
 		} else {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					innerObservableValue = (IObservableValue) factory
-							.createObservable(currentOuterValue);
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				innerObservableValue = (IObservableValue) factory
+						.createObservable(currentOuterValue);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
 					innerObservableValue.getRealm());
 
@@ -125,24 +127,24 @@ public class DetailObservableValue extends AbstractObservableValue implements
 
 	public void doSetValue(final Object value) {
 		if (innerObservableValue != null) {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					innerObservableValue.setValue(value);
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				innerObservableValue.setValue(value);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 		}
 	}
 
 	public Object doGetValue() {
 		if (innerObservableValue == null)
 			return null;
-		final Object[] result = new Object[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = innerObservableValue.getValue();
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return innerObservableValue.getValue();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public Object getValueType() {

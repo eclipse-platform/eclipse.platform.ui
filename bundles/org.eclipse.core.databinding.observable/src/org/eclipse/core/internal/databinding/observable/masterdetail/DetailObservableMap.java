@@ -7,7 +7,8 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 221704)
- *     Matthew Hall - bug 223114, 226289, 247875, 246782, 249526, 268022
+ *     Matthew Hall - bug 223114, 226289, 247875, 246782, 249526, 268022,
+ *                    251424
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -48,13 +49,14 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 
 	private IValueChangeListener masterChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					Map oldMap = new HashMap(wrappedMap);
-					updateDetailMap();
-					fireMapChange(Diffs.computeMapDiff(oldMap, wrappedMap));
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				Map oldMap = new HashMap(wrappedMap);
+				updateDetailMap();
+				fireMapChange(Diffs.computeMapDiff(oldMap, wrappedMap));
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 		}
 	};
 
@@ -93,11 +95,12 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 			}
 		});
 
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				updateDetailMap();
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			updateDetailMap();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 		master.addValueChangeListener(masterChangeListener);
 	}
 
@@ -112,12 +115,13 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 			detailMap = null;
 			wrappedMap = Collections.EMPTY_MAP;
 		} else {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					detailMap = (IObservableMap) detailFactory
-							.createObservable(masterValue);
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				detailMap = (IObservableMap) detailFactory
+						.createObservable(masterValue);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 			DetailObservableHelper.warnIfDifferentRealms(getRealm(), detailMap
 					.getRealm());
 			wrappedMap = detailMap;
@@ -149,39 +153,39 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 	}
 
 	public Object put(final Object key, final Object value) {
-		final Object[] result = new Object[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = detailMap.put(key, value);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return detailMap.put(key, value);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public void putAll(final Map map) {
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				detailMap.putAll(map);
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			detailMap.putAll(map);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public Object remove(final Object key) {
-		final Object[] result = new Object[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = detailMap.remove(key);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return detailMap.remove(key);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public void clear() {
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				detailMap.clear();
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			detailMap.clear();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public synchronized void dispose() {

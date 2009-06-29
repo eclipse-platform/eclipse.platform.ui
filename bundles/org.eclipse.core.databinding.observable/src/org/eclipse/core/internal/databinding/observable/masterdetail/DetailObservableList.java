@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 147515
- *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022
+ *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022, 251424
  *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -82,23 +82,25 @@ public class DetailObservableList extends ObservableList implements IObserving {
 			}
 		});
 
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				updateInnerObservableList();
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			updateInnerObservableList();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					List oldList = new ArrayList(wrappedList);
-					updateInnerObservableList();
-					fireListChange(Diffs.computeListDiff(oldList, wrappedList));
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				List oldList = new ArrayList(wrappedList);
+				updateInnerObservableList();
+				fireListChange(Diffs.computeListDiff(oldList, wrappedList));
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 		}
 	};
 
@@ -112,12 +114,13 @@ public class DetailObservableList extends ObservableList implements IObserving {
 			innerObservableList = null;
 			wrappedList = Collections.EMPTY_LIST;
 		} else {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					innerObservableList = (IObservableList) factory
-							.createObservable(currentOuterValue);
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				innerObservableList = (IObservableList) factory
+						.createObservable(currentOuterValue);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
 					innerObservableList.getRealm());
 			wrappedList = innerObservableList;
@@ -132,112 +135,105 @@ public class DetailObservableList extends ObservableList implements IObserving {
 	}
 
 	public boolean add(final Object o) {
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.add(o);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.add(o);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public void add(final int index, final Object element) {
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				wrappedList.add(index, element);
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			wrappedList.add(index, element);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean remove(final Object o) {
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.remove(o);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.remove(o);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public Object set(final int index, final Object element) {
-		final Object[] result = new Object[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.set(index, element);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.set(index, element);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public Object move(final int oldIndex, final int newIndex) {
 		if (innerObservableList != null) {
-			final Object[] result = new Object[1];
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					result[0] = innerObservableList.move(oldIndex, newIndex);
-				}
-			});
-			return result[0];
+			ObservableTracker.setIgnore(true);
+			try {
+				return innerObservableList.move(oldIndex, newIndex);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 		}
 		return super.move(oldIndex, newIndex);
 	}
 
 	public Object remove(final int index) {
-		final Object[] result = new Object[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.remove(index);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.remove(index);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean addAll(final Collection c) {
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.addAll(c);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.addAll(c);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean addAll(final int index, final Collection c) {
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.addAll(index, c);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.addAll(index, c);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean removeAll(final Collection c) {
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.removeAll(c);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.removeAll(c);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean retainAll(final Collection c) {
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedList.retainAll(c);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedList.retainAll(c);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public void clear() {
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				wrappedList.clear();
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			wrappedList.clear();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public synchronized void dispose() {

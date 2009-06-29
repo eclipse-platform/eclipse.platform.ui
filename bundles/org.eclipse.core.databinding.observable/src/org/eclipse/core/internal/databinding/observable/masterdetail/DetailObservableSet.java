@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022
+ *     Matthew Hall - bug 221351, 247875, 246782, 249526, 268022, 251424
  *     Ovidio Mallo - bug 241318
  *******************************************************************************/
 package org.eclipse.core.internal.databinding.observable.masterdetail;
@@ -77,23 +77,25 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 			}
 		});
 
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				updateInnerObservableSet();
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			updateInnerObservableSet();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 		outerObservableValue.addValueChangeListener(outerChangeListener);
 	}
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					Set oldSet = new HashSet(wrappedSet);
-					updateInnerObservableSet();
-					fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				Set oldSet = new HashSet(wrappedSet);
+				updateInnerObservableSet();
+				fireSetChange(Diffs.computeSetDiff(oldSet, wrappedSet));
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 		}
 	};
 
@@ -107,12 +109,13 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 			innerObservableSet = null;
 			wrappedSet = Collections.EMPTY_SET;
 		} else {
-			ObservableTracker.runAndIgnore(new Runnable() {
-				public void run() {
-					innerObservableSet = (IObservableSet) factory
-							.createObservable(currentOuterValue);
-				}
-			});
+			ObservableTracker.setIgnore(true);
+			try {
+				innerObservableSet = (IObservableSet) factory
+						.createObservable(currentOuterValue);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 			DetailObservableHelper.warnIfDifferentRealms(getRealm(),
 					innerObservableSet.getRealm());
 			wrappedSet = innerObservableSet;
@@ -130,66 +133,62 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 
 	public boolean add(final Object o) {
 		getterCalled();
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedSet.add(o);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedSet.add(o);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean remove(final Object o) {
 		getterCalled();
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedSet.remove(o);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedSet.remove(o);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean addAll(final Collection c) {
 		getterCalled();
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedSet.addAll(c);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedSet.addAll(c);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean removeAll(final Collection c) {
 		getterCalled();
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedSet.removeAll(c);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedSet.removeAll(c);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public boolean retainAll(final Collection c) {
 		getterCalled();
-		final boolean[] result = new boolean[1];
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				result[0] = wrappedSet.retainAll(c);
-			}
-		});
-		return result[0];
+		ObservableTracker.setIgnore(true);
+		try {
+			return wrappedSet.retainAll(c);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public void clear() {
 		getterCalled();
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				wrappedSet.clear();
-			}
-		});
+		ObservableTracker.setIgnore(true);
+		try {
+			wrappedSet.clear();
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	public synchronized void dispose() {

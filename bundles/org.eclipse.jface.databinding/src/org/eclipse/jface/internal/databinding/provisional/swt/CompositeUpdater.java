@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Boris Bokowski, IBM Corporation - initial API and implementation
+ *     Matthew Hall - bug 251424
  *******************************************************************************/
 package org.eclipse.jface.internal.databinding.provisional.swt;
 
@@ -29,7 +30,9 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 
 /**
- * NON-API - This class can be used to update a composite with automatic dependency tracking.
+ * NON-API - This class can be used to update a composite with automatic
+ * dependency tracking.
+ * 
  * @since 1.1
  * 
  */
@@ -94,10 +97,11 @@ public abstract class CompositeUpdater {
 			}
 		}
 	}
-	
+
 	private class LayoutRunnable implements Runnable {
 		private boolean posted = false;
 		private Set controlsToLayout = new HashSet();
+
 		void add(Control toLayout) {
 			controlsToLayout.add(toLayout);
 			if (!posted) {
@@ -105,18 +109,23 @@ public abstract class CompositeUpdater {
 				theComposite.getDisplay().asyncExec(this);
 			}
 		}
+
 		public void run() {
 			posted = false;
-			theComposite.getShell().layout((Control[])controlsToLayout.toArray(new Control[controlsToLayout.size()]));
+			theComposite.getShell().layout(
+					(Control[]) controlsToLayout
+							.toArray(new Control[controlsToLayout.size()]));
 			controlsToLayout.clear();
 		}
 	}
-	
+
 	private LayoutRunnable layoutRunnable = new LayoutRunnable();
-	
+
 	/**
-	 * To be called from {@link #updateWidget(Widget, Object)} or {@link #createWidget(int)}
-	 * if this updater's composite's layout may need to be updated. 
+	 * To be called from {@link #updateWidget(Widget, Object)} or
+	 * {@link #createWidget(int)} if this updater's composite's layout may need
+	 * to be updated.
+	 * 
 	 * @param control
 	 * @since 1.2
 	 */
@@ -137,7 +146,8 @@ public abstract class CompositeUpdater {
 			for (int i = 0; i < diffs.length; i++) {
 				ListDiffEntry listDiffEntry = diffs[i];
 				if (listDiffEntry.isAddition()) {
-					createChild(listDiffEntry.getElement(), listDiffEntry.getPosition());
+					createChild(listDiffEntry.getElement(), listDiffEntry
+							.getPosition());
 				} else {
 					disposeWidget(listDiffEntry.getPosition());
 				}
@@ -169,15 +179,17 @@ public abstract class CompositeUpdater {
 
 		model.addListChangeListener(privateInterface);
 		theComposite.addDisposeListener(privateInterface);
-		ObservableTracker.runAndIgnore(new Runnable(){
-			public void run() {
-				int index = 0;
-				for (Iterator it = CompositeUpdater.this.model.iterator(); it.hasNext();) {
-					Object element = it.next();
-					createChild(element, index++);
-				}
+		ObservableTracker.setIgnore(true);
+		try {
+			int index = 0;
+			for (Iterator it = CompositeUpdater.this.model.iterator(); it
+					.hasNext();) {
+				Object element = it.next();
+				createChild(element, index++);
 			}
-		});
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	/**
@@ -235,7 +247,8 @@ public abstract class CompositeUpdater {
 
 	void createChild(Object element, int index) {
 		Widget newChild = createWidget(index);
-		final UpdateRunnable updateRunnable = new UpdateRunnable(newChild, element);
+		final UpdateRunnable updateRunnable = new UpdateRunnable(newChild,
+				element);
 		newChild.setData(updateRunnable);
 		updateRunnable.updateIfNecessary();
 	}

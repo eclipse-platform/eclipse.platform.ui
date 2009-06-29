@@ -7,14 +7,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 210115, 146397, 249526, 262269
+ *     Matthew Hall - bugs 210115, 146397, 249526, 262269, 251424
  *******************************************************************************/
 package org.eclipse.core.databinding.observable;
 
 import java.util.Set;
 
+import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.identity.IdentitySet;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 
 /**
  * This class makes it possible to monitor whenever an IObservable is read from.
@@ -70,6 +73,8 @@ public class ObservableTracker {
 
 	private static ThreadLocal currentObservableCreatedSet = new ThreadLocal();
 
+	private static ThreadLocal currentIgnoreCount = new ThreadLocal();
+
 	/**
 	 * Invokes the given runnable, and returns the set of IObservables that were
 	 * read by the runnable. If the runnable calls this method recursively, the
@@ -93,12 +98,14 @@ public class ObservableTracker {
 				.get();
 		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
 				.get();
+		Integer lastIgnore = (Integer) currentIgnoreCount.get();
 
 		Set observableSet = new IdentitySet();
 		// Push the new listeners to the top of the stack
 		currentGetterCalledSet.set(observableSet);
 		currentChangeListener.set(changeListener);
 		currentStaleListener.set(staleListener);
+		currentIgnoreCount.set(null);
 		try {
 			runnable.run();
 		} finally {
@@ -107,6 +114,8 @@ public class ObservableTracker {
 			currentGetterCalledSet.set(lastObservableSet);
 			currentChangeListener.set(lastChangeListener);
 			currentStaleListener.set(lastStaleListener);
+			checkUnmatchedIgnore(runnable);
+			currentIgnoreCount.set(lastIgnore);
 		}
 
 		return (IObservable[]) observableSet
@@ -131,49 +140,85 @@ public class ObservableTracker {
 	 */
 	public static IObservable[] runAndCollect(Runnable runnable) {
 		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
+		Integer lastIgnore = (Integer) currentIgnoreCount.get();
 
 		Set observableSet = new IdentitySet();
 		// Push the new listeners to the top of the stack
 		currentObservableCreatedSet.set(observableSet);
+		currentIgnoreCount.set(null);
 		try {
 			runnable.run();
 		} finally {
 			// Pop the new listener off the top of the stack (by restoring the
 			// previous listener)
 			currentObservableCreatedSet.set(lastObservableCreatedSet);
+			checkUnmatchedIgnore(runnable);
+			currentIgnoreCount.set(lastIgnore);
 		}
 
 		return (IObservable[]) observableSet
 				.toArray(new IObservable[observableSet.size()]);
 	}
 
+	private static void checkUnmatchedIgnore(Runnable runnable) {
+		if (isIgnore()) {
+			Policy
+					.getLog()
+					.log(
+							new Status(
+									IStatus.ERROR,
+									Policy.JFACE_DATABINDING,
+									"There were " //$NON-NLS-1$
+											+ currentIgnoreCount.get()
+											+ " unmatched setIgnore(true) invocations in runnable " //$NON-NLS-1$
+											+ runnable));
+		}
+	}
+
+	/**
+	 * If the argument is <code>true</code>, causes subsequent calls to
+	 * {@link #getterCalled(IObservable)} and
+	 * {@link #observableCreated(IObservable)} to be ignored on the current
+	 * thread. When the flag is set to <code>false</code>, calls to
+	 * {@link #getterCalled(IObservable)} and
+	 * {@link #observableCreated(IObservable)} will resume gathering
+	 * observables. Nested calls to this method are stacked.
+	 * 
+	 * @param ignore
+	 *            the new ignore state
+	 * 
+	 * @exception IllegalStateException
+	 *                if
+	 *                <code>ignore<code> is false and the ignore count is already zero.
+	 * 
+	 * @see #getterCalled(IObservable)
+	 * @see #observableCreated(IObservable)
+	 */
+	public static void setIgnore(boolean ignore) {
+		Integer lastCount = (Integer) currentIgnoreCount.get();
+
+		int newCount = (lastCount == null ? 0 : lastCount.intValue())
+				+ (ignore ? 1 : -1);
+
+		if (newCount < 0)
+			throw new IllegalStateException("Ignore count is already zero"); //$NON-NLS-1$
+
+		currentIgnoreCount.set(newCount == 0 ? null : new Integer(newCount));
+	}
+
 	/**
 	 * Runs the given runnable without tracking dependencies.
+	 * 
 	 * @param runnable
 	 * 
 	 * @since 1.1
 	 */
 	public static void runAndIgnore(Runnable runnable) {
-		// Remember the previous value in the listener stack
-		Set lastGetterCalledSet = (Set) currentGetterCalledSet.get();
-		Set lastObservableCreatedSet = (Set) currentObservableCreatedSet.get();
-		IChangeListener lastChangeListener = (IChangeListener) currentChangeListener
-				.get();
-		IStaleListener lastStaleListener = (IStaleListener) currentStaleListener
-				.get();
-		currentGetterCalledSet.set(null);
-		currentObservableCreatedSet.set(null);
-		currentChangeListener.set(null);
-		currentStaleListener.set(null);
+		setIgnore(true);
 		try {
 			runnable.run();
 		} finally {
-			// Pop the new listener off the top of the stack (by restoring the
-			// previous listener)
-			currentGetterCalledSet.set(lastGetterCalledSet);
-			currentObservableCreatedSet.set(lastObservableCreatedSet);
-			currentChangeListener.set(lastChangeListener);
-			currentStaleListener.set(lastStaleListener);
+			setIgnore(false);
 		}
 	}
 
@@ -185,6 +230,10 @@ public class ObservableTracker {
 	private static String toString(IObservable observable) {
 		return observable.getClass().getName() + "@" //$NON-NLS-1$
 				+ Integer.toHexString(System.identityHashCode(observable));
+	}
+
+	private static boolean isIgnore() {
+		return currentIgnoreCount.get() != null;
 	}
 
 	/**
@@ -205,6 +254,9 @@ public class ObservableTracker {
 		if (!realm.isCurrent())
 			Assert.isTrue(false, "Getter called outside realm of observable " //$NON-NLS-1$
 					+ toString(observable));
+
+		if (isIgnore())
+			return;
 
 		Set getterCalledSet = (Set) currentGetterCalledSet.get();
 		if (getterCalledSet != null && getterCalledSet.add(observable)) {
@@ -228,6 +280,8 @@ public class ObservableTracker {
 	 * @since 1.2
 	 */
 	public static void observableCreated(IObservable observable) {
+		if (isIgnore())
+			return;
 		Set observableCreatedSet = (Set) currentObservableCreatedSet.get();
 		if (observableCreatedSet != null) {
 			observableCreatedSet.add(observable);

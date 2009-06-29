@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 237884, 240590, 251003
+ *     Matthew Hall - bug 237884, 240590, 251003, 251424
  *     Ovidio Mallo - bug 238909, 235859
  ******************************************************************************/
 
@@ -247,43 +247,43 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		final IObservable[] dependencies = ObservableTracker.runAndMonitor(
 				validationRunnable, null, null);
 
-		ObservableTracker.runAndIgnore(new Runnable() {
-			public void run() {
-				List newTargets = new ArrayList(Arrays.asList(dependencies));
+		ObservableTracker.setIgnore(true);
+		try {
+			List newTargets = new ArrayList(Arrays.asList(dependencies));
 
-				// This loop is roughly equivalent to:
-				// targets.retainAll(newTargets);
-				// newTargets.removeAll(targets);
-				// Except that dependencies are compared by identity instead of
-				// equality
-				outer: for (int i = targets.size() - 1; i >= 0; i--) {
-					Object oldDependency = targets.get(i);
-					for (Iterator itNew = newTargets.iterator(); itNew
-							.hasNext();) {
-						Object newDependency = itNew.next();
-						if (oldDependency == newDependency) {
-							// Dependency is already known--remove from list of
-							// new dependencies
-							itNew.remove();
-							continue outer;
-						} else if (newDependency == validationStatus
-								|| newDependency == unmodifiableValidationStatus
-								|| newDependency == targets
-								|| newDependency == unmodifiableTargets
-								|| newDependency == models) {
-							// Internal observables should not be dependencies
-							// (prevent dependency loop)
-							itNew.remove();
-						}
+			// This loop is roughly equivalent to:
+			// targets.retainAll(newTargets);
+			// newTargets.removeAll(targets);
+			// Except that dependencies are compared by identity instead of
+			// equality
+			outer: for (int i = targets.size() - 1; i >= 0; i--) {
+				Object oldDependency = targets.get(i);
+				for (Iterator itNew = newTargets.iterator(); itNew.hasNext();) {
+					Object newDependency = itNew.next();
+					if (oldDependency == newDependency) {
+						// Dependency is already known--remove from list of
+						// new dependencies
+						itNew.remove();
+						continue outer;
+					} else if (newDependency == validationStatus
+							|| newDependency == unmodifiableValidationStatus
+							|| newDependency == targets
+							|| newDependency == unmodifiableTargets
+							|| newDependency == models) {
+						// Internal observables should not be dependencies
+						// (prevent dependency loop)
+						itNew.remove();
 					}
-					// Old dependency is no longer a dependency--remove from
-					// targets
-					targets.remove(i);
 				}
-
-				targets.addAll(newTargets);
+				// Old dependency is no longer a dependency--remove from
+				// targets
+				targets.remove(i);
 			}
-		});
+
+			targets.addAll(newTargets);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 
 		// Once the dependencies are up-to-date, we set the new status.
 		validationStatus.setValue(validationRunnable.validationResult);
