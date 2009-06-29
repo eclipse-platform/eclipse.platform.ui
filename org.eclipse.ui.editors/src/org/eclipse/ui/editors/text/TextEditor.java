@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,15 +30,15 @@ import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 
 /**
- * The standard text editor for file resources (<code>IFile</code>).
+ * The standard/default text editor.
  * <p>
- * This editor has id <code>"org.eclipse.ui.DefaultTextEditor"</code>.
- * The editor's context menu has id <code>#TextEditorContext</code>.
- * The editor's ruler context menu has id <code>#TextRulerContext</code>.
+ * This editor has id <code>"org.eclipse.ui.DefaultTextEditor"</code>. The editor's context menu has
+ * id <code>#TextEditorContext</code>. The editor's ruler context menu has id
+ * <code>#TextRulerContext</code>.
  * </p>
  * <p>
- * The workbench will automatically instantiate this class when the default
- * editor is needed for a workbench window.
+ * The workbench will automatically instantiate this class when the default editor is needed for a
+ * workbench window.
  * </p>
  */
 public class TextEditor extends AbstractDecoratedTextEditor {
@@ -52,10 +52,13 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 
 	/**
 	 * Creates a new text editor.
+	 * 
+	 * @see #initializeEditor()
+	 * @see #initializeKeyBindingScopes()
 	 */
 	public TextEditor() {
 		if (getSourceViewerConfiguration() == null) {
-			// configuration not yet set by subclass
+			// Configuration not yet set by subclass in initializeEditor()
 			setSourceViewerConfiguration(new TextSourceViewerConfiguration(getPreferenceStore()));
 		}
 	}

@@ -314,6 +314,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 	/**
 	 * Creates a new text editor.
+	 * 
+	 * @see #initializeEditor()
+	 * @see #initializeKeyBindingScopes()
 	 */
 	public AbstractDecoratedTextEditor() {
 		super();
