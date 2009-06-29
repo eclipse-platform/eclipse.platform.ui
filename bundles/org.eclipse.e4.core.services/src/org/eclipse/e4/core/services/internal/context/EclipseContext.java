@@ -120,7 +120,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				return;
 			}
 			if (EclipseContext.DEBUG)
-				System.out.println("scheduling " + toString()); //$NON-NLS-1$
+				System.out.println("scheduling " + this); //$NON-NLS-1$
 			((EclipseContext) context).schedule(this); // XXX conversion: should
 			// be IEclipseContext
 		}
@@ -196,6 +196,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			startListening();
 			return result;
 		}
+
+		public String toString() {
+			return "TrackableComputationExt(" + runnable + ')'; //$NON-NLS-1$
+		}
 	}
 
 	/**
@@ -206,7 +210,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	static ThreadLocal currentComputation = new ThreadLocal();
 
 	// TODO replace with variable on bundle-specific class
-	public static boolean DEBUG = false;
+	public static boolean DEBUG = true;
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
@@ -215,11 +219,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	final Map localValueComputations = Collections.synchronizedMap(new HashMap());
 	final Map localValues = Collections.synchronizedMap(new HashMap());
 
-	final IEclipseContext parent;
 	private final IEclipseContextStrategy strategy;
 
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
-		this.parent = parent;
 		this.strategy = strategy;
 		set(PARENT, parent);
 	}
@@ -227,6 +229,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public boolean containsKey(String name) {
 		if (isSetLocally(name))
 			return true;
+		IEclipseContext parent = (IEclipseContext) getLocal(PARENT);
 		if (parent != null && parent.containsKey(name))
 			return true;
 		if (strategy instanceof ILookupStrategy) {
@@ -288,22 +291,28 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				if (EclipseContext.DEBUG)
 					System.out.println("created " + valueComputation);
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
+				// value computation depends on parent if function is defined in a parent
+				if (this != originatingContext)
+					valueComputation.addDependency(originatingContext, PARENT);
 				result = valueComputation.get(arguments);
 			}
 			return result;
 		}
 		// 3. delegate to parent
-		if (!local && parent != null) {
-			return ((EclipseContext) parent)
-					.internalGet(originatingContext, name, arguments, local); // XXX
-			// IEclipseContext
+		if (!local) {
+			IEclipseContext parent = (IEclipseContext) getLocal(PARENT);
+			if (parent != null) {
+				return ((EclipseContext) parent).internalGet(originatingContext, name, arguments,
+						local); // XXX
+				// IEclipseContext
+			}
 		}
 		return null;
 	}
 
 	protected void invalidate(String name, int eventType) {
 		if (EclipseContext.DEBUG)
-			System.out.println("invalidating " + get(IContextConstants.DEBUG_STRING) + ',' + name); //$NON-NLS-1$
+			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
 		removeLocalValueComputations(name);
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
