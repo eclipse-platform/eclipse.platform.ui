@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,8 @@ package org.eclipse.team.ui.mapping;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.mapping.*;
@@ -127,7 +128,7 @@ public abstract class SynchronizationOperation extends TeamOperation {
 	private void clearContextBusy(final IProgressMonitor monitor) {
 		// Add a job change listener to the job manager that will clear the busy
 		// when there are no more jobs related to the context running
-		final IJobManager jobManager = Platform.getJobManager();
+		final IJobManager jobManager = Job.getJobManager();
 		final IJobChangeListener listener = new JobChangeAdapter() {
 			public void done(IJobChangeEvent event) {
 				Job[] jobs = jobManager.find(getContext());

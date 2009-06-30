@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,18 +10,39 @@
  *******************************************************************************/
 package org.eclipse.team.examples.model.mapping;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
-import org.eclipse.core.runtime.*;
-import org.eclipse.team.core.diff.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubProgressMonitor;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.team.core.diff.FastDiffFilter;
+import org.eclipse.team.core.diff.IDiff;
+import org.eclipse.team.core.diff.IDiffVisitor;
+import org.eclipse.team.core.diff.IThreeWayDiff;
 import org.eclipse.team.core.history.IFileRevision;
-import org.eclipse.team.core.mapping.*;
-import org.eclipse.team.core.mapping.provider.*;
+import org.eclipse.team.core.mapping.IMergeContext;
+import org.eclipse.team.core.mapping.IResourceDiff;
+import org.eclipse.team.core.mapping.ResourceMappingMerger;
+import org.eclipse.team.core.mapping.provider.MergeStatus;
+import org.eclipse.team.core.mapping.provider.ResourceDiffTree;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
-import org.eclipse.team.examples.model.*;
+import org.eclipse.team.examples.model.ModelObject;
+import org.eclipse.team.examples.model.ModelObjectDefinitionFile;
+import org.eclipse.team.examples.model.ModelProject;
 
 /**
  * A resource mapping merger for our example model 
@@ -58,7 +79,7 @@ public class ModelMerger extends ResourceMappingMerger {
 				// so the diff tree will be up-to-date when we delegate the rest of the merge
 				// to the superclass
 				try {
-					Platform.getJobManager().join(mergeContext, new SubProgressMonitor(monitor, 50));
+					Job.getJobManager().join(mergeContext, new SubProgressMonitor(monitor, 50));
 				} catch (InterruptedException e) {
 					// Ignore
 				}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,31 +9,88 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.team.tests.ccvs.core;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.Reader;
 import java.lang.reflect.InvocationTargetException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
-import junit.framework.*;
+import junit.framework.AssertionFailedError;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.IWorkspaceRunnable;
+import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.resources.ResourceTest;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.RepositoryProvider;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
-import org.eclipse.team.internal.ccvs.core.client.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSStatus;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSFile;
+import org.eclipse.team.internal.ccvs.core.ICVSFolder;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteFile;
+import org.eclipse.team.internal.ccvs.core.ICVSRemoteResource;
+import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.ICVSResource;
+import org.eclipse.team.internal.ccvs.core.Policy;
+import org.eclipse.team.internal.ccvs.core.client.Command;
+import org.eclipse.team.internal.ccvs.core.client.Import;
+import org.eclipse.team.internal.ccvs.core.client.Session;
+import org.eclipse.team.internal.ccvs.core.client.Update;
 import org.eclipse.team.internal.ccvs.core.client.Command.LocalOption;
-import org.eclipse.team.internal.ccvs.core.connection.*;
-import org.eclipse.team.internal.ccvs.core.resources.*;
+import org.eclipse.team.internal.ccvs.core.connection.CVSCommunicationException;
+import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
+import org.eclipse.team.internal.ccvs.core.connection.CVSServerException;
+import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFile;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolder;
+import org.eclipse.team.internal.ccvs.core.resources.RemoteFolderTree;
 import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
 import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileChangeListener;
 import org.eclipse.team.internal.ccvs.ui.mappings.ModelReplaceOperation;
 import org.eclipse.team.internal.ccvs.ui.mappings.ModelUpdateOperation;
-import org.eclipse.team.internal.ccvs.ui.operations.*;
+import org.eclipse.team.internal.ccvs.ui.operations.AddOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.BranchOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CVSOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CheckoutSingleProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.CommitOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ITagOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ReplaceOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.RepositoryProviderOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.ShareProjectOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.TagInRepositoryOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.TagOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.UpdateOperation;
+import org.eclipse.team.internal.ccvs.ui.operations.WorkspaceResourceMapper;
 import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
 import org.eclipse.team.ui.TeamOperation;
 import org.eclipse.ui.IWorkbenchPart;
@@ -970,7 +1027,7 @@ public class EclipseTest extends ResourceTest {
 
     protected static void waitForDecorator() {
         // Wait for the decorator job
-        Job[] decorators = Platform.getJobManager().find(DecoratorManager.FAMILY_DECORATE);
+        Job[] decorators = Job.getJobManager().find(DecoratorManager.FAMILY_DECORATE);
         for (int i = 0; i < decorators.length; i++) {
             Job job = decorators[i];
             waitForJobCompletion(job);
@@ -1269,7 +1326,7 @@ public class EclipseTest extends ResourceTest {
 		// Overridden to change how the workspace is deleted on teardown
 		if (resource.getType() == IResource.ROOT) {
 			// Delete each project individually
-			Job[] allJobs = Platform.getJobManager().find(null /* all families */);
+			Job[] allJobs = Job.getJobManager().find(null /* all families */);
 			IProject[] projects = ((IWorkspaceRoot)resource).getProjects();
 			try {
 				ensureDoesNotExistInWorkspace(projects);

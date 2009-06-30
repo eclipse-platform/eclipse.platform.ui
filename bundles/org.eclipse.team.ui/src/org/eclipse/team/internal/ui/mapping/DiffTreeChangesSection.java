@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -58,7 +58,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 		context = (ISynchronizationContext)configuration.getProperty(ITeamContentProviderManager.P_SYNCHRONIZATION_CONTEXT);
 		context.getDiffTree().addDiffChangeListener(this);
 		getConfiguration().addPropertyChangeListener(this);
-		Platform.getJobManager().addJobChangeListener(new JobChangeAdapter() {
+		Job.getJobManager().addJobChangeListener(new JobChangeAdapter() {
 			public void running(IJobChangeEvent event) {
 				if (isJobOfInterest(event.getJob())) {
 					if (context.getDiffTree().isEmpty())
@@ -433,7 +433,7 @@ public class DiffTreeChangesSection extends ForwardingChangesSection implements 
 	}
 
 	private boolean isRefreshRunning() {
-		return Platform.getJobManager().find(getConfiguration().getParticipant()).length > 0;
+		return Job.getJobManager().find(getConfiguration().getParticipant()).length > 0;
 	}
 
 	private SubscriberDiffTreeEventHandler getHandler() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,12 @@ import java.io.File;
 
 import junit.framework.Test;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.internal.ccvs.core.CVSTag;
 import org.eclipse.team.tests.ccvs.core.subscriber.SyncInfoSource;
 
@@ -63,9 +67,9 @@ public class WorkflowTests extends BenchmarkTest {
     	// Ensure that we can obtrain the worksapce lock before continuing
     	IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
     	try {
-    		Platform.getJobManager().beginRule(root, null);
+    		Job.getJobManager().beginRule(root, null);
     	} finally {
-    		Platform.getJobManager().endRule(root);
+    		Job.getJobManager().endRule(root);
     	}
     }
     

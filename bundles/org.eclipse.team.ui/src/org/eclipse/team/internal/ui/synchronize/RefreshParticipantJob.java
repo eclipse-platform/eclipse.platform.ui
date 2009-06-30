@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public abstract class RefreshParticipantJob extends Job {
 	/*
 	 * Lock used to sequence refresh jobs
 	 */
-	private static final ILock lock = Platform.getJobManager().newLock(); 
+	private static final ILock lock = Job.getJobManager().newLock(); 
 	
 	/*
 	 * Constant used for postponement
@@ -374,7 +374,7 @@ public abstract class RefreshParticipantJob extends Job {
 	protected abstract int getOutgoingChangeCount();
     
 	private boolean isJobInFamilyRunning(Object family) {
-		Job[] jobs = Platform.getJobManager().find(family);
+		Job[] jobs = Job.getJobManager().find(family);
 		if (jobs != null && jobs.length > 0) {
 			for (int i = 0; i < jobs.length; i++) {
 				Job job = jobs[i];
@@ -432,7 +432,7 @@ public abstract class RefreshParticipantJob extends Job {
 	private void initialize(final IRefreshSubscriberListener listener) {
 		final GotoActionWrapper actionWrapper = new GotoActionWrapper();
 		
-		IProgressMonitor group = Platform.getJobManager().createProgressGroup();
+		IProgressMonitor group = Job.getJobManager().createProgressGroup();
 		group.beginTask(taskName, 100);
 		setProgressGroup(group, 80);
 		handleProgressGroupSet(group, 20);

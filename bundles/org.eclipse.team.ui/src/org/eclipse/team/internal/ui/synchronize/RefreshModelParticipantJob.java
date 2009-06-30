@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Map;
 
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -68,7 +69,7 @@ public class RefreshModelParticipantJob extends RefreshParticipantJob {
 			context.refresh(mappings, monitor);
 			// Wait for any asynchronous updating to complete
 			try {
-				Platform.getJobManager().join(context, monitor);
+				Job.getJobManager().join(context, monitor);
 			} catch (InterruptedException e) {
 				// Ignore
 			}

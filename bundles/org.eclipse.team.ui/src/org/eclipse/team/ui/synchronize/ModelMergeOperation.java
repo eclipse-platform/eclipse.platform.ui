@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -312,7 +312,7 @@ public abstract class ModelMergeOperation extends ModelOperation {
 	 * context has updated before invoking merge on another merger. The following
 	 * line of code will wait for the context to update:
 	 * <pre>
-	 * Platform.getJobManager().join(getContext(), monitor);
+	 * Job.getJobManager().join(getContext(), monitor);
 	 * </pre>
 	 * <p>
 	 * This method will throw a runtime exception
