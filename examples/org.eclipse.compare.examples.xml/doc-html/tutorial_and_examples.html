@@ -1,11 +1,11 @@
 <!doctype html public "-//w3c//dtd html 4.0 transitional//en">
 <html>
 <head>
-<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2005. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2009. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
    <title>Tutorial and Examples</title>
 </head>
-
+<body>
 <h1>Tutorial and Examples</h1>
 <h2><a id="id_mapping" name="id_mapping">
 General Matching vs. ID Mapping Schemes:<br>How to create an ID Mapping Scheme to improve compare results
@@ -14,51 +14,38 @@ Consider an example XML file in two slightly different versions, left and right.
 The textual differences are shown in bold.
 <table>
 <tr>
-<td><tt>
-<br>
-<p>&lt;?xml version="1.0" encoding="UTF-8"?>
-<p>&lt;plugin
-<br>
+<td>
+<blockquote><pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<br>&lt;plugin
 &nbsp;&nbsp;&nbsp;name="%Plugin.name"
-<br>
 &nbsp;&nbsp;&nbsp;id="org.eclipse.ui"
-<br>
 &nbsp;&nbsp;&nbsp;version="1.0"
-<br>
 &nbsp;&nbsp;&nbsp;provider-name="Object Technology International, Inc."
-<br>
-&nbsp;&nbsp;&nbsp;class="org.eclipse.ui.internal.WorkbenchPlugin">
-<br>
-<br>&lt;extension-point name="%ExtPoint.editorMenus " id="editorActions"/>
-<br>&lt;extension-point name="%ExtPoint.popupMenus " id="popupMenus"/>
-<br>&lt;extension-point name="%ExtPoint.<b>importWizards</b>" id="<b>importWizards</b>"/>
-<br>
-<p>&lt;/plugin>
-</tt>
+&nbsp;&nbsp;&nbsp;class="org.eclipse.ui.internal.WorkbenchPlugin"&gt;
+<br>&lt;extension-point name="%ExtPoint.editorMenus " id="editorActions"/&gt;
+&lt;extension-point name="%ExtPoint.popupMenus " id="popupMenus"/&gt;
+&lt;extension-point name="%ExtPoint.<b>importWizards</b>" id="<b>importWizards</b>"/&gt;
+<br>&lt;/plugin&gt;
+</pre></blockquote>
 </td>
 <td>
 &nbsp;&nbsp;
 </td>
-<td><tt>
-<p>&lt;?xml version="1.0" encoding="UTF-8"?>
-<p>&lt;plugin
-<br>
+<td>
+<blockquote><pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<br>&lt;plugin
 &nbsp;&nbsp;&nbsp;name="%Plugin.name"
-<br>
 &nbsp;&nbsp;&nbsp;id="org.eclipse.ui"
-<br>
 &nbsp;&nbsp;&nbsp;version="1.0"
-<br>
 &nbsp;&nbsp;&nbsp;provider-name="Object Technology International, Inc."
-<br>
-&nbsp;&nbsp;&nbsp;class="org.eclipse.ui.internal.WorkbenchPlugin">
-<br>
-<br>&lt;extension-point name="%ExtPoint.editorMenus " id="editorActions"/>
-<br>&lt;extension-point name="%ExtPoint.popupMenus " id="popupMenus"/>
-<br>&lt;extension-point name="%ExtPoint.<b>exportWizards</b>" id="<b>exportWizards</b>"/>
-<br>
-<p>&lt;/plugin>
-</tt>
+&nbsp;&nbsp;&nbsp;class="org.eclipse.ui.internal.WorkbenchPlugin"&gt;
+<br>&lt;extension-point name="%ExtPoint.editorMenus " id="editorActions"/&gt;
+&lt;extension-point name="%ExtPoint.popupMenus " id="popupMenus"/&gt;
+&lt;extension-point name="%ExtPoint.<b>exportWizards</b>" id="<b>exportWizards</b>"/&gt;
+<br>&lt;/plugin&gt;
+</pre></blockquote>
 </td>
 </tr>
 </table>
@@ -130,66 +117,49 @@ Ordered entries are used to specify that the direct children (excluding attribut
 <table>
 <tr>
 <td>
-<tt>
-<p>&lt;?xml version="1.0" encoding="UTF-8"?>
-<p>&lt;project name="org.junit.wizards" default="export" basedir="..">
-<br>
-&nbsp;&nbsp;&nbsp;&lt;target name="export" depends="build">
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${destdir}" />
-<br>
+<blockquote><pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<br>&lt;project name="org.junit.wizards" default="export" basedir=".."&gt;
+&nbsp;&nbsp;&nbsp;&lt;target name="export" depends="build"&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${destdir}" /&gt;
 <b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;delete dir="${dest}" />
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${dest}" />
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;delete dir="${dest}" /&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${dest}" /&gt;
 </b>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jar
-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jarfile="${dest}/JUnitWizard.jar"
-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;basedir="bin"
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/>
-<br>&lt;/project>
-</tt>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&gt;
+<br>&lt;/project&gt;
+</pre></blockquote>
 </td>
 <td>
 &nbsp;&nbsp;
 </td>
 <td>
-<tt>
-<p>&lt;?xml version="1.0" encoding="UTF-8"?>
-<p>&lt;project name="org.junit.wizards" default="export" basedir="..">
-<br>
-&nbsp;&nbsp;&nbsp;&lt;target name="export" depends="build">
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${destdir}"/>
-<br>
+<blockquote><pre>
+&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+<br>&lt;project name="org.junit.wizards" default="export" basedir=".."&gt;
+&nbsp;&nbsp;&nbsp;&lt;target name="export" depends="build"&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${destdir}"/&gt;
 <b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${dest}"/>
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;delete dir="${dest}"/>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;mkdir dir="${dest}"/&gt;
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;delete dir="${dest}"/&gt;
 </b>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;jar
-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;jarfile="${dest}/JUnitWizard.jar"
-<br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;basedir="bin"
-<br>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/>
-<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;/&gt;
 <b>
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;copy file="plugin.xml" todir="${dest}"/>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&lt;copy file="plugin.xml" todir="${dest}"/&gt;
 </b>
-<br>&lt;/project>
-</tt>
+<br>&lt;/project&gt;
+</pre></blockquote>
 </td>
 </tr>
 </table>
 <br>
-The differences between the two documents are shown in bold. Two elements have been swapped (<tt>&lt;mkdir dir="${dest}"/></tt> and <tt>&lt;delete dir="${dest}"/></tt>) and a new element (<tt>&lt;copy .../></tt>) has been appended to the target element.
+The differences between the two documents are shown in bold. Two elements have been swapped (<tt>&lt;mkdir dir="${dest}"/&gt;</tt> and <tt>&lt;delete dir="${dest}"/&gt;</tt>) and a new element (<tt>&lt;copy .../&gt;</tt>) has been appended to the target element.
 <br>
 Performing an unordered compare will result in the following tree of differences:
 <br>
