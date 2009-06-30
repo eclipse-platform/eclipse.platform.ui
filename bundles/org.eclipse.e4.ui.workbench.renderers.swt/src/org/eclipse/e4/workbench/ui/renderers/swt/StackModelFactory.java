@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.util.Iterator;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -24,6 +25,7 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
@@ -153,7 +155,19 @@ public class StackModelFactory extends LazyStackFactory {
 		}
 	}
 
-	protected void internalChildAdded(final MPart parentElement, MPart element) {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.LazyStackFactory#internalChildAdded
+	 * (org.eclipse.e4.ui.model.application.MPart,
+	 * org.eclipse.e4.ui.model.application.MPart)
+	 */
+	@Override
+	protected void internalChildAdded(MPart parentElement, MPart element) {
+		// TODO Auto-generated method stub
+		super.internalChildAdded(parentElement, element);
+
 		MItemPart<?> itemPart = (MItemPart<?>) element;
 		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
 		int createFlags = 0;
@@ -162,8 +176,10 @@ public class StackModelFactory extends LazyStackFactory {
 		// createFlags = createFlags | SWT.CLOSE;
 
 		CTabItem cti = findItemForPart(parentElement, element);
-		if (cti == null)
-			cti = new CTabItem(ctf, createFlags);
+		if (cti == null) {
+			int index = calcIndexFor(element);
+			cti = new CTabItem(ctf, createFlags, index);
+		}
 
 		cti.setData(OWNING_ME, element);
 		cti.setText(itemPart.getName());
@@ -172,6 +188,21 @@ public class StackModelFactory extends LazyStackFactory {
 
 		// Hook up special logic to synch up the Tab Items
 		hookTabControllerLogic(parentElement, element, cti);
+	}
+
+	private int calcIndexFor(final MPart element) {
+		int index = 0;
+
+		// Find the -visible- part before this element
+		EList<MPart> kids = element.getParent().getChildren();
+		for (Iterator iterator = kids.iterator(); iterator.hasNext();) {
+			MPart mPart = (MPart) iterator.next();
+			if (mPart == element)
+				return index;
+			if (mPart.isVisible())
+				index++;
+		}
+		return index;
 	}
 
 	@Override
@@ -259,6 +290,15 @@ public class StackModelFactory extends LazyStackFactory {
 		if (oldItem != null) {
 			oldItem.setControl(null); // prevent the widget from being disposed
 			oldItem.dispose();
+		}
+
+		// 'auto-hide' empty stacks
+		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
+		String policy = parentElement.getPolicy();
+		boolean isEditorStack = policy != null
+				&& policy.indexOf("EditorStack") >= 0; //$NON-NLS-1$
+		if (ctf.getItemCount() == 0 && !isEditorStack) {
+			parentElement.setVisible(false);
 		}
 	}
 

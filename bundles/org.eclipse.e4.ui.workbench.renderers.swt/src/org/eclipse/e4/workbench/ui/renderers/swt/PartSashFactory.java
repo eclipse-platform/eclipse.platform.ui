@@ -55,9 +55,17 @@ public class PartSashFactory extends SWTPartFactory {
 	public void postProcess(MPart<?> part) {
 		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
 			// do we have any children ?
-			EList<?> kids = part.getChildren();
+			EList<MPart<?>> kids = (EList<MPart<?>>) part.getChildren();
 			if (kids.size() == 0)
 				return;
+
+			// Cound the -visible- children
+			int visCount = 0;
+			for (Iterator iterator = kids.iterator(); iterator.hasNext();) {
+				MPart<?> mPart = (MPart<?>) iterator.next();
+				if (mPart.getWidget() != null)
+					visCount++;
+			}
 
 			// set the weights of the sashes
 			final SashForm sashForm = (SashForm) part.getWidget();
@@ -65,8 +73,9 @@ public class PartSashFactory extends SWTPartFactory {
 			List<Integer> weightList = sashPart.getWeights();
 
 			// If it's not already initialized the set them all ==
-			if (weightList.size() != kids.size()) {
-				for (int i = weightList.size(); i < kids.size(); i++) {
+			if (weightList.size() != visCount) {
+				weightList.clear();
+				for (int i = weightList.size(); i < visCount; i++) {
 					weightList.add(new Integer(100));
 				}
 			}
