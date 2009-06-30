@@ -178,7 +178,7 @@ public class ReparentingTest extends TestCase {
 	 * Tests an object consuming simple values from a parent context, and a parent change causes a
 	 * change in simple values. TODO: Still fails
 	 */
-	public void _testInjectSwitchParent() {
+	public void testInjectSwitchParent() {
 
 		IEclipseContext oldParent = EclipseContextFactory.create();
 		oldParent.set("StringViaMethod", "old");
