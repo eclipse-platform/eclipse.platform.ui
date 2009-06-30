@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProduct;
@@ -33,6 +35,12 @@ import org.eclipse.swt.widgets.Display;
  */
 public class WorkbenchApplication implements IApplication {
 
+	private static final String APPLICATION_CSS_RESOURCES_ARG = "-applicationCSSResources";
+	private static final String APPLICATION_CSS_RESOURCES = "applicationCSSResources";
+	private static final String APPLICATION_CSS_ARG = "-applicationCSS";
+	private static final String APPLICATION_CSS = "applicationCSS";
+	private static final String APPLICATION_XMI_ARG = "-applicationXMI";
+	private static final String APPLICATION_XMI = "applicationXMI";
 	// TODO this is a hack until we can review testing
 	public static Workbench workbench;
 
@@ -40,22 +48,27 @@ public class WorkbenchApplication implements IApplication {
 			throws Exception {
 
 		final Display display = new Display();
-		String appURI = null;
 		String[] args = (String[]) applicationContext.getArguments().get(
 				"application.args"); //$NON-NLS-1$
+		Map<String, String> argsList = processArgs(args);
+		String appURI = argsList.get(APPLICATION_XMI);
+		String cssURIr = argsList.get(APPLICATION_CSS);
+		String cssResourcesURIr = argsList.get(APPLICATION_CSS_RESOURCES);
 		IProduct product = Platform.getProduct();
-		if (args.length > 0 && args[0].equals("-applicationXMI")) { //$NON-NLS-1$
-			appURI = args[1];
-		} else if (product != null) {
-			String path = product.getProperty("applicationXMI"); //$NON-NLS-1$
-			if (path != null) {
-				appURI = path;
+		if (product != null) {
+			if (appURI == null) {
+				appURI = product.getProperty(APPLICATION_XMI); //$NON-NLS-1$
+			}
+			if (cssURIr == null) {
+				cssURIr = product.getProperty(APPLICATION_CSS);
+			}
+			if (cssResourcesURIr == null) {
+				cssResourcesURIr = product
+						.getProperty(APPLICATION_CSS_RESOURCES);
 			}
 		}
-		final String cssURI = product == null ? null : product
-				.getProperty("applicationCSS"); //$NON-NLS-1$;
-		final String cssResourcesURI = product == null ? null : product
-				.getProperty("applicationCSSResources"); //$NON-NLS-1$;
+		final String cssURI = cssURIr;
+		final String cssResourcesURI = cssResourcesURIr;
 
 		Assert.isNotNull(appURI, "-applicationXMI argument missing"); //$NON-NLS-1$
 		final URI initialWorkbenchDefinitionInstance = URI
@@ -98,6 +111,20 @@ public class WorkbenchApplication implements IApplication {
 			}
 		});
 		return IApplication.EXIT_OK;
+	}
+
+	private Map<String, String> processArgs(String[] args) {
+		HashMap<String, String> argsList = new HashMap<String, String>();
+		for (int i = 0; i < args.length; i++) {
+			if (APPLICATION_XMI_ARG.equals(args[i])) {
+				argsList.put(APPLICATION_XMI, args[++i]);
+			} else if (APPLICATION_CSS_ARG.equals(args[i])) {
+				argsList.put(APPLICATION_CSS, args[++i]);
+			} else if (APPLICATION_CSS_RESOURCES_ARG.equals(args[i])) {
+				argsList.put(APPLICATION_CSS_RESOURCES, args[++i]);
+			}
+		}
+		return argsList;
 	}
 
 	public void stop() {
