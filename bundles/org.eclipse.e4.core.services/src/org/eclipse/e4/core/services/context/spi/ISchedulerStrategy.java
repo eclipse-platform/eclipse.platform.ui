@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.core.services.context.spi;
 
+import org.eclipse.e4.core.services.context.IRunAndTrack;
+
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**

@@ -10,13 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.context.ContextEvent;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 abstract class Computation {
 	Map dependencies = new HashMap();
@@ -48,7 +49,7 @@ abstract class Computation {
 
 	final void handleInvalid(IEclipseContext context, String name, int eventType) {
 		Set names = (Set) dependencies.get(context);
-		if (name == null && eventType == IRunAndTrack.DISPOSE) {
+		if (name == null && eventType == ContextEvent.DISPOSE) {
 			clear(context, null);
 			doHandleInvalid(context, null, eventType);
 		} else if (names != null && names.contains(name)) {

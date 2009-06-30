@@ -10,9 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.context.ContextEvent;
+
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 public class ValueComputation extends Computation {
 	Object cachedValue;
@@ -108,7 +109,7 @@ public class ValueComputation extends Computation {
 
 	final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
 		this.originatingContext.invalidate(this.name,
-				eventType == IRunAndTrack.DISPOSE ? IRunAndTrack.REMOVED : eventType);
+				eventType == ContextEvent.DISPOSE ? ContextEvent.REMOVED : eventType);
 	}
 
 	final Object get(Object[] arguments) {

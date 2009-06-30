@@ -12,7 +12,6 @@
 package org.eclipse.e4.core.services.context;
 
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 
 /**
  * A context is used to isolate application code from its dependencies on an

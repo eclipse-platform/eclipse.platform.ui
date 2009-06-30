@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+
+import org.eclipse.e4.core.services.context.ContextEvent;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,7 +29,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
-import org.eclipse.e4.core.services.context.spi.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 
 public class EclipseContext implements IEclipseContext, IDisposable {
@@ -116,7 +120,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 
 		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
-			if (eventType == IRunAndTrack.DISPOSE) {
+			if (eventType == ContextEvent.DISPOSE) {
 				return;
 			}
 			if (EclipseContext.DEBUG)
@@ -184,12 +188,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			// IEclipseContext
 		}
 
-		public boolean notify(IEclipseContext context, String name, int eventType, Object[] args) {
+		public boolean notify(ContextEvent event) {
 			Computation oldComputation = (Computation) currentComputation.get();
 			currentComputation.set(this);
 			boolean result = true;
 			try {
-				result = runnable.notify(context, name, eventType, args);
+				result = runnable.notify(EclipseContextFactory
+						.createContextEvent(event.getContext(), event.getEventType(), event
+								.getArguments(), event.getName(), null));
 			} finally {
 				currentComputation.set(oldComputation);
 			}
@@ -247,7 +253,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void dispose() {
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
 		for (int i = 0; i < ls.length; i++) {
-			ls[i].handleInvalid(this, null, IRunAndTrack.DISPOSE);
+			ls[i].handleInvalid(this, null, ContextEvent.DISPOSE);
 		}
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
@@ -328,7 +334,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void remove(String name) {
 		if (isSetLocally(name)) {
 			localValues.remove(name);
-			invalidate(name, IRunAndTrack.REMOVED);
+			invalidate(name, ContextEvent.REMOVED);
 		}
 	}
 
@@ -356,7 +362,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
 		TrackableComputationExt computation = new TrackableComputationExt(runnable);
-		schedule(computation, null, IRunAndTrack.INITIAL, args);
+		schedule(computation, null, ContextEvent.INITIAL, args);
 	}
 
 	public void runAndTrack(final Runnable runnable) {
@@ -367,10 +373,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	protected boolean schedule(IRunAndTrack runnable, String name, int eventType, Object[] args) {
 		if (runnable == null)
 			return false;
-		if (eventType != IRunAndTrack.INITIAL && eventType != IRunAndTrack.DISPOSE
+		if (eventType != ContextEvent.INITIAL && eventType != ContextEvent.DISPOSE
 				&& strategy != null && strategy instanceof ISchedulerStrategy)
 			return ((ISchedulerStrategy) strategy).schedule(this, runnable, name, eventType, args);
-		return runnable.notify(this, name, eventType, args);
+		return runnable.notify(EclipseContextFactory.createContextEvent(this, eventType, args, name, null));
 	}
 
 	protected void schedule(Runnable runnable) {
@@ -386,7 +392,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		boolean containsKey = localValues.containsKey(name);
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
-			invalidate(name, IRunAndTrack.ADDED);
+			invalidate(name, ContextEvent.ADDED);
 		}
 	}
 
