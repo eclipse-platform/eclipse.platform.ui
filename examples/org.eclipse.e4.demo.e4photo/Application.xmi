@@ -21,13 +21,14 @@
       </items>
     </menu>
     <children policy="VerticalComposite">
-      <toolBar>
-        <items xsi:type="application:MToolBarItem" name="Create Album" command="//@command.0"/>
-      </toolBar>
       <children xsi:type="application:MSashForm" policy="HorizontalSash">
         <children xsi:type="application:MSashForm" policy="VerticalSash">
           <children xsi:type="application:MStack">
-            <children xsi:type="application:MContributedPart" name="Library" tooltip="Library" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library"/>
+            <children xsi:type="application:MContributedPart" name="Library" tooltip="Library" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library">
+              <toolBar>
+                <items xsi:type="application:MToolBarItem" name="Create Album" command="//@command.0"/>
+              </toolBar>
+            </children>
           </children>
           <children xsi:type="application:MStack">
             <children xsi:type="application:MContributedPart" name="Location" tooltip="Location" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location"/>

@@ -168,4 +168,20 @@ public class WBPartFactory extends SWTPartFactory {
 		});
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.SWTPartFactory#processContents
+	 * (org.eclipse.e4.ui.model.application.MPart)
+	 */
+	@Override
+	public <P extends MPart<?>> void processContents(MPart<P> me) {
+		super.processContents(me);
+
+		// Populate the main menu
+		if (me.getMenu() != null) {
+			createMenu(me, me.getWidget(), me.getMenu());
+		}
+	}
 }
