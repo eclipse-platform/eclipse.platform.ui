@@ -198,7 +198,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, log.size());
 		IStatus status = (IStatus) log.get(0);
 		assertEquals(IStatus.ERROR, status.getSeverity());
-		assertTrue(status.getMessage().contains("setIgnore"));
+		assertTrue(status.getMessage().indexOf("setIgnore") != -1);
 	}
 
 	public void testSetIgnore_RunAndCollect_UnmatchedIgnore_LogsError() {
@@ -219,7 +219,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 		assertEquals(1, log.size());
 		IStatus status = (IStatus) log.get(0);
 		assertEquals(IStatus.ERROR, status.getSeverity());
-		assertTrue(status.getMessage().contains("setIgnore"));
+		assertTrue(status.getMessage().indexOf("setIgnore") != -1);
 	}
 
 	public void testSetIgnore_UnmatchedUnignore() {
