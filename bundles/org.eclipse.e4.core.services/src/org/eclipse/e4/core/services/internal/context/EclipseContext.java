@@ -10,11 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-
-import org.eclipse.e4.core.services.context.ContextEvent;
-import org.eclipse.e4.core.services.context.IRunAndTrack;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -24,8 +19,11 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IRunAndTrack;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
@@ -119,14 +117,13 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			Assert.isNotNull(runnable);
 		}
 
-		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
-			if (eventType == ContextEvent.DISPOSE) {
+		final protected void doHandleInvalid(ContextChangeEvent event) {
+			if (event.getEventType() == ContextChangeEvent.DISPOSE) {
 				return;
 			}
 			if (EclipseContext.DEBUG)
 				System.out.println("scheduling " + this); //$NON-NLS-1$
-			((EclipseContext) context).schedule(this); // XXX conversion: should
-			// be IEclipseContext
+			((EclipseContext) event.getContext()).schedule(this);
 		}
 
 		public void run() {
@@ -183,19 +180,16 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			this.runnable = runnable;
 		}
 
-		final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
-			((EclipseContext) context).schedule(this, name, eventType, null); // XXX
-			// IEclipseContext
+		final protected void doHandleInvalid(ContextChangeEvent event) {
+			((EclipseContext) event.getContext()).schedule(this, event);
 		}
 
-		public boolean notify(ContextEvent event) {
+		public boolean notify(ContextChangeEvent event) {
 			Computation oldComputation = (Computation) currentComputation.get();
 			currentComputation.set(this);
 			boolean result = true;
 			try {
-				result = runnable.notify(EclipseContextFactory
-						.createContextEvent(event.getContext(), event.getEventType(), event
-								.getArguments(), event.getName(), null));
+				result = runnable.notify(event);
 			} finally {
 				currentComputation.set(oldComputation);
 			}
@@ -208,11 +202,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
-	/**
-	 * TODO Can this really be static? Couldn't there be multiple computations ongoing in a single
-	 * thread? For example a computation could recursively cause another context lookup and
-	 * therefore a nested computation.
-	 */
 	static ThreadLocal currentComputation = new ThreadLocal();
 
 	// TODO replace with variable on bundle-specific class
@@ -252,8 +241,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 */
 	public void dispose() {
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
+				ContextChangeEvent.DISPOSE, null, null, null);
 		for (int i = 0; i < ls.length; i++) {
-			ls[i].handleInvalid(this, null, ContextEvent.DISPOSE);
+			ls[i].handleInvalid(event);
 		}
 		if (strategy instanceof IDisposable)
 			((IDisposable) strategy).dispose();
@@ -295,7 +286,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				ValueComputation valueComputation = new ValueComputation(this, originatingContext,
 						name, ((IContextFunction) result));
 				if (EclipseContext.DEBUG)
-					System.out.println("created " + valueComputation);
+					System.out.println("created " + valueComputation); //$NON-NLS-1$
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
 				// value computation depends on parent if function is defined in a parent
 				if (this != originatingContext)
@@ -316,13 +307,15 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return null;
 	}
 
-	protected void invalidate(String name, int eventType) {
+	protected void invalidate(String name, int eventType, Object oldValue) {
 		if (EclipseContext.DEBUG)
 			System.out.println("invalidating " + this + ',' + name); //$NON-NLS-1$
 		removeLocalValueComputations(name);
 		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this, eventType, null,
+				name, oldValue);
 		for (int i = 0; i < ls.length; i++) {
-			ls[i].handleInvalid(this, name, eventType);
+			ls[i].handleInvalid(event);
 		}
 	}
 
@@ -333,8 +326,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	public void remove(String name) {
 		if (isSetLocally(name)) {
-			localValues.remove(name);
-			invalidate(name, ContextEvent.REMOVED);
+			Object oldValue = localValues.remove(name);
+			invalidate(name, ContextChangeEvent.REMOVED, oldValue);
 		}
 	}
 
@@ -362,7 +355,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	public void runAndTrack(final IRunAndTrack runnable, Object[] args) {
 		TrackableComputationExt computation = new TrackableComputationExt(runnable);
-		schedule(computation, null, ContextEvent.INITIAL, args);
+		schedule(computation, EclipseContextFactory.createContextEvent(this,
+				ContextChangeEvent.INITIAL, args, null, null));
 	}
 
 	public void runAndTrack(final Runnable runnable) {
@@ -370,13 +364,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		schedule(computation);
 	}
 
-	protected boolean schedule(IRunAndTrack runnable, String name, int eventType, Object[] args) {
+	protected boolean schedule(IRunAndTrack runnable, ContextChangeEvent event) {
 		if (runnable == null)
 			return false;
-		if (eventType != ContextEvent.INITIAL && eventType != ContextEvent.DISPOSE
+		int eventType = event.getEventType();
+		if (eventType != ContextChangeEvent.INITIAL && eventType != ContextChangeEvent.DISPOSE
 				&& strategy != null && strategy instanceof ISchedulerStrategy)
-			return ((ISchedulerStrategy) strategy).schedule(this, runnable, name, eventType, args);
-		return runnable.notify(EclipseContextFactory.createContextEvent(this, eventType, args, name, null));
+			return ((ISchedulerStrategy) strategy).schedule(runnable, event);
+		return runnable.notify(event);
 	}
 
 	protected void schedule(Runnable runnable) {
@@ -392,7 +387,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		boolean containsKey = localValues.containsKey(name);
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
-			invalidate(name, ContextEvent.ADDED);
+			invalidate(name, ContextChangeEvent.ADDED, oldValue);
 		}
 	}
 
@@ -401,7 +396,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 */
 	public String toString() {
 		Object debugString = localValues.get(IContextConstants.DEBUG_STRING);
-		return debugString instanceof String ? ((String) debugString) : "Anonymous Context";
+		return debugString instanceof String ? ((String) debugString) : "Anonymous Context"; //$NON-NLS-1$
 	}
 
 	private void trackAccess(String name) {

@@ -24,5 +24,5 @@ public interface IRunAndTrack {
 	 * @param event
 	 *            The event that occurred
 	 */
-	public boolean notify(ContextEvent event);
+	public boolean notify(ContextChangeEvent event);
 }

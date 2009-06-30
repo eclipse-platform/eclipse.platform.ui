@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.ContextEvent;
-
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
@@ -107,9 +106,11 @@ public class ValueComputation extends Computation {
 		cachedValue = null;
 	}
 
-	final protected void doHandleInvalid(IEclipseContext context, String name, int eventType) {
+	final protected void doHandleInvalid(ContextChangeEvent event) {
+		int eventType = event.getEventType();
 		this.originatingContext.invalidate(this.name,
-				eventType == ContextEvent.DISPOSE ? ContextEvent.REMOVED : eventType);
+				eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType,
+				event.getOldValue());
 	}
 
 	final Object get(Object[] arguments) {

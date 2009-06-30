@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.context.ContextEvent;
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 
 import java.beans.PropertyChangeEvent;
@@ -91,9 +91,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		fieldPrefixLength = this.fieldPrefix.length();
 	}
 
-	public boolean notify(final ContextEvent event) {
+	public boolean notify(final ContextChangeEvent event) {
 		final String name = event.getName();
-		if (event.getEventType() == ContextEvent.DISPOSE) {
+		if (event.getEventType() == ContextChangeEvent.DISPOSE) {
 			for (Iterator it = userObjects.iterator(); it.hasNext();) {
 				WeakReference ref = (WeakReference) it.next();
 				Object referent = ref.get();
@@ -101,11 +101,11 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					findAndCallDispose(referent, referent.getClass(), new ProcessMethodsResult());
 			}
 		}
-		boolean isSetter = (event.getEventType() == ContextEvent.ADDED || event.getEventType() == ContextEvent.INITIAL);
+		boolean isSetter = (event.getEventType() == ContextChangeEvent.ADDED || event.getEventType() == ContextChangeEvent.INITIAL);
 		Processor processor = new Processor(isSetter) {
 			void processField(final Field field, String injectName, boolean optional) {
 				switch (event.getEventType()) {
-				case ContextEvent.INITIAL:
+				case ContextChangeEvent.INITIAL:
 					String key = findKey(injectName, field.getType());
 					if (key != null) {
 						setField(event.getArguments()[0], field, event.getContext().get(key));
@@ -116,18 +116,18 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 						}
 					}
 					break;
-				case ContextEvent.ADDED:
+				case ContextChangeEvent.ADDED:
 					String injectKey = findKey(name, field.getType());
 					if (injectKey != null
 							&& (keyMatches(name, injectName) || field.getType().getName().equals(
 									name)))
 						setField(userObject, field, event.getContext().get(injectKey));
 					break;
-				case ContextEvent.REMOVED:
+				case ContextChangeEvent.REMOVED:
 					if (keyMatches(name, injectName) || field.getType().getName().equals(name))
 						setField(userObject, field, null);
 					break;
-				case ContextEvent.DISPOSE:
+				case ContextChangeEvent.DISPOSE:
 					break;
 				default:
 					logWarning(userObject, new IllegalArgumentException("Unknown event type: "
@@ -145,7 +145,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				if (parameterTypes.length != 1)
 					return;
 				switch (event.getEventType()) {
-				case ContextEvent.INITIAL:
+				case ContextChangeEvent.INITIAL:
 					// when initializing, inject every method that has a match in the context
 					String key = findKey(candidateName, parameterTypes[0]);
 					if (key != null) {
@@ -157,18 +157,18 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 						}
 					}
 					break;
-				case ContextEvent.ADDED:
+				case ContextChangeEvent.ADDED:
 					// on add event, only inject the method corresponding to the added context key
 					if (keyMatches(name, candidateName)) {
 						key = findKey(name, parameterTypes[0]);
 						setMethod(userObject, method, event.getContext().get(key, parameterTypes));
 					}
 					break;
-				case ContextEvent.REMOVED:
+				case ContextChangeEvent.REMOVED:
 					if (keyMatches(name, candidateName))
 						setMethod(userObject, method, null);
 					break;
-				case ContextEvent.DISPOSE:
+				case ContextChangeEvent.DISPOSE:
 					break;
 				default:
 					logWarning(userObject, new IllegalArgumentException("Unknown event type: "
@@ -177,7 +177,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			}
 
 			void processPostConstructMethod(Method m) {
-				if (event.getEventType() == ContextEvent.INITIAL) {
+				if (event.getEventType() == ContextChangeEvent.INITIAL) {
 					Object[] methodArgs = null;
 					if (m.getParameterTypes().length == 1)
 						methodArgs = new Object[] { context };
@@ -201,7 +201,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			public void processOutMethod(Method m, final String name) {
 				final EclipseContext outputContext = (EclipseContext) event.getContext().get(
 						"outputs");
-				if (event.getEventType() == ContextEvent.INITIAL) {
+				if (event.getEventType() == ContextChangeEvent.INITIAL) {
 					if (outputContext == null) {
 						throw new IllegalStateException("No output context available for @Out " + m
 								+ " in " + userObject);
@@ -236,7 +236,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				}
 			}
 		};
-		if (event.getEventType() == ContextEvent.INITIAL) {
+		if (event.getEventType() == ContextChangeEvent.INITIAL) {
 			if (event.getArguments() == null || event.getArguments().length == 0
 					|| event.getArguments()[0] == null)
 				throw new IllegalArgumentException();

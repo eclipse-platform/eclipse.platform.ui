@@ -11,14 +11,13 @@
 
 package org.eclipse.e4.core.services.context.spi;
 
+import org.eclipse.e4.core.services.context.ContextChangeEvent;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
-
 /**
- * A context strategy for queueing and invoking runnables that are tracking
- * changes in the context. Implementations of this strategy must queue and
- * invoke runnables in the order they are scheduled.
+ * A context strategy for queueing and invoking runnables that are tracking changes in the context.
+ * Implementations of this strategy must queue and invoke runnables in the order they are scheduled.
  * 
  * @see IEclipseContext#runAndTrack(Runnable)
  */
@@ -33,15 +32,12 @@ public interface ISchedulerStrategy extends IEclipseContextStrategy {
 	public void schedule(Runnable runnable);
 
 	/**
-	 * This is the same method but for more involved listeners. It should pass
-	 * in the context that has been changed, name of the changed service, and
-	 * the arguments.
+	 * This is the same method but for more involved listeners. It should pass in the event
+	 * describing the changes that occurred in the context
 	 * 
-	 * @return <code>true</code> if the runnable is still valid, or
-	 *         <code>false</code> to indicate this runnable is no longer valid
-	 *         and should be removed from the context.
+	 * @return <code>true</code> if the runnable is still valid, or <code>false</code> to indicate
+	 *         this runnable is no longer valid and should be removed from the context.
 	 */
-	public boolean schedule(IEclipseContext context, IRunAndTrack runnable, String name,
-			int eventType, Object[] args);
+	public boolean schedule(IRunAndTrack runnable, ContextChangeEvent event);
 
 }

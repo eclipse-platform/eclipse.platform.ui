@@ -27,7 +27,7 @@ package org.eclipse.e4.core.services.context;
  * 
  * @see IRunAndTrack
  */
-public final class ContextEvent {
+public final class ContextChangeEvent {
 	/**
 	 * A change event type (value "0"), indicating that the listener receiving this event has just
 	 * been registered with a context.
@@ -57,19 +57,23 @@ public final class ContextEvent {
 	private int eventType;
 	private String key;
 
+	private Object oldValue;
+
 	/**
 	 * Creates a new context event.
 	 * 
 	 * @param context
-	 * @param key
 	 * @param eventType
 	 * @param args
+	 * @param name
 	 */
-	ContextEvent(IEclipseContext context, String key, int eventType, Object[] args) {
+	ContextChangeEvent(IEclipseContext context, int eventType, Object[] args, String name,
+			Object oldValue) {
 		this.context = context;
-		this.key = key;
+		this.key = name;
 		this.eventType = eventType;
 		this.args = args;
+		this.oldValue = oldValue;
 	}
 
 	/**
@@ -108,5 +112,9 @@ public final class ContextEvent {
 	 */
 	public String getName() {
 		return key;
+	}
+
+	public Object getOldValue() {
+		return oldValue;
 	}
 }

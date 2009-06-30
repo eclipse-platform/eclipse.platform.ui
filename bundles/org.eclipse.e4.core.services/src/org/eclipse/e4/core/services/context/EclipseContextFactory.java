@@ -81,8 +81,8 @@ public final class EclipseContextFactory {
 	 *            type of event.
 	 * @return A new context change event
 	 */
-	public static ContextEvent createContextEvent(IEclipseContext context, int eventType,
+	public static ContextChangeEvent createContextEvent(IEclipseContext context, int eventType,
 			Object[] args, String name, Object oldValue) {
-		return new ContextEvent(context, name, eventType, args);
+		return new ContextChangeEvent(context, eventType, args, name, oldValue);
 	}
 }
