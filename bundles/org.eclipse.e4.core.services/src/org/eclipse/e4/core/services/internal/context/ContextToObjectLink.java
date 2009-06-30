@@ -315,8 +315,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				// if value is local then parent change has no effect
 				if (eventContext.getLocal(key) != null)
 					return false;
-				Object oldValue = oldParent.internalGet(eventContext, key, null, false);
-				Object newValue = newParent.internalGet(eventContext, key, null, false);
+				Object oldValue = oldParent == null ? null : oldParent.internalGet(eventContext,
+						key, null, false);
+				Object newValue = newParent == null ? null : newParent.internalGet(eventContext,
+						key, null, false);
 				return oldValue != newValue;
 			}
 
