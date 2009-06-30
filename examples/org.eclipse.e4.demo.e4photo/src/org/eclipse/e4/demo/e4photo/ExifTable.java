@@ -186,7 +186,7 @@ public class ExifTable {
 	}
 
 	void dispose() {
-		System.out.println("dispose called!");
+		//nothing to do
 	}
 
 }
