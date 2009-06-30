@@ -21,6 +21,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
@@ -32,11 +34,14 @@ import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.Widget;
@@ -227,6 +232,48 @@ public class MWindowTest extends TestCase {
 				});
 	}
 
+	public void testCreateMenu() {
+		final MWindow<MPart<?>> window = createWindowWithOneViewAndMenu();
+		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
+				new Runnable() {
+					public void run() {
+						IEclipseContext context = getAppContext();
+						Workbench.initializeContext(context, window);
+						PartRenderer renderer = new PartRenderer(getCFactory(),
+								context);
+						Workbench.initializeRenderer(RegistryFactory
+								.getRegistry(), renderer, appContext,
+								getCFactory());
+						Object o = renderer.createGui(window);
+						assertNotNull(o);
+						topWidget = (Widget) o;
+						assertTrue(topWidget instanceof Shell);
+						Shell shell = (Shell) topWidget;
+						final Menu menuBar = shell.getMenuBar();
+						assertNotNull(menuBar);
+						assertEquals(1, menuBar.getItemCount());
+						final MenuItem fileItem = menuBar.getItem(0);
+						assertEquals("File", fileItem.getText());
+						final Menu fileMenu = fileItem.getMenu();
+						fileMenu.notifyListeners(SWT.Show, null);
+						assertEquals(2, fileMenu.getItemCount());
+						fileMenu.notifyListeners(SWT.Hide, null);
+						final MMenuItem item2Model = window.getMenu()
+
+						.getItems().get(0).getMenu().getItems().get(1);
+						item2Model.setVisible(false);
+						fileMenu.notifyListeners(SWT.Show, null);
+						assertEquals(1, fileMenu.getItemCount());
+						fileMenu.notifyListeners(SWT.Hide, null);
+
+						item2Model.setVisible(true);
+						fileMenu.notifyListeners(SWT.Show, null);
+						assertEquals(2, fileMenu.getItemCount());
+						fileMenu.notifyListeners(SWT.Hide, null);
+					}
+				});
+	}
+
 	private MContributedPart<MPart<?>> getContributedPart(
 			MWindow<MPart<?>> window) {
 		MPart<?> part = window.getChildren().get(0).getChildren().get(0)
@@ -253,6 +300,30 @@ public class MWindowTest extends TestCase {
 		contributedPart.setName("Sample View");
 		contributedPart
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+		return window;
+	}
+
+	private MWindow<MPart<?>> createWindowWithOneViewAndMenu() {
+		final MWindow<MPart<?>> window = createWindowWithOneView();
+		final MMenu menuBar = ApplicationFactory.eINSTANCE.createMMenu();
+		window.setMenu(menuBar);
+		final MMenuItem fileItem = ApplicationFactory.eINSTANCE
+				.createMMenuItem();
+		fileItem.setName("File");
+		fileItem.setId("file");
+		menuBar.getItems().add(fileItem);
+		final MMenu fileMenu = ApplicationFactory.eINSTANCE.createMMenu();
+		fileItem.setMenu(fileMenu);
+
+		final MMenuItem item1 = ApplicationFactory.eINSTANCE.createMMenuItem();
+		item1.setId("item1");
+		item1.setName("item1");
+		fileMenu.getItems().add(item1);
+		final MMenuItem item2 = ApplicationFactory.eINSTANCE.createMMenuItem();
+		item2.setId("item2");
+		item2.setName("item2");
+		fileMenu.getItems().add(item2);
+
 		return window;
 	}
 }

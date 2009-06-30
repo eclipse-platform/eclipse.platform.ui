@@ -15,6 +15,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
@@ -26,6 +27,7 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.ContributionItem;
+import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -164,10 +166,23 @@ public class HandledContributionItem extends ContributionItem {
 								}
 							});
 						}
+					} else if (ApplicationPackage.Literals.MMENU_ITEM__VISIBLE
+							.equals(msg.getFeature())) {
+						updateVisible();
 					}
 				}
 			};
 			model.eAdapters().add(modelListener);
+		}
+	}
+
+	private void updateVisible() {
+		if (model instanceof MMenuItem) {
+			setVisible(((MMenuItem) model).isVisible());
+			final IContributionManager parent = getParent();
+			if (parent != null) {
+				parent.markDirty();
+			}
 		}
 	}
 
