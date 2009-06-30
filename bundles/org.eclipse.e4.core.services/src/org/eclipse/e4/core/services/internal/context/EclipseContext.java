@@ -205,7 +205,7 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	static ThreadLocal currentComputation = new ThreadLocal();
 
 	// TODO replace with variable on bundle-specific class
-	public static boolean DEBUG = true;
+	public static boolean DEBUG = false;
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
