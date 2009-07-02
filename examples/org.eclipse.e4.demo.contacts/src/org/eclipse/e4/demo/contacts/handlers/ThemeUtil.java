@@ -46,6 +46,7 @@ public class ThemeUtil {
 						engine.reset();
 						engine.parseStyleSheet(streamReader);
 						engine.applyStyles(shell, true, false);
+						shell.layout(true, true);
 					} catch (MalformedURLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
