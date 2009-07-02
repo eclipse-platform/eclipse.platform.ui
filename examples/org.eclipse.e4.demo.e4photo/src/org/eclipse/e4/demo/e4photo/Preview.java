@@ -96,16 +96,18 @@ public class Preview {
 		};
 		scaledImageData.addChangeListener(new IChangeListener() {
 			public void handleChange(ChangeEvent event) {
-				ImageData imageData = (ImageData) scaledImageData.getValue();
-				if (imageData == null)
-					return;
-				if (currentImage != null) {
-					currentImage.dispose();
-					currentImage = null;
-				}
-				currentImage = new Image(parent.getDisplay(), imageData);
+				final ImageData imageData = (ImageData) scaledImageData
+						.getValue();
 				parent.getDisplay().asyncExec(new Runnable() {
 					public void run() {
+						if (imageData == null)
+							return;
+						if (currentImage != null) {
+							currentImage.dispose();
+							currentImage = null;
+						}
+						currentImage = new Image(parent.getDisplay(), imageData);
+
 						parent.redraw();
 					}
 				});
