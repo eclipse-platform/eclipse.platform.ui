@@ -1019,7 +1019,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		}
 
 		int length= document.getLength();
-		if (end - 1 < length && start < length)
+		if (end <= length && start <= length)
 			selectAndReveal(start, end - start);
 	}
 
