@@ -4340,6 +4340,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fRulerContextMenu= null;
 		}
 
+		registerUndoRedoAction(ITextEditorActionConstants.UNDO, null);
+		registerUndoRedoAction(ITextEditorActionConstants.REDO, null);
+
 		if (fActions != null) {
 			fActions.clear();
 			fActions= null;
@@ -5535,19 +5538,21 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
-	 * Registers the given undo/redo action under the given ID and
-	 * ensures that previously installed actions get disposed. It
-	 * also takes care of re-registering the new action with the
-	 * global action handler.
-	 *
-	 * @param actionId	the action id under which to register the action
-	 * @param action	the action to register
+	 * Registers the given undo/redo action under the given ID and ensures that previously installed
+	 * actions get disposed. It also takes care of re-registering the new action with the global
+	 * action handler.
+	 * 
+	 * @param actionId the action id under which to register the action
+	 * @param action the action to register or <code>null</code> to dispose them
 	 * @since 3.1
 	 */
 	private void registerUndoRedoAction(String actionId, OperationHistoryActionHandler action) {
 		IAction oldAction= getAction(actionId);
 		if (oldAction instanceof OperationHistoryActionHandler)
 			((OperationHistoryActionHandler)oldAction).dispose();
+
+		if (action == null)
+			return;
 
 		setAction(actionId, action);
 
