@@ -64,8 +64,7 @@ public abstract class PartFactory {
 		return null;
 	}
 
-	public Object createToolBar(MPart<?> part, Object widgetObject,
-			MToolBar toolBar) {
+	public Object createToolBar(MPart<?> part, Object widgetObject, MToolBar toolBar) {
 		return null;
 	}
 
@@ -74,8 +73,7 @@ public abstract class PartFactory {
 	 * 
 	 * @param part
 	 *            the part to start searching from
-	 * @return the parent's closest context, or global context if none in the
-	 *         hierarchy
+	 * @return the parent's closest context, or global context if none in the hierarchy
 	 */
 	protected IEclipseContext getContextForParent(MPart<?> part) {
 		MPart<?> parent = part.getParent();
@@ -114,8 +112,8 @@ public abstract class PartFactory {
 	}
 
 	/**
-	 * Activate the part in the hierarchy. This should either still be internal
-	 * or be a public method somewhere else.
+	 * Activate the part in the hierarchy. This should either still be internal or be a public
+	 * method somewhere else.
 	 * 
 	 * @param part
 	 */
@@ -124,12 +122,14 @@ public abstract class PartFactory {
 		IEclipseContext partContext = part.getContext();
 		while (parent != null) {
 			IEclipseContext parentContext = parent.getContext();
-			if (parent.getActiveChild() != part)
-				parent.setActiveChild(part);
+			// The context has to be changed first as the events created by #setActiveChild()
+			// will use context information.
 			if (parentContext != null) {
 				parentContext.set(IServiceConstants.ACTIVE_CHILD, partContext);
 				partContext = parentContext;
 			}
+			if (parent.getActiveChild() != part)
+				parent.setActiveChild(part);
 			part = parent;
 			parent = (MPart<MPart<?>>) parent.getParent();
 		}
