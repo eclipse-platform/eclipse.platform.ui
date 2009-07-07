@@ -412,7 +412,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 
 			public void processOutMethod(Method m, final String name) {
 				final EclipseContext outputContext = (EclipseContext) event.getContext().get(
-						"outputs");
+						IContextConstants.OUTPUTS);
 				if (outputContext == null) {
 					throw new IllegalStateException("No output context available for @Out " + m //$NON-NLS-1$
 							+ " in " + userObject); //$NON-NLS-1$

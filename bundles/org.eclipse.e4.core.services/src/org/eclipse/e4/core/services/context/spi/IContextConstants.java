@@ -74,13 +74,13 @@ public interface IContextConstants {
 	 * A context key (value "DEBUG_STRING") identifying a value to use in debug statements for a
 	 * context. A computed value can be used to embed more complex information in debug statements.
 	 */
-	public static final String DEBUG_STRING = "DEBUG_STRING"; //$NON-NLS-1$
+	public static final String DEBUG_STRING = "debugString"; //$NON-NLS-1$
 
 	/**
 	 * A context key (value "OUTPUTS") identifying a value that stores an output context for a given
 	 * context. An output context is used by the dependency injection system for storing values
 	 * injected "out" of a user object back into its surrounding context.
 	 */
-	public static final String OUTPUTS = "OUTPUTS"; //$NON-NLS-1$
+	public static final String OUTPUTS = "outputs"; //$NON-NLS-1$
 
 }
