@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MTrimmedPart.java,v 1.1 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -48,7 +48,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @model containment="true"
 	 * @generated
 	 */
-	MToolBarContainer<?> getTopTrim();
+	MToolBarContainer getTopTrim();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getTopTrim <em>Top Trim</em>}' containment reference.
@@ -58,7 +58,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @see #getTopTrim()
 	 * @generated
 	 */
-	void setTopTrim(MToolBarContainer<?> value);
+	void setTopTrim(MToolBarContainer value);
 
 	/**
 	 * Returns the value of the '<em><b>Left Trim</b></em>' containment reference.
@@ -74,7 +74,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @model containment="true"
 	 * @generated
 	 */
-	MToolBarContainer<?> getLeftTrim();
+	MToolBarContainer getLeftTrim();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getLeftTrim <em>Left Trim</em>}' containment reference.
@@ -84,7 +84,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @see #getLeftTrim()
 	 * @generated
 	 */
-	void setLeftTrim(MToolBarContainer<?> value);
+	void setLeftTrim(MToolBarContainer value);
 
 	/**
 	 * Returns the value of the '<em><b>Right Trim</b></em>' containment reference.
@@ -100,7 +100,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @model containment="true"
 	 * @generated
 	 */
-	MToolBarContainer<?> getRightTrim();
+	MToolBarContainer getRightTrim();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getRightTrim <em>Right Trim</em>}' containment reference.
@@ -110,7 +110,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @see #getRightTrim()
 	 * @generated
 	 */
-	void setRightTrim(MToolBarContainer<?> value);
+	void setRightTrim(MToolBarContainer value);
 
 	/**
 	 * Returns the value of the '<em><b>Bottom Trim</b></em>' containment reference.
@@ -126,7 +126,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @model containment="true"
 	 * @generated
 	 */
-	MToolBarContainer<?> getBottomTrim();
+	MToolBarContainer getBottomTrim();
 
 	/**
 	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MTrimmedPart#getBottomTrim <em>Bottom Trim</em>}' containment reference.
@@ -136,7 +136,7 @@ public interface MTrimmedPart<P extends MPart<?>> extends MPart<P> {
 	 * @see #getBottomTrim()
 	 * @generated
 	 */
-	void setBottomTrim(MToolBarContainer<?> value);
+	void setBottomTrim(MToolBarContainer value);
 
 	/**
 	 * Returns the value of the '<em><b>Client Area</b></em>' containment reference.

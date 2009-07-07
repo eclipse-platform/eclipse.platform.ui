@@ -8,11 +8,12 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MToolBarContainer.java,v 1.1 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
@@ -31,10 +32,10 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface MToolBarContainer<I extends MToolBar> extends MApplicationElement {
+public interface MToolBarContainer extends EObject {
 	/**
 	 * Returns the value of the '<em><b>Toolbars</b></em>' containment reference list.
-	 * The list contents are of type {@link I}.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MToolBar}.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Toolbars</em>' containment reference list isn't clear,
@@ -46,7 +47,7 @@ public interface MToolBarContainer<I extends MToolBar> extends MApplicationEleme
 	 * @model containment="true"
 	 * @generated
 	 */
-	EList<I> getToolbars();
+	EList<MToolBar> getToolbars();
 
 	/**
 	 * Returns the value of the '<em><b>Horizontal</b></em>' attribute.

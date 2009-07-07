@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MTrimmedPartImpl.java,v 1.1 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -51,7 +51,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * @generated
 	 * @ordered
 	 */
-	protected MToolBarContainer<?> topTrim;
+	protected MToolBarContainer topTrim;
 
 	/**
 	 * The cached value of the '{@link #getLeftTrim() <em>Left Trim</em>}' containment reference.
@@ -61,7 +61,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * @generated
 	 * @ordered
 	 */
-	protected MToolBarContainer<?> leftTrim;
+	protected MToolBarContainer leftTrim;
 
 	/**
 	 * The cached value of the '{@link #getRightTrim() <em>Right Trim</em>}' containment reference.
@@ -71,7 +71,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * @generated
 	 * @ordered
 	 */
-	protected MToolBarContainer<?> rightTrim;
+	protected MToolBarContainer rightTrim;
 
 	/**
 	 * The cached value of the '{@link #getBottomTrim() <em>Bottom Trim</em>}' containment reference.
@@ -81,7 +81,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * @generated
 	 * @ordered
 	 */
-	protected MToolBarContainer<?> bottomTrim;
+	protected MToolBarContainer bottomTrim;
 
 	/**
 	 * The cached value of the '{@link #getClientArea() <em>Client Area</em>}' containment reference.
@@ -117,7 +117,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolBarContainer<?> getTopTrim() {
+	public MToolBarContainer getTopTrim() {
 		return topTrim;
 	}
 
@@ -126,8 +126,8 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetTopTrim(MToolBarContainer<?> newTopTrim, NotificationChain msgs) {
-		MToolBarContainer<?> oldTopTrim = topTrim;
+	public NotificationChain basicSetTopTrim(MToolBarContainer newTopTrim, NotificationChain msgs) {
+		MToolBarContainer oldTopTrim = topTrim;
 		topTrim = newTopTrim;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackage.MTRIMMED_PART__TOP_TRIM, oldTopTrim, newTopTrim);
@@ -141,7 +141,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setTopTrim(MToolBarContainer<?> newTopTrim) {
+	public void setTopTrim(MToolBarContainer newTopTrim) {
 		if (newTopTrim != topTrim) {
 			NotificationChain msgs = null;
 			if (topTrim != null)
@@ -160,7 +160,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolBarContainer<?> getLeftTrim() {
+	public MToolBarContainer getLeftTrim() {
 		return leftTrim;
 	}
 
@@ -169,8 +169,8 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetLeftTrim(MToolBarContainer<?> newLeftTrim, NotificationChain msgs) {
-		MToolBarContainer<?> oldLeftTrim = leftTrim;
+	public NotificationChain basicSetLeftTrim(MToolBarContainer newLeftTrim, NotificationChain msgs) {
+		MToolBarContainer oldLeftTrim = leftTrim;
 		leftTrim = newLeftTrim;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackage.MTRIMMED_PART__LEFT_TRIM, oldLeftTrim, newLeftTrim);
@@ -184,7 +184,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setLeftTrim(MToolBarContainer<?> newLeftTrim) {
+	public void setLeftTrim(MToolBarContainer newLeftTrim) {
 		if (newLeftTrim != leftTrim) {
 			NotificationChain msgs = null;
 			if (leftTrim != null)
@@ -203,7 +203,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolBarContainer<?> getRightTrim() {
+	public MToolBarContainer getRightTrim() {
 		return rightTrim;
 	}
 
@@ -212,8 +212,8 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetRightTrim(MToolBarContainer<?> newRightTrim, NotificationChain msgs) {
-		MToolBarContainer<?> oldRightTrim = rightTrim;
+	public NotificationChain basicSetRightTrim(MToolBarContainer newRightTrim, NotificationChain msgs) {
+		MToolBarContainer oldRightTrim = rightTrim;
 		rightTrim = newRightTrim;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackage.MTRIMMED_PART__RIGHT_TRIM, oldRightTrim, newRightTrim);
@@ -227,7 +227,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setRightTrim(MToolBarContainer<?> newRightTrim) {
+	public void setRightTrim(MToolBarContainer newRightTrim) {
 		if (newRightTrim != rightTrim) {
 			NotificationChain msgs = null;
 			if (rightTrim != null)
@@ -246,7 +246,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolBarContainer<?> getBottomTrim() {
+	public MToolBarContainer getBottomTrim() {
 		return bottomTrim;
 	}
 
@@ -255,8 +255,8 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public NotificationChain basicSetBottomTrim(MToolBarContainer<?> newBottomTrim, NotificationChain msgs) {
-		MToolBarContainer<?> oldBottomTrim = bottomTrim;
+	public NotificationChain basicSetBottomTrim(MToolBarContainer newBottomTrim, NotificationChain msgs) {
+		MToolBarContainer oldBottomTrim = bottomTrim;
 		bottomTrim = newBottomTrim;
 		if (eNotificationRequired()) {
 			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, ApplicationPackage.MTRIMMED_PART__BOTTOM_TRIM, oldBottomTrim, newBottomTrim);
@@ -270,7 +270,7 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setBottomTrim(MToolBarContainer<?> newBottomTrim) {
+	public void setBottomTrim(MToolBarContainer newBottomTrim) {
 		if (newBottomTrim != bottomTrim) {
 			NotificationChain msgs = null;
 			if (bottomTrim != null)
@@ -380,16 +380,16 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
 			case ApplicationPackage.MTRIMMED_PART__TOP_TRIM:
-				setTopTrim((MToolBarContainer<?>)newValue);
+				setTopTrim((MToolBarContainer)newValue);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__LEFT_TRIM:
-				setLeftTrim((MToolBarContainer<?>)newValue);
+				setLeftTrim((MToolBarContainer)newValue);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__RIGHT_TRIM:
-				setRightTrim((MToolBarContainer<?>)newValue);
+				setRightTrim((MToolBarContainer)newValue);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__BOTTOM_TRIM:
-				setBottomTrim((MToolBarContainer<?>)newValue);
+				setBottomTrim((MToolBarContainer)newValue);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__CLIENT_AREA:
 				setClientArea((MPart<?>)newValue);
@@ -407,16 +407,16 @@ public class MTrimmedPartImpl<P extends MPart<?>> extends MPartImpl<P> implement
 	public void eUnset(int featureID) {
 		switch (featureID) {
 			case ApplicationPackage.MTRIMMED_PART__TOP_TRIM:
-				setTopTrim((MToolBarContainer<?>)null);
+				setTopTrim((MToolBarContainer)null);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__LEFT_TRIM:
-				setLeftTrim((MToolBarContainer<?>)null);
+				setLeftTrim((MToolBarContainer)null);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__RIGHT_TRIM:
-				setRightTrim((MToolBarContainer<?>)null);
+				setRightTrim((MToolBarContainer)null);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__BOTTOM_TRIM:
-				setBottomTrim((MToolBarContainer<?>)null);
+				setBottomTrim((MToolBarContainer)null);
 				return;
 			case ApplicationPackage.MTRIMMED_PART__CLIENT_AREA:
 				setClientArea((MPart<?>)null);

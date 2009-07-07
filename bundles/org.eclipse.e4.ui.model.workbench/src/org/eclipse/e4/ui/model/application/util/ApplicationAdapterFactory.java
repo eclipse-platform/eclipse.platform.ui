@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationAdapterFactory.java,v 1.3 2009/02/03 14:25:36 emoffatt Exp $
+ * $Id: ApplicationAdapterFactory.java,v 1.4 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -154,7 +154,7 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createMCommandAdapter();
 			}
 			@Override
-			public <I extends MToolBar> Adapter caseMToolBarContainer(MToolBarContainer<I> object) {
+			public Adapter caseMToolBarContainer(MToolBarContainer object) {
 				return createMToolBarContainerAdapter();
 			}
 			@Override

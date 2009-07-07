@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MToolBarContainerImpl.java,v 1.1 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.impl.FlatEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -44,7 +45,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class MToolBarContainerImpl<I extends MToolBar> extends MApplicationElementImpl implements MToolBarContainer<I> {
+public class MToolBarContainerImpl extends FlatEObjectImpl implements MToolBarContainer {
 	/**
 	 * The cached value of the '{@link #getToolbars() <em>Toolbars</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -53,7 +54,7 @@ public class MToolBarContainerImpl<I extends MToolBar> extends MApplicationEleme
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<I> toolbars;
+	protected EList<MToolBar> toolbars;
 
 	/**
 	 * The default value of the '{@link #isHorizontal() <em>Horizontal</em>}' attribute.
@@ -98,9 +99,9 @@ public class MToolBarContainerImpl<I extends MToolBar> extends MApplicationEleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<I> getToolbars() {
+	public EList<MToolBar> getToolbars() {
 		if (toolbars == null) {
-			toolbars = new EObjectContainmentEList<I>(MToolBar.class, this, ApplicationPackage.MTOOL_BAR_CONTAINER__TOOLBARS);
+			toolbars = new EObjectContainmentEList<MToolBar>(MToolBar.class, this, ApplicationPackage.MTOOL_BAR_CONTAINER__TOOLBARS);
 		}
 		return toolbars;
 	}
@@ -167,7 +168,7 @@ public class MToolBarContainerImpl<I extends MToolBar> extends MApplicationEleme
 		switch (featureID) {
 			case ApplicationPackage.MTOOL_BAR_CONTAINER__TOOLBARS:
 				getToolbars().clear();
-				getToolbars().addAll((Collection<? extends I>)newValue);
+				getToolbars().addAll((Collection<? extends MToolBar>)newValue);
 				return;
 			case ApplicationPackage.MTOOL_BAR_CONTAINER__HORIZONTAL:
 				setHorizontal((Boolean)newValue);

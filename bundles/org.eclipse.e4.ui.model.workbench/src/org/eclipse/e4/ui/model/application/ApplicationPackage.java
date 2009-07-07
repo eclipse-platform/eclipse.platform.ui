@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.9 2009/05/25 14:29:18 pwebster Exp $
+ * $Id: ApplicationPackage.java,v 1.10 2009/06/15 19:13:16 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -1923,31 +1923,13 @@ public interface ApplicationPackage extends EPackage {
 	int MTOOL_BAR_CONTAINER = 19;
 
 	/**
-	 * The feature id for the '<em><b>Owner</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MTOOL_BAR_CONTAINER__OWNER = MAPPLICATION_ELEMENT__OWNER;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MTOOL_BAR_CONTAINER__ID = MAPPLICATION_ELEMENT__ID;
-
-	/**
 	 * The feature id for the '<em><b>Toolbars</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MTOOL_BAR_CONTAINER__TOOLBARS = MAPPLICATION_ELEMENT_FEATURE_COUNT + 0;
+	int MTOOL_BAR_CONTAINER__TOOLBARS = 0;
 
 	/**
 	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
@@ -1956,7 +1938,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTOOL_BAR_CONTAINER__HORIZONTAL = MAPPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MTOOL_BAR_CONTAINER__HORIZONTAL = 1;
 
 	/**
 	 * The number of structural features of the '<em>MTool Bar Container</em>' class.
@@ -1965,7 +1947,7 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int MTOOL_BAR_CONTAINER_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MTOOL_BAR_CONTAINER_FEATURE_COUNT = 2;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.

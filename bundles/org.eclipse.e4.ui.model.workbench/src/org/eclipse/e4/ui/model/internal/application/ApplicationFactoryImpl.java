@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationFactoryImpl.java,v 1.4 2009/02/04 21:18:31 pwebster Exp $
+ * $Id: ApplicationFactoryImpl.java,v 1.5 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -269,8 +269,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public <I extends MToolBar> MToolBarContainer<I> createMToolBarContainer() {
-		MToolBarContainerImpl<I> mToolBarContainer = new MToolBarContainerImpl<I>();
+	public MToolBarContainer createMToolBarContainer() {
+		MToolBarContainerImpl mToolBarContainer = new MToolBarContainerImpl();
 		return mToolBarContainer;
 	}
 

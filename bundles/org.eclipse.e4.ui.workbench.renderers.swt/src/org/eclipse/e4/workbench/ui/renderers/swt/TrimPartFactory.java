@@ -94,7 +94,7 @@ public class TrimPartFactory extends SWTPartFactory {
 	 * @return
 	 */
 	private Composite createTrim(Composite trimmedComp, int orientation,
-			MTrimmedPart<?> trimModel, MToolBarContainer<?> trimContainer) {
+			MTrimmedPart<?> trimModel, MToolBarContainer trimContainer) {
 		Composite trimComposite = new Composite(trimmedComp, SWT.NONE);
 		RowLayout trl = new RowLayout(orientation);
 		trl.marginBottom = trl.marginTop = 1;
@@ -112,7 +112,7 @@ public class TrimPartFactory extends SWTPartFactory {
 	 * @param trimSide
 	 * @return
 	 */
-	private boolean hasVisibleChildren(MToolBarContainer<?> trimSide) {
+	private boolean hasVisibleChildren(MToolBarContainer trimSide) {
 		if (trimSide == null)
 			return false;
 

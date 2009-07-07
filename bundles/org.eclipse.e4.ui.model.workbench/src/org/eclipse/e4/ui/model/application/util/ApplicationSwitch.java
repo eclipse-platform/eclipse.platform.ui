@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationSwitch.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
+ * $Id: ApplicationSwitch.java,v 1.4 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -246,9 +246,8 @@ public class ApplicationSwitch<T> {
 				return result;
 			}
 			case ApplicationPackage.MTOOL_BAR_CONTAINER: {
-				MToolBarContainer<?> mToolBarContainer = (MToolBarContainer<?>)theEObject;
+				MToolBarContainer mToolBarContainer = (MToolBarContainer)theEObject;
 				T result = caseMToolBarContainer(mToolBarContainer);
-				if (result == null) result = caseMApplicationElement(mToolBarContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -552,7 +551,7 @@ public class ApplicationSwitch<T> {
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <I extends MToolBar> T caseMToolBarContainer(MToolBarContainer<I> object) {
+	public T caseMToolBarContainer(MToolBarContainer object) {
 		return null;
 	}
 
