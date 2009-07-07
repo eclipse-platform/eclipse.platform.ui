@@ -50,5 +50,5 @@ public interface IServiceConstants {
 	/**
 	 * 
 	 */
-	public static final String ACTIVE_SHELL = "activeShell";
+	public static final String ACTIVE_SHELL = "activeShell"; //$NON-NLS-1$
 }
