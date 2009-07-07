@@ -8,22 +8,28 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id$
+ * $Id: MHandledItemImpl.java,v 1.1 2009/02/03 14:25:36 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
+import java.util.Collection;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenu;
 
+import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -34,6 +40,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#getMenu <em>Menu</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#getWbCommand <em>Wb Command</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  * </p>
  *
@@ -59,6 +67,36 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 	 * @ordered
 	 */
 	protected MMenu menu;
+
+	/**
+	 * The default value of the '{@link #getWbCommand() <em>Wb Command</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWbCommand()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final ParameterizedCommand WB_COMMAND_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getWbCommand() <em>Wb Command</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWbCommand()
+	 * @generated
+	 * @ordered
+	 */
+	protected ParameterizedCommand wbCommand = WB_COMMAND_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getParameters()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MParameter> parameters;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -165,11 +203,46 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public ParameterizedCommand getWbCommand() {
+		return wbCommand;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setWbCommand(ParameterizedCommand newWbCommand) {
+		ParameterizedCommand oldWbCommand = wbCommand;
+		wbCommand = newWbCommand;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MHANDLED_ITEM__WB_COMMAND, oldWbCommand, wbCommand));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<MParameter> getParameters() {
+		if (parameters == null) {
+			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this, ApplicationPackage.MHANDLED_ITEM__PARAMETERS);
+		}
+		return parameters;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
 			case ApplicationPackage.MHANDLED_ITEM__MENU:
 				return basicSetMenu(null, msgs);
+			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
+				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -187,6 +260,10 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 				return basicGetCommand();
 			case ApplicationPackage.MHANDLED_ITEM__MENU:
 				return getMenu();
+			case ApplicationPackage.MHANDLED_ITEM__WB_COMMAND:
+				return getWbCommand();
+			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
+				return getParameters();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -196,6 +273,7 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -204,6 +282,13 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 				return;
 			case ApplicationPackage.MHANDLED_ITEM__MENU:
 				setMenu((MMenu)newValue);
+				return;
+			case ApplicationPackage.MHANDLED_ITEM__WB_COMMAND:
+				setWbCommand((ParameterizedCommand)newValue);
+				return;
+			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
+				getParameters().clear();
+				getParameters().addAll((Collection<? extends MParameter>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -223,6 +308,12 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 			case ApplicationPackage.MHANDLED_ITEM__MENU:
 				setMenu((MMenu)null);
 				return;
+			case ApplicationPackage.MHANDLED_ITEM__WB_COMMAND:
+				setWbCommand(WB_COMMAND_EDEFAULT);
+				return;
+			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
+				getParameters().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -239,8 +330,28 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 				return command != null;
 			case ApplicationPackage.MHANDLED_ITEM__MENU:
 				return menu != null;
+			case ApplicationPackage.MHANDLED_ITEM__WB_COMMAND:
+				return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
+			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
+				return parameters != null && !parameters.isEmpty();
 		}
 		return super.eIsSet(featureID);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public String toString() {
+		if (eIsProxy()) return super.toString();
+
+		StringBuffer result = new StringBuffer(super.toString());
+		result.append(" (wbCommand: "); //$NON-NLS-1$
+		result.append(wbCommand);
+		result.append(')');
+		return result.toString();
 	}
 
 } //MHandledItemImpl

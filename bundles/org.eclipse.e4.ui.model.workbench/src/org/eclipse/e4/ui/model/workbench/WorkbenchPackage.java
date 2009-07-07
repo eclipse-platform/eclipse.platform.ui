@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackage.java,v 1.5 2009/04/13 19:47:35 emoffatt Exp $
+ * $Id: WorkbenchPackage.java,v 1.6 2009/06/16 16:09:51 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -675,6 +675,24 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MMENU_ITEM_RENDERER__MENU = ApplicationPackage.MMENU_ITEM__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__WB_COMMAND = ApplicationPackage.MMENU_ITEM__WB_COMMAND;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__PARAMETERS = ApplicationPackage.MMENU_ITEM__PARAMETERS;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.

@@ -8,10 +8,11 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationFactoryImpl.java,v 1.5 2009/04/13 19:47:35 emoffatt Exp $
+ * $Id: ApplicationFactoryImpl.java,v 1.6 2009/07/07 14:27:31 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.ui.model.application.*;
 
 import org.eclipse.emf.ecore.EClass;
@@ -83,6 +84,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 			case ApplicationPackage.MWINDOW: return createMWindow();
 			case ApplicationPackage.MCOMMAND: return createMCommand();
 			case ApplicationPackage.MTOOL_BAR_CONTAINER: return createMToolBarContainer();
+			case ApplicationPackage.MPARAMETER: return createMParameter();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -96,6 +98,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
+			case ApplicationPackage.PARAMETERIZED_COMMAND:
+				return createParameterizedCommandFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -109,6 +113,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
+			case ApplicationPackage.PARAMETERIZED_COMMAND:
+				return convertParameterizedCommandToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -272,6 +278,34 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements ApplicationF
 	public MToolBarContainer createMToolBarContainer() {
 		MToolBarContainerImpl mToolBarContainer = new MToolBarContainerImpl();
 		return mToolBarContainer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MParameter createMParameter() {
+		MParameterImpl mParameter = new MParameterImpl();
+		return mParameter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ParameterizedCommand createParameterizedCommandFromString(EDataType eDataType, String initialValue) {
+		return (ParameterizedCommand)super.createFromString(eDataType, initialValue);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertParameterizedCommandToString(EDataType eDataType, Object instanceValue) {
+		return super.convertToString(eDataType, instanceValue);
 	}
 
 	/**

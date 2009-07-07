@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationAdapterFactory.java,v 1.4 2009/04/13 19:47:35 emoffatt Exp $
+ * $Id: ApplicationAdapterFactory.java,v 1.5 2009/07/07 14:27:32 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -156,6 +156,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseMToolBarContainer(MToolBarContainer object) {
 				return createMToolBarContainerAdapter();
+			}
+			@Override
+			public Adapter caseMParameter(MParameter object) {
+				return createMParameterAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -454,6 +458,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMToolBarContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MParameter <em>MParameter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MParameter
+	 * @generated
+	 */
+	public Adapter createMParameterAdapter() {
 		return null;
 	}
 

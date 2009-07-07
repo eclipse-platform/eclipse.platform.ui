@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationFactory.java,v 1.4 2009/04/13 19:47:35 emoffatt Exp $
+ * $Id: ApplicationFactory.java,v 1.5 2009/07/07 14:27:32 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -174,6 +174,15 @@ public interface ApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MToolBarContainer createMToolBarContainer();
+
+	/**
+	 * Returns a new object of class '<em>MParameter</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>MParameter</em>'.
+	 * @generated
+	 */
+	MParameter createMParameter();
 
 	/**
 	 * Returns the package supported by this factory.

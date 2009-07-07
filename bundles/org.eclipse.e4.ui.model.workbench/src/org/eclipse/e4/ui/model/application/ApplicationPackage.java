@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.10 2009/06/15 19:13:16 pwebster Exp $
+ * $Id: ApplicationPackage.java,v 1.11 2009/07/07 14:27:31 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -1175,13 +1175,31 @@ public interface ApplicationPackage extends EPackage {
 	int MHANDLED_ITEM__MENU = MITEM_FEATURE_COUNT + 1;
 
 	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MHANDLED_ITEM__WB_COMMAND = MITEM_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MHANDLED_ITEM__PARAMETERS = MITEM_FEATURE_COUNT + 3;
+
+	/**
 	 * The number of structural features of the '<em>MHandled Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MHANDLED_ITEM_FEATURE_COUNT = MITEM_FEATURE_COUNT + 2;
+	int MHANDLED_ITEM_FEATURE_COUNT = MITEM_FEATURE_COUNT + 4;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl <em>MMenu Item</em>}' class.
@@ -1255,6 +1273,24 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MMENU_ITEM__MENU = MHANDLED_ITEM__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM__WB_COMMAND = MHANDLED_ITEM__WB_COMMAND;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM__PARAMETERS = MHANDLED_ITEM__PARAMETERS;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -1355,6 +1391,24 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MTOOL_BAR_ITEM__MENU = MHANDLED_ITEM__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_ITEM__WB_COMMAND = MHANDLED_ITEM__WB_COMMAND;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_ITEM__PARAMETERS = MHANDLED_ITEM__PARAMETERS;
 
 	/**
 	 * The number of structural features of the '<em>MTool Bar Item</em>' class.
@@ -1950,6 +2004,43 @@ public interface ApplicationPackage extends EPackage {
 	int MTOOL_BAR_CONTAINER_FEATURE_COUNT = 2;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MParameterImpl <em>MParameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.internal.application.MParameterImpl
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMParameter()
+	 * @generated
+	 */
+	int MPARAMETER = 20;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPARAMETER__NAME = 0;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPARAMETER__VALUE = 1;
+
+	/**
+	 * The number of structural features of the '<em>MParameter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPARAMETER_FEATURE_COUNT = 2;
+
+	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1957,7 +2048,18 @@ public interface ApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 20;
+	int IECLIPSE_CONTEXT = 21;
+
+
+	/**
+	 * The meta object id for the '<em>Parameterized Command</em>' data type.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.core.commands.ParameterizedCommand
+	 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getParameterizedCommand()
+	 * @generated
+	 */
+	int PARAMETERIZED_COMMAND = 22;
 
 
 	/**
@@ -2336,6 +2438,28 @@ public interface ApplicationPackage extends EPackage {
 	EReference getMHandledItem_Menu();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MHandledItem#getWbCommand <em>Wb Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Wb Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem#getWbCommand()
+	 * @see #getMHandledItem()
+	 * @generated
+	 */
+	EAttribute getMHandledItem_WbCommand();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MHandledItem#getParameters <em>Parameters</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem#getParameters()
+	 * @see #getMHandledItem()
+	 * @generated
+	 */
+	EReference getMHandledItem_Parameters();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>MMenu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2601,6 +2725,38 @@ public interface ApplicationPackage extends EPackage {
 	EAttribute getMToolBarContainer_Horizontal();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MParameter <em>MParameter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>MParameter</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MParameter
+	 * @generated
+	 */
+	EClass getMParameter();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MParameter#getName <em>Name</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Name</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MParameter#getName()
+	 * @see #getMParameter()
+	 * @generated
+	 */
+	EAttribute getMParameter_Name();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MParameter#getValue <em>Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MParameter#getValue()
+	 * @see #getMParameter()
+	 * @generated
+	 */
+	EAttribute getMParameter_Value();
+
+	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.services.context.IEclipseContext <em>IEclipse Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2610,6 +2766,17 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EDataType getIEclipseContext();
+
+	/**
+	 * Returns the meta object for data type '{@link org.eclipse.core.commands.ParameterizedCommand <em>Parameterized Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for data type '<em>Parameterized Command</em>'.
+	 * @see org.eclipse.core.commands.ParameterizedCommand
+	 * @model instanceClass="org.eclipse.core.commands.ParameterizedCommand"
+	 * @generated
+	 */
+	EDataType getParameterizedCommand();
 
 	/**
 	 * Returns the factory that creates the instances of the model.
@@ -2934,6 +3101,22 @@ public interface ApplicationPackage extends EPackage {
 		EReference MHANDLED_ITEM__MENU = eINSTANCE.getMHandledItem_Menu();
 
 		/**
+		 * The meta object literal for the '<em><b>Wb Command</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MHANDLED_ITEM__WB_COMMAND = eINSTANCE.getMHandledItem_WbCommand();
+
+		/**
+		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MHANDLED_ITEM__PARAMETERS = eINSTANCE.getMHandledItem_Parameters();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl <em>MMenu Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3154,6 +3337,32 @@ public interface ApplicationPackage extends EPackage {
 		EAttribute MTOOL_BAR_CONTAINER__HORIZONTAL = eINSTANCE.getMToolBarContainer_Horizontal();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MParameterImpl <em>MParameter</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.internal.application.MParameterImpl
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getMParameter()
+		 * @generated
+		 */
+		EClass MPARAMETER = eINSTANCE.getMParameter();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MPARAMETER__NAME = eINSTANCE.getMParameter_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MPARAMETER__VALUE = eINSTANCE.getMParameter_Value();
+
+		/**
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3162,6 +3371,16 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EDataType IECLIPSE_CONTEXT = eINSTANCE.getIEclipseContext();
+
+		/**
+		 * The meta object literal for the '<em>Parameterized Command</em>' data type.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.core.commands.ParameterizedCommand
+		 * @see org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl#getParameterizedCommand()
+		 * @generated
+		 */
+		EDataType PARAMETERIZED_COMMAND = eINSTANCE.getParameterizedCommand();
 
 	}
 

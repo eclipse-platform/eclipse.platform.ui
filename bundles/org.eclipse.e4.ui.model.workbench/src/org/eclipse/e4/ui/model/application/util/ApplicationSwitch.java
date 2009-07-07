@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationSwitch.java,v 1.4 2009/04/13 19:47:35 emoffatt Exp $
+ * $Id: ApplicationSwitch.java,v 1.5 2009/07/07 14:27:32 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application.util;
 
@@ -248,6 +248,12 @@ public class ApplicationSwitch<T> {
 			case ApplicationPackage.MTOOL_BAR_CONTAINER: {
 				MToolBarContainer mToolBarContainer = (MToolBarContainer)theEObject;
 				T result = caseMToolBarContainer(mToolBarContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case ApplicationPackage.MPARAMETER: {
+				MParameter mParameter = (MParameter)theEObject;
+				T result = caseMParameter(mParameter);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -552,6 +558,21 @@ public class ApplicationSwitch<T> {
 	 * @generated
 	 */
 	public T caseMToolBarContainer(MToolBarContainer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>MParameter</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>MParameter</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMParameter(MParameter object) {
 		return null;
 	}
 

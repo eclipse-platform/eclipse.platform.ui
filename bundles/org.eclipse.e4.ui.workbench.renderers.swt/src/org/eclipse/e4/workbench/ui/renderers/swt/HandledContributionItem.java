@@ -11,12 +11,16 @@
 
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.util.HashMap;
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
@@ -25,6 +29,7 @@ import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -58,6 +63,35 @@ public class HandledContributionItem extends ContributionItem {
 	public HandledContributionItem(MHandledItem model, IEclipseContext context) {
 		this.model = model;
 		this.context = context;
+		generateCommand();
+	}
+
+	/**
+	 * 
+	 */
+	private void generateCommand() {
+		if (model.getCommand() == null) {
+			return;
+		}
+		if (model.getWbCommand() == null) {
+			ECommandService cs = (ECommandService) context
+					.get(ECommandService.class.getName());
+			final Command cmd = cs.getCommand(model.getCommand().getId());
+			final EList<MParameter> modelParms = model.getParameters();
+			if (modelParms.isEmpty()) {
+				Activator.trace(Policy.DEBUG_MENUS, "command: " + cmd, null); //$NON-NLS-1$
+				model.setWbCommand(new ParameterizedCommand(cmd, null));
+				return;
+			}
+			HashMap<String, String> parms = new HashMap<String, String>();
+			for (MParameter parm : modelParms) {
+				parms.put(parm.getName(), parm.getValue());
+			}
+			final ParameterizedCommand parmCmd = ParameterizedCommand
+					.generateCommand(cmd, parms);
+			Activator.trace(Policy.DEBUG_MENUS, "command: " + parmCmd, null); //$NON-NLS-1$
+			model.setWbCommand(parmCmd);
+		}
 	}
 
 	/*
@@ -360,8 +394,8 @@ public class HandledContributionItem extends ContributionItem {
 	}
 
 	protected boolean canExecuteItem(Display display) {
-		final MCommand command = model.getCommand();
-		if (command == null) {
+		final ParameterizedCommand parmCmd = model.getWbCommand();
+		if (parmCmd == null) {
 			return false;
 		}
 		IEclipseContext context = getFocusContext(display);
@@ -370,13 +404,13 @@ public class HandledContributionItem extends ContributionItem {
 		if (hs == null) {
 			return true;
 		}
-		return hs.canExecute(command.getId());
+		return hs.canExecute(parmCmd);
 	}
 
 	protected Object executeItem(Display display) {
-		final MCommand command = model.getCommand();
-		if (command == null) {
-			return null;
+		final ParameterizedCommand parmCmd = model.getWbCommand();
+		if (parmCmd == null) {
+			return false;
 		}
 		IEclipseContext context = getFocusContext(display);
 		EHandlerService hs = (EHandlerService) context
@@ -384,6 +418,6 @@ public class HandledContributionItem extends ContributionItem {
 		if (hs == null) {
 			return null;
 		}
-		return hs.executeHandler(command.getId());
+		return hs.executeHandler(parmCmd);
 	}
 }

@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.internal.services;
 
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.EHandlerService;
@@ -27,7 +32,8 @@ public class ContextHandlerService implements EHandlerService {
 		context.set(PREFIX + commandId, handler);
 	}
 
-	public Object executeHandler(String commandId) {
+	public Object executeHandler(ParameterizedCommand command) {
+		String commandId = command.getId();
 		Object handler = context.get(commandId, new Object[] { "handler" });
 		if (handler == null) {
 			return null;
@@ -35,12 +41,25 @@ public class ContextHandlerService implements EHandlerService {
 		IContributionFactory factory = (IContributionFactory) context.get(
 				"org.eclipse.e4.core.services.IContributionFactory",
 				new Object[] { handler });
-		Object rc = factory.call(handler, null, "canExecute", context,
-				Boolean.TRUE);
-		if (Boolean.FALSE.equals(rc)) {
-			return null;
+		final Map parms = command.getParameterMap();
+		Iterator i = parms.entrySet().iterator();
+		while (i.hasNext()) {
+			Map.Entry entry = (Map.Entry) i.next();
+			context.set((String) entry.getKey(), entry.getValue());
 		}
-		return factory.call(handler, null, "execute", context, null);
+		try {
+			Object rc = factory.call(handler, null, "canExecute", context,
+					Boolean.TRUE);
+			if (Boolean.FALSE.equals(rc)) {
+				return null;
+			}
+			return factory.call(handler, null, "execute", context, null);
+		} finally {
+			i = parms.keySet().iterator();
+			while (i.hasNext()) {
+				context.remove((String) i.next());
+			}
+		}
 	}
 
 	public void deactivateHandler(String commandId, Object handler) {
@@ -50,7 +69,8 @@ public class ContextHandlerService implements EHandlerService {
 		}
 	}
 
-	public boolean canExecute(String commandId) {
+	public boolean canExecute(ParameterizedCommand command) {
+		String commandId = command.getId();
 		Object handler = context.get(commandId, new Object[] { "handler" });
 		if (handler == null) {
 			return false;
@@ -58,12 +78,30 @@ public class ContextHandlerService implements EHandlerService {
 		IContributionFactory factory = (IContributionFactory) context.get(
 				"org.eclipse.e4.core.services.IContributionFactory",
 				new Object[] { handler });
-		Object rc = factory.call(handler, null, "canExecute", context,
-				Boolean.TRUE);
+		final Map parms = command.getParameterMap();
+		Iterator i = parms.entrySet().iterator();
+		while (i.hasNext()) {
+			Map.Entry entry = (Map.Entry) i.next();
+			context.set((String) entry.getKey(), entry.getValue());
+		}
+		Object rc = null;
+		try {
+			rc = factory.call(handler, null, "canExecute", context,
+					Boolean.TRUE);
+		} finally {
+			i = parms.keySet().iterator();
+			while (i.hasNext()) {
+				context.remove((String) i.next());
+			}
+		}
 		if (Boolean.FALSE.equals(rc)) {
 			return false;
 		}
 		return true;
+	}
+
+	public IEclipseContext getContext() {
+		return context;
 	}
 
 }

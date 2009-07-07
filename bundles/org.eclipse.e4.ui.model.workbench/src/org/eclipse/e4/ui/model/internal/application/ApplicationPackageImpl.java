@@ -8,10 +8,11 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.12 2009/06/15 19:13:16 pwebster Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.13 2009/07/07 14:27:31 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
@@ -27,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MItemContainer;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MStack;
@@ -198,7 +200,21 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass mParameterEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EDataType iEclipseContextEDataType = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EDataType parameterizedCommandEDataType = null;
 
 	/**
 	 * Creates an instance of the model <b>Package</b>, registered with
@@ -586,6 +602,24 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getMHandledItem_WbCommand() {
+		return (EAttribute)mHandledItemEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getMHandledItem_Parameters() {
+		return (EReference)mHandledItemEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getMMenuItem() {
 		return mMenuItemEClass;
 	}
@@ -811,8 +845,44 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getMParameter() {
+		return mParameterEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMParameter_Name() {
+		return (EAttribute)mParameterEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMParameter_Value() {
+		return (EAttribute)mParameterEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getIEclipseContext() {
 		return iEclipseContextEDataType;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EDataType getParameterizedCommand() {
+		return parameterizedCommandEDataType;
 	}
 
 	/**
@@ -887,6 +957,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		mHandledItemEClass = createEClass(MHANDLED_ITEM);
 		createEReference(mHandledItemEClass, MHANDLED_ITEM__COMMAND);
 		createEReference(mHandledItemEClass, MHANDLED_ITEM__MENU);
+		createEAttribute(mHandledItemEClass, MHANDLED_ITEM__WB_COMMAND);
+		createEReference(mHandledItemEClass, MHANDLED_ITEM__PARAMETERS);
 
 		mMenuItemEClass = createEClass(MMENU_ITEM);
 		createEAttribute(mMenuItemEClass, MMENU_ITEM__SEPARATOR);
@@ -923,8 +995,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEReference(mToolBarContainerEClass, MTOOL_BAR_CONTAINER__TOOLBARS);
 		createEAttribute(mToolBarContainerEClass, MTOOL_BAR_CONTAINER__HORIZONTAL);
 
+		mParameterEClass = createEClass(MPARAMETER);
+		createEAttribute(mParameterEClass, MPARAMETER__NAME);
+		createEAttribute(mParameterEClass, MPARAMETER__VALUE);
+
 		// Create data types
 		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
+		parameterizedCommandEDataType = createEDataType(PARAMETERIZED_COMMAND);
 	}
 
 	/**
@@ -1093,6 +1170,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEClass(mHandledItemEClass, MHandledItem.class, "MHandledItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getMHandledItem_Command(), this.getMCommand(), null, "command", null, 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getMHandledItem_Menu(), this.getMMenu(), null, "menu", null, 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMHandledItem_WbCommand(), this.getParameterizedCommand(), "wbCommand", null, 0, 1, MHandledItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getMHandledItem_Parameters(), this.getMParameter(), null, "parameters", null, 0, -1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mMenuItemEClass, MMenuItem.class, "MMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getMMenuItem_Separator(), ecorePackage.getEBoolean(), "separator", null, 0, 1, MMenuItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1133,8 +1212,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEReference(getMToolBarContainer_Toolbars(), this.getMToolBar(), null, "toolbars", null, 0, -1, MToolBarContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getMToolBarContainer_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MToolBarContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEClass(mParameterEClass, MParameter.class, "MParameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getMParameter_Name(), ecorePackage.getEString(), "name", null, 1, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMParameter_Value(), ecorePackage.getEString(), "value", null, 1, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
 		// Initialize data types
 		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEDataType(parameterizedCommandEDataType, ParameterizedCommand.class, "ParameterizedCommand", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		// Create resource
 		createResource(eNS_URI);

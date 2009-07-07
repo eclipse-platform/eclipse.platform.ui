@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -59,6 +60,10 @@ public class HandlerTest extends TestCase {
 		IEclipseContext appContext = createGlobalContext();
 
 		defineCommands(appContext);
+		final ParameterizedCommand helpCommand = getCommand(appContext,
+				HELP_COMMAND_ID);
+		final ParameterizedCommand help1Command = getCommand(appContext,
+				HELP_COMMAND1_ID);
 
 		TestHandler handler = new TestHandler(true, HELP_COMMAND_ID);
 		EHandlerService service = (EHandlerService) appContext
@@ -67,15 +72,19 @@ public class HandlerTest extends TestCase {
 
 		Command command = (Command) appContext.get(HELP_COMMAND_ID);
 		assertEquals(HELP_COMMAND_ID, command.getId());
-		assertEquals(HELP_COMMAND_ID, service.executeHandler(HELP_COMMAND_ID));
+		assertEquals(HELP_COMMAND_ID, service.executeHandler(helpCommand));
 		assertTrue(handler.ran);
-		assertNull(service.executeHandler(HELP_COMMAND1_ID));
+		assertNull(service.executeHandler(help1Command));
 	}
 
 	public void testTwoCommands() throws Exception {
 		IEclipseContext appContext = createGlobalContext();
 
 		defineCommands(appContext);
+		final ParameterizedCommand helpCommand = getCommand(appContext,
+				HELP_COMMAND_ID);
+		final ParameterizedCommand help1Command = getCommand(appContext,
+				HELP_COMMAND1_ID);
 
 		EHandlerService service = (EHandlerService) appContext
 				.get(EHandlerService.class.getName());
@@ -83,11 +92,11 @@ public class HandlerTest extends TestCase {
 		service.activateHandler(HELP_COMMAND_ID, handler);
 		TestHandler handler1 = new TestHandler(false, HELP_COMMAND1_ID);
 		service.activateHandler(HELP_COMMAND1_ID, handler1);
-		assertEquals(HELP_COMMAND_ID, service.executeHandler(HELP_COMMAND_ID));
-		assertNull(service.executeHandler(HELP_COMMAND1_ID));
+		assertEquals(HELP_COMMAND_ID, service.executeHandler(helpCommand));
+		assertNull(service.executeHandler(help1Command));
 		assertFalse(handler1.ran);
 		handler1.canRun = true;
-		assertEquals(HELP_COMMAND1_ID, service.executeHandler(HELP_COMMAND1_ID));
+		assertEquals(HELP_COMMAND1_ID, service.executeHandler(help1Command));
 		assertTrue(handler1.ran);
 	}
 
@@ -96,6 +105,9 @@ public class HandlerTest extends TestCase {
 
 		defineCommands(appContext);
 
+		ParameterizedCommand helpCommand = getCommand(appContext,
+				HELP_COMMAND_ID);
+
 		EHandlerService service = (EHandlerService) appContext
 				.get(EHandlerService.class.getName());
 		TestHandler handler = new TestHandler(true, HELP_COMMAND_ID);
@@ -108,20 +120,35 @@ public class HandlerTest extends TestCase {
 		String windowRC = HELP_COMMAND_ID + ".window";
 		TestHandler windowHandler = new TestHandler(false, windowRC);
 		windowService.activateHandler(HELP_COMMAND_ID, windowHandler);
-		assertNull(service.executeHandler(HELP_COMMAND_ID));
+		assertNull(service.executeHandler(helpCommand));
 		assertFalse(windowHandler.ran);
 		assertFalse(handler.ran);
 
 		windowHandler.canRun = true;
-		assertEquals(windowRC, service.executeHandler(HELP_COMMAND_ID));
+		assertEquals(windowRC, service.executeHandler(helpCommand));
 		assertTrue(windowHandler.ran);
 		assertFalse(handler.ran);
+	}
+
+	/**
+	 * @param appContext
+	 * @param commandId
+	 * @return
+	 */
+	private ParameterizedCommand getCommand(IEclipseContext appContext,
+			String commandId) {
+		ECommandService cs = (ECommandService) appContext
+				.get(ECommandService.class.getName());
+		final Command cmd = cs.getCommand(commandId);
+		return new ParameterizedCommand(cmd, null);
 	}
 
 	public void testCanExecute() throws Exception {
 		IEclipseContext appContext = createGlobalContext();
 
 		defineCommands(appContext);
+		final ParameterizedCommand helpCommand = getCommand(appContext,
+				HELP_COMMAND_ID);
 
 		EHandlerService service = (EHandlerService) appContext
 				.get(EHandlerService.class.getName());
@@ -136,19 +163,21 @@ public class HandlerTest extends TestCase {
 		TestHandler windowHandler = new TestHandler(false, windowRC);
 		windowService.activateHandler(HELP_COMMAND_ID, windowHandler);
 
-		assertFalse(windowService.canExecute(HELP_COMMAND_ID));
+		assertFalse(windowService.canExecute(helpCommand));
 		windowHandler.canRun = true;
-		assertTrue(windowService.canExecute(HELP_COMMAND_ID));
+		assertTrue(windowService.canExecute(helpCommand));
 		windowHandler.canRun = false;
-		assertFalse(windowService.canExecute(HELP_COMMAND_ID));
+		assertFalse(windowService.canExecute(helpCommand));
 		windowService.deactivateHandler(HELP_COMMAND_ID, windowHandler);
-		assertTrue(windowService.canExecute(HELP_COMMAND_ID));
+		assertTrue(windowService.canExecute(helpCommand));
 	}
 
 	public void testThreeContexts() throws Exception {
 		IEclipseContext appContext = createGlobalContext();
 
 		defineCommands(appContext);
+		final ParameterizedCommand helpCommand = getCommand(appContext,
+				HELP_COMMAND_ID);
 
 		EHandlerService service = (EHandlerService) appContext
 				.get(EHandlerService.class.getName());
@@ -162,20 +191,22 @@ public class HandlerTest extends TestCase {
 		String windowRC = HELP_COMMAND_ID + ".window";
 		TestHandler windowHandler = new TestHandler(true, windowRC);
 		windowService.activateHandler(HELP_COMMAND_ID, windowHandler);
-		assertEquals(windowRC, service.executeHandler(HELP_COMMAND_ID));
+		assertEquals(windowRC, service.executeHandler(helpCommand));
 
 		IEclipseContext dialog = createContext(appContext, "dialogContext");
 		appContext.set(IServiceConstants.ACTIVE_CHILD, dialog);
-		assertEquals(HELP_COMMAND_ID, service.executeHandler(HELP_COMMAND_ID));
+		assertEquals(HELP_COMMAND_ID, service.executeHandler(helpCommand));
 
 		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
-		assertEquals(windowRC, service.executeHandler(HELP_COMMAND_ID));
+		assertEquals(windowRC, service.executeHandler(helpCommand));
 	}
 
 	public void testDifferentExecutionContexts() throws Exception {
 		IEclipseContext appContext = createGlobalContext();
 
 		defineCommands(appContext);
+		final ParameterizedCommand helpCommand = getCommand(appContext,
+				HELP_COMMAND_ID);
 
 		EHandlerService service = (EHandlerService) appContext
 				.get(EHandlerService.class.getName());
@@ -189,14 +220,13 @@ public class HandlerTest extends TestCase {
 		String windowRC = HELP_COMMAND_ID + ".window";
 		TestHandler windowHandler = new TestHandler(true, windowRC);
 		windowService.activateHandler(HELP_COMMAND_ID, windowHandler);
-		assertEquals(windowRC, service.executeHandler(HELP_COMMAND_ID));
-		assertEquals(windowRC, windowService.executeHandler(HELP_COMMAND_ID));
+		assertEquals(windowRC, service.executeHandler(helpCommand));
+		assertEquals(windowRC, windowService.executeHandler(helpCommand));
 
 		IEclipseContext dialog = createContext(appContext, "dialogContext");
 		EHandlerService dialogService = (EHandlerService) dialog
 				.get(EHandlerService.class.getName());
-		assertEquals(HELP_COMMAND_ID, dialogService
-				.executeHandler(HELP_COMMAND_ID));
+		assertEquals(HELP_COMMAND_ID, dialogService.executeHandler(helpCommand));
 	}
 
 	private void defineCommands(IEclipseContext appContext) {

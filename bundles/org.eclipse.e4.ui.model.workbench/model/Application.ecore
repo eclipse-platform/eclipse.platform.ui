@@ -108,6 +108,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//MCommand"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="menu" eType="#//MMenu"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="wbCommand" eType="#//ParameterizedCommand"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        eType="#//MParameter" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MMenuItem" eSuperTypes="#//MHandledItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="separator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -191,5 +195,11 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="toolbars" upperBound="-1"
         eType="#//MToolBar" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="ParameterizedCommand" instanceClassName="org.eclipse.core.commands.ParameterizedCommand"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MParameter">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" unique="false" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
 </ecore:EPackage>
