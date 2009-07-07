@@ -142,17 +142,7 @@ public class NonProxyHostsComposite extends Composite {
 	protected void enableButtons() {
 		boolean enabled = getEnabled();
 		if (enabled) {
-			IStructuredSelection selection = (IStructuredSelection) hostsViewer
-					.getSelection();
-			Iterator iterator = selection.iterator();
-			boolean editable = iterator.hasNext();
-			while (iterator.hasNext()) {
-				String provider = ((ProxyBypassData) iterator.next())
-						.getSource();
-				if (!ProxySelector.canSetBypassHosts(provider)) {
-					editable = false;
-				}
-			}
+			boolean editable = isSelectionEditable();
 			addButton.setEnabled(true);
 			editButton.setEnabled(editable);
 			removeButton.setEnabled(editable);
@@ -161,6 +151,20 @@ public class NonProxyHostsComposite extends Composite {
 			editButton.setEnabled(false);
 			removeButton.setEnabled(false);
 		}
+	}
+
+	private boolean isSelectionEditable() {
+		IStructuredSelection selection = (IStructuredSelection) hostsViewer
+				.getSelection();
+		Iterator iterator = selection.iterator();
+		boolean editable = iterator.hasNext();
+		while (iterator.hasNext()) {
+			String provider = ((ProxyBypassData) iterator.next()).getSource();
+			if (!ProxySelector.canSetBypassHosts(provider)) {
+				editable = false;
+			}
+		}
+		return editable;
 	}
 
 	protected void addHost() {
@@ -197,6 +201,9 @@ public class NonProxyHostsComposite extends Composite {
 	}
 
 	protected void editSelection() {
+		if (!isSelectionEditable()) {
+			return;
+		}
 		IStructuredSelection selection = (IStructuredSelection) hostsViewer
 				.getSelection();
 		String selectedHosts = getStringList(selection.iterator());

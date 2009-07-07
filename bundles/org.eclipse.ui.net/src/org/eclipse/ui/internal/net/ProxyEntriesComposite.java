@@ -134,24 +134,34 @@ public class ProxyEntriesComposite extends Composite {
 	protected void enableButtons() {
 		boolean enabled = getEnabled();
 		if (enabled) {
-			IStructuredSelection selection = (IStructuredSelection) entriesViewer
-					.getSelection();
-			Iterator iterator = selection.iterator();
-			boolean editable = iterator.hasNext();
-			while (iterator.hasNext()) {
-				String provider = ((ProxyData) iterator.next()).getSource();
-				if (!ProxySelector.canSetProxyData(provider)) {
-					editable = false;
-				}
-			}
 			// addButton.setEnabled(true);
-			editButton.setEnabled(editable && selection.size() == 1);
-			removeButton.setEnabled(editable);
+			editButton.setEnabled(isSelectionEditable());
+			removeButton.setEnabled(isSelectionRemovable());
 		} else {
 			// addButton.setEnabled(false);
 			editButton.setEnabled(false);
 			removeButton.setEnabled(false);
 		}
+	}
+
+	private boolean isSelectionEditable() {
+		IStructuredSelection selection = (IStructuredSelection) entriesViewer
+				.getSelection();
+		return isSelectionRemovable() && selection.size() == 1;
+	}
+
+	private boolean isSelectionRemovable() {
+		IStructuredSelection selection = (IStructuredSelection) entriesViewer
+				.getSelection();
+		Iterator iterator = selection.iterator();
+		boolean editable = iterator.hasNext();
+		while (iterator.hasNext()) {
+			String provider = ((ProxyData) iterator.next()).getSource();
+			if (!ProxySelector.canSetProxyData(provider)) {
+				editable = false;
+			}
+		}
+		return editable;
 	}
 
 	protected void addEntry() {
@@ -196,8 +206,10 @@ public class ProxyEntriesComposite extends Composite {
 	}
 
 	protected void editSelection() {
-		Iterator itsel = ((IStructuredSelection) entriesViewer.getSelection())
-				.iterator();
+		if (!isSelectionRemovable()) {
+			return;
+		}
+		Iterator itsel = ((IStructuredSelection) entriesViewer.getSelection()).iterator();
 		ProxyData toEdit = null;
 		if (itsel.hasNext()) {
 			toEdit = ((ProxyData) itsel.next());
