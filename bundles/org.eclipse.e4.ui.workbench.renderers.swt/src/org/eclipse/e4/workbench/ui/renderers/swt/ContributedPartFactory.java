@@ -48,7 +48,7 @@ public class ContributedPartFactory extends SWTPartFactory {
 			outputContext.set(IContextConstants.DEBUG_STRING,
 					"PartOutputContext(" + contributedPart.getName() + ')'); //$NON-NLS-1$
 			localContext.set(Composite.class.getName(), newComposite);
-			localContext.set(IServiceConstants.OUTPUTS, outputContext);
+			localContext.set(IContextConstants.OUTPUTS, outputContext);
 			localContext.set(IEclipseContext.class.getName(), outputContext);
 			localContext.set(IServiceConstants.PERSISTED_STATE, contributedPart
 					.getPersistedState());

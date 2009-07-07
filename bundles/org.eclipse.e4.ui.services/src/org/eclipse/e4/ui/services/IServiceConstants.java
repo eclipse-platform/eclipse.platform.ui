@@ -40,11 +40,6 @@ public interface IServiceConstants {
 	/**
 	 * 
 	 */
-	public static final String OUTPUTS = "outputs"; //$NON-NLS-1$
-
-	/**
-	 * 
-	 */
 	public static final String INPUT = "input"; //$NON-NLS-1$
 
 	/**

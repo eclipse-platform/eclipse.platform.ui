@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -26,9 +28,9 @@ public final class ActiveChildOutputFunction extends ContextFunction {
 				.getLocal(IServiceConstants.ACTIVE_CHILD);
 		if (childContext != null) {
 			return childContext.get(attr);
-		} else if (context.containsKey(IServiceConstants.OUTPUTS)) {
+		} else if (context.containsKey(IContextConstants.OUTPUTS)) {
 			IEclipseContext outputs = (IEclipseContext) context
-					.get(IServiceConstants.OUTPUTS);
+					.get(IContextConstants.OUTPUTS);
 			return outputs.get(attr);
 		}
 		return null;
