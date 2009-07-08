@@ -30,12 +30,6 @@ import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
 import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 
 public class EclipseContext implements IEclipseContext, IDisposable {
-	/**
-	 * A context key identifying the parent context, which can be retrieved with
-	 * {@link IEclipseContext#get(String)}.
-	 */
-	public static final String PARENT = "PARENT_CONTEXT"; //$NON-NLS-1$
-
 	static class LookupKey {
 		Object[] arguments;
 		String name;
@@ -218,13 +212,13 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.strategy = strategy;
-		set(PARENT, parent);
+		set(IContextConstants.PARENT, parent);
 	}
 
 	public boolean containsKey(String name) {
 		if (isSetLocally(name))
 			return true;
-		IEclipseContext parent = (IEclipseContext) getLocal(PARENT);
+		IEclipseContext parent = (IEclipseContext) getLocal(IContextConstants.PARENT);
 		if (parent != null && parent.containsKey(name))
 			return true;
 		if (strategy instanceof ILookupStrategy) {
@@ -290,14 +284,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				originatingContext.localValueComputations.put(lookupKey, valueComputation);
 				// value computation depends on parent if function is defined in a parent
 				if (this != originatingContext)
-					valueComputation.addDependency(originatingContext, PARENT);
+					valueComputation.addDependency(originatingContext, IContextConstants.PARENT);
 				result = valueComputation.get(arguments);
 			}
 			return result;
 		}
 		// 3. delegate to parent
 		if (!local) {
-			IEclipseContext parent = (IEclipseContext) getLocal(PARENT);
+			IEclipseContext parent = (IEclipseContext) getLocal(IContextConstants.PARENT);
 			if (parent != null) {
 				return ((EclipseContext) parent).internalGet(originatingContext, name, arguments,
 						local); // XXX

@@ -71,16 +71,22 @@ public interface IContextConstants {
 	public static final String INJECTION_SET_METHOD_PREFIX = "set"; //$NON-NLS-1$
 
 	/**
-	 * A context key (value "DEBUG_STRING") identifying a value to use in debug statements for a
+	 * A context key (value "debugString") identifying a value to use in debug statements for a
 	 * context. A computed value can be used to embed more complex information in debug statements.
 	 */
 	public static final String DEBUG_STRING = "debugString"; //$NON-NLS-1$
 
 	/**
-	 * A context key (value "OUTPUTS") identifying a value that stores an output context for a given
+	 * A context key (value "outputs") identifying a value that stores an output context for a given
 	 * context. An output context is used by the dependency injection system for storing values
 	 * injected "out" of a user object back into its surrounding context.
 	 */
 	public static final String OUTPUTS = "outputs"; //$NON-NLS-1$
+
+	/**
+	 * A context key (value "parentContext") identifying the parent context, which can be retrieved
+	 * with {@link IEclipseContext#get(String)}.
+	 */
+	public static final String PARENT = "parentContext"; //$NON-NLS-1$
 
 }

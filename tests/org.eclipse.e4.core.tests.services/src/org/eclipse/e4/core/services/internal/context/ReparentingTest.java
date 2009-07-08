@@ -51,7 +51,7 @@ public class ReparentingTest extends TestCase {
 		child.set("y", 1);
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
-		child.set(EclipseContext.PARENT, EclipseContextFactory.create());
+		child.set(IContextConstants.PARENT, EclipseContextFactory.create());
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertNull("Expected null but was: " + child.get("sum"), child.get("sum"));
 	}
@@ -71,7 +71,7 @@ public class ReparentingTest extends TestCase {
 
 		// switch parent
 		IEclipseContext newParent = EclipseContextFactory.create();
-		child.set(EclipseContext.PARENT, newParent);
+		child.set(IContextConstants.PARENT, newParent);
 		newParent.set("sum", new AddContextFunction());
 		assertEquals(0, ((Integer) newParent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
@@ -90,7 +90,7 @@ public class ReparentingTest extends TestCase {
 		IEclipseContext parent = EclipseContextFactory.create();
 		parent.set("x", 3);
 		parent.set("y", 3);
-		child.set(EclipseContext.PARENT, parent);
+		child.set(IContextConstants.PARENT, parent);
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 
 	}
@@ -102,7 +102,7 @@ public class ReparentingTest extends TestCase {
 		parent.set("y", 3);
 		child.set("sum", new AddContextFunction());
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
-		child.set(EclipseContext.PARENT, null);
+		child.set(IContextConstants.PARENT, null);
 		assertEquals(0, ((Integer) child.get("sum")).intValue());
 
 	}
@@ -117,7 +117,7 @@ public class ReparentingTest extends TestCase {
 		IEclipseContext newParent = EclipseContextFactory.create();
 		newParent.set("x", 1);
 		newParent.set("y", 1);
-		child.set(EclipseContext.PARENT, newParent);
+		child.set(IContextConstants.PARENT, newParent);
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 	}
 
@@ -135,7 +135,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals(null, value[0]);
 		IEclipseContext parent = EclipseContextFactory.create();
 		parent.set("x", "newParent");
-		child.set(EclipseContext.PARENT, parent);
+		child.set(IContextConstants.PARENT, parent);
 		assertEquals("newParent", value[0]);
 	}
 
@@ -153,7 +153,7 @@ public class ReparentingTest extends TestCase {
 			}
 		});
 		assertEquals("oldParent", value[0]);
-		child.set(EclipseContext.PARENT, null);
+		child.set(IContextConstants.PARENT, null);
 		assertNull(value[0]);
 	}
 
@@ -170,7 +170,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals("oldParent", value[0]);
 		IEclipseContext newParent = EclipseContextFactory.create();
 		newParent.set("x", "newParent");
-		child.set(EclipseContext.PARENT, newParent);
+		child.set(IContextConstants.PARENT, newParent);
 		assertEquals("newParent", value[0]);
 	}
 
@@ -193,7 +193,7 @@ public class ReparentingTest extends TestCase {
 		assertEquals(1, object.setStringCalled);
 		assertEquals("old", object.getStringViaMethod());
 
-		child.set(EclipseContext.PARENT, newParent);
+		child.set(IContextConstants.PARENT, newParent);
 		assertEquals("new", object.getStringViaMethod());
 		assertEquals(2, object.setStringCalled);
 
@@ -216,7 +216,7 @@ public class ReparentingTest extends TestCase {
 		ContextInjectionFactory.inject(object, child);
 		assertEquals(1, object.setStringCalled);
 
-		child.set(EclipseContext.PARENT, newParent);
+		child.set(IContextConstants.PARENT, newParent);
 		assertEquals(1, object.setStringCalled);
 
 	}

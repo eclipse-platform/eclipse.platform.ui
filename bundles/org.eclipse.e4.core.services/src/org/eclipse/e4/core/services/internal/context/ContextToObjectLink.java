@@ -266,7 +266,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 
 	private void handleAdd(final ContextChangeEvent event) {
 		final String name = event.getName();
-		if (EclipseContext.PARENT.equals(name)) {
+		if (IContextConstants.PARENT.equals(name)) {
 			handleParentChange(event);
 			return;
 		}
@@ -303,7 +303,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	private void handleParentChange(final ContextChangeEvent event) {
 		final EclipseContext eventContext = (EclipseContext) event.getContext();
 		final EclipseContext oldParent = (EclipseContext) event.getOldValue();
-		final EclipseContext newParent = (EclipseContext) eventContext.get(EclipseContext.PARENT);
+		final EclipseContext newParent = (EclipseContext) eventContext.get(IContextConstants.PARENT);
 		if (oldParent == newParent)
 			return;
 		Processor processor = new Processor(true) {
@@ -478,7 +478,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 
 	private void handleRemove(final ContextChangeEvent event) {
 		final String name = event.getName();
-		if (EclipseContext.PARENT.equals(name)) {
+		if (IContextConstants.PARENT.equals(name)) {
 			handleParentChange(event);
 			return;
 		}
