@@ -18,17 +18,28 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
+import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 		implements ICSSPropertyHandler2 {
 
 	public final static ICSSPropertyFontHandler INSTANCE = new CSSPropertyFontSWTHandler();
-	
+
+	/**
+	 * The key for the SWT event listener that will be attached to a CTabFolder
+	 * for applying fonts to a CTabItem.
+	 */
+	private static final String CSS_CTABITEM_SELECTED_FONT_LISTENER_KEY = "CSS_CTABFOLDER_SELECTED_FONT_LISTENER_KEY"; //$NON-NLS-1$
+
 	private static void setFont(Widget widget, Font font) {
 		if (widget instanceof CTabItem) {
 			((CTabItem) widget).setFont(font);
@@ -47,6 +58,23 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 			if (fontProperties != null) {
 				super.applyCSSProperty(fontProperties, property, value, pseudo,
 						engine);
+				if (widget instanceof CTabItem) {
+					CTabItem item = (CTabItem) widget;
+					FontSelectionListener listener = (FontSelectionListener) item
+							.getParent().getData(
+									CSS_CTABITEM_SELECTED_FONT_LISTENER_KEY);
+					if (listener == null) {
+						listener = new FontSelectionListener(engine);
+						item.getParent().addListener(SWT.Paint, listener);
+						item.getParent().setData(
+								CSS_CTABITEM_SELECTED_FONT_LISTENER_KEY,
+								listener);
+					} else {
+						// update our engine
+						listener.setEngine(engine);
+					}
+					listener.setShouldStyle(true);
+				}
 			}
 			return true;
 		} else {
@@ -58,7 +86,6 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 			}
 		}
 		return false;
-
 	}
 
 	public String retrieveCSSProperty(Object element, String property,
@@ -113,7 +140,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
 			throws Exception {
 		final Widget widget = SWTElementHelpers.getWidget(element);
-		if (widget == null)
+		if (widget == null || widget instanceof CTabItem)
 			return;
 		CSS2FontProperties fontProperties = CSSSWTFontHelper
 				.getCSS2FontProperties(widget, engine
@@ -122,5 +149,123 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 			return;
 		Font font = (Font) engine.convert(fontProperties, Font.class, widget);
 		setFont(widget, font);
+	}
+
+	private class FontSelectionListener implements Listener {
+
+		/**
+		 * The font attributes that we currently "support" and that should be
+		 * retrieved from the style sheet. This list must be updated if
+		 * AbstractCSSPropertyFontHandler's listing changes.
+		 */
+		private String[] fontAttributes = { "font", "font-family", "font-size",
+				"font-adjust", "font-stretch", "font-style", "font-variant",
+				"font-weight" };
+
+		private CSSEngine engine;
+
+		private CTabItem selection;
+		
+		private boolean shouldStyle;
+
+		public FontSelectionListener(CSSEngine engine) {
+			this.engine = engine;
+		}
+
+		public void setEngine(CSSEngine engine) {
+			this.engine = engine;
+		}
+		
+		public void setShouldStyle(boolean shouldStyle) {
+			this.shouldStyle = shouldStyle;
+		}
+
+		private void applyStyles(CSSStyleDeclaration styleDeclaration,
+				String pseudo, CTabItem item) {
+			CSS2FontProperties fontProperties = CSSSWTFontHelper
+					.getCSS2FontProperties(item, engine
+							.getCSSElementContext(item));
+			if (fontProperties != null) {
+				// reset ourselves to prevent the stacking of properties
+				reset(fontProperties);
+
+				for (int j = 0; j < fontAttributes.length; j++) {
+					CSSValue value = styleDeclaration
+							.getPropertyCSSValue(fontAttributes[j]);
+					if (value != null) {
+						try {
+							// we have a value, so apply it to the properties
+							CSSPropertyFontSWTHandler.super.applyCSSProperty(
+									fontProperties, fontAttributes[j], value,
+									pseudo, engine);
+						} catch (Exception e) {
+							engine.handleExceptions(e);
+						}
+					}
+				}
+
+				try {
+					// set the font
+					Font font = (Font) engine.convert(fontProperties,
+							Font.class, item);
+					item.setFont(font);
+				} catch (Exception e) {
+					engine.handleExceptions(e);
+				}
+			}
+		}
+
+		private void styleUnselected(CTabItem[] items) {
+			for (int i = 0; i < items.length; i++) {
+				CSSStyleDeclaration unselectedStyle = engine.getViewCSS()
+						.getComputedStyle(engine.getElement(items[i]), null);
+				if (unselectedStyle == null) {
+					items[i].setFont(null);
+				} else {
+					applyStyles(unselectedStyle, null, items[i]);
+				}
+			}
+		}
+
+		private boolean styleSelected(CTabItem selection) {
+			CSSStyleDeclaration selectedStyle = engine.getViewCSS()
+					.getComputedStyle(engine.getElement(selection), "selected");
+			if (selectedStyle == null) {
+				return false;
+			}
+
+			applyStyles(selectedStyle, "pseudo", selection);
+			return true;
+		}
+
+		private void reset(CSS2FontProperties properties) {
+			properties.setFamily(null);
+			properties.setSize(null);
+			properties.setSizeAdjust(null);
+			properties.setWeight(null);
+			properties.setStyle(null);
+			properties.setVariant(null);
+			properties.setStretch(null);
+		}
+
+		public void handleEvent(Event e) {
+			CTabFolder folder = (CTabFolder) e.widget;
+			CTabItem selection = folder.getSelection();
+			// only style if the selection has changed
+			if (!shouldStyle && this.selection == selection) {
+				return;
+			}
+
+			CTabItem[] items = folder.getItems();
+			// style individual items
+			styleUnselected(items);
+
+			if (selection != null && !styleSelected(selection)) {
+				selection.setFont(null);
+			}
+
+			this.selection = selection;
+			shouldStyle = false;
+		}
 	}
 }

@@ -127,7 +127,7 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 */
 	protected void computeStaticPseudoInstances() {
 		Widget widget = getWidget();
-		if (widget instanceof CTabFolder) {
+		if (widget instanceof CTabFolder || widget instanceof CTabItem) {
 			// it's CTabFolder. Set selected as static pseudo instance.
 			// because this widget define methods
 			// CTabFolder#setSelectionBackground (Color color)

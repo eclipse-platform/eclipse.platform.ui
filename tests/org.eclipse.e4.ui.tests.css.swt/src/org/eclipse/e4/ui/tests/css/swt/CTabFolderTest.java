@@ -205,22 +205,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "single", null));
 	}
 	
-	public void testShowClose() throws Exception {
-		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { show-close: true}");
-		CTabItem[] itemList = folderToTest.getItems();
-		for(CTabItem item: itemList){
-			assertEquals(true, item.getShowClose());
-		}
-		assertEquals("true", engine.retrieveCSSProperty(folderToTest, "show-close", null));
-		folderToTest = createTestCTabFolder("CTabFolder { show-close: false}");
-		itemList = folderToTest.getItems();
-		for(CTabItem item: itemList){
-			assertEquals(false, item.getShowClose());
-		}
-		assertEquals(false, folderToTest.getSingle());
-		assertEquals("false", engine.retrieveCSSProperty(folderToTest, "show-close", null));
-	}
-	
 	public void testUnselectedCloseVisible() throws Exception {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { unselected-close-visible: true}");
 		assertEquals(true, folderToTest.getUnselectedCloseVisible());

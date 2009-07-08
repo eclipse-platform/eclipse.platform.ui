@@ -26,12 +26,12 @@ import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabFolderTabHeightHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabItemShowCloseHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedCloseVisibleSWTHandler;
@@ -104,10 +104,6 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("minimize-visible", CSSPropertyMinimizeVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyMinimizeVisibleSWTHandler.class,
 				CSSPropertyMinimizeVisibleSWTHandler.INSTANCE);
-		//Register SWT CSS Property ShowClose
-		super.registerCSSProperty("show-close", CSSPropertyShowCloseSWTHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyShowCloseSWTHandler.class,
-				CSSPropertyShowCloseSWTHandler.INSTANCE);
 		//Register SWT CSS Property mruVisible
 		super.registerCSSProperty("mru-visible", CSSPropertyMruVisibleSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyMruVisibleSWTHandler.class,
@@ -136,6 +132,11 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("tab-height", CSSPropertyCTabFolderTabHeightHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyCTabFolderTabHeightHandler.class,
 				CSSPropertyCTabFolderTabHeightHandler.INSTANCE);
+
+		//Register CTabItem CSS Property show-close
+		super.registerCSSProperty("show-close", CSSPropertyCTabItemShowCloseHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyCTabItemShowCloseHandler.class,
+				CSSPropertyCTabItemShowCloseHandler.INSTANCE);
 
 		//Register SWT CSS Property Alignment
 		super.registerCSSProperty("alignment", CSSPropertyAlignmentSWTHandler.class);  
