@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.services.EHandlerService;
 
 public class ContextHandlerService implements EHandlerService {
 	private static final String PREFIX = "HDL_";
+	private static final String PARM_MAP = "legacyParameterMap"; //$NON-NLS-1$
+
 
 	private IEclipseContext context;
 
@@ -47,6 +49,7 @@ public class ContextHandlerService implements EHandlerService {
 			Map.Entry entry = (Map.Entry) i.next();
 			context.set((String) entry.getKey(), entry.getValue());
 		}
+		context.set(PARM_MAP, parms);
 		try {
 			Object rc = factory.call(handler, null, "canExecute", context,
 					Boolean.TRUE);
@@ -55,6 +58,7 @@ public class ContextHandlerService implements EHandlerService {
 			}
 			return factory.call(handler, null, "execute", context, null);
 		} finally {
+			context.remove(PARM_MAP);
 			i = parms.keySet().iterator();
 			while (i.hasNext()) {
 				context.remove((String) i.next());
@@ -84,11 +88,13 @@ public class ContextHandlerService implements EHandlerService {
 			Map.Entry entry = (Map.Entry) i.next();
 			context.set((String) entry.getKey(), entry.getValue());
 		}
+		context.set(PARM_MAP, parms);
 		Object rc = null;
 		try {
 			rc = factory.call(handler, null, "canExecute", context,
 					Boolean.TRUE);
 		} finally {
+			context.remove(PARM_MAP);
 			i = parms.keySet().iterator();
 			while (i.hasNext()) {
 				context.remove((String) i.next());
