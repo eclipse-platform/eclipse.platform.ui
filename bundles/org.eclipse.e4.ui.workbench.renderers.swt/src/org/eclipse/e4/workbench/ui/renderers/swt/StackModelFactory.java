@@ -35,6 +35,8 @@ import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ETabFolder;
+import org.eclipse.swt.custom.ETabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -93,7 +95,10 @@ public class StackModelFactory extends LazyStackFactory {
 			Composite stylingWrapper = createWrapperForStyling((Composite) parentWidget);
 
 			// TODO see bug #267434, SWT.BORDER should be determined from CSS
-			final CTabFolder ctf = new CTabFolder(stylingWrapper, SWT.BORDER
+			// TODO see bug #282901 - [UI] Need better support for switching
+			// renderer to use
+
+			final CTabFolder ctf = new ETabFolder(stylingWrapper, SWT.BORDER
 					| styleModifier);
 
 			configureForStyling(ctf);
@@ -178,7 +183,9 @@ public class StackModelFactory extends LazyStackFactory {
 		CTabItem cti = findItemForPart(parentElement, element);
 		if (cti == null) {
 			int index = calcIndexFor(element);
-			cti = new CTabItem(ctf, createFlags, index);
+			// TODO see bug 282901 - [UI] Need better support for switching
+			// renderer to use
+			cti = new ETabItem(ctf, createFlags, index);
 		}
 
 		cti.setData(OWNING_ME, element);
