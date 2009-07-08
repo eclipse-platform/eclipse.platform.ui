@@ -1,11 +1,12 @@
 package org.eclipse.e4.ui.internal.services;
 
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+
 import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class ActiveContextsFunction extends ContextFunction {
@@ -29,7 +30,7 @@ public class ActiveContextsFunction extends ContextFunction {
 			rc.addAll(locals);
 		}
 		IEclipseContext parent = (IEclipseContext) context
-				.get(EclipseContext.PARENT);
+				.get(IContextConstants.PARENT);
 		if (parent != null) {
 			parent.get(IServiceConstants.ACTIVE_CONTEXTS,
 					new Object[] { rc });
