@@ -177,7 +177,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		me.setWidget(widget);
 		((Widget) widget).setData(OWNING_ME, me);
 		final IStylingEngine engine = (IStylingEngine) me.getContext().get(
-				IStylingEngine.class.getName());
+				IStylingEngine.SERVICE_NAME);
 		engine.style(widget);
 	}
 

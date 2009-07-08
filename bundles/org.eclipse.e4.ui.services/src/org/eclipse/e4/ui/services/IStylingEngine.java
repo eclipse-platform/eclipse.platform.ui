@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services;
 
+
 public interface IStylingEngine {
+	/**
+	 * The service name for a styling engine. This name can be
+	 * used to obtain instances of the service from a context or service registry.
+	 */
+	public static final String SERVICE_NAME = IStylingEngine.class.getName();
 
 	public void setClassname(Object widget, String classname);
 	public void setId(Object widget, String id);

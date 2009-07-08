@@ -114,7 +114,7 @@ public class StackModelFactory extends LazyStackFactory {
 			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
 			final IEclipseContext toplevelContext = getToplevelContext(part);
 			final IStylingEngine engine = (IStylingEngine) folderContext
-					.get(IStylingEngine.class.getName());
+					.get(IStylingEngine.SERVICE_NAME);
 			folderContext.runAndTrack(new Runnable() {
 				public void run() {
 					// this will cause the tracker to be removed because no

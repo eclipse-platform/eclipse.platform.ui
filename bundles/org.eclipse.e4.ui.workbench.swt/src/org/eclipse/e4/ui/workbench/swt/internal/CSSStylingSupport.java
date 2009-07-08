@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
@@ -68,7 +67,7 @@ public class CSSStylingSupport {
 			e1.printStackTrace();
 		}
 
-		appContext.set(IStylingEngine.class.getName(), new IStylingEngine() {
+		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 			public void setClassname(Object widget, String classname) {
 				((Widget) widget).setData(
 						"org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$

@@ -354,9 +354,8 @@ public class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Create the context chain. It both creates the chain for the current
-	 * model, and adds eAdapters so it can add new contexts when new model items
-	 * are added.
+	 * Create the context chain. It both creates the chain for the current model, and adds eAdapters
+	 * so it can add new contexts when new model items are added.
 	 * 
 	 * @param parentContext
 	 *            The parent context
@@ -555,13 +554,13 @@ public class Workbench implements IWorkbench {
 	}
 
 	/*
-	 * For use when there is no real styling engine present. Has no behaviour
-	 * but conforms to IStylingEngine API.
+	 * For use when there is no real styling engine present. Has no behaviour but conforms to
+	 * IStylingEngine API.
 	 * 
 	 * @param appContext
 	 */
 	private static void initializeNullStyling(IEclipseContext appContext) {
-		appContext.set(IStylingEngine.class.getName(), new IStylingEngine() {
+		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
 			public void setClassname(Object widget, String classname) {
 			}
 
