@@ -5,7 +5,7 @@
       <items xsi:type="application:MMenuItem" name="File">
         <menu>
           <items xsi:type="application:MMenuItem" name="Create Album" command="//@command.0"/>
-          <items xsi:type="application:MMenuItem" name="Show Dialog" command="//@command.2"/>
+          <items xsi:type="application:MMenuItem" name="Image Dialog" command="//@command.2"/>
           <items xsi:type="application:MMenuItem" iconURI="" name="---" separator="true"/>
           <items xsi:type="application:MMenuItem" iconURI="" name="Exit" command="//@command.1"/>
         </menu>
@@ -54,5 +54,5 @@
   </windows>
   <command id="e4photo.newProject" name="New Project"/>
   <command id="e4photo.exit" name="Exit"/>
-  <command id="e4photo.showDlg" name="Show Dialog"/>
+  <command id="e4photo.showDlg" name="Image Dialog"/>
 </application:MApplication>
