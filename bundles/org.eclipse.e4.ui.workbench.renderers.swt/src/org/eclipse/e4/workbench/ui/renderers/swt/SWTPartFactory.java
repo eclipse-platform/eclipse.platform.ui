@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.renderers.PartFactory;
@@ -175,6 +176,9 @@ public abstract class SWTPartFactory extends PartFactory {
 	public void bindWidget(MPart<?> me, Object widget) {
 		me.setWidget(widget);
 		((Widget) widget).setData(OWNING_ME, me);
+		final IStylingEngine engine = (IStylingEngine) me.getContext().get(
+				IStylingEngine.class.getName());
+		engine.style(widget);
 	}
 
 	public Object unbindWidget(MPart<?> me) {
