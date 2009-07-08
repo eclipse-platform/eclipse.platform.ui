@@ -38,7 +38,7 @@ public abstract class PartFactory {
 		this.context = context;
 	}
 
-	public abstract Object createWidget(MPart<?> element);
+	public abstract Object createWidget(MPart<?> element, Object parent);
 
 	public abstract <P extends MPart<?>> void processContents(MPart<P> me);
 
@@ -73,7 +73,8 @@ public abstract class PartFactory {
 	 * 
 	 * @param part
 	 *            the part to start searching from
-	 * @return the parent's closest context, or global context if none in the hierarchy
+	 * @return the parent's closest context, or global context if none in the
+	 *         hierarchy
 	 */
 	protected IEclipseContext getContextForParent(MPart<?> part) {
 		MPart<?> parent = part.getParent();

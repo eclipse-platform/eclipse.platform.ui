@@ -23,38 +23,35 @@ import org.eclipse.swt.widgets.Widget;
  * Factory for <code>org.eclipse.e4.workbench.emf.workbench.Composite</code>
  */
 public class CompositePartFactory extends SWTPartFactory {
-	
+
 	public CompositePartFactory() {
 		super();
 	}
 
-	public Object createWidget(MPart part) {
-		final Widget parentWidget = getParentWidget(part);
-		
-		Widget newWidget = null;
-		if (part instanceof MPart<?>) {
-			MPart<?> compositeModel = (MPart<?>) part;
-			String policy = compositeModel.getPolicy();
-			if (policy!=null && (policy.equals("HorizontalComposite") //$NON-NLS-1$
-					|| policy.equals("VerticalComposite"))) { //$NON-NLS-1$
-				Composite composite = new Composite((Composite) parentWidget,
-						SWT.NONE);
-				newWidget = composite;
-				bindWidget(part, newWidget);
-			}
+	public Object createWidget(MPart part, Object parent) {
+		if (!(part instanceof MPart) || !(parent instanceof Composite))
+			return null;
+
+		final Widget parentWidget = (Widget) parent;
+		MPart<?> compositeModel = (MPart<?>) part;
+		String policy = compositeModel.getPolicy();
+		if (policy != null && (policy.equals("HorizontalComposite") //$NON-NLS-1$
+				|| policy.equals("VerticalComposite"))) { //$NON-NLS-1$
+			return new Composite((Composite) parentWidget, SWT.NONE);
 		}
-		return newWidget;
+
+		return null;
 	}
 
 	@Override
 	public void postProcess(MPart<?> part) {
 		super.postProcess(part);
-		
+
 		if (part.getPolicy() != null && part.getPolicy().endsWith("Composite")) { //$NON-NLS-1$
 			Composite composite = (Composite) part.getWidget();
 			Control[] children = composite.getChildren();
-			GridLayout gl = new GridLayout(
-					part.getPolicy().startsWith("Horizontal") ? children.length : 1, false); //$NON-NLS-1$
+			GridLayout gl = new GridLayout(part.getPolicy().startsWith(
+					"Horizontal") ? children.length : 1, false); //$NON-NLS-1$
 			gl.horizontalSpacing = 0;
 			gl.verticalSpacing = 0;
 			gl.marginHeight = 0;

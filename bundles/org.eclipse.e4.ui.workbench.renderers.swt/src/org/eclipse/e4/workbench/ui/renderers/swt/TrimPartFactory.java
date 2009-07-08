@@ -33,11 +33,12 @@ public class TrimPartFactory extends SWTPartFactory {
 	 * .e4.ui.model.application.MPart)
 	 */
 	@Override
-	public Object createWidget(MPart<?> element) {
-		if (!(element instanceof MTrimmedPart<?>))
+	public Object createWidget(MPart<?> element, Object parent) {
+		if (!(element instanceof MTrimmedPart<?>)
+				|| !(parent instanceof Composite))
 			return null;
 
-		Composite parentWidget = (Composite) getParentWidget(element);
+		Composite parentWidget = (Composite) parent;
 		Composite trimmedComp = new Composite(parentWidget, SWT.NONE);
 		TrimmedPartLayout trimLayout = new TrimmedPartLayout(trimmedComp);
 		trimmedComp.setLayout(trimLayout);

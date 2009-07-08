@@ -27,6 +27,9 @@ import org.eclipse.emf.ecore.EObject;
 public class PartRenderer {
 	private final List partFactories = new ArrayList();
 
+	// 'Publish' the renerer as a service
+	public static final String SERVICE_NAME = PartRenderer.class.getName();
+
 	// SWT property ids containing the currently rendered part (and factory) for
 	// a given widget
 	public static final String FACTORY = "partFactory"; //$NON-NLS-1$
@@ -114,7 +117,7 @@ public class PartRenderer {
 		partFactories.add(factory);
 	}
 
-	public Object createGui(MPart element) {
+	public Object createGui(MPart element, Object parent) {
 		// Life-cycle hooks
 		installLifeCycleHooks(element);
 
@@ -122,7 +125,7 @@ public class PartRenderer {
 			return null;
 
 		// Create a control appropriate to the part
-		Object newWidget = createWidget(element);
+		Object newWidget = createWidget(element, parent);
 
 		// Remember that we've created the control
 		if (newWidget != null) {
@@ -146,6 +149,17 @@ public class PartRenderer {
 		}
 
 		return newWidget;
+	}
+
+	public Object createGui(MPart element) {
+		// Obtain the necessary parent and context
+		Object parent = null;
+		MPart parentME = element.getParent();
+		if (parentME != null) {
+			parent = parentME.getWidget();
+		}
+
+		return createGui(element, parent);
 	}
 
 	/**
@@ -181,7 +195,7 @@ public class PartRenderer {
 			((EObject) element).eAdapters().add(childrenListener);
 	}
 
-	protected Object createWidget(MPart<?> element) {
+	protected Object createWidget(MPart<?> element, Object parent) {
 		// Iterate through the factories until one actually creates the widget
 		for (Iterator iterator = partFactories.iterator(); iterator.hasNext();) {
 			PartFactory factory = (PartFactory) iterator.next();
@@ -190,7 +204,7 @@ public class PartRenderer {
 			// For example, test whether this factory handles a particular model
 			// type ('StackModel'...)
 
-			Object newWidget = factory.createWidget(element);
+			Object newWidget = factory.createWidget(element, parent);
 			if (newWidget != null) {
 				// Remember which factory created the widget
 				setFactoryFor(element, factory);

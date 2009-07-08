@@ -354,8 +354,9 @@ public class Workbench implements IWorkbench {
 	}
 
 	/**
-	 * Create the context chain. It both creates the chain for the current model, and adds eAdapters
-	 * so it can add new contexts when new model items are added.
+	 * Create the context chain. It both creates the chain for the current
+	 * model, and adds eAdapters so it can add new contexts when new model items
+	 * are added.
 	 * 
 	 * @param parentContext
 	 *            The parent context
@@ -499,6 +500,9 @@ public class Workbench implements IWorkbench {
 				r.addPartFactory(factory);
 			}
 		}
+
+		// Add the renderer to the context
+		context.set(PartRenderer.SERVICE_NAME, r);
 	}
 
 	public void createGUI(MPart part) {
@@ -551,8 +555,8 @@ public class Workbench implements IWorkbench {
 	}
 
 	/*
-	 * For use when there is no real styling engine present. Has no behaviour but conforms to
-	 * IStylingEngine API.
+	 * For use when there is no real styling engine present. Has no behaviour
+	 * but conforms to IStylingEngine API.
 	 * 
 	 * @param appContext
 	 */

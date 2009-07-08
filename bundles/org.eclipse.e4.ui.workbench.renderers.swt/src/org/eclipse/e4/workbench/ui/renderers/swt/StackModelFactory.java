@@ -64,13 +64,13 @@ public class StackModelFactory extends LazyStackFactory {
 		super();
 	}
 
-	public Object createWidget(MPart<?> part) {
+	public Object createWidget(MPart<?> part, Object parent) {
 		Widget newWidget = null;
 
-		if (!(part instanceof MStack))
+		if (!(part instanceof MStack) || !(parent instanceof Composite))
 			return null;
 
-		Widget parentWidget = getParentWidget(part);
+		Widget parentWidget = (Widget) parent;
 		if (parentWidget instanceof Composite) {
 
 			// HACK!! Set up the close button style based on the 'Policy'

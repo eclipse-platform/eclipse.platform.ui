@@ -32,24 +32,21 @@ public class PartSashFactory extends SWTPartFactory {
 		super();
 	}
 
-	public Widget createWidget(MPart<?> part) {
+	public Widget createWidget(MPart<?> part, Object parent) {
+		if (!(part instanceof MSashForm<?>) || !(parent instanceof Composite))
+			return null;
 
-		Widget parentWidget = getParentWidget(part);
+		Widget parentWidget = (Widget) parent;
 
-		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
-			org.eclipse.e4.ui.model.application.MSashForm<?> sashModel = (org.eclipse.e4.ui.model.application.MSashForm<?>) part;
-			int orientation = (sashModel.getPolicy() != null && sashModel
-					.getPolicy().startsWith("Horizontal")) ? SWT.HORIZONTAL //$NON-NLS-1$
-					: SWT.VERTICAL;
-			SashForm newSash = new SashForm((Composite) parentWidget,
-					SWT.SMOOTH | orientation);
-			bindWidget(part, newSash);
-			// newSash.setSashWidth(1);
-			newSash.setVisible(true);
-			return newSash;
-		}
+		int orientation = (part.getPolicy() != null && part.getPolicy()
+				.startsWith("Horizontal")) ? SWT.HORIZONTAL //$NON-NLS-1$
+				: SWT.VERTICAL;
+		SashForm newSash = new SashForm((Composite) parentWidget, SWT.SMOOTH
+				| orientation);
+		bindWidget(part, newSash);
+		newSash.setVisible(true);
 
-		return null;
+		return newSash;
 	}
 
 	public void postProcess(MPart<?> part) {

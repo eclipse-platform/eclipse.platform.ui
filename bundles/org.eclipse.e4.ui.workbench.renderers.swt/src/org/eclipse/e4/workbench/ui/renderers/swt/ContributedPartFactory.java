@@ -31,8 +31,11 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class ContributedPartFactory extends SWTPartFactory {
 
-	public Object createWidget(final MPart<?> part) {
-		Widget parentWidget = getParentWidget(part);
+	public Object createWidget(final MPart<?> part, Object parent) {
+		if (!(parent instanceof Composite))
+			return null;
+
+		Widget parentWidget = (Widget) parent;
 		IEclipseContext parentContext = getContextForParent(part);
 		Widget newWidget = null;
 

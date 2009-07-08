@@ -53,49 +53,55 @@ public class WBPartFactory extends SWTPartFactory {
 		super();
 	}
 
-	public Object createWidget(MPart<?> part) {
+	public Object createWidget(MPart<?> part, Object parent) {
 		final Widget newWidget;
 
-		if (part instanceof MWindow<?>) {
-			IEclipseContext parentContext = getContextForParent(part);
-			Shell wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-			wbwShell.setLayout(new FillLayout());
-			newWidget = wbwShell;
-			bindWidget(part, newWidget);
+		if (!(part instanceof MWindow<?>)
+				|| (parent != null && !(parent instanceof Shell)))
+			return null;
 
-			// set up context
-			IEclipseContext localContext = part.getContext();
-			localContext
-					.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
-			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
+		Shell parentShell = (Shell) parent;
 
-			// Add the shell into the WBW's context
-			localContext.set(Shell.class.getName(), wbwShell);
-			localContext.set(Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
+		IEclipseContext parentContext = getContextForParent(part);
+		Shell wbwShell;
+		if (parentShell == null)
+			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
+		else
+			wbwShell = new Shell(parentShell, SWT.SHELL_TRIM);
 
-			if (part instanceof MWorkbenchWindow) {
-				// TrimmedLayout tl = new TrimmedLayout(wbwShell);
-				// wbwShell.setLayout(tl);
-				// localContext.set(MWorkbenchWindow.class.getName(), part);
-			} else {
-				wbwShell.setLayout(new FillLayout());
-			}
-			if (((MWindow<?>) part).getName() != null)
-				wbwShell.setText(((MWindow<?>) part).getName());
-			String uri = ((MWindow<?>) part).getIconURI();
-			if (uri != null) {
-				try {
-					Image image = ImageDescriptor.createFromURL(new URL(uri))
-							.createImage();
-					wbwShell.setImage(image);
-				} catch (MalformedURLException e) {
-					// invalid image in model, so don't set an image
-					if (logger != null)
-						logger.error(e);
-				}
-			}
+		wbwShell.setLayout(new FillLayout());
+		newWidget = wbwShell;
+		bindWidget(part, newWidget);
+
+		// set up context
+		IEclipseContext localContext = part.getContext();
+		localContext.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
+		parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
+
+		// Add the shell into the WBW's context
+		localContext.set(Shell.class.getName(), wbwShell);
+		localContext.set(Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
+
+		if (part instanceof MWorkbenchWindow) {
+			// TrimmedLayout tl = new TrimmedLayout(wbwShell);
+			// wbwShell.setLayout(tl);
+			// localContext.set(MWorkbenchWindow.class.getName(), part);
 		} else {
-			newWidget = null;
+			wbwShell.setLayout(new FillLayout());
+		}
+		if (((MWindow<?>) part).getName() != null)
+			wbwShell.setText(((MWindow<?>) part).getName());
+		String uri = ((MWindow<?>) part).getIconURI();
+		if (uri != null) {
+			try {
+				Image image = ImageDescriptor.createFromURL(new URL(uri))
+						.createImage();
+				wbwShell.setImage(image);
+			} catch (MalformedURLException e) {
+				// invalid image in model, so don't set an image
+				if (logger != null)
+					logger.error(e);
+			}
 		}
 
 		return newWidget;
