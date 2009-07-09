@@ -185,7 +185,7 @@ public class StackModelFactory extends LazyStackFactory {
 			int index = calcIndexFor(element);
 			// TODO see bug 282901 - [UI] Need better support for switching
 			// renderer to use
-			cti = new ETabItem(ctf, createFlags, index);
+			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
 		}
 
 		cti.setData(OWNING_ME, element);
