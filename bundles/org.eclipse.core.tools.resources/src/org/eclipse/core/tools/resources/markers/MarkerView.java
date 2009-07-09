@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2003, 2004 Geoff Longman and others.
+ * Copyright (c) 2003, 2009 Geoff Longman and others.
  * All rights reserved.   This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -595,7 +595,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
 		IMemento child = memento.createChild(MEMENTO_TAG1);
-		child = child = child.createChild(MEMENTO_TAG2);
+		child = child.createChild(MEMENTO_TAG2);
 		if (currentResource == null)
 			child.putTextData(NONE_SELECTED);
 		else
