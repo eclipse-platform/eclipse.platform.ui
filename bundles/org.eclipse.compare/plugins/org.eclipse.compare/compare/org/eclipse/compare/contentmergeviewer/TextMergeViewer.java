@@ -3279,8 +3279,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		} catch (CoreException e) {
 			CompareUIPlugin.log(e.getStatus());
 			String title= Utilities.getString(getResourceBundle(), "tooComplexError.title"); //$NON-NLS-1$
-			String format= Utilities.getString(getResourceBundle(), "tooComplexError.format"); //$NON-NLS-1$
-			String msg= MessageFormat.format(format, new Object[] { Integer.toString(PlatformUI.getWorkbench().getProgressService().getLongOperationTime()/1000) } );
+			String msg= Utilities.getString(getResourceBundle(), "tooComplexError.message"); //$NON-NLS-1$
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 		}
 
@@ -3293,8 +3292,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		} catch (CoreException e) {
 			CompareUIPlugin.log(e.getStatus());
 			String title= Utilities.getString(getResourceBundle(), "tooComplexError.title"); //$NON-NLS-1$
-			String format= Utilities.getString(getResourceBundle(), "tooComplexError.format"); //$NON-NLS-1$
-			String msg= MessageFormat.format(format, new Object[] { Integer.toString(PlatformUI.getWorkbench().getProgressService().getLongOperationTime()/1000) } );
+			String msg= Utilities.getString(getResourceBundle(), "tooComplexError.message"); //$NON-NLS-1$
 			MessageDialog.openError(fComposite.getShell(), title, msg);
 			return null;
 		}
