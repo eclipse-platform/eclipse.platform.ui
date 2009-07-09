@@ -189,7 +189,8 @@ public abstract class CompareInputChangeNotifier implements
 	 */
 	public void dispose() {
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
-		eventHandler.shutdown();
+		if (eventHandler != null)
+			eventHandler.shutdown();
 	}
 
 	/**
