@@ -216,6 +216,10 @@ public class CheckoutAsMainPage extends CVSWizardPage {
 				setPageComplete(nameStatus.isOK());
 			}
 		}
+		if (intoProjectButton.getSelection()) {
+			setErrorMessage(null);
+			setPageComplete(true);
+		}
 	}
 	
 	public String getProjectName() {
