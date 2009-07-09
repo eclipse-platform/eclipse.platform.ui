@@ -78,20 +78,20 @@ ToolBar {
     font: Verdana 8px;
 }
 
-CTabFolder:selected {
+ETabFolder:selected {
     background-color: rgb(48,48,48);
     font-weight: normal;
     font: Verdana 8px;
 }
 
-CTabFolder {
+ETabFolder {
     color: rgb(150,150,150);
     background-color: rgb(48,48,48);
     font: Verdana 8px;
     simple: true;
 }
 
-CTabFolder.active:selected {
+ETabFolder.active:selected {
 	color: #ff5500;
 	font: bold;
 }
