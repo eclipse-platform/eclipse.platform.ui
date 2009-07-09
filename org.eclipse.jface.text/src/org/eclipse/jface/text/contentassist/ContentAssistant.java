@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1145,7 +1145,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Sets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
-	 *
+	 * 
 	 * @param delay the auto activation delay
 	 */
 	public void setAutoActivationDelay(int delay) {
@@ -1155,7 +1155,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	/**
 	 * Gets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
-	 *
+	 * 
 	 * @return the auto activation delay
 	 * @since 3.4
 	 */
@@ -1680,15 +1680,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * @since 3.2
 	 */
 	private boolean prepareToShowCompletions(boolean isAutoActivated) {
-		long current= System.currentTimeMillis();
-		int gracePeriod= Math.max(fAutoActivationDelay, 200);
-		if (current < fLastAutoActivation + gracePeriod)
-			return false;
-
-	    promoteKeyListener();
+		if (!isAutoActivated) {
+			int gracePeriod= Math.max(fAutoActivationDelay, 200);
+			if (System.currentTimeMillis() < fLastAutoActivation + gracePeriod) {
+				return false;
+			}
+		}
+		
+		promoteKeyListener();
 		fireSessionBeginEvent(isAutoActivated);
 		return true;
-    }
+	}
 
 	/**
 	 * Callback to signal this content assistant that the presentation of the possible completions
