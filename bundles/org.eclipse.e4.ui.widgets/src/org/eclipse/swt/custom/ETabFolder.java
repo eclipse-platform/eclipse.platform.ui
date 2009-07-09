@@ -24,15 +24,21 @@ public class ETabFolder extends CTabFolder {
 
 	boolean webbyStyle = false;
 
-	static final int[] E4_TOP_LEFT_CORNER = new int[] {0,6, 1,5, 1,4, 4,1, 5,1, 6,0};
-	static final int[] E4_TOP_RIGHT_CORNER = new int[] {0,0, 1,1, 2,1, 4,5, 5,5, 6,6};
+	static final int[] E_TOP_LEFT_CORNER = new int[] {0,5, 1,4, 1,3, 2,2, 3,1, 4,1, 5,0};
+	static final int[] E_TOP_RIGHT_CORNER = new int[] {-5,0, -4,1, -3,1, -2,2, -1,3, -1,4, 0,5};
+
+	static final int[] E_TOP_LEFT_CORNER_BORDERLESS = new int[] {};
+	static final int[] E_TOP_RIGHT_CORNER_BORDERLESS = new int[] {};
 	
-	int topMargin = 4;  //The space above the highest (selected) tab
-	int selectionMargin = 4;  //bonus margin for selected tabs
-	int tabTopMargin = 4;  //margin within tab above text below line
-	int tabBottomMargin = 4; //bottom margin within tab
+	int topMargin = 0;  //The space above the highest (selected) tab
+	int selectionMargin = 3;  //bonus margin for selected tabs
+	int tabTopMargin = 6;  //margin within tab above text below line
+	int tabBottomMargin = 6; //bottom margin within tab
 	int hSpace = 2;  //horizontal spacing between tabs
-	int leftMargin = topMargin;  //first horizontal space
+	int leftMargin = 4;  //first horizontal space
+	
+	Color exteriorKeyLineColor;
+	Color interiorKeyLineColor;
 	
 /**
  * @param parent
@@ -40,6 +46,28 @@ public class ETabFolder extends CTabFolder {
  */
 public ETabFolder(Composite parent, int style) {
 	super(parent, style);
+}
+
+void init(int style) {
+	super.init(style);
+	RGB exteriorKeyLineRGB = new RGB(201,200, 204);
+	RGB interiorKeyLineRGB = new RGB(208, 207, 212);
+	
+	exteriorKeyLineColor = new Color(getDisplay(), exteriorKeyLineRGB);
+	interiorKeyLineColor = new Color(getDisplay(), interiorKeyLineRGB);
+}
+
+public void dispose() {
+	super.dispose();
+	
+	if(exteriorKeyLineColor != null) {
+		exteriorKeyLineColor.dispose();
+		exteriorKeyLineColor = null;
+	}
+	if(interiorKeyLineColor != null) {
+		interiorKeyLineColor.dispose();
+		interiorKeyLineColor = null;
+	}
 }
 
 public boolean getWebbyStyle() {
@@ -73,6 +101,75 @@ int getTextMidline() {
 	return (tabHeight - topMargin - selectionMargin) /2 + topMargin + selectionMargin;
 }
 
+void drawBody(Event event) {
+	GC gc = event.gc;
+	Point size = getSize();
+	
+	// fill in body
+	if (!minimized){
+		int width = size.x  - borderLeft - borderRight - 2*highlight_margin;
+		int height = size.y - borderTop - borderBottom - tabHeight - highlight_header - highlight_margin;
+		// Draw highlight margin
+		if (highlight_margin > 0) {
+			int[] shape = null;
+			if (onBottom) {
+				int x1 = borderLeft;
+				int y1 = borderTop;
+				int x2 = size.x - borderRight;
+				int y2 = size.y - borderBottom - tabHeight - highlight_header;
+				shape = new int[] {x1,y1, x2,y1, x2,y2, x2-highlight_margin,y2,
+						           x2-highlight_margin, y1+highlight_margin, x1+highlight_margin,y1+highlight_margin,
+								   x1+highlight_margin,y2, x1,y2};
+			} else {	
+				int x1 = borderLeft;
+				int y1 = borderTop + tabHeight + highlight_header;
+				int x2 = size.x - borderRight;
+				int y2 = size.y - borderBottom;
+				shape = new int[] {x1,y1, x1+highlight_margin,y1, x1+highlight_margin,y2-highlight_margin, 
+						           x2-highlight_margin,y2-highlight_margin, x2-highlight_margin,y1,
+								   x2,y1, x2,y2, x1,y2};
+			}
+			// If horizontal gradient, show gradient across the whole area
+			if (selectedIndex != -1 && selectionGradientColors != null && selectionGradientColors.length > 1 && !selectionGradientVertical) {
+				drawBackground(gc, shape, true);
+			} else if (selectedIndex == -1 && gradientColors != null && gradientColors.length > 1 && !gradientVertical) {
+				drawBackground(gc, shape, false);
+			} else {
+				gc.setBackground(selectedIndex == -1 ? getBackground() : selectionBackground);
+				gc.fillPolygon(shape);
+			}
+		}
+		//Draw client area
+		if ((getStyle() & SWT.NO_BACKGROUND) != 0) {
+			gc.setBackground(getBackground());
+			gc.fillRectangle(xClient - marginWidth, yClient - marginHeight, width, height);
+		}
+	} else {
+		if ((getStyle() & SWT.NO_BACKGROUND) != 0) {
+			int height = borderTop + tabHeight + highlight_header + borderBottom;
+			if (size.y > height) {
+				gc.setBackground(getParent().getBackground());
+				gc.fillRectangle(0, height, size.x, size.y - height);
+			}
+		}
+	}
+	
+	//draw 1 pixel border around outside
+	if (borderLeft > 0) {
+		gc.setForeground(exteriorKeyLineColor);
+		int x1 = borderLeft - 1;
+		int x2 = size.x - borderRight;
+		int y1 = onBottom ? borderTop - 1 : borderTop + tabHeight;
+		int y2 = onBottom ? size.y - tabHeight - borderBottom - 1 : size.y - borderBottom;
+		gc.drawLine(x1, y1, x1, y2); // left
+		gc.drawLine(x2, y1, x2, y2); // right
+		if (onBottom) {
+			gc.drawLine(x1, y1, x2, y1); // top
+		} else {
+			gc.drawLine(x1, y2, x2, y2); // bottom
+		}
+	}
+}
 void drawTabArea(Event event) {
 	if (!webbyStyle || onBottom || single) {
 		super.drawTabArea(event);
@@ -82,7 +179,7 @@ void drawTabArea(Event event) {
 	GC gc = event.gc;
 	Point size = getSize();
 	int[] shape = null;
-	Color borderColor = getDisplay().getSystemColor(SWT.COLOR_DARK_GRAY); //TODO parameterize
+	Color borderColor = exteriorKeyLineColor;
 
 	if (tabHeight == 0) {
 		int style = getStyle();
@@ -127,14 +224,13 @@ void drawTabArea(Event event) {
 	// Draw Tab Header
 	int[] left, right;
 	if ((getStyle() & SWT.BORDER) != 0) {
-		left = simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
-		right = simple ? SIMPLE_TOP_RIGHT_CORNER : TOP_RIGHT_CORNER;
+		left = E_TOP_LEFT_CORNER;
+		right = E_TOP_RIGHT_CORNER;
 	} else {
-		left = simple ? SIMPLE_TOP_LEFT_CORNER_BORDERLESS
-				: TOP_LEFT_CORNER_BORDERLESS;
-		right = simple ? SIMPLE_TOP_RIGHT_CORNER_BORDERLESS
-				: TOP_RIGHT_CORNER_BORDERLESS;
+		left = E_TOP_LEFT_CORNER_BORDERLESS;
+		right = E_TOP_RIGHT_CORNER_BORDERLESS;
 	}
+	
 	shape = new int[left.length + right.length + 4];
 	int index = 0;
 	shape[index++] = x;
@@ -242,6 +338,7 @@ boolean setItemLocation() {
 	return changed;
 }
 
+
 //The space above the selected tab
 int getSelectedTabTopOffset() {
 	return topMargin;
@@ -250,6 +347,5 @@ int getSelectedTabTopOffset() {
 int getUnselectedTabTopOffset() {
 	return topMargin + selectionMargin;
 }
-
 
 }

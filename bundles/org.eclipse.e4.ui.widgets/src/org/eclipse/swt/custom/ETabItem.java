@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.swt.custom;
 
+import java.lang.reflect.Field;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -24,16 +26,25 @@ import org.eclipse.swt.widgets.Display;
  *
  */
 public class ETabItem extends CTabItem {
-
-	/**
-	 * @param parent
-	 * @param style
-	 * @param index
-	 */
-	public ETabItem(CTabFolder parent, int style, int index) {
-		super(parent, style, index);
-		// TODO Auto-generated constructor stub
+	static {
+		try {
+			final Field parentF = CTabItem.class.getDeclaredField("parent");
+			parentF.setAccessible(true);
+			System.err.println("Set accessible: " + parentF);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
+
+/**
+ * @param parent
+ * @param style
+ * @param index
+ */
+public ETabItem(ETabFolder parent, int style, int index) {
+	super(parent, style, index);
+}
 
 ETabFolder getETabParent() {
 	return (ETabFolder) parent;
@@ -71,7 +82,7 @@ void drawSelected(GC gc) {
 		int x1 = Math.max(0, parent.borderLeft - 1);
 		int y1 = y + height;
 		int x2 = size.x - parent.borderRight;
-		gc.setForeground(getDisplay().getSystemColor(CTabFolder.BORDER1_COLOR));
+		gc.setForeground(getETabParent().interiorKeyLineColor);
 		gc.drawLine(x1, y1, x2, y1);
 		return;
 	}
@@ -79,12 +90,9 @@ void drawSelected(GC gc) {
 	// draw selected tab background and outline
 	shape = null;
 	
-	int[] left = ETabFolder.TOP_LEFT_CORNER;
-	int[] right = ETabFolder.TOP_RIGHT_CORNER;
-		
-	if (parent.borderLeft == 0 && parent.indexOf(this) == parent.firstIndex) {
-		left = new int[]{x, y};
-	}
+	int[] left = ETabFolder.E_TOP_LEFT_CORNER;
+	int[] right = ETabFolder.E_TOP_RIGHT_CORNER;
+
 	shape = new int[left.length+right.length+8];
 	int index = 0;
 	shape[index++] = x; // first point repeated here because below we reuse shape to draw outline
@@ -103,7 +111,6 @@ void drawSelected(GC gc) {
 	shape[index++] = y +  height + 1;
 	shape[index++] = rightEdge - 1;
 	shape[index++] = y +  height + 1;
-
 	
 	Rectangle clipping = gc.getClipping();
 	Rectangle bounds = getBounds();
@@ -128,17 +135,11 @@ void drawSelected(GC gc) {
 			parent.drawBackground(gc, shape, xx, yy, ww, hh, defaultBackground, image, colors, percents, vertical);
 		}
 	}
-	
-	// draw outline
+
+	//Complete the horizontal line below and before/after the selected tab
 	shape[0] = Math.max(0, parent.borderLeft - 1);
-	if (parent.borderLeft == 0 && parent.indexOf(this) == parent.firstIndex) {
-		shape[1] = y; 
-		shape[5] = shape[3] = shape[1];
-	}
 	shape[shape.length - 2] = size.x - parent.borderRight + 1;
-	for (int i = 0; i < shape.length/2; i++) {
-		if (shape[2*i + 1] == y + 1) shape[2*i + 1] -= 1;
-	}
+
 	RGB inside = parent.selectionBackground.getRGB();
 	if (parent.selectionBgImage != null || 
 	    (parent.selectionGradientColors != null && parent.selectionGradientColors.length > 1)) {
@@ -148,7 +149,8 @@ void drawSelected(GC gc) {
 	if (parent.gradientColors != null && parent.gradientColors.length > 1) {
 	    outside = null;
 	}
-	Color borderColor = getDisplay().getSystemColor(CTabFolder.BORDER1_COLOR);
+	
+	Color borderColor = getETabParent().interiorKeyLineColor;
 	parent.antialias(shape, borderColor.getRGB(), inside, outside, gc);
 	gc.setForeground(borderColor);
 //	debugPrintPolyline(true, shape);
@@ -280,8 +282,8 @@ void drawUnselected(GC gc) {
 void drawUnselectedBorder(GC gc) {
 	int[] shape = null;
 
-	int[] left = ETabFolder.TOP_LEFT_CORNER;
-	int[] right = ETabFolder.TOP_RIGHT_CORNER;
+	int[] left = ETabFolder.E_TOP_LEFT_CORNER;
+	int[] right = ETabFolder.E_TOP_RIGHT_CORNER;
 	
 	int topOffset = getETabParent().getUnselectedTabTopOffset();
 	shape = new int[left.length + 2 + right.length + 2];
@@ -303,7 +305,7 @@ void drawUnselectedBorder(GC gc) {
 	shape[index++] = startX;
 	shape[index++] = y + height;
 	
-	Color borderColor = getDisplay().getSystemColor(CTabFolder.BORDER1_COLOR);
+	Color borderColor = getETabParent().interiorKeyLineColor;
 //	parent.antialias(shape, borderColor.getRGB(), inside, outside, gc);
 	gc.setForeground(borderColor);
 //	debugPrintPolyline(false, shape);
@@ -336,19 +338,6 @@ int preferredHeight(GC gc) {
 	return prefHeight;
 }
 
-void debugPrintPolyline(boolean selected, int[] shape) {
-	System.out.println(
-		selected ? "selected polyline:" : "unselected polyline:" );
-	for (int i = 0; i < shape.length; i+=2) {
-		System.out.print(shape[i]);
-		System.out.print("@");
-		System.out.print(shape[i+1]);
-		if(i != shape.length -2)
-			System.out.print(", ");
-		else
-			System.out.println();
-	}
-}
 public Rectangle getBounds () {
 	//checkWidget();
 	if(! getETabParent().webbyStyle || this.parent.onBottom || parent.single) {
@@ -361,5 +350,19 @@ public Rectangle getBounds () {
 	int w = width;
 	int h = height - yy;
 	return new Rectangle(x, yy, w, h);
+}
+
+void debugPrintPolyline(boolean selected, int[] shape) {
+	System.out.println(
+		(selected ? "selected" : "unselected") + " polyline ("+ getText()+"): " );
+	for (int i = 0; i < shape.length; i+=2) {
+		System.out.print(shape[i]);
+		System.out.print("@");
+		System.out.print(shape[i+1]);
+		if(i != shape.length -2)
+			System.out.print(", ");
+		else
+			System.out.println();
+	}
 }
 }
