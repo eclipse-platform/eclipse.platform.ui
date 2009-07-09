@@ -15,13 +15,14 @@
       </items>
     </menu>
     <children policy="VerticalComposite">
-      <toolBar>
-        <items xsi:type="application:MToolBarItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_add.png" name="" tooltip="Add User"/>
-        <items xsi:type="application:MToolBarItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_delete.png" name="" tooltip="Delete User"/>
-      </toolBar>
       <children xsi:type="application:MSashForm" policy="HorizontalSash">
         <children xsi:type="application:MStack">
-          <children xsi:type="application:MContributedPart" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" name="Contacts List" tooltip="Contacts List" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView"/>
+          <children xsi:type="application:MContributedPart" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" name="Contacts List" tooltip="Contacts List" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView">
+            <toolBar>
+              <items xsi:type="application:MToolBarItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_add.png" name="" tooltip="Add User"/>
+              <items xsi:type="application:MToolBarItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/user_delete.png" name="" tooltip="Delete User"/>
+            </toolBar>
+          </children>
         </children>
         <children xsi:type="application:MStack">
           <children xsi:type="application:MContributedPart" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" name="Details" tooltip="Details" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView"/>
