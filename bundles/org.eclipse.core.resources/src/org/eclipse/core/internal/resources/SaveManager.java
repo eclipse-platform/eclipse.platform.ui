@@ -985,7 +985,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		public boolean isCanceled() {
 			return ignoreCancel ? false : super.isCanceled();
 		}
-	};
+	}
 	
 	public IStatus save(int kind, Project project, IProgressMonitor monitor) throws CoreException {
 		return save(kind, false, project, monitor);
