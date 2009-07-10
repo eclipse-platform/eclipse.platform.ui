@@ -80,6 +80,7 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 * Default Constructor
 	 */
 	public ConfiguredSite() {
+		setUpdatable(true);
 	}
 
 	/*
@@ -125,19 +126,17 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 		// change the status if justCreated
 		if (justCreated) justCreated=false;
 
-		// ConfigSite is read only 
-		if (!isUpdatable()) {
-			String errorMessage = NLS.bind(Messages.ConfiguredSite_NonInstallableSite, (new String[] { getSite().getURL().toExternalForm() }));
-			IStatus status = verifyUpdatableStatus();
-			if (status != null)
-				errorMessage += " " + status.getMessage(); //$NON-NLS-1$
+		// Check if the site is updateable
+		String errorMessage = NLS.bind(Messages.ConfiguredSite_NonInstallableSite, (new String[] {getSite().getURL().toExternalForm()}));
+		IStatus status = verifyUpdatableStatus();
+		if (status != null) {
+			errorMessage += " " + status.getMessage(); //$NON-NLS-1$
 			throw Utilities.newCoreException(errorMessage, null);
 		}
 
 		// feature is null
 		if (feature == null) {
-			String errorMessage = Messages.ConfiguredSite_NullFeatureToInstall; 
-			throw Utilities.newCoreException(errorMessage, null);
+			throw Utilities.newCoreException(Messages.ConfiguredSite_NullFeatureToInstall, null);
 		}
 
 		// feature reference to return
@@ -196,9 +195,11 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 	 */
 	public void remove(IFeature feature, IProgressMonitor monitor) throws CoreException {
 
-		// ConfigSite is read only
-		if (!isUpdatable()) {
-			String errorMessage = NLS.bind(Messages.ConfiguredSite_NonUninstallableSite, (new String[] { getSite().getURL().toExternalForm() }));
+		// Check if the site is updateable
+		String errorMessage = NLS.bind(Messages.ConfiguredSite_NonUninstallableSite, (new String[] {getSite().getURL().toExternalForm()}));
+		IStatus status = verifyUpdatableStatus();
+		if (status != null) {
+			errorMessage += " " + status.getMessage(); //$NON-NLS-1$
 			throw Utilities.newCoreException(errorMessage, null);
 		}
 
@@ -776,6 +777,10 @@ public class ConfiguredSite extends ConfiguredSiteModel implements IConfiguredSi
 
 		if (verifyStatus != null)
 			return verifyStatus;
+
+		if (!isUpdatable())
+			return verifyStatus = createStatus(IStatus.ERROR, Messages.ConfiguredSite_NonUpdateableSite, null);
+			
 
 		URL siteURL = getSite().getURL();
 		if (siteURL == null) {
