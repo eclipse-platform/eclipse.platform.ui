@@ -128,6 +128,9 @@ public class PartSashFactory extends SWTPartFactory {
 	 *            the sash form to synchronize
 	 */
 	private void synchWeightsToModel(SashForm sf) {
+		if (sf.isDisposed())
+			return;
+
 		// retrieve the model
 		MSashForm<?> sfm = (MSashForm<?>) sf.getData(OWNING_ME);
 		// get the weights of the widget and the model model

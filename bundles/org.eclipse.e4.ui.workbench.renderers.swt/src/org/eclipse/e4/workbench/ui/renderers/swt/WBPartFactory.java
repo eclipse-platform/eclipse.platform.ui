@@ -60,14 +60,20 @@ public class WBPartFactory extends SWTPartFactory {
 				|| (parent != null && !(parent instanceof Shell)))
 			return null;
 
+		MWindow<?> window = (MWindow<?>) part;
+
 		Shell parentShell = (Shell) parent;
 
 		IEclipseContext parentContext = getContextForParent(part);
 		Shell wbwShell;
-		if (parentShell == null)
+		if (parentShell == null) {
 			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-		else
+		} else {
 			wbwShell = new Shell(parentShell, SWT.SHELL_TRIM);
+			wbwShell.setLocation(window.getX(), window.getY());
+			wbwShell.setSize(window.getWidth(), window.getHeight());
+			wbwShell.setVisible(true);
+		}
 
 		wbwShell.setLayout(new FillLayout());
 		newWidget = wbwShell;
@@ -189,5 +195,20 @@ public class WBPartFactory extends SWTPartFactory {
 		if (me.getMenu() != null) {
 			createMenu(me, me.getWidget(), me.getMenu());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.PartFactory#postProcess(org.eclipse
+	 * .e4.ui.model.application.MPart)
+	 */
+	@Override
+	public void postProcess(MPart<?> childME) {
+		super.postProcess(childME);
+
+		Shell shell = (Shell) childME.getWidget();
+		shell.layout(true);
 	}
 }
