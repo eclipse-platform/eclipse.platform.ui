@@ -132,8 +132,16 @@ public class StackModelFactory extends LazyStackFactory {
 
 					if (currentActive == folderContext) {
 						engine.setClassname(ctf, "active"); //$NON-NLS-1$
+						// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
+						// should get same background color
+						if (ctf.getTopRight() != null)
+							engine.setClassname(ctf.getTopRight(), "active"); //$NON-NLS-1$
 					} else {
 						engine.setClassname(ctf, "inactive"); //$NON-NLS-1$
+						// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
+						// should get same background color
+						if (ctf.getTopRight() != null)
+							engine.setClassname(ctf.getTopRight(), "inactive"); //$NON-NLS-1$
 					}
 				}
 			});
@@ -382,6 +390,12 @@ public class StackModelFactory extends LazyStackFactory {
 
 			if (tb.getSize().y > ctf.getTabHeight())
 				ctf.setTabHeight(tb.getSize().y);
+
+			// TODO HACK: see Bug 283073 [CSS] CTabFolder.getTopRight() should
+			// get same background color
+			String cssClassName = (String) ctf
+					.getData("org.eclipse.e4.ui.css.CssClassName"); //$NON-NLS-1$
+			stylingEngine.setClassname(tb, cssClassName);
 
 			ctf.setTopRight(tb, SWT.RIGHT);
 			ctf.layout(true);
