@@ -117,7 +117,6 @@ public final class Messages extends NLS {
 	public static String ConfiguredSite_MissingPluginsBrokenFeature;
 	public static String ConfiguredSite_UnableToRemoveConfiguredFeature;
 	public static String ConfiguredSite_UnableToFindFeature;
-	public static String ConfiguredSite_NonUpdateableSite;
 	public static String ConfiguredSite_SiteURLNull;
 	public static String ConfiguredSite_NonLocalSite;
 	public static String ConfiguredSite_NotSameProductId;
