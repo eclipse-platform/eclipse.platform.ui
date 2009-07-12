@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MMenuItemImpl.java,v 1.1 2009/02/03 14:25:35 emoffatt Exp $
+ * $Id: MMenuItemImpl.java,v 1.2 2009/06/15 19:13:16 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -29,7 +29,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl#isSeparator <em>Separator</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl#isVisible <em>Visible</em>}</li>
  * </ul>
  * </p>
  *
@@ -54,27 +53,7 @@ public class MMenuItemImpl extends MHandledItemImpl implements MMenuItem {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final int SEPARATOR_EFLAG = 1 << 8;
-
-	/**
-	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isVisible()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean VISIBLE_EDEFAULT = true;
-
-	/**
-	 * The flag representing the value of the '{@link #isVisible() <em>Visible</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isVisible()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final int VISIBLE_EFLAG = 1 << 9;
+	protected static final int SEPARATOR_EFLAG = 1 << 9;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -83,7 +62,6 @@ public class MMenuItemImpl extends MHandledItemImpl implements MMenuItem {
 	 */
 	protected MMenuItemImpl() {
 		super();
-		eFlags |= VISIBLE_EFLAG;
 	}
 
 	/**
@@ -122,34 +100,11 @@ public class MMenuItemImpl extends MHandledItemImpl implements MMenuItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isVisible() {
-		return (eFlags & VISIBLE_EFLAG) != 0;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setVisible(boolean newVisible) {
-		boolean oldVisible = (eFlags & VISIBLE_EFLAG) != 0;
-		if (newVisible) eFlags |= VISIBLE_EFLAG; else eFlags &= ~VISIBLE_EFLAG;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MMENU_ITEM__VISIBLE, oldVisible, newVisible));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case ApplicationPackage.MMENU_ITEM__SEPARATOR:
 				return isSeparator();
-			case ApplicationPackage.MMENU_ITEM__VISIBLE:
-				return isVisible();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -164,9 +119,6 @@ public class MMenuItemImpl extends MHandledItemImpl implements MMenuItem {
 		switch (featureID) {
 			case ApplicationPackage.MMENU_ITEM__SEPARATOR:
 				setSeparator((Boolean)newValue);
-				return;
-			case ApplicationPackage.MMENU_ITEM__VISIBLE:
-				setVisible((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -183,9 +135,6 @@ public class MMenuItemImpl extends MHandledItemImpl implements MMenuItem {
 			case ApplicationPackage.MMENU_ITEM__SEPARATOR:
 				setSeparator(SEPARATOR_EDEFAULT);
 				return;
-			case ApplicationPackage.MMENU_ITEM__VISIBLE:
-				setVisible(VISIBLE_EDEFAULT);
-				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -200,8 +149,6 @@ public class MMenuItemImpl extends MHandledItemImpl implements MMenuItem {
 		switch (featureID) {
 			case ApplicationPackage.MMENU_ITEM__SEPARATOR:
 				return ((eFlags & SEPARATOR_EFLAG) != 0) != SEPARATOR_EDEFAULT;
-			case ApplicationPackage.MMENU_ITEM__VISIBLE:
-				return ((eFlags & VISIBLE_EFLAG) != 0) != VISIBLE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -218,8 +165,6 @@ public class MMenuItemImpl extends MHandledItemImpl implements MMenuItem {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (separator: "); //$NON-NLS-1$
 		result.append((eFlags & SEPARATOR_EFLAG) != 0);
-		result.append(", visible: "); //$NON-NLS-1$
-		result.append((eFlags & VISIBLE_EFLAG) != 0);
 		result.append(')');
 		return result.toString();
 	}

@@ -17,7 +17,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MHandledItem;
-import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.ECommandService;
@@ -64,6 +63,8 @@ public class HandledContributionItem extends ContributionItem {
 		this.model = model;
 		this.context = context;
 		generateCommand();
+		addModelListener();
+		updateVisible();
 	}
 
 	/**
@@ -125,7 +126,6 @@ public class HandledContributionItem extends ContributionItem {
 
 		update(null);
 		updateIcons();
-		addModelListener();
 	}
 
 	/*
@@ -159,7 +159,6 @@ public class HandledContributionItem extends ContributionItem {
 
 		update(null);
 		updateIcons();
-		addModelListener();
 		widget.getDisplay().timerExec(VISIBLE_ITEM_REFRESH, new Runnable() {
 			public void run() {
 				if (widget == null || widget.isDisposed()) {
@@ -200,7 +199,7 @@ public class HandledContributionItem extends ContributionItem {
 								}
 							});
 						}
-					} else if (ApplicationPackage.Literals.MMENU_ITEM__VISIBLE
+					} else if (ApplicationPackage.Literals.MHANDLED_ITEM__VISIBLE
 							.equals(msg.getFeature())) {
 						updateVisible();
 					}
@@ -211,12 +210,10 @@ public class HandledContributionItem extends ContributionItem {
 	}
 
 	private void updateVisible() {
-		if (model instanceof MMenuItem) {
-			setVisible(((MMenuItem) model).isVisible());
-			final IContributionManager parent = getParent();
-			if (parent != null) {
-				parent.markDirty();
-			}
+		setVisible((model).isVisible());
+		final IContributionManager parent = getParent();
+		if (parent != null) {
+			parent.markDirty();
 		}
 	}
 

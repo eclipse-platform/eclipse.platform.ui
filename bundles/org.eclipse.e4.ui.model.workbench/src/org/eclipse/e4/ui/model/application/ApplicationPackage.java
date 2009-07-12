@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.11 2009/07/07 14:27:31 emoffatt Exp $
+ * $Id: ApplicationPackage.java,v 1.12 2009/07/07 18:38:58 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -1193,13 +1193,22 @@ public interface ApplicationPackage extends EPackage {
 	int MHANDLED_ITEM__PARAMETERS = MITEM_FEATURE_COUNT + 3;
 
 	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MHANDLED_ITEM__VISIBLE = MITEM_FEATURE_COUNT + 4;
+
+	/**
 	 * The number of structural features of the '<em>MHandled Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MHANDLED_ITEM_FEATURE_COUNT = MITEM_FEATURE_COUNT + 4;
+	int MHANDLED_ITEM_FEATURE_COUNT = MITEM_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl <em>MMenu Item</em>}' class.
@@ -1293,6 +1302,15 @@ public interface ApplicationPackage extends EPackage {
 	int MMENU_ITEM__PARAMETERS = MHANDLED_ITEM__PARAMETERS;
 
 	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM__VISIBLE = MHANDLED_ITEM__VISIBLE;
+
+	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1302,22 +1320,13 @@ public interface ApplicationPackage extends EPackage {
 	int MMENU_ITEM__SEPARATOR = MHANDLED_ITEM_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MMENU_ITEM__VISIBLE = MHANDLED_ITEM_FEATURE_COUNT + 1;
-
-	/**
 	 * The number of structural features of the '<em>MMenu Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MMENU_ITEM_FEATURE_COUNT = MHANDLED_ITEM_FEATURE_COUNT + 2;
+	int MMENU_ITEM_FEATURE_COUNT = MHANDLED_ITEM_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarItemImpl <em>MTool Bar Item</em>}' class.
@@ -1409,6 +1418,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MTOOL_BAR_ITEM__PARAMETERS = MHANDLED_ITEM__PARAMETERS;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_BAR_ITEM__VISIBLE = MHANDLED_ITEM__VISIBLE;
 
 	/**
 	 * The number of structural features of the '<em>MTool Bar Item</em>' class.
@@ -2460,6 +2478,17 @@ public interface ApplicationPackage extends EPackage {
 	EReference getMHandledItem_Parameters();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MHandledItem#isVisible <em>Visible</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Visible</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem#isVisible()
+	 * @see #getMHandledItem()
+	 * @generated
+	 */
+	EAttribute getMHandledItem_Visible();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>MMenu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2479,17 +2508,6 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMMenuItem_Separator();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MMenuItem#isVisible <em>Visible</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Visible</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MMenuItem#isVisible()
-	 * @see #getMMenuItem()
-	 * @generated
-	 */
-	EAttribute getMMenuItem_Visible();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolBarItem <em>MTool Bar Item</em>}'.
@@ -3117,6 +3135,14 @@ public interface ApplicationPackage extends EPackage {
 		EReference MHANDLED_ITEM__PARAMETERS = eINSTANCE.getMHandledItem_Parameters();
 
 		/**
+		 * The meta object literal for the '<em><b>Visible</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MHANDLED_ITEM__VISIBLE = eINSTANCE.getMHandledItem_Visible();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MMenuItemImpl <em>MMenu Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -3133,14 +3159,6 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MMENU_ITEM__SEPARATOR = eINSTANCE.getMMenuItem_Separator();
-
-		/**
-		 * The meta object literal for the '<em><b>Visible</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute MMENU_ITEM__VISIBLE = eINSTANCE.getMMenuItem_Visible();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MToolBarItemImpl <em>MTool Bar Item</em>}' class.

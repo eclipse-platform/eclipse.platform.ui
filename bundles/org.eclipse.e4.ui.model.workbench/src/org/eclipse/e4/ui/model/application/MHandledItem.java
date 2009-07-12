@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MHandledItem.java,v 1.1 2009/02/03 14:25:34 emoffatt Exp $
+ * $Id: MHandledItem.java,v 1.2 2009/07/07 18:38:58 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -28,6 +28,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getWbCommand <em>Wb Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#isVisible <em>Visible</em>}</li>
  * </ul>
  * </p>
  *
@@ -129,5 +130,32 @@ public interface MHandledItem extends MItem {
 	 * @generated
 	 */
 	EList<MParameter> getParameters();
+
+	/**
+	 * Returns the value of the '<em><b>Visible</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Visible</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Visible</em>' attribute.
+	 * @see #setVisible(boolean)
+	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMHandledItem_Visible()
+	 * @model default="true"
+	 * @generated
+	 */
+	boolean isVisible();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MHandledItem#isVisible <em>Visible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Visible</em>' attribute.
+	 * @see #isVisible()
+	 * @generated
+	 */
+	void setVisible(boolean value);
 
 } // MHandledItem

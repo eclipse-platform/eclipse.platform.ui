@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.13 2009/07/07 14:27:31 emoffatt Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.14 2009/07/07 18:38:58 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -620,6 +620,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getMHandledItem_Visible() {
+		return (EAttribute)mHandledItemEClass.getEStructuralFeatures().get(4);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getMMenuItem() {
 		return mMenuItemEClass;
 	}
@@ -631,15 +640,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 */
 	public EAttribute getMMenuItem_Separator() {
 		return (EAttribute)mMenuItemEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getMMenuItem_Visible() {
-		return (EAttribute)mMenuItemEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -959,10 +959,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEReference(mHandledItemEClass, MHANDLED_ITEM__MENU);
 		createEAttribute(mHandledItemEClass, MHANDLED_ITEM__WB_COMMAND);
 		createEReference(mHandledItemEClass, MHANDLED_ITEM__PARAMETERS);
+		createEAttribute(mHandledItemEClass, MHANDLED_ITEM__VISIBLE);
 
 		mMenuItemEClass = createEClass(MMENU_ITEM);
 		createEAttribute(mMenuItemEClass, MMENU_ITEM__SEPARATOR);
-		createEAttribute(mMenuItemEClass, MMENU_ITEM__VISIBLE);
 
 		mToolBarItemEClass = createEClass(MTOOL_BAR_ITEM);
 
@@ -1172,10 +1172,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEReference(getMHandledItem_Menu(), this.getMMenu(), null, "menu", null, 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getMHandledItem_WbCommand(), this.getParameterizedCommand(), "wbCommand", null, 0, 1, MHandledItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getMHandledItem_Parameters(), this.getMParameter(), null, "parameters", null, 0, -1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMHandledItem_Visible(), ecorePackage.getEBoolean(), "visible", "true", 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 
 		initEClass(mMenuItemEClass, MMenuItem.class, "MMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getMMenuItem_Separator(), ecorePackage.getEBoolean(), "separator", null, 0, 1, MMenuItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getMMenuItem_Visible(), ecorePackage.getEBoolean(), "visible", "true", 0, 1, MMenuItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 
 		initEClass(mToolBarItemEClass, MToolBarItem.class, "MToolBarItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

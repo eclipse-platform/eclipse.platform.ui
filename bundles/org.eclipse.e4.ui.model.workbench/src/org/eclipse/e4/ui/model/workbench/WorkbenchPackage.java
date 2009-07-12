@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackage.java,v 1.6 2009/06/16 16:09:51 pwebster Exp $
+ * $Id: WorkbenchPackage.java,v 1.7 2009/07/07 18:38:58 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -695,15 +695,6 @@ public interface WorkbenchPackage extends EPackage {
 	int MMENU_ITEM_RENDERER__PARAMETERS = ApplicationPackage.MMENU_ITEM__PARAMETERS;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MMENU_ITEM_RENDERER__SEPARATOR = ApplicationPackage.MMENU_ITEM__SEPARATOR;
-
-	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -711,6 +702,15 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MMENU_ITEM_RENDERER__VISIBLE = ApplicationPackage.MMENU_ITEM__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MMENU_ITEM_RENDERER__SEPARATOR = ApplicationPackage.MMENU_ITEM__SEPARATOR;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.

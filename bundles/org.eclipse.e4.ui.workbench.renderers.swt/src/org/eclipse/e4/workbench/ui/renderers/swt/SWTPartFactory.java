@@ -64,6 +64,7 @@ public abstract class SWTPartFactory extends PartFactory {
 
 		if (widget instanceof Decorations) {
 			swtMenu = manager.createMenuBar((Decorations) widgetObject);
+			swtMenu.setData(manager);
 			((Decorations) widget).setMenuBar(swtMenu);
 		} else if (widget instanceof Control) {
 			swtMenu = manager.createContextMenu((Control) widget);

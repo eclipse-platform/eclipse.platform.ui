@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MHandledItemImpl.java,v 1.1 2009/02/03 14:25:36 emoffatt Exp $
+ * $Id: MHandledItemImpl.java,v 1.2 2009/07/07 18:38:58 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -42,6 +42,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#getMenu <em>Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#getWbCommand <em>Wb Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.MHandledItemImpl#isVisible <em>Visible</em>}</li>
  * </ul>
  * </p>
  *
@@ -99,12 +100,33 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 	protected EList<MParameter> parameters;
 
 	/**
+	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isVisible()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean VISIBLE_EDEFAULT = true;
+
+	/**
+	 * The flag representing the value of the '{@link #isVisible() <em>Visible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isVisible()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final int VISIBLE_EFLAG = 1 << 8;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
 	protected MHandledItemImpl() {
 		super();
+		eFlags |= VISIBLE_EFLAG;
 	}
 
 	/**
@@ -236,6 +258,27 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isVisible() {
+		return (eFlags & VISIBLE_EFLAG) != 0;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setVisible(boolean newVisible) {
+		boolean oldVisible = (eFlags & VISIBLE_EFLAG) != 0;
+		if (newVisible) eFlags |= VISIBLE_EFLAG; else eFlags &= ~VISIBLE_EFLAG;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, ApplicationPackage.MHANDLED_ITEM__VISIBLE, oldVisible, newVisible));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
@@ -264,6 +307,8 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 				return getWbCommand();
 			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
 				return getParameters();
+			case ApplicationPackage.MHANDLED_ITEM__VISIBLE:
+				return isVisible();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -290,6 +335,9 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 				getParameters().clear();
 				getParameters().addAll((Collection<? extends MParameter>)newValue);
 				return;
+			case ApplicationPackage.MHANDLED_ITEM__VISIBLE:
+				setVisible((Boolean)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -314,6 +362,9 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
 				getParameters().clear();
 				return;
+			case ApplicationPackage.MHANDLED_ITEM__VISIBLE:
+				setVisible(VISIBLE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -334,6 +385,8 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 				return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
 			case ApplicationPackage.MHANDLED_ITEM__PARAMETERS:
 				return parameters != null && !parameters.isEmpty();
+			case ApplicationPackage.MHANDLED_ITEM__VISIBLE:
+				return ((eFlags & VISIBLE_EFLAG) != 0) != VISIBLE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -350,6 +403,8 @@ public class MHandledItemImpl extends MItemImpl implements MHandledItem {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (wbCommand: "); //$NON-NLS-1$
 		result.append(wbCommand);
+		result.append(", visible: "); //$NON-NLS-1$
+		result.append((eFlags & VISIBLE_EFLAG) != 0);
 		result.append(')');
 		return result.toString();
 	}
