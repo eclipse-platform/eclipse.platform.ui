@@ -30,7 +30,7 @@ public interface IServiceConstants {
 	/**
 	 * 
 	 */
-	public static final String ACTIVE_PART = "activePart"; //$NON-NLS-1$
+	public static final String ACTIVE_PART = "e4ActivePart"; //$NON-NLS-1$
 
 	/**
 	 * 
