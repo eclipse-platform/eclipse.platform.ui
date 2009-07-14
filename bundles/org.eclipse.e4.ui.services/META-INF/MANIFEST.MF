@@ -16,3 +16,4 @@ Require-Bundle: org.eclipse.equinox.common;bundle-version="3.4.0",
 Export-Package: org.eclipse.e4.ui.internal.services,
  org.eclipse.e4.ui.services
 Bundle-Activator: org.eclipse.e4.ui.internal.services.Activator
+Bundle-Vendor: Eclipse.org

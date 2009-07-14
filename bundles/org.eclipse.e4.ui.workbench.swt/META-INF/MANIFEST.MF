@@ -22,3 +22,4 @@ Export-Package: org.eclipse.e4.ui.workbench.swt,
  org.eclipse.e4.ui.workbench.swt.internal.parts,
  org.eclipse.e4.ui.workbench.swt.modeling,
  org.eclipse.e4.ui.workbench.swt.util
+Bundle-Vendor: Eclipse.org
