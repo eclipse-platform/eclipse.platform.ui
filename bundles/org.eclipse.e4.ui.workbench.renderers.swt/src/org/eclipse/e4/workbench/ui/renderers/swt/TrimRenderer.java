@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Composite;
 /**
  *
  */
-public class TrimPartFactory extends SWTPartFactory {
+public class TrimRenderer extends SWTPartRenderer {
 
 	/*
 	 * (non-Javadoc)

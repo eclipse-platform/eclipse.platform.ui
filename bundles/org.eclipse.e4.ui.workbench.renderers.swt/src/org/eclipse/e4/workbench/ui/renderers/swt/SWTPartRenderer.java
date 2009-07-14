@@ -26,7 +26,7 @@ import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.GroupMarker;
@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 
-public abstract class SWTPartFactory extends PartFactory {
+public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	private static Shell limbo;
 
@@ -74,7 +74,7 @@ public abstract class SWTPartFactory extends PartFactory {
 					"The widget must be MenuItem, Decorations, or Control but is: " //$NON-NLS-1$
 							+ widgetObject);
 		}
-		swtMenu.setData(PartFactory.OWNING_ME, menu);
+		swtMenu.setData(AbstractPartRenderer.OWNING_ME, menu);
 		for (MMenuItem menuItem : menu.getItems()) {
 			createMenuItem(part, manager, menuItem);
 		}
@@ -103,7 +103,7 @@ public abstract class SWTPartFactory extends PartFactory {
 
 		ToolBarManager manager = new ToolBarManager(SWT.FLAT | orientation);
 		ToolBar swtToolBar = manager.createControl(composite);
-		swtToolBar.setData(PartFactory.OWNING_ME, toolbar);
+		swtToolBar.setData(AbstractPartRenderer.OWNING_ME, toolbar);
 
 		EList<MToolBarItem> items = toolbar.getItems();
 		if (items != null && items.size() > 0) {
@@ -306,7 +306,7 @@ public abstract class SWTPartFactory extends PartFactory {
 		Composite curComposite = ctrl.getParent();
 		Control outerMost = ctrl;
 		while (curComposite != null
-				&& curComposite.getData(PartFactory.OWNING_ME) == null
+				&& curComposite.getData(AbstractPartRenderer.OWNING_ME) == null
 				&& !(curComposite instanceof Shell)) {
 			outerMost = curComposite;
 			curComposite = curComposite.getParent();

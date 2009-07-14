@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Create a contribute part.
  */
-public class ContributedPartFactory extends SWTPartFactory {
+public class ContributedPartRenderer extends SWTPartRenderer {
 
 	public Object createWidget(final MPart<?> part, Object parent) {
 		if (!(parent instanceof Composite))

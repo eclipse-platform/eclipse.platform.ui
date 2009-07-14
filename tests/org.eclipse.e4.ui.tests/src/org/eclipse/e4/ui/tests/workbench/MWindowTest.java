@@ -31,8 +31,8 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
-import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
+import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -120,7 +120,7 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderer renderer = new PartRenderer(getCFactory(),
+						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
 								context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,
@@ -143,7 +143,7 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderer renderer = new PartRenderer(getCFactory(),
+						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
 								context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,
@@ -184,7 +184,7 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderer renderer = new PartRenderer(getCFactory(),
+						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
 								context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,
@@ -209,7 +209,7 @@ public class MWindowTest extends TestCase {
 
 						// "activate" the part, same as (in theory) an
 						// SWT.Activate event.
-						PartFactory factory = (PartFactory) modelPart
+						AbstractPartRenderer factory = (AbstractPartRenderer) modelPart
 								.getOwner();
 						factory.activate(modelPart);
 
@@ -239,7 +239,7 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderer renderer = new PartRenderer(getCFactory(),
+						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
 								context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,

@@ -4,37 +4,37 @@
    <extension
          point="org.eclipse.e4.workbench.partfactory">
       <factory
-            class="org.eclipse.e4.workbench.ui.renderers.swt.CompositePartFactory">
+            class="org.eclipse.e4.workbench.ui.renderers.swt.CompositePartRenderer">
       </factory>
    </extension>
    <extension
          point="org.eclipse.e4.workbench.partfactory">
       <factory
-            class="org.eclipse.e4.workbench.ui.renderers.swt.PartSashFactory">
+            class="org.eclipse.e4.workbench.ui.renderers.swt.SashRenderer">
       </factory>
    </extension>
    <extension
          point="org.eclipse.e4.workbench.partfactory">
       <factory
-            class="org.eclipse.e4.workbench.ui.renderers.swt.WBPartFactory">
+            class="org.eclipse.e4.workbench.ui.renderers.swt.WBWRenderer">
       </factory>
    </extension>
    <extension
          point="org.eclipse.e4.workbench.partfactory">
       <factory
-            class="org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartFactory">
+            class="org.eclipse.e4.workbench.ui.renderers.swt.ContributedPartRenderer">
       </factory>
    </extension>
    <extension
          point="org.eclipse.e4.workbench.partfactory">
       <factory
-            class="org.eclipse.e4.workbench.ui.renderers.swt.StackModelFactory">
+            class="org.eclipse.e4.workbench.ui.renderers.swt.StackRenderer">
       </factory>
    </extension>
    <extension
          point="org.eclipse.e4.workbench.partfactory">
       <factory
-            class="org.eclipse.e4.workbench.ui.renderers.swt.TrimPartFactory">
+            class="org.eclipse.e4.workbench.ui.renderers.swt.TrimRenderer">
       </factory>
    </extension>
 

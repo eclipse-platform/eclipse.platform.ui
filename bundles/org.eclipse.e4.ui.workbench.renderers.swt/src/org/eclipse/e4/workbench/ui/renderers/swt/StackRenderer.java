@@ -22,7 +22,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
@@ -55,14 +55,14 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
-public class StackModelFactory extends LazyStackFactory {
+public class StackRenderer extends LazyStackRenderer {
 
 	Image viewMenuImage;
 
 	@In
 	IStylingEngine stylingEngine;
 
-	public StackModelFactory() {
+	public StackRenderer() {
 		super();
 	}
 
@@ -340,7 +340,7 @@ public class StackModelFactory extends LazyStackFactory {
 
 		ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
-				MPart part = (MPart) event.item.getData(PartFactory.OWNING_ME);
+				MPart part = (MPart) event.item.getData(AbstractPartRenderer.OWNING_ME);
 				part.setVisible(false);
 			}
 		});

@@ -54,8 +54,8 @@ import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
-import org.eclipse.e4.workbench.ui.renderers.PartRenderer;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
+import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
@@ -86,7 +86,7 @@ public class Workbench implements IWorkbench {
 	}
 
 	// UI Construction...
-	private PartRenderer renderer;
+	private PartRenderingEngine renderer;
 	private int rv;
 
 	private ExceptionHandler exceptionHandler;
@@ -465,7 +465,7 @@ public class Workbench implements IWorkbench {
 	 * @param f
 	 *            the IContributionFactory already provided to <code>r</code>
 	 */
-	public static void initializeRenderer(IExtensionRegistry registry, PartRenderer r,
+	public static void initializeRenderer(IExtensionRegistry registry, PartRenderingEngine r,
 			IEclipseContext context, IContributionFactory f) {
 		// add the factories from the extension point, sort by dependency
 		// * Need to make the EP more declarative to avoid aggressive
@@ -487,9 +487,9 @@ public class Workbench implements IWorkbench {
 		}
 
 		for (int i = 0; i < factories.length; i++) {
-			PartFactory factory = null;
+			AbstractPartRenderer factory = null;
 			try {
-				factory = (PartFactory) factories[i].createExecutableExtension("class"); //$NON-NLS-1$
+				factory = (AbstractPartRenderer) factories[i].createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
@@ -501,12 +501,12 @@ public class Workbench implements IWorkbench {
 		}
 
 		// Add the renderer to the context
-		context.set(PartRenderer.SERVICE_NAME, r);
+		context.set(PartRenderingEngine.SERVICE_NAME, r);
 	}
 
 	public void createGUI(MPart part) {
 		if (renderer == null) {
-			renderer = new PartRenderer(contributionFactory, workbenchContext);
+			renderer = new PartRenderingEngine(contributionFactory, workbenchContext);
 			initializeRenderer(registry, renderer, workbenchContext, contributionFactory);
 
 		}

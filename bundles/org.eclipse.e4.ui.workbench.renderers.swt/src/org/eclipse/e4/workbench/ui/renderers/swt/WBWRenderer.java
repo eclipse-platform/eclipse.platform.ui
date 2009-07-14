@@ -45,11 +45,11 @@ import org.eclipse.swt.widgets.Widget;
 /**
  * Render a Window or Workbench Window.
  */
-public class WBPartFactory extends SWTPartFactory {
+public class WBWRenderer extends SWTPartRenderer {
 	@In
 	Logger logger;
 
-	public WBPartFactory() {
+	public WBWRenderer() {
 		super();
 	}
 

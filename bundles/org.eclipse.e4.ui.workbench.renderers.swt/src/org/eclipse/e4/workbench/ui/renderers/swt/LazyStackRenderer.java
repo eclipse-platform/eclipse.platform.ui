@@ -35,8 +35,8 @@ import org.eclipse.swt.widgets.Widget;
  * arbitrarily cause plug-in loading.
  * 
  */
-public abstract class LazyStackFactory extends SWTPartFactory {
-	public LazyStackFactory() {
+public abstract class LazyStackRenderer extends SWTPartRenderer {
+	public LazyStackRenderer() {
 		super();
 	}
 

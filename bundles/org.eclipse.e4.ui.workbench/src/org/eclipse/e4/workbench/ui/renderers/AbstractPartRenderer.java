@@ -19,19 +19,19 @@ import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 
-public abstract class PartFactory {
+public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
-	protected PartRenderer renderer;
+	protected PartRenderingEngine renderer;
 	protected IContributionFactory contributionFactory;
 	protected IEclipseContext context;
 	protected EMFDataBindingContext dbc;
 
-	public PartFactory() {
+	public AbstractPartRenderer() {
 		dbc = new EMFDataBindingContext();
 	}
 
-	public void init(PartRenderer renderer, IEclipseContext context,
+	public void init(PartRenderingEngine renderer, IEclipseContext context,
 			IContributionFactory contributionFactory) {
 		this.renderer = renderer;
 		this.contributionFactory = contributionFactory;

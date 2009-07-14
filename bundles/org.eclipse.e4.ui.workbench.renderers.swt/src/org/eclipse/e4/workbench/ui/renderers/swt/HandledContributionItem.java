@@ -25,7 +25,7 @@ import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
-import org.eclipse.e4.workbench.ui.renderers.PartFactory;
+import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
@@ -370,7 +370,7 @@ public class HandledContributionItem extends ContributionItem {
 		Control control = display.getFocusControl();
 		Object partObj = null;
 		while (control != null && !(partObj instanceof MPart<?>)) {
-			partObj = control.getData(PartFactory.OWNING_ME);
+			partObj = control.getData(AbstractPartRenderer.OWNING_ME);
 			control = control.getParent();
 		}
 		if (partObj == null) {

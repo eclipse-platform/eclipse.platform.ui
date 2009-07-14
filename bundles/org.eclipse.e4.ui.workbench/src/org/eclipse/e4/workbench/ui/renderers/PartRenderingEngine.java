@@ -24,11 +24,11 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
 
-public class PartRenderer {
+public class PartRenderingEngine {
 	private final List partFactories = new ArrayList();
 
 	// 'Publish' the renerer as a service
-	public static final String SERVICE_NAME = PartRenderer.class.getName();
+	public static final String SERVICE_NAME = PartRenderingEngine.class.getName();
 
 	// SWT property ids containing the currently rendered part (and factory) for
 	// a given widget
@@ -43,7 +43,7 @@ public class PartRenderer {
 
 				// If the parent isn't displayed who cares?
 				MPart<?> parent = changedPart.getParent();
-				PartFactory parentFactory = parent != null ? getFactoryFor(parent) : null;
+				AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent) : null;
 				if (parentFactory == null)
 					return;
 
@@ -67,7 +67,7 @@ public class PartRenderer {
 		public void notifyChanged(Notification msg) {
 			if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())) {
 				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
-				PartFactory factory = getFactoryFor(changedPart);
+				AbstractPartRenderer factory = getFactoryFor(changedPart);
 
 				// If the parent isn't in the UI then who cares?
 				if (factory == null)
@@ -108,12 +108,12 @@ public class PartRenderer {
 	private final IContributionFactory contributionFactory;
 	private final IEclipseContext context;
 
-	public PartRenderer(IContributionFactory contributionFactory, IEclipseContext context) {
+	public PartRenderingEngine(IContributionFactory contributionFactory, IEclipseContext context) {
 		this.contributionFactory = contributionFactory;
 		this.context = context;
 	}
 
-	public void addPartFactory(PartFactory factory) {
+	public void addPartFactory(AbstractPartRenderer factory) {
 		partFactories.add(factory);
 	}
 
@@ -134,7 +134,7 @@ public class PartRenderer {
 
 			// Process its internal structure through the factory that created
 			// it
-			PartFactory factory = getFactoryFor(element);
+			AbstractPartRenderer factory = getFactoryFor(element);
 			factory.bindWidget(element, newWidget);
 			hookControllerLogic(element);
 			factory.processContents(element);
@@ -143,7 +143,7 @@ public class PartRenderer {
 			// Now that we have a widget let the parent know
 			if (element.getParent() instanceof MPart) {
 				MPart parentElement = (MPart) element.getParent();
-				PartFactory parentFactory = getFactoryFor(parentElement);
+				AbstractPartRenderer parentFactory = getFactoryFor(parentElement);
 				parentFactory.childAdded(parentElement, element);
 			}
 		}
@@ -166,11 +166,11 @@ public class PartRenderer {
 	 * @param element
 	 */
 	public void removeGui(MPart<?> element) {
-		PartFactory factory = getFactoryFor(element);
+		AbstractPartRenderer factory = getFactoryFor(element);
 		assert (factory != null);
 
 		MPart<?> parent = element.getParent();
-		PartFactory parentFactory = parent != null ? getFactoryFor(parent) : null;
+		AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent) : null;
 		if (parentFactory == null)
 			return;
 
@@ -198,7 +198,7 @@ public class PartRenderer {
 	protected Object createWidget(MPart<?> element, Object parent) {
 		// Iterate through the factories until one actually creates the widget
 		for (Iterator iterator = partFactories.iterator(); iterator.hasNext();) {
-			PartFactory factory = (PartFactory) iterator.next();
+			AbstractPartRenderer factory = (AbstractPartRenderer) iterator.next();
 
 			// *** Put any declarative tests here to prevent aggressive loading
 			// For example, test whether this factory handles a particular model
@@ -246,16 +246,16 @@ public class PartRenderer {
 
 	private void hookControllerLogic(final MPart<?> element) {
 		// Delegate widget specific hook-up to the creating factory
-		PartFactory factory = (PartFactory) getFactoryFor(element);
+		AbstractPartRenderer factory = (AbstractPartRenderer) getFactoryFor(element);
 		if (factory != null)
 			factory.hookControllerLogic(element);
 	}
 
-	protected void setFactoryFor(MPart element, PartFactory factory) {
+	protected void setFactoryFor(MPart element, AbstractPartRenderer factory) {
 		element.setOwner(factory);
 	}
 
-	protected PartFactory getFactoryFor(MPart element) {
-		return (PartFactory) element.getOwner();
+	protected AbstractPartRenderer getFactoryFor(MPart element) {
+		return (AbstractPartRenderer) element.getOwner();
 	}
 }
