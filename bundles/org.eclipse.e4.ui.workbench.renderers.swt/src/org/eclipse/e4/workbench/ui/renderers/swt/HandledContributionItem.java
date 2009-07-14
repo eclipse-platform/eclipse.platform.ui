@@ -32,6 +32,8 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuListener;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -58,6 +60,12 @@ public class HandledContributionItem extends ContributionItem {
 	private IEclipseContext context;
 	private LocalResourceManager localResourceManager;
 	private AdapterImpl modelListener;
+
+	private IMenuListener menuListener = new IMenuListener() {
+		public void menuAboutToShow(IMenuManager manager) {
+			update(null);
+		}
+	};
 
 	public HandledContributionItem(MHandledItem model, IEclipseContext context) {
 		this.model = model;
@@ -417,4 +425,17 @@ public class HandledContributionItem extends ContributionItem {
 		}
 		return hs.executeHandler(parmCmd);
 	}
+
+	public void setParent(IContributionManager parent) {
+		if (getParent() instanceof IMenuManager) {
+			IMenuManager menuMgr = (IMenuManager) getParent();
+			menuMgr.removeMenuListener(menuListener);
+		}
+		if (parent instanceof IMenuManager) {
+			IMenuManager menuMgr = (IMenuManager) parent;
+			menuMgr.addMenuListener(menuListener);
+		}
+		super.setParent(parent);
+	}
+
 }
