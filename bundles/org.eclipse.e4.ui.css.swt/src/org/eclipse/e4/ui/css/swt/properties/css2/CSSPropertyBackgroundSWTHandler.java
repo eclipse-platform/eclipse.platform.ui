@@ -20,6 +20,8 @@ import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.GradientBackgroundListener;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ETabFolder;
+import org.eclipse.swt.custom.ETabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
@@ -65,7 +67,14 @@ public class CSSPropertyBackgroundSWTHandler extends
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
-			if (widget instanceof CTabItem) {
+			if (widget instanceof ETabItem) {
+				ETabFolder folder = (ETabFolder) ((ETabItem) widget).getParent();
+				if ("selected".equals(pseudo)) {
+					folder.setSelectionBackground(newColor);
+				} else {
+					folder.setUnselectedTabBackgroundColor(newColor);
+				}
+			} else if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
 				if ("selected".equals(pseudo)) {
 					folder.setSelectionBackground(newColor);
