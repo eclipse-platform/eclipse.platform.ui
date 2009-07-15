@@ -52,18 +52,21 @@ ToolBar {
 }
 
 ETabFolder {
-	color: black;
-	font: Verdana 8px;
 	simple: true;
 }
 
-ETabFolder:selected {
+ETabItem {
+	color: black;
+	font: Verdana 8px;
+}
+
+ETabItem:selected {
 	background-color: #cccccc #e8e8e8 60%;
 	font-weight: normal;
 	font: Verdana 8px;
 }
 
-ETabFolder.active:selected {
+ETabItem.active:selected {
 	background-color: #ffffff #cccccc #dddddd 50% 50%;
 	color: #1d659f;
 	font: bold;

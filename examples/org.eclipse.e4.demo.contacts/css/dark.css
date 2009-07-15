@@ -78,20 +78,23 @@ ToolBar {
     font: Verdana 8px;
 }
 
-ETabFolder:selected {
+ETabFolder {
+    simple: true;
+}
+
+ETabItem:selected {
     background-color: rgb(48,48,48);
     font-weight: normal;
     font: Verdana 8px;
 }
 
-ETabFolder {
+ETabItem {
     color: rgb(150,150,150);
     background-color: rgb(48,48,48);
     font: Verdana 8px;
-    simple: true;
 }
 
-ETabFolder.active:selected {
+ETabItem.active:selected {
 	color: #ff5500;
 	font: bold;
 }
