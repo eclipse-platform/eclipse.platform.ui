@@ -189,7 +189,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 			return false;
 		WebBrowserEditorInput other = (WebBrowserEditorInput) obj;
 
-		if (url != null && !url.equals(obj))
+		if (url != null && !url.equals(other.url))
 			return false;
 
 		return canReplaceInput(other);
