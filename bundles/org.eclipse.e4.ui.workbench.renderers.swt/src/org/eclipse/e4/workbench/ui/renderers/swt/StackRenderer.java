@@ -92,7 +92,8 @@ public class StackRenderer extends LazyStackRenderer {
 				}
 			}
 
-			Composite stylingWrapper = createWrapperForStyling((Composite) parentWidget);
+			Composite stylingWrapper = createWrapperForStyling(
+					(Composite) parentWidget, part.getContext());
 
 			// TODO see bug #267434, SWT.BORDER should be determined from CSS
 			// TODO see bug #282901 - [UI] Need better support for switching
@@ -130,18 +131,20 @@ public class StackRenderer extends LazyStackRenderer {
 					}
 					// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 
-					if (currentActive == folderContext) {
-						engine.setClassname(ctf, "active"); //$NON-NLS-1$
-						// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
-						// should get same background color
-						if (ctf.getTopRight() != null)
-							engine.setClassname(ctf.getTopRight(), "active"); //$NON-NLS-1$
-					} else {
-						engine.setClassname(ctf, "inactive"); //$NON-NLS-1$
-						// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
-						// should get same background color
-						if (ctf.getTopRight() != null)
-							engine.setClassname(ctf.getTopRight(), "inactive"); //$NON-NLS-1$
+					String cssClassName = (currentActive == folderContext) ? "active" //$NON-NLS-1$
+							: "inactive"; //$NON-NLS-1$
+					engine.setClassname(ctf, cssClassName);
+
+					// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
+					// should get same background color
+					if (ctf.getTopRight() != null)
+						engine.setClassname(ctf.getTopRight(), cssClassName);
+
+					// TODO HACK: see Bug 283585 [CSS] Specificity fails with
+					// descendents
+					CTabItem[] items = ctf.getItems();
+					for (int i = 0; i < items.length; i++) {
+						stylingEngine.setClassname(items[i], cssClassName);
 					}
 				}
 			});
@@ -193,7 +196,14 @@ public class StackRenderer extends LazyStackRenderer {
 			int index = calcIndexFor(element);
 			// TODO see bug 282901 - [UI] Need better support for switching
 			// renderer to use
+
 			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
+
+			// TODO HACK: see Bug 283585 [CSS] Specificity fails with
+			// descendents
+			String cssClassName = (String) ctf
+					.getData("org.eclipse.e4.ui.css.CssClassName"); //$NON-NLS-1$
+			stylingEngine.setClassname(cti, cssClassName);
 		}
 
 		cti.setData(OWNING_ME, element);
@@ -340,7 +350,8 @@ public class StackRenderer extends LazyStackRenderer {
 
 		ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
-				MPart part = (MPart) event.item.getData(AbstractPartRenderer.OWNING_ME);
+				MPart part = (MPart) event.item
+						.getData(AbstractPartRenderer.OWNING_ME);
 				part.setVisible(false);
 			}
 		});

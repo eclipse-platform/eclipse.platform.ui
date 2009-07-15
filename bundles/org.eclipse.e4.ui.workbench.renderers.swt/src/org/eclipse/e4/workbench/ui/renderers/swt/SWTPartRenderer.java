@@ -362,10 +362,14 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	 * HACK: Create a wrapper composite with appropriate layout for the purpose
 	 * of styling margins. See bug #280632
 	 */
-	protected Composite createWrapperForStyling(Composite parentWidget) {
+	protected Composite createWrapperForStyling(Composite parentWidget,
+			IEclipseContext context) {
 		Composite layoutHolder = new Composite(parentWidget, SWT.NONE);
 		addLayoutForStyling(layoutHolder);
 		layoutHolder.setData("org.eclipse.e4.ui.css.swt.marginWrapper", true); //$NON-NLS-1$
+		final IStylingEngine engine = (IStylingEngine) context
+				.get(IStylingEngine.SERVICE_NAME);
+		engine.setClassname(layoutHolder, "marginWrapper"); //$NON-NLS-1$
 		return layoutHolder;
 	}
 
