@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Alexander Kuppe, Versant GmbH - bug 215797
+ *     Sascha Zak - bug 282874
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -1803,9 +1804,9 @@ public class Perspective {
         while (itr.hasNext()) {
             ViewPane pane = (ViewPane) itr.next();
             IViewReference ref = pane.getViewReference();
-            boolean restorable = page.getViewFactory().getViewRegistry().find(
-					ref.getId()).isRestorable();
-			if(restorable) {
+			IViewDescriptor desc = page.getViewFactory().getViewRegistry()
+					.find(ref.getId());
+			if (desc != null && desc.isRestorable()) {
 	            IMemento viewMemento = memento
 	                    .createChild(IWorkbenchConstants.TAG_VIEW);
 	            viewMemento.putString(IWorkbenchConstants.TAG_ID, ViewFactory

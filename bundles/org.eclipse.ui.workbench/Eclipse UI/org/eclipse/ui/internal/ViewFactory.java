@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
+ *     Sascha Zak - bug 282874
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -285,7 +286,7 @@ public class ViewFactory implements IExtensionChangeHandler {
         final IViewReference refs[] = getViews();
         for (int i = 0; i < refs.length; i++) {
         	IViewDescriptor desc = viewReg.find(refs[i].getId());
-			if(desc.isRestorable()) {
+			if (desc != null && desc.isRestorable()) {
 				//for dynamic UI - add the following line to replace subsequent code which is commented out
 				saveViewState(memento, refs[i], result);
 			}
