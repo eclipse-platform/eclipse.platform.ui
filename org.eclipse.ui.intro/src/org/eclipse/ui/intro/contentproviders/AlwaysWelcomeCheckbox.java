@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mike Evans      - Fix for Bug 283136
  *******************************************************************************/
 
 package org.eclipse.ui.intro.contentproviders;
@@ -72,7 +73,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 		out.print("<div id=\""+id+"\"><input type=\"checkbox\" "+  	//$NON-NLS-1$//$NON-NLS-2$
 				"onClick=window.location="+ 						//$NON-NLS-1$
 				"\"http://org.eclipse.ui.intro/runAction?"+ 		//$NON-NLS-1$
-				"pluginId=org.eclipse.platform&"+ 					//$NON-NLS-1$
+				"pluginId=org.eclipse.ui.intro&"+ 					//$NON-NLS-1$
 				"class="+this.getClass().getName()+"\" ");			//$NON-NLS-1$ //$NON-NLS-2$
 		
 		if (alwaysShowIntro)
