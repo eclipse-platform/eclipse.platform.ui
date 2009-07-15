@@ -179,7 +179,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		((Widget) widget).setData(OWNING_ME, me);
 		final IStylingEngine engine = (IStylingEngine) me.getContext().get(
 				IStylingEngine.SERVICE_NAME);
-		engine.style(widget);
+		engine.setId(widget, me.getId()); // also triggers style()
 	}
 
 	public Object unbindWidget(MPart<?> me) {
