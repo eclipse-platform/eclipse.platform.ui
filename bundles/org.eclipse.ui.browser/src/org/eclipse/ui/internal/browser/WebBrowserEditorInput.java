@@ -34,7 +34,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	// public static final int SHOW_GLOBAL_TOOLBAR = 1 << 2;
 
 	// if used, the status bar will be available
-	// public static final int SHOW_STATUSBAR = 1 << 2;
+	// public static final int SHOW_STATUSBAR = 1 << 3;
 
 	// if used, the original URL will be saved and
 	// the page can reopen to the same URL after
@@ -179,8 +179,9 @@ public class WebBrowserEditorInput implements IEditorInput,
 	}
 
 	/**
-	 * Indicates whether some other object is "equal to" this one. In this case
-	 * it means that the underlying IFolders are equal.
+	 * Tests to see if two input objects are equal in the sense that they can share an
+	 * editor.
+	 * @return true if the url and browser id are equal and the style bits are compatible
 	 */
 	public boolean equals(Object obj) {
 		if (this == obj)
