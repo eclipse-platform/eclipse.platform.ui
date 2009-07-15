@@ -148,6 +148,23 @@ public class IAdapterManagerTest extends TestCase {
 		assertNull("1.4", manager.getAdapter(adaptable, "java.lang.String"));
 	}
 
+	public void testGetAdapterNullArgs() {
+		TestAdaptable adaptable = new TestAdaptable();
+		try {
+			manager.getAdapter(adaptable, (Class) null);
+			fail("1.0");
+		} catch (RuntimeException e) {
+			//expected
+		}
+		try {
+			manager.getAdapter(null, NON_EXISTING);
+			fail("1.0");
+		} catch (RuntimeException e) {
+			//expected
+		}
+
+	}
+
 	/**
 	 * Tests API method IAdapterManager.loadAdapter.
 	 */
