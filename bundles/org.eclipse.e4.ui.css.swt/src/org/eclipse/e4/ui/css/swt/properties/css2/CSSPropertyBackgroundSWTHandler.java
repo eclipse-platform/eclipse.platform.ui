@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2009 Angelo Zerr and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,10 +19,12 @@ import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.e4.ui.css.swt.properties.GradientBackgroundListener;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyBackgroundSWTHandler extends
@@ -32,9 +34,9 @@ public class CSSPropertyBackgroundSWTHandler extends
 
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		Control control = SWTElementHelpers.getControl(element);
-		if (control != null) {
-			super.applyCSSProperty(control, property, value, pseudo, engine);
+		Widget widget = SWTElementHelpers.getWidget(element);
+		if (widget != null) {
+			super.applyCSSProperty(widget, property, value, pseudo, engine);
 			return true;
 		}
 		return false;
@@ -43,9 +45,9 @@ public class CSSPropertyBackgroundSWTHandler extends
 
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		Control control = SWTElementHelpers.getControl(element);
-		if (control != null) {
-			return super.retrieveCSSProperty(control, property, pseudo, engine);
+		Widget widget = SWTElementHelpers.getWidget(element);
+		if (widget != null) {
+			return super.retrieveCSSProperty(widget, property, pseudo, engine);
 		}
 		return null;
 	}
@@ -59,25 +61,31 @@ public class CSSPropertyBackgroundSWTHandler extends
 	 */
 	public void applyCSSPropertyBackgroundColor(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		Control control = (Control) element;
+		Widget widget = (Widget) element;
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			Color newColor = (Color) engine.convert(value, Color.class, control
+			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
-			if (control instanceof CTabFolder && "selected".equals(pseudo)) {
-				((CTabFolder) control).setSelectionBackground(newColor);
-			} else {
-				control.setBackground(newColor);
+			if (widget instanceof CTabItem) {
+				CTabFolder folder = ((CTabItem) widget).getParent();
+				if ("selected".equals(pseudo)) {
+					folder.setSelectionBackground(newColor);
+				} else {
+					folder.setBackground(newColor);
+				}
+			} else if (widget instanceof Control) {
+				((Control) widget).setBackground(newColor);
 			}
 		} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
 			Gradient grad = (Gradient) engine.convert(value, Gradient.class,
-					control.getDisplay());
-			if (control instanceof CTabFolder && "selected".equals(pseudo)) {
-					((CTabFolder) control).setSelectionBackground(
-							CSSSWTColorHelper.getSWTColors(grad, control.getDisplay()),
+					widget.getDisplay());
+			if (widget instanceof CTabItem && "selected".equals(pseudo)) {
+				CTabFolder folder = ((CTabItem) widget).getParent();
+					folder.setSelectionBackground(
+							CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay()),
 							CSSSWTColorHelper.getPercents(grad),
 							true);
-			} else {
-				GradientBackgroundListener.handle(control, grad);
+			} else if (widget instanceof Control) {
+				GradientBackgroundListener.handle((Control) widget, grad);
 			}
 		}
 	}
@@ -121,8 +129,17 @@ public class CSSPropertyBackgroundSWTHandler extends
 
 	public String retrieveCSSPropertyBackgroundColor(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
-		Control control = (Control) element;
-		Color color = control.getBackground();
+		Widget widget = (Widget) element;
+		Color color = null;
+		if (widget instanceof CTabItem) {
+			if ("selected".equals(pseudo)) {
+				color = ((CTabItem) widget).getParent().getSelectionBackground();	
+			} else {
+				color = ((CTabItem) widget).getParent().getBackground();				
+			}
+		} else if (widget instanceof Control) {
+			color = ((Control) widget).getBackground();	
+		}
 		return engine.convert(color, Color.class, null);
 	}
 

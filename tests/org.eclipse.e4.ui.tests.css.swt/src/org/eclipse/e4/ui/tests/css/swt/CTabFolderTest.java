@@ -105,16 +105,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(BLUE, folderToTest.getForeground().getRGB());
 	}
 
-	public void testSelectedPseudo() throws Exception {
-		CTabFolder folderToTest = createTestCTabFolder(
-				"CTabFolder { color: #FFFFFF; background-color: #0000FF }\n" +
-				"CTabFolder:selected { color: #FF0000;  background-color: #00FF00 }");
-		assertEquals(WHITE, folderToTest.getForeground().getRGB());
-		assertEquals(BLUE, folderToTest.getBackground().getRGB());
-		assertEquals(RED, folderToTest.getSelectionForeground().getRGB());
-		assertEquals(GREEN, folderToTest.getSelectionBackground().getRGB());
-	}
-
 	//See GradientTest for testing background gradient
 
 	public void testFontRegular() throws Exception {

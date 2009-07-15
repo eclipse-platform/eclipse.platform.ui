@@ -21,10 +21,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
-import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
-import org.eclipse.e4.ui.css.core.utils.StringUtils;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
+import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
@@ -44,13 +42,18 @@ import org.eclipse.e4.ui.css.core.impl.dom.ViewCSSImpl;
 import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
 import org.eclipse.e4.ui.css.core.resources.CSSResourcesHelpers;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+import org.eclipse.e4.ui.css.core.util.impl.resources.ResourcesLocatorManager;
+import org.eclipse.e4.ui.css.core.util.resources.IResourcesLocatorManager;
+import org.eclipse.e4.ui.css.core.utils.StringUtils;
 import org.w3c.css.sac.AttributeCondition;
 import org.w3c.css.sac.Condition;
 import org.w3c.css.sac.ConditionalSelector;
 import org.w3c.css.sac.InputSource;
 import org.w3c.css.sac.Selector;
+import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSStyleSheet;
 import org.w3c.dom.css.CSSValue;
@@ -166,7 +169,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		CSSParser parser = makeCSSParser();
 		CSSStyleSheet styleSheet = parser.parseStyleSheet(source);
 		if (documentCSS instanceof ExtendedDocumentCSS) {
-			((ExtendedDocumentCSS) documentCSS).addStyleSheet(styleSheet);
+			documentCSS.addStyleSheet(styleSheet);
 		}
 		return styleSheet;
 	}
@@ -338,9 +341,15 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 						applyDefaultStyleDeclaration(element, false,
 								styleWithPseudoInstance, pseudoInstance);
 					}
+					
 					if (styleWithPseudoInstance != null) {
-						applyStyleDeclaration(element, styleWithPseudoInstance,
-								pseudoInstance);
+						CSSRule parentRule = styleWithPseudoInstance.getParentRule();
+						if (parentRule instanceof ExtendedCSSRule) {
+							applyConditionalPseudoStyle((ExtendedCSSRule) parentRule, pseudoInstance, element, styleWithPseudoInstance);
+						} else {
+							applyStyleDeclaration(element, styleWithPseudoInstance,
+									pseudoInstance);							
+						}
 					}
 				}
 			}
@@ -369,6 +378,27 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 			}
 		}
 
+	}
+	
+	private void applyConditionalPseudoStyle(ExtendedCSSRule parentRule, String pseudoInstance, Object element, CSSStyleDeclaration styleWithPseudoInstance) {
+		SelectorList selectorList = parentRule.getSelectorList();
+		for (int j = 0; j < selectorList.getLength(); j++) {
+			Selector item = selectorList.item(j);
+			// search for conditional selectors
+			if (item instanceof ConditionalSelector) {
+				Condition condition = ((ConditionalSelector) item).getCondition();
+				// we're only interested in attribute selector conditions
+				if (condition instanceof AttributeCondition) {
+					String value = ((AttributeCondition) condition).getValue();
+					if (value.equals(pseudoInstance)) {
+						// if we match the pseudo, apply the style
+						applyStyleDeclaration(element, styleWithPseudoInstance,
+								pseudoInstance);
+						return;
+					}										
+				}
+			}
+		}
 	}
 
 	protected String[] getStaticPseudoInstances(Element element) {
@@ -878,7 +908,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 
 	public void reset() {
 		// Remove All Style Sheets
-		((ExtendedDocumentCSS) documentCSS).removeAllStyleSheets();
+		documentCSS.removeAllStyleSheets();
 		if (elementsWithDynamicPseudoClasses != null) {
 			Collection elements = elementsWithDynamicPseudoClasses.values();
 			for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
