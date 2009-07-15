@@ -50,6 +50,7 @@ import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
@@ -62,7 +63,10 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 		MenuManager manager = new MenuManager();
 
-		if (widget instanceof Decorations) {
+		if (widget instanceof ToolItem) {
+			swtMenu = manager.createContextMenu(((ToolItem) widget).getParent()
+					.getShell());
+		} else if (widget instanceof Decorations) {
 			swtMenu = manager.createMenuBar((Decorations) widgetObject);
 			swtMenu.setData(manager);
 			((Decorations) widget).setMenuBar(swtMenu);
