@@ -39,5 +39,8 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(LabelTextTransformTest.class);
 		addTestSuite(TextTextTransformTest.class);
 		
+		//other
+//		addTestSuite(DescendentTest.class);  //TODO see bug #283585 
+
 	}
 }

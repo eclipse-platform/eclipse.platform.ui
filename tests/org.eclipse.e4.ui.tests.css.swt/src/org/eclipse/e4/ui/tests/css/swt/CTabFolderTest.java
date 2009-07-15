@@ -10,6 +10,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.dom.SWTElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -19,6 +20,7 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.ToolBar;
 
 public class CTabFolderTest extends CSSSWTTestCase {
 
@@ -47,6 +49,37 @@ public class CTabFolderTest extends CSSSWTTestCase {
 
 		shell.pack();
 		return folderToTest;
+	}
+	
+	protected ToolBar[] createTestToolBars(String styleSheet) {
+
+		Display display = Display.getDefault();
+		engine = createEngine(styleSheet, display);
+
+		// Create widgets
+		Shell shell = new Shell(display, SWT.SHELL_TRIM);
+		FillLayout layout = new FillLayout();
+		shell.setLayout(layout);
+		Composite panel = new Composite(shell, SWT.NONE);
+		panel.setLayout(new FillLayout());
+
+		CTabFolder folderA = new CTabFolder(panel, SWT.NONE);
+		CTabItem tabA = new CTabItem(folderA, SWT.NONE);
+		tabA.setText("FolderA TAB ITEM");
+		ToolBar toolbarA = new ToolBar(folderA,  SWT.FLAT | SWT.HORIZONTAL);
+		folderA.setTopRight(toolbarA);
+
+		CTabFolder folderB = new CTabFolder(panel, SWT.NONE);
+		CTabItem tabB = new CTabItem(folderB, SWT.NONE);
+		tabB.setText("FolderB TAB ITEM");
+		ToolBar toolbarB = new ToolBar(folderB,  SWT.FLAT | SWT.HORIZONTAL);
+		folderB.setTopRight(toolbarB);
+
+		//One toolbar on its own, no CTabFolder parent
+		ToolBar toolbarC = new ToolBar(panel,  SWT.FLAT | SWT.HORIZONTAL);
+
+		engine.applyStyles(shell, true);
+		return new ToolBar[] {toolbarA, toolbarB, toolbarC};
 	}
 	
 	protected Shell createShell(String styleSheet) {
@@ -236,4 +269,23 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(null, engine.retrieveCSSProperty(shell, "unselected-close-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "unselected-image-visible", null));
 	}	
+	
+	//TODO see bug #283585 
+//	public void testTopRightAsDescendentChild() throws Exception {
+//		ToolBar[] toolBars = createTestToolBars(
+//				"#special ToolBar { background: #FF0000}/n" +
+//				"CTabFolder ToolBar { background: #00FF00}/n" +
+//				"ToolBar { background: #0000FF}");
+//				
+//		ToolBar barA = toolBars[0];
+//		ToolBar barB = toolBars[1];
+//		ToolBar barC = toolBars[2];
+//		
+//		SWTElement.setID(barA.getParent(), "special");
+//		
+//		engine.applyStyles(barA.getShell(), true);
+//		assertEquals(RED, barA.getBackground().getRGB());
+//		assertEquals(GREEN, barB.getBackground().getRGB());
+//		assertEquals(BLUE, barC.getBackground().getRGB());
+//	}
 }
