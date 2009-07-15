@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,31 +8,25 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.browser;
+
+package org.eclipse.ua.tests.browser.other;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.ua.tests.browser.external.AllExternalBrowserTests;
-import org.eclipse.ua.tests.browser.other.AllOtherBrowserTests;
-
-/*
- * Tests all cheat sheet functionality (automated).
- */
-public class AllBrowserTests extends TestSuite {
+public class AllOtherBrowserTests extends TestSuite {
 
 	/*
 	 * Returns the entire test suite.
 	 */
 	public static Test suite() {
-		return new AllBrowserTests();
+		return new AllOtherBrowserTests();
 	}
 
 	/*
 	 * Constructs a new test suite.
 	 */
-	public AllBrowserTests() {
-		addTest(AllExternalBrowserTests.suite());
-		addTest(AllOtherBrowserTests.suite());
+	public AllOtherBrowserTests() {
+		addTestSuite(TestInput.class);
 	}
 }
