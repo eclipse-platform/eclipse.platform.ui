@@ -11,7 +11,9 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 import junit.framework.TestCase;
 
@@ -40,6 +42,7 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
@@ -199,6 +202,24 @@ public class RenderingTestCase extends TestCase {
 			if (renderedObject instanceof Composite) {
 				Control[] controlKids = ((Composite) renderedObject)
 						.getChildren();
+				// Special check to remove the 'Sash' elements from a SashForm
+				if (renderedObject instanceof SashForm) {
+					List<Control> nonSashes = new ArrayList<Control>();
+					for (int i = 0; i < controlKids.length; i++) {
+						if (controlKids[i] instanceof Sash)
+							continue;
+						nonSashes.add(controlKids[i]);
+					}
+					controlKids = new Control[nonSashes.size()];
+					int count = 0;
+					for (Iterator<Control> iterator = nonSashes.iterator(); iterator
+							.hasNext();) {
+						Control ctrl = iterator.next();
+						controlKids[count++] = ctrl;
+					}
+					// controlKids = (Control[]) nonSashes.toArray();
+				}
+
 				assertTrue("Child count mismatch; expected: "
 						+ expected.kids.size() + "actual: "
 						+ controlKids.length,

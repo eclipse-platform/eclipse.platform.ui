@@ -88,7 +88,6 @@ public class MSashTest extends RenderingTestCase {
 
 	private void testWeights(MSashForm sf, double w1, double w2) {
 		double baseRatio = w1 / w2;
-		System.out.println("Base Ratio: " + baseRatio);
 
 		// test the model
 		Integer sf1 = (Integer) sf.getWeights().get(0);
@@ -108,8 +107,6 @@ public class MSashTest extends RenderingTestCase {
 
 	private void checkRatio(String label, int num, int div, double baseRatio) {
 		double ratio = (double) num / (double) div;
-		System.out.println(label + " Ratio: " + num + " / " + div + " = "
-				+ ratio);
 
 		double TOLERANCE = 0.1;
 		boolean withinTolerance = Math.abs(ratio - baseRatio) < TOLERANCE;
