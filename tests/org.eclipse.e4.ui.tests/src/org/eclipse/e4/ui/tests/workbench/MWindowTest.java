@@ -29,13 +29,13 @@ import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -120,8 +120,8 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
-								context);
+						PartRenderingEngine renderer = new PartRenderingEngine(
+								getCFactory(), context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,
 								getCFactory());
@@ -143,8 +143,8 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
-								context);
+						PartRenderingEngine renderer = new PartRenderingEngine(
+								getCFactory(), context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,
 								getCFactory());
@@ -164,7 +164,7 @@ public class MWindowTest extends TestCase {
 						// CTabFolder so can implement margins
 						Composite marginHolder = (Composite) sashChildren[0];
 						assertEquals(1, marginHolder.getChildren().length);
-						CTabFolder folder = (CTabFolder) marginHolder
+						ETabFolder folder = (ETabFolder) marginHolder
 								.getChildren()[0];
 
 						assertEquals(1, folder.getItemCount());
@@ -184,8 +184,8 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
-								context);
+						PartRenderingEngine renderer = new PartRenderingEngine(
+								getCFactory(), context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,
 								getCFactory());
@@ -239,8 +239,8 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(getCFactory(),
-								context);
+						PartRenderingEngine renderer = new PartRenderingEngine(
+								getCFactory(), context);
 						Workbench.initializeRenderer(RegistryFactory
 								.getRegistry(), renderer, appContext,
 								getCFactory());
