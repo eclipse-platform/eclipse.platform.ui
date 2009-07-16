@@ -11,6 +11,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.Iterator;
+import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -22,6 +23,12 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.widgets.CTabFolder2Adapter;
+import org.eclipse.e4.ui.widgets.CTabFolderEvent;
+import org.eclipse.e4.ui.widgets.CTabItem;
+import org.eclipse.e4.ui.widgets.ETabFolder;
+import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.notify.Notification;
@@ -32,12 +39,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
-import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.ETabFolder;
-import org.eclipse.swt.custom.ETabItem;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -292,7 +293,20 @@ public class StackRenderer extends LazyStackRenderer {
 		IObservableValue emfTTipObs = EMFObservables.observeValue(
 				(EObject) childElement,
 				ApplicationPackage.Literals.MITEM__TOOLTIP);
-		ISWTObservableValue uiTTipObs = SWTObservables.observeTooltipText(cti);
+		IObservableValue uiTTipObs = new AbstractObservableValue() {
+
+			public Object getValueType() {
+				return String.class;
+			}
+
+			protected Object doGetValue() {
+				return cti.getToolTipText();
+			}
+
+			protected void doSetValue(Object val) {
+				cti.setToolTipText((String) val);
+			}
+		};
 		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
 
 		// Handle tab item image changes
@@ -360,7 +374,7 @@ public class StackRenderer extends LazyStackRenderer {
 			public void close(CTabFolderEvent event) {
 				MPart part = (MPart) event.item
 						.getData(AbstractPartRenderer.OWNING_ME);
-						
+
 				// Allow closes to be 'canceled'
 				IEclipseContext partContext = part.getContext();
 				IValueFunction closeFunc = (IValueFunction) partContext
