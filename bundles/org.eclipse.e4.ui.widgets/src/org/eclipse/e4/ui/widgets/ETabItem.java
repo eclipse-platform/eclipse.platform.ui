@@ -8,9 +8,7 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.swt.custom;
-
-import java.lang.reflect.Field;
+package org.eclipse.e4.ui.widgets;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -26,16 +24,14 @@ import org.eclipse.swt.widgets.Display;
  *
  */
 public class ETabItem extends CTabItem {
-	static {
-		try {
-			final Field parentF = CTabItem.class.getDeclaredField("parent");
-			parentF.setAccessible(true);
-			System.err.println("Set accessible: " + parentF);
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
+
+/**
+ * @param parent
+ * @param style
+ */
+public ETabItem(ETabFolder parent, int style) {
+	this(parent, style, parent.getItemCount());
+}
 
 /**
  * @param parent
@@ -48,6 +44,10 @@ public ETabItem(ETabFolder parent, int style, int index) {
 
 ETabFolder getETabParent() {
 	return (ETabFolder) parent;
+}
+
+boolean useEllipses() {
+	return false;
 }
 
 void drawSelected(GC gc) {
@@ -229,8 +229,24 @@ void drawUnselected(GC gc) {
 	Rectangle bounds = getBounds();
 	if (!clipping.intersects(bounds)) return;
 	
+	int[] shape = getUnselectedShape();
+	
+	//Fill tab contents
+	bounds.height += 1;
+	
+	// fill in tab background
+	Color defaultBackground = getETabParent().unselectedTabBackgroundColor;
+	Color[] colors = new Color[] {getETabParent().unselectedTabBackgroundColor};
+	int[] percents = new int[0];
+	boolean vertical = parent.selectionGradientVertical;
+	int xx = x;
+	int yy = y + 1;
+	int ww = width;
+	int hh = height;
+	parent.drawBackground(gc, shape, xx, yy, ww, hh, defaultBackground, null, colors, percents, vertical);
+	
 	// draw border
-	drawUnselectedBorder(gc);
+	drawUnselectedBorder(gc, shape);
 
 	// draw Image
 	int xDraw = x + LEFT_MARGIN;
@@ -279,7 +295,7 @@ void drawUnselected(GC gc) {
 
 }
 
-void drawUnselectedBorder(GC gc) {
+int[] getUnselectedShape() {
 	int[] shape = null;
 
 	int[] left = ETabFolder.E_TOP_LEFT_CORNER;
@@ -304,7 +320,10 @@ void drawUnselectedBorder(GC gc) {
 
 	shape[index++] = startX;
 	shape[index++] = y + height;
-	
+	return shape;
+}
+
+void drawUnselectedBorder(GC gc, int shape[]) {
 	Color borderColor = getETabParent().interiorKeyLineColor;
 //	parent.antialias(shape, borderColor.getRGB(), inside, outside, gc);
 	gc.setForeground(borderColor);

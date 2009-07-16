@@ -8,7 +8,7 @@
  *  Contributors:
  *      IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.swt.custom;
+package org.eclipse.e4.ui.widgets;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -30,15 +30,19 @@ public class ETabFolder extends CTabFolder {
 	static final int[] E_TOP_LEFT_CORNER_BORDERLESS = new int[] {};
 	static final int[] E_TOP_RIGHT_CORNER_BORDERLESS = new int[] {};
 	
+	//TODO tabTopMargin and tabBottomMargin aren't the correct values but
+	//until make it look more correct until bug #283648 is fixed
+	
 	int topMargin = 0;  //The space above the highest (selected) tab
 	int selectionMargin = 3;  //bonus margin for selected tabs
-	int tabTopMargin = 6;  //margin within tab above text below line
-	int tabBottomMargin = 6; //bottom margin within tab
+	int tabTopMargin = 3;//5;  //margin within tab above text below line
+	int tabBottomMargin = 3;//6; //bottom margin within tab
 	int hSpace = 2;  //horizontal spacing between tabs
 	int leftMargin = 4;  //first horizontal space
 	
 	Color exteriorKeyLineColor;
 	Color interiorKeyLineColor;
+	Color unselectedTabBackgroundColor;
 	
 /**
  * @param parent
@@ -55,6 +59,15 @@ void init(int style) {
 	
 	exteriorKeyLineColor = new Color(getDisplay(), exteriorKeyLineRGB);
 	interiorKeyLineColor = new Color(getDisplay(), interiorKeyLineRGB);
+	unselectedTabBackgroundColor = getBackground();
+}
+
+public Color getUnselectedTabBackgroundColor() {
+	return unselectedTabBackgroundColor;
+}
+
+public void setUnselectedTabBackgroundColor(Color color) {
+	this.unselectedTabBackgroundColor = color;
 }
 
 public void dispose() {
@@ -67,6 +80,10 @@ public void dispose() {
 	if(interiorKeyLineColor != null) {
 		interiorKeyLineColor.dispose();
 		interiorKeyLineColor = null;
+	}
+	if(unselectedTabBackgroundColor != null) {
+		unselectedTabBackgroundColor.dispose();
+		unselectedTabBackgroundColor = null;
 	}
 }
 
@@ -291,7 +308,7 @@ void drawTabArea(Event event) {
 		gc.drawPolyline(shape);
 	}
 }
-	
+
 boolean setItemLocation() {
 	if(!webbyStyle || onBottom || single) {
 		return super.setItemLocation();
