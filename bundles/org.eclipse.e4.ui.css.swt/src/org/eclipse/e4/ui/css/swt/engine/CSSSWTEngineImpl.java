@@ -27,6 +27,7 @@ import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandle
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabFolderTabHeightHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabItemShowCloseHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyETabFolderWebbyStyleHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizeVisibleSWTHandler;
@@ -142,6 +143,12 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("alignment", CSSPropertyAlignmentSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyAlignmentSWTHandler.class,
 				CSSPropertyAlignmentSWTHandler.INSTANCE);
+		
+		//Register ETabFolder CSS Property webbyStyle
+		super.registerCSSProperty("webbyStyle", CSSPropertyETabFolderWebbyStyleHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyETabFolderWebbyStyleHandler.class,
+				CSSPropertyETabFolderWebbyStyleHandler.INSTANCE);
+
 	}
 
 }

@@ -15,6 +15,8 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
+import org.eclipse.e4.ui.widgets.ETabFolder;
+import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.events.VerifyEvent;
@@ -64,6 +66,13 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 				} else {
 					folder.setForeground(newColor);
 				}
+			} else if (widget instanceof ETabItem) {
+				ETabFolder folder = ((ETabItem) widget).getETabParent();
+				if ("selected".equals(pseudo)) {
+					folder.setSelectionForeground(newColor);
+				} else {
+					folder.setForeground(newColor);
+				}
 			} else if (widget instanceof Control) {
 				((Control) widget).setForeground(newColor);
 			}
@@ -73,10 +82,10 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 	public void applyCSSPropertyTextTransform(Object element,
 			final CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		Control control = (Control) element;
-		String defaultText = (String) control.getData(CSSSWTConstants.TEXT_KEY);
+		Widget widget = (Widget) element;
+		String defaultText = (String) widget.getData(CSSSWTConstants.TEXT_KEY);
 		if (element instanceof Text) {
-			final Text text = (Text) control;
+			final Text text = (Text) widget;
 			VerifyListener listener = (VerifyListener) text
 					.getData("CSSModifyTextListener");
 			if (hasTextTransform(value)) {
@@ -131,6 +140,12 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 			} else {
 				color = ((CTabItem) widget).getParent().getForeground();
 			}
+		} else if (widget instanceof ETabItem) {
+				if ("selected".equals(pseudo)) {
+					color = ((ETabItem) widget).getParent().getSelectionForeground();	
+				} else {
+					color = ((ETabItem) widget).getParent().getForeground();
+				}
 		} else if (widget instanceof Control) {
 			color = ((Control) widget).getForeground();	
 		}
@@ -140,20 +155,20 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 	public String retrieveCSSPropertyTextTransform(Object element,
 			String pseudo, CSSEngine engine) throws Exception {
 		String text = null;
-		Control control = (Control) element;
+		Widget widget = (Widget) element;
 		// if (control instanceof Text) {
 		// final Text controlText = ((Text) element);
 		// text = controlText.getText();
 		// } else {
-		if (control instanceof Label) {
+		if (widget instanceof Label) {
 			text = ((Label) element).getText();
 			if (text != null)
-				control.setData(CSSSWTConstants.TEXT_KEY, text);
+				widget.setData(CSSSWTConstants.TEXT_KEY, text);
 		} else {
-			if (control instanceof Button) {
+			if (widget instanceof Button) {
 				text = ((Button) element).getText();
 				if (text != null)
-					control.setData(CSSSWTConstants.TEXT_KEY, text);
+					widget.setData(CSSSWTConstants.TEXT_KEY, text);
 			}
 		}
 		// }

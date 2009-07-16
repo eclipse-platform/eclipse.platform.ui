@@ -12,6 +12,8 @@
 package org.eclipse.e4.ui.examples.css.editor;
 
 import org.eclipse.e4.ui.css.swt.dom.SWTElement;
+import org.eclipse.e4.ui.widgets.ETabFolder;
+import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -75,19 +77,38 @@ public class CSSEditorSWTWidgets extends AbstractCSSSWTEditor {
 		combo.select(0);
 
 		// Create CTabFolder
-		CTabFolder tabFolder = new CTabFolder(composite, SWT.CLOSE);
-		tabFolder.setUnselectedCloseVisible(true);
-		tabFolder.setUnselectedImageVisible(true);
-				
-		CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NONE);
-		tabItem1.setText("Busy");
-		SWTElement.setCSSClass(tabItem1, "busy");
-		
-		CTabItem tabItem2 = new CTabItem(tabFolder, SWT.NONE);
-		tabItem2.setText("Modified");
-		SWTElement.setCSSClass(tabItem2, "modified");
-		
-		tabFolder.setSelection(0);
+		{
+			CTabFolder tabFolder = new CTabFolder(composite, SWT.CLOSE);
+			tabFolder.setUnselectedCloseVisible(true);
+			tabFolder.setUnselectedImageVisible(true);
+					
+			CTabItem tabItem1 = new CTabItem(tabFolder, SWT.NONE);
+			tabItem1.setText("Busy");
+			SWTElement.setCSSClass(tabItem1, "busy");
+			
+			CTabItem tabItem2 = new CTabItem(tabFolder, SWT.NONE);
+			tabItem2.setText("Modified");
+			SWTElement.setCSSClass(tabItem2, "modified");
+			
+			tabFolder.setSelection(0);
+		}
+		// Create ETabFolder
+		{
+			ETabFolder etabFolder = new ETabFolder(composite, SWT.CLOSE);
+			etabFolder.setUnselectedCloseVisible(true);
+			etabFolder.setUnselectedImageVisible(true);
+					
+			ETabItem etabItem1 = new ETabItem(etabFolder, SWT.NONE);
+			etabItem1.setText("Busy");
+			SWTElement.setCSSClass(etabItem1, "busy");
+			
+			ETabItem etabItem2 = new ETabItem(etabFolder, SWT.NONE);
+			etabItem2.setText("Modified");
+			SWTElement.setCSSClass(etabItem2, "modified");
+			
+			etabFolder.setSelection(0);
+		}
+
 	}
 
 	public static void main(String[] args) {

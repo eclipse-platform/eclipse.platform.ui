@@ -67,19 +67,19 @@ public class CSSPropertyBackgroundSWTHandler extends
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			Color newColor = (Color) engine.convert(value, Color.class, widget
 					.getDisplay());
-			if (widget instanceof ETabItem) {
-				ETabFolder folder = (ETabFolder) ((ETabItem) widget).getParent();
-				if ("selected".equals(pseudo)) {
-					folder.setSelectionBackground(newColor);
-				} else {
-					folder.setUnselectedTabBackgroundColor(newColor);
-				}
-			} else if (widget instanceof CTabItem) {
+			if (widget instanceof CTabItem) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
 				if ("selected".equals(pseudo)) {
 					folder.setSelectionBackground(newColor);
 				} else {
 					folder.setBackground(newColor);
+				}
+			} else if (widget instanceof ETabItem) {
+				ETabFolder folder = ((ETabItem) widget).getETabParent();
+				if ("selected".equals(pseudo)) {
+					folder.setSelectionBackground(newColor);
+				} else {
+					folder.setUnselectedTabBackgroundColor(newColor);
 				}
 			} else if (widget instanceof Control) {
 				((Control) widget).setBackground(newColor);
@@ -89,10 +89,14 @@ public class CSSPropertyBackgroundSWTHandler extends
 					widget.getDisplay());
 			if (widget instanceof CTabItem && "selected".equals(pseudo)) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
-					folder.setSelectionBackground(
-							CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay()),
-							CSSSWTColorHelper.getPercents(grad),
-							true);
+				folder.setSelectionBackground(CSSSWTColorHelper.getSWTColors(
+						grad, folder.getDisplay()), CSSSWTColorHelper
+						.getPercents(grad), true);
+			} else if (widget instanceof ETabItem && "selected".equals(pseudo)) {
+				ETabFolder folder = ((ETabItem) widget).getETabParent();
+				folder.setSelectionBackground(CSSSWTColorHelper.getSWTColors(
+						grad, folder.getDisplay()), CSSSWTColorHelper
+						.getPercents(grad), true);
 			} else if (widget instanceof Control) {
 				GradientBackgroundListener.handle((Control) widget, grad);
 			}
@@ -108,11 +112,13 @@ public class CSSPropertyBackgroundSWTHandler extends
 	 */
 	public void applyCSSPropertyBackgroundImage(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		Control control = (Control) element;
+		Widget control = (Widget) element;
 		Image image = (Image) engine.convert(value, Image.class, control
 				.getDisplay());
 		if (control instanceof CTabFolder && "selected".equals(pseudo)) {
 			((CTabFolder) control).setSelectionBackground(image);
+		} else if (control instanceof ETabFolder && "selected".equals(pseudo)) {
+			((ETabFolder) control).setSelectionBackground(image);
 		} else if (control instanceof Button) {
 			Button button = ((Button) control);
 			// Image oldImage = button.getImage();
@@ -121,7 +127,8 @@ public class CSSPropertyBackgroundSWTHandler extends
 			button.setImage(image);
 		} else {
 			try {
-				control.setBackgroundImage(image);
+				if(element instanceof Control)
+					((Control) control).setBackgroundImage(image);
 			} catch (Throwable e) {
 				//TODO replace with eclipse logging
 //				if (logger.isWarnEnabled())
@@ -145,6 +152,12 @@ public class CSSPropertyBackgroundSWTHandler extends
 				color = ((CTabItem) widget).getParent().getSelectionBackground();	
 			} else {
 				color = ((CTabItem) widget).getParent().getBackground();				
+			}
+		} else if (widget instanceof ETabItem) {
+			if ("selected".equals(pseudo)) {
+				color = ((ETabItem) widget).getParent().getSelectionBackground();	
+			} else {
+				color = ((ETabItem) widget).getETabParent().getUnselectedTabBackgroundColor();				
 			}
 		} else if (widget instanceof Control) {
 			color = ((Control) widget).getBackground();	

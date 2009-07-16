@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterCo
 import org.eclipse.e4.ui.css.core.dom.properties.css2.CSS2FontProperties;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTFontHelper;
+import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -59,6 +60,11 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 			}
 			if (context instanceof CTabItem) {
 				CTabItem item = (CTabItem) context;
+				Font font = item.getFont();
+				fontData = CSSSWTFontHelper.getFirstFontData(font);
+			}
+			if (context instanceof ETabItem) {
+				ETabItem item = (ETabItem) context;
 				Font font = item.getFont();
 				fontData = CSSSWTFontHelper.getFirstFontData(font);
 			}

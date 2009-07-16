@@ -19,6 +19,8 @@ import org.eclipse.e4.ui.css.core.utils.ClassUtils;
 import org.eclipse.e4.ui.css.core.utils.NumberUtils;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpers;
+import org.eclipse.e4.ui.widgets.ETabFolder;
+import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Button;
@@ -127,7 +129,8 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 */
 	protected void computeStaticPseudoInstances() {
 		Widget widget = getWidget();
-		if (widget instanceof CTabFolder || widget instanceof CTabItem) {
+		if (widget instanceof CTabFolder || widget instanceof CTabItem
+				|| widget instanceof ETabFolder || widget instanceof ETabItem) {
 			// it's CTabFolder. Set selected as static pseudo instance.
 			// because this widget define methods
 			// CTabFolder#setSelectionBackground (Color color)
@@ -181,6 +184,9 @@ public class SWTElement extends ElementAdapter implements NodeList {
 		if (widget instanceof CTabItem) {
 			return getElement(((CTabItem) widget).getParent());
 		}
+		if (widget instanceof ETabItem) {
+			return getElement(((ETabItem) widget).getParent());
+		}
 		if (widget instanceof Control) {
 			Control control = (Control) widget;
 			Composite parent = control.getParent();
@@ -206,6 +212,10 @@ public class SWTElement extends ElementAdapter implements NodeList {
 				// if it's a CTabFolder, include the child items in the count
 				childCount += ((CTabFolder) widget).getItemCount();
 			}
+			if (widget instanceof ETabFolder) {
+				// if it's a CTabFolder, include the child items in the count
+				childCount += ((ETabFolder) widget).getItemCount();
+			}
 		}
 		return childCount;
 	}
@@ -217,6 +227,18 @@ public class SWTElement extends ElementAdapter implements NodeList {
 				// retrieve the child control or child item depending on the
 				// index
 				CTabFolder folder = (CTabFolder) widget;
+				int length = folder.getChildren().length;
+				if (index >= length) {
+					Widget w = folder.getItem(index - length);
+					return getElement(w);
+				} else {
+					Widget w = folder.getChildren()[index];
+					return getElement(w);
+				}
+			} else 	if (widget instanceof ETabFolder) {
+				// retrieve the child control or child item depending on the
+				// index
+				ETabFolder folder = (ETabFolder) widget;
 				int length = folder.getChildren().length;
 				if (index >= length) {
 					Widget w = folder.getItem(index - length);

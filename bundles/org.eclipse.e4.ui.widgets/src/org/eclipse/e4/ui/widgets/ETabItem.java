@@ -42,7 +42,7 @@ public ETabItem(ETabFolder parent, int style, int index) {
 	super(parent, style, index);
 }
 
-ETabFolder getETabParent() {
+public ETabFolder getETabParent() {
 	return (ETabFolder) parent;
 }
 
