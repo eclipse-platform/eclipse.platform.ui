@@ -263,25 +263,6 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private void hookTabControllerLogic(final MPart<?> parentElement,
 			final MPart<?> childElement, final CTabItem cti) {
-		// Handle visibility changes
-		((EObject) childElement).eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg
-						.getFeature())) {
-					MPart<?> changedPart = (MPart<?>) msg.getNotifier();
-					if (changedPart.getParent() == null)
-						return;
-
-					if (changedPart.isVisible()) {
-						childAdded(changedPart.getParent(), changedPart);
-					} else {
-						childRemoved(changedPart.getParent(), changedPart);
-					}
-				}
-			}
-		});
-
 		// Handle label changes
 		IObservableValue textObs = EMFObservables
 				.observeValue((EObject) childElement,

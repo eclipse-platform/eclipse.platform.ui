@@ -304,7 +304,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 	}
 
-	private Control getOutermost(Control ctrl) {
+	protected Control getOutermost(Control ctrl) {
 		// Find the 'outermost' Composite that is *not* bound
 		// to a model element
 		Composite curComposite = ctrl.getParent();

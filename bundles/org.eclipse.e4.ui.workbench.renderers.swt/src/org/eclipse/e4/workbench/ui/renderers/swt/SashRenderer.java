@@ -49,6 +49,33 @@ public class SashRenderer extends SWTPartRenderer {
 		return newSash;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.SWTPartRenderer#childAdded(
+	 * org.eclipse.e4.ui.model.application.MPart,
+	 * org.eclipse.e4.ui.model.application.MPart)
+	 */
+	@Override
+	public void childAdded(MPart<?> parentElement, MPart<?> element) {
+		super.childAdded(parentElement, element);
+
+		if (!(parentElement.getWidget() instanceof SashForm))
+			return;
+
+		// Ensure the Z-order of the contained controls matches the model order
+		for (Iterator kidIter = (parentElement.getChildren()).iterator(); kidIter
+				.hasNext();) {
+			MPart part = (MPart) kidIter.next();
+			Control partCtrl = (Control) part.getWidget();
+			if (partCtrl != null) {
+				Control outerMost = getOutermost(partCtrl);
+				outerMost.moveBelow(null);
+			}
+		}
+	}
+
 	public void postProcess(MPart<?> part) {
 		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
 			// do we have any children ?
