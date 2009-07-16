@@ -1069,7 +1069,7 @@ public class FilteredTree extends Composite {
 	 */
 	public void setInitialText(String text) {
 		initialText = text;
-		if (useNewLook) {
+		if (useNewLook && filterText != null) {
 			filterText.setMessage(text);
 			if (filterText.isFocusControl()) {
 				setFilterText(initialText);
