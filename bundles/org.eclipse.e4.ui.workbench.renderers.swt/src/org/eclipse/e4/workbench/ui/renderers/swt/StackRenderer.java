@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -196,7 +197,6 @@ public class StackRenderer extends LazyStackRenderer {
 			int index = calcIndexFor(element);
 			// TODO see bug 282901 - [UI] Need better support for switching
 			// renderer to use
-
 			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
 
 			// TODO HACK: see Bug 283585 [CSS] Specificity fails with
@@ -269,6 +269,9 @@ public class StackRenderer extends LazyStackRenderer {
 				if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg
 						.getFeature())) {
 					MPart<?> changedPart = (MPart<?>) msg.getNotifier();
+					if (changedPart.getParent() == null)
+						return;
+
 					if (changedPart.isVisible()) {
 						childAdded(changedPart.getParent(), changedPart);
 					} else {
@@ -325,6 +328,11 @@ public class StackRenderer extends LazyStackRenderer {
 		if (ctf.getItemCount() == 0 && !isEditorStack) {
 			parentElement.setVisible(false);
 		}
+
+		// Auto-remove 'editor stack' entries on close
+		if (isEditorStack) {
+			parentElement.getChildren().remove(child);
+		}
 	}
 
 	@Override
@@ -348,13 +356,25 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		});
 
-		ctf.addCTabFolder2Listener(new CTabFolder2Adapter() {
+		CTabFolder2Adapter closeListener = new CTabFolder2Adapter() {
 			public void close(CTabFolderEvent event) {
 				MPart part = (MPart) event.item
 						.getData(AbstractPartRenderer.OWNING_ME);
+						
+				// Allow closes to be 'canceled'
+				IEclipseContext partContext = part.getContext();
+				IValueFunction closeFunc = (IValueFunction) partContext
+						.get("canCloseFunc"); //$NON-NLS-1$
+				boolean canClose = closeFunc == null
+						|| (Boolean) closeFunc.getValue();
+				if (!canClose) {
+					event.doit = false;
+					return;
+				}
 				part.setVisible(false);
 			}
-		});
+		};
+		ctf.addCTabFolder2Listener(closeListener);
 
 		// Detect activation...picks up cases where the user clicks on the
 		// (already active) tab
