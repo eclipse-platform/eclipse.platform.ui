@@ -216,6 +216,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			unbindWidget(part);
 			curWidget.dispose();
 		}
+		part.setWidget(null);
 	}
 
 	public void hookControllerLogic(final MPart<?> me) {
