@@ -38,6 +38,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -209,6 +210,7 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter {
 			fTable.setHeaderVisible(false);
 			fTable.setForeground(fForegroundColor);
 			fTable.setBackground(fBackgroundColor);
+			fTable.setFont(JFaceResources.getDialogFont());
 
 			if (IS_WIN32) {
 				GridData data= new GridData(SWT.BEGINNING, SWT.BEGINNING, true, true);
