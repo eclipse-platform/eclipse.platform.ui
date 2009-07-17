@@ -7,11 +7,11 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 259380)
+ *     Matthew Hall - bug 283204
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.core.databinding.observable.Realm;
@@ -19,6 +19,7 @@ import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.property.set.SetProperty;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.viewers.ICheckable;
+import org.eclipse.jface.viewers.IElementComparer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
 
@@ -49,12 +50,12 @@ public class CheckableCheckedElementsProperty extends SetProperty {
 	}
 
 	public IObservableSet observe(Realm realm, Object source) {
-		Set wrappedSet = new HashSet();
+		IElementComparer comparer = null;
 		if (source instanceof StructuredViewer)
-			wrappedSet = ViewerElementSet
-					.withComparer(((StructuredViewer) source).getComparer());
+			comparer = ((StructuredViewer) source).getComparer();
+		Set wrappedSet = ViewerElementSet.withComparer(comparer);
 		IObservableSet observable = new CheckableCheckedElementsObservableSet(
-				realm, wrappedSet, elementType, (ICheckable) source);
+				realm, wrappedSet, elementType, comparer, (ICheckable) source);
 		if (source instanceof Viewer)
 			observable = new ViewerObservableSetDecorator(observable,
 					(Viewer) source);

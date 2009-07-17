@@ -15,7 +15,8 @@
  *                    212518, 215531, 221351, 184830, 213145, 218269, 239015,
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
- *                    255734, 263693, 169876, 266038, 268336, 270461, 271720
+ *                    255734, 263693, 169876, 266038, 268336, 270461, 271720,
+ *                    283204
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -201,6 +202,7 @@ import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueDefau
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueFocusOutTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueModifyTest;
 import org.eclipse.jface.tests.internal.databinding.swt.TextObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.viewers.CheckableCheckedElementsObservableSetTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ObservableCollectionContentProviderTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ObservableCollectionTreeContentProviderTest;
 import org.eclipse.jface.tests.internal.databinding.viewers.ObservableViewerElementSetTest;
@@ -453,6 +455,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(StyledTextObservableValueTest.class);
 
 		// org.eclipse.jface.tests.internal.databinding.viewers
+		addTestSuite(CheckableCheckedElementsObservableSetTest.class);
 		addTest(ObservableViewerElementSetTest.suite());
 		addTestSuite(ObservableCollectionContentProviderTest.class);
 		addTestSuite(ObservableCollectionTreeContentProviderTest.class);
