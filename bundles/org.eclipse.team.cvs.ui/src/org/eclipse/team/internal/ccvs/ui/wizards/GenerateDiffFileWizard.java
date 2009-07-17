@@ -1116,7 +1116,6 @@ public class GenerateDiffFileWizard extends Wizard {
 
 			Group diffTypeGroup = new Group(composite, SWT.NONE);
 			layout = new GridLayout();
-			layout.marginHeight = 0;
 			diffTypeGroup.setLayout(layout);
 			GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
 			diffTypeGroup.setLayoutData(data);
