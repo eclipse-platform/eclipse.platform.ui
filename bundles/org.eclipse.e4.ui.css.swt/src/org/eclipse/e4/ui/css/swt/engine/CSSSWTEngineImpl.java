@@ -24,10 +24,11 @@ import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyFontSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyMarginSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBodyKeylineColorHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabFolderTabHeightHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCTabItemShowCloseHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyETabFolderWebbyStyleHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabHeightHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyWebbyStyleHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizeVisibleSWTHandler;
@@ -35,6 +36,8 @@ import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizedSWTHandle
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabAreaKeylineColorHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabKeylineColorHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedCloseVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyBackgroundXMLHandler;
@@ -130,24 +133,41 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSPropertyHandler(CSSPropertyUnselectedImageVisibleSWTHandler.class,
 				CSSPropertyUnselectedImageVisibleSWTHandler.INSTANCE);
 		//Register CTabFolder CSS Property tab-height
-		super.registerCSSProperty("tab-height", CSSPropertyCTabFolderTabHeightHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyCTabFolderTabHeightHandler.class,
-				CSSPropertyCTabFolderTabHeightHandler.INSTANCE);
+		super.registerCSSProperty("tab-height", CSSPropertyTabHeightHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyTabHeightHandler.class,
+				CSSPropertyTabHeightHandler.INSTANCE);
 
 		//Register CTabItem CSS Property show-close
-		super.registerCSSProperty("show-close", CSSPropertyCTabItemShowCloseHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyCTabItemShowCloseHandler.class,
-				CSSPropertyCTabItemShowCloseHandler.INSTANCE);
+		super.registerCSSProperty("show-close", CSSPropertyShowCloseHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyShowCloseHandler.class,
+				CSSPropertyShowCloseHandler.INSTANCE);
 
 		//Register SWT CSS Property Alignment
 		super.registerCSSProperty("alignment", CSSPropertyAlignmentSWTHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyAlignmentSWTHandler.class,
 				CSSPropertyAlignmentSWTHandler.INSTANCE);
 		
+		//ETabFolder properties
+		
 		//Register ETabFolder CSS Property webbyStyle
-		super.registerCSSProperty("webbyStyle", CSSPropertyETabFolderWebbyStyleHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyETabFolderWebbyStyleHandler.class,
-				CSSPropertyETabFolderWebbyStyleHandler.INSTANCE);
+		super.registerCSSProperty("webby-style", CSSPropertyWebbyStyleHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyWebbyStyleHandler.class,
+				CSSPropertyWebbyStyleHandler.INSTANCE);
+
+		//Register ETabFolder CSS Property tabAreaKeylineColor
+		super.registerCSSProperty("tab-area-keyline-color", CSSPropertyTabAreaKeylineColorHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyTabAreaKeylineColorHandler.class,
+				CSSPropertyTabAreaKeylineColorHandler.INSTANCE);
+
+		//Register ETabFolder CSS Property bodyKeylineColor
+		super.registerCSSProperty("body-keyline-color", CSSPropertyBodyKeylineColorHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyBodyKeylineColorHandler.class,
+				CSSPropertyBodyKeylineColorHandler.INSTANCE);
+
+		//Register ETabFolder CSS Property tabKeylineColor
+		super.registerCSSProperty("tab-keyline-color", CSSPropertyTabKeylineColorHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyTabKeylineColorHandler.class,
+				CSSPropertyTabKeylineColorHandler.INSTANCE);
 
 	}
 
