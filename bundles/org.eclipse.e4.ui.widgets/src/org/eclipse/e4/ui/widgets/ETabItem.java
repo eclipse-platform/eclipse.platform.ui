@@ -82,7 +82,7 @@ void drawSelected(GC gc) {
 		int x1 = Math.max(0, parent.borderLeft - 1);
 		int y1 = y + height;
 		int x2 = size.x - parent.borderRight;
-		gc.setForeground(getETabParent().tabKeyLineColor);
+		gc.setForeground(getETabParent().tabKeylineColor);
 		gc.drawLine(x1, y1, x2, y1);
 		return;
 	}
@@ -150,7 +150,7 @@ void drawSelected(GC gc) {
 	    outside = null;
 	}
 	
-	Color borderColor = getETabParent().tabKeyLineColor;
+	Color borderColor = getETabParent().tabKeylineColor;
 	parent.antialias(shape, borderColor.getRGB(), inside, outside, gc);
 	gc.setForeground(borderColor);
 //	debugPrintPolyline(true, shape);
@@ -324,7 +324,7 @@ int[] getUnselectedShape() {
 }
 
 void drawUnselectedBorder(GC gc, int shape[]) {
-	Color borderColor = getETabParent().tabKeyLineColor;
+	Color borderColor = getETabParent().tabKeylineColor;
 //	parent.antialias(shape, borderColor.getRGB(), inside, outside, gc);
 	gc.setForeground(borderColor);
 //	debugPrintPolyline(false, shape);

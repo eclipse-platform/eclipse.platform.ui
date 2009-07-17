@@ -33,15 +33,16 @@ public class ETabFolder extends CTabFolder {
 	//TODO tabTopMargin and tabBottomMargin aren't the correct values but
 	//until make it look more correct until bug #283648 is fixed
 	
-	int topMargin = 2;  //The space above the highest (selected) tab
+	int topMargin = 0;  //The space above the highest (selected) tab
 	int selectionMargin = 3;  //bonus margin for selected tabs
 	int tabTopMargin = 3;//5;  //margin within tab above text below line
 	int tabBottomMargin = 3;//6; //bottom margin within tab
 	int hSpace = 2;  //horizontal spacing between tabs
 	int leftMargin = 4;  //first horizontal space
 	
-	Color exteriorKeyLineColor;
-	Color tabKeyLineColor;
+	Color tabAreaKeylineColor;  // The exterior keyline color of the top tab area
+	Color bodyKeylineColor;		// The keyline color of the left, right, and bottom of the body
+	Color tabKeylineColor;		// Keyline color for the tabs themselves
 	Color unselectedTabBackgroundColor;
 	
 /**
@@ -54,12 +55,47 @@ public ETabFolder(Composite parent, int style) {
 
 void init(int style) {
 	super.init(style);
-	RGB exteriorKeyLineRGB = new RGB(100,200, 100);
-	RGB tabKeyLineRGB = new RGB(208, 0, 212);
 	
-	exteriorKeyLineColor = new Color(getDisplay(), exteriorKeyLineRGB);
-	tabKeyLineColor = new Color(getDisplay(), tabKeyLineRGB);
+	tabAreaKeylineColor = getDisplay().getSystemColor(BORDER1_COLOR);
+	bodyKeylineColor = getDisplay().getSystemColor(BORDER1_COLOR);
+	tabKeylineColor = getDisplay().getSystemColor(BORDER1_COLOR);
 	unselectedTabBackgroundColor = getBackground();
+}
+
+public Color getTabAreaKeylineColor() {
+	return tabAreaKeylineColor;
+}
+
+public void setTabAreaKeylineColor(Color color) {
+	checkWidget();
+	if (tabAreaKeylineColor == color) return;
+	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
+	tabAreaKeylineColor = color;
+	if (selectedIndex > -1) redraw();
+}
+
+public Color getBodyKeylineColor() {
+	return bodyKeylineColor;
+}
+
+public void setBodyKeylineColor(Color color) {
+	checkWidget();
+	if (bodyKeylineColor == color) return;
+	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
+	bodyKeylineColor = color;
+	if (selectedIndex > -1) redraw();
+}
+
+public Color getTabKeylineColor() {
+	return tabKeylineColor;
+}
+
+public void setTabKeylineColor(Color color) {
+	checkWidget();
+	if (tabKeylineColor == color) return;
+	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
+	tabKeylineColor = color;
+	if (selectedIndex > -1) redraw();
 }
 
 public Color getUnselectedTabBackgroundColor() {
@@ -67,24 +103,11 @@ public Color getUnselectedTabBackgroundColor() {
 }
 
 public void setUnselectedTabBackgroundColor(Color color) {
-	this.unselectedTabBackgroundColor = color;
-}
-
-public void dispose() {
-	super.dispose();
-	
-	if(exteriorKeyLineColor != null) {
-		exteriorKeyLineColor.dispose();
-		exteriorKeyLineColor = null;
-	}
-	if(tabKeyLineColor != null) {
-		tabKeyLineColor.dispose();
-		tabKeyLineColor = null;
-	}
-	if(unselectedTabBackgroundColor != null) {
-		unselectedTabBackgroundColor.dispose();
-		unselectedTabBackgroundColor = null;
-	}
+	checkWidget();
+	if (unselectedTabBackgroundColor == color) return;
+	if (color == null) color = getBackground();
+	unselectedTabBackgroundColor = color;
+	if (selectedIndex > -1) redraw();
 }
 
 public boolean getWebbyStyle() {
@@ -113,6 +136,19 @@ public void setWebbyStyle(boolean webbyStyle) {
 		redraw();
 	}
 }
+
+public ETabItem getETabItem (int index) {
+	return (ETabItem) getItem(index);
+}
+
+public ETabItem [] getETabItems() {
+	//checkWidget();
+	ETabItem[] tabItems = new ETabItem [items.length];
+	System.arraycopy(items, 0, tabItems, 0, items.length);
+	return tabItems;
+}
+
+
 
 int getTextMidline() {
 	return (tabHeight - topMargin - selectionMargin) /2 + topMargin + selectionMargin;
@@ -178,18 +214,14 @@ void drawBody(Event event) {
 	
 	//draw 1 pixel border around outside
 	if (borderLeft > 0) {
-		gc.setForeground(exteriorKeyLineColor);
+		gc.setForeground(bodyKeylineColor);
 		int x1 = borderLeft - 1;
 		int x2 = size.x - borderRight;
 		int y1 = onBottom ? borderTop - 1 : borderTop + tabHeight;
 		int y2 = onBottom ? size.y - tabHeight - borderBottom - 1 : size.y - borderBottom;
 		gc.drawLine(x1, y1, x1, y2); // left
 		gc.drawLine(x2, y1, x2, y2); // right
-		if (onBottom) {
-			gc.drawLine(x1, y1, x2, y1); // top
-		} else {
-			gc.drawLine(x1, y2, x2, y2); // bottom
-		}
+		gc.drawLine(x1, y2, x2, y2); // bottom
 	}
 }
 void drawTabArea(Event event) {
@@ -201,7 +233,7 @@ void drawTabArea(Event event) {
 	GC gc = event.gc;
 	Point size = getSize();
 	int[] shape = null;
-	Color borderColor = exteriorKeyLineColor;
+	Color borderColor = tabAreaKeylineColor;
 
 	if (tabHeight == 0) {
 		int style = getStyle();
@@ -368,17 +400,6 @@ int getSelectedTabTopOffset() {
 //The space above the unselected tab
 int getUnselectedTabTopOffset() {
 	return topMargin + selectionMargin;
-}
-
-public ETabItem getETabItem (int index) {
-	return (ETabItem) getItem(index);
-}
-
-public ETabItem [] getETabItems() {
-	//checkWidget();
-	ETabItem[] tabItems = new ETabItem [items.length];
-	System.arraycopy(items, 0, tabItems, 0, items.length);
-	return tabItems;
 }
 
 private boolean useWebbyStyling() {
