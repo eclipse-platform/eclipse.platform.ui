@@ -365,4 +365,14 @@ int getUnselectedTabTopOffset() {
 	return topMargin + selectionMargin;
 }
 
+public ETabItem getETabItem (int index) {
+	return (ETabItem) getItem(index);
+}
+
+public ETabItem [] getETabItems() {
+	//checkWidget();
+	ETabItem[] tabItems = new ETabItem [items.length];
+	System.arraycopy(items, 0, tabItems, 0, items.length);
+	return tabItems;
+}
 }
