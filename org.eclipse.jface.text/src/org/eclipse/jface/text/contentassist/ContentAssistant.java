@@ -1146,17 +1146,17 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 	 * Sets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
 	 * 
-	 * @param delay the auto activation delay
+	 * @param delay the auto activation delay (as of 3.6 a negative argument will be set to 0)
 	 */
 	public void setAutoActivationDelay(int delay) {
-		fAutoActivationDelay= delay;
+		fAutoActivationDelay= Math.max(0, delay);
 	}
 
 	/**
 	 * Gets the delay after which the content assistant is automatically invoked if the cursor is
 	 * behind an auto activation character.
 	 * 
-	 * @return the auto activation delay
+	 * @return the auto activation delay (will not be negative)
 	 * @since 3.4
 	 */
 	public int getAutoActivationDelay() {
