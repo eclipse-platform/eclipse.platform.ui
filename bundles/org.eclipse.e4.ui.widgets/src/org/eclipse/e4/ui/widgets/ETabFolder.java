@@ -116,10 +116,7 @@ public boolean getWebbyStyle() {
 
 public void setWebbyStyle(boolean webbyStyle) {
 	checkWidget();
-	this.webbyStyle = webbyStyle;
-	layout();
-	redrawTabs();
-	redraw();
+	
 	if(this.webbyStyle != webbyStyle) {
 		this.webbyStyle = webbyStyle;
 		updateTabHeight(true);
@@ -130,6 +127,7 @@ public void setWebbyStyle(boolean webbyStyle) {
 		Rectangle rectBefore = getClientArea();
 		updateItems();
 		Rectangle rectAfter = getClientArea();
+		layout();
 		if (!rectBefore.equals(rectAfter)) {
 			notifyListeners(SWT.Resize, new Event());
 		}
@@ -346,6 +344,21 @@ void drawTabArea(Event event) {
 	}
 }
 
+boolean updateTabHeight(boolean force){
+	if (! useWebbyStyling() || fixedTabHeight != SWT.DEFAULT || items.length > 0) {
+		return super.updateTabHeight(force);
+	}
+	
+	int tempHeight = 0;
+	GC gc = new GC(this);
+	tempHeight = gc.textExtent("Default", ETabItem.FLAGS).y + topMargin + selectionMargin + tabTopMargin + tabBottomMargin; //$NON-NLS-1$
+
+	gc.dispose();
+	tabHeight =  tempHeight;
+	notifyListeners(SWT.Resize, new Event());
+	return true;
+}
+	
 boolean setItemLocation() {
 	if(! useWebbyStyling()) {
 		return super.setItemLocation();
