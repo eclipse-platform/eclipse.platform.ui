@@ -33,7 +33,7 @@ public class ETabFolder extends CTabFolder {
 	//TODO tabTopMargin and tabBottomMargin aren't the correct values but
 	//until make it look more correct until bug #283648 is fixed
 	
-	int topMargin = 0;  //The space above the highest (selected) tab
+	int topMargin = 2;  //The space above the highest (selected) tab
 	int selectionMargin = 3;  //bonus margin for selected tabs
 	int tabTopMargin = 3;//5;  //margin within tab above text below line
 	int tabBottomMargin = 3;//6; //bottom margin within tab
@@ -41,7 +41,7 @@ public class ETabFolder extends CTabFolder {
 	int leftMargin = 4;  //first horizontal space
 	
 	Color exteriorKeyLineColor;
-	Color interiorKeyLineColor;
+	Color tabKeyLineColor;
 	Color unselectedTabBackgroundColor;
 	
 /**
@@ -54,11 +54,11 @@ public ETabFolder(Composite parent, int style) {
 
 void init(int style) {
 	super.init(style);
-	RGB exteriorKeyLineRGB = new RGB(201,200, 204);
-	RGB interiorKeyLineRGB = new RGB(208, 207, 212);
+	RGB exteriorKeyLineRGB = new RGB(100,200, 100);
+	RGB tabKeyLineRGB = new RGB(208, 0, 212);
 	
 	exteriorKeyLineColor = new Color(getDisplay(), exteriorKeyLineRGB);
-	interiorKeyLineColor = new Color(getDisplay(), interiorKeyLineRGB);
+	tabKeyLineColor = new Color(getDisplay(), tabKeyLineRGB);
 	unselectedTabBackgroundColor = getBackground();
 }
 
@@ -77,9 +77,9 @@ public void dispose() {
 		exteriorKeyLineColor.dispose();
 		exteriorKeyLineColor = null;
 	}
-	if(interiorKeyLineColor != null) {
-		interiorKeyLineColor.dispose();
-		interiorKeyLineColor = null;
+	if(tabKeyLineColor != null) {
+		tabKeyLineColor.dispose();
+		tabKeyLineColor = null;
 	}
 	if(unselectedTabBackgroundColor != null) {
 		unselectedTabBackgroundColor.dispose();
@@ -119,6 +119,11 @@ int getTextMidline() {
 }
 
 void drawBody(Event event) {
+	if(! useWebbyStyling()) {
+		super.drawBody(event);
+		return;
+	}
+	
 	GC gc = event.gc;
 	Point size = getSize();
 	
@@ -188,7 +193,7 @@ void drawBody(Event event) {
 	}
 }
 void drawTabArea(Event event) {
-	if (!webbyStyle || onBottom || single) {
+	if(! useWebbyStyling()) {
 		super.drawTabArea(event);
 		return;
 	}
@@ -310,7 +315,7 @@ void drawTabArea(Event event) {
 }
 
 boolean setItemLocation() {
-	if(!webbyStyle || onBottom || single) {
+	if(! useWebbyStyling()) {
 		return super.setItemLocation();
 	}
 	
@@ -374,5 +379,9 @@ public ETabItem [] getETabItems() {
 	ETabItem[] tabItems = new ETabItem [items.length];
 	System.arraycopy(items, 0, tabItems, 0, items.length);
 	return tabItems;
+}
+
+private boolean useWebbyStyling() {
+	return webbyStyle && ! onBottom && ! single;
 }
 }
