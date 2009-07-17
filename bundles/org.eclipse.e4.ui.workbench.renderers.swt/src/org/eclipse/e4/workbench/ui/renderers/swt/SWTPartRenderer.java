@@ -55,7 +55,10 @@ import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
-	private static Shell limbo;
+	// This shell acts as a place holder for Controls that
+	// still exist but should not be shown in the UI. It's
+	// necessary because SWT Layout's handle invisible controls correctly
+	private static Shell limbo = null;
 
 	public Object createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
 		Widget widget = (Widget) widgetObject;
@@ -350,7 +353,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	 */
 	private void locallyHide(Control ctrl) {
 		if (limbo == null) {
-			limbo = new Shell(ctrl.getShell(), SWT.NONE);
+			limbo = new Shell(ctrl.getDisplay(), SWT.NONE);
 			limbo.setVisible(false);
 		}
 
