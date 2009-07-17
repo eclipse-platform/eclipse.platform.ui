@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.services.EBindingService;
 import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
@@ -34,6 +35,7 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
@@ -251,7 +253,25 @@ public class HandledContributionItem extends ContributionItem {
 
 	private void updateMenuItem() {
 		MenuItem item = (MenuItem) widget;
-		item.setText(model.getName());
+		String text = model.getName();
+		ParameterizedCommand parmCmd = model.getWbCommand();
+		String keyBindingText = null;
+		if (parmCmd != null) {
+			EBindingService bindingService = (EBindingService) context
+					.get(EBindingService.class.getName());
+			if (bindingService != null) {
+				TriggerSequence binding = bindingService
+						.getBestActiveBindingFor(parmCmd);
+				if (binding != null)
+					keyBindingText = binding.format();
+			}
+		}
+		if (text != null) {
+			if (keyBindingText == null)
+				item.setText(text);
+			else
+				item.setText(text + '\t' + keyBindingText);
+		}
 		item.setEnabled(canExecuteItem(widget.getDisplay()));
 	}
 
