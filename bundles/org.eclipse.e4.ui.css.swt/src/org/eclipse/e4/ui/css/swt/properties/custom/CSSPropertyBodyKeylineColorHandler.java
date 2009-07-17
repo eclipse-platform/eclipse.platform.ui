@@ -38,8 +38,12 @@ public class CSSPropertyBodyKeylineColorHandler extends AbstractCSSPropertySWTHa
 
 	public String retrieveCSSProperty(Control control, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
-		Color color = ((ETabFolder) control).getBodyKeylineColor();
-		return engine.convert(color, Color.class, null);
+		
+		if (control instanceof ETabFolder) {
+			Color color = ((ETabFolder) control).getBodyKeylineColor();
+			return engine.convert(color, Color.class, null);
+		}
+		return null;
 	}
 
 }

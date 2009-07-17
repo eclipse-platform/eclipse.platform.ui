@@ -38,8 +38,12 @@ public class CSSPropertyTabKeylineColorHandler extends AbstractCSSPropertySWTHan
 
 	public String retrieveCSSProperty(Control control, String property, String pseudo, 
 			CSSEngine engine) throws Exception {
-		Color color = ((ETabFolder) control).getTabKeylineColor();
-		return engine.convert(color, Color.class, null);
+		
+		if (control instanceof ETabFolder) {
+			Color color = ((ETabFolder) control).getTabKeylineColor();
+			return engine.convert(color, Color.class, null);
+		}
+		return null;
 	}
 
 }
