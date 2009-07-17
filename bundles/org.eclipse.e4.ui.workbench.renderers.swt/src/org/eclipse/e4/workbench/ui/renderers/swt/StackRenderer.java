@@ -116,8 +116,6 @@ public class StackRenderer extends LazyStackRenderer {
 			final IEclipseContext folderContext = part.getContext();
 			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
 			final IEclipseContext toplevelContext = getToplevelContext(part);
-			final IStylingEngine engine = (IStylingEngine) folderContext
-					.get(IStylingEngine.SERVICE_NAME);
 			folderContext.runAndTrack(new Runnable() {
 				public void run() {
 					// this will cause the tracker to be removed because no
@@ -135,12 +133,13 @@ public class StackRenderer extends LazyStackRenderer {
 
 					String cssClassName = (currentActive == folderContext) ? "active" //$NON-NLS-1$
 							: "inactive"; //$NON-NLS-1$
-					engine.setClassname(ctf, cssClassName);
+					stylingEngine.setClassname(ctf, cssClassName);
 
 					// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
 					// should get same background color
 					if (ctf.getTopRight() != null)
-						engine.setClassname(ctf.getTopRight(), cssClassName);
+						stylingEngine.setClassname(ctf.getTopRight(),
+								cssClassName);
 
 					// TODO HACK: see Bug 283585 [CSS] Specificity fails with
 					// descendents
