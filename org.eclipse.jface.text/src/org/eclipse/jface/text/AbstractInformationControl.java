@@ -444,16 +444,19 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * {@link Composite#getForeground()} from <code>parent</code>.
 	 * </p>
 	 * <p>
-	 * Implementors are expected to consider {@link #isResizable()}: If
-	 * <code>true</code>, they should show scrollbars if their content may
-	 * exceed the size of the information control. If <code>false</code>,
-	 * they should never show scrollbars.
+	 * Implementors must either use the dialog font or override
+	 * {@link #computeSizeConstraints(int, int)}.
 	 * </p>
 	 * <p>
-	 * The given <code>parent</code> comes with a {@link FillLayout}.
-	 * Subclasses may set a different layout.
+	 * Implementors are expected to consider {@link #isResizable()}: If <code>true</code>, they
+	 * should show scrollbars if their content may exceed the size of the information control. If
+	 * <code>false</code>, they should never show scrollbars.
 	 * </p>
-	 *
+	 * <p>
+	 * The given <code>parent</code> comes with a {@link FillLayout}. Subclasses may set a different
+	 * layout.
+	 * </p>
+	 * 
 	 * @param parent the container of the content
 	 */
 	protected abstract void createContent(Composite parent);
