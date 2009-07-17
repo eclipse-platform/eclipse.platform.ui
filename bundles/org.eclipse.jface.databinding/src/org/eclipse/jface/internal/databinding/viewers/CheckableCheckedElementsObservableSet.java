@@ -7,14 +7,13 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 124684)
- *     Matthew Hall - bug 259380
+ *     Matthew Hall - bug 259380, 283204
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.viewers;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -25,6 +24,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
+import org.eclipse.jface.viewers.IElementComparer;
 
 /**
  * 
@@ -35,6 +35,7 @@ public class CheckableCheckedElementsObservableSet extends
 	private ICheckable checkable;
 	private Set wrappedSet;
 	private Object elementType;
+	private IElementComparer elementComparer;
 	private ICheckStateListener listener;
 
 	/**
@@ -46,17 +47,21 @@ public class CheckableCheckedElementsObservableSet extends
 	 *            the set being wrapped
 	 * @param elementType
 	 *            type of elements in the set
+	 * @param elementComparer
+	 *            element comparer
 	 * @param checkable
 	 *            the ICheckable to track
 	 */
 	public CheckableCheckedElementsObservableSet(Realm realm,
-			final Set wrappedSet, Object elementType, ICheckable checkable) {
+			final Set wrappedSet, Object elementType,
+			IElementComparer elementComparer, ICheckable checkable) {
 		super(realm);
 		Assert.isNotNull(checkable, "Checkable cannot be null"); //$NON-NLS-1$
 		Assert.isNotNull(wrappedSet, "Wrapped set cannot be null"); //$NON-NLS-1$
 		this.checkable = checkable;
 		this.wrappedSet = wrappedSet;
 		this.elementType = elementType;
+		this.elementComparer = elementComparer;
 
 		listener = new ICheckStateListener() {
 			public void checkStateChanged(CheckStateChangedEvent event) {
@@ -81,7 +86,7 @@ public class CheckableCheckedElementsObservableSet extends
 	}
 
 	Set createDiffSet() {
-		return new HashSet();
+		return ViewerElementSet.withComparer(elementComparer);
 	}
 
 	public Object getElementType() {
@@ -165,7 +170,10 @@ public class CheckableCheckedElementsObservableSet extends
 	}
 
 	public void clear() {
-		removeAll(wrappedSet);
+		getterCalled();
+		Set removals = createDiffSet();
+		removals.addAll(wrappedSet);
+		removeAll(removals);
 	}
 
 	public Iterator iterator() {
