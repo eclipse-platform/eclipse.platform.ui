@@ -16,7 +16,6 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.help.ITopic;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.webapp.servlet.EclipseConnector;
 import org.eclipse.help.internal.webapp.servlet.ExtraFilters;

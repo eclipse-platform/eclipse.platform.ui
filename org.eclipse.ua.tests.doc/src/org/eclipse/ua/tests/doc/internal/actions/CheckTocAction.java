@@ -11,13 +11,9 @@
 
 package org.eclipse.ua.tests.doc.internal.actions;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.validation.TocValidator;
@@ -27,7 +23,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ua.tests.doc.internal.dialogs.SelectTocDialog;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
-import org.xml.sax.SAXException;
 
 public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	private IWorkbenchWindow window;

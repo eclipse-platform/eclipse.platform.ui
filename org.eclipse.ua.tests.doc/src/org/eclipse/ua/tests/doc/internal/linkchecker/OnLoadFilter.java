@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.webapp.servlet.FilterUtils;
 import org.eclipse.help.webapp.IFilter;
-import org.eclipse.ua.tests.doc.internal.actions.CheckLinkAction;
 import org.eclipse.ua.tests.doc.internal.dialogs.SelectTocDialog;
 
 public class OnLoadFilter implements IFilter {

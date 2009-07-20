@@ -42,7 +42,7 @@ public class CheckLinkAction implements ILiveHelpAction {
 			LoadTocAction.showErrors();
 			checkLinks();
 		} else if (link.startsWith("htt")){
-			String lastPage = LoadTocAction.lastPage;
+			//String lastPage = LoadTocAction.lastPage;
 			links.put(link, VisitPageAction.lastPageVisited);
 		}
 	}
