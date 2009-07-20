@@ -105,9 +105,9 @@ public abstract class CVSWizardPage extends WizardPage {
 	 * Creates composite control and sets the default layout data.
 	 * @param parent  the parent of the new composite
 	 * @param numColumns  the number of columns for the new composite
-	 * @param grabExcess TODO
+	 * @param grabExcess <code>true</code> if the composite should take up the remaining horizontal and vertical space
 	 *
-	 * @return the newly-created coposite
+	 * @return the newly-created composite
 	 */
 	protected Composite createComposite(Composite parent, int numColumns, boolean grabExcess) {
 		final Composite composite = new Composite(parent, SWT.NULL);
