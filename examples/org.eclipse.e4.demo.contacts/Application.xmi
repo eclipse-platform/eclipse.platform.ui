@@ -25,7 +25,7 @@
           </children>
         </children>
         <children xsi:type="application:MStack">
-          <children xsi:type="application:MContributedPart" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" name="Details" tooltip="Details" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView"/>
+          <children xsi:type="application:MContributedPart" id="DetailsView" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" name="Details" tooltip="Details" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView"/>
         </children>
         <weights>30</weights>
         <weights>70</weights>
