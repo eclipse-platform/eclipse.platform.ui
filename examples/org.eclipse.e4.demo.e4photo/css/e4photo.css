@@ -10,18 +10,16 @@ ETabItem {
 }
 ETabItem:selected {
 	background-color: #f4f4f4;
-	font: normal;
 }
 
 ETabItem.active {
 	background-color: #ffffff;
-	font: normal;
 }
 
 ETabItem.active:selected {
 	color: #ff5500;
 	background-color: #f4f4f4;
-	font: bold;
+	font-weight: bold;
 }
 
 #library {
