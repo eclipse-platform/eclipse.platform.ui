@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,7 +30,7 @@ import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
 import org.eclipse.team.internal.ccvs.ui.operations.RemoteProjectFolder;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Common superclass for CVS wizard pages. Provides convenience methods
@@ -231,7 +231,7 @@ public abstract class CVSWizardPage extends WizardPage {
 			new DecoratingLabelProvider(
 				new WorkbenchLabelProvider(), 
 				CVSUIPlugin.getPlugin().getWorkbench().getDecoratorManager().getLabelDecorator()));
-		tree.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		tree.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		
 		GridData data = new GridData(GridData.FILL_BOTH | GridData.GRAB_VERTICAL);
 		data.heightHint = LIST_HEIGHT_HINT;
