@@ -16,6 +16,7 @@ public class DescendentTest extends CSSSWTTestCase {
 	static final RGB GREEN = new RGB(0, 255, 0);
 	static final RGB BLUE = new RGB(0, 0, 255);
 	static final RGB WHITE = new RGB(255, 255, 255);
+	static final RGB BLACK = new RGB(0, 0, 0);
 	static public CSSEngine engine;
 	
 	protected Button[] createTestWidgets(String styleSheet) {
@@ -42,19 +43,28 @@ public class DescendentTest extends CSSSWTTestCase {
 	
 	public void testDescendentSpecificity() throws Exception {
 		Button[] buttons = createTestWidgets(
-				"#special Button { background: #FF0000}/n" +  //specificity a=1 b=0 c=1 = 101
-				"Composite Button { background: #00FF00}/n" + //specificity a=0 b=0 c=2 = 002
+				"Composite.special Button { background: #FF0000}\n" +  //specificity a=1 b=0 c=1 = 101
+				"Composite Button { background: #00FF00}\n" + //specificity a=0 b=0 c=2 = 002
+				"Composite.extraordinary Button { background: #FFFFFF}\n" + //specificity a=0 b=0 c=2 = 002
+				"#parent Button { background: #000000}\n" + //specificity a=0 b=0 c=2 = 002
 				"Button { background: #0000FF}");  //specificity a=0 b=0 c=1 = 001
 				
 		Button buttonA = buttons[0];
 		Button buttonB = buttons[1];
 		Button buttonC = buttons[2];
 		
-		SWTElement.setID(buttonA.getParent(), "special");
+		SWTElement.setCSSClass(buttonA.getParent(), "special");
 		engine.applyStyles(buttonA.getShell(), true);
 		
 		assertEquals(RED, buttonA.getBackground().getRGB());
 		assertEquals(GREEN, buttonB.getBackground().getRGB());
 		assertEquals(BLUE, buttonC.getBackground().getRGB());
+		
+		SWTElement.setCSSClass(buttonA.getParent(), "extraordinary");
+		SWTElement.setID(buttonB.getParent(), "parent");
+		
+		engine.applyStyles(buttonA.getShell(), true);
+		assertEquals(WHITE, buttonA.getBackground().getRGB());
+		assertEquals(BLACK, buttonB.getBackground().getRGB());
 	}
 }

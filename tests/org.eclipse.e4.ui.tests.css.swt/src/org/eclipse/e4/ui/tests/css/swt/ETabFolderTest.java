@@ -10,6 +10,7 @@
 package org.eclipse.e4.ui.tests.css.swt;
 
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
+import org.eclipse.e4.ui.css.swt.dom.SWTElement;
 import org.eclipse.swt.SWT;
 import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.widgets.ETabItem;
@@ -259,22 +260,28 @@ public class ETabFolderTest extends CSSSWTTestCase {
 		assertEquals(null, engine.retrieveCSSProperty(shell, "unselected-image-visible", null));
 	}	
 	
-	//TODO see bug #283585 
-//	public void testTopRightAsDescendentChild() throws Exception {
-//		ToolBar[] toolBars = createTestToolBars(
-//				"#special ToolBar { background: #FF0000}/n" +
-//				"ETabFolder ToolBar { background: #00FF00}/n" +
-//				"ToolBar { background: #0000FF}");
-//				
-//		ToolBar barA = toolBars[0];
-//		ToolBar barB = toolBars[1];
-//		ToolBar barC = toolBars[2];
-//		
-//		SWTElement.setID(barA.getParent(), "special");
-//		
-//		engine.applyStyles(barA.getShell(), true);
-//		assertEquals(RED, barA.getBackground().getRGB());
-//		assertEquals(GREEN, barB.getBackground().getRGB());
-//		assertEquals(BLUE, barC.getBackground().getRGB());
-//	}
+	public void testTopRightAsDescendentChild() throws Exception {
+		ToolBar[] toolBars = createTestToolBars(
+				"ETabFolder.special ToolBar { background: #FF0000}\n" +
+				"ETabFolder ToolBar { background: #00FF00}\n" +
+				"ETabFolder.extraordinary ToolBar { background: #FFFFFF}\n" +
+				"ToolBar { background: #0000FF}");
+				
+		ToolBar barA = toolBars[0];
+		ToolBar barB = toolBars[1];
+		ToolBar barC = toolBars[2];
+		
+		SWTElement.setCSSClass(barA.getParent(), "special");		
+		engine.applyStyles(barA.getShell(), true);
+		
+		assertEquals(RED, barA.getBackground().getRGB());
+		assertEquals(GREEN, barB.getBackground().getRGB());
+		assertEquals(BLUE, barC.getBackground().getRGB());
+		
+		SWTElement.setCSSClass(barA.getParent(), "extraordinary");
+		engine.applyStyles(barA.getShell(), true);
+
+		assertEquals(WHITE, barA.getBackground().getRGB());
+	}
+
 }

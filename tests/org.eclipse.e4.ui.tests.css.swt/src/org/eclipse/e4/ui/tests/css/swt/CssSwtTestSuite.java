@@ -42,7 +42,7 @@ public class CssSwtTestSuite extends TestSuite {
 		addTestSuite(TextTextTransformTest.class);
 		
 		//other
-//		addTestSuite(DescendentTest.class);  //TODO see bug #283585 
+		addTestSuite(DescendentTest.class);  
 
 	}
 }
