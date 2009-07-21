@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.internal.services;
 
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.IContributionFactory;
