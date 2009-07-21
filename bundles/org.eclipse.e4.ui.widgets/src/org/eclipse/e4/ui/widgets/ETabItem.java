@@ -384,4 +384,65 @@ void debugPrintPolyline(boolean selected, int[] shape) {
 			System.out.println();
 	}
 }
+void drawClose(GC gc) {
+
+	if (closeRect.width == 0 || closeRect.height == 0) return;
+	Display display = getDisplay();
+
+	// draw X 9x9
+	int indent = Math.max(1, (CTabFolder.BUTTON_SIZE-9)/2);
+	int x = closeRect.x + indent;
+	int y = closeRect.y + indent;
+	y += parent.onBottom ? -1 : 1;
+	
+	Color closeBorder = display.getSystemColor(CTabFolder.BUTTON_BORDER);
+	switch (closeImageState) {
+		case CTabFolder.NORMAL: {
+			int[] shape = new int[] {x,y, x+2,y, x+4,y+2, x+5,y+2, x+7,y, x+9,y, 
+					                 x+9,y+2, x+7,y+4, x+7,y+5, x+9,y+7, x+9,y+9,
+			                         x+7,y+9, x+5,y+7, x+4,y+7, x+2,y+9, x,y+9,
+			                         x,y+7, x+2,y+5, x+2,y+4, x,y+2};
+			gc.setBackground(getETabParent().getUnselectedTabBackgroundColor());
+			gc.fillPolygon(shape);
+			gc.setForeground(closeBorder);
+			gc.drawPolygon(shape);
+			break;
+		}
+		case CTabFolder.HOT: {
+			int[] shape = new int[] {x,y, x+2,y, x+4,y+2, x+5,y+2, x+7,y, x+9,y, 
+					                 x+9,y+2, x+7,y+4, x+7,y+5, x+9,y+7, x+9,y+9,
+			                         x+7,y+9, x+5,y+7, x+4,y+7, x+2,y+9, x,y+9,
+			                         x,y+7, x+2,y+5, x+2,y+4, x,y+2};
+			gc.setBackground(parent.getFillColor());
+			gc.fillPolygon(shape);
+			gc.setForeground(closeBorder);
+			gc.drawPolygon(shape);
+			break;
+		}
+		case CTabFolder.SELECTED: {
+			int[] shape = new int[] {x+1,y+1, x+3,y+1, x+5,y+3, x+6,y+3, x+8,y+1, x+10,y+1, 
+					                 x+10,y+3, x+8,y+5, x+8,y+6, x+10,y+8, x+10,y+10,
+			                         x+8,y+10, x+6,y+8, x+5,y+8, x+3,y+10, x+1,y+10,
+			                         x+1,y+8, x+3,y+6, x+3,y+5, x+1,y+3};
+			gc.setBackground(parent.getFillColor());
+			gc.fillPolygon(shape);
+			gc.setForeground(closeBorder);
+			gc.drawPolygon(shape);
+			break;
+		}
+		case CTabFolder.NONE: {
+			int[] shape = new int[] {x,y, x+10,y, x+10,y+10, x,y+10};
+			if (parent.gradientColors != null && !parent.gradientVertical) {
+				parent.drawBackground(gc, shape, false);
+			} else {
+				Color defaultBackground = getETabParent().getUnselectedTabBackgroundColor();
+				Color[] colors = parent.gradientColors;
+				int[] percents = parent.gradientPercents;
+				boolean vertical = parent.gradientVertical; 
+				parent.drawBackground(gc, shape, x, y, 10, 10, defaultBackground, null, colors, percents, vertical);
+			}
+			break;
+		}
+	}
+}
 }
