@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,9 @@ import org.eclipse.osgi.util.NLS;
  * @see org.eclipse.core.internal.properties.IPropertyManager
  */
 public class PropertyManager2 implements IPropertyManager {
+	
+	private static final int MAX_VALUE_SIZE = 2 * 1024;
+
 	class PropertyCopyVisitor extends Bucket.Visitor {
 		private List changes = new ArrayList();
 		private IPath destination;
@@ -149,8 +152,8 @@ public class PropertyManager2 implements IPropertyManager {
 		int flags = resource.getFlags(info);
 		resource.checkAccessible(flags);
 		// enforce the limit stated by the spec
-		if (value != null && value.length() > 2 * 1024) {
-			String message = NLS.bind(Messages.properties_valueTooLong, name.getQualifier(), name.getLocalName());
+		if (value != null && value.length() > MAX_VALUE_SIZE) {
+			String message = NLS.bind(Messages.properties_valueTooLong, new Object[] {name.getQualifier(), name.getLocalName(), new Integer(MAX_VALUE_SIZE).toString()});
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, target.getFullPath(), message, null);
 		}
 		if (name.getQualifier() == null) {
