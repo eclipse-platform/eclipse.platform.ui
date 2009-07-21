@@ -209,7 +209,11 @@ public class StackRenderer extends LazyStackRenderer {
 		cti.setData(OWNING_ME, element);
 		cti.setText(itemPart.getName());
 		cti.setImage(getImage(element));
-		cti.setControl((Control) element.getWidget());
+		Control widget = (Control) element.getWidget();
+		if (widget != null && widget.getParent() != cti.getParent()) {
+			widget.setParent(cti.getParent());
+		}
+		cti.setControl(widget);
 
 		// Hook up special logic to synch up the Tab Items
 		hookTabControllerLogic(parentElement, element, cti);
