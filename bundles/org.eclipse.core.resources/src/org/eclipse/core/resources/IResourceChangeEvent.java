@@ -22,12 +22,12 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
  *    <code>PRE_BUILD</code>, and <code>getDelta</code> returns
- *    the hierarchical delta.  The resource delta is rooted at the 
- *    workspace root.  The <code>getBuildKind</code> method returns
+ *    the hierarchical delta rooted at the workspace root. 
+ *    The <code>getBuildKind</code> method returns
  *    the kind of build that is about to occur, and the <code>getSource</code>
  *    method returns the scope of the build (either the workspace or a single project).
  *    These events are broadcast to interested parties immediately 
- *    before each build operation.  If autobuilding is not enabled, these events still 
+ *    before each build operation. If autobuilding is not enabled, these events still 
  *    occur at times when autobuild would have occurred. The workspace is open 
  *    for change during notification of these events. The delta reported in this event 
  *    cycle is identical across all listeners registered for this type of event.
@@ -39,8 +39,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
  *    deletions and modifications to one or more resources expressed
  *    as a hierarchical resource delta. Event type is
  *    <code>POST_BUILD</code>, and <code>getDelta</code> returns
- *    the hierarchical delta. The resource delta is rooted at the 
- *    workspace root.  The <code>getBuildKind</code> method returns
+ *    the hierarchical delta rooted at the workspace root.
+ *    The <code>getBuildKind</code> method returns
  *    the kind of build that occurred, and the <code>getSource</code>
  *    method returns the scope of the build (either the workspace or a single project).
  *    These events are broadcast to interested parties at the end of every build operation.
@@ -135,14 +135,13 @@ public interface IResourceChangeEvent {
 	public static final int PRE_AUTO_BUILD = 8;
 
 	/**
-	 * Event type constant (bit mask) indicating an before-the-fact 
-	 * report of creations, deletions, and modifications
-	 * to one or more resources expressed as a hierarchical
-	 * resource delta as returned by <code>getDelta</code>.
+	 * Event type constant (bit mask) indicating a before-the-fact 
+	 * report of a build. The event contains a hierarchical resource delta
+	 * as returned by <code>getDelta</code>.
 	 * See class comments for further details.
 	 *
-	 * @see #getType()
-	 * @see #getResource()
+	 * @see #getBuildKind()
+	 * @see #getSource()
 	 * @since 3.0
 	 */
 	public static final int PRE_BUILD = 8;
@@ -155,13 +154,12 @@ public interface IResourceChangeEvent {
 
 	/**
 	 * Event type constant (bit mask) indicating an after-the-fact 
-	 * report of creations, deletions, and modifications
-	 * to one or more resources expressed as a hierarchical
-	 * resource delta as returned by <code>getDelta</code>.
+	 * report of a build. The event contains a hierarchical resource delta
+	 * as returned by <code>getDelta</code>.
 	 * See class comments for further details.
 	 *
-	 * @see #getType()
-	 * @see #getResource()
+	 * @see #getBuildKind()
+	 * @see #getSource()
 	 * @since 3.0
 	 */
 	public static final int POST_BUILD = 16;
