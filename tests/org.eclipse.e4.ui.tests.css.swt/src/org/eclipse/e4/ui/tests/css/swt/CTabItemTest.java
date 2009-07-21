@@ -346,7 +346,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		SWTElement.setCSSClass(folder2, "editorStack");
 		engine = createEngine(
-				"CTabItem { font-size: 10 }"
+				"CTabItem { font-size: 10 }\n"
 						+ "CTabItem:selected { font-size: 14; font-weight: bold }"
 						+ "CTabFolder.editorStack CTabItem { font-size: 11; }"
 						+ "CTabFolder.editorStack CTabItem:selected { font-size: 13; font-style: italic }",
