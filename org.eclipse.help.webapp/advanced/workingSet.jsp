@@ -390,7 +390,7 @@ function enableOK() {
 		<tr><td style="padding:5px 10px 0px 10px;"><label for="workingSet" accesskey="<%=ServletResources.getAccessKey("WorkingSetName", request)%>"><%=ServletResources.getLabel("WorkingSetName", request)%></label>
 		</td></tr>
 		<tr><td style="padding:0px 10px;"><input type="text" id="workingSet" name="workingSet" 
-		    value='<%=data.isEditMode()?UrlUtil.htmlEncode(data.getWorkingSetName()):""%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' title='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
+		    value='<%=data.isEditMode()?UrlUtil.htmlEncode(data.getWorkingSetName()):data.getDefaultName()%>' maxlength=256 alt='<%=ServletResources.getString("WorkingSetName", request)%>' title='<%=ServletResources.getString("WorkingSetName", request)%>' onkeyup="enableOK();return true;">
         </td></tr>
          <tr><td><div id="selectBook" style="padding-top:5px; margin-<%=isRTL?"right":"left"%>:10px;"><%=ServletResources.getString("WorkingSetContent", request)%>:</div>
 		</td></tr>
