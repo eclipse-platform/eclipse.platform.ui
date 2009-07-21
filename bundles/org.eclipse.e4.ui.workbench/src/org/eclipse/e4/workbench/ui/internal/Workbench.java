@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -100,7 +101,7 @@ public class Workbench implements IWorkbench {
 		exceptionHandler = new ExceptionHandler();
 		this.registry = registry;
 		try {
-			workbenchData = new File(instanceLocation.getURL().toURI());
+			workbenchData = new File(URIUtil.toURI(instanceLocation.getURL()));
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
 		}
