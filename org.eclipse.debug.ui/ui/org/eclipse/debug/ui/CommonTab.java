@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -39,6 +39,7 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationMan
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsMessages;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchGroupExtension;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -66,7 +67,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Group;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
@@ -91,25 +91,13 @@ import com.ibm.icu.text.MessageFormat;
 public class CommonTab extends AbstractLaunchConfigurationTab {
 	
 	/**
-	 * Provides a persistible dialog for selecting the shared project location
-	 * @since 3.2
+	 * Constant representing the id of the {@link IDialogSettings} location for the {@link ContainerSelectionDialog} used
+	 * on this tab
+	 * 
+	 * @since 3.6
 	 */
-	class SharedLocationSelectionDialog extends ContainerSelectionDialog {
-		private final String SETTINGS_ID = IDebugUIConstants.PLUGIN_ID + ".SHARED_LAUNCH_CONFIGURATON_DIALOG"; //$NON-NLS-1$
-		
-		public SharedLocationSelectionDialog(Shell parentShell, IContainer initialRoot, boolean allowNewContainerName, String message) {
-			super(parentShell, initialRoot, allowNewContainerName, message);
-		}
-
-		protected IDialogSettings getDialogBoundsSettings() {
-			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
-			IDialogSettings section = settings.getSection(SETTINGS_ID);
-			if (section == null) {
-				section = settings.addNewSection(SETTINGS_ID);
-			} 
-			return section;
-		}
-	}
+	private final String SHARED_LAUNCH_CONFIGURATON_DIALOG = IDebugUIConstants.PLUGIN_ID + ".SHARED_LAUNCH_CONFIGURATON_DIALOG"; //$NON-NLS-1$
+	private final String WORKSPACE_SELECTION_DIALOG = IDebugUIConstants.PLUGIN_ID + ".WORKSPACE_SELECTION_DIALOG"; //$NON-NLS-1$
 	
 	/**
 	 * This attribute exists solely for the purpose of making sure that invalid shared locations
@@ -165,6 +153,19 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		createEncodingComponent(comp);
 		createOutputCaptureComponent(comp);
 		createLaunchInBackgroundComponent(comp);
+	}
+	
+	/**
+	 * @return the {@link IDialogSettings} to pass into the {@link ContainerSelectionDialog}
+	 * @since 3.6
+	 */
+	IDialogSettings getDialogBoundsSettings(String id) {
+		IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
+		IDialogSettings section = settings.getSection(id);
+		if (section == null) {
+			section = settings.addNewSection(id);
+		} 
+		return section;
 	}
 	
 	/**
@@ -272,11 +273,14 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
                 dialog.setMessage(LaunchConfigurationsMessages.CommonTab_14); 
                 dialog.setInput(ResourcesPlugin.getWorkspace().getRoot()); 
                 dialog.setComparator(new ResourceComparator(ResourceComparator.NAME));
+                dialog.setDialogBoundsSettings(getDialogBoundsSettings(WORKSPACE_SELECTION_DIALOG), Dialog.DIALOG_PERSISTSIZE);
                 if (dialog.open() == IDialogConstants.OK_ID) {
                     IResource resource = (IResource) dialog.getFirstResult();
-                    String arg = resource.getFullPath().toString();
-                    String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
-                    fFileText.setText(fileLoc);
+                    if(resource != null) {
+                    	String arg = resource.getFullPath().toString();
+                    	String fileLoc = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", arg); //$NON-NLS-1$
+                    	fFileText.setText(fileLoc);
+                    }
                 }
             }
         });
@@ -469,11 +473,12 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private void handleSharedLocationButtonSelected() { 
 		String currentContainerString = fSharedLocationText.getText();
 		IContainer currentContainer = getContainer(currentContainerString);
-		SharedLocationSelectionDialog dialog = new SharedLocationSelectionDialog(getShell(),
+		ContainerSelectionDialog dialog = new ContainerSelectionDialog(getShell(),
 				   currentContainer,
 				   false,
 				   LaunchConfigurationsMessages.CommonTab_Select_a_location_for_the_launch_configuration_13);
 		dialog.showClosedProjects(false);
+		dialog.setDialogBoundsSettings(getDialogBoundsSettings(SHARED_LAUNCH_CONFIGURATON_DIALOG), Dialog.DIALOG_PERSISTSIZE);
 		dialog.open();
 		Object[] results = dialog.getResult();	
 		if ((results != null) && (results.length > 0) && (results[0] instanceof IPath)) {
