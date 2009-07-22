@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchFactoryImpl.java,v 1.3 2009/02/03 14:25:36 emoffatt Exp $
+ * $Id: WorkbenchFactoryImpl.java,v 1.4 2009/06/16 16:09:51 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
@@ -73,6 +73,7 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 			case WorkbenchPackage.MPERSPECTIVE: return createMPerspective();
 			case WorkbenchPackage.MWORKBENCH: return createMWorkbench();
 			case WorkbenchPackage.MMENU_ITEM_RENDERER: return createMMenuItemRenderer();
+			case WorkbenchPackage.MTOOL_ITEM_RENDERER: return createMToolItemRenderer();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -142,6 +143,16 @@ public class WorkbenchFactoryImpl extends EFactoryImpl implements WorkbenchFacto
 	public MMenuItemRenderer createMMenuItemRenderer() {
 		MMenuItemRendererImpl mMenuItemRenderer = new MMenuItemRendererImpl();
 		return mMenuItemRenderer;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MToolItemRenderer createMToolItemRenderer() {
+		MToolItemRendererImpl mToolItemRenderer = new MToolItemRendererImpl();
+		return mToolItemRenderer;
 	}
 
 	/**

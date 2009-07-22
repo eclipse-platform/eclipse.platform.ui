@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchFactory.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
+ * $Id: WorkbenchFactory.java,v 1.4 2009/06/16 16:09:51 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -68,6 +68,15 @@ public interface WorkbenchFactory extends EFactory {
 	 * @generated
 	 */
 	MMenuItemRenderer createMMenuItemRenderer();
+
+	/**
+	 * Returns a new object of class '<em>MTool Item Renderer</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>MTool Item Renderer</em>'.
+	 * @generated
+	 */
+	MToolItemRenderer createMToolItemRenderer();
 
 	/**
 	 * Returns the package supported by this factory.

@@ -125,7 +125,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	private void createToolBarItem(MPart<?> part, ToolBarManager manager,
 			final MToolBarItem toolBarItem) {
-		manager.add(new HandledContributionItem(toolBarItem, context));
+		manager
+				.add(new HandledContributionItem(toolBarItem, part.getContext()));
 	}
 
 	private void createMenuItem(MPart<?> part, final MenuManager manager,
@@ -163,7 +164,8 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			}
 		}
 
-		manager.add(new HandledContributionItem(handledItem, context));
+		manager
+				.add(new HandledContributionItem(handledItem, part.getContext()));
 	}
 
 	public <P extends MPart<?>> void processContents(MPart<P> me) {

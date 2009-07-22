@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackage.java,v 1.7 2009/07/07 18:38:58 pwebster Exp $
+ * $Id: WorkbenchPackage.java,v 1.8 2009/07/12 15:39:28 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -731,6 +731,124 @@ public interface WorkbenchPackage extends EPackage {
 	int MMENU_ITEM_RENDERER_FEATURE_COUNT = ApplicationPackage.MMENU_ITEM_FEATURE_COUNT + 1;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.workbench.MToolItemRendererImpl <em>MTool Item Renderer</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.internal.workbench.MToolItemRendererImpl
+	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMToolItemRenderer()
+	 * @generated
+	 */
+	int MTOOL_ITEM_RENDERER = 5;
+
+	/**
+	 * The feature id for the '<em><b>Owner</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__OWNER = ApplicationPackage.MTOOL_BAR_ITEM__OWNER;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__ID = ApplicationPackage.MTOOL_BAR_ITEM__ID;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__ICON_URI = ApplicationPackage.MTOOL_BAR_ITEM__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__NAME = ApplicationPackage.MTOOL_BAR_ITEM__NAME;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__TOOLTIP = ApplicationPackage.MTOOL_BAR_ITEM__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__COMMAND = ApplicationPackage.MTOOL_BAR_ITEM__COMMAND;
+
+	/**
+	 * The feature id for the '<em><b>Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__MENU = ApplicationPackage.MTOOL_BAR_ITEM__MENU;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__WB_COMMAND = ApplicationPackage.MTOOL_BAR_ITEM__WB_COMMAND;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__PARAMETERS = ApplicationPackage.MTOOL_BAR_ITEM__PARAMETERS;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__VISIBLE = ApplicationPackage.MTOOL_BAR_ITEM__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER__RENDERER = ApplicationPackage.MTOOL_BAR_ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>MTool Item Renderer</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTOOL_ITEM_RENDERER_FEATURE_COUNT = ApplicationPackage.MTOOL_BAR_ITEM_FEATURE_COUNT + 1;
+
+	/**
 	 * The meta object id for the '<em>IContribution Item</em>' data type.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -738,7 +856,7 @@ public interface WorkbenchPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getIContributionItem()
 	 * @generated
 	 */
-	int ICONTRIBUTION_ITEM = 5;
+	int ICONTRIBUTION_ITEM = 6;
 
 
 	/**
@@ -845,6 +963,27 @@ public interface WorkbenchPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMMenuItemRenderer_Renderer();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.workbench.MToolItemRenderer <em>MTool Item Renderer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>MTool Item Renderer</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MToolItemRenderer
+	 * @generated
+	 */
+	EClass getMToolItemRenderer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.workbench.MToolItemRenderer#getRenderer <em>Renderer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Renderer</em>'.
+	 * @see org.eclipse.e4.ui.model.workbench.MToolItemRenderer#getRenderer()
+	 * @see #getMToolItemRenderer()
+	 * @generated
+	 */
+	EAttribute getMToolItemRenderer_Renderer();
 
 	/**
 	 * Returns the meta object for data type '{@link java.lang.Object <em>IContribution Item</em>}'.
@@ -968,6 +1107,24 @@ public interface WorkbenchPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MMENU_ITEM_RENDERER__RENDERER = eINSTANCE.getMMenuItemRenderer_Renderer();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.workbench.MToolItemRendererImpl <em>MTool Item Renderer</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.internal.workbench.MToolItemRendererImpl
+		 * @see org.eclipse.e4.ui.model.internal.workbench.WorkbenchPackageImpl#getMToolItemRenderer()
+		 * @generated
+		 */
+		EClass MTOOL_ITEM_RENDERER = eINSTANCE.getMToolItemRenderer();
+
+		/**
+		 * The meta object literal for the '<em><b>Renderer</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MTOOL_ITEM_RENDERER__RENDERER = eINSTANCE.getMToolItemRenderer_Renderer();
 
 		/**
 		 * The meta object literal for the '<em>IContribution Item</em>' data type.

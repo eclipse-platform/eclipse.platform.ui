@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchSwitch.java,v 1.3 2009/02/03 14:25:37 emoffatt Exp $
+ * $Id: WorkbenchSwitch.java,v 1.4 2009/06/16 16:09:51 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.workbench.util;
 
@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MItemPart;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.model.application.MWindow;
 
 import org.eclipse.e4.ui.model.workbench.*;
@@ -146,6 +147,16 @@ public class WorkbenchSwitch<T> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case WorkbenchPackage.MTOOL_ITEM_RENDERER: {
+				MToolItemRenderer mToolItemRenderer = (MToolItemRenderer)theEObject;
+				T result = caseMToolItemRenderer(mToolItemRenderer);
+				if (result == null) result = caseMToolBarItem(mToolItemRenderer);
+				if (result == null) result = caseMHandledItem(mToolItemRenderer);
+				if (result == null) result = caseMItem(mToolItemRenderer);
+				if (result == null) result = caseMApplicationElement(mToolItemRenderer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			default: return defaultCase(theEObject);
 		}
 	}
@@ -222,6 +233,21 @@ public class WorkbenchSwitch<T> {
 	 * @generated
 	 */
 	public T caseMMenuItemRenderer(MMenuItemRenderer object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>MTool Item Renderer</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>MTool Item Renderer</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMToolItemRenderer(MToolItemRenderer object) {
 		return null;
 	}
 
@@ -327,6 +353,21 @@ public class WorkbenchSwitch<T> {
 	 * @generated
 	 */
 	public T caseMMenuItem(MMenuItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>MTool Bar Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>MTool Bar Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T caseMToolBarItem(MToolBarItem object) {
 		return null;
 	}
 

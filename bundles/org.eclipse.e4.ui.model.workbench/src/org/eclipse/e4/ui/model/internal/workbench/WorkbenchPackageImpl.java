@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackageImpl.java,v 1.6 2009/06/16 16:09:51 pwebster Exp $
+ * $Id: WorkbenchPackageImpl.java,v 1.7 2009/07/07 14:27:32 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.workbench;
 
@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.internal.application.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
 import org.eclipse.e4.ui.model.workbench.MPerspective;
 import org.eclipse.e4.ui.model.workbench.MProxyPart;
+import org.eclipse.e4.ui.model.workbench.MToolItemRenderer;
 import org.eclipse.e4.ui.model.workbench.MWorkbench;
 import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.model.workbench.WorkbenchFactory;
@@ -75,6 +76,13 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * @generated
 	 */
 	private EClass mMenuItemRendererEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass mToolItemRendererEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -244,6 +252,24 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getMToolItemRenderer() {
+		return mToolItemRendererEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMToolItemRenderer_Renderer() {
+		return (EAttribute)mToolItemRendererEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getIContributionItem() {
 		return iContributionItemEDataType;
 	}
@@ -290,6 +316,9 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 
 		mMenuItemRendererEClass = createEClass(MMENU_ITEM_RENDERER);
 		createEAttribute(mMenuItemRendererEClass, MMENU_ITEM_RENDERER__RENDERER);
+
+		mToolItemRendererEClass = createEClass(MTOOL_ITEM_RENDERER);
+		createEAttribute(mToolItemRendererEClass, MTOOL_ITEM_RENDERER__RENDERER);
 
 		// Create data types
 		iContributionItemEDataType = createEDataType(ICONTRIBUTION_ITEM);
@@ -351,6 +380,7 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 		g1.getETypeArguments().add(g2);
 		mPerspectiveEClass.getEGenericSuperTypes().add(g1);
 		mMenuItemRendererEClass.getESuperTypes().add(theApplicationPackage.getMMenuItem());
+		mToolItemRendererEClass.getESuperTypes().add(theApplicationPackage.getMToolBarItem());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(mWorkbenchWindowEClass, MWorkbenchWindow.class, "MWorkbenchWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -373,6 +403,9 @@ public class WorkbenchPackageImpl extends EPackageImpl implements WorkbenchPacka
 
 		initEClass(mMenuItemRendererEClass, MMenuItemRenderer.class, "MMenuItemRenderer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getMMenuItemRenderer_Renderer(), this.getIContributionItem(), "renderer", null, 0, 1, MMenuItemRenderer.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(mToolItemRendererEClass, MToolItemRenderer.class, "MToolItemRenderer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getMToolItemRenderer_Renderer(), this.getIContributionItem(), "renderer", null, 0, 1, MToolItemRenderer.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		// Initialize data types
 		initEDataType(iContributionItemEDataType, Object.class, "IContributionItem", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$

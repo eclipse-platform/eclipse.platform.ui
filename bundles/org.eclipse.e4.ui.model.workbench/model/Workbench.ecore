@@ -52,4 +52,8 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="IContributionItem" instanceClassName="java.lang.Object"
       serializable="false"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MToolItemRenderer" eSuperTypes="Application.ecore#//MToolBarItem">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="renderer" eType="#//IContributionItem"
+        transient="true"/>
+  </eClassifiers>
 </ecore:EPackage>
