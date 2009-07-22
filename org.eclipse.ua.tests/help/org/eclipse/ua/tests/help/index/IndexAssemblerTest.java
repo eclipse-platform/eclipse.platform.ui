@@ -19,7 +19,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.UAElement;
