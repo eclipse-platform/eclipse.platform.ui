@@ -32,7 +32,6 @@ public class HighlightFilter implements IFilter {
 	private static final String sheetRefPart1 = "<link id=\"highlightStyle\" rel=\"STYLESHEET\" href=\""; //$NON-NLS-1$
 	private static final String sheetRefPart3 = "advanced/highlight.css\" charset=\"ISO-8859-1\" type=\"text/css\"></link>\n"; //$NON-NLS-1$
 	
-	private static final String noHighlightScript1 = "<script type=\"text/javascript\">\n<!--\nif (parent.ContentToolbarFrame && parent.ContentToolbarFrame.setButtonState) parent.ContentToolbarFrame.setButtonState(\"toggle_highlight\",\"hidden\");\n-->\n</script>\n"; //$NON-NLS-1$
 	/*
 	 * @see IFilter#filter(HttpServletRequest, OutputStream)
 	 */
@@ -47,11 +46,7 @@ public class HighlightFilter implements IFilter {
 
 		Collection keywords = getWords(req);
 		if (keywords.size() == 0) {
-			try {
-				return new FilterHTMLHeadOutputStream(out, noHighlightScript1.getBytes("ASCII")); //$NON-NLS-1$
-			} catch (UnsupportedEncodingException uee) {
-				return out;
-			}
+			return out;
 		}
 		keywords = removeWildCards(keywords);
 		keywords = encodeKeyWords(keywords);
