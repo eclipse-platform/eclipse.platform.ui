@@ -349,9 +349,8 @@ int preferredHeight(GC gc) {
 		gc.setFont(gcFont);
 	}
 	int prefHeight = h
-		+ getETabParent().tabTopPadding
-		+ getETabParent().topMargin
-		+ getETabParent().selectionMargin
+		+ getETabParent().tabTopMargin
+		+ getETabParent().getMaxTabTopPadding()
 		+ getETabParent().tabBottomPadding;
 		//all tabs pick max height
 	return prefHeight;

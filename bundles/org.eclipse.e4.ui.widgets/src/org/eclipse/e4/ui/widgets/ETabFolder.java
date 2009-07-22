@@ -33,8 +33,8 @@ public class ETabFolder extends CTabFolder {
 	//TODO tabTopMargin and tabBottomMargin aren't the correct values but
 	//until make it look more correct until bug #283648 is fixed
 	
-	int topMargin = 0;  //The space above the highest (selected) tab
-	int selectionMargin = 3;  //bonus margin for selected tabs
+	int tabTopMargin = 0;  //The space above the highest (selected) tab
+	int tabTopSelectionPadding = 6;  //pad within *selected* tab, above text, below line
 	int tabTopPadding = 3;  //pad within tab, above text, below line
 	int tabBottomPadding = 3; //bottom margin within tab
 	int hSpace = 2;  //horizontal spacing between tabs
@@ -110,6 +110,15 @@ public void setUnselectedTabBackgroundColor(Color color) {
 	if (selectedIndex > -1) redraw();
 }
 
+
+public int getTabTopMargin() {
+	return tabTopMargin;
+}
+
+public void setTabTopMargin(int tabTopMargin) {
+	this.tabTopMargin = tabTopMargin;
+}
+
 public int getTabTopPadding() {
 	return tabTopPadding;
 }
@@ -125,6 +134,15 @@ public int getTabBottomPadding() {
 public void setTabBottomPadding(int tabBottomPadding) {
 	this.tabBottomPadding = tabBottomPadding;
 }
+
+public int getTabTopSelectionPadding() {
+	return tabTopSelectionPadding;
+}
+
+public void setTabTopSelectionPadding(int tabTopSelectionPadding) {
+	this.tabTopSelectionPadding = tabTopSelectionPadding;
+}
+
 public boolean getWebbyStyle() {
 	return webbyStyle;
 }
@@ -164,7 +182,7 @@ public ETabItem [] getETabItems() {
 
 
 int getTextMidline() {
-	int topSpacing = topMargin + selectionMargin + tabTopPadding;
+	int topSpacing = tabTopMargin + getMaxTabTopPadding();
 	int textHeight = tabHeight - topSpacing - tabBottomPadding;
 	return (textHeight / 2) + topSpacing;
 }
@@ -361,6 +379,10 @@ void drawTabArea(Event event) {
 	}
 }
 
+int getMaxTabTopPadding() {
+	return Math.max(tabTopSelectionPadding, tabTopPadding);
+}
+
 boolean updateTabHeight(boolean force){
 	if (! useWebbyStyling() || fixedTabHeight != SWT.DEFAULT || items.length > 0) {
 		return super.updateTabHeight(force);
@@ -368,7 +390,7 @@ boolean updateTabHeight(boolean force){
 	
 	int tempHeight = 0;
 	GC gc = new GC(this);
-	tempHeight = gc.textExtent("Default", ETabItem.FLAGS).y + topMargin + selectionMargin + tabTopPadding + tabBottomPadding; //$NON-NLS-1$
+	tempHeight = gc.textExtent("Default", ETabItem.FLAGS).y + tabTopMargin + getMaxTabTopPadding() + tabBottomPadding; //$NON-NLS-1$
 
 	gc.dispose();
 	tabHeight =  tempHeight;
@@ -425,11 +447,11 @@ boolean setItemLocation() {
 
 //The space above the selected tab
 int getSelectedTabTopOffset() {
-	return topMargin;
+	return tabTopMargin + (getMaxTabTopPadding() - tabTopSelectionPadding);
 }
 //The space above the unselected tab
 int getUnselectedTabTopOffset() {
-	return topMargin + selectionMargin;
+	return tabTopMargin + (getMaxTabTopPadding() - tabTopPadding);
 }
 
 private boolean useWebbyStyling() {
