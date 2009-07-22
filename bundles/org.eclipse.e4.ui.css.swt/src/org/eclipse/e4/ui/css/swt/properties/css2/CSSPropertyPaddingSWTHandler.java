@@ -45,10 +45,10 @@ public class CSSPropertyPaddingSWTHandler extends
 		
 		// If single value then assigned to all four paddings
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			setPadding(element, TOP, value);
-			setPadding(element, RIGHT, value);
-			setPadding(element, BOTTOM, value);
-			setPadding(element, LEFT, value);
+			setPadding(element, TOP, value, pseudo);
+			setPadding(element, RIGHT, value, pseudo);
+			setPadding(element, BOTTOM, value, pseudo);
+			setPadding(element, LEFT, value, pseudo);
 			return;
 		}
 		
@@ -62,23 +62,23 @@ public class CSSPropertyPaddingSWTHandler extends
 			switch (length) {
 			case 4:
 				// If four values then assigned top/right/bottom/left
-				setPadding(element, TOP, valueList.item(0));
-				setPadding(element, RIGHT, valueList.item(1));
-				setPadding(element, BOTTOM, valueList.item(2));
-				setPadding(element, LEFT, valueList.item(3));				
+				setPadding(element, TOP, valueList.item(0), pseudo);
+				setPadding(element, RIGHT, valueList.item(1), pseudo);
+				setPadding(element, BOTTOM, valueList.item(2), pseudo);
+				setPadding(element, LEFT, valueList.item(3), pseudo);				
 				break;
 			case 3:
 				// If three values then assigned top=v1, left=v2, right=v2, bottom=v3
-				setPadding(element, TOP, valueList.item(0));
-				setPadding(element, RIGHT, valueList.item(1));
-				setPadding(element, BOTTOM, valueList.item(2));
-				setPadding(element, LEFT, valueList.item(1));
+				setPadding(element, TOP, valueList.item(0), pseudo);
+				setPadding(element, RIGHT, valueList.item(1), pseudo);
+				setPadding(element, BOTTOM, valueList.item(2), pseudo);
+				setPadding(element, LEFT, valueList.item(1), pseudo);
 			case 2:
 				// If two values then assigned top/bottom=v1, left/right=v2
-				setPadding(element, TOP, valueList.item(0));
-				setPadding(element, RIGHT, valueList.item(1));
-				setPadding(element, BOTTOM, valueList.item(0));
-				setPadding(element, LEFT, valueList.item(1));
+				setPadding(element, TOP, valueList.item(0), pseudo);
+				setPadding(element, RIGHT, valueList.item(1), pseudo);
+				setPadding(element, BOTTOM, valueList.item(0), pseudo);
+				setPadding(element, LEFT, valueList.item(1), pseudo);
 			}
 		} else {
 			throw new CSSException("Invalid padding property value");
@@ -87,22 +87,22 @@ public class CSSPropertyPaddingSWTHandler extends
 
 	public void applyCSSPropertyPaddingTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, TOP, value);
+		setPadding(element, TOP, value, pseudo);
 	}
 
 	public void applyCSSPropertyPaddingRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, RIGHT, value);
+		setPadding(element, RIGHT, value, pseudo);
 	}
 
 	public void applyCSSPropertyPaddingBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, BOTTOM, value);
+		setPadding(element, BOTTOM, value, pseudo);
 	}
 
 	public void applyCSSPropertyPaddingLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setPadding(element, LEFT, value);
+		setPadding(element, LEFT, value, pseudo);
 	}
 
 	public String retrieveCSSPropertyPadding(Object element, String pseudo,
@@ -135,7 +135,7 @@ public class CSSPropertyPaddingSWTHandler extends
 		return null;
 	}
 	
-	private void setPadding(Object element, int side, CSSValue value) {
+	private void setPadding(Object element, int side, CSSValue value, String pseudo) {
 		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
 			return;
 		Widget widget = SWTElementHelpers.getWidget(element);
@@ -151,7 +151,10 @@ public class CSSPropertyPaddingSWTHandler extends
 
 		switch (side) {
 		case TOP:
-			folder.setTabTopPadding(pixelValue);
+			if("selected".equals(pseudo))
+				folder.setTabTopSelectionPadding(pixelValue);
+			else
+				folder.setTabTopPadding(pixelValue);
 			break;
 		case BOTTOM:
 			folder.setTabBottomPadding(pixelValue);
