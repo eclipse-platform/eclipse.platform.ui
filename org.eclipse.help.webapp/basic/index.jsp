@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -21,7 +21,7 @@
 <jsp:include page="livehelp_js.jsp"/>
 </head>
 
-<frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>45,*">
+<frameset rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>45,*<%=data.getFooterRowText()%>">
 <%
 	if(!("0".equals(data.getBannerHeight()))){
 %>
@@ -31,6 +31,14 @@
 %>
 	<frame name="TabsFrame" title="<%=ServletResources.getString("helpToolbarFrame", request)%>" src='<%="basic/tabs.jsp"+data.getQuery()%>' marginwidth="5" marginheight="5" scrolling="no">
 	<frame name="HelpFrame" title="<%=ServletResources.getString("ignore", "HelpFrame", request)%>" src='<%="basic/help.jsp"+data.getQuery()%>' frameborder="no" marginwidth="0" marginheight="0" scrolling="no">
+<%
+	if(!("0".equals(data.getFooterHeight()))){
+%>
+	<frame name="FooterFrame" title="<%=ServletResources.getString("Footer", request)%>" src='<%=data.getFooterURL()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+<%
+	}
+%>
+
 </frameset>
 
 </html>

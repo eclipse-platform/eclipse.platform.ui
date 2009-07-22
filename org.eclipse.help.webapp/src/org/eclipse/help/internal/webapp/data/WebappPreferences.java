@@ -36,6 +36,17 @@ public class WebappPreferences {
 	public String getBannerHeight() {
 		return getPreferenceString("banner_height"); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @return String - URL of footer page or null
+	 */
+	public String getFooter() {
+		return getPreferenceString("footer"); //$NON-NLS-1$
+	}
+
+	public String getFooterHeight() {
+		return getPreferenceString("footer_height"); //$NON-NLS-1$
+	}
 
 	public String getHelpHome() {
 		return getPreferenceString("help_home"); //$NON-NLS-1$

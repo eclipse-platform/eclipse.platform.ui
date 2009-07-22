@@ -64,6 +64,38 @@ public class LayoutData extends RequestData {
 		}
 		return height;
 	}
+	
+	public String getFooterURL() {
+		String footer = preferences.getFooter();
+		if (footer == null || footer.trim().length() == 0) {
+			footer = "about:blank"; //$NON-NLS-1$
+		} else if (footer.startsWith("http:/") || footer.startsWith("https:/")) { //$NON-NLS-1$ //$NON-NLS-2$
+		} else if (footer.startsWith("file:/") || footer.startsWith("jar:file:/")) { //$NON-NLS-1$ //$NON-NLS-2$
+			footer = "topic/" + footer; //$NON-NLS-1$
+		} else {
+			footer = "topic" + footer; //$NON-NLS-1$
+		}
+		return footer;
+	}
+
+	public String getFooterHeight() {
+		String height = preferences.getFooterHeight();
+		if (height == null || height.length() == 0) {
+			height = "0"; //$NON-NLS-1$
+		}
+		return height;
+	}
+	
+	/**
+	 * @return the text to be added to the rows attribute of the frameset
+	 */
+	public String getFooterRowText() {
+		String height = getFooterHeight();
+		if ("0".equals(height)) { //$NON-NLS-1$
+			return ""; //$NON-NLS-1$
+		}
+		return "," + height; //$NON-NLS-1$
+	}
 
 	public String getContentURL() {
 		String navHref = request.getParameter("nav"); //$NON-NLS-1$

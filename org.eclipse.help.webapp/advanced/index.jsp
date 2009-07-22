@@ -47,7 +47,8 @@ function onloadHandler(e)
 	    if(h<=19){
 		    // no need to resize up to 19px 
 	    } else {
-	        document.getElementById("indexFrameset").setAttribute("rows", <%="0".equals(data.getBannerHeight())?"":"\""+data.getBannerHeight()+",\"+"%>(11+h)+",*"); <%-- default 24 --%>
+	        document.getElementById("indexFrameset").setAttribute("rows", 
+	            <%="0".equals(data.getBannerHeight())?"":"\""+data.getBannerHeight()+",\"+"%>(11+h)+",*<%=data.getFooterRowText()%>" ); <%-- default 24 --%>
         }
     }
     catch (e) {
@@ -67,7 +68,7 @@ if (data.isMozilla()){
 </script>
 </head>
 
-<frameset id="indexFrameset" onload="onloadHandler()" rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*"  frameborder="0" framespacing="0" border=0 spacing=0>
+<frameset id="indexFrameset" onload="onloadHandler()" rows="<%="0".equals(data.getBannerHeight())?"":data.getBannerHeight()+","%>24,*<%=data.getFooterRowText()%>"  frameborder="0" framespacing="0" border=0 spacing=0>
 <%
 	if(!("0".equals(data.getBannerHeight()))){
 %>
@@ -77,6 +78,13 @@ if (data.isMozilla()){
 %>
 	<frame name="SearchFrame" title="<%=ServletResources.getString("helpToolbarFrame", request)%>" src='<%="advanced/search.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name="HelpFrame" title="<%=ServletResources.getString("ignore", "HelpFrame", request)%>" src='<%="advanced/help.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" >
+<%
+	if(!("0".equals(data.getFooterHeight()))){
+%>
+	<frame name="FooterFrame" title="<%=ServletResources.getString("Footer", request)%>" src='<%=data.getFooterURL()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+<%
+	}
+%>
 </frameset>
 
 </html>
