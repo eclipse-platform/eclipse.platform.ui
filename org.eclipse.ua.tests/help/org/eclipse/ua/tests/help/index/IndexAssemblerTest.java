@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,9 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.IIndex;
+import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.index.Index;
@@ -51,6 +54,22 @@ public class IndexAssemblerTest extends TestCase {
 		String expected = serialize((UAElement)result_a_b_c.getIndex());
 		String actual = serialize(assembled);
 		assertEquals(trimWhiteSpace(expected), trimWhiteSpace(actual));
+	}
+	
+	public void testTitle() throws Exception{
+		IndexFileParser parser = new IndexFileParser();
+		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/hasTitle.xml", "en"));	
+		IndexAssembler assembler = new IndexAssembler();
+		List contributions = new ArrayList(Arrays.asList(new Object[] { contrib }));
+		Index index = assembler.assemble(contributions, Platform.getNL());
+	    IIndexEntry[] children = index.getEntries();
+	    assertEquals(1,children.length);
+	    assertEquals("keyword1", children[0].getKeyword());
+	    ITopic[] topics = children[0].getTopics();
+	    assertEquals(3, topics.length);
+	    assertEquals("topic0", topics[0].getLabel());
+	    assertEquals("topic1", topics[1].getLabel());
+	    assertEquals("topic2", topics[2].getLabel());
 	}
 	
 	// Replaces white space between ">" and "<" by a single newline
