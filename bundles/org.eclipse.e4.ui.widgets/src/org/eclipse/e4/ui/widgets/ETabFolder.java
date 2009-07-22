@@ -164,7 +164,9 @@ public ETabItem [] getETabItems() {
 
 
 int getTextMidline() {
-	return (tabHeight - topMargin - selectionMargin) /2 + topMargin + selectionMargin;
+	int topSpacing = topMargin + selectionMargin + tabTopPadding;
+	int textHeight = tabHeight - topSpacing - tabBottomPadding;
+	return (textHeight / 2) + topSpacing;
 }
 
 void drawBody(Event event) {
