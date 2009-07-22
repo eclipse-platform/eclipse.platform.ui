@@ -23,6 +23,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolBarItem;
 import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
+import org.eclipse.e4.ui.model.workbench.MToolItemRenderer;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
@@ -125,6 +126,12 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	private void createToolBarItem(MPart<?> part, ToolBarManager manager,
 			final MToolBarItem toolBarItem) {
+		if (toolBarItem instanceof MToolItemRenderer) {
+			final IContributionItem renderer = (IContributionItem) ((MToolItemRenderer) toolBarItem)
+					.getRenderer();
+			manager.add(renderer);
+			return;
+		}
 		manager
 				.add(new HandledContributionItem(toolBarItem, part.getContext()));
 	}
