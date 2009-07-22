@@ -440,6 +440,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 			else {
 				helpPart.showPage(IHelpUIConstants.HV_FSEARCH_PAGE, true);
 			}
+			helpPart.setFocus();
 		}
 		else {
 			// someone else was occupying the tray; not supported
