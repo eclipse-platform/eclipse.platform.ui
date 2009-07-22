@@ -5,10 +5,12 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
+import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.Widget;
 import org.w3c.css.sac.CSSException;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
@@ -26,13 +28,6 @@ public class CSSPropertyMarginSWTHandler extends
 
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		Control control = SWTElementHelpers.getControl(element);
-		if (control == null)
-			return false;
-		
-		Composite parent = control.getParent();
-		if (parent == null)
-			return true;
 		
 		super.applyCSSProperty(element, property, value, pseudo, engine);
 		return true;
@@ -141,8 +136,7 @@ public class CSSPropertyMarginSWTHandler extends
 		return null;
 	}
 
-	private GridLayout getLayout(Object element) {
-		Control control = SWTElementHelpers.getControl(element);
+	private GridLayout getLayout(Control control) {
 		if (control == null)
 			return null;
 		Composite parent = control.getParent();
@@ -158,12 +152,25 @@ public class CSSPropertyMarginSWTHandler extends
 	}
 	
 	private void setMargin(Object element, int side, CSSValue value) {
-		GridLayout layout = getLayout(element);
-		if(layout == null)
-			return;
 		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
 			return;
 		int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PX);
+
+		Widget widget = SWTElementHelpers.getWidget(element);
+		
+		if(widget instanceof ETabItem) {
+			if(side == TOP) {
+				((ETabItem) widget).getETabParent().setTabTopMargin(pixelValue);
+			}
+			return;
+		}
+
+		if(! (widget instanceof Control))
+			return;
+		
+		GridLayout layout = getLayout((Control) widget);
+		if(layout == null)
+			return;
 		switch (side) {
 		case TOP:
 			layout.marginTop = pixelValue;
