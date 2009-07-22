@@ -301,6 +301,10 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
             public void keyPressed(KeyEvent e) {
                 //If there has been a key pressed then mark as dirty
                 entryChanged = true;
+				if (e.character == SWT.CR) {
+					entryChanged = false;
+					updateFromSourceField();
+				}
             }
 
             /*
