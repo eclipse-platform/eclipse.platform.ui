@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyClassification
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyDimensionHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
+import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyPaddingHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -162,7 +163,7 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 		registerDefaultCSSProperty("text-transform",
 				ICSSPropertyTextHandler.class);
 
-		// Register CSS2 Margin Properties
+		// Register Margin Properties
 		registerDefaultCSSProperty("margin", ICSSPropertyMarginHandler.class);
 		registerDefaultCSSProperty("margin-bottom",
 				ICSSPropertyMarginHandler.class);
@@ -172,6 +173,17 @@ public class CSSPropertyHandlerSimpleProviderImpl extends
 				ICSSPropertyMarginHandler.class);
 		registerDefaultCSSProperty("margin-right",
 				ICSSPropertyMarginHandler.class);
+		
+		// Register Padding Properties
+		registerDefaultCSSProperty("padding", ICSSPropertyPaddingHandler.class);
+		registerDefaultCSSProperty("padding-bottom",
+				ICSSPropertyPaddingHandler.class);
+		registerDefaultCSSProperty("padding-left",
+				ICSSPropertyPaddingHandler.class);
+		registerDefaultCSSProperty("padding-top",
+				ICSSPropertyPaddingHandler.class);
+		registerDefaultCSSProperty("padding-right",
+				ICSSPropertyPaddingHandler.class);
 	}
 
 	public Collection getCSSPropertyHandlers(String property) throws Exception {

@@ -16,12 +16,14 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyBorderHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyClassificationHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyFontHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
+import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyPaddingHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyTextHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBackgroundSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyBorderSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyClassificationSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyFontSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyMarginSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyPaddingSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBodyKeylineColorHandler;
@@ -79,6 +81,9 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		// Register SWT CSS Property Margin Handler
 		super.registerCSSPropertyHandler(ICSSPropertyMarginHandler.class,
 				CSSPropertyMarginSWTHandler.INSTANCE);
+		// Register SWT CSS Property Padding Handler
+		super.registerCSSPropertyHandler(ICSSPropertyPaddingHandler.class,
+				CSSPropertyPaddingSWTHandler.INSTANCE);
 
 		// Register XML CSS Property Background Handler
 		super.registerCSSPropertyHandler(ICSSPropertyBackgroundHandler.class,

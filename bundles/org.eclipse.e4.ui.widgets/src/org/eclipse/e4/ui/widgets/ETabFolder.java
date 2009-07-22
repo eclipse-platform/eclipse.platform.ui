@@ -35,8 +35,8 @@ public class ETabFolder extends CTabFolder {
 	
 	int topMargin = 0;  //The space above the highest (selected) tab
 	int selectionMargin = 3;  //bonus margin for selected tabs
-	int tabTopMargin = 3;//5;  //margin within tab above text below line
-	int tabBottomMargin = 3;//6; //bottom margin within tab
+	int tabTopPadding = 3;  //pad within tab, above text, below line
+	int tabBottomPadding = 3; //bottom margin within tab
 	int hSpace = 2;  //horizontal spacing between tabs
 	int leftMargin = 4;  //first horizontal space
 	
@@ -110,6 +110,21 @@ public void setUnselectedTabBackgroundColor(Color color) {
 	if (selectedIndex > -1) redraw();
 }
 
+public int getTabTopPadding() {
+	return tabTopPadding;
+}
+
+public void setTabTopPadding(int tabTopPadding) {
+	this.tabTopPadding = tabTopPadding;
+}
+
+public int getTabBottomPadding() {
+	return tabBottomPadding;
+}
+
+public void setTabBottomPadding(int tabBottomPadding) {
+	this.tabBottomPadding = tabBottomPadding;
+}
 public boolean getWebbyStyle() {
 	return webbyStyle;
 }
@@ -351,7 +366,7 @@ boolean updateTabHeight(boolean force){
 	
 	int tempHeight = 0;
 	GC gc = new GC(this);
-	tempHeight = gc.textExtent("Default", ETabItem.FLAGS).y + topMargin + selectionMargin + tabTopMargin + tabBottomMargin; //$NON-NLS-1$
+	tempHeight = gc.textExtent("Default", ETabItem.FLAGS).y + topMargin + selectionMargin + tabTopPadding + tabBottomPadding; //$NON-NLS-1$
 
 	gc.dispose();
 	tabHeight =  tempHeight;
