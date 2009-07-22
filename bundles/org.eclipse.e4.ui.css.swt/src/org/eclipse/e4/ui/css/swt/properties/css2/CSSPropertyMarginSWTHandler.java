@@ -5,6 +5,7 @@ import org.eclipse.e4.ui.css.core.dom.properties.css2.ICSSPropertyMarginHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
+import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -159,8 +160,17 @@ public class CSSPropertyMarginSWTHandler extends
 		Widget widget = SWTElementHelpers.getWidget(element);
 		
 		if(widget instanceof ETabItem) {
-			if(side == TOP) {
-				((ETabItem) widget).getETabParent().setTabTopMargin(pixelValue);
+			ETabFolder folder = ((ETabItem) widget).getETabParent();
+			switch (side) {
+			case TOP:
+				folder.setTabTopMargin(pixelValue);
+				break;
+			case RIGHT:
+				folder.setTabRightMargin(pixelValue);
+				break;
+			case LEFT:
+				folder.setTabLeftMargin(pixelValue);
+				break;
 			}
 			return;
 		}

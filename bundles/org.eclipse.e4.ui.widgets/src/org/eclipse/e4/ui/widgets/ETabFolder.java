@@ -37,8 +37,9 @@ public class ETabFolder extends CTabFolder {
 	int tabTopSelectionPadding = 6;  //pad within *selected* tab, above text, below line
 	int tabTopPadding = 3;  //pad within tab, above text, below line
 	int tabBottomPadding = 3; //bottom margin within tab
-	int hSpace = 2;  //horizontal spacing between tabs
-	int leftMargin = 4;  //first horizontal space
+	int tabLeftMargin = 2;  //horizontal spacing left side of each tab
+	int tabRightMargin = 0;  //horizontal spacing left side of each tab
+	int leftMargin = 0;  //first horizontal space
 	
 	Color tabAreaKeylineColor;  // The exterior keyline color of the top tab area
 	Color bodyKeylineColor;		// The keyline color of the left, right, and bottom of the body
@@ -141,6 +142,22 @@ public int getTabTopSelectionPadding() {
 
 public void setTabTopSelectionPadding(int tabTopSelectionPadding) {
 	this.tabTopSelectionPadding = tabTopSelectionPadding;
+}
+
+public int getTabLeftMargin() {
+	return tabLeftMargin;
+}
+
+public void setTabLeftMargin(int tabLeftMargin) {
+	this.tabLeftMargin = tabLeftMargin;
+}
+
+public int getTabRightMargin() {
+	return tabRightMargin;
+}
+
+public void setTabRightMargin(int tabRightMargin) {
+	this.tabRightMargin = tabRightMargin;
 }
 
 public boolean getWebbyStyle() {
@@ -426,6 +443,7 @@ boolean setItemLocation() {
 		} else {
 			firstIndex = Math.min(firstIndex, i);
 			if (item.x != x || item.y != y) changed = true;
+			x = x + tabLeftMargin;
 			item.x = x;
 			item.y = y;
 			if (i == selectedIndex) {
@@ -437,7 +455,7 @@ boolean setItemLocation() {
 				item.y = item.y;
 			}
 			item.closeRect.y = getTextMidline() - BUTTON_SIZE /2;
-			x = x + item.width + hSpace;
+			x = x + item.width + tabRightMargin;
 		}
 	}
 	
