@@ -39,6 +39,10 @@ public class PartRenderingEngine {
 		@Override
 		public void notifyChanged(Notification msg) {
 			if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg.getFeature())) {
+				// skip no-ops
+				if (msg.getOldBooleanValue() == msg.getNewBooleanValue())
+					return;
+					
 				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
 
 				// If the parent isn't displayed who cares?
