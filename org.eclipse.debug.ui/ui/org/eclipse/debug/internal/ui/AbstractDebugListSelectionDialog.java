@@ -42,11 +42,8 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 	
-	/**
-	 * Create and return a viewer to use in this dialog.
-	 * 
-	 * @param parent the composite the viewer should be created in
-	 * @return the viewer to use in the dialog
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.AbstractDebugSelectionDialog#createViewer(org.eclipse.swt.widgets.Composite)
 	 */
 	protected StructuredViewer createViewer(Composite parent){
 		//by default return a table viewer

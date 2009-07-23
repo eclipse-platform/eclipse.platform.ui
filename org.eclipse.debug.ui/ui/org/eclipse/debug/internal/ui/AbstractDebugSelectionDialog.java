@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -47,6 +46,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	 */
 	public AbstractDebugSelectionDialog(Shell parentShell) {
 		super(parentShell);
+		setDialogBoundsSettings(getDialogBoundsSettings(), Dialog.DIALOG_PERSISTSIZE);
 	}
 	
 	/**
@@ -212,25 +212,4 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 		} 
 		return section;
 	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#getInitialSize()
-	 */
-	protected Point getInitialSize() {
-		IDialogSettings settings = getDialogBoundsSettings();
-		if(settings != null) {
-			try {
-				int width = settings.getInt("DIALOG_WIDTH"); //$NON-NLS-1$
-				int height = settings.getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
-				if(width > 0 & height > 0) {
-					return new Point(width, height);
-				}
-			}
-			catch (NumberFormatException nfe) {
-				return new Point(350, 350);
-			}
-		}
-		return new Point(350, 350);
-	}
-	
 }
