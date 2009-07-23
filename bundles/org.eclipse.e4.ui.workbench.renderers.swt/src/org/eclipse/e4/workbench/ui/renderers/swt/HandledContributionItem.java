@@ -397,9 +397,15 @@ public class HandledContributionItem extends ContributionItem {
 		// find the first useful part in the model
 		Control control = display.getFocusControl();
 		Object partObj = null;
-		while (control != null && !(partObj instanceof MPart<?>)) {
+		Object localContext = null;
+		while (control != null && localContext == null
+				&& !(partObj instanceof MPart<?>)) {
 			partObj = control.getData(AbstractPartRenderer.OWNING_ME);
+			localContext = control.getData("localContext"); //$NON-NLS-1$
 			control = control.getParent();
+		}
+		if (localContext != null) {
+			return (IEclipseContext) localContext;
 		}
 		if (partObj == null) {
 			return context;
