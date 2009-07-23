@@ -47,10 +47,10 @@ public class CSSPropertyMarginSWTHandler extends
 		
 		// If single value then assigned to all four margins
 		if(value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-			setMargin(element, TOP, value);
-			setMargin(element, RIGHT, value);
-			setMargin(element, BOTTOM, value);
-			setMargin(element, LEFT, value);
+			setMargin(element, TOP, value, pseudo);
+			setMargin(element, RIGHT, value, pseudo);
+			setMargin(element, BOTTOM, value, pseudo);
+			setMargin(element, LEFT, value, pseudo);
 			return;
 		}
 		
@@ -64,23 +64,23 @@ public class CSSPropertyMarginSWTHandler extends
 			switch (length) {
 			case 4:
 				// If four values then assigned top/right/bottom/left
-				setMargin(element, TOP, valueList.item(0));
-				setMargin(element, RIGHT, valueList.item(1));
-				setMargin(element, BOTTOM, valueList.item(2));
-				setMargin(element, LEFT, valueList.item(3));				
+				setMargin(element, TOP, valueList.item(0), pseudo);
+				setMargin(element, RIGHT, valueList.item(1), pseudo);
+				setMargin(element, BOTTOM, valueList.item(2), pseudo);
+				setMargin(element, LEFT, valueList.item(3), pseudo);				
 				break;
 			case 3:
 				// If three values then assigned top=v1, left=v2, right=v2, bottom=v3
-				setMargin(element, TOP, valueList.item(0));
-				setMargin(element, RIGHT, valueList.item(1));
-				setMargin(element, BOTTOM, valueList.item(2));
-				setMargin(element, LEFT, valueList.item(1));
+				setMargin(element, TOP, valueList.item(0), pseudo);
+				setMargin(element, RIGHT, valueList.item(1), pseudo);
+				setMargin(element, BOTTOM, valueList.item(2), pseudo);
+				setMargin(element, LEFT, valueList.item(1), pseudo);
 			case 2:
 				// If two values then assigned top/bottom=v1, left/right=v2
-				setMargin(element, TOP, valueList.item(0));
-				setMargin(element, RIGHT, valueList.item(1));
-				setMargin(element, BOTTOM, valueList.item(0));
-				setMargin(element, LEFT, valueList.item(1));
+				setMargin(element, TOP, valueList.item(0), pseudo);
+				setMargin(element, RIGHT, valueList.item(1), pseudo);
+				setMargin(element, BOTTOM, valueList.item(0), pseudo);
+				setMargin(element, LEFT, valueList.item(1), pseudo);
 			}
 		} else {
 			throw new CSSException("Invalid margin property value");
@@ -89,22 +89,22 @@ public class CSSPropertyMarginSWTHandler extends
 
 	public void applyCSSPropertyMarginTop(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, TOP, value);
+		setMargin(element, TOP, value, pseudo);
 	}
 
 	public void applyCSSPropertyMarginRight(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, RIGHT, value);
+		setMargin(element, RIGHT, value, pseudo);
 	}
 
 	public void applyCSSPropertyMarginBottom(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, BOTTOM, value);
+		setMargin(element, BOTTOM, value, pseudo);
 	}
 
 	public void applyCSSPropertyMarginLeft(Object element, CSSValue value,
 			String pseudo, CSSEngine engine) throws Exception {
-		setMargin(element, LEFT, value);
+		setMargin(element, LEFT, value, pseudo);
 	}
 
 	public String retrieveCSSPropertyMargin(Object element, String pseudo,
@@ -152,7 +152,7 @@ public class CSSPropertyMarginSWTHandler extends
 		return (GridLayout) layout;
 	}
 	
-	private void setMargin(Object element, int side, CSSValue value) {
+	private void setMargin(Object element, int side, CSSValue value, String pseudo) {
 		if(value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE)
 			return;
 		int pixelValue = (int) ((CSSPrimitiveValue) value).getFloatValue(CSSPrimitiveValue.CSS_PX);
@@ -160,19 +160,8 @@ public class CSSPropertyMarginSWTHandler extends
 		Widget widget = SWTElementHelpers.getWidget(element);
 		
 		if(widget instanceof ETabItem) {
-			ETabFolder folder = ((ETabItem) widget).getETabParent();
-			switch (side) {
-			case TOP:
-				folder.setTabTopMargin(pixelValue);
-				break;
-			case RIGHT:
-				folder.setTabRightMargin(pixelValue);
-				break;
-			case LEFT:
-				folder.setTabLeftMargin(pixelValue);
-				break;
-			}
-			return;
+			if(setMargin((ETabItem) widget, side, pixelValue, pseudo))
+				return;
 		}
 
 		if(! (widget instanceof Control))
@@ -195,5 +184,21 @@ public class CSSPropertyMarginSWTHandler extends
 			layout.marginLeft = pixelValue;
 			break;
 		}
+	}
+		
+	private boolean setMargin(ETabItem widget, int side, int pixelValue, String pseudo) {
+		ETabFolder folder = ((ETabItem) widget).getETabParent();
+		switch (side) {
+		case TOP:
+			folder.setTabTopMargin(pixelValue);
+			return true;
+		case RIGHT:
+			folder.setTabRightMargin(pixelValue);
+			return true;
+		case LEFT:
+			folder.setTabLeftMargin(pixelValue);
+			return true;
+		}
+		return false;
 	}
 }

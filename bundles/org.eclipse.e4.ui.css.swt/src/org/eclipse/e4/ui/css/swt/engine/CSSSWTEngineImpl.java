@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabHeightHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabMarginOffsetHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedCloseVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyWebbyStyleHandler;
@@ -151,10 +152,15 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		
 		//ETabFolder properties
 		
-		//Register ETabFolder CSS Property webbyStyle
+		//Register ETabFolder CSS Property webby-style
 		super.registerCSSProperty("webby-style", CSSPropertyWebbyStyleHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyWebbyStyleHandler.class,
 				CSSPropertyWebbyStyleHandler.INSTANCE);
+
+		//Register ETabFolder CSS Property tab-margin-offset
+		super.registerCSSProperty("tab-margin-offset", CSSPropertyTabMarginOffsetHandler.class);  
+		super.registerCSSPropertyHandler(CSSPropertyTabMarginOffsetHandler.class,
+				CSSPropertyTabMarginOffsetHandler.INSTANCE);
 	}
 
 }

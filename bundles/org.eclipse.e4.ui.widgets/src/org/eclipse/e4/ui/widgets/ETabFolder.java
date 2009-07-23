@@ -39,7 +39,7 @@ public class ETabFolder extends CTabFolder {
 	int tabBottomPadding = 3; 	//bottom margin within tab
 	int tabLeftMargin = 2;  	//horizontal spacing left side of each tab
 	int tabRightMargin = 0;  	//horizontal spacing left side of each tab
-	int leftMargin = 0;  		//first horizontal space
+	int tabMarginOffset = 0;  	//horizontal space added between folder frame and leftmost tab
 	
 	Color topBorderColor;  		// The exterior keyline color of the top tab area
 	Color bottomBorderColor;	// The keyline color of the left, right, and bottom of the body
@@ -158,6 +158,14 @@ public int getTabRightMargin() {
 
 public void setTabRightMargin(int tabRightMargin) {
 	this.tabRightMargin = tabRightMargin;
+}
+
+public int getTabMarginOffset() {
+	return tabMarginOffset;
+}
+
+public void setTabMarginOffset(int value) {
+	this.tabMarginOffset = value;
 }
 
 public boolean getWebbyStyle() {
@@ -432,7 +440,7 @@ boolean setItemLocation() {
 		width += item.width;
 		item.showing = i == 0 ? true : item.width > 0 && width <= maxWidth;
 	}
-	int x = leftMargin;
+	int x = tabMarginOffset;
 	int defaultX = getDisplay().getBounds().width + 10; // off screen
 	firstIndex = items.length - 1;
 	for (int i = 0; i < items.length; i++) {
