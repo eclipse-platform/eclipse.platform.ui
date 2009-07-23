@@ -26,22 +26,19 @@ import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyMarginSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyPaddingSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.css2.CSSPropertyTextSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyAlignmentSWTHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBodyKeylineColorHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabHeightHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyWebbyStyleHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizeVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizedSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShowCloseHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySimpleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabAreaKeylineColorHandler;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabKeylineColorHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabHeightHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedCloseVisibleSWTHandler;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler;
+import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyWebbyStyleHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyBackgroundXMLHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyFontXMLHandler;
 import org.eclipse.e4.ui.css.xml.properties.css2.CSSPropertyTextXMLHandler;
@@ -158,22 +155,6 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 		super.registerCSSProperty("webby-style", CSSPropertyWebbyStyleHandler.class);  
 		super.registerCSSPropertyHandler(CSSPropertyWebbyStyleHandler.class,
 				CSSPropertyWebbyStyleHandler.INSTANCE);
-
-		//Register ETabFolder CSS Property tabAreaKeylineColor
-		super.registerCSSProperty("tab-area-keyline-color", CSSPropertyTabAreaKeylineColorHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyTabAreaKeylineColorHandler.class,
-				CSSPropertyTabAreaKeylineColorHandler.INSTANCE);
-
-		//Register ETabFolder CSS Property bodyKeylineColor
-		super.registerCSSProperty("body-keyline-color", CSSPropertyBodyKeylineColorHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyBodyKeylineColorHandler.class,
-				CSSPropertyBodyKeylineColorHandler.INSTANCE);
-
-		//Register ETabFolder CSS Property tabKeylineColor
-		super.registerCSSProperty("tab-keyline-color", CSSPropertyTabKeylineColorHandler.class);  
-		super.registerCSSPropertyHandler(CSSPropertyTabKeylineColorHandler.class,
-				CSSPropertyTabKeylineColorHandler.INSTANCE);
-
 	}
 
 }

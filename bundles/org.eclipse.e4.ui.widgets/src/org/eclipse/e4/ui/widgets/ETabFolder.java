@@ -33,17 +33,17 @@ public class ETabFolder extends CTabFolder {
 	//TODO tabTopMargin and tabBottomMargin aren't the correct values but
 	//until make it look more correct until bug #283648 is fixed
 	
-	int tabTopMargin = 0;  //The space above the highest (selected) tab
+	int tabTopMargin = 0;  		//The space above the highest (selected) tab
 	int tabTopSelectionPadding = 6;  //pad within *selected* tab, above text, below line
-	int tabTopPadding = 3;  //pad within tab, above text, below line
-	int tabBottomPadding = 3; //bottom margin within tab
-	int tabLeftMargin = 2;  //horizontal spacing left side of each tab
-	int tabRightMargin = 0;  //horizontal spacing left side of each tab
-	int leftMargin = 0;  //first horizontal space
+	int tabTopPadding = 3;  	//pad within tab, above text, below line
+	int tabBottomPadding = 3; 	//bottom margin within tab
+	int tabLeftMargin = 2;  	//horizontal spacing left side of each tab
+	int tabRightMargin = 0;  	//horizontal spacing left side of each tab
+	int leftMargin = 0;  		//first horizontal space
 	
-	Color tabAreaKeylineColor;  // The exterior keyline color of the top tab area
-	Color bodyKeylineColor;		// The keyline color of the left, right, and bottom of the body
-	Color tabKeylineColor;		// Keyline color for the tabs themselves
+	Color topBorderColor;  		// The exterior keyline color of the top tab area
+	Color bottomBorderColor;	// The keyline color of the left, right, and bottom of the body
+	Color tabBorderColor;		// Keyline color for the tabs themselves
 	Color unselectedTabBackgroundColor;
 	
 /**
@@ -57,45 +57,45 @@ public ETabFolder(Composite parent, int style) {
 void init(int style) {
 	super.init(style);
 	
-	tabAreaKeylineColor = getDisplay().getSystemColor(BORDER1_COLOR);
-	bodyKeylineColor = getDisplay().getSystemColor(BORDER1_COLOR);
-	tabKeylineColor = getDisplay().getSystemColor(BORDER1_COLOR);
+	topBorderColor = getDisplay().getSystemColor(BORDER1_COLOR);
+	bottomBorderColor = getDisplay().getSystemColor(BORDER1_COLOR);
+	tabBorderColor = getDisplay().getSystemColor(BORDER1_COLOR);
 	unselectedTabBackgroundColor = getBackground();
 }
 
-public Color getTabAreaKeylineColor() {
-	return tabAreaKeylineColor;
+public Color getTopBorderColor() {
+	return topBorderColor;
 }
 
-public void setTabAreaKeylineColor(Color color) {
+public void setTopBorderColor(Color color) {
 	checkWidget();
-	if (tabAreaKeylineColor == color) return;
+	if (topBorderColor == color) return;
 	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
-	tabAreaKeylineColor = color;
+	topBorderColor = color;
 	if (selectedIndex > -1) redraw();
 }
 
-public Color getBodyKeylineColor() {
-	return bodyKeylineColor;
+public Color getBottomBorderColor() {
+	return bottomBorderColor;
 }
 
-public void setBodyKeylineColor(Color color) {
+public void setBottomBorderColor(Color color) {
 	checkWidget();
-	if (bodyKeylineColor == color) return;
+	if (bottomBorderColor == color) return;
 	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
-	bodyKeylineColor = color;
+	bottomBorderColor = color;
 	if (selectedIndex > -1) redraw();
 }
 
-public Color getTabKeylineColor() {
-	return tabKeylineColor;
+public Color getTabBorderColor() {
+	return tabBorderColor;
 }
 
-public void setTabKeylineColor(Color color) {
+public void setTabBorderColor(Color color) {
 	checkWidget();
-	if (tabKeylineColor == color) return;
+	if (tabBorderColor == color) return;
 	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
-	tabKeylineColor = color;
+	tabBorderColor = color;
 	if (selectedIndex > -1) redraw();
 }
 
@@ -264,7 +264,7 @@ void drawBody(Event event) {
 	
 	//draw 1 pixel border around outside
 	if (borderLeft > 0) {
-		gc.setForeground(bodyKeylineColor);
+		gc.setForeground(bottomBorderColor);
 		int x1 = borderLeft - 1;
 		int x2 = size.x - borderRight;
 		int y1 = onBottom ? borderTop - 1 : borderTop + tabHeight;
@@ -283,7 +283,7 @@ void drawTabArea(Event event) {
 	GC gc = event.gc;
 	Point size = getSize();
 	int[] shape = null;
-	Color borderColor = tabAreaKeylineColor;
+	Color borderColor = topBorderColor;
 
 	if (tabHeight == 0) {
 		int style = getStyle();

@@ -19,11 +19,13 @@ import org.eclipse.e4.ui.css.core.impl.dom.properties.CSSBorderPropertiesImpl;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTHelpers;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
-
+import org.eclipse.e4.ui.widgets.ETabFolder;
+import org.eclipse.e4.ui.widgets.ETabItem;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-
+import org.eclipse.swt.widgets.Widget;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
@@ -34,6 +36,19 @@ public class CSSPropertyBorderSWTHandler extends
 
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
+		
+		Widget widget = SWTElementHelpers.getWidget(element);
+		
+		if(widget instanceof ETabItem) {
+			if(applyCSSPropertyBorder((ETabItem) widget, property, value, pseudo, engine))
+				return true;
+		}
+		
+		if(widget instanceof ETabFolder) {
+			if(applyCSSPropertyBorder((ETabFolder) widget, property, value, pseudo, engine))
+				return true;
+		}
+		
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
 			Composite parent = control.getParent();
@@ -69,6 +84,38 @@ public class CSSPropertyBorderSWTHandler extends
 
 	}
 
+	private boolean applyCSSPropertyBorder(ETabItem item, String property,
+			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
+		Color newColor = (Color) engine.convert(value, Color.class, item.getDisplay());
+		ETabFolder folder = item.getETabParent();
+		
+		if("border-color".equals(property)) {
+			folder.setTabBorderColor(newColor);
+			return true;
+		}
+		return false;
+	}
+
+	private boolean applyCSSPropertyBorder(ETabFolder folder, String property,
+			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
+		Color newColor = (Color) engine.convert(value, Color.class, folder.getDisplay());
+		
+		if("border-color".equals(property)) {
+			folder.setTopBorderColor(newColor);
+			folder.setBottomBorderColor(newColor);
+			return true;
+		}
+		if("border-top-color".equals(property)) {
+			folder.setTopBorderColor(newColor);
+			return true;
+		}
+		if("border-bottom-color".equals(property)) {
+			folder.setBottomBorderColor(newColor);
+			return true;
+		}
+		return false;
+	}
+	
 	public void onAllCSSPropertiesApplyed(Object element, CSSEngine engine)
 			throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
