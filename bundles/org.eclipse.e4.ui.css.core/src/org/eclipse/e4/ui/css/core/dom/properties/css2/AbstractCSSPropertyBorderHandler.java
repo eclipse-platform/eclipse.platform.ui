@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom.properties.css2;
 
@@ -19,10 +20,6 @@ import org.w3c.dom.css.CSSValue;
 /**
  * Abstract CSS property background which is enable to manage 
  * apply CSS Property border, border-color, border-style...
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public abstract class AbstractCSSPropertyBorderHandler extends
 		AbstractCSSPropertyBorderCompositeHandler implements
