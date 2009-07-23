@@ -115,6 +115,12 @@ public class StackRenderer extends LazyStackRenderer {
 
 			final IEclipseContext folderContext = part.getContext();
 			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
+
+			folderContext.set("canCloseFunc", new IValueFunction() { //$NON-NLS-1$
+						public Object getValue() {
+							return true;
+						}
+					});
 			final IEclipseContext toplevelContext = getToplevelContext(part);
 			folderContext.runAndTrack(new Runnable() {
 				public void run() {
