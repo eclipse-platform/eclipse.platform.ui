@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.menus;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
@@ -69,9 +70,12 @@ public abstract class ExtensionContributionFactory extends
 	 * Clients who wish to implement their own {@link IExecutableExtension}
 	 * behaviour <strong>must</strong> invoke this method prior to any
 	 * customization they perform.
+	 * 
+	 * @throws CoreException
+	 *             so that a subclass may throw this
 	 */
 	public void setInitializationData(IConfigurationElement config,
-			String propertyName, Object data) {
+			String propertyName, Object data) throws CoreException {
 		locationURI = config
 				.getAttribute(IWorkbenchRegistryConstants.TAG_LOCATION_URI);
 		namespace = config.getNamespaceIdentifier();
