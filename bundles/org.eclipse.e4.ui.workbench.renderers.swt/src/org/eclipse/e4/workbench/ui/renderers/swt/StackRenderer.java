@@ -53,6 +53,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
@@ -330,7 +331,13 @@ public class StackRenderer extends LazyStackRenderer {
 		boolean isEditorStack = policy != null
 				&& policy.indexOf("EditorStack") >= 0; //$NON-NLS-1$
 		if (ctf.getItemCount() == 0 && !isEditorStack) {
+			final Shell sh = ctf.getShell();
 			parentElement.setVisible(false);
+			sh.getDisplay().asyncExec(new Runnable() {
+				public void run() {
+					sh.layout(true, true);
+				}
+			});
 		}
 
 		// Auto-remove 'editor stack' entries on close

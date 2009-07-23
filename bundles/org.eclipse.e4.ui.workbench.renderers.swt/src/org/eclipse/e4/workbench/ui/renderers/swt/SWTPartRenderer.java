@@ -311,7 +311,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
 		super.childRemoved(parentElement, child);
 
-		if (child.getWidget() instanceof Control) {
+		if (child.isVisible() && child.getWidget() instanceof Control) {
 			Control ctrl = (Control) child.getWidget();
 			locallyHide(ctrl);
 		}
