@@ -572,4 +572,8 @@ public class Workbench implements IWorkbench {
 			}
 		});
 	}
+
+	public MApplication getModel() {
+		return workbench;
+	}
 }
