@@ -46,8 +46,12 @@ public class WorkbenchWindowHandler implements IWorkbenchWindowHandler {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
-			} catch (Throwable e) {
-				e.printStackTrace();
+			} catch (ThreadDeath th) {
+				throw th;
+			} catch (Exception ex) {
+				ex.printStackTrace();
+			} catch (Error err) {
+				err.printStackTrace();
 			}
 		}
 
