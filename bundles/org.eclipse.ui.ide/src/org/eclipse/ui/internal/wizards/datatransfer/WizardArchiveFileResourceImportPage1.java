@@ -19,16 +19,14 @@ import java.util.List;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
-
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.AdaptableList;
@@ -149,6 +147,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     private boolean ensureZipSourceIsValid() {
         ZipFile specifiedFile = getSpecifiedZipSourceFile();
         if (specifiedFile == null) {
+			setErrorMessage(DataTransferMessages.ZipImport_badFormat);
             return false;
         }
         return ArchiveFileManipulations.closeZipFile(specifiedFile, getShell());
@@ -157,6 +156,7 @@ public class WizardArchiveFileResourceImportPage1 extends
     private boolean ensureTarSourceIsValid() {
     	TarFile specifiedFile = getSpecifiedTarSourceFile();
     	if( specifiedFile == null ) {
+			setErrorMessage(DataTransferMessages.TarImport_badFormat);
     		return false;
     	}
     	return ArchiveFileManipulations.closeTarFile(specifiedFile, getShell());
@@ -300,9 +300,9 @@ public class WizardArchiveFileResourceImportPage1 extends
         try {
             return new ZipFile(fileName);
         } catch (ZipException e) {
-            displayErrorDialog(DataTransferMessages.ZipImport_badFormat);
+			// ignore
         } catch (IOException e) {
-            displayErrorDialog(DataTransferMessages.ZipImport_couldNotRead);
+			// ignore
         }
 
         sourceNameField.setFocus();
@@ -329,9 +329,9 @@ public class WizardArchiveFileResourceImportPage1 extends
         try {
             return new TarFile(fileName);
         } catch (TarException e) {
-        	displayErrorDialog(DataTransferMessages.TarImport_badFormat);
+			// ignore
         } catch (IOException e) {
-            displayErrorDialog(DataTransferMessages.ZipImport_couldNotRead);
+			// ignore
         }
 
         sourceNameField.setFocus();
@@ -489,7 +489,7 @@ public class WizardArchiveFileResourceImportPage1 extends
             enableButtonGroup(false);
             return false;
         }
-        
+
         List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
         if (resourcesToExport.size() == 0){
         	setErrorMessage(DataTransferMessages.FileImport_noneSelected);
