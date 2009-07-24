@@ -84,7 +84,7 @@ public void setBottomBorderColor(Color color) {
 	if (bottomBorderColor == color) return;
 	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
 	bottomBorderColor = color;
-	if (selectedIndex > -1) redraw();
+	redraw();
 }
 
 public Color getTabBorderColor() {
@@ -96,7 +96,7 @@ public void setTabBorderColor(Color color) {
 	if (tabBorderColor == color) return;
 	if (color == null) color = getDisplay().getSystemColor(BORDER1_COLOR);
 	tabBorderColor = color;
-	if (selectedIndex > -1) redraw();
+	redraw();
 }
 
 public Color getUnselectedTabBackgroundColor() {
@@ -117,7 +117,12 @@ public int getTabTopMargin() {
 }
 
 public void setTabTopMargin(int tabTopMargin) {
+	checkWidget();
+	if(this.tabTopMargin == tabTopMargin) return;
 	this.tabTopMargin = tabTopMargin;
+	updateItems();
+	updateTabHeight(true);
+	redraw();
 }
 
 public int getTabTopPadding() {
@@ -125,7 +130,12 @@ public int getTabTopPadding() {
 }
 
 public void setTabTopPadding(int tabTopPadding) {
+	checkWidget();
+	if(this.tabTopPadding == tabTopPadding) return;
 	this.tabTopPadding = tabTopPadding;
+	updateItems();
+	updateTabHeight(true);
+	redraw();
 }
 
 public int getTabBottomPadding() {
@@ -133,7 +143,12 @@ public int getTabBottomPadding() {
 }
 
 public void setTabBottomPadding(int tabBottomPadding) {
+	checkWidget();
+	if(this.tabBottomPadding == tabBottomPadding) return;
 	this.tabBottomPadding = tabBottomPadding;
+	updateItems();
+	updateTabHeight(true);
+	redraw();
 }
 
 public int getTabTopSelectionPadding() {
@@ -141,7 +156,12 @@ public int getTabTopSelectionPadding() {
 }
 
 public void setTabTopSelectionPadding(int tabTopSelectionPadding) {
+	checkWidget();
+	if(this.tabTopSelectionPadding == tabTopSelectionPadding) return;
 	this.tabTopSelectionPadding = tabTopSelectionPadding;
+	updateItems();
+	updateTabHeight(true);
+	redraw();
 }
 
 public int getTabLeftMargin() {
@@ -149,7 +169,11 @@ public int getTabLeftMargin() {
 }
 
 public void setTabLeftMargin(int tabLeftMargin) {
+	checkWidget();
+	if(this.tabLeftMargin == tabLeftMargin) return;
 	this.tabLeftMargin = tabLeftMargin;
+	updateItems();
+	redraw();
 }
 
 public int getTabRightMargin() {
@@ -157,7 +181,11 @@ public int getTabRightMargin() {
 }
 
 public void setTabRightMargin(int tabRightMargin) {
+	checkWidget();
+	if(this.tabRightMargin == tabRightMargin) return;
 	this.tabRightMargin = tabRightMargin;
+	updateItems();
+	redraw();
 }
 
 public int getTabMarginOffset() {
@@ -165,7 +193,11 @@ public int getTabMarginOffset() {
 }
 
 public void setTabMarginOffset(int value) {
+	checkWidget();
+	if(this.tabMarginOffset == value) return;
 	this.tabMarginOffset = value;
+	updateItems();
+	redraw();
 }
 
 public boolean getWebbyStyle() {
