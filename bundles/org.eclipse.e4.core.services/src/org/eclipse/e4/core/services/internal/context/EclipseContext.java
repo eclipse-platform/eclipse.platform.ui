@@ -200,6 +200,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 
 	// TODO replace with variable on bundle-specific class
 	public static boolean DEBUG = false;
+	public static boolean DEBUG_VERBOSE = false;
+	public static String DEBUG_VERBOSE_NAME = null;
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
@@ -259,6 +261,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	protected Object internalGet(EclipseContext originatingContext, String name,
 			Object[] arguments, boolean local) {
 		trackAccess(name);
+		if (DEBUG_VERBOSE) {
+			System.out.println("IEC.get(" + name + ", " + arguments + ", " + local + "):"
+					+ originatingContext + " for " + toString());
+		}
 		LookupKey lookupKey = new LookupKey(name, arguments);
 		if (this == originatingContext) {
 			ValueComputation valueComputation = (ValueComputation) localValueComputations
@@ -286,6 +292,9 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				if (this != originatingContext)
 					valueComputation.addDependency(originatingContext, IContextConstants.PARENT);
 				result = valueComputation.get(arguments);
+			}
+			if (DEBUG_VERBOSE) {
+				System.out.println("IEC.get(" + name + "): " + result);
 			}
 			return result;
 		}
@@ -381,6 +390,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		boolean containsKey = localValues.containsKey(name);
 		Object oldValue = localValues.put(name, value);
 		if (!containsKey || value != oldValue) {
+			if (DEBUG_VERBOSE) {
+				System.out.println("IEC.set(" + name + "," + value + "):" + oldValue + " for "
+						+ toString());
+			}
 			invalidate(name, ContextChangeEvent.ADDED, oldValue);
 		}
 	}
