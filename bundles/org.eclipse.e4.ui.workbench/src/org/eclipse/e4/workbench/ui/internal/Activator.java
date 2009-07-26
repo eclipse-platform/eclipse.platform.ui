@@ -11,6 +11,7 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.core.services.ISchedulingExecutor;
+import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugTrace;
@@ -117,6 +118,11 @@ public class Activator implements BundleActivator {
 		this.context = context;
 		executorTracker = context.registerService(ISchedulingExecutor.SERVICE_NAME,
 				new JobExecutor(), null);
+		EclipseContext.DEBUG = getDebugOptions().getBooleanOption(
+				PI_WORKBENCH + Policy.DEBUG_CONTEXTS, false);
+		EclipseContext.DEBUG_VERBOSE = EclipseContext.DEBUG
+				&& getDebugOptions().getBooleanOption(PI_WORKBENCH + Policy.DEBUG_CONTEXTS_VERBOSE,
+						false);
 	}
 
 	public void stop(BundleContext context) throws Exception {
