@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
+import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -39,6 +40,8 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -59,6 +62,8 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class StackRenderer extends LazyStackRenderer {
+
+	private static final String FOLDER_DISPOSED = "folderDisposed"; //$NON-NLS-1$
 
 	Image viewMenuImage;
 
@@ -122,23 +127,24 @@ public class StackRenderer extends LazyStackRenderer {
 							return true;
 						}
 					});
+			folderContext.set(FOLDER_DISPOSED, Boolean.FALSE);
 			final IEclipseContext toplevelContext = getToplevelContext(part);
-			folderContext.runAndTrack(new Runnable() {
+			final Trackable updateActiveTab = new Trackable(folderContext) {
 				public void run() {
-					// this will cause the tracker to be removed because no
-					// context values are accessed
-					if (ctf.isDisposed())
+					if (!participating) {
 						return;
+					}
+					trackingContext.get(FOLDER_DISPOSED);
 					IEclipseContext currentActive = toplevelContext;
 					IEclipseContext child;
-					while (currentActive != folderContext
+					while (currentActive != trackingContext
 							&& (child = (IEclipseContext) currentActive
 									.get("activeChild")) != null && child != currentActive) { //$NON-NLS-1$
 						currentActive = child;
 					}
 					// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
 
-					String cssClassName = (currentActive == folderContext) ? "active" //$NON-NLS-1$
+					String cssClassName = (currentActive == trackingContext) ? "active" //$NON-NLS-1$
 							: "inactive"; //$NON-NLS-1$
 					stylingEngine.setClassname(ctf, cssClassName);
 
@@ -155,7 +161,14 @@ public class StackRenderer extends LazyStackRenderer {
 						stylingEngine.setClassname(items[i], cssClassName);
 					}
 				}
+			};
+			ctf.addDisposeListener(new DisposeListener() {
+				public void widgetDisposed(DisposeEvent e) {
+					updateActiveTab.participating = false;
+					folderContext.set(FOLDER_DISPOSED, Boolean.TRUE);
+				}
 			});
+			folderContext.runAndTrack(updateActiveTab);
 		}
 
 		return newWidget;
