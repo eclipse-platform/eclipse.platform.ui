@@ -89,14 +89,16 @@ public class CSSPropertyBackgroundSWTHandler extends
 					widget.getDisplay());
 			if (widget instanceof CTabItem && "selected".equals(pseudo)) {
 				CTabFolder folder = ((CTabItem) widget).getParent();
-				folder.setSelectionBackground(CSSSWTColorHelper.getSWTColors(
-						grad, folder.getDisplay()), CSSSWTColorHelper
-						.getPercents(grad), true);
+				folder.setSelectionBackground(
+						CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay(), engine),
+						CSSSWTColorHelper.getPercents(grad),
+						true);
 			} else if (widget instanceof ETabItem && "selected".equals(pseudo)) {
 				ETabFolder folder = ((ETabItem) widget).getETabParent();
-				folder.setSelectionBackground(CSSSWTColorHelper.getSWTColors(
-						grad, folder.getDisplay()), CSSSWTColorHelper
-						.getPercents(grad), true);
+				folder.setSelectionBackground(
+						CSSSWTColorHelper.getSWTColors(grad, folder.getDisplay(), engine),
+						CSSSWTColorHelper.getPercents(grad),
+						true);
 			} else if (widget instanceof Control) {
 				GradientBackgroundListener.handle((Control) widget, grad);
 			}

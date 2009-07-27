@@ -8,23 +8,26 @@
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
  *     Kai Toedter - added radial gradient support
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.core.dom.properties;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import org.w3c.dom.css.CSSPrimitiveValue;
+
 /**
- * Generic class to store informations to manage Gradiant color.
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
+ * Generic class to store informations to manage Gradient color.
  * 
  */
 public class Gradient {
 
 	private final List rgbs = new ArrayList();
 	private final List percents = new ArrayList();
+
+	//TODO see bug #278077
+	private final List values = new ArrayList();
 
 	private boolean isLinear = true;
 
@@ -42,8 +45,10 @@ public class Gradient {
 		return !isLinear;
 	}
 
-	public void addRGB(Object rgb) {
+	//TODO see bug #278077
+	public void addRGB(Object rgb, CSSPrimitiveValue value) {
 		rgbs.add(rgb);
+		values.add(value);
 	}
 
 	public void addPercent(Integer percent) {
@@ -54,6 +59,10 @@ public class Gradient {
 		return rgbs;
 	}
 
+	public List getValues() {
+		return values;
+	}
+	
 	public List getPercents() {
 		return percents;
 	}

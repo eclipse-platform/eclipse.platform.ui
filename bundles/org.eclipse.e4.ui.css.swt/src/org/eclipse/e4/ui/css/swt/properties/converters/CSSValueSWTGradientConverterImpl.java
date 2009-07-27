@@ -7,8 +7,11 @@
  *
  * Contributors:
  *     Angelo Zerr <angelo.zerr@gmail.com> - initial API and implementation
+ *     IBM Corporation
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.properties.converters;
+
+import java.util.List;
 
 import org.eclipse.e4.ui.css.core.dom.properties.Gradient;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.AbstractCSSValueConverter;
@@ -16,6 +19,8 @@ import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverter;
 import org.eclipse.e4.ui.css.core.dom.properties.converters.ICSSValueConverterConfig;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
+import org.eclipse.swt.graphics.Color;
+import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
@@ -25,10 +30,6 @@ import org.w3c.dom.css.CSSValueList;
  * <li>CSS Value to {@link Gradient}</li>.
  * <li>{@link Gradient} to String CSS Value</li>
  * </ul>
- * 
- * @version 1.0.0
- * @author <a href="mailto:angelo.zerr@gmail.com">Angelo ZERR</a>
- * 
  */
 public class CSSValueSWTGradientConverterImpl extends AbstractCSSValueConverter {
 
@@ -38,9 +39,19 @@ public class CSSValueSWTGradientConverterImpl extends AbstractCSSValueConverter 
 		super(Gradient.class);
 	}
 
-	public Object convert(CSSValue value, CSSEngine engine, Object context) {
-		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST)
-			return CSSSWTColorHelper.getGradient((CSSValueList) value);
+	public Object convert(CSSValue value, CSSEngine engine, Object context) throws Exception {
+		if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+			Gradient grad = CSSSWTColorHelper.getGradient((CSSValueList) value);
+			List values = grad.getValues();
+			for (int i = 0; i < values.size(); i++) {
+				//Ensure all the colors are already converted and in the registry
+				//TODO see bug #278077	
+				CSSPrimitiveValue prim = (CSSPrimitiveValue) values.get(i);
+				engine.convert(prim, Color.class, context);
+			}
+			return grad;
+		}
+
 		return null;
 	}
 
