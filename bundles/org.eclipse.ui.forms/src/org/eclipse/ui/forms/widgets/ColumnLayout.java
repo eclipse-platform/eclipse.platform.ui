@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     dinko.ivanov@sap.com - patch #70790
+ *     RasmussenJamie@comcast.net - patch for Bug 184345
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 import org.eclipse.swt.SWT;
@@ -185,7 +186,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 			cwidth = Math.max(cwidth, sizes[i].x);
 			cheight += sizes[i].y;
 		}
-		int ncolumns = (carea.width - leftMargin - rightMargin - horizontalSpacing) / (cwidth + horizontalSpacing);
+		int ncolumns = (carea.width - leftMargin - rightMargin + horizontalSpacing) / (cwidth + horizontalSpacing);
 		ncolumns = Math.min(ncolumns, children.length);		
 		ncolumns = Math.max(ncolumns, minNumColumns);
 		ncolumns = Math.min(ncolumns, maxNumColumns);
