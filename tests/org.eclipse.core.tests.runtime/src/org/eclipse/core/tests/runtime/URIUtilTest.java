@@ -221,6 +221,31 @@ public class URIUtilTest extends RuntimeTest {
 	}
 
 	/**
+	 * Tests handling of conversion from a File with spaces to URL and File to URI and equivalence of the resulting URI
+	 */
+	public void testFileWithBrackets() throws MalformedURLException, URISyntaxException {
+		File fileWithSpaces = new File("/c:/with[brackets]/goo");
+		URI correctURI = fileWithSpaces.toURI();
+		URL fileURL = fileWithSpaces.toURL();
+		URI fileURI = null;
+		try {
+			fileURI = fileURL.toURI();
+			fail();
+		} catch (URISyntaxException e) {
+			fileURI = URIUtil.toURI(fileURL);
+		}
+		assertEquals("1.1", correctURI, fileURI);
+
+		try {
+			fileURI = new URI(fileURL.toString());
+			fail();
+		} catch (URISyntaxException e) {
+			fileURI = URIUtil.fromString(fileURL.toString());
+		}
+		assertEquals("1.2", correctURI, fileURI);
+	}
+
+	/**
 	 * Tests for {@link URIUtil#append(URI, String)}.
 	 * @throws URISyntaxException 
 	 */
