@@ -13,6 +13,7 @@
 package org.eclipse.e4.demo.contacts.handlers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -41,10 +42,13 @@ public class ThemeUtil {
 								"platform:/plugin/org.eclipse.e4.demo.contacts/css/"
 										+ css));
 
+						InputStream stream = url.openStream();
 						InputStreamReader streamReader = new InputStreamReader(
-								url.openStream());
+								stream);
 						engine.reset();
 						engine.parseStyleSheet(streamReader);
+						stream.close();
+						streamReader.close();
 						engine.applyStyles(shell, true, false);
 						shell.layout(true, true);
 					} catch (MalformedURLException e) {
