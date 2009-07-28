@@ -641,7 +641,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Load all registered extensions of the 'launch shortcut' extension point.
 	 */
-	private void loadLaunchShortcuts() {
+	private synchronized void loadLaunchShortcuts() {
 		if(fLaunchShortcuts == null) {
 			// Get the configuration elements
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_SHORTCUTS);
@@ -659,7 +659,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	/**
 	 * Load all registered extensions of the 'launch groups' extension point.
 	 */
-	private void loadLaunchGroups() {
+	private synchronized void loadLaunchGroups() {
 		if (fLaunchGroups == null) {
 			// Get the configuration elements
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_GROUPS);
