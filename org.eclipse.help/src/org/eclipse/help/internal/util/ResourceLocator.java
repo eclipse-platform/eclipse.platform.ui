@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -466,5 +466,24 @@ public class ResourceLocator {
 				}
 			}
 		}
+	}
+	
+	/**
+	 * Create a path for use in error messages that will identify the plugin and
+	 * file name as well as a resolved path (if available) which will give 
+	 * information about which fragment the file was located in
+	 * @return pluginId/file followed by a resolved path if the file exists
+	 */
+	public static String getErrorPath(String pluginId, String file, String locale)  {
+		String resolvedPath = pluginId + '/' + file;
+		try {
+			ArrayList pathPrefix = ResourceLocator.getPathPrefix(locale);
+			Bundle bundle = Platform.getBundle(pluginId);
+			URL rawURL = ResourceLocator.find(bundle, new Path(file), pathPrefix);
+			URL resolvedURL = FileLocator.resolve(rawURL);
+			resolvedPath += ", URL = " + resolvedURL.toExternalForm(); //$NON-NLS-1$
+		} catch (Exception e) {
+		}
+		return resolvedPath;
 	}
 }

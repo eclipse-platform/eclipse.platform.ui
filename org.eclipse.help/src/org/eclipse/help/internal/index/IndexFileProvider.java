@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.IIndexContribution;
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.util.ResourceLocator;
 import org.xml.sax.SAXParseException;
 
 /*
@@ -67,7 +68,9 @@ public class IndexFileProvider extends AbstractIndexProvider {
 	}
 
 	private String getIndexFilePath(IndexFile indexFile) {
-		return indexFile.getPluginId() + '/' + indexFile.getFile();
+		String pluginId = indexFile.getPluginId();
+		String file = indexFile.getFile();		
+		return ResourceLocator.getErrorPath(pluginId, file, indexFile.getLocale());
 	}
 
 	/*

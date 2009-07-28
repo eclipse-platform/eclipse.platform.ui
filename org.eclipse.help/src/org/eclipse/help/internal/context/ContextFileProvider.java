@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -227,7 +227,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 					return contexts;
 				}
 				else {
-					String msg = "Required root element \"contexts\" missing from context-sensitive help file \"/" + descriptor.getBundleId() + '/' + descriptor.getFile() + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+					String msg = "Required root element \"contexts\" missing from context-sensitive help file \"/" + getErrorPath(descriptor, locale) + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
 					HelpPlugin.logError(msg);
 				}
 	    	}
@@ -236,12 +236,16 @@ public class ContextFileProvider extends AbstractContextProvider {
 	    	}
 		}
 		catch (Throwable t) {
-			String msg = "Error reading context-sensitive help file /\"" + descriptor.getBundleId() + '/' + descriptor.getFile() + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
+			String msg = "Error reading context-sensitive help file /\"" + getErrorPath(descriptor, locale) + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
 			HelpPlugin.logError(msg, t);
 		}
 		return null;
 	}
 	
+	private String getErrorPath(ContextFile descriptor, String locale) {
+		return ResourceLocator.getErrorPath(descriptor.getBundleId(), descriptor.getFile(), locale);
+	}
+
 	private Map getRequiredAttributes() {
 		if (requiredAttributes == null) {
 			requiredAttributes = new HashMap();
