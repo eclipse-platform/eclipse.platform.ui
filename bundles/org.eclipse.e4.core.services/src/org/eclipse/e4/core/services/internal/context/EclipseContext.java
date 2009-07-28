@@ -196,12 +196,20 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		}
 	}
 
+	static class DebugSnap {
+		Set listeners = new HashSet();
+		Map localValueComputations = Collections.synchronizedMap(new HashMap());
+		Map localValues = Collections.synchronizedMap(new HashMap());
+	}
+
 	static ThreadLocal currentComputation = new ThreadLocal();
 
 	// TODO replace with variable on bundle-specific class
 	public static boolean DEBUG = false;
 	public static boolean DEBUG_VERBOSE = false;
 	public static String DEBUG_VERBOSE_NAME = null;
+
+	private DebugSnap snapshot;
 
 	private static final Object[] NO_ARGUMENTS = new Object[0];
 
@@ -228,6 +236,45 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				return true;
 		}
 		return false;
+	}
+
+	/**
+	 * Remember a snapshot of this context state for debugging purposes.
+	 */
+	public void debugSnap() {
+		snapshot = new DebugSnap();
+		snapshot.listeners = new HashSet(listeners);
+		snapshot.localValueComputations = new HashMap(localValueComputations);
+		snapshot.localValues = new HashMap(localValues);
+	}
+
+	/**
+	 * Print a diff between the current context state and the last snapshot state
+	 */
+	public void debugDiff() {
+		if (snapshot == null)
+			return;
+		Set listenerDiff = new HashSet(listeners);
+		listenerDiff.removeAll(snapshot.listeners);
+		listenerDiff = new HashSet(listenerDiff);// shrink the set
+		System.out.println("Listener diff: ");
+		for (Iterator it = listenerDiff.iterator(); it.hasNext();) {
+			System.out.println("\t" + it.next());
+		}
+
+		Set computationDiff = new HashSet(localValueComputations.values());
+		computationDiff.removeAll(snapshot.localValueComputations.values());
+		System.out.println("localValueComputations diff:");
+		for (Iterator it = computationDiff.iterator(); it.hasNext();) {
+			System.out.println("\t" + it.next());
+		}
+
+		Set valuesDiff = new HashSet(localValues.values());
+		valuesDiff.removeAll(snapshot.localValues.values());
+		System.out.println("localValues diff:");
+		for (Iterator it = valuesDiff.iterator(); it.hasNext();) {
+			System.out.println("\t" + it.next());
+		}
 	}
 
 	/*
@@ -365,6 +412,34 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void runAndTrack(final Runnable runnable) {
 		TrackableComputation computation = new TrackableComputation(runnable);
 		schedule(computation);
+	}
+
+	/**
+	 * Removes a runnable from all contexts it is listening to. See bug 284604.
+	 */
+	public void removeRunAndTrack(final Runnable runnable) {
+
+		TrackableComputation computation = new TrackableComputation(runnable);
+		// if the runnable isn't in this context, we can't figure out where to remove it from
+		if (!listeners.contains(computation))
+			return;
+		for (Iterator listenerIterator = listeners.iterator(); listenerIterator.hasNext();) {
+			Computation candidate = (Computation) listenerIterator.next();
+			if (candidate.equals(computation)) {
+				// remove the runnable from every context it is listening to
+				Set referencedContexts = candidate.dependencies.keySet();
+				for (Iterator contextIterator = referencedContexts.iterator(); contextIterator
+						.hasNext();) {
+					EclipseContext context = (EclipseContext) contextIterator.next();
+					if (context == this) {
+						listenerIterator.remove();
+					} else {
+						context.listeners.remove(candidate);
+					}
+				}
+			}
+		}
+
 	}
 
 	protected boolean schedule(IRunAndTrack runnable, ContextChangeEvent event) {

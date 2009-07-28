@@ -111,6 +111,9 @@ abstract class Computation {
 			((EclipseContext) context).listeners.remove(this); // XXX
 			// IEclipseContext
 			properties.remove(name);
+			// if we no longer track any values in the context, remove dependency
+			if (properties.isEmpty())
+				dependencies.remove(context);
 		}
 	}
 
