@@ -21,6 +21,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
+import org.osgi.service.log.LogService;
 import org.osgi.service.packageadmin.PackageAdmin;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -38,6 +39,7 @@ public class Activator implements BundleActivator {
 	private ServiceTracker pkgAdminTracker;
 
 	private ServiceTracker debugTracker;
+	private ServiceTracker logTracker;
 
 	private DebugTrace trace;
 
@@ -143,6 +145,10 @@ public class Activator implements BundleActivator {
 			debugTracker.close();
 			debugTracker = null;
 		}
+		if (logTracker != null) {
+			logTracker.close();
+			logTracker = null;
+		}
 	}
 
 	public DebugOptions getDebugOptions() {
@@ -173,4 +179,31 @@ public class Activator implements BundleActivator {
 		}
 		activator.getTrace().trace(option, msg, error);
 	}
+
+	public LogService getLogService() {
+		LogService logService = null;
+		if (logTracker != null) {
+			logService = (LogService) logTracker.getService();
+		} else {
+			if (context != null) {
+				logTracker = new ServiceTracker(context, LogService.class.getName(), null);
+				logTracker.open();
+				logService = (LogService) logTracker.getService();
+			}
+		}
+		return logService;
+	}
+
+	public static void log(int level, String message) {
+		LogService logService = activator.getLogService();
+		if (logService != null)
+			logService.log(level, message);
+	}
+
+	public static void log(int level, String message, Throwable exception) {
+		LogService logService = activator.getLogService();
+		if (logService != null)
+			logService.log(level, message, exception);
+	}
+
 }

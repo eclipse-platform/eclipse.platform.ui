@@ -30,6 +30,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.emf.common.util.URI;
 import org.osgi.framework.Bundle;
+import org.osgi.service.log.LogService;
 
 /**
  * Create the contribution factory.
@@ -166,26 +167,41 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	public Object create(String uriString, IEclipseContext context) {
 		URI uri = URI.createURI(uriString);
 		Bundle bundle = getBundle(uri);
+		Object contribution;
 		if (bundle != null) {
-			if (uri.segmentCount() > 3) {
-				String prefix = uri.segment(2);
-				IContributionFactorySpi factory = (IContributionFactorySpi) languages.get(prefix);
-				StringBuffer resource = new StringBuffer(uri.segment(3));
-				for (int i = 4; i < uri.segmentCount(); i++) {
-					resource.append('/');
-					resource.append(uri.segment(i));
-				}
-				return factory.create(bundle, resource.toString(), context);
+			contribution = createFromBundle(bundle, context, uri);
+		} else {
+			contribution = null;
+			Activator.log(LogService.LOG_ERROR, "Unable to retrive the bundle from the URI: " //$NON-NLS-1$
+					+ uriString);
+		}
+		return contribution;
+	}
+
+	private Object createFromBundle(Bundle bundle, IEclipseContext context, URI uri) {
+		Object contribution;
+		if (uri.segmentCount() > 3) {
+			String prefix = uri.segment(2);
+			IContributionFactorySpi factory = (IContributionFactorySpi) languages.get(prefix);
+			StringBuffer resource = new StringBuffer(uri.segment(3));
+			for (int i = 4; i < uri.segmentCount(); i++) {
+				resource.append('/');
+				resource.append(uri.segment(i));
 			}
+			contribution = factory.create(bundle, resource.toString(), context);
+		} else {
+			String clazz = uri.segment(2);
 			try {
-				Class<?> targetClass = bundle.loadClass(uri.segment(2));
-				return createObject(targetClass, context);
+				Class<?> targetClass = bundle.loadClass(clazz);
+				contribution = createObject(targetClass, context);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				contribution = null;
+				String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
+						+ bundle.getBundleId() + "'"; //$NON-NLS-1$
+				Activator.log(LogService.LOG_ERROR, message, e);
 			}
 		}
-		return null;
+		return contribution;
 	}
 
 	private void processLanguages() {
