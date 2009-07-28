@@ -51,6 +51,7 @@ public class EclipseContextTest extends TestCase {
 		this.parentContext.set(IContextConstants.DEBUG_STRING, getName() + "-parent");
 		this.context = EclipseContextFactory.create(parentContext, null);
 		context.set(IContextConstants.DEBUG_STRING, getName());
+		runCounter = 0;
 	}
 
 	public void testContainsKey() {
@@ -168,6 +169,39 @@ public class EclipseContextTest extends TestCase {
 		parentContext.set("bar", "bam");
 		assertEquals(8, runCounter);
 		assertEquals("bam", value[0]);
+	}
+
+	public void testRunAndTrackMultipleValues() {
+		IEclipseContext parent = EclipseContextFactory.create();
+		final IEclipseContext child = EclipseContextFactory.create(parent, null);
+		parent.set("parentValue", "x");
+		parent.set(IContextConstants.DEBUG_STRING, "ParentContext");
+		child.set("childValue", "x");
+		child.set(IContextConstants.DEBUG_STRING, "ChildContext");
+		Runnable runnable = new Runnable() {
+			public void run() {
+				runCounter++;
+				if (runCounter < 2)
+					child.get("childValue");
+				if (runCounter < 3)
+					child.get("parentValue");
+			}
+		};
+		child.runAndTrack(runnable);
+		assertEquals(1, runCounter);
+		child.set("childValue", "z");
+		assertEquals(2, runCounter);
+		parent.set("parentValue", "z");
+		assertEquals(3, runCounter);
+		// at this point we should no longer be listening
+		child.set("childValue", "y");
+		assertEquals(3, runCounter);
+		parent.set("parentValue", "y");
+		assertEquals(3, runCounter);
+		// TODO this shouldn't be required
+		((EclipseContext) child).removeRunAndTrack(runnable);
+		assertTrue(TestHelper.getListeners(child).isEmpty());
+		assertTrue(TestHelper.getListeners(parent).isEmpty());
 	}
 
 }
