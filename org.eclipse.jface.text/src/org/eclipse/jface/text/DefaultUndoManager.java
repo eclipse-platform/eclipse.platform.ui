@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -786,9 +786,9 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	}
 
 	/** Text buffer to collect text which is inserted into the viewer */
-	private StringBuffer fTextBuffer= new StringBuffer();
+	private StringBuffer fTextBuffer;
 	/** Text buffer to collect viewer content which has been replaced */
-	private StringBuffer fPreservedTextBuffer= new StringBuffer();
+	private StringBuffer fPreservedTextBuffer;
 	/** The document modification stamp for undo. */
 	protected long fPreservedUndoModificationStamp= IDocumentExtension4.UNKNOWN_MODIFICATION_STAMP;
 	/** The document modification stamp for redo. */
@@ -1218,6 +1218,8 @@ public class DefaultUndoManager implements IUndoManager, IUndoManagerExtension {
 	public void connect(ITextViewer textViewer) {
 		if (!isConnected() && textViewer != null) {
 			fTextViewer= textViewer;
+			fTextBuffer= new StringBuffer();
+			fPreservedTextBuffer= new StringBuffer();
 		    if (fUndoContext == null)
 		        fUndoContext= new ObjectUndoContext(this);
 
