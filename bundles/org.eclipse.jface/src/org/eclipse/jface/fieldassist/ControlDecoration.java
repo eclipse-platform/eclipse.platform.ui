@@ -71,6 +71,8 @@ import org.eclipse.swt.widgets.Widget;
  * 
  * @see FieldDecoration
  * @see FieldDecorationRegistry
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
  */
 public class ControlDecoration {
 	/**
