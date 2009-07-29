@@ -11,7 +11,6 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
-import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -268,8 +267,6 @@ public abstract class IconAndMessageDialog extends Dialog {
 	 * @return image the image
 	 */
 	private Image getSWTImage(final int imageID) {
-		Assert.isNotNull(Display.getCurrent(), "Invalid access from non-UI thread."); //$NON-NLS-1$
-
 		Shell shell = getShell();
 		final Display display;
 		if (shell == null || shell.isDisposed()) {
@@ -280,8 +277,16 @@ public abstract class IconAndMessageDialog extends Dialog {
 		} else {
 			display = shell.getDisplay();
 		}
-		
-		return display.getSystemImage(imageID);
+
+		final Image[] image = new Image[1];
+		display.syncExec(new Runnable() {
+			public void run() {
+				image[0] = display.getSystemImage(imageID);
+			}
+		});
+
+		return image[0];
+
 	}
 
 }
