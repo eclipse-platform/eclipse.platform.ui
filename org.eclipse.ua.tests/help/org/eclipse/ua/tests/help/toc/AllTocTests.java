@@ -39,6 +39,5 @@ public class AllTocTests extends TestSuite {
 		addTestSuite(TocIconPathTest.class);
 		addTestSuite(TocProviderTest.class);
 		addTestSuite(HelpData.class);
-		addTestSuite(PrebuiltIndexChecker.class);
 	}
 }
