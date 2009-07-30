@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,15 +185,13 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 
 	/**
 	 * Sets the scheduling rule used to execute this operation. If
-	 * not set then the workspace root is used. The Change operation
+	 * not set then the workspace root is used. The supplied Change
 	 * must be able to be performed in the provided scheduling rule.
 	 *
-	 * @param rule the Rule to use, not null
+	 * @param rule the rule to use, or <code>null</code> to use no scheduling rule
 	 * @since 3.3
 	 */
 	public void setSchedulingRule(ISchedulingRule rule) {
-		Assert.isNotNull(rule);
-
 		fSchedulingRule= rule;
 	}
 
