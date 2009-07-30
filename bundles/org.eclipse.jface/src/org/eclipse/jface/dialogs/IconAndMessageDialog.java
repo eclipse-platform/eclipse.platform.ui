@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.LayoutConstants;
@@ -274,6 +275,12 @@ public abstract class IconAndMessageDialog extends Dialog {
 		}
 		if (shell == null || shell.isDisposed()) {
 			display = Display.getCurrent();
+			// The dialog should be always instantiated in UI thread.
+			// However it was possible to instantiate it in other threads
+			// (the code worked in most cases) so the assertion covers
+			// only the failing scenario. See bug 107082 for details.
+			Assert.isNotNull(display,
+					"The dialog should be created in UI thread"); //$NON-NLS-1$
 		} else {
 			display = shell.getDisplay();
 		}
