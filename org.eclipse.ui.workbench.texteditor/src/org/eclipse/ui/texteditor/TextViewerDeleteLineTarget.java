@@ -379,7 +379,7 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 			}
 
 			fClipboard.setDeleting(true);
-			document.replace(deleteOffset, deleteLength, null);
+			document.replace(deleteOffset, deleteLength, ""); //$NON-NLS-1$
 			fClipboard.setDeleting(false);
 
 			fClipboard.saveState();
