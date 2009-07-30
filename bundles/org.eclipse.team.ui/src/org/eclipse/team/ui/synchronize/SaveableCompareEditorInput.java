@@ -74,7 +74,7 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 	private static ITypedElement getFileElement(ICompareInput input,
 			CompareEditorInput editorInput) {
 		if (input.getLeft() instanceof LocalResourceTypedElement) {
-			return (LocalResourceTypedElement) input.getLeft();
+			return input.getLeft();
 		}
 		if (editorInput instanceof CompareFileRevisionEditorInput) {
 			return ((CompareFileRevisionEditorInput) editorInput).getLocalElement();
@@ -289,7 +289,10 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 			if (Display.getCurrent() != null) {
 				runnable.run();
 			} else {
-				Display display = getPage().getWorkbenchWindow().getShell().getDisplay();
+				IWorkbenchPage page = getPage();
+				if (page == null)
+					return false;
+				Display display = page.getWorkbenchWindow().getShell().getDisplay();
 				display.asyncExec(runnable);
 			}
 			return true;
