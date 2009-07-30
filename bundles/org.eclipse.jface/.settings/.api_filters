@@ -16,4 +16,11 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/jface/fieldassist/ControlDecoration.java" type="org.eclipse.jface.fieldassist.ControlDecoration">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.fieldassist.ControlDecoration"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>
