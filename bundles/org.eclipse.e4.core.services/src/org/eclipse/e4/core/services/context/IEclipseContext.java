@@ -30,6 +30,7 @@ import org.eclipse.e4.core.services.context.spi.ContextFunction;
  * </p>
  * 
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  */
 public interface IEclipseContext {
 
@@ -42,6 +43,19 @@ public interface IEclipseContext {
 	 *         <code>false</code> otherwise.
 	 */
 	public boolean containsKey(String name);
+
+	/**
+	 * Returns whether this context or a parent has a value stored for the given name.
+	 * 
+	 * @param name
+	 *            The name being queried
+	 * @param localOnly
+	 *            if <code>true</code> only local values will be considered; otherwise values the
+	 *            parent contexts will be included
+	 * @return <code>true</code> if this context has computed a value for the given name, and
+	 *         <code>false</code> otherwise.
+	 */
+	public boolean containsKey(String name, boolean localOnly);
 
 	/**
 	 * Returns the context value associated with the given name. Returns <code>null</code> if no

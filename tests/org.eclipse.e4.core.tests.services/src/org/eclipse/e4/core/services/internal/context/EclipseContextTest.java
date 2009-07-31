@@ -69,7 +69,23 @@ public class EclipseContextTest extends TestCase {
 
 		context.remove("separator");
 		assertFalse("4.0", context.containsKey("separator"));
+	}
 
+	public void testContainsKeyLocal() {
+		IEclipseContext contextGlobal = EclipseContextFactory.create();
+		contextGlobal.set("global", new Object());
+		IEclipseContext contextLocal = EclipseContextFactory.create(contextGlobal, null);
+		contextLocal.set("local", new Object());
+
+		assertTrue("1.0", contextLocal.containsKey("local", true));
+		assertTrue("1.1", contextLocal.containsKey("local", false));
+		assertFalse("1.2", contextLocal.containsKey("global", true));
+		assertTrue("1.3", contextLocal.containsKey("global", false));
+
+		assertFalse("2.0", contextGlobal.containsKey("local", true));
+		assertFalse("2.1", contextGlobal.containsKey("local", false));
+		assertTrue("2.2", contextGlobal.containsKey("global", true));
+		assertTrue("2.3", contextGlobal.containsKey("global", false));
 	}
 
 	public void testFunctions() {

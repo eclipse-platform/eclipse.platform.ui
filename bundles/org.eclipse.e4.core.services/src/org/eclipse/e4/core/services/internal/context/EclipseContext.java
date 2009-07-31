@@ -226,8 +226,14 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	}
 
 	public boolean containsKey(String name) {
+		return containsKey(name, false);
+	}
+
+	public boolean containsKey(String name, boolean localOnly) {
 		if (isSetLocally(name))
 			return true;
+		if (localOnly)
+			return false;
 		IEclipseContext parent = (IEclipseContext) getLocal(IContextConstants.PARENT);
 		if (parent != null && parent.containsKey(name))
 			return true;
