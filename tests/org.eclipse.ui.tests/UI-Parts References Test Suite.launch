@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <launchConfiguration type="org.eclipse.pde.ui.JunitLaunchConfig">
 <stringAttribute key="application" value="org.eclipse.pde.junit.runtime.coretestapplication"/>
-<booleanAttribute key="askclear" value="true"/>
+<booleanAttribute key="askclear" value="false"/>
 <booleanAttribute key="automaticAdd" value="true"/>
 <booleanAttribute key="automaticValidate" value="false"/>
 <stringAttribute key="bootstrap" value=""/>
