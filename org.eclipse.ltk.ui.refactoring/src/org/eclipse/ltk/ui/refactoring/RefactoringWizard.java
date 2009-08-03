@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -616,6 +616,15 @@ public abstract class RefactoringWizard extends Wizard {
 
 	//---- Re-implementation of Wizard methods --------------------------------------------
 
+	/**
+	 * Calls {@link RefactoringWizardPage#performFinish()} on the currently active wizard page.
+	 * Clients are not expected to extend this method to do lengthy processing
+	 * (the {@link Refactoring} class should implement analysis and {@link Change} creation).
+     *
+     * @return <code>true</code> to indicate the finish request
+     *   was accepted, and <code>false</code> to indicate
+     *   that the finish request was refused
+	 */
 	public boolean performFinish() {
 		RefactoringWizardPage page= (RefactoringWizardPage)getContainer().getCurrentPage();
 		return page.performFinish();
