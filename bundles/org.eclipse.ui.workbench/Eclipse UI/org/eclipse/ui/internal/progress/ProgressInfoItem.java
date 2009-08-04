@@ -10,13 +10,12 @@ package org.eclipse.ui.internal.progress;
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-import java.net.URL;
 import com.ibm.icu.text.DateFormat;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -34,7 +33,9 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.graphics.*;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
@@ -58,7 +59,7 @@ import org.eclipse.ui.progress.IProgressConstants;
  * @since 3.1
  * 
  */
-class ProgressInfoItem extends Composite {
+public class ProgressInfoItem extends Composite {
 
 	static String STOP_IMAGE_KEY = "org.eclipse.ui.internal.progress.PROGRESS_STOP"; //$NON-NLS-1$
 
@@ -394,9 +395,11 @@ class ProgressInfoItem extends Composite {
 	/**
 	 * Get the name and status for a jobInfo
 	 * 
+	 * @param jobInfo
+	 * 
 	 * @return String
 	 */
-	protected String getJobNameAndStatus(JobInfo jobInfo) {
+	public String getJobNameAndStatus(JobInfo jobInfo) {
 
 		Job job = jobInfo.getJob();
 
@@ -596,7 +599,7 @@ class ProgressInfoItem extends Composite {
 	 * 
 	 * @return JobInfo[]
 	 */
-	private JobInfo[] getJobInfos() {
+	public JobInfo[] getJobInfos() {
 		if (info.isJobInfo()) {
 			return new JobInfo[] { (JobInfo) info };
 		}

@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.progress;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
@@ -26,7 +25,7 @@ import org.eclipse.swt.graphics.Image;
  * JobInfo is the class that keeps track of the tree structure for objects that
  * display job status in a tree.
  */
-class JobInfo extends JobTreeElement {
+public class JobInfo extends JobTreeElement {
 
     private IStatus blockedStatus;
 
@@ -315,7 +314,7 @@ class JobInfo extends JobTreeElement {
      * 
      * @return Job
      */
-    Job getJob() {
+	public Job getJob() {
         return job;
     }
 

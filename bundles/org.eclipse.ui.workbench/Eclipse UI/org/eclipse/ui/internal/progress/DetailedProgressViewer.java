@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -517,6 +516,13 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 			item.setDisplayed(top, bottom);
 
 		}
+	}
+
+	public ProgressInfoItem[] getProgressInfoItems() {
+		Control[] children = control.getChildren();
+		ProgressInfoItem[] progressInfoItems = new ProgressInfoItem[children.length];
+		System.arraycopy(children, 0, progressInfoItems, 0, children.length);
+		return progressInfoItems;
 	}
 
 }

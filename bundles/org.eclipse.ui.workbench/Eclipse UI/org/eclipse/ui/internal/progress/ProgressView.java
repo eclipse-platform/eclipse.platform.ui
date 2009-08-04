@@ -217,4 +217,11 @@ public class ProgressView extends ViewPart implements IViewPart {
 		}
 	}
 
+	/**
+	 * @return Returns the viewer.
+	 */
+	public DetailedProgressViewer getViewer() {
+		return viewer;
+	}
+
 }
