@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1254,7 +1254,7 @@ class FindReplaceDialog extends Dialog {
 			class ReplaceAllRunnable implements Runnable {
 				public int numberOfOccurrences;
 				public void run() {
-					numberOfOccurrences= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked());	//$NON-NLS-1$
+					numberOfOccurrences= replaceAll(findString, replaceString == null ? "" : replaceString, isForwardSearch(), isCaseSensitiveSearch(), isWholeWordSearch(), isRegExSearchAvailableAndChecked());	//$NON-NLS-1$
 				}
 			}
 
@@ -1383,26 +1383,19 @@ class FindReplaceDialog extends Dialog {
 	 * @param replaceString the replacement string
 	 * @param forwardSearch	the search direction
 	 * @param caseSensitive should the search be case sensitive
-	 * @param wrapSearch	should search wrap to start/end if end/start is reached
 	 * @param wholeWord does the search string represent a complete word
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
 	 * @return the number of occurrences
 	 *
 	 * @since 3.0
 	 */
-	private int replaceAll(String findString, String replaceString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch) {
+	private int replaceAll(String findString, String replaceString, boolean forwardSearch, boolean caseSensitive, boolean wholeWord, boolean regExSearch) {
 
 		int replaceCount= 0;
 		int findReplacePosition= 0;
 
-		if (wrapSearch) { // search the whole text
-			findReplacePosition= 0;
-			forwardSearch= true;
-		} else {
-			// the cursor is set to the end or beginning of the selected text
-			Point selection= fTarget.getSelection();
-			findReplacePosition= selection.x;
-		}
+		findReplacePosition= 0;
+		forwardSearch= true;
 
 		if (!validateTargetState())
 			return replaceCount;
