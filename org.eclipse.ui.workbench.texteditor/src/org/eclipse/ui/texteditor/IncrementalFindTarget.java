@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -45,6 +45,7 @@ import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.ITextViewerExtension5;
 import org.eclipse.jface.text.TextEvent;
 
 import org.eclipse.ui.PlatformUI;
@@ -301,8 +302,14 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 		install();
 
 		// Set the mark
-		if (fTextViewer instanceof ITextViewerExtension)
-			((ITextViewerExtension) fTextViewer).setMark(fCurrentIndex);
+		if (fTextViewer instanceof ITextViewerExtension) {
+			int modelOffset;
+			if (fTextViewer instanceof ITextViewerExtension5)
+				modelOffset= fCurrentIndex == -1 ? -1 : ((ITextViewerExtension5)fTextViewer).widgetOffset2ModelOffset(fCurrentIndex);
+			else
+				modelOffset= fCurrentIndex;
+			((ITextViewerExtension)fTextViewer).setMark(modelOffset);
+		}
 
 		updateStatus();
 
