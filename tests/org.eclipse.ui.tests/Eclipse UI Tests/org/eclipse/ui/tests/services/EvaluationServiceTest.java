@@ -191,8 +191,8 @@ public class EvaluationServiceTest extends UITestCase {
 	}
 
 	public void testRestriction() {
-		// temporarily disabled
-		if (true) return;
+		boolean temporarilyDisabled = true;
+		if (temporarilyDisabled) return;
 		
 		IWorkbenchWindow window = openTestWindow();
 		IEvaluationService evaluationService = (IEvaluationService) window
