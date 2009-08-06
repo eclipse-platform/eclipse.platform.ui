@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -655,8 +655,6 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	
 		StringBuffer pattern= new StringBuffer(string.length() + 16);
 		int length= string.length();
-		if (length > 0 && string.charAt(0) == '^')
-			pattern.append('\\');
 		for (int i= 0; i < length; i++) {
 			char ch= string.charAt(i);
 			switch (ch) {
@@ -672,6 +670,8 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 				case '*':
 				case '+':
 				case '|':
+				case '^':
+				case '$':
 					pattern.append('\\').append(ch);
 					break;
 	
@@ -704,8 +704,6 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 					}
 			}
 		}
-		if (length > 0 && string.charAt(length - 1) == '$')
-			pattern.insert(pattern.length() - 1, '\\');
 		return pattern.toString();
 	}
 }
