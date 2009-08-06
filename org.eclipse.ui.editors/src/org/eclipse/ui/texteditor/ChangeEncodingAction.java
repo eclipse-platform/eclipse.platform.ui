@@ -117,24 +117,21 @@ public class ChangeEncodingAction extends TextEditorAction {
 			 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 			 */
 			protected Control createDialogArea(Composite parent) {
-				Control composite= super.createDialogArea(parent);
-				if (!(composite instanceof Composite)) {
-					composite.dispose();
-					composite= new Composite(parent, SWT.NONE);
-				}
+				Composite composite= (Composite)super.createDialogArea(parent);
 
+				composite= new Composite(composite, SWT.NONE);
 				GridLayout layout= new GridLayout();
 				layout.marginHeight= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
 				layout.marginWidth= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
 				layout.verticalSpacing= convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 				layout.horizontalSpacing= convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-				parent.setLayout(layout);
+				composite.setLayout(layout);
 
 				GridData data = new GridData(GridData.FILL_BOTH);
 				composite.setLayoutData(data);
 				composite.setFont(parent.getFont());
 
-				DialogPage page= new MessageDialogPage((Composite)composite) {
+				DialogPage page= new MessageDialogPage(composite) {
 					public void setErrorMessage(String newMessage) {
 						super.setErrorMessage(newMessage);
 						setButtonEnabledState(IDialogConstants.OK_ID, newMessage == null);
@@ -149,11 +146,11 @@ public class ChangeEncodingAction extends TextEditorAction {
 				};
 
 				if (resource != null) {
-					fEncodingEditor= new ResourceEncodingFieldEditor("", (Composite)composite, resource, null); //$NON-NLS-1$
+					fEncodingEditor= new ResourceEncodingFieldEditor("", composite, resource, null); //$NON-NLS-1$
 					fEncodingEditor.setPage(page);
 					fEncodingEditor.load();
 				} else {
-					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", null, (Composite)composite); //$NON-NLS-1$
+					fEncodingEditor= new EncodingFieldEditor(ENCODING_PREF_KEY, "", null, composite); //$NON-NLS-1$
 					store= new PreferenceStore();
 					String defaultEncoding= encodingSupport.getDefaultEncoding();
 					store.setDefault(ENCODING_PREF_KEY, defaultEncoding);
