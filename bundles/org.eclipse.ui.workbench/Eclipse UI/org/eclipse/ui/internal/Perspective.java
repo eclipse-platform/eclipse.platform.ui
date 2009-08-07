@@ -2423,6 +2423,33 @@ public class Perspective {
         removeAlwaysOff(toRemove);
     }
 
+	public void setFastViewState(IViewReference ref, int newState) {
+		// If the current pane is null then the FV is not open
+		if (fastViewManager != null) {
+			String id = fastViewManager.getIdForRef(ref);
+			if (id != null && id != FastViewBar.FASTVIEWBAR_ID) {
+				if (newState == IStackPresentationSite.STATE_MINIMIZED)
+					return; // No-op
+
+				// So it's either RESTORED or MAXIMIZED so we have to restore
+				// the stack
+				fastViewManager.restoreToPresentation(id);
+
+				// If it's MAXIMIZED we then have to MAXIMIZE the stack
+				if (newState == IStackPresentationSite.STATE_MAXIMIZED) {
+					// Recurse back to the page now that the stack is restored
+					page.setState(ref, newState);
+				}
+
+				return;
+			}
+		}
+
+		// Fast View is open, change its state
+		if (fastViewPane.getCurrentPane() != null)
+			fastViewPane.setState(newState);
+	}
+
     public void setFastViewState(int newState) {
         fastViewPane.setState(newState);
     }

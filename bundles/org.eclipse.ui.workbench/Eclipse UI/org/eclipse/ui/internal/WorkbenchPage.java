@@ -3905,7 +3905,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 
         if (ref instanceof IViewReference
                 && persp.isFastView((IViewReference) ref)) {
-            persp.setFastViewState(newState);
+			persp.setFastViewState((IViewReference) ref, newState);
             return;
         }
 
