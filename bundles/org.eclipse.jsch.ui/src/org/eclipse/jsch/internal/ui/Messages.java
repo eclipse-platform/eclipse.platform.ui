@@ -24,6 +24,7 @@ public class Messages extends NLS{
   public static String CVSSSH2ServerConnection_open;
   public static String CVSSSH2PreferencePage_18;
   public static String CVSSSH2PreferencePage_19;
+  public static String CVSSSH2PreferencePage_2;
   public static String CVSSSH2PreferencePage_20;
   public static String CVSSSH2PreferencePage_21;
   public static String CVSSSH2PreferencePage_23;
@@ -31,6 +32,7 @@ public class Messages extends NLS{
   public static String CVSSSH2PreferencePage_25;
   public static String CVSSSH2PreferencePage_26;
   public static String CVSSSH2PreferencePage_27;
+  public static String CVSSSH2PreferencePage_3;
   public static String CVSSSH2PreferencePage_30;
   public static String CVSSSH2PreferencePage_31;
   public static String CVSSSH2PreferencePage_32;
@@ -39,6 +41,7 @@ public class Messages extends NLS{
   public static String CVSSSH2PreferencePage_35;
   public static String CVSSSH2PreferencePage_36;
   public static String CVSSSH2PreferencePage_39;
+  public static String CVSSSH2PreferencePage_4;
   public static String CVSSSH2PreferencePage_41;
   public static String CVSSSH2PreferencePage_42;
   public static String CVSSSH2PreferencePage_43;
@@ -47,6 +50,7 @@ public class Messages extends NLS{
   public static String CVSSSH2PreferencePage_47;
   public static String CVSSSH2PreferencePage_48;
   public static String CVSSSH2PreferencePage_49;
+  public static String CVSSSH2PreferencePage_5;
   public static String CVSSSH2PreferencePage_50;
   public static String CVSSSH2PreferencePage_53;
   public static String CVSSSH2PreferencePage_55;
@@ -81,6 +85,7 @@ public class Messages extends NLS{
   public static String CVSSSH2PreferencePage_134;
   public static String CVSSSH2PreferencePage_135;
   public static String CVSSSH2PreferencePage_136;
+  public static String CVSSSH2PreferencePage_137;
   public static String CVSSSH2PreferencePage_138;
   public static String CVSSSH2PreferencePage_139;
   public static String KeyboardInteractiveDialog_0;

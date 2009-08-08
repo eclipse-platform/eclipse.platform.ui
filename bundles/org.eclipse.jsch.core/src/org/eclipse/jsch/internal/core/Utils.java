@@ -15,7 +15,9 @@ import java.util.Hashtable;
 import org.eclipse.core.net.proxy.IProxyData;
 import org.eclipse.core.net.proxy.IProxyService;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 
 import com.jcraft.jsch.*;
@@ -25,6 +27,18 @@ import com.jcraft.jsch.*;
  * @since 1.0
  */
 public class Utils{
+  
+  /* should have at least one element */
+  private static final String[] PREFERRED_AUTH_METHODS=new String[] {
+      "gssapi-with-mic", "publickey", "password", "keyboard-interactive"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+  public static String getDefaultAuthMethods(){
+    String defaultValue = PREFERRED_AUTH_METHODS[0];
+    for(int i = 1; i < PREFERRED_AUTH_METHODS.length; i++){
+      defaultValue += "," + PREFERRED_AUTH_METHODS[i]; //$NON-NLS-1$
+    }
+    return defaultValue;
+  }
 
   public static String loadPrivateKeys(JSch jsch, String current_pkeys){
     Preferences preferences=JSchCorePlugin.getPlugin().getPluginPreferences();
@@ -78,7 +92,7 @@ public class Utils{
     setProxy(session);
     Hashtable config=new Hashtable();
     config.put("PreferredAuthentications", //$NON-NLS-1$ 
-        "gssapi-with-mic,publickey,password,keyboard-interactive"); //$NON-NLS-1$ 
+        getEnabledPreferredAuthMethods()); 
     session.setConfig(config);
     return session;
   }
@@ -187,5 +201,25 @@ public class Utils{
       ssh2Prefs.remove(IConstants.KEY_OLD_PRIVATEKEY);
     }
   }
+  
+  public static String getEnabledPreferredAuthMethods(){
+    IPreferencesService service = Platform.getPreferencesService();
+    return service.getString(JSchCorePlugin.ID,
+        IConstants.PREF_PREFERRED_AUTHENTICATION_METHODS, getDefaultAuthMethods(), null);
+  }
+
+  public static String getMethodsOrder(){
+    IPreferencesService service = Platform.getPreferencesService();
+    return service.getString(JSchCorePlugin.ID,
+        IConstants.PREF_PREFERRED_AUTHENTICATION_METHODS_ORDER, getDefaultAuthMethods(), null);
+  }
+  
+  public static void setEnabledPreferredAuthMethods(String methods, String order){
+    IPreferencesService service=Platform.getPreferencesService();
+    service.getRootNode().node(InstanceScope.SCOPE).node(JSchCorePlugin.ID).put(
+        IConstants.PREF_PREFERRED_AUTHENTICATION_METHODS, methods);
+    service.getRootNode().node(InstanceScope.SCOPE).node(JSchCorePlugin.ID).put(
+        IConstants.PREF_PREFERRED_AUTHENTICATION_METHODS_ORDER, order);}
+  
 
 }

@@ -47,5 +47,7 @@ public interface IConstants{
   public final String PREF_PROXY_AUTH="proxyAuth"; //$NON-NLS-1$
 
   public final String PREF_HAS_MIGRATED_SSH2_PREFS="org.eclipse.jsch.core.hasMigratedSsh2Preferences"; //$NON-NLS-1$
-
+  
+  public static final String PREF_PREFERRED_AUTHENTICATION_METHODS="CVSSSH2PreferencePage.PREF_AUTH_METHODS"; //$NON-NLS-1$
+  public static final String PREF_PREFERRED_AUTHENTICATION_METHODS_ORDER="CVSSSH2PreferencePage.PREF_AUTH_METHODS_ORDER"; //$NON-NLS-1$
 }

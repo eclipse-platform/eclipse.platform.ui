@@ -12,30 +12,78 @@
  *******************************************************************************/
 package org.eclipse.jsch.internal.ui.preference;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
-import org.eclipse.core.runtime.*;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Preferences;
 import org.eclipse.jface.dialogs.Dialog;
-import org.eclipse.jface.viewers.*;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.TableLayout;
+import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jsch.core.IJSchLocation;
 import org.eclipse.jsch.core.IJSchService;
-import org.eclipse.jsch.internal.core.*;
+import org.eclipse.jsch.internal.core.IConstants;
+import org.eclipse.jsch.internal.core.JSchCorePlugin;
+import org.eclipse.jsch.internal.core.Utils;
 import org.eclipse.jsch.internal.ui.JSchUIPlugin;
 import org.eclipse.jsch.internal.ui.Messages;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.*;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
+import org.eclipse.swt.events.SelectionAdapter;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.DirectoryDialog;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.FileDialog;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.TabFolder;
+import org.eclipse.swt.widgets.TabItem;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.ui.PlatformUI;
 
-import com.jcraft.jsch.*;
+import com.jcraft.jsch.Channel;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.HostKey;
+import com.jcraft.jsch.HostKeyRepository;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.KeyPair;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpATTRS;
+import com.jcraft.jsch.SftpException;
 
 public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
     implements IWorkbenchPreferencePage{
@@ -93,6 +141,10 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
     tabItem=new TabItem(tabFolder, SWT.NONE);
     tabItem.setText(Messages.CVSSSH2PreferencePage_133);
     tabItem.setControl(createHostKeyManagementPage(tabFolder));
+    
+    tabItem=new TabItem(tabFolder, SWT.NONE);
+    tabItem.setText(Messages.CVSSSH2PreferencePage_137);
+    tabItem.setControl(createPreferredAuthenticationPage(tabFolder));
 
     initControls();
 
@@ -715,6 +767,12 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
   private TableViewer viewer;
   private Button removeHostKeyButton;
 
+  Table preferedAuthMethodTable;
+
+  Button up;
+
+  Button down;
+
   class TableLabelProvider extends LabelProvider implements ITableLabelProvider{
     public String getColumnText(Object element, int columnIndex){
       HostKey entry=(HostKey)element;
@@ -840,6 +898,132 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 
     return group;
   }
+  
+  private Control createPreferredAuthenticationPage(Composite parent){
+    Composite root = new Composite(parent, SWT.NONE);
+    GridLayout layout=new GridLayout();
+    layout.marginHeight=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+    layout.marginWidth=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+    layout.verticalSpacing=convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+    layout.horizontalSpacing=convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+    layout.numColumns = 2;
+    root.setLayout(layout);
+    
+    Label label=new Label(root, SWT.NONE);
+    GridData textLayoutData=new GridData(SWT.BEGINNING, SWT.BEGINNING, true, false);
+    textLayoutData.horizontalSpan = 2;
+    label.setLayoutData(textLayoutData);
+    label.setText(Messages.CVSSSH2PreferencePage_4);
+    
+    preferedAuthMethodTable=new Table(root, SWT.CHECK | SWT.BORDER);
+    GridData layoutData=new GridData(SWT.FILL, SWT.BEGINNING, true, true);
+    layoutData.verticalSpan = 3;
+    preferedAuthMethodTable.setLayoutData(layoutData);
+    layoutData.minimumHeight = 150;
+    layoutData.minimumWidth = 200;
+    populateAuthMethods();
+    
+    up=new Button(root, SWT.PUSH);
+    up.setText(Messages.CVSSSH2PreferencePage_2);
+    up.setEnabled(false);
+    setButtonLayoutData(up);
+    
+    down=new Button(root, SWT.PUSH);
+    down.setText(Messages.CVSSSH2PreferencePage_3);
+    down.setEnabled(false);
+    setButtonLayoutData(down);
+    
+    preferedAuthMethodTable.addSelectionListener(new SelectionAdapter(){
+      
+      public void widgetSelected(SelectionEvent e){
+        boolean anySelected = false;
+        for(int i = 0; i < preferedAuthMethodTable.getItemCount(); i++){
+          anySelected |= preferedAuthMethodTable.getItem(i).getChecked();
+        }
+        
+        if(anySelected){
+          setErrorMessage(null);
+          setValid(true);
+        }
+        else{
+          setErrorMessage(Messages.CVSSSH2PreferencePage_5);
+          setValid(false);
+        }
+        up.setEnabled(preferedAuthMethodTable.getSelectionIndex()>0);
+        down
+            .setEnabled(preferedAuthMethodTable.getSelectionIndex()<preferedAuthMethodTable
+                .getItemCount()-1);
+      }
+      
+    });
+    up.addSelectionListener(new SelectionAdapter(){
+
+      public void widgetSelected(SelectionEvent e){
+        int selectedIndex=preferedAuthMethodTable.getSelectionIndex();
+        if(selectedIndex == 1){ //this is the last possible swap
+          up.setEnabled(false);
+        }
+        down.setEnabled(true);
+        TableItem sourceItem = preferedAuthMethodTable.getItem(selectedIndex);
+        TableItem targetItem = preferedAuthMethodTable.getItem(selectedIndex-1);
+        
+        //switch text
+        String stemp = targetItem.getText();
+        targetItem.setText(sourceItem.getText());
+        sourceItem.setText(stemp);
+        
+        //switch selection
+        boolean btemp = targetItem.getChecked();
+        targetItem.setChecked(sourceItem.getChecked());
+        sourceItem.setChecked(btemp);
+        
+        preferedAuthMethodTable.setSelection(targetItem);
+      }
+    });
+    
+    down.addSelectionListener(new SelectionAdapter(){
+
+      public void widgetSelected(SelectionEvent e){
+        int selectedIndex=preferedAuthMethodTable.getSelectionIndex();
+        if(selectedIndex == preferedAuthMethodTable.getItemCount()-2){ //this is the last possible swap
+          down.setEnabled(false);
+        }
+        up.setEnabled(true);
+        TableItem sourceItem = preferedAuthMethodTable.getItem(selectedIndex);
+        TableItem targetItem = preferedAuthMethodTable.getItem(selectedIndex+1);
+        
+        //switch text
+        String stemp = targetItem.getText();
+        targetItem.setText(sourceItem.getText());
+        sourceItem.setText(stemp);
+        
+        //switch selection
+        boolean btemp = targetItem.getChecked();
+        targetItem.setChecked(sourceItem.getChecked());
+        sourceItem.setChecked(btemp);
+        
+        preferedAuthMethodTable.setSelection(targetItem);
+      }
+    });
+    
+    return root;
+  }
+
+  private void populateAuthMethods(){
+    preferedAuthMethodTable.removeAll();
+    String[] methods = Utils.getEnabledPreferredAuthMethods().split(","); //$NON-NLS-1$
+    Set smethods  = new HashSet(Arrays.asList(methods));
+    
+    String[] order = Utils.getMethodsOrder().split(","); //$NON-NLS-1$
+    
+    for(int i=0; i<order.length; i++){
+      TableItem tableItem= new TableItem(preferedAuthMethodTable, SWT.NONE);
+      tableItem.setText(0, order[i]);
+      if(smethods.contains(order[i])){
+        tableItem.setChecked(true);
+      }
+    }
+  }
 
   void handleSelection(){
     boolean empty=viewer.getSelection().isEmpty();
@@ -953,6 +1137,9 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
     keyPassphrase2Text.setEnabled(enable);
     keyExport.setEnabled(enable);
     saveKeyPair.setEnabled(enable);
+    populateAuthMethods();
+    up.setEnabled(false);
+    down.setEnabled(false);
   }
 
   public void init(IWorkbench workbench){
@@ -975,6 +1162,7 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
 
   public boolean performOk(){
     boolean result=super.performOk();
+    storeAuthenticationMethodSettings();
     if(result){
       setErrorMessage(null);
       String home=ssh2HomeText.getText();
@@ -1003,12 +1191,36 @@ public class PreferencePage extends org.eclipse.jface.preference.PreferencePage
     return result;
   }
 
+  private void storeAuthenticationMethodSettings(){
+    String selected = null;
+    String order = null;
+    for(int i = 0; i < preferedAuthMethodTable.getItemCount(); i++){
+      TableItem item=preferedAuthMethodTable.getItem(i);
+      if(item.getChecked()){
+        if(selected==null){
+          selected=item.getText();
+        }
+        else{
+          selected+=","+item.getText(); //$NON-NLS-1$
+        }
+      }
+      if(order == null){
+        order = item.getText();
+      } else {
+        order += "," + item.getText(); //$NON-NLS-1$
+      }
+    }
+    Utils.setEnabledPreferredAuthMethods(selected, order);
+  }
+
   public void performApply(){
     performOk();
   }
 
   protected void performDefaults(){
     super.performDefaults();
+    Utils.setEnabledPreferredAuthMethods(Utils.getDefaultAuthMethods(), Utils
+        .getDefaultAuthMethods());
     Preferences preferences=JSchCorePlugin.getPlugin().getPluginPreferences();
     ssh2HomeText
         .setText(preferences
