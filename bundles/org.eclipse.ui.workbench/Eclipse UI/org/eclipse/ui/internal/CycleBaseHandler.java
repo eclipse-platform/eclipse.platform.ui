@@ -7,19 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 276324
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExecutableExtension;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ParameterizedCommand;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.jface.bindings.Trigger;
+import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.bindings.keys.SWTKeySupport;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
@@ -36,13 +40,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.jface.bindings.Trigger;
-import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.bindings.keys.KeyStroke;
-import org.eclipse.jface.bindings.keys.SWTKeySupport;
-import org.eclipse.jface.preference.IPreferenceStore;
-
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbenchPage;
@@ -127,9 +124,11 @@ public abstract class CycleBaseHandler extends AbstractHandler implements
 	 */
 	protected void openDialog(WorkbenchPage page, IWorkbenchPart activePart) {
 		final int MAX_ITEMS = 22;
-
+		Shell shell = null;
 		selection = null;
-		Shell shell = activePart.getSite().getShell();
+
+		if (activePart != null)
+			shell = activePart.getSite().getShell();
 		if (shell == null)
 			shell = window.getShell();
 		final Shell dialog = new Shell(shell, SWT.MODELESS);
