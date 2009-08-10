@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
+import org.eclipse.ui.tests.markers.MarkerSortUtilTest;
 import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
 import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
@@ -49,6 +50,7 @@ public class InternalTestSuite extends TestSuite {
         addTest(new TestSuite(DeclarativeFilterDeclarationTest.class));
         addTest(new TestSuite(ResourceMappingMarkersTest.class));
         addTest(new TestSuite(MarkerSupportRegistryTests.class));
+        addTest(new TestSuite(MarkerSortUtilTest.class));       
         addTest(new TestSuite(MarkerViewTests.class));
         addTest(Bug99858Test.suite());
         addTest(new TestSuite(WorkbenchWindowSubordinateSourcesTests.class));
