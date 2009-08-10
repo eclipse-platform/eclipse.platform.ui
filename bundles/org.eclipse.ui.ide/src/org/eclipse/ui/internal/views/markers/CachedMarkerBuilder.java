@@ -1137,7 +1137,7 @@ public class CachedMarkerBuilder {
 				if (avaliable < effLimit || limit == -1) {
 					effLimit = avaliable;
 				}
-				MarkerSortUtil.sortStatingKElement(entries, comparator,
+				MarkerSortUtil.sortStartingKElement(entries, comparator,
 						category.start, category.end, effLimit);
 			}
 		} else {
@@ -1146,7 +1146,7 @@ public class CachedMarkerBuilder {
 				// sort all as we'll display all
 				effLimit = entries.length - 1;
 			}
-			MarkerSortUtil.sortStatingKElement(entries, getComparator(),
+			MarkerSortUtil.sortStartingKElement(entries, getComparator(),
 					effLimit);
 		}
 
@@ -1164,7 +1164,7 @@ public class CachedMarkerBuilder {
 	 */
   MarkerCategory[] groupIntoCategories(IProgressMonitor monitor,
 			MarkerMap newMarkers) {
-		Map boundaryInfoMap = MarkerSortUtil.groupMarkerEnteries(newMarkers
+		Map boundaryInfoMap = MarkerSortUtil.groupMarkerEntries(newMarkers
 				.toArray(), getCategoryGroup(), newMarkers.getSize() - 1);
 		Iterator iterator = boundaryInfoMap.keySet().iterator();
 		int start = 0;
