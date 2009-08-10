@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %fragmentName
 Bundle-SymbolicName: org.eclipse.core.runtime.compatibility.registry
-Bundle-Version: 3.2.200.qualifier
+Bundle-Version: 3.2.300.qualifier
 Bundle-Vendor: %providerName
-Fragment-Host: org.eclipse.equinox.registry;bundle-version="[3.3.0,3.5.0)"
+Fragment-Host: org.eclipse.equinox.registry;bundle-version="[3.3.0,3.6.0)"
 Bundle-Localization: fragment
 Eclipse-PatchFragment: true
 Bundle-ClassPath: runtime_registry_compatibility.jar
