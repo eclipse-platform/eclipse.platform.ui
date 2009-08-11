@@ -95,7 +95,7 @@ public class RulerBreakpointTypesActionDelegate implements IEditorActionDelegate
         }
 
         public void run() {
-            if (!isChecked()) {
+            if (isChecked()) {
                 ToggleBreakpointsTargetManager.getDefault().setPreferredTarget(fPossibleIDs, fID);
             }
         }
