@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,7 @@ import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
  * <p>
  * When queried for the <code>SyncInfo</code> corresponding to a local resource using 
  * <code>getSyncInfo(IResource)</code>, the subscriber should not contact the server. 
- * Server round trips should only occur within the <code>refresh<code>
+ * Server round trips should only occur within the <code>refresh</code>
  * method of the subscriber. Consequently,
  * the implementation of a subscriber must cache enough state information for a remote resource to calculate the 
  * synchronization state without contacting the server.  During a refresh, the latest remote resource state 
@@ -161,6 +161,7 @@ abstract public class Subscriber {
 	 * <li>if the given resource is not supervised by this subscriber</li>
 	 * <li>if the given resource is a closed project (they are ineligible for
 	 * synchronization)</li>
+	 * </ul>
 	 * <p>
 	 * Typical synchronization operations use the statuses computed by this
 	 * method as the basis for determining what to do. It is possible for the
@@ -230,15 +231,15 @@ abstract public class Subscriber {
 	}
 	
 	/**
-	 * Adds all out-of-sync resources (getKind() != IN_SYNC) that occur
+	 * Adds all out-of-sync resources (<code>getKind() != SyncInfo.IN_SYNC</code>) that occur
 	 * under the given resources to the specified depth. The purpose of this
 	 * method is to provide subscribers a means of optimizing the determination
-	 * of all out-of-sync out-of-sync descendants of a set of resources.
+	 * of all out-of-sync descendants of a set of resources.
 	 * <p>
 	 * If any of the directly provided resources are not supervised by the subscriber, then
 	 * they should be removed from the set.
 	 * If errors occur while determining the sync info for the resources, they should
-	 * be added to the set using <code>addError</code>.
+	 * be added to the set using <code>SyncInfoSet.addError</code>.
 	 * </p>
 	 * @param resources the root of the resource subtrees from which out-of-sync sync info should be collected
 	 * @param depth the depth to which sync info should be collected
@@ -264,9 +265,9 @@ abstract public class Subscriber {
 	}
 	
 	/**
-	 * Fires a team resource change event to all registered listeners Only
+	 * Fires a team resource change event to all registered listeners. Only
 	 * listeners registered at the time this method is called are notified.
-	 * Listener notification makes use of an ISafeRunnable to ensure that
+	 * Listener notification makes use of an <code>ISafeRunnable</code> to ensure that
 	 * client exceptions do not effect the notification to other clients.
 	 */
 	protected void fireTeamResourceChange(final ISubscriberChangeEvent[] deltas) {
@@ -470,7 +471,7 @@ abstract public class Subscriber {
 	/**
 	 * Return the synchronization state of the given resource mapping.
 	 * Only return the portion of the synchronization state that matches
-	 * the provided stateMask. The synchronization state flags that are
+	 * the provided <code>stateMask</code>. The synchronization state flags that are
 	 * guaranteed to be interpreted by this method are:
 	 * <ul>
 	 * <li>The kind flags {@link IDiff#ADD}, {@link IDiff#REMOVE} and {@link IDiff#CHANGE}.
@@ -482,7 +483,7 @@ abstract public class Subscriber {
 	 * <p>
 	 * An element will only include {@link IDiff#ADD} in the returned state if all resources covered
 	 * by the traversals mappings are added. Similarly, {@link IDiff#REMOVE} will only be included
-	 * if all the resources covered by the tarversals are deleted. Otherwise {@link IDiff#CHANGE}
+	 * if all the resources covered by the traversals are deleted. Otherwise {@link IDiff#CHANGE}
 	 * will be returned. 
 	 * 
 	 * @param mapping the resource mapping whose synchronization state is to be determined
@@ -511,7 +512,7 @@ abstract public class Subscriber {
 				if (kind[0] != diffKind) {
 					kind[0] = IDiff.CHANGE;
 				}
-				// Only need to visit the childen of a change
+				// Only need to visit the children of a change
 				return diffKind == IDiff.CHANGE;
 			}
 		});
