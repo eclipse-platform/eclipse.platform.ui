@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,19 +28,19 @@ import org.eclipse.team.internal.core.Messages;
  * </p>
  * <p>
  * For two-way comparisons, a <code>SyncInfo</code> node has a change
- * type. This will be one of IN-SYNC, ADDITION, DELETION or CHANGE determined
- * in the following manner.
+ * type. This will be one of <code>IN-SYNC</code>, <code>ADDITION</code>, 
+ * <code>DELETION</code> or <code>CHANGE</code> determined in the following manner.
  * <ul>
- * <li>A resource is considered an ADDITION if it exists locally and there is no remote.
- * <li>A resource is considered an DELETION if it does not exists locally and there is remote.
- * <li>A resource is considered a CHANGE if both the local and remote exist but the 
+ * <li>A resource is considered an <code>ADDITION</code> if it exists locally and there is no remote.
+ * <li>A resource is considered an <code>DELETION</code> if it does not exists locally and there is remote.
+ * <li>A resource is considered a <code>CHANGE</code> if both the local and remote exist but the 
  * comparator indicates that they differ. The comparator may be comparing contents or
  * timestamps or some other resource state.
- * <li>A resource is considered IN_SYNC in all other cases.
+ * <li>A resource is considered <code>IN_SYNC</code> in all other cases.
  * </ul>
  * </p><p>
  * For three-way comparisons, the sync info node has a direction as well as a change
- * type. The direction is one of INCOMING, OUTGOING or CONFLICTING. The comparison
+ * type. The direction is one of <code>INCOMING</code>, <code>OUTGOING</code> or <code>CONFLICTING</code>. The comparison
  * of the local and remote resources with a <b>base</b> resource is used to determine
  * the direction of the change.
  * <ul>
@@ -54,6 +54,7 @@ import org.eclipse.team.internal.core.Messages;
  * <b>incoming resource</b>.
  * <li>If there are both incoming and outgoing changes, the resource 
  * is considered a <b>conflicting change</b>.
+ * </ul>
  * Again, the comparison of resources is done using the variant comparator provided
  * when the sync info was created.
  * </p>
@@ -192,7 +193,7 @@ public class SyncInfo implements IAdaptable {
 	 * of the local and remote resources.
 	 * ]
 	 * </p>
-	 * @return a remote resource handle, or <code>null</code>
+	 * @return a remote base resource handle, or <code>null</code>
 	 */
 	public IResourceVariant getBase() {
 		return base;
