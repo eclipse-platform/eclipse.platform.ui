@@ -556,8 +556,10 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 		if (!fPattern.getText().equals(patternData.textPattern))
 			return;
 		fIsCaseSensitiveCheckbox.setSelection(patternData.isCaseSensitive);
-		fIsRegExCheckbox.setSelection(patternData.isRegExSearch);
+		fIsRegExSearch= patternData.isRegExSearch;
+		fIsRegExCheckbox.setSelection(fIsRegExSearch);
 		fPattern.setText(patternData.textPattern);
+		fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 		fFileTypeEditor.setFileTypes(patternData.fileNamePatterns);
 		if (patternData.workingSets != null)
 			getContainer().setSelectedWorkingSets(patternData.workingSets);
