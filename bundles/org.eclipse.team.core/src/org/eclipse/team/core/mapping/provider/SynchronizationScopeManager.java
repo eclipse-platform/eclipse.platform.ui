@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,11 +36,11 @@ import org.eclipse.team.internal.core.mapping.*;
  * <li>Determine what model providers are interested in the targeted resources
  * <li>From those model providers, obtain the set of affected resource mappings
  * <li>If the original set is the same as the new set, we are done.
- * <li>if the set differs from the original selection, rerun the mapping
+ * <li>If the set differs from the original selection, rerun the mapping
  * process for any new mappings
  * <ul>
  * <li>Only need to query model providers for mappings for new resources
- * <li>keep repeating until no new mappings or resources are added
+ * <li>Keep repeating until no new mappings or resources are added
  * </ul>
  * </ol>
  * <p>
@@ -326,7 +326,7 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 	}
 
 	/**
-	 * set whether the scope has additional mappings. This method is not
+	 * Set whether the scope has additional mappings. This method is not
 	 * intended to be overridden.
 	 * 
 	 * @param hasAdditionalMappings a boolean indicating if the scope has
@@ -338,7 +338,7 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 	}
 
 	/**
-	 * set whether the scope has additional resources. This method is not
+	 * Set whether the scope has additional resources. This method is not
 	 * intended to be overridden.
 	 * 
 	 * @param hasAdditionalResources a boolean indicating if the scope has
@@ -368,7 +368,7 @@ public class SynchronizationScopeManager extends PlatformObject implements ISync
 	 * include the original resource either explicitly or implicitly as a child
 	 * of a returned resource.
 	 * <p>
-	 * Subclasses may override this method to include additional resources
+	 * Subclasses may override this method to include additional resources.
 	 * 
 	 * @param traversals the input resource traversals
 	 * @return the input resource traversals adjusted to include any additional resources
