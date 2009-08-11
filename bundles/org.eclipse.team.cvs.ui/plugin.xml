@@ -685,6 +685,7 @@
                tooltip="%CopyRepositoryNameAction.tooltip"
                class="org.eclipse.team.internal.ccvs.ui.repo.CopyRepositoryNameAction"
                menubarPath="miscGroup"
+               definitionId="org.eclipse.ui.edit.copy"
                id="org.eclipse.team.ccvs.ui.copyNames">
          </action>
          <action

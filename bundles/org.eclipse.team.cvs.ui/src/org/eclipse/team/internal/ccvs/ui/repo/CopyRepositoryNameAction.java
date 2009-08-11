@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,10 +22,13 @@ import org.eclipse.team.internal.ccvs.ui.actions.CVSAction;
 
 public class CopyRepositoryNameAction extends CVSAction {
 	public boolean isEnabled() {
-		return true;
+		return getSelectedRepositories().length > 0;
 	}
 	public void execute(IAction action) {
 		ICVSRepositoryLocation[] locations = getSelectedRepositories();
+		if (locations.length == 0)
+			return;
+
 		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < locations.length; i++) {
 			buffer.append(locations[i].getLocation(true));
@@ -56,7 +59,7 @@ public class CopyRepositoryNameAction extends CVSAction {
 	}
 	private void copyToClipbard(Display display, String str) {
 		Clipboard clipboard = new Clipboard(display);
-		clipboard.setContents(new String[] { str },	new Transfer[] { TextTransfer.getInstance()});			
+		clipboard.setContents(new String[] { str },	new Transfer[] { TextTransfer.getInstance()});
 		clipboard.dispose();
 	}
 }
