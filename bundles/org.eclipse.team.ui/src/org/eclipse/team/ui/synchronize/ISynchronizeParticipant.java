@@ -32,7 +32,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * of a page {@link #createPage(ISynchronizePageConfiguration)} and
  * clients can decide where to display the page. For example, the synchronize view is an example
  * of a client that displays a participant in a view. However, you can imagine that a client may
- * also want to display this state in a wizard or dialog instead. That is possible by 
+ * also want to display this state in a wizard or dialog instead. 
  * </p><p>
  * When a participant is registered with the {@link ISynchronizeManager} it will automatically display 
  * in the <i>Synchronize View</i> and if the participant extension point
