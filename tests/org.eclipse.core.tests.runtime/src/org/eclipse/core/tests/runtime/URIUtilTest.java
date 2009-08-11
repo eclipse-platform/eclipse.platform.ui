@@ -272,6 +272,16 @@ public class URIUtilTest extends RuntimeTest {
 		URI expectedResolved = new URI("file:////SERVER/some/path/plugins/javax.servlet_2.4.0.v200806031604.jar");
 		URI resolved = URIUtil.append(base, relative.toString());
 		assertEquals("1.0", expectedResolved, resolved);
+	}
+
+	public void testBug286339() throws URISyntaxException {
+
+		//single letter server path
+		URI base = new URI("file:////S/some/path/");
+		URI relative = new URI("plugins/javax.servlet_2.4.0.v200806031604.jar");
+		URI expectedResolved = new URI("file:////S/some/path/plugins/javax.servlet_2.4.0.v200806031604.jar");
+		URI resolved = URIUtil.append(base, relative.toString());
+		assertEquals("1.1", expectedResolved, resolved);
 
 	}
 
