@@ -594,6 +594,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				IFileInfo fileInfo = assertLinkRequirements(localLocation, updateFlags);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 				workspace.beginOperation(true);
+				
 				//replace existing resource, if applicable
 				if ((updateFlags & REPLACE) != 0) {
 					IResource existing = workspace.getRoot().findMember(getFullPath());
@@ -607,11 +608,18 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				localLocation = FileUtil.canonicalURI(localLocation);
 				getLocalManager().link(this, localLocation, fileInfo);
 				monitor.worked(Policy.opWork * 5 / 100);
+				
 				//save the location in the project description
 				Project project = (Project) getProject();
 				boolean changed = project.internalGetDescription().setLinkLocation(getProjectRelativePath(), new LinkDescription(this, localLocation));
 				if (changed)
-					project.writeDescription(IResource.NONE);
+					try {
+						project.writeDescription(IResource.NONE);
+					} catch (CoreException e) {
+						// a problem happened updating the description, so delete the resource from the workspace
+						workspace.deleteResource(this);
+						throw e; // rethrow
+					}	
 				monitor.worked(Policy.opWork * 5 / 100);
 
 				//refresh to discover any new resources below this linked location
