@@ -46,6 +46,7 @@ import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -255,15 +256,20 @@ public final class WorkbenchMenuService extends InternalMenuService {
 				.addActivityManagerListener(getActivityManagerListener());
 		
 		final IExtensionRegistry registry = Platform.getExtensionRegistry();
-		registry.addRegistryChangeListener(new IRegistryChangeListener() {
+		registryChangeListener = new IRegistryChangeListener() {
 			public void registryChanged(final IRegistryChangeEvent event) {
-				PlatformUI.getWorkbench().getDisplay().syncExec(new Runnable() {
+				final Display display = PlatformUI.getWorkbench().getDisplay();
+				if (display.isDisposed()) {
+					return;
+				}
+				display.syncExec(new Runnable() {
 					public void run() {
 						handleRegistryChanges(event);
 					}
 				});
 			}
-		});
+		};
+		registry.addRegistryChangeListener(registryChangeListener);
 	}
 
 	/**
@@ -365,6 +371,11 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 	public final void dispose() {
 		menuPersistence.dispose();
+		if (registryChangeListener != null) {
+			final IExtensionRegistry registry = Platform.getExtensionRegistry();
+			registry.removeRegistryChangeListener(registryChangeListener);
+			registryChangeListener = null;
+		}
 		Iterator i = evaluationsByItem.values().iterator();
 		while (i.hasNext()) {
 			IEvaluationReference ref = (IEvaluationReference) i.next();
@@ -399,6 +410,8 @@ public final class WorkbenchMenuService extends InternalMenuService {
 	private Set managersAwaitingUpdates = new HashSet();
 
 	private HashMap populatedManagers = new HashMap();
+
+	private IRegistryChangeListener registryChangeListener;
 
 	/**
 	 * Construct an 'id' string from the given URI. The resulting 'id' is the
