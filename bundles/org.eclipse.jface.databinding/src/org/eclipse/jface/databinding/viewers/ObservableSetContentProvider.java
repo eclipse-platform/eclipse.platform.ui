@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 116920
- *     Matthew Hall - bugs 215531, 226765, 222991, 238296, 266038
+ *     Matthew Hall - bugs 215531, 226765, 222991, 238296, 266038, 283351
  *******************************************************************************/
 package org.eclipse.jface.databinding.viewers;
 
@@ -81,14 +81,16 @@ public class ObservableSetContentProvider implements IStructuredContentProvider 
 	}
 
 	/**
-	 * Constructs an ObservableSetContentProvider
+	 * Constructs an ObservableSetContentProvider. Must be called from the
+	 * display thread.
 	 */
 	public ObservableSetContentProvider() {
 		this(null);
 	}
 
 	/**
-	 * Constructs an ObservableSetContentProvider with the given viewer updater
+	 * Constructs an ObservableSetContentProvider with the given viewer updater.
+	 * Must be called from the display thread.
 	 * 
 	 * @param viewerUpdater
 	 *            the viewer updater to use when elements are added or removed
