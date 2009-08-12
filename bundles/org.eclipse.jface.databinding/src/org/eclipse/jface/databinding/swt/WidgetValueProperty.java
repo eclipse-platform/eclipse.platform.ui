@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 263413, 264286, 265561, 262287
+ *     Matthew Hall - bugs 263413, 264286, 265561, 262287, 281723
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.swt;
@@ -20,6 +20,7 @@ import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.NativePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
+import org.eclipse.jface.internal.databinding.swt.WidgetListenerUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -127,7 +128,8 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 				for (int i = 0; i < changeEvents.length; i++) {
 					int event = changeEvents[i];
 					if (event != SWT.None) {
-						widget.addListener(event, this);
+						WidgetListenerUtil
+								.asyncAddListener(widget, event, this);
 					}
 				}
 			}
@@ -135,7 +137,8 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 				for (int i = 0; i < staleEvents.length; i++) {
 					int event = staleEvents[i];
 					if (event != SWT.None) {
-						widget.addListener(event, this);
+						WidgetListenerUtil
+								.asyncAddListener(widget, event, this);
 					}
 				}
 			}
@@ -148,14 +151,16 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 					for (int i = 0; i < changeEvents.length; i++) {
 						int event = changeEvents[i];
 						if (event != SWT.None)
-							widget.removeListener(event, this);
+							WidgetListenerUtil.asyncRemoveListener(widget,
+									event, this);
 					}
 				}
 				if (staleEvents != null) {
 					for (int i = 0; i < staleEvents.length; i++) {
 						int event = staleEvents[i];
 						if (event != SWT.None) {
-							widget.removeListener(event, this);
+							WidgetListenerUtil.asyncRemoveListener(widget,
+									event, this);
 						}
 					}
 				}

@@ -16,7 +16,7 @@
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
  *                    255734, 263693, 169876, 266038, 268336, 270461, 271720,
- *                    283204
+ *                    283204, 281723
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -155,6 +155,7 @@ import org.eclipse.core.tests.internal.databinding.validation.StringToLongValida
 import org.eclipse.core.tests.internal.databinding.validation.StringToShortValidatorTest;
 import org.eclipse.jface.tests.databinding.scenarios.BindingScenariosTestSuite;
 import org.eclipse.jface.tests.databinding.swt.SWTObservablesTest;
+import org.eclipse.jface.tests.databinding.swt.WidgetObservableThreadTest;
 import org.eclipse.jface.tests.databinding.swt.WidgetPropertiesTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableListContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableListTreeContentProviderTest;
@@ -394,6 +395,7 @@ public class BindingTestSuite extends TestSuite {
 		// org.eclipse.jface.tests.databinding.swt
 		addTestSuite(SWTObservablesTest.class);
 		addTestSuite(WidgetPropertiesTest.class);
+		addTestSuite(WidgetObservableThreadTest.class);
 
 		// org.eclipse.jface.tests.databinding.viewers
 		addTestSuite(ObservableListContentProviderTest.class);

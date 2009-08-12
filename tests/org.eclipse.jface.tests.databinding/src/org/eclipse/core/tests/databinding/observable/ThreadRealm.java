@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bug 118516
+ *     Matthew Hall - bugs 118516, 281723
  *******************************************************************************/
 package org.eclipse.core.tests.databinding.observable;
 
@@ -71,6 +71,35 @@ public class ThreadRealm extends Realm {
         }
     }
     
+    /**
+     * Returns after the realm has completed all runnables currently on its
+     * queue.  Do not call from the realm's thread.
+     * 
+     * @throws IllegalStateException
+     *             if the ThreadRealm is not blocking on its thread.
+     * @throws IllegalStateException
+     *             if invoked from the realm's own thread.
+     */
+    public void processQueue() {
+        if (Thread.currentThread() == thread) {
+            throw new IllegalStateException(
+                    "Cannot execute this method in the realm's own thread");
+        }
+
+        try {
+            synchronized (queue) {
+                while (!queue.isEmpty()) {
+                    if (!block)
+                        throw new IllegalStateException(
+                                "Cannot process queue, ThreadRealm is not blocking on its thread");
+                    queue.wait();
+                }
+            }
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
     public boolean isBlocking() {
         return block;
     }
@@ -106,6 +135,10 @@ public class ThreadRealm extends Realm {
                 if (runnable != null) {
                     safeRun(runnable);
                     runnable = null;
+                    synchronized (queue) {
+                        // Notify that task was removed from queue
+                        queue.notifyAll();
+                    }
                 }
             }
         } catch (InterruptedException e) {

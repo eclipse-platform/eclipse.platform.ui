@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bug 159768
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 218269, 254524, 146906
+ *     Matthew Hall - bug 218269, 254524, 146906, 281723
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -64,7 +64,12 @@ public abstract class Binding extends ValidationStatusProvider {
 			throw new IllegalArgumentException("Model observable is disposed"); //$NON-NLS-1$
 		this.disposeListener = new IDisposeListener() {
 			public void handleDispose(DisposeEvent staleEvent) {
-				dispose();
+				Binding.this.context.getValidationRealm().exec(new Runnable() {
+					public void run() {
+						if (!isDisposed())
+							dispose();
+					}
+				});
 			}
 		};
 		target.addDisposeListener(disposeListener);

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 256543, 190881, 263691
+ *     Matthew Hall - bug 256543, 190881, 263691, 281723
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -61,24 +61,26 @@ public class SWTVetoableValueDecorator extends DecoratingVetoableValue
 		Assert
 				.isTrue(decorated.getValueType().equals(String.class),
 						"SWTVetoableValueDecorator can only decorate observable values of String value type"); //$NON-NLS-1$
-		widget.addListener(SWT.Dispose, disposeListener);
+		WidgetListenerUtil.asyncAddListener(widget, SWT.Dispose,
+				disposeListener);
 	}
 
 	protected void firstListenerAdded() {
 		super.firstListenerAdded();
-		widget.addListener(SWT.Verify, verifyListener);
+		WidgetListenerUtil.asyncAddListener(widget, SWT.Verify, verifyListener);
 	}
 
 	protected void lastListenerRemoved() {
-		if (widget != null && !widget.isDisposed())
-			widget.removeListener(SWT.Verify, verifyListener);
+		WidgetListenerUtil.asyncRemoveListener(widget, SWT.Verify,
+				verifyListener);
 		super.lastListenerRemoved();
 	}
 
 	public synchronized void dispose() {
-		if (widget != null && !widget.isDisposed()) {
-			widget.removeListener(SWT.Verify, verifyListener);
-		}
+		WidgetListenerUtil.asyncRemoveListener(widget, SWT.Verify,
+				verifyListener);
+		WidgetListenerUtil.asyncRemoveListener(widget, SWT.Dispose,
+				disposeListener);
 		this.widget = null;
 		super.dispose();
 	}

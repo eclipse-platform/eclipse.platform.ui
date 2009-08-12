@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation
- *     Matthew Hall - bugs 190881, 264286
+ *     Matthew Hall - bugs 190881, 264286, 281723
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -35,7 +35,8 @@ public class SWTObservableListDecorator extends DecoratingObservableList
 	public SWTObservableListDecorator(IObservableList decorated, Widget widget) {
 		super(decorated, true);
 		this.widget = widget;
-		widget.addListener(SWT.Dispose, disposeListener);
+		WidgetListenerUtil.asyncAddListener(widget, SWT.Dispose,
+				disposeListener);
 	}
 
 	private Listener disposeListener = new Listener() {
@@ -45,6 +46,8 @@ public class SWTObservableListDecorator extends DecoratingObservableList
 	};
 
 	public synchronized void dispose() {
+		WidgetListenerUtil.asyncRemoveListener(widget, SWT.Dispose,
+				disposeListener);
 		this.widget = null;
 		super.dispose();
 	}
