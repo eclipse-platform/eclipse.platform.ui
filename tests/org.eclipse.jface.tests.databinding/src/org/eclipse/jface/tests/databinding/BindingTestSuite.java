@@ -16,7 +16,7 @@
  *                    237703, 237718, 222289, 247394, 233306, 247647, 254524,
  *                    246103, 249992, 256150, 256543, 262269, 175735, 262946,
  *                    255734, 263693, 169876, 266038, 268336, 270461, 271720,
- *                    283204, 281723
+ *                    283204, 281723, 283428
  *     Ovidio Mallo - bug 237163, bug 235195
  *******************************************************************************/
 package org.eclipse.jface.tests.databinding;
@@ -162,6 +162,7 @@ import org.eclipse.jface.tests.databinding.viewers.ObservableListTreeContentProv
 import org.eclipse.jface.tests.databinding.viewers.ObservableMapLabelProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetContentProviderTest;
 import org.eclipse.jface.tests.databinding.viewers.ObservableSetTreeContentProviderTest;
+import org.eclipse.jface.tests.databinding.viewers.ViewerSupportTest;
 import org.eclipse.jface.tests.databinding.viewers.ViewersObservablesTest;
 import org.eclipse.jface.tests.databinding.wizard.WizardPageSupportTest;
 import org.eclipse.jface.tests.examples.databinding.mask.internal.EditMaskLexerAndTokenTest;
@@ -404,6 +405,7 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(ObservableSetContentProviderTest.class);
 		addTestSuite(ObservableSetTreeContentProviderTest.class);
 		addTestSuite(ViewersObservablesTest.class);
+		addTestSuite(ViewerSupportTest.class);
 
 		// org.eclipse.jface.tests.databinding.wizard
 		addTestSuite(WizardPageSupportTest.class);
