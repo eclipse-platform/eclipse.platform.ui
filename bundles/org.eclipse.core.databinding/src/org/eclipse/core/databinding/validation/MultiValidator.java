@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 237884, 240590, 251003
+ *     Matthew Hall - bug 237884, 240590, 251003, 278550
  *     Ovidio Mallo - bug 238909, 235859
  ******************************************************************************/
 
@@ -172,17 +172,23 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	 * @param realm
 	 *            the realm on which validation takes place.
 	 */
-	public MultiValidator(Realm realm) {
+	public MultiValidator(final Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		this.realm = realm;
 
-		validationStatus = new ValidationStatusObservableValue(realm);
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				validationStatus = new ValidationStatusObservableValue(realm);
 
-		targets = new WritableList(realm, new ArrayList(), IObservable.class);
-		targets.addListChangeListener(targetsListener);
-		unmodifiableTargets = Observables.unmodifiableObservableList(targets);
+				targets = new WritableList(realm, new ArrayList(),
+						IObservable.class);
+				targets.addListChangeListener(targetsListener);
+				unmodifiableTargets = Observables
+						.unmodifiableObservableList(targets);
 
-		models = Observables.emptyObservableList(realm);
+				models = Observables.emptyObservableList(realm);
+			}
+		});
 	}
 
 	private void checkObservable(IObservable target) {
@@ -203,8 +209,12 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	public IObservableValue getValidationStatus() {
 		if (unmodifiableValidationStatus == null) {
 			revalidate();
-			unmodifiableValidationStatus = Observables
-					.unmodifiableObservableValue(validationStatus);
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					unmodifiableValidationStatus = Observables
+							.unmodifiableObservableValue(validationStatus);
+				}
+			});
 		}
 		return unmodifiableValidationStatus;
 	}

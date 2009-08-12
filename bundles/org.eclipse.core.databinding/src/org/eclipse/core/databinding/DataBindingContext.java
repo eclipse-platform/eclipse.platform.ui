@@ -8,13 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brad Reynolds - bugs 159539, 140644, 159940, 116920, 159768
- *     Matthew Hall - bugs 118516, 124684, 218269, 260329, 252732, 146906
+ *     Matthew Hall - bugs 118516, 124684, 218269, 260329, 252732, 146906,
+ *                    278550
  *     Boris Bokowski - bug 218269
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
 import java.util.Iterator;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -89,18 +91,24 @@ public class DataBindingContext {
 	 * 
 	 * @see Realm
 	 */
-	public DataBindingContext(Realm validationRealm) {
+	public DataBindingContext(final Realm validationRealm) {
 		Assert.isNotNull(validationRealm, "Validation realm cannot be null"); //$NON-NLS-1$
 		this.validationRealm = validationRealm;
 
-		bindings = new WritableList(validationRealm);
-		unmodifiableBindings = Observables.unmodifiableObservableList(bindings);
-
-		validationStatusProviders = new WritableList(validationRealm);
-		unmodifiableStatusProviders = Observables
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				bindings = new WritableList(validationRealm);
+				unmodifiableBindings = Observables
+				.unmodifiableObservableList(bindings);
+				
+				validationStatusProviders = new WritableList(validationRealm);
+				unmodifiableStatusProviders = Observables
 				.unmodifiableObservableList(validationStatusProviders);
-
-		validationStatusMap = new ValidationStatusMap(validationRealm, bindings);
+				
+				validationStatusMap = new ValidationStatusMap(validationRealm,
+						bindings);
+			}
+		});
 	}
 
 	/**

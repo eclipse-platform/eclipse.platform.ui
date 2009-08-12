@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bugs 195222, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -41,17 +42,31 @@ public class ValuePropertyDetailSet extends SetProperty {
 		return detailProperty.getElementType();
 	}
 
-	public IObservableSet observe(Realm realm, Object source) {
-		IObservableValue masterValue = masterProperty.observe(realm, source);
-		IObservableSet detailSet = detailProperty.observeDetail(masterValue);
-		PropertyObservableUtil.cascadeDispose(detailSet, masterValue);
+	public IObservableSet observe(final Realm realm, final Object source) {
+		final IObservableValue[] masterValue = new IObservableValue[1];
+
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				masterValue[0] = masterProperty.observe(realm, source);
+			}
+		});
+
+		IObservableSet detailSet = detailProperty.observeDetail(masterValue[0]);
+		PropertyObservableUtil.cascadeDispose(detailSet, masterValue[0]);
 		return detailSet;
 	}
 
-	public IObservableSet observeDetail(IObservableValue master) {
-		IObservableValue masterValue = masterProperty.observeDetail(master);
-		IObservableSet detailSet = detailProperty.observeDetail(masterValue);
-		PropertyObservableUtil.cascadeDispose(detailSet, masterValue);
+	public IObservableSet observeDetail(final IObservableValue master) {
+		final IObservableValue[] masterValue = new IObservableValue[1];
+
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				masterValue[0] = masterProperty.observeDetail(master);
+			}
+		});
+
+		IObservableSet detailSet = detailProperty.observeDetail(masterValue[0]);
+		PropertyObservableUtil.cascadeDispose(detailSet, masterValue[0]);
 		return detailSet;
 	}
 

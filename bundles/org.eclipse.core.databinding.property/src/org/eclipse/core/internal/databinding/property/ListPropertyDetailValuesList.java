@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bugs 195222, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -41,17 +42,32 @@ public class ListPropertyDetailValuesList extends ListProperty {
 		return detailProperty.getValueType();
 	}
 
-	public IObservableList observe(Realm realm, Object source) {
-		IObservableList masterList = masterProperty.observe(realm, source);
-		IObservableList detailList = detailProperty.observeDetail(masterList);
-		PropertyObservableUtil.cascadeDispose(detailList, masterList);
+	public IObservableList observe(final Realm realm, final Object source) {
+		final IObservableList[] masterList = new IObservableList[1];
+
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				masterList[0] = masterProperty.observe(realm, source);
+			}
+		});
+
+		IObservableList detailList = detailProperty
+				.observeDetail(masterList[0]);
+		PropertyObservableUtil.cascadeDispose(detailList, masterList[0]);
 		return detailList;
 	}
 
-	public IObservableList observeDetail(IObservableValue master) {
-		IObservableList masterList = masterProperty.observeDetail(master);
-		IObservableList detailList = detailProperty.observeDetail(masterList);
-		PropertyObservableUtil.cascadeDispose(detailList, masterList);
+	public IObservableList observeDetail(final IObservableValue master) {
+		final IObservableList[] masterList = new IObservableList[1];
+
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				masterList[0] = masterProperty.observeDetail(master);
+			}
+		});
+		IObservableList detailList = detailProperty
+				.observeDetail(masterList[0]);
+		PropertyObservableUtil.cascadeDispose(detailList, masterList[0]);
 		return detailList;
 	}
 

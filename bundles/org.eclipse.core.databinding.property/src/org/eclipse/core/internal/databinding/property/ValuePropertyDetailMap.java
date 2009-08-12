@@ -7,10 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -44,17 +46,31 @@ public class ValuePropertyDetailMap extends MapProperty {
 		return detailProperty.getValueType();
 	}
 
-	public IObservableMap observe(Realm realm, Object source) {
-		IObservableValue masterValue = masterProperty.observe(realm, source);
-		IObservableMap detailMap = detailProperty.observeDetail(masterValue);
-		PropertyObservableUtil.cascadeDispose(detailMap, masterValue);
+	public IObservableMap observe(final Realm realm, final Object source) {
+		final IObservableValue[] masterValue = new IObservableValue[1];
+
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				masterValue[0] = masterProperty.observe(realm, source);
+			}
+		});
+
+		IObservableMap detailMap = detailProperty.observeDetail(masterValue[0]);
+		PropertyObservableUtil.cascadeDispose(detailMap, masterValue[0]);
 		return detailMap;
 	}
 
-	public IObservableMap observeDetail(IObservableValue master) {
-		IObservableValue masterValue = masterProperty.observeDetail(master);
-		IObservableMap detailMap = detailProperty.observeDetail(masterValue);
-		PropertyObservableUtil.cascadeDispose(detailMap, masterValue);
+	public IObservableMap observeDetail(final IObservableValue master) {
+		final IObservableValue[] masterValue = new IObservableValue[1];
+
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				masterValue[0] = masterProperty.observeDetail(master);
+			}
+		});
+
+		IObservableMap detailMap = detailProperty.observeDetail(masterValue[0]);
+		PropertyObservableUtil.cascadeDispose(detailMap, masterValue[0]);
 		return detailMap;
 	}
 

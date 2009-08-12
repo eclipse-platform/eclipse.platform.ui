@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 220700, 271148
+ *     Matthew Hall - bugs 220700, 271148, 278550
  *******************************************************************************/
 
 package org.eclipse.core.databinding;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
@@ -82,8 +83,12 @@ class ValueBinding extends Binding {
 	}
 
 	protected void preInit() {
-		validationStatusObservable = new WritableValue(context
-				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				validationStatusObservable = new WritableValue(context
+						.getValidationRealm(), Status.OK_STATUS, IStatus.class);
+			}
+		});
 	}
 
 	protected void postInit() {

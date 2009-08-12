@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 281727
+ *     Matthew Hall - bugs 262269, 281727, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -34,22 +35,22 @@ import org.eclipse.core.internal.databinding.identity.IdentityObservableSet;
  * 
  */
 abstract class DelegatingCache {
-	private Realm realm;
-	private DelegatingValueProperty detailProperty;
-	private IObservableSet elements;
-	private Map delegateCaches;
-
 	private class DelegateCache implements IMapChangeListener {
 		private final IValueProperty delegate;
-		private final IObservableSet masterElements;
-		private final IObservableMap masterElementValues;
+		private IObservableSet masterElements;
+		private IObservableMap masterElementValues;
 		private final Map cachedValues;
 
-		DelegateCache(IValueProperty delegate) {
+		DelegateCache(final IValueProperty delegate) {
 			this.delegate = delegate;
-			this.masterElements = new IdentityObservableSet(realm, elements
-					.getElementType());
-			this.masterElementValues = delegate.observeDetail(masterElements);
+			ObservableTracker.runAndIgnore(new Runnable() {
+				public void run() {
+					masterElements = new IdentityObservableSet(realm, elements
+							.getElementType());
+					masterElementValues = delegate
+							.observeDetail(masterElements);
+				}
+			});
 			this.cachedValues = new IdentityMap();
 
 			masterElementValues.addMapChangeListener(this);
@@ -117,11 +118,21 @@ abstract class DelegatingCache {
 		}
 	}
 
-	DelegatingCache(Realm realm, DelegatingValueProperty detailProperty) {
+	private Realm realm;
+	private DelegatingValueProperty detailProperty;
+	private IObservableSet elements;
+	private Map delegateCaches;
+
+	DelegatingCache(final Realm realm, DelegatingValueProperty detailProperty) {
 		this.realm = realm;
 		this.detailProperty = detailProperty;
 
-		this.elements = new IdentityObservableSet(realm, null);
+		ObservableTracker.runAndIgnore(new Runnable() {
+			public void run() {
+				elements = new IdentityObservableSet(realm, null);
+			}
+		});
+
 		this.delegateCaches = new IdentityMap();
 
 		elements.addSetChangeListener(new ISetChangeListener() {
