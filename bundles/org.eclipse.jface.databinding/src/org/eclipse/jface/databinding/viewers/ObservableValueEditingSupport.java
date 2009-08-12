@@ -15,6 +15,8 @@ package org.eclipse.jface.databinding.viewers;
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.observable.ChangeEvent;
+import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.runtime.Assert;
@@ -197,16 +199,28 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 	 */
 	protected Binding createBinding(IObservableValue target,
 			IObservableValue model) {
-		return dbc.bindValue(target, model, new UpdateValueStrategy(
+		dirty = false;
+		Binding binding = dbc.bindValue(target, model, new UpdateValueStrategy(
 				UpdateValueStrategy.POLICY_CONVERT), null);
+		target.addChangeListener(new IChangeListener() {
+			public void handleChange(ChangeEvent event) {
+				dirty = true;
+			}
+		});
+		return binding;
 	}
+
+	boolean dirty = false;
 
 	/**
 	 * Updates the model from the target.
 	 */
 	final protected void saveCellEditorValue(CellEditor cellEditor,
 			ViewerCell cell) {
-		editingState.binding.updateTargetToModel();
+		if (dirty) {
+			editingState.binding.updateTargetToModel();
+			dirty = false;
+		}
 	}
 
 	private class ColumnViewerEditorActivationListenerHelper extends
@@ -254,9 +268,9 @@ public abstract class ObservableValueEditingSupport extends EditingSupport {
 		}
 
 		void dispose() {
+			binding.dispose();
 			target.dispose();
 			model.dispose();
-			binding.dispose();
 		}
 	}
 }
