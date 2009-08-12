@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 260337)
+ *     Matthew Hall - bug 283428
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -61,11 +62,14 @@ public class ViewerSupport {
 	public static void bind(StructuredViewer viewer, IObservableList input,
 			IValueProperty[] labelProperties) {
 		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
+		if (viewer.getInput() != null)
+			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
 				.observeEach(contentProvider.getKnownElements(),
 						labelProperties)));
-		viewer.setInput(input);
+		if (input != null)
+			viewer.setInput(input);
 	}
 
 	/**
@@ -99,11 +103,14 @@ public class ViewerSupport {
 	public static void bind(StructuredViewer viewer, IObservableSet input,
 			IValueProperty[] labelProperties) {
 		ObservableSetContentProvider contentProvider = new ObservableSetContentProvider();
+		if (viewer.getInput() != null)
+			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
 				.observeEach(contentProvider.getKnownElements(),
 						labelProperties)));
-		viewer.setInput(input);
+		if (input != null)
+			viewer.setInput(input);
 	}
 
 	/**
@@ -146,11 +153,14 @@ public class ViewerSupport {
 		Realm realm = SWTObservables.getRealm(viewer.getControl().getDisplay());
 		ObservableListTreeContentProvider contentProvider = new ObservableListTreeContentProvider(
 				childrenProperty.listFactory(realm), null);
+		if (viewer.getInput() != null)
+			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
 				.observeEach(contentProvider.getKnownElements(),
 						labelProperties)));
-		viewer.setInput(input);
+		if (input != null)
+			viewer.setInput(input);
 	}
 
 	/**
@@ -193,10 +203,13 @@ public class ViewerSupport {
 		Realm realm = SWTObservables.getRealm(viewer.getControl().getDisplay());
 		ObservableSetTreeContentProvider contentProvider = new ObservableSetTreeContentProvider(
 				childrenProperty.setFactory(realm), null);
+		if (viewer.getInput() != null)
+			viewer.setInput(null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setLabelProvider(new ObservableMapLabelProvider(Properties
 				.observeEach(contentProvider.getKnownElements(),
 						labelProperties)));
-		viewer.setInput(input);
+		if (input != null)
+			viewer.setInput(input);
 	}
 }
