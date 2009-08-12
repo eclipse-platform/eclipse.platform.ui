@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 262221, 271148, 280341
+ *     Matthew Hall - bugs 262221, 271148, 280341, 278550
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -15,6 +15,7 @@ package org.eclipse.core.databinding;
 import java.util.Collections;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -87,8 +88,13 @@ public class ListBinding extends Binding {
 	}
 
 	protected void preInit() {
-		validationStatusObservable = new WritableValue(context
-				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
+		ObservableTracker.setIgnore(true);
+		try {
+			validationStatusObservable = new WritableValue(context
+					.getValidationRealm(), Status.OK_STATUS, IStatus.class);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	protected void postInit() {

@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bugs 195222, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -47,14 +48,30 @@ public class SetPropertyDetailValuesMap extends MapProperty {
 	}
 
 	public IObservableMap observe(Realm realm, Object source) {
-		IObservableSet masterSet = masterProperty.observe(realm, source);
+		IObservableSet masterSet;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterSet = masterProperty.observe(realm, source);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableMap detailMap = detailProperty.observeDetail(masterSet);
 		PropertyObservableUtil.cascadeDispose(detailMap, masterSet);
 		return detailMap;
 	}
 
 	public IObservableMap observeDetail(IObservableValue master) {
-		IObservableSet masterSet = masterProperty.observeDetail(master);
+		IObservableSet masterSet;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterSet = masterProperty.observeDetail(master);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableMap detailMap = detailProperty.observeDetail(masterSet);
 		PropertyObservableUtil.cascadeDispose(detailMap, masterSet);
 		return detailMap;

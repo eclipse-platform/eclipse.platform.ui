@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 265561, 262287, 268688
+ *     Matthew Hall - bugs 262269, 265561, 262287, 268688, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -154,7 +154,13 @@ public class MapSimpleValueObservableMap extends AbstractObservableMap
 	}
 
 	protected void firstListenerAdded() {
-		knownMasterValues = new IdentityObservableSet(getRealm(), null);
+		ObservableTracker.setIgnore(true);
+		try {
+			knownMasterValues = new IdentityObservableSet(getRealm(), null);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		cachedValues = new IdentityMap();
 		staleMasterValues = new IdentitySet();
 		knownMasterValues.addSetChangeListener(new ISetChangeListener() {

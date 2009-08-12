@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *         (through WizardPageSupport.java)
  *     Matthew Hall - initial API and implementation (bug 239900)
- *     Matthew Hall - bugs 237856, 275058
+ *     Matthew Hall - bugs 237856, 275058, 278550
  *     Ovidio Mallo - bug 237856
  ******************************************************************************/
 
@@ -24,6 +24,7 @@ import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.IStaleListener;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -145,9 +146,15 @@ public class DialogPageSupport {
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	protected void init() {
-		aggregateStatus = new AggregateValidationStatus(dbc
-				.getValidationStatusProviders(),
-				AggregateValidationStatus.MAX_SEVERITY);
+		ObservableTracker.setIgnore(true);
+		try {
+			aggregateStatus = new AggregateValidationStatus(dbc
+					.getValidationStatusProviders(),
+					AggregateValidationStatus.MAX_SEVERITY);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		aggregateStatus.addValueChangeListener(new IValueChangeListener() {
 			public void handleValueChange(ValueChangeEvent event) {
 				currentStatus = (IStatus) event.diff.getNewValue();

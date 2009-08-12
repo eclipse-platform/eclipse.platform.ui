@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 218269)
  *     Boris Bokowski - bug 218269
- *     Matthew Hall - bug 237884, 240590, 251003, 251424
+ *     Matthew Hall - bug 237884, 240590, 251003, 251424, 278550
  *     Ovidio Mallo - bug 238909, 235859
  ******************************************************************************/
 
@@ -176,13 +176,20 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		this.realm = realm;
 
-		validationStatus = new ValidationStatusObservableValue(realm);
+		ObservableTracker.setIgnore(true);
+		try {
+			validationStatus = new ValidationStatusObservableValue(realm);
 
-		targets = new WritableList(realm, new ArrayList(), IObservable.class);
-		targets.addListChangeListener(targetsListener);
-		unmodifiableTargets = Observables.unmodifiableObservableList(targets);
+			targets = new WritableList(realm, new ArrayList(),
+					IObservable.class);
+			targets.addListChangeListener(targetsListener);
+			unmodifiableTargets = Observables
+					.unmodifiableObservableList(targets);
 
-		models = Observables.emptyObservableList(realm);
+			models = Observables.emptyObservableList(realm);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	private void checkObservable(IObservable target) {
@@ -203,8 +210,13 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 	public IObservableValue getValidationStatus() {
 		if (unmodifiableValidationStatus == null) {
 			revalidate();
-			unmodifiableValidationStatus = Observables
-					.unmodifiableObservableValue(validationStatus);
+			ObservableTracker.setIgnore(true);
+			try {
+				unmodifiableValidationStatus = Observables
+						.unmodifiableObservableValue(validationStatus);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 		}
 		return unmodifiableValidationStatus;
 	}

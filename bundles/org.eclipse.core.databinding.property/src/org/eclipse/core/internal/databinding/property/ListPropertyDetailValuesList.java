@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bugs 195222, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -42,14 +43,30 @@ public class ListPropertyDetailValuesList extends ListProperty {
 	}
 
 	public IObservableList observe(Realm realm, Object source) {
-		IObservableList masterList = masterProperty.observe(realm, source);
+		IObservableList masterList;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterList = masterProperty.observe(realm, source);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableList detailList = detailProperty.observeDetail(masterList);
 		PropertyObservableUtil.cascadeDispose(detailList, masterList);
 		return detailList;
 	}
 
 	public IObservableList observeDetail(IObservableValue master) {
-		IObservableList masterList = masterProperty.observeDetail(master);
+		IObservableList masterList;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterList = masterProperty.observeDetail(master);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableList detailList = detailProperty.observeDetail(masterList);
 		PropertyObservableUtil.cascadeDispose(detailList, masterList);
 		return detailList;

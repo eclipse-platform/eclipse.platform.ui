@@ -7,11 +7,12 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bug 195222
+ *     Matthew Hall - bugs 195222, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -44,7 +45,15 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 	}
 
 	public IObservableValue observe(Realm realm, Object source) {
-		IObservableValue masterValue = masterProperty.observe(realm, source);
+		IObservableValue masterValue;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterValue = masterProperty.observe(realm, source);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableValue detailValue = detailProperty
 				.observeDetail(masterValue);
 		PropertyObservableUtil.cascadeDispose(detailValue, masterValue);
@@ -52,7 +61,15 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 	}
 
 	public IObservableValue observeDetail(IObservableValue master) {
-		IObservableValue masterValue = masterProperty.observeDetail(master);
+		IObservableValue masterValue;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterValue = masterProperty.observeDetail(master);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableValue detailValue = detailProperty
 				.observeDetail(masterValue);
 		PropertyObservableUtil.cascadeDispose(detailValue, masterValue);
@@ -60,21 +77,45 @@ public class ValuePropertyDetailValue extends ValueProperty implements
 	}
 
 	public IObservableList observeDetail(IObservableList master) {
-		IObservableList masterList = masterProperty.observeDetail(master);
+		IObservableList masterList;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterList = masterProperty.observeDetail(master);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableList detailList = detailProperty.observeDetail(masterList);
 		PropertyObservableUtil.cascadeDispose(detailList, masterList);
 		return detailList;
 	}
 
 	public IObservableMap observeDetail(IObservableSet master) {
-		IObservableMap masterMap = masterProperty.observeDetail(master);
+		IObservableMap masterMap;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterMap = masterProperty.observeDetail(master);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableMap detailMap = detailProperty.observeDetail(masterMap);
 		PropertyObservableUtil.cascadeDispose(detailMap, masterMap);
 		return detailMap;
 	}
 
 	public IObservableMap observeDetail(IObservableMap master) {
-		IObservableMap masterMap = masterProperty.observeDetail(master);
+		IObservableMap masterMap;
+
+		ObservableTracker.setIgnore(true);
+		try {
+			masterMap = masterProperty.observeDetail(master);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		IObservableMap detailMap = detailProperty.observeDetail(masterMap);
 		PropertyObservableUtil.cascadeDispose(detailMap, masterMap);
 		return detailMap;

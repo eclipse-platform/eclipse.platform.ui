@@ -11,7 +11,7 @@
  *     Matthew Hall - initial API and implementation (bug 239900)
  *     Ben Vitale <bvitale3002@yahoo.com> - bug 263100
  *     Kai Schlamp - bug 275058
- *     Matthew Hall - bug 275058
+ *     Matthew Hall - bugs 275058, 278550
  ******************************************************************************/
 
 package org.eclipse.jface.databinding.dialog;
@@ -24,6 +24,7 @@ import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.ListChangeEvent;
@@ -128,9 +129,15 @@ public class TitleAreaDialogSupport {
 	}
 
 	private void init() {
-		aggregateStatus = new AggregateValidationStatus(dbc
-				.getValidationStatusProviders(),
-				AggregateValidationStatus.MAX_SEVERITY);
+		ObservableTracker.setIgnore(true);
+		try {
+			aggregateStatus = new AggregateValidationStatus(dbc
+					.getValidationStatusProviders(),
+					AggregateValidationStatus.MAX_SEVERITY);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		aggregateStatus.addValueChangeListener(new IValueChangeListener() {
 			public void handleValueChange(ValueChangeEvent event) {
 

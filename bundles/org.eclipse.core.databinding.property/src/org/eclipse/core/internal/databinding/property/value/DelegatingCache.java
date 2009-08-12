@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
- *     Matthew Hall - bugs 262269, 281727
+ *     Matthew Hall - bugs 262269, 281727, 278550
  ******************************************************************************/
 
 package org.eclipse.core.internal.databinding.property.value;
@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
@@ -47,9 +48,15 @@ abstract class DelegatingCache {
 
 		DelegateCache(IValueProperty delegate) {
 			this.delegate = delegate;
-			this.masterElements = new IdentityObservableSet(realm, elements
-					.getElementType());
-			this.masterElementValues = delegate.observeDetail(masterElements);
+			ObservableTracker.setIgnore(true);
+			try {
+				this.masterElements = new IdentityObservableSet(realm, elements
+						.getElementType());
+				this.masterElementValues = delegate
+						.observeDetail(masterElements);
+			} finally {
+				ObservableTracker.setIgnore(false);
+			}
 			this.cachedValues = new IdentityMap();
 
 			masterElementValues.addMapChangeListener(this);
@@ -121,7 +128,13 @@ abstract class DelegatingCache {
 		this.realm = realm;
 		this.detailProperty = detailProperty;
 
-		this.elements = new IdentityObservableSet(realm, null);
+		ObservableTracker.setIgnore(true);
+		try {
+			this.elements = new IdentityObservableSet(realm, null);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
+
 		this.delegateCaches = new IdentityMap();
 
 		elements.addSetChangeListener(new ISetChangeListener() {

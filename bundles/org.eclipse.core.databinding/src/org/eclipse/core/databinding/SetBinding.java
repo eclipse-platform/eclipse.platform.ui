@@ -8,7 +8,7 @@
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 124684)
  *     IBM Corporation - through ListBinding.java
- *     Matthew Hall - bug 271148
+ *     Matthew Hall - bugs 271148, 278550
  ******************************************************************************/
 
 package org.eclipse.core.databinding;
@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Iterator;
 
 import org.eclipse.core.databinding.observable.Diffs;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetChangeEvent;
@@ -89,8 +90,13 @@ public class SetBinding extends Binding {
 	}
 
 	protected void preInit() {
-		validationStatusObservable = new WritableValue(context
-				.getValidationRealm(), Status.OK_STATUS, IStatus.class);
+		ObservableTracker.setIgnore(true);
+		try {
+			validationStatusObservable = new WritableValue(context
+					.getValidationRealm(), Status.OK_STATUS, IStatus.class);
+		} finally {
+			ObservableTracker.setIgnore(false);
+		}
 	}
 
 	protected void postInit() {
