@@ -8,7 +8,7 @@
  * Contributors:
  * 		Matthew Hall - initial API and implementation (bug 180746)
  * 		Boris Bokowski, IBM - initial API and implementation
- * 		Matthew Hall - bugs 212223, 208332, 245647
+ * 		Matthew Hall - bugs 212223, 208332, 245647, 281723
  *  	Will Horn - bug 215297
  ******************************************************************************/
 
@@ -58,7 +58,7 @@ public class SWTDelayedObservableValueDecorator extends
 
 		if (widget instanceof Control) {
 			control = (Control) widget;
-			control.addListener(SWT.FocusOut, this);
+			WidgetListenerUtil.asyncAddListener(control, SWT.FocusOut, this);
 		}
 	}
 
@@ -72,8 +72,7 @@ public class SWTDelayedObservableValueDecorator extends
 
 	public synchronized void dispose() {
 		if (control != null) {
-			if (!control.isDisposed())
-				control.removeListener(SWT.FocusOut, this);
+			WidgetListenerUtil.asyncRemoveListener(control, SWT.FocusOut, this);
 			control = null;
 		}
 		super.dispose();

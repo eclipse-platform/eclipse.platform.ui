@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 194734)
+ *     Matthew Hall - bug 281723
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
@@ -34,7 +35,7 @@ public class SWTObservableValueDecorator extends DecoratingObservableValue
 	public SWTObservableValueDecorator(IObservableValue decorated, Widget widget) {
 		super(decorated, true);
 		this.widget = widget;
-		widget.addListener(SWT.Dispose, this);
+		WidgetListenerUtil.asyncAddListener(widget, SWT.Dispose, this);
 	}
 
 	public void handleEvent(Event event) {
@@ -48,8 +49,7 @@ public class SWTObservableValueDecorator extends DecoratingObservableValue
 
 	public synchronized void dispose() {
 		if (widget != null) {
-			if (!widget.isDisposed())
-				widget.removeListener(SWT.Dispose, this);
+			WidgetListenerUtil.asyncRemoveListener(widget, SWT.Dispose, this);
 			widget = null;
 		}
 		super.dispose();
