@@ -30,6 +30,7 @@ import org.eclipse.ui.INestableKeyBindingService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.KeyBindingService;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -181,11 +182,14 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 
 		// Remove myself from the list of nested key binding services.
 		if (service != null) {
-			IKeyBindingService parentService = getEditor().getSite()
+			IKeyBindingService parentService = getMultiPageEditor().getEditorSite()
 					.getKeyBindingService();
 			if (parentService instanceof INestableKeyBindingService) {
 				INestableKeyBindingService nestableParent = (INestableKeyBindingService) parentService;
 				nestableParent.removeKeyBindingService(this);
+			}
+			if (service instanceof KeyBindingService) {
+				((KeyBindingService) service).dispose();
 			}
 			service = null;
 		}
