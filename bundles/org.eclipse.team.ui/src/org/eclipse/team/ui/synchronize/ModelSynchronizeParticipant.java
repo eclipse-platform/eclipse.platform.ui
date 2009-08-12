@@ -109,7 +109,7 @@ public class ModelSynchronizeParticipant extends
 	private SaveableComparison activeSaveable;
 	private PreferenceStore preferences = new PreferenceStore() {
 		public void save() throws IOException {
-			// Nothing to do. Preference will be saved with participant
+			// Nothing to do. Preference will be saved with participant.
 		}
 	};
 
@@ -124,7 +124,7 @@ public class ModelSynchronizeParticipant extends
 	};
 
 	/**
-	 * Create a participant for the given context
+	 * Create a participant for the given context and name
 	 * @param context the synchronization context
 	 * @param name the name of the participant
 	 * @return a participant for the given context
