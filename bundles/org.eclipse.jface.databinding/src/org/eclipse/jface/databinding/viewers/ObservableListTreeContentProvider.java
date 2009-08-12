@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 207858)
- *     Matthew Hall - bugs 226765, 222991, 226292, 266038
+ *     Matthew Hall - bugs 226765, 222991, 226292, 266038, 283351
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -180,7 +180,7 @@ public class ObservableListTreeContentProvider implements ITreeContentProvider {
 
 	/**
 	 * Constructs an ObservableListTreeContentProvider using the given list
-	 * factory.
+	 * factory. Must be called from the display thread.
 	 * 
 	 * @param listFactory
 	 *            observable factory that produces an IObservableList of

@@ -8,7 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl<tom.schindl@bestsolution.at> - bugfix in: 214355
- *     Matthew Hall - bugs 215531, 226765, 222991, 238296, 226292, 266038
+ *     Matthew Hall - bugs 215531, 226765, 222991, 238296, 226292, 266038,
+ *                    283351
  *******************************************************************************/
 
 package org.eclipse.jface.databinding.viewers;
@@ -146,14 +147,16 @@ public class ObservableListContentProvider implements
 	}
 
 	/**
-	 * Constructs an ObservableListContentProvider
+	 * Constructs an ObservableListContentProvider. Must be called from the
+	 * display thread.
 	 */
 	public ObservableListContentProvider() {
 		this(null);
 	}
 
 	/**
-	 * Constructs an ObservableListContentProvider with the given viewer updater
+	 * Constructs an ObservableListContentProvider with the given viewer
+	 * updater. Must be called from the display thread.
 	 * 
 	 * @param viewerUpdater
 	 *            the viewer updater to use when elements are added, removed,
