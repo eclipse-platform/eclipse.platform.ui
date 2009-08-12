@@ -506,6 +506,7 @@ public class KeyController {
 		fileDialog.setFilterExtensions(new String[] { "*.csv" }); //$NON-NLS-1$
 		fileDialog.setFilterNames(new String[] { Util.translateString(
 				RESOURCE_BUNDLE, "csvFilterName") }); //$NON-NLS-1$
+		fileDialog.setOverwrite(true);
 		final String filePath = fileDialog.open();
 		if (filePath == null) {
 			return;
