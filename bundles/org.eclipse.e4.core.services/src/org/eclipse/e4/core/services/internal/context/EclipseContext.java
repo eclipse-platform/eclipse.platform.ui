@@ -29,6 +29,10 @@ import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
 import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 
+/**
+ * This implementation assumes that all contexts are of the class EclipseContext. The external
+ * methods of it are exposed via IEclipseContext.
+ */
 public class EclipseContext implements IEclipseContext, IDisposable {
 	static class LookupKey {
 		Object[] arguments;
@@ -477,6 +481,35 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			}
 			invalidate(name, ContextChangeEvent.ADDED, oldValue);
 		}
+	}
+
+	public void modify(String name, Object value) {
+		if (!internalModify(name, value))
+			set(name, value);
+	}
+
+	public boolean internalModify(String name, Object value) {
+		boolean containsKey = localValues.containsKey(name);
+		if (containsKey) {
+			Object oldValue = localValues.put(name, value);
+			if (value != oldValue) {
+				if (DEBUG_VERBOSE)
+					System.out.println("IEC.set(" + name + "," + value + "):" + oldValue + " for "
+							+ toString());
+				invalidate(name, ContextChangeEvent.ADDED, oldValue);
+			}
+			return true;
+		}
+
+		EclipseContext parent = getParent();
+		if (parent != null)
+			return parent.internalModify(name, value);
+		return false;
+	}
+
+	// TBD should this method be an API?
+	public EclipseContext getParent() {
+		return (EclipseContext) localValues.get(IContextConstants.PARENT);
 	}
 
 	/**

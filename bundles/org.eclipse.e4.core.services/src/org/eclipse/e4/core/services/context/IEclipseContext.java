@@ -170,4 +170,21 @@ public interface IEclipseContext {
 	 *            value.
 	 */
 	public void set(String name, Object value);
+
+	/**
+	 * Modifies the value to be associated with the given name.
+	 * <p>
+	 * The value is modified in the context in which it has been previously set. If none of the
+	 * contexts on the parent chain have a value set for the name, the value will be set in this
+	 * context.
+	 * </p>
+	 * 
+	 * @param name
+	 *            The name to store a value for
+	 * @param value
+	 *            The value to be stored, or a {@link ContextFunction} that can return the stored
+	 *            value.
+	 */
+	public void modify(String name, Object value);
+
 }

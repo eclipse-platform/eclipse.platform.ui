@@ -220,4 +220,52 @@ public class EclipseContextTest extends TestCase {
 		assertTrue(TestHelper.getListeners(parent).isEmpty());
 	}
 
+	public void testModify() {
+		IEclipseContext grandParent = EclipseContextFactory.create();
+		IEclipseContext parent = EclipseContextFactory.create(grandParent, null);
+		IEclipseContext child = EclipseContextFactory.create(parent, null);
+
+		child.set("a", "a1");
+		parent.set("b", "b2");
+		grandParent.set("c", "c3");
+
+		// test pre-conditions
+		assertNull(grandParent.get("b"));
+		assertEquals("b2", parent.get("b"));
+		assertEquals("b2", child.get("b"));
+		assertFalse(child.containsKey("b", true /* localOnly */));
+
+		// modify value on the middle node via its child
+		child.modify("b", "abc");
+
+		assertFalse(grandParent.containsKey("b"));
+		assertEquals("abc", parent.get("b"));
+		assertEquals("abc", child.get("b"));
+		assertFalse(child.containsKey("b", true /* localOnly */));
+
+		// modifying non-exist values adds it to the context
+		child.modify("d", "123");
+
+		assertFalse(grandParent.containsKey("d"));
+		assertFalse(parent.containsKey("d"));
+		assertNull(parent.get("d"));
+		assertEquals("123", child.get("d"));
+
+		// edge conditions: modify value in the top node
+		grandParent.modify("c", "cNew");
+		assertTrue(grandParent.containsKey("c"));
+		assertEquals("cNew", grandParent.get("c"));
+		assertFalse(parent.containsKey("c", true /* localOnly */));
+		assertFalse(child.containsKey("c", true /* localOnly */));
+		assertTrue(child.containsKey("c", false /* localOnly */));
+
+		// edge condition: modify value in the leaf node
+		child.modify("a", "aNew");
+		assertTrue(child.containsKey("a"));
+		assertFalse(parent.containsKey("a"));
+		assertFalse(grandParent.containsKey("a"));
+		assertEquals("aNew", child.get("a"));
+		assertNull(parent.get("a"));
+	}
+
 }
