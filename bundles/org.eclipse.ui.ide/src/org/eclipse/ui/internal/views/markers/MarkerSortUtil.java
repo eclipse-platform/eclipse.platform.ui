@@ -28,18 +28,8 @@
 
 package org.eclipse.ui.internal.views.markers;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.views.markers.internal.MarkerGroup;
-import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
 
 /**
  * @since 3.5
@@ -389,53 +379,4 @@ public class MarkerSortUtil {
 			Comparator comparator, int from, int k) {
 		sortStartingKElement(entries, comparator, from, entries.length - 1, k);
 	}
-
-	/**
-	 * Sorts/groups the markers in O(N) comparisons and returns the boundary
-	 * indices in the map. The O(N) complexity requires the use of a few data
-	 * structures. But the speed benefit is tremendous at a very small price of
-	 * few extra references.
-	 * 
-	 * @param entries
-	 * @param group
-	 * @param k
-	 * @return {@link Map}
-	 * 
-	 */
-	public static Map groupMarkerEntries(MarkerEntry[] entries,
-			MarkerGroup group, int k) {
-		TreeMap map = new TreeMap(group.getEntriesComparator());
-		for (int i = 0; i <= k; i++) {
-			IMarker marker = entries[i].getMarker();
-			if(marker == null || !marker.exists()) {
-				continue;//skip stale markers
-			}
-			try {
-				MarkerGroupingEntry groupingEntry = group.findGroupValue(marker
-						.getType(), marker);
-				List list = (List) map.get(groupingEntry);
-				if (list == null) {
-					list = new ArrayList();
-					map.put(groupingEntry, list);
-				}
-				list.add(entries[i]);
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-		}
-		Iterator keys = map.keySet().iterator();
-		int i = 0;
-		while (keys.hasNext()) {
-			Object key = keys.next();
-			List list = (List) map.get(key);
-			Iterator iterator = list.iterator();
-			while (iterator.hasNext()) {
-				MarkerEntry entry = (MarkerEntry) iterator.next();
-				entries[i++] = entry;
-			}
-			map.put(key, new Integer(i - 1));
-		}
-		return map;
-	}
-
 }
