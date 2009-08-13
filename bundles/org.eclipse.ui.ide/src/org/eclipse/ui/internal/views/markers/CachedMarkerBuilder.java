@@ -21,7 +21,9 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -57,6 +59,7 @@ import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
+import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.MarkerType;
@@ -1164,7 +1167,7 @@ public class CachedMarkerBuilder {
 	 */
   MarkerCategory[] groupIntoCategories(IProgressMonitor monitor,
 			MarkerMap newMarkers) {
-		Map boundaryInfoMap = MarkerSortUtil.groupMarkerEntries(newMarkers
+		Map boundaryInfoMap = groupMarkerEntries(newMarkers
 				.toArray(), getCategoryGroup(), newMarkers.getSize() - 1);
 		Iterator iterator = boundaryInfoMap.keySet().iterator();
 		int start = 0;
@@ -1182,7 +1185,54 @@ public class CachedMarkerBuilder {
 		}
 		return markerCategories;
 	}
-
+  
+	/**
+	 * Sorts/groups the markers in O(N) comparisons and returns the boundary
+	 * indices in the map. The O(N) complexity requires the use of a few data
+	 * structures. But the speed benefit is tremendous at a very small price of
+	 * few extra references.
+	 * 
+	 * @param entries
+	 * @param group
+	 * @param k
+	 * @return {@link Map}
+	 * 
+	 */
+	Map groupMarkerEntries(MarkerEntry[] entries,
+			MarkerGroup group, int k) {
+		TreeMap map = new TreeMap(group.getEntriesComparator());
+		for (int i = 0; i <= k; i++) {
+			IMarker marker = entries[i].getMarker();
+			if(marker == null || !marker.exists()) {
+				continue;//skip stale markers
+			}
+			try {
+				MarkerGroupingEntry groupingEntry = group.findGroupValue(marker
+						.getType(), marker);
+				List list = (List) map.get(groupingEntry);
+				if (list == null) {
+					list = new ArrayList();
+					map.put(groupingEntry, list);
+				}
+				list.add(entries[i]);
+			} catch (CoreException e) {
+				e.printStackTrace();
+			}
+		}
+		Iterator keys = map.keySet().iterator();
+		int i = 0;
+		while (keys.hasNext()) {
+			Object key = keys.next();
+			List list = (List) map.get(key);
+			Iterator iterator = list.iterator();
+			while (iterator.hasNext()) {
+				MarkerEntry entry = (MarkerEntry) iterator.next();
+				entries[i++] = entry;
+			}
+			map.put(key, new Integer(i - 1));
+		}
+		return map;
+	}
 
 	/**
 	 * Add group to the enabled filters.
