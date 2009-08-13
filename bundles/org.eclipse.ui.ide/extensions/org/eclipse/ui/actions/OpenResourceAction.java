@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Mohamed Tarief , IBM - Bug 139211
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -19,7 +20,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.WorkspaceJob;
 import org.eclipse.core.runtime.CoreException;
@@ -28,9 +28,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
-import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.runtime.jobs.MultiRule;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -38,6 +36,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
@@ -75,7 +74,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 		super(shell, IDEWorkbenchMessages.OpenResourceAction_text);
 		initAction();
 	}
-	
+
 	/**
 	 * Creates a new action.
 	 * 
@@ -83,7 +82,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	 * 				the shell for any dialogs
 	 * @since 3.4
 	 */
-	public OpenResourceAction(IShellProvider provider){
+	public OpenResourceAction(IShellProvider provider) {
 		super(provider, IDEWorkbenchMessages.OpenResourceAction_text);
 		initAction();
 	}
@@ -91,11 +90,12 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	/**
 	 * Initializes the workbench
 	 */
-	private void initAction(){
+	private void initAction() {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IIDEHelpContextIds.OPEN_RESOURCE_ACTION);
 		setToolTipText(IDEWorkbenchMessages.OpenResourceAction_toolTip);
 		setId(ID);
 	}
+
 	/**
 	 * Returns the total number of closed projects in the workspace.
 	 */
@@ -211,19 +211,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	 */
 	public void run() {
 		try {
-			if (hasOtherClosedProjects() && promptToOpenWithReferences()) {
-				runOpenWithReferences();
-			}
-			ISchedulingRule rule = null;
-			// be conservative and include all projects in the selection - projects
-			// can change state between now and when the job starts
-			IResourceRuleFactory factory = ResourcesPlugin.getWorkspace().getRuleFactory();
-			Iterator resources = getSelectedResources().iterator();
-			while (resources.hasNext()) {
-				IProject project = (IProject) resources.next();
-				rule = MultiRule.combine(rule, factory.modifyRule(project));
-			}
-			runInBackground(rule);
+			runOpenWithReferences();
 		} catch (OperationCanceledException e) {
 			//just return when canceled
 		}
@@ -235,7 +223,8 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 	private void runOpenWithReferences() {
 		final List resources = new ArrayList(getActionResources());
 		Job job = new WorkspaceJob(removeMnemonics(getText())) {
-
+			private boolean openProjectReferences = true;
+			private boolean hasPrompted = false;
 			/**
 			 * Opens a project along with all projects it references
 			 */
@@ -244,9 +233,30 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					return;
 				}
 				project.open(new SubProgressMonitor(monitor, 1000));
-				IProject[] references = project.getReferencedProjects();
-				for (int i = 0; i < references.length; i++) {
-					doOpenWithReferences(references[i], monitor);
+				final IProject[] references = project.getReferencedProjects();
+				if (!hasPrompted) {
+					openProjectReferences = false;
+					for (int i = 0; i < references.length; i++) {
+						if (references[i].exists() && !references[i].isOpen()) {
+							openProjectReferences = true;
+							break;
+						}
+					}
+					if (openProjectReferences && hasOtherClosedProjects()) {
+						Display.getDefault().syncExec(new Runnable() {
+							public void run() {
+								openProjectReferences = promptToOpenWithReferences();
+								//remember that we have prompted to avoid repeating the analysis
+								hasPrompted = true;
+							}
+						});
+					}
+				}
+
+				if (openProjectReferences) {
+					for (int i = 0; i < references.length; i++) {
+						doOpenWithReferences(references[i], monitor);
+					}
 				}
 			}
 
