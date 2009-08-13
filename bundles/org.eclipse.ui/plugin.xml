@@ -2197,6 +2197,10 @@
                name="activeSite"
                priorityLevel="workbench">
          </variable>
+         <variable
+               name="activeEditorInput"
+               priorityLevel="workbench">
+         </variable>
       </sourceProvider>
       <sourceProvider
             provider="org.eclipse.ui.internal.services.ActionSetSourceProvider">
