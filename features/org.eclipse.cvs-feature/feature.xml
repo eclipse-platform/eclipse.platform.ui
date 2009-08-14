@@ -18,9 +18,9 @@
    </license>
 
    <url>
-      <update label="%updateSiteName" url="http://download.eclipse.org/eclipse/updates/3.5"/>
-      <discovery label="%updateSiteName" url="http://download.eclipse.org/eclipse/updates/3.5"/>
-      <discovery label="%secondaryUpdateSiteName" url="http://download.eclipse.org/releases/galileo"/>
+      <update label="%updateSiteName" url="http://download.eclipse.org/eclipse/updates/3.6"/>
+      <discovery label="%updateSiteName" url="http://download.eclipse.org/eclipse/updates/3.6"/>
+      <discovery label="%secondaryUpdateSiteName" url="http://download.eclipse.org/releases/helios"/>
    </url>
 
    <requires>
