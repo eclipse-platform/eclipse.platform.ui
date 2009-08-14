@@ -135,6 +135,12 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			startListening();
 		}
 
+		protected void stopListening(IEclipseContext context, String name) {
+			// trackable computation should always stop listening to
+			// everything since dependencies are recomputed on each run
+			removeAll();
+		}
+
 		public String toString() {
 			return runnable.toString();
 		}
@@ -422,23 +428,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public void runAndTrack(final Runnable runnable) {
 		TrackableComputation computation = new TrackableComputation(runnable);
 		schedule(computation);
-	}
-
-	/**
-	 * Removes a runnable from all contexts it is listening to. See bug 284604.
-	 */
-	public void removeRunAndTrack(final Runnable runnable) {
-		TrackableComputation computation = new TrackableComputation(runnable);
-		// if the runnable isn't in this context, we can't figure out where to remove it from
-		if (!listeners.contains(computation))
-			return;
-		for (Iterator listenerIterator = listeners.iterator(); listenerIterator.hasNext();) {
-			Computation candidate = (Computation) listenerIterator.next();
-			if (candidate.equals(computation)) {
-				candidate.removeAll();
-				return;
-			}
-		}
 	}
 
 	protected boolean schedule(IRunAndTrack runnable, ContextChangeEvent event) {

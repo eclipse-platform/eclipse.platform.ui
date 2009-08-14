@@ -215,7 +215,7 @@ public class EclipseContextTest extends TestCase {
 		parent.set("parentValue", "y");
 		assertEquals(3, runCounter);
 		// TODO this shouldn't be required
-		 ((EclipseContext) child).removeRunAndTrack(runnable);
+		// ((EclipseContext) child).removeRunAndTrack(runnable);
 		assertTrue(TestHelper.getListeners(child).isEmpty());
 		assertTrue(TestHelper.getListeners(parent).isEmpty());
 	}

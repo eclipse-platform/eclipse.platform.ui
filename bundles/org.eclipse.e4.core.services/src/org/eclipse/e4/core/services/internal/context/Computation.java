@@ -106,7 +106,7 @@ abstract class Computation {
 		}
 	}
 
-	private void stopListening(IEclipseContext context, String name) {
+	protected void stopListening(IEclipseContext context, String name) {
 
 		if (name == null) {
 			if (EclipseContext.DEBUG)
