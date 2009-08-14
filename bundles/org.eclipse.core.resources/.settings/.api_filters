@@ -7,4 +7,12 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/core/resources/mapping/ModelProvider.java" type="org.eclipse.core.resources.mapping.ModelProvider">
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.resources.mapping.ModelProvider"/>
+                <message_argument value="init(IModelProviderDescriptor)"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

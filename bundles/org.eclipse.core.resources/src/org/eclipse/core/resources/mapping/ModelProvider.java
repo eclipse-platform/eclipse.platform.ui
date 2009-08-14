@@ -104,7 +104,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * By default, an empty array is returned. Subclass may override
 	 * this method but should consider overriding either 
 	 * {@link #getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
-	 * or ({@link #getMappings(ResourceTraversal[], ResourceMappingContext, IProgressMonitor)}
+	 * or {@link #getMappings(ResourceTraversal[], ResourceMappingContext, IProgressMonitor)}
 	 * if more context is needed to determine the proper mappings.
 	 * 
 	 * @param resource the resource
@@ -150,7 +150,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * This method is used to map operations on resources to
 	 * operations on resource mappings. By default, this method
 	 * calls {@link #getMappings(IResource[], ResourceMappingContext, IProgressMonitor)}
-	 * with the resources extract from each traversal.
+	 * with the resources extracted from each traversal.
 	 * <p>
 	 * Subclasses may override this method.
 	 * </p>
@@ -219,6 +219,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * can override that method if they need to do additional initialization.
 	 * 
 	 * @param desc the description of the provider as it appears in the plugin manifest
+	 * @noreference This method is not intended to be referenced by clients.
 	 */
 	public final void init(IModelProviderDescriptor desc) {
 		if (descriptor != null)
