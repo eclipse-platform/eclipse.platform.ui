@@ -15,5 +15,4 @@ Export-Package: org.eclipse.e4.core.services,
  org.eclipse.e4.core.services.context.spi,
  org.eclipse.e4.core.services.internal.context;x-internal:=true,
  org.eclipse.e4.internal.core.services.osgi;x-internal:=true
-Bundle-Activator: org.eclipse.e4.internal.core.services.osgi.Activator
 Bundle-Vendor: Eclipse.org
