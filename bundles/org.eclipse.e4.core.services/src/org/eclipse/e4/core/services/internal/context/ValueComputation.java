@@ -108,6 +108,12 @@ public class ValueComputation extends Computation {
 
 	final protected void doHandleInvalid(ContextChangeEvent event) {
 		int eventType = event.getEventType();
+		// if the originating context is being disposed, remove this value computation completely
+		if (eventType == ContextChangeEvent.DISPOSE
+				&& originatingContext.equals(event.getContext())) {
+			removeAll();
+			return;
+		}
 		this.originatingContext.invalidate(this.name,
 				eventType == ContextChangeEvent.DISPOSE ? ContextChangeEvent.REMOVED : eventType,
 				event.getOldValue());

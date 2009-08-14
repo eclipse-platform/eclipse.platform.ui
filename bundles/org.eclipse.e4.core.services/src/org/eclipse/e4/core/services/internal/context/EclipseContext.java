@@ -428,7 +428,6 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	 * Removes a runnable from all contexts it is listening to. See bug 284604.
 	 */
 	public void removeRunAndTrack(final Runnable runnable) {
-
 		TrackableComputation computation = new TrackableComputation(runnable);
 		// if the runnable isn't in this context, we can't figure out where to remove it from
 		if (!listeners.contains(computation))
@@ -436,20 +435,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		for (Iterator listenerIterator = listeners.iterator(); listenerIterator.hasNext();) {
 			Computation candidate = (Computation) listenerIterator.next();
 			if (candidate.equals(computation)) {
-				// remove the runnable from every context it is listening to
-				Set referencedContexts = candidate.dependencies.keySet();
-				for (Iterator contextIterator = referencedContexts.iterator(); contextIterator
-						.hasNext();) {
-					EclipseContext context = (EclipseContext) contextIterator.next();
-					if (context == this) {
-						listenerIterator.remove();
-					} else {
-						context.listeners.remove(candidate);
-					}
-				}
+				candidate.removeAll();
+				return;
 			}
 		}
-
 	}
 
 	protected boolean schedule(IRunAndTrack runnable, ContextChangeEvent event) {

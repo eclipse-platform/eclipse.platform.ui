@@ -86,6 +86,16 @@ abstract class Computation {
 		return result.toString();
 	}
 
+	/**
+	 * Remove this computation from all contexts that are tracking it
+	 */
+	protected void removeAll() {
+		for (Iterator it = dependencies.keySet().iterator(); it.hasNext();) {
+			((EclipseContext) it.next()).listeners.remove(this);
+		}
+		dependencies.clear();
+	}
+
 	void startListening() {
 		if (EclipseContext.DEBUG)
 			System.out.println(toString() + " now listening to: " //$NON-NLS-1$

@@ -215,7 +215,7 @@ public class EclipseContextTest extends TestCase {
 		parent.set("parentValue", "y");
 		assertEquals(3, runCounter);
 		// TODO this shouldn't be required
-		((EclipseContext) child).removeRunAndTrack(runnable);
+		 ((EclipseContext) child).removeRunAndTrack(runnable);
 		assertTrue(TestHelper.getListeners(child).isEmpty());
 		assertTrue(TestHelper.getListeners(parent).isEmpty());
 	}
@@ -268,4 +268,18 @@ public class EclipseContextTest extends TestCase {
 		assertNull(parent.get("a"));
 	}
 
+	public void testRemoveValueComputationOnDispose() {
+		IEclipseContext parent = EclipseContextFactory.create();
+		IEclipseContext child = EclipseContextFactory.create(parent, null);
+		parent.set("x", 1);
+		parent.set("y", 1);
+		parent.set("sum", new AddContextFunction());
+		parent.set(IContextConstants.DEBUG_STRING, "ParentContext");
+		child.set(IContextConstants.DEBUG_STRING, "ChildContext");
+
+		child.get("sum");
+		assertEquals(1, TestHelper.getListeners(parent).size());
+		((EclipseContext) child).dispose();
+		assertEquals(0, TestHelper.getListeners(parent).size());
+	}
 }
