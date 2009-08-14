@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.ui.navigator.ICommonLabelProvider;
 
 /**
  * Model content provider for use with the Common Navigator framework.
- * It makes use of an IWorkbenchAdapter to get the label and image
+ * It makes use of an <code>IWorkbenchAdapter</code> to get the label and image
  * of model objects.
  */
 public class ModelNavigatorLabelProvider extends WorkbenchLabelProvider implements

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,9 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.team.core.diff.IDiff;
 import org.eclipse.team.core.diff.IDiffTree;
 import org.eclipse.team.examples.filesystem.FileSystemPlugin;
-import org.eclipse.team.examples.model.*;
+import org.eclipse.team.examples.model.ModelObjectDefinitionFile;
+import org.eclipse.team.examples.model.ModelObjectElementFile;
+import org.eclipse.team.examples.model.ModelResource;
 import org.eclipse.team.examples.model.ui.ModelNavigatorLabelProvider;
 import org.eclipse.team.ui.mapping.SynchronizationLabelProvider;
 import org.eclipse.ui.navigator.ICommonContentExtensionSite;
@@ -23,7 +25,7 @@ import org.eclipse.ui.navigator.ICommonContentExtensionSite;
 /**
  * The label provider that is used for synchronizations.
  * It provides a diff for each model element and also provides
- * overlay hints for isBust, conflict propagation and markers.
+ * overlay hints for isBusy, conflict propagation and markers.
  */
 public class ModelSyncLabelProvider extends SynchronizationLabelProvider {
 	
