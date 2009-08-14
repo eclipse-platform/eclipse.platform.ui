@@ -19,16 +19,15 @@ import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 
 /**
- * This is a demo of a scenario when computed values don't work. The basic
- * idea here is that a calculated value depends on something not stored
- * in the context, it won't necessarily be updated.
+ * This is a demo of a scenario when computed values don't work. The basic idea here is that a
+ * calculated value depends on something not stored in the context, it won't necessarily be updated.
  * 
- *      CalculatedValue = Function(ContextElement1, ..., ContextElement1N, ExtnernalFactor)
- *      
+ * CalculatedValue = Function(ContextElement1, ..., ContextElement1N, ExtnernalFactor)
+ * 
  * In this scenario we deal with the Output = Function(arg1, ..., arg10, Time)
  * 
- * We use a system timer here as an external input, but it can be
- * pretty much anything not stored directly in the context.
+ * We use a system timer here as an external input, but it can be pretty much anything not stored
+ * directly in the context.
  */
 public class ComputedValueLimitationTest extends TestCase {
 
@@ -39,30 +38,30 @@ public class ComputedValueLimitationTest extends TestCase {
 	public ComputedValueLimitationTest(String name) {
 		super(name);
 	}
-	
+
 	/**
 	 * Used as an injection target
 	 */
 	public class UserObject {
-		
+
 		private String txt;
-		
+
 		public void setComputed(String txt) {
 			this.txt = txt;
 		}
-		
+
 		public String getComputed() {
 			return txt;
 		}
 	}
-	
+
 	static public class ExtenralFactor {
 		static public int useChild() {
 			long time = System.currentTimeMillis();
-			return ((int)time % 10); // this is incorrect but works for the example
+			return ((int) time % 10); // this is incorrect but works for the example
 		}
 	}
-	
+
 	public class CalcColor extends ContextFunction {
 
 		public Object compute(IEclipseContext context, Object[] arguments) {
@@ -71,17 +70,25 @@ public class ComputedValueLimitationTest extends TestCase {
 		}
 	}
 
+	public class Time extends ContextFunction {
+		@Override
+		public Object compute(IEclipseContext context, Object[] arguments) {
+			context.get(String.valueOf(System.currentTimeMillis()));
+			return System.currentTimeMillis();
+		}
+	}
+
 	public synchronized void testInjection() {
-		
+
 		IEclipseContext context = EclipseContextFactory.create();
-		for (int i = 0 ; i < 10; i++)
+		for (int i = 0; i < 10; i++)
 			context.set("arg" + Integer.toString(i), Integer.toString(i));
 		context.set("computed", new CalcColor());
-		
+
 		UserObject userObject = new UserObject();
 		ContextInjectionFactory.inject(userObject, context);
-		
-		for (int i = 0 ; i < 20; i++) {
+
+		for (int i = 0; i < 20; i++) {
 			int before = ExtenralFactor.useChild();
 			String actual = userObject.getComputed();
 			int after = ExtenralFactor.useChild();
@@ -93,6 +100,19 @@ public class ComputedValueLimitationTest extends TestCase {
 				e.printStackTrace();
 			}
 		}
+	}
+
+	public void testVolatileFunction() {
+		IEclipseContext context = EclipseContextFactory.create();
+		context.set("time", new Time());
+		long time = (Long) context.get("time");
+		try {
+			Thread.sleep(100);
+		} catch (InterruptedException e) {
+			//
+		}
+		long newTime = (Long) context.get("time", new Object[] { System.currentTimeMillis() });
+		assertTrue(time != newTime);
 	}
 
 	public static Test suite() {
