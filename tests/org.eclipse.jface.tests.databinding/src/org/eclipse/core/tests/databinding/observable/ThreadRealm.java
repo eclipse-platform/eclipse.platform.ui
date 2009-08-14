@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Matthew Hall - bugs 118516, 281723
+ *     Matthew Hall - bugs 118516, 281723, 286533
  *******************************************************************************/
 package org.eclipse.core.tests.databinding.observable;
 
@@ -121,22 +121,20 @@ public class ThreadRealm extends Realm {
             while (block) {
                 Runnable runnable = null;
                 synchronized (queue) {
-                    while (queue.isEmpty()) {
+                    if (queue.isEmpty()) {
                         queue.wait();
-                    }
-                    
-                    // Check the size in case the thread is being awoken by
-                    // unblock().
-                    if (!queue.isEmpty()) {
-                        runnable = (Runnable) queue.removeFirst();
+                    } else {
+                        runnable = (Runnable) queue.getFirst();
                     }
                 }
 
                 if (runnable != null) {
                     safeRun(runnable);
-                    runnable = null;
                     synchronized (queue) {
-                        // Notify that task was removed from queue
+                        // Don't remove the runnable from the queue until after
+                        // it has run, or else processQueue() may return before
+                        // the last runnable has finished
+                        queue.removeFirst();
                         queue.notifyAll();
                     }
                 }

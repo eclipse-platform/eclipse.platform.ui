@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Matthew Hall - initial API and implementation (bug 281723)
+ *     Matthew Hall - bug 286533
  ******************************************************************************/
 
 package org.eclipse.jface.tests.databinding.swt;
@@ -32,9 +33,9 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 
 	protected void setUp() throws Exception {
 		super.setUp();
+		threadRealm = new ThreadRealm();
 		new Thread() {
 			public void run() {
-				threadRealm = new ThreadRealm();
 				RealmTester.setDefault(threadRealm);
 				threadRealm.init(Thread.currentThread());
 				threadRealm.block();
@@ -108,25 +109,7 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 	}
 
 	private void processDisplayQueue() {
-		final Display display = Display.getCurrent();
-
-		final boolean[] synced = { false };
-		display.asyncExec(new Runnable() {
-			// It's the only way to be sure.
-			int counter = 100000;
-
-			public void run() {
-				if (--counter > 0)
-					display.asyncExec(this);
-				else
-					synced[0] = true;
-			}
-		});
-
-		while (!synced[0]) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
+		while (Display.getCurrent().readAndDispatch()) {
 		}
 	}
 }
