@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,9 +28,7 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
 /**
- * A abstract implementation of {@link ISynchronizationCompareAdapter}. 
- * The {@link #asCompareInput(ISynchronizationContext, Object) }
- * which will convert file objects to an appropriate compare input.
+ * An abstract implementation of {@link ISynchronizationCompareAdapter}.
  * <p>
  * Clients may subclass this class.
  * 
