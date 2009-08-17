@@ -73,7 +73,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	/**
 	 * @since 1.2
 	 */
-	public boolean isDisposed() {
+	public synchronized boolean isDisposed() {
 		return disposed;
 	}
 
