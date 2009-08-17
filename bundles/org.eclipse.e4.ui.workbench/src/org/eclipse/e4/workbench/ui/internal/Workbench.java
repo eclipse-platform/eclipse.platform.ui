@@ -384,6 +384,12 @@ public class Workbench implements IWorkbench {
 			context.set(intf.getName(), part);
 		}
 
+		// declares modifiable variables from the model
+		EList<String> containedProperties = part.getVariables();
+		for (String name : containedProperties) {
+			context.declareModifiable(name);
+		}
+
 		part.setContext(context);
 
 		// take care of generating the contexts.

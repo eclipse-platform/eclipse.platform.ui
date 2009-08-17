@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MPart.java,v 1.3 2009/03/17 16:41:43 pwebster Exp $
+ * $Id: MPart.java,v 1.4 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -33,6 +33,7 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getContext <em>Context</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MPart#getVariables <em>Variables</em>}</li>
  * </ul>
  * </p>
  *
@@ -284,5 +285,21 @@ public interface MPart<P extends MPart<?>> extends MApplicationElement {
 	 * @generated
 	 */
 	void setContext(IEclipseContext value);
+
+	/**
+	 * Returns the value of the '<em><b>Variables</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.String}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Variables</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Variables</em>' attribute list.
+	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMPart_Variables()
+	 * @model unique="false"
+	 * @generated
+	 */
+	EList<String> getVariables();
 
 } // MPart

@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: MPartImpl.java,v 1.3 2009/03/17 16:41:43 pwebster Exp $
+ * $Id: MPartImpl.java,v 1.4 2009/04/13 19:47:35 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -26,6 +26,7 @@ import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -48,6 +49,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getContext <em>Context</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.internal.application.MPartImpl#getVariables <em>Variables</em>}</li>
  * </ul>
  * </p>
  *
@@ -183,6 +185,16 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 	 * @ordered
 	 */
 	protected IEclipseContext context = CONTEXT_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getVariables() <em>Variables</em>}' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getVariables()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<String> variables;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -483,6 +495,18 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<String> getVariables() {
+		if (variables == null) {
+			variables = new EDataTypeEList<String>(String.class, this, ApplicationPackage.MPART__VARIABLES);
+		}
+		return variables;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -562,6 +586,8 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return isVisible();
 			case ApplicationPackage.MPART__CONTEXT:
 				return getContext();
+			case ApplicationPackage.MPART__VARIABLES:
+				return getVariables();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -607,6 +633,10 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 			case ApplicationPackage.MPART__CONTEXT:
 				setContext((IEclipseContext)newValue);
 				return;
+			case ApplicationPackage.MPART__VARIABLES:
+				getVariables().clear();
+				getVariables().addAll((Collection<? extends String>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -649,6 +679,9 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 			case ApplicationPackage.MPART__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
+			case ApplicationPackage.MPART__VARIABLES:
+				getVariables().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -681,6 +714,8 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 				return ((eFlags & VISIBLE_EFLAG) != 0) != VISIBLE_EDEFAULT;
 			case ApplicationPackage.MPART__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
+			case ApplicationPackage.MPART__VARIABLES:
+				return variables != null && !variables.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -703,6 +738,8 @@ public class MPartImpl<P extends MPart<?>> extends MApplicationElementImpl imple
 		result.append((eFlags & VISIBLE_EFLAG) != 0);
 		result.append(", context: "); //$NON-NLS-1$
 		result.append(context);
+		result.append(", variables: "); //$NON-NLS-1$
+		result.append(variables);
 		result.append(')');
 		return result.toString();
 	}

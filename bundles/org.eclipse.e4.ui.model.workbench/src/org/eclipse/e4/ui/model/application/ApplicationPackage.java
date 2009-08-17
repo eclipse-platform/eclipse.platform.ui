@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackage.java,v 1.12 2009/07/07 18:38:58 pwebster Exp $
+ * $Id: ApplicationPackage.java,v 1.13 2009/07/12 15:39:28 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
@@ -294,13 +294,22 @@ public interface ApplicationPackage extends EPackage {
 	int MPART__CONTEXT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPART__VARIABLES = MAPPLICATION_ELEMENT_FEATURE_COUNT + 10;
+
+	/**
 	 * The number of structural features of the '<em>MPart</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MPART_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	int MPART_FEATURE_COUNT = MAPPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.internal.application.MStackImpl <em>MStack</em>}' class.
@@ -419,6 +428,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MSTACK__CONTEXT = MPART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MSTACK__VARIABLES = MPART__VARIABLES;
 
 	/**
 	 * The number of structural features of the '<em>MStack</em>' class.
@@ -546,6 +564,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MSASH_FORM__CONTEXT = MPART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MSASH_FORM__VARIABLES = MPART__VARIABLES;
 
 	/**
 	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
@@ -682,6 +709,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MITEM_PART__CONTEXT = MPART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MITEM_PART__VARIABLES = MPART__VARIABLES;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -836,6 +872,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MCONTRIBUTED_PART__CONTEXT = MITEM_PART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MCONTRIBUTED_PART__VARIABLES = MITEM_PART__VARIABLES;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1694,6 +1739,15 @@ public interface ApplicationPackage extends EPackage {
 	int MTRIMMED_PART__CONTEXT = MPART__CONTEXT;
 
 	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MTRIMMED_PART__VARIABLES = MPART__VARIABLES;
+
+	/**
 	 * The feature id for the '<em><b>Top Trim</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1864,6 +1918,15 @@ public interface ApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MWINDOW__CONTEXT = MITEM_PART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MWINDOW__VARIABLES = MITEM_PART__VARIABLES;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2274,6 +2337,17 @@ public interface ApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getMPart_Context();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MPart#getVariables <em>Variables</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Variables</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getVariables()
+	 * @see #getMPart()
+	 * @generated
+	 */
+	EAttribute getMPart_Variables();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MStack <em>MStack</em>}'.
@@ -2967,6 +3041,14 @@ public interface ApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute MPART__CONTEXT = eINSTANCE.getMPart_Context();
+
+		/**
+		 * The meta object literal for the '<em><b>Variables</b></em>' attribute list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute MPART__VARIABLES = eINSTANCE.getMPart_Variables();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.internal.application.MStackImpl <em>MStack</em>}' class.

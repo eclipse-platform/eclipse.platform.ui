@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: ApplicationPackageImpl.java,v 1.14 2009/07/07 18:38:58 pwebster Exp $
+ * $Id: ApplicationPackageImpl.java,v 1.15 2009/07/12 15:39:28 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.internal.application;
 
@@ -442,6 +442,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 	 */
 	public EAttribute getMPart_Context() {
 		return (EAttribute)mPartEClass.getEStructuralFeatures().get(9);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getMPart_Variables() {
+		return (EAttribute)mPartEClass.getEStructuralFeatures().get(10);
 	}
 
 	/**
@@ -933,6 +942,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		createEReference(mPartEClass, MPART__PARENT);
 		createEAttribute(mPartEClass, MPART__VISIBLE);
 		createEAttribute(mPartEClass, MPART__CONTEXT);
+		createEAttribute(mPartEClass, MPART__VARIABLES);
 
 		mStackEClass = createEClass(MSTACK);
 
@@ -1146,6 +1156,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements ApplicationP
 		initEReference(getMPart_Parent(), g1, this.getMPart_Children(), "parent", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getMPart_Visible(), ecorePackage.getEBoolean(), "visible", "true", 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 		initEAttribute(getMPart_Context(), this.getIEclipseContext(), "context", null, 0, 1, MPart.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getMPart_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(mStackEClass, MStack.class, "MStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

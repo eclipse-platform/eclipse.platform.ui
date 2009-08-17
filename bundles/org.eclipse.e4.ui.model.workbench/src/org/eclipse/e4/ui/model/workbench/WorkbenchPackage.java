@@ -8,7 +8,7 @@
  * Contributors:
  *      IBM Corporation - initial API and implementation
  *
- * $Id: WorkbenchPackage.java,v 1.8 2009/07/12 15:39:28 pwebster Exp $
+ * $Id: WorkbenchPackage.java,v 1.9 2009/07/22 00:30:07 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.workbench;
 
@@ -193,6 +193,15 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MWORKBENCH_WINDOW__CONTEXT = ApplicationPackage.MWINDOW__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MWORKBENCH_WINDOW__VARIABLES = ApplicationPackage.MWINDOW__VARIABLES;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -394,6 +403,15 @@ public interface WorkbenchPackage extends EPackage {
 	int MPROXY_PART__CONTEXT = ApplicationPackage.MPART__CONTEXT;
 
 	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPROXY_PART__VARIABLES = ApplicationPackage.MPART__VARIABLES;
+
+	/**
 	 * The feature id for the '<em><b>Part</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -528,6 +546,15 @@ public interface WorkbenchPackage extends EPackage {
 	 * @ordered
 	 */
 	int MPERSPECTIVE__CONTEXT = ApplicationPackage.MITEM_PART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MPERSPECTIVE__VARIABLES = ApplicationPackage.MITEM_PART__VARIABLES;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
