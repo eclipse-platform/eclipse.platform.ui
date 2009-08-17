@@ -229,6 +229,10 @@ public class EclipseContextTest extends TestCase {
 		parent.set("b", "b2");
 		grandParent.set("c", "c3");
 
+		child.declareModifiable("a");
+		parent.declareModifiable("b");
+		grandParent.declareModifiable("c");
+
 		// test pre-conditions
 		assertNull(grandParent.get("b"));
 		assertEquals("b2", parent.get("b"));
@@ -266,6 +270,35 @@ public class EclipseContextTest extends TestCase {
 		assertFalse(grandParent.containsKey("a"));
 		assertEquals("aNew", child.get("a"));
 		assertNull(parent.get("a"));
+
+		// test access rules
+		child.set("aNo", "a1");
+		parent.set("bNo", "b2");
+		grandParent.set("cNo", "c3");
+
+		boolean exception = false;
+		try {
+			child.modify("bNo", "new");
+		} catch (IllegalArgumentException e) {
+			exception = true;
+		}
+		assertTrue(exception);
+
+		exception = false;
+		try {
+			grandParent.modify("cNo", "new");
+		} catch (IllegalArgumentException e) {
+			exception = true;
+		}
+		assertTrue(exception);
+
+		exception = false;
+		try {
+			child.modify("aNo", "new");
+		} catch (IllegalArgumentException e) {
+			exception = true;
+		}
+		assertTrue(exception);
 	}
 
 	public void testRemoveValueComputationOnDispose() {

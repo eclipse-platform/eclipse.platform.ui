@@ -174,6 +174,11 @@ public interface IEclipseContext {
 	/**
 	 * Modifies the value to be associated with the given name.
 	 * <p>
+	 * The value has to be declared as modifiable by the original context before this method can be
+	 * used. If the variable with this name has not been declared as modifiable, an
+	 * {@link IllegalArgumentException} will be thrown.
+	 * </p>
+	 * <p>
 	 * The value is modified in the context in which it has been previously set. If none of the
 	 * contexts on the parent chain have a value set for the name, the value will be set in this
 	 * context.
@@ -184,7 +189,18 @@ public interface IEclipseContext {
 	 * @param value
 	 *            The value to be stored, or a {@link ContextFunction} that can return the stored
 	 *            value.
+	 * @throws IllegalArgumentException
+	 *             if the variable has not been declared as modifiable
 	 */
 	public void modify(String name, Object value);
+
+	/**
+	 * Declares the named value as modifiable by descendants of this context. If the value does not
+	 * exist in this context, a <code>null</code> value added for the name.
+	 * 
+	 * @param name
+	 *            the name to be declared as modifiable by descendants
+	 */
+	public void declareModifiable(String name);
 
 }

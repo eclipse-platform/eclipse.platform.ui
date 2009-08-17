@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -229,6 +230,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	final Map localValues = Collections.synchronizedMap(new HashMap());
 
 	private final IEclipseContextStrategy strategy;
+
+	private ArrayList modifiable;
 
 	public EclipseContext(IEclipseContext parent, IEclipseContextStrategy strategy) {
 		this.strategy = strategy;
@@ -469,6 +472,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 	public boolean internalModify(String name, Object value) {
 		boolean containsKey = localValues.containsKey(name);
 		if (containsKey) {
+			if (!checkModifiable(name)) {
+				String tmp = "Variable " + name + " is not modifiable in the context " + toString();
+				throw new IllegalArgumentException(tmp);
+			}
 			Object oldValue = localValues.put(name, value);
 			if (value != oldValue) {
 				if (DEBUG_VERBOSE)
@@ -503,5 +510,27 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		if (computation != null) {
 			computation.addDependency(this, name);
 		}
+	}
+
+	public void declareModifiable(String name) {
+		if (name == null)
+			return;
+		if (modifiable == null)
+			modifiable = new ArrayList(3);
+		modifiable.add(name);
+		if (localValues.containsKey(name))
+			return;
+		localValues.put(name, null);
+	}
+
+	private boolean checkModifiable(String name) {
+		if (modifiable == null)
+			return false;
+		for (Iterator i = modifiable.iterator(); i.hasNext();) {
+			String candidate = (String) i.next();
+			if (candidate.equals(name))
+				return true;
+		}
+		return false;
 	}
 }
