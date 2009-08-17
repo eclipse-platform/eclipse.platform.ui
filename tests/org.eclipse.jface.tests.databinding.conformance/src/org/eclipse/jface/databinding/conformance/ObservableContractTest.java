@@ -205,6 +205,14 @@ public class ObservableContractTest extends ObservableDelegateTest {
 				0, disposedObservableListener.count);
 	}
 
+	public void testDispose_PreservesRealm() throws Exception {
+		Realm realm = observable.getRealm();
+
+		observable.dispose();
+
+		assertSame(realm, observable.getRealm());
+	}
+
 	/* package */static class ChangeListener implements IChangeListener {
 		int count;
 

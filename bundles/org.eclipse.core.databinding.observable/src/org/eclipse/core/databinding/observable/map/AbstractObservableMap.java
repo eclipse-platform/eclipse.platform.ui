@@ -58,6 +58,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 		}
 	}
 
+	private final Realm realm;
 	private PrivateChangeSupport changeSupport;
 	private boolean disposed = false;
 
@@ -87,6 +88,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	public AbstractObservableMap(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
 		ObservableTracker.observableCreated(this);
+		this.realm = realm;
 		changeSupport = new PrivateChangeSupport(realm);
 	}
 
@@ -137,7 +139,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	/**
 	 * @since 1.2
 	 */
-	public boolean isDisposed() {
+	public synchronized boolean isDisposed() {
 		return disposed;
 	}
 
@@ -151,7 +153,7 @@ public abstract class AbstractObservableMap extends AbstractMap implements
 	}
 
 	public Realm getRealm() {
-		return changeSupport.getRealm();
+		return realm;
 	}
 
 	public boolean isStale() {

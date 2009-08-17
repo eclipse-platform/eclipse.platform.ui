@@ -33,7 +33,7 @@ public class EmptyObservableSet implements IObservableSet {
 
 	private static final Set emptySet = Collections.EMPTY_SET;
 
-	private Realm realm;
+	private final Realm realm;
 	private Object elementType;
 
 	/**

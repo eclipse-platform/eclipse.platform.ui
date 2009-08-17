@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.ListenerList;
 
 	ListenerList[] listenerLists = null;
 	Object listenerTypes[] = null;
-	private Realm realm;
+	private final Realm realm;
 
 	/**
 	 * @param realm
@@ -139,7 +139,6 @@ import org.eclipse.core.runtime.ListenerList;
 	public void dispose() {
 		listenerLists = null;
 		listenerTypes = null;
-		realm = null;
 	}
 
 	/**

@@ -115,7 +115,6 @@ public class ViewerInputObservableValueTest extends
 	public void testDispose() throws Exception {
 		IObservableValue observable = ViewersObservables.observeInput(viewer);
 		observable.dispose();
-		assertNull(observable.getRealm());
 		try {
 			observable.setValue(model);
 			fail("Expected NullPointerException");

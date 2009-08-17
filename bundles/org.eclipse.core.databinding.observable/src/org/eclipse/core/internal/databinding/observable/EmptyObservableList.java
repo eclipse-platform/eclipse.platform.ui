@@ -34,7 +34,7 @@ public class EmptyObservableList implements IObservableList {
 
 	private static final List emptyList = Collections.EMPTY_LIST;
 
-	private Realm realm;
+	private final Realm realm;
 	private Object elementType;
 
 	/**

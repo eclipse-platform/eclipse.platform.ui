@@ -16,13 +16,8 @@ import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.beans.BeanProperties;
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.IChangeListener;
-import org.eclipse.core.databinding.observable.IDisposeListener;
-import org.eclipse.core.databinding.observable.IStaleListener;
-import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
-import org.eclipse.core.databinding.observable.value.IValueChangeListener;
 import org.eclipse.core.tests.internal.databinding.beans.Bean;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
@@ -118,10 +113,10 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		shell.open();
 
 		viewer.editElement(bean, 0);
-		assertEquals("precondition", 0, editingSupport.target.disposed);
+		assertTrue("precondition", editingSupport.target.isDisposed());
 
 		text.setFocus();
-		assertEquals(1, editingSupport.target.disposed);
+		assertTrue(editingSupport.target.isDisposed());
 	}
 
 	public void testDisposesModelObservable() throws Exception {
@@ -129,10 +124,10 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 		shell.open();
 
 		viewer.editElement(bean, 0);
-		assertEquals("precondition", 0, editingSupport.model.disposed);
+		assertTrue("precondition", editingSupport.model.isDisposed());
 
 		text.setFocus();
-		assertEquals(1, editingSupport.model.disposed);
+		assertTrue(editingSupport.model.isDisposed());
 	}
 
 	public void testCanEdit_DefaultIsTrue() throws Exception {
@@ -147,9 +142,9 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 		Binding binding;
 
-		ObservableValueDecorator target;
+		IObservableValue target;
 
-		ObservableValueDecorator model;
+		IObservableValue model;
 
 		/**
 		 * @param viewer
@@ -177,15 +172,14 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 				CellEditor cellEditor) {
 			event("createCellEditorObservable");
 
-			return target = new ObservableValueDecorator(SWTObservables
-					.observeText(cellEditor.getControl(), SWT.NONE));
+			return target = SWTObservables.observeText(cellEditor.getControl(),
+					SWT.NONE);
 		}
 
 		protected IObservableValue doCreateElementObservable(Object element,
 				ViewerCell cell) {
 			event("createElementObservable");
-			return model = new ObservableValueDecorator(BeansObservables
-					.observeValue(element, "value"));
+			return model = BeansObservables.observeValue(element, "value");
 		}
 
 		protected Binding createBinding(IObservableValue target,
@@ -197,81 +191,6 @@ public class ObservableValueEditingSupportTest extends AbstractSWTTestCase {
 
 		protected CellEditor getCellEditor(Object element) {
 			return editor;
-		}
-	}
-
-	/**
-	 * Decorator that will allow for tracking calls to dispose(). We really need
-	 * an isDisposed() method on IObservable...
-	 */
-	private static class ObservableValueDecorator implements IObservableValue {
-		int disposed;
-
-		IObservableValue delegate;
-
-		ObservableValueDecorator(IObservableValue delegate) {
-			this.delegate = delegate;
-		}
-
-		public boolean isDisposed() {
-			return disposed > 0;
-		}
-
-		public synchronized void dispose() {
-			disposed++;
-			delegate.dispose();
-		}
-
-		public void addChangeListener(IChangeListener listener) {
-			delegate.addChangeListener(listener);
-		}
-
-		public void addDisposeListener(IDisposeListener listener) {
-			delegate.addDisposeListener(listener);
-		}
-
-		public void addStaleListener(IStaleListener listener) {
-			delegate.addStaleListener(listener);
-		}
-
-		public void addValueChangeListener(IValueChangeListener listener) {
-			delegate.addValueChangeListener(listener);
-		}
-
-		public Realm getRealm() {
-			return delegate.getRealm();
-		}
-
-		public Object getValue() {
-			return delegate.getValue();
-		}
-
-		public Object getValueType() {
-			return delegate.getValueType();
-		}
-
-		public boolean isStale() {
-			return delegate.isStale();
-		}
-
-		public void removeChangeListener(IChangeListener listener) {
-			delegate.removeChangeListener(listener);
-		}
-
-		public void removeDisposeListener(IDisposeListener listener) {
-			delegate.removeDisposeListener(listener);
-		}
-
-		public void removeStaleListener(IStaleListener listener) {
-			delegate.removeStaleListener(listener);
-		}
-
-		public void removeValueChangeListener(IValueChangeListener listener) {
-			delegate.removeValueChangeListener(listener);
-		}
-
-		public void setValue(Object value) {
-			delegate.setValue(value);
 		}
 	}
 }
