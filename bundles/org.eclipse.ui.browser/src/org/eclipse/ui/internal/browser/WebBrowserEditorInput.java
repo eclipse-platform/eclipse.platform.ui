@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -190,9 +190,13 @@ public class WebBrowserEditorInput implements IEditorInput,
 			return false;
 		WebBrowserEditorInput other = (WebBrowserEditorInput) obj;
 
-		if (url != null && !url.equals(other.url))
-			return false;
-
+		if (url != null) {
+			if (other.url == null || !url.toExternalForm().equals(other.url.toExternalForm()))	 {
+			    return false;
+			}
+		} else if (other.url != null) {
+		    return false;
+		}
 		return canReplaceInput(other);
 	}
 
@@ -362,5 +366,16 @@ public class WebBrowserEditorInput implements IEditorInput,
 	 */
 	public String toString() {
 		return "WebBrowserEditorInput[" + url + " " + style + " " + id + "]";  //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+	}
+	
+	public int hashCode() {
+		int result = 0;
+		if (url != null) {
+			result = result + url.toExternalForm().hashCode();
+		}
+		if (id != null) {
+			result = result + id.hashCode();
+		}
+		return result;
 	}
 }
