@@ -12,6 +12,7 @@
 package org.eclipse.help.ui.internal.preferences;
 
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
@@ -109,8 +110,9 @@ public class AddICDialog extends StatusDialog implements IShellProvider {
 		createPortSection(topGroup);
 		
 		//Initialize validity
-		updateValidity();
-		
+		updateValidity();		
+
+		Dialog.applyDialogFont(topComposite);	
 		return topComposite;
 
 	}

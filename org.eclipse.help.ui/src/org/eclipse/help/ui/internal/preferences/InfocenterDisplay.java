@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,8 +11,8 @@
 package org.eclipse.help.ui.internal.preferences;
 
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -38,10 +38,7 @@ public class InfocenterDisplay implements IHelpContentBlockContainer {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
 				IHelpUIConstants.PREF_PAGE_HELP_CONTENT);
 
-		Font font = parent.getFont();
-
 		Composite top = new Composite(parent, SWT.NONE);
-		top.setFont(font);
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -53,7 +50,7 @@ public class InfocenterDisplay implements IHelpContentBlockContainer {
 
 		fHelpContentBlock.setContainer(this);
 		fHelpContentBlock.createContents(top);
-
+		Dialog.applyDialogFont(top);
 		return top;
 	}
 

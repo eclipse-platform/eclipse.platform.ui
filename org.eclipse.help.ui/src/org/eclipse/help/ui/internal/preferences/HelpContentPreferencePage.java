@@ -21,6 +21,7 @@ import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.base.remote.RemoteIC;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -75,6 +76,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		
 		descLabel = new Label(parent, SWT.NONE);
 		descLabel.setText(Messages.HelpContentPage_title);
+		Dialog.applyDialogFont(descLabel);
 		
 		remoteICPage = new InfocenterDisplay(this);
 		remoteICPage.createContents(parent);
@@ -147,7 +149,7 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		boolean isOn = Platform.getPreferencesService().getBoolean
 		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
 		checkbox.setSelection(isOn);
-	
+		Dialog.applyDialogFont(checkbox);	
 	}
 	
 	/*

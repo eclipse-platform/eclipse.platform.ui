@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,7 @@
 package org.eclipse.help.ui.internal.preferences;
 
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
@@ -118,8 +119,9 @@ public class EditICDialog extends StatusDialog implements IShellProvider {
 		createPortSection(topGroup);
 	
 		//Initialize validator and setup for User Input
-		updateValidity();
-		
+		updateValidity();	
+
+		Dialog.applyDialogFont(topComposite);	
 		return topComposite;
 	}
 

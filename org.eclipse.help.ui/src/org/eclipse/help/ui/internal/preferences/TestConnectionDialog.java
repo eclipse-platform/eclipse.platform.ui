@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal.preferences;
 
 import org.eclipse.help.ui.internal.Messages;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.StatusDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.IShellProvider;
@@ -60,12 +61,11 @@ public class TestConnectionDialog extends StatusDialog implements IShellProvider
 		layout.marginWidth= 0;
 		layout.makeColumnsEqualWidth = false;
 		topGroup.setLayout(layout);
-		topGroup.setFont(topComposite.getFont());
 		topGroup.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL));
-
 
 		createTestLabelSection(topGroup);
 		createURLSection(topGroup);
+		Dialog.applyDialogFont(topGroup);
 
 		return topGroup;
 	}
