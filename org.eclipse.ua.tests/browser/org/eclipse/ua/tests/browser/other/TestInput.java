@@ -30,6 +30,15 @@ public class TestInput extends TestCase {
 				0, ID1);
 		assertFalse(input.equals(null));
 	}
+	
+	public void testCompareWithNullURL() throws MalformedURLException {
+		WebBrowserEditorInput input = new WebBrowserEditorInput(new URL(URL1),
+				0, ID1);
+		WebBrowserEditorInput input2 = new WebBrowserEditorInput(null,
+				0, ID1);
+		assertFalse(input.equals(input2));
+		assertFalse(input2.equals(input));
+	}
 
 	public void testCompareWithSelf() throws MalformedURLException {
 		WebBrowserEditorInput input = new WebBrowserEditorInput(new URL(URL1),
@@ -43,6 +52,7 @@ public class TestInput extends TestCase {
 		WebBrowserEditorInput input2 = new WebBrowserEditorInput(new URL(URL1),
 						0, ID1);
 		assertTrue(input.equals(input2));
+		assertTrue(input.hashCode() == input2.hashCode());
 	}
 
 	public void testCompareWithDifferentUrl() throws MalformedURLException {
@@ -67,6 +77,7 @@ public class TestInput extends TestCase {
 		WebBrowserEditorInput input2 = new WebBrowserEditorInput(new URL(URL1),
 						1, ID1);
 		assertTrue(input.equals(input2));
+		assertTrue(input.hashCode() == input2.hashCode());
 	}
 	
 	public void testCompareWithStatusbarVisible() throws MalformedURLException {
@@ -75,6 +86,16 @@ public class TestInput extends TestCase {
 		WebBrowserEditorInput input2 = new WebBrowserEditorInput(new URL(URL1),
 				IWorkbenchBrowserSupport.STATUS, ID1);
 		assertFalse(input.equals(input2));
+	}
+
+	public void testHashWithNullURL() {
+		WebBrowserEditorInput input = new WebBrowserEditorInput(null,0, ID1);
+		input.hashCode();  // Fails if exception thrown
+	}
+	
+	public void testHashWithNullID() throws MalformedURLException {
+		WebBrowserEditorInput input = new WebBrowserEditorInput(new URL(URL1),0, null);
+		input.hashCode();  // Fails if exception thrown
 	}
 	
 }
