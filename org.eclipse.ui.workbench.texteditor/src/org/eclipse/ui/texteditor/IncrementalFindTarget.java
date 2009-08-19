@@ -33,6 +33,7 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.runtime.Assert;
 
 import org.eclipse.jface.action.IStatusLineManager;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -500,7 +501,11 @@ class IncrementalFindTarget implements IFindReplaceTarget, IFindReplaceTargetExt
 				break;
 
 			default:
-				if (event.stateMask == 0 || event.stateMask == SWT.SHIFT || event.stateMask == (SWT.ALT | SWT.CTRL)) { // SWT.ALT | SWT.CTRL covers AltGr (see bug 43049)
+				int stateMask= event.stateMask;
+				if (stateMask == 0
+						|| stateMask == SWT.SHIFT
+						|| !Util.isMac() && stateMask == (SWT.ALT | SWT.CTRL) // AltGr (see bug 43049)
+						|| Util.isMac() && (stateMask == (SWT.ALT | SWT.SHIFT) || stateMask == SWT.ALT) ) { // special chars on Mac (bug 272994)
 					saveState();
 					addCharSearch(event.character);
 					event.doit= false;
