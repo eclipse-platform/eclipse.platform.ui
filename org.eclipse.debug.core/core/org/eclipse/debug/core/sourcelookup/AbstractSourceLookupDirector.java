@@ -487,6 +487,17 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 		SourceLookupQuery query = new SourceLookupQuery(element);
 		SafeRunner.run(query);
 		List sources = query.getSourceElements();
+		Throwable exception = query.getException();
+		if (exception != null) {
+			if (exception instanceof CoreException) {
+				CoreException ce = (CoreException) exception;
+				if (ce.getStatus().getSeverity() == IStatus.ERROR) {
+					DebugPlugin.log(ce);
+				}
+			} else {
+				DebugPlugin.log(exception);
+			}
+		}
 		query.dispose();
 		return sources;
 	}
