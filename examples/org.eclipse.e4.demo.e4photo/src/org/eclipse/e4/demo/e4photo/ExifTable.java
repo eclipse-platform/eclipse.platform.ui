@@ -11,8 +11,8 @@
 package org.eclipse.e4.demo.e4photo;
 
 import org.eclipse.e4.core.services.annotations.*;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 
-import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,8 +44,9 @@ public class ExifTable {
 	private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 	private WritableList inputList = new WritableList();
 	private IContainer input;
-	private Exif selection;
 	private String persistedState;
+
+	private IEclipseContext context;
 
 	@In
 	private Composite parent;
@@ -56,18 +57,8 @@ public class ExifTable {
 		super();
 	}
 
-	@Out
-	public String getPersistedState() {
-		return persistedState;
-	}
-
-	@Out
-	public Exif getSelection() {
-		return selection;
-	}
-
 	@In
-	void setInput(IResource selection) {
+	void setSelection(IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;
@@ -107,15 +98,10 @@ public class ExifTable {
 		}
 	}
 
-	@In
+	@In (optional = true)
 	void setPersistedState(String persistedState) {
 		changeSupport.firePropertyChange("persistedState", this.persistedState,
 				this.persistedState = persistedState);
-	}
-
-	private void setSelection(Exif newSelection) {
-		changeSupport.firePropertyChange("selection", this.selection,
-				this.selection = newSelection);
 	}
 
 	@PostConstruct
@@ -162,8 +148,8 @@ public class ExifTable {
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				setSelection((Exif) ((StructuredSelection) event.getSelection())
-						.getFirstElement());
+				Object selected = ((StructuredSelection) event.getSelection()).getFirstElement();
+				context.modify("exif",  selected);
 			}
 		});
 
@@ -175,18 +161,12 @@ public class ExifTable {
 		viewer.setInput(inputList);
 	}
 
-	public void addPropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
-		changeSupport.addPropertyChangeListener(propertyName, listener);
-	}
-
-	public void removePropertyChangeListener(String propertyName,
-			PropertyChangeListener listener) {
-		changeSupport.removePropertyChangeListener(propertyName, listener);
-	}
-
 	void dispose() {
 		//nothing to do
+	}
+	
+	public void contextSet(IEclipseContext context) {
+		this.context = context;
 	}
 
 }

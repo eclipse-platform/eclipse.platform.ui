@@ -34,6 +34,8 @@ import org.osgi.service.prefs.BackingStoreException;
 public class Library implements IDisposable {
 
 	Map<IContainer, IObservableSet> observableSets = new HashMap<IContainer, IObservableSet>();
+	
+	private IEclipseContext context;
 
 	private IResourceChangeListener listener = new IResourceChangeListener() {
 		public void resourceChanged(IResourceChangeEvent event) {
@@ -82,7 +84,7 @@ public class Library implements IDisposable {
 
 	static int counter;
 
-	public Library(Composite parent, final IWorkspace workspace, final IEclipseContext outputContext) {
+	public Library(Composite parent, final IWorkspace workspace) {
 		final Realm realm = SWTObservables.getRealm(parent.getDisplay());
 		this.workspace = workspace;
 		initializeWorkspace();
@@ -92,7 +94,7 @@ public class Library implements IDisposable {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
 			public void selectionChanged(SelectionChangedEvent event) {
 				StructuredSelection selection = (StructuredSelection)event.getSelection();
-				outputContext.set(IServiceConstants.SELECTION, selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
+				context.modify(IServiceConstants.SELECTION, selection.size() == 1 ? selection.getFirstElement() : selection.toArray());
 			}
 		});
 		IObservableFactory setFactory = new IObservableFactory() {
@@ -175,6 +177,10 @@ public class Library implements IDisposable {
 		}
 	}
 	
+	public void contextSet(IEclipseContext context) {
+		this.context = context;
+	}
+
 	public void dispose() {
 		workspace.removeResourceChangeListener(listener);
 	}

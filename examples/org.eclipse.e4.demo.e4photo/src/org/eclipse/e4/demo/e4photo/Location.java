@@ -30,7 +30,7 @@ public class Location {
 	}
 
 	@In
-	public void setInput(Exif input) {
+	public void setExif(Exif input) {
 		if (input == null || this.exif == input) {
 			return;
 		}

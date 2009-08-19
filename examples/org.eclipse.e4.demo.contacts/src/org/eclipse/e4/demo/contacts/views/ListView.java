@@ -41,8 +41,9 @@ import org.eclipse.swt.widgets.Composite;
 public class ListView implements IDisposable {
 
 	private final TableViewer contactsViewer;
+	private IEclipseContext context;
 
-	public ListView(Composite parent, final IEclipseContext outputContext) {
+	public ListView(Composite parent) {
 		// Table composite (because of TableColumnLayout)
 		final Composite tableComposite = new Composite(parent, SWT.NONE);
 		tableComposite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,
@@ -61,7 +62,7 @@ public class ListView implements IDisposable {
 					public void selectionChanged(SelectionChangedEvent event) {
 						StructuredSelection selection = (StructuredSelection) event
 								.getSelection();
-						outputContext.set(IServiceConstants.SELECTION,
+						context.modify(IServiceConstants.SELECTION,
 								selection.size() == 1 ? selection
 										.getFirstElement() : selection
 										.toArray());
@@ -102,6 +103,10 @@ public class ListView implements IDisposable {
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
+	public void contextSet(IEclipseContext context) {
+		this.context = context;
+	}
+	
 	public void dispose() {
 		// TODO Auto-generated method stub
 

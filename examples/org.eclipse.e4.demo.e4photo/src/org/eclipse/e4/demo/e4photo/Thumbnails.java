@@ -43,16 +43,14 @@ public class Thumbnails {
 
 	private Gallery gallery;
 	private GalleryItem group;
-	private final IEclipseContext outputContext;
-	private final ISchedulingExecutor backgroundRunner;
 	private IContainer input;
 	private volatile Runnable runnable;
 	private final IStylingEngine stylingEngine;
 
-	public Thumbnails(Composite parent, final IEclipseContext outputContext,
+	private IEclipseContext context;
+
+	public Thumbnails(Composite parent, 
 			ISchedulingExecutor backgroundRunner, IStylingEngine stylingEngine) {
-		this.outputContext = outputContext;
-		this.backgroundRunner = backgroundRunner;
 		this.stylingEngine = stylingEngine;
 		parent.setLayout(new FillLayout());
 		gallery = new Gallery(parent, SWT.V_SCROLL | SWT.MULTI);
@@ -73,7 +71,7 @@ public class Thumbnails {
 		gallery.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				Object data = e.item.getData();
-				outputContext.set(IServiceConstants.SELECTION, data);
+				context.modify(IServiceConstants.SELECTION, data);
 			}
 		});
 
@@ -92,7 +90,7 @@ public class Thumbnails {
 	}
 
 	@In
-	public void setInput(IResource selection) {
+	public void setSelection(IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;
@@ -179,4 +177,9 @@ public class Thumbnails {
 			e1.printStackTrace();
 		}
 	}
+	
+	public void contextSet(IEclipseContext context) {
+		this.context = context;
+	}
+
 }

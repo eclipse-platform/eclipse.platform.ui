@@ -11,13 +11,10 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -46,24 +43,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			bindWidget(part, newWidget);
 			final MContributedPart<?> contributedPart = (MContributedPart<?>) part;
 			final IEclipseContext localContext = part.getContext();
-			final IEclipseContext outputContext = EclipseContextFactory.create(
-					null, UISchedulerStrategy.getInstance());
-			outputContext.set(IContextConstants.DEBUG_STRING,
-					"PartOutputContext(" + contributedPart.getName() + ')'); //$NON-NLS-1$
 			localContext.set(Composite.class.getName(), newComposite);
-			localContext.set(IContextConstants.OUTPUTS, outputContext);
-			localContext.set(IEclipseContext.class.getName(), outputContext);
-			localContext.set(IServiceConstants.PERSISTED_STATE, contributedPart
-					.getPersistedState());
-			outputContext.runAndTrack(new Runnable() {
-				public void run() {
-					Object state = outputContext
-							.get(IServiceConstants.PERSISTED_STATE);
-					if (state != null) {
-						contributedPart.setPersistedState((String) state);
-					}
-				}
-			});
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 			Object newPart = contributionFactory.create(contributedPart
 					.getURI(), localContext);

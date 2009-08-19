@@ -30,6 +30,7 @@
         <weights>30</weights>
         <weights>70</weights>
       </children>
+      <variables>selection</variables>
     </children>
     <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="//@command.0"/>
     <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler" command="//@command.1"/>

@@ -152,7 +152,7 @@ public class Preview {
 
 
 	@In
-	public void setInput(final IFile input) {
+	public void setSelection(final IFile input) {
 		bgRealm.asyncExec(new Runnable() {
 			public void run() {
 				inputFile.setValue(input);
