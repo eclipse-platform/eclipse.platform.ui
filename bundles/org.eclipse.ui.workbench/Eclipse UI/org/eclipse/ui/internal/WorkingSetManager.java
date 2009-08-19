@@ -15,16 +15,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
+import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleListener;
 
@@ -109,18 +110,15 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 				restoreMruList(memento);
 				reader.close();
 			} catch (IOException e) {
-				MessageDialog
-						.openError(
-								(Shell) null,
-								WorkbenchMessages.ProblemRestoringWorkingSetState_title,
-								WorkbenchMessages.ProblemRestoringWorkingSetState_message);
+				handleInternalError(
+						e,
+						WorkbenchMessages.ProblemRestoringWorkingSetState_title,
+						WorkbenchMessages.ProblemRestoringWorkingSetState_message);
 			} catch (WorkbenchException e) {
-				ErrorDialog
-						.openError(
-								(Shell) null,
-								WorkbenchMessages.ProblemRestoringWorkingSetState_title,
-								WorkbenchMessages.ProblemRestoringWorkingSetState_message,
-								e.getStatus());
+				handleInternalError(
+						e,
+						WorkbenchMessages.ProblemRestoringWorkingSetState_title,
+						WorkbenchMessages.ProblemRestoringWorkingSetState_message);
 			}
 		}
 	}
@@ -138,7 +136,7 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 			saveState(stateFile);
 		} catch (IOException e) {
 			stateFile.delete();
-			MessageDialog.openError((Shell) null,
+			handleInternalError(e,
 					WorkbenchMessages.ProblemSavingWorkingSetState_title,
 					WorkbenchMessages.ProblemSavingWorkingSetState_message);
 		}
@@ -159,5 +157,17 @@ public class WorkingSetManager extends AbstractWorkingSetManager implements
 			String propertyChangeId, Object oldValue) {
 		saveState();
 		super.workingSetChanged(changedWorkingSet, propertyChangeId, oldValue);
+	}
+
+	/**
+	 * Show and Log the exception using StatusManager.
+	 */
+	private void handleInternalError(Exception exp, String title, String message) {
+		Status status = new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+				message, exp);
+		StatusAdapter sa = new StatusAdapter(status);
+		sa.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, title);
+		StatusManager.getManager().handle(sa,
+				StatusManager.SHOW | StatusManager.LOG);
 	}
 }
