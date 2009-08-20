@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  * Benjamin Muskalla - bug 29633
  * Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
  *		- Bug 224997 [Workbench] Impossible to copy project
+ * Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -23,7 +24,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkbenchAdvisor_cancelHistoryPruning;
 	public static String IDEWorkbenchAdvisor_preHistoryCompaction;
 	public static String IDEWorkbenchAdvisor_postHistoryCompaction;
-	
+
 	public static String IDE_noFileEditorFound;
 	public static String IDE_coreExceptionFileStore;
 
@@ -47,14 +48,35 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String ResourceInfoPage_noResource;
 
-
+	public static String ResourceFilterPage_title;
+	public static String ResourceFilterPage_noResource;
+	public static String ResourceFilterPage_addButtonLabel;
+	public static String ResourceFilterPage_editButtonLabel;
+	public static String ResourceFilterPage_removeButtonLabel;
+	public static String ResourceFilterPage_upButtonLabel;
+	public static String ResourceFilterPage_downButtonLabel;
+	public static String ResourceFilterPage_addNewFilterTitle;
+	public static String ResourceFilterPage_columnFilterID;
+	public static String ResourceFilterPage_columnFilterMode;
+	public static String ResourceFilterPage_columnFilterTargets;
+	public static String ResourceFilterPage_columnFilterInheritable;
+	public static String ResourceFilterPage_columnFilterArguments;
+	public static String ResourceFilterPage_includeOnly;
+	public static String ResourceFilterPage_excludeAll;
+	public static String ResourceFilterPage_filesAndFolders;
+	public static String ResourceFilterPage_files;
+	public static String ResourceFilterPage_folders;
+	public static String ResourceFilterPage_editFilterDialogTitle;
+	public static String ResourceFilterPage_description;
+	public static String ResourceFilterPage_addSubFilterActionLabel;
 	//
 	//
 	// Copies from org.eclipse.ui.workbench
 	//
 	public static String showAdvanced;
 	public static String hideAdvanced;
-
+	public static String editfilters;
+	
 	// ==============================================================================
 	// Workbench Actions
 	// ==============================================================================
@@ -317,6 +339,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_CopyResourcesTask;
 	public static String CopyFilesAndFoldersOperation_parentNotEqual;
 	public static String CopyFilesAndFoldersOperation_infoNotFound;
+	public static String CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAGroup;
 	public static String CopyFilesAndFoldersOperation_copyTitle;
 	public static String CopyFilesAndFoldersOperation_moveTitle;
 
@@ -391,6 +414,16 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_title;
 	public static String WizardNewFolder_internalError;
 
+	// --- New Group ---
+	public static String WizardNewGroupMainPage_groupName;
+	public static String WizardNewGroupMainPage_groupLabel;
+	public static String WizardNewGroupMainPage_description;
+	public static String WizardNewGroupCreationPage_progress;
+	public static String WizardNewGroupCreationPage_errorTitle;
+	public static String WizardNewGroupCreationPage_internalErrorTitle;
+	public static String WizardNewGroupCreationPage_title;
+	public static String WizardNewGroup_internalError;
+
 	// --- New File ---
 	public static String WizardNewFileCreationPage_progress;
 	public static String WizardNewFileCreationPage_errorTitle;
@@ -450,24 +483,31 @@ public class IDEWorkbenchMessages extends NLS {
 	// and should be removed.
 	public static String PathVariableDialog_shellTitle_newVariable;
 	public static String PathVariableDialog_shellTitle_existingVariable;
+	public static String PathVariableDialog_shellTitle_editLocation;
 	public static String PathVariableDialog_dialogTitle_newVariable;
 	public static String PathVariableDialog_dialogTitle_existingVariable;
+	public static String PathVariableDialog_dialogTitle_editLinkLocation;
 	public static String PathVariableDialog_message_newVariable;
 	public static String PathVariableDialog_message_existingVariable;
+	public static String PathVariableDialog_message_editLocation;
 
 	public static String PathVariableDialog_variableName;
 	public static String PathVariableDialog_variableValue;
+	public static String PathVariableDialog_variableResolvedValue;
 	public static String PathVariableDialog_variableNameEmptyMessage;
 	public static String PathVariableDialog_variableValueEmptyMessage;
 	public static String PathVariableDialog_variableValueInvalidMessage;
 	public static String PathVariableDialog_file;
 	public static String PathVariableDialog_folder;
+	public static String PathVariableDialog_variable;
 	public static String PathVariableDialog_selectFileTitle;
 	public static String PathVariableDialog_selectFolderTitle;
 	public static String PathVariableDialog_selectFolderMessage;
 	public static String PathVariableDialog_variableAlreadyExistsMessage;
 	public static String PathVariableDialog_pathIsRelativeMessage;
 	public static String PathVariableDialog_pathDoesNotExistMessage;
+	public static String PathVariableDialog_variableValueIsWrongTypeFolder;
+	public static String PathVariableDialog_variableValueIsWrongTypeFile;
 
 	// --- Local History ---
 	public static String FileHistory_longevity;
@@ -525,6 +565,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_project;
 	public static String ResourceInfo_linkedFile;
 	public static String ResourceInfo_linkedFolder;
+	public static String ResourceInfo_groupFolder;
 	public static String ResourceInfo_unknown;
 	public static String ResourceInfo_notLocal;
 	public static String ResourceInfo_undefinedPathVariable;
@@ -537,10 +578,35 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_fileContainerEncodingFormat;
 	public static String ResourceInfo_containerEncodingFormat;
 	public static String ResourceInfo_exWarning;
+	public static String ResourceInfo_isGroup;
+	public static String ResourceInfo_edit;
 
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;
 
+	// --- Project Linked Resources References ---
+	public static String ProjectLinkedResourcePage_description;
+	public static String ProjectLinkedResourcePage_pathVariableTabTitle;
+	public static String ProjectLinkedResourcePage_linkedResourcesTabTitle;
+
+	// --- Linked Resource Editor ---
+	public static String LinkedResourceEditor_editLinkedLocation;
+	public static String LinkedResourceEditor_convertToVariableLocation;
+	public static String LinkedResourceEditor_resourceName;
+	public static String LinkedResourceEditor_path;
+	public static String LinkedResourceEditor_location;
+	public static String LinkedResourceEditor_fixed;
+	public static String LinkedResourceEditor_broken;
+	public static String LinkedResourceEditor_absolute;
+	public static String LinkedResourceEditor_changedTo;
+	public static String LinkedResourceEditor_unableToSetLinkLocationForResource;
+	public static String LinkedResourceEditor_convertRelativePathLocations;
+	public static String LinkedResourceEditor_convertionResults;
+	public static String linkedResourceEditor_OK;
+	public static String LinkedResourceEditor_unableToCreateVariable;
+	public static String LinkedResourceEditor_unableToFindCommonPathSegments;
+	public static String LinkedResourceEditor_convertAbsolutePathLocations;	
+	
 	// ==============================================================================
 	// Editors
 	// ==============================================================================
@@ -635,16 +701,33 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CreateLinkedResourceGroup_linkTargetNotFolder;
 	public static String CreateLinkedResourceGroup_linkTargetNonExistent;
 	public static String CreateLinkedResourceGroup_unableToValidateLinkTarget;
+	public static String CreateLinkedResourceGroup_linkRequiredUnderAGroup;
 
 	public static String PathVariablesBlock_variablesLabel;
+	public static String PathVariablesBlock_variablesLabelForProject;
 	public static String PathVariablesBlock_addVariableButton;
 	public static String PathVariablesBlock_editVariableButton;
 	public static String PathVariablesBlock_removeVariableButton;
+	public static String PathVariablesBlock_nameColumn;
+	public static String PathVariablesBlock_valueColumn;
+	public static String PathVariablesBlock_resolvedValueColumn;
 
 	public static String PathVariableSelectionDialog_title;
 	public static String PathVariableSelectionDialog_extendButton;
 	public static String PathVariableSelectionDialog_ExtensionDialog_title;
 	public static String PathVariableSelectionDialog_ExtensionDialog_description;
+
+	public static String ImportTypeDialog_title;
+	public static String ImportTypeDialog_question;
+	public static String ImportTypeDialog_moveFilesAndDirectories;
+	public static String ImportTypeDialog_copyFilesAndDirectories;
+	public static String ImportTypeDialog_recreateFilesAndDirectories;
+	public static String ImportTypeDialog_createLinks;
+	public static String ImportTypeDialog_importElementsAs;
+	public static String ImportTypeDialog_automatic;
+	public static String ImportTypeDialog_absolutePath;
+	public static String ImportTypeDialog_editVariables;
+	public static String ImportTypeDialog_alwaysPerformThisOperation;
 
 	// ==============================================================================
 	// Editor Framework

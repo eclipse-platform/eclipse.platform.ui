@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.ide" version="2">
+    <resource path="src/org/eclipse/ui/internal/ide/dialogs/ResourceFilterPage.java" type="org.eclipse.ui.internal.ide.dialogs.FilterCopy">
+        <filter id="574619656">
+            <message_arguments>
+                <message_argument value="IFilter"/>
+                <message_argument value="FilterCopy"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="extensions/org/eclipse/ui/actions/RefreshAction.java" type="org.eclipse.ui.actions.RefreshAction">
         <filter id="438431863">
             <message_arguments>

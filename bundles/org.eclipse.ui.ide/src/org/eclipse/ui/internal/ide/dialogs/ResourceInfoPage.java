@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 175069 [Preferences] ResourceInfoPage is not setting dialog font on all widgets
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
@@ -14,6 +15,7 @@ package org.eclipse.ui.internal.ide.dialogs;
 import java.net.URI;
 
 import org.eclipse.core.filesystem.EFS;
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -22,14 +24,20 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.window.Window;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -97,6 +105,13 @@ public class ResourceInfoPage extends PropertyPage {
 
 	private static String CONTAINER_ENCODING_TITLE = IDEWorkbenchMessages.ResourceInfo_fileEncodingTitle;
 
+	private static String EDIT_TITLE = IDEWorkbenchMessages.ResourceInfo_edit;
+
+	private Text resolvedLocationValue = null;
+	private Text locationValue = null;
+	private Text sizeValue = null;
+	private IPath newResourceLocation = null;
+
 	// Max value width in characters before wrapping
 	private static final int MAX_VALUE_WIDTH = 80;
 
@@ -152,27 +167,60 @@ public class ResourceInfoPage extends PropertyPage {
 		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 
-		// The group for location
-		Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
-		locationTitle.setText(LOCATION_TITLE);
-		gd = new GridData();
-		gd.verticalAlignment = SWT.TOP;
-		locationTitle.setLayoutData(gd);
+		if (resource.isLinked()) {
+			// The group for location
+			Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
+			locationTitle.setText(LOCATION_TITLE);
+			gd = new GridData();
+			gd.verticalAlignment = SWT.TOP;
+			locationTitle.setLayoutData(gd);
 
-		Text locationValue = new Text(basicInfoComposite, SWT.WRAP
-				| SWT.READ_ONLY);
-		String locationStr = TextProcessor.process(IDEResourceInfoUtils
-				.getLocationText(resource));
-		locationValue.setText(locationStr);
-		gd = new GridData();
-		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalAlignment = GridData.FILL;
-		locationValue.setLayoutData(gd);
-		locationValue.setBackground(locationValue.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
+			Composite locationComposite = new Composite(basicInfoComposite,
+					SWT.NULL);
+			layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginWidth = 0;
+			layout.marginHeight = 0;
+			locationComposite.setLayout(layout);
+			gd = new GridData();
+			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+			gd.grabExcessHorizontalSpace = true;
+			gd.horizontalAlignment = GridData.FILL;
+			locationComposite.setLayoutData(gd);
 
-		if (isPathVariable(resource)) {
+			locationValue = new Text(locationComposite, SWT.WRAP
+					| SWT.READ_ONLY);
+			String locationStr = TextProcessor.process(IDEResourceInfoUtils
+					.getLocationText(resource));
+			locationValue.setText(locationStr);
+			gd = new GridData();
+			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+			gd.grabExcessHorizontalSpace = true;
+			gd.horizontalAlignment = GridData.FILL;
+			locationValue.setLayoutData(gd);
+			locationValue.setBackground(locationValue.getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_BACKGROUND));
+
+
+			Button editButton = new Button(locationComposite, SWT.PUSH);
+			editButton.setText(EDIT_TITLE);
+			gd = new GridData();
+			gd.widthHint = convertWidthInCharsToPixels(EDIT_TITLE
+					.length()) * 2 + 40;
+			gd.grabExcessHorizontalSpace = true;
+			gd.horizontalAlignment = GridData.FILL;
+			editButton.setLayoutData(gd);
+			editButton.addSelectionListener(new SelectionListener() {
+				public void widgetDefaultSelected(SelectionEvent e) {
+					editLinkLocation();
+				}
+
+				public void widgetSelected(SelectionEvent e) {
+					editLinkLocation();
+				}
+			});
+
+			// displayed in all cases since the link can be changed to a path variable any time by the user in this dialog
 			Label resolvedLocationTitle = new Label(basicInfoComposite,
 					SWT.LEFT);
 			resolvedLocationTitle.setText(RESOLVED_LOCATION_TITLE);
@@ -180,7 +228,7 @@ public class ResourceInfoPage extends PropertyPage {
 			gd.verticalAlignment = SWT.TOP;
 			resolvedLocationTitle.setLayoutData(gd);
 
-			Text resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP
+			resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP
 					| SWT.READ_ONLY);
 			resolvedLocationValue.setText(IDEResourceInfoUtils
 					.getResolvedLocationText(resource));
@@ -191,6 +239,28 @@ public class ResourceInfoPage extends PropertyPage {
 			resolvedLocationValue.setLayoutData(gd);
 			resolvedLocationValue.setBackground(resolvedLocationValue
 					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+		} else {
+			if (!resource.isGroup()) {
+				// The group for location
+				Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
+				locationTitle.setText(LOCATION_TITLE);
+				gd = new GridData();
+				gd.verticalAlignment = SWT.TOP;
+				locationTitle.setLayoutData(gd);
+
+				Text locationValue = new Text(basicInfoComposite, SWT.WRAP
+						| SWT.READ_ONLY);
+				String locationStr = TextProcessor.process(IDEResourceInfoUtils
+						.getLocationText(resource));
+				locationValue.setText(locationStr);
+				gd = new GridData();
+				gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+				gd.grabExcessHorizontalSpace = true;
+				gd.horizontalAlignment = GridData.FILL;
+				locationValue.setLayoutData(gd);
+				locationValue.setBackground(locationValue.getDisplay()
+						.getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			}
 		}
 		if (resource.getType() == IResource.FILE) {
 			// The group for size
@@ -210,6 +280,54 @@ public class ResourceInfoPage extends PropertyPage {
 		}
 
 		return basicInfoComposite;
+	}
+
+	protected void editLinkLocation() {
+		IResource resource = (IResource) getElement().getAdapter(
+				IResource.class);
+		IPath location = Path.fromPortableString(locationValue.getText());
+
+		PathVariableDialog dialog = new PathVariableDialog(getShell(),
+				PathVariableDialog.EDIT_LINK_LOCATION, resource.getType(),
+				resource.getProject().getPathVariableManager(), null);
+		dialog.setLinkLocation(location);
+		dialog.setProject(resource.getProject());
+		// opens the dialog - just returns if the user cancels it
+		if (dialog.open() == Window.CANCEL) {
+			return;
+		}
+		location = Path.fromOSString(dialog.getVariableValue());
+		newResourceLocation = location;
+		refreshLinkLocation();
+	}
+
+	private void refreshLinkLocation() {
+		IResource resource = (IResource) getElement().getAdapter(
+				IResource.class);
+
+		locationValue.setText(newResourceLocation.toPortableString());
+
+		IPath resolved = resource.getProject().getPathVariableManager()
+				.resolvePath(newResourceLocation);
+		if (!IDEResourceInfoUtils.exists(resolved.toOSString())) {
+			resolvedLocationValue
+					.setText(IDEWorkbenchMessages.ResourceInfo_undefinedPathVariable);
+			if (sizeValue != null)
+				sizeValue.setText(IDEWorkbenchMessages.ResourceInfo_notExist);
+		} else {
+			resolvedLocationValue.setText(resolved.toPortableString());
+			if (sizeValue != null) {
+				IFileInfo info = IDEResourceInfoUtils.getFileInfo(resolved
+						.toPortableString());
+				if (info != null)
+					sizeValue.setText(NLS.bind(
+							IDEWorkbenchMessages.ResourceInfo_bytes, Long
+									.toString(info.getLength())));
+				else
+					sizeValue
+							.setText(IDEWorkbenchMessages.ResourceInfo_unknown);
+			}
+		}
 	}
 
 	protected Control createContents(Composite parent) {
@@ -431,23 +549,26 @@ public class ResourceInfoPage extends PropertyPage {
 
 		// Not relevant to projects
 		if (resource.getType() != IResource.PROJECT) {
-			URI location = resource.getLocationURI();
-			if (location != null && location.getScheme() != null) {
-				try {
-					IFileSystem fs = EFS.getFileSystem(location.getScheme());
-					int attributes = fs.attributes();
-					if ((attributes & EFS.ATTRIBUTE_READ_ONLY) != 0) {
-						createEditableButton(composite);
+			if (!resource.isGroup()) {
+				URI location = resource.getLocationURI();
+				if (location != null && location.getScheme() != null) {
+					try {
+						IFileSystem fs = EFS
+								.getFileSystem(location.getScheme());
+						int attributes = fs.attributes();
+						if ((attributes & EFS.ATTRIBUTE_READ_ONLY) != 0) {
+							createEditableButton(composite);
+						}
+						if ((attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0) {
+							createExecutableButton(composite);
+						}
+						if ((attributes & EFS.ATTRIBUTE_ARCHIVE) != 0) {
+							createArchiveButton(composite);
+						}
+					} catch (CoreException e) {
+						// ignore if we can't access the file system for this
+						// resource
 					}
-					if ((attributes & EFS.ATTRIBUTE_EXECUTABLE) != 0) {
-						createExecutableButton(composite);
-					}
-					if ((attributes & EFS.ATTRIBUTE_ARCHIVE) != 0) {
-						createArchiveButton(composite);
-					}
-				} catch (CoreException e) {
-					// ignore if we can't access the file system for this
-					// resource
 				}
 			}
 			createDerivedButton(composite);
@@ -490,24 +611,18 @@ public class ResourceInfoPage extends PropertyPage {
 	 *         resource is either not a linked resource or it is not using a
 	 *         path variable.
 	 */
-	private boolean isPathVariable(IResource resource) {
-		if (!resource.isLinked()) {
-			return false;
-		}
-
-		IPath resolvedLocation = resource.getLocation();
-		if (resolvedLocation == null) {
-			// missing path variable
-			return true;
-		}
-		IPath rawLocation = resource.getRawLocation();
-		if (resolvedLocation.equals(rawLocation)) {
-			return false;
-		}
-
-		return true;
-	}
-
+	/*
+	 * Now shows the same widgets for all linked files. private boolean
+	 * isPathVariable(IResource resource) { if (!resource.isLinked()) { return
+	 * false; }
+	 * 
+	 * IPath resolvedLocation = resource.getLocation(); if (resolvedLocation ==
+	 * null) { // missing path variable return true; } IPath rawLocation =
+	 * resource.getRawLocation(); if (resolvedLocation.equals(rawLocation)) {
+	 * return false; }
+	 * 
+	 * return true; }
+	 */
 	/**
 	 * Reset the editableBox to the false.
 	 */
@@ -518,6 +633,20 @@ public class ResourceInfoPage extends PropertyPage {
 		
 		if (resource == null)
 			return;
+
+		if (newResourceLocation != null) {
+			newResourceLocation = null;
+
+			resolvedLocationValue.setText(IDEResourceInfoUtils
+					.getResolvedLocationText(resource));
+
+			String locationStr = TextProcessor.process(IDEResourceInfoUtils
+					.getLocationText(resource));
+			locationValue.setText(locationStr);
+
+			if (sizeValue != null)
+				sizeValue.setText(IDEResourceInfoUtils.getSizeString(resource));
+		}
 
 		// Nothing to update if we never made the box
 		if (this.editableBox != null) {
@@ -560,6 +689,11 @@ public class ResourceInfoPage extends PropertyPage {
 		}
 
 		try {
+			if (newResourceLocation != null) {
+				resource.setLinkLocation(newResourceLocation, 0,
+						new NullProgressMonitor());
+			}
+
 			ResourceAttributes attrs = resource.getResourceAttributes();
 			if (attrs != null) {
 				boolean hasChange = false;

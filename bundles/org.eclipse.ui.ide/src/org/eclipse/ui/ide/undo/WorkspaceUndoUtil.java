@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,23 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 
 package org.eclipse.ui.ide.undo;
 
+import java.net.URI;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
+import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -247,6 +253,59 @@ public class WorkspaceUndoUtil {
 	static ResourceDescription[] copy(IResource[] resources, IPath destination,
 			List resourcesAtDestination, IProgressMonitor monitor,
 			IAdaptable uiInfo, boolean pathIncludesName) throws CoreException {
+		return copy(resources, destination, resourcesAtDestination, monitor,
+				uiInfo, pathIncludesName, false, false, null);
+	}
+
+	/**
+	 * Copies the resources to the given destination. This method can be called
+	 * recursively to merge folders during folder copy.
+	 *
+	 * @param resources
+	 *            the resources to be copied
+	 * @param destination
+	 *            the destination path for the resources, relative to the
+	 *            workspace
+	 * @param resourcesAtDestination
+	 *            A list used to record the new copies.
+	 * @param monitor
+	 *            the progress monitor used to show progress
+	 * @param uiInfo
+	 *            the IAdaptable (or <code>null</code>) provided by the
+	 *            caller in order to supply UI information for prompting the
+	 *            user if necessary. When this parameter is not
+	 *            <code>null</code>, it contains an adapter for the
+	 *            org.eclipse.swt.widgets.Shell.class
+	 * @param pathIncludesName
+	 *            a boolean that indicates whether the specified path includes
+	 *            the resource's name at the destination. If this value is
+	 *            <code>true</code>, the destination will contain the desired
+	 *            name of the resource (usually only desired when only one
+	 *            resource is being copied). If this value is <code>false</code>,
+	 *            each resource's name will be appended to the destination.
+	 * @param createGroups
+	 *            a boolean that indicates whether groups resources should be
+	 *            created instead of folders when a hierarchy of files is
+	 *            copied.
+	 * @param createLinks
+	 *            a boolean that indicates whether linked resources should be
+	 *            created instead of files and folders (if createGroups is
+	 *            false) when copied.
+	 * @param relativeToVariable
+	 *            a String that indicates relative to which variable linked
+	 *            resources should be created, if createLinks is set to true.
+	 *            Absolute linked resources will be created if null is passed
+	 *            otherwise (and createLinks is set to true).
+	 * @return an array of ResourceDescriptions describing any resources that
+	 *         were overwritten by the copy operation
+	 * @throws CoreException
+	 *             propagates any CoreExceptions thrown from the resources API
+	 */
+	static ResourceDescription[] copy(IResource[] resources, IPath destination,
+			List resourcesAtDestination, IProgressMonitor monitor,
+			IAdaptable uiInfo, boolean pathIncludesName, boolean createGroups,
+			boolean createLinks, String relativeToVariable)
+			throws CoreException {
 
 		monitor.beginTask("", resources.length); //$NON-NLS-1$
 		monitor
@@ -265,11 +324,15 @@ public class WorkspaceUndoUtil {
 			if (source.getType() == IResource.FOLDER && existing != null) {
 				// The resource is a folder and it exists in the destination.
 				// Copy its children to the existing destination.
-				if (source.isLinked() == existing.isLinked()) {
+				if ((source.isLinked() && existing.isLinked())
+						|| (source.isGroup() && existing.isGroup())
+						|| (!source.isLinked() && !existing.isLinked()
+								&& !source.isGroup() && !existing.isGroup())) {
 					IResource[] children = ((IContainer) source).members();
 					ResourceDescription[] overwritten = copy(children,
 							destinationPath, resourcesAtDestination,
-							new SubProgressMonitor(monitor, 1), uiInfo, false);
+							new SubProgressMonitor(monitor, 1), uiInfo, false,
+							createGroups, createLinks, relativeToVariable);
 					// We don't record the copy since this recursive call will
 					// do so. Just record the overwrites.
 					for (int j = 0; j < overwritten.length; j++) {
@@ -281,8 +344,32 @@ public class WorkspaceUndoUtil {
 					ResourceDescription[] deleted = delete(
 							new IResource[] { existing },
 							new SubProgressMonitor(monitor, 0), uiInfo, false);
-					source.copy(destinationPath, IResource.SHALLOW,
-							new SubProgressMonitor(monitor, 1));
+					if ((createLinks || createGroups)
+							&& (source.isLinked() == false)
+							&& (source.isGroup() == false)) {
+						IFolder folder = workspaceRoot.getFolder(destinationPath);
+						if (createGroups) {
+							folder.createGroup(0, new SubProgressMonitor(
+									monitor, 1));
+							IResource[] members = ((IContainer) source)
+									.members();
+							if (members.length > 0) {
+								overwrittenResources.addAll(Arrays.asList(copy(
+										members, destinationPath,
+										resourcesAtDestination,
+										new SubProgressMonitor(monitor, 1),
+										uiInfo, false, createGroups,
+										createLinks, relativeToVariable)));
+
+							}
+						} else
+							folder.createLink(createRelativePath(
+									folder.getProject().getPathVariableManager(), source
+									.getLocationURI(), relativeToVariable), 0,
+									new SubProgressMonitor(monitor, 1));
+					} else
+						source.copy(destinationPath, IResource.SHALLOW,
+								new SubProgressMonitor(monitor, 1));
 					// Record the copy
 					resourcesAtDestination.add(getWorkspace().getRoot()
 							.findMember(destinationPath));
@@ -292,29 +379,79 @@ public class WorkspaceUndoUtil {
 				}
 			} else {
 				if (existing != null) {
-					if (source.isLinked() == existing.isLinked()) {
-						overwrittenResources.add(copyOverExistingResource(
-								source, existing, new SubProgressMonitor(
-										monitor, 1), uiInfo, false));
-						// Record the "copy"
-						resourcesAtDestination.add(existing);
-					} else {
-						// Copying a linked resource over unlinked or vice
-						// versa. Can't use setContents here. Fixes bug 28772.
+					// source is a FILE and destination EXISTS
+					if ((createLinks || createGroups)
+							&& (source.isLinked() == false)) {
+						// we create a linked file, and overwrite the
+						// destination
 						ResourceDescription[] deleted = delete(
 								new IResource[] { existing },
 								new SubProgressMonitor(monitor, 0), uiInfo,
 								false);
-						source.copy(destinationPath, IResource.SHALLOW,
-								new SubProgressMonitor(monitor, 1));
-						// Record the copy
+						if (source.getType() == IResource.FILE) {
+							IFile file = workspaceRoot.getFile(destinationPath);
+							file.createLink(createRelativePath(
+									file.getProject().getPathVariableManager(), source
+									.getLocationURI(), relativeToVariable), 0,
+									new SubProgressMonitor(monitor, 1));
+						} else {
+							IFolder folder = workspaceRoot
+									.getFolder(destinationPath);
+							if (createGroups) {
+								folder.createGroup(0, new SubProgressMonitor(
+										monitor, 1));
+								IResource[] members = ((IContainer) source)
+										.members();
+								if (members.length > 0) {
+									overwrittenResources.addAll(Arrays
+											.asList(copy(members,
+													destinationPath,
+													resourcesAtDestination,
+													new SubProgressMonitor(
+															monitor, 1),
+													uiInfo, false,
+													createGroups, createLinks,
+													relativeToVariable)));
+
+								}
+							} else
+								folder.createLink(createRelativePath(
+										folder.getProject().getPathVariableManager(),
+										source.getLocationURI(), relativeToVariable),
+										0, new SubProgressMonitor(monitor, 1));
+						}
 						resourcesAtDestination.add(getWorkspace().getRoot()
 								.findMember(destinationPath));
 						for (int j = 0; j < deleted.length; j++) {
 							overwrittenResources.add(deleted[j]);
 						}
+					} else {
+						if (source.isLinked() == existing.isLinked()) {
+							overwrittenResources.add(copyOverExistingResource(
+									source, existing, new SubProgressMonitor(
+											monitor, 1), uiInfo, false));
+							// Record the "copy"
+							resourcesAtDestination.add(existing);
+						} else {
+							// Copying a linked resource over unlinked or vice
+							// versa. Can't use setContents here. Fixes bug
+							// 28772.
+							ResourceDescription[] deleted = delete(
+									new IResource[] { existing },
+									new SubProgressMonitor(monitor, 0), uiInfo,
+									false);
+							source.copy(destinationPath, IResource.SHALLOW,
+									new SubProgressMonitor(monitor, 1));
+							// Record the copy
+							resourcesAtDestination.add(getWorkspace().getRoot()
+									.findMember(destinationPath));
+							for (int j = 0; j < deleted.length; j++) {
+								overwrittenResources.add(deleted[j]);
+							}
+						}
 					}
 				} else {
+					// source is a FILE or FOLDER
 					// no resources are being overwritten
 					// ensure the destination path exists
 					IPath parentPath = destination;
@@ -322,8 +459,41 @@ public class WorkspaceUndoUtil {
 						parentPath = destination.removeLastSegments(1);
 					}
 					IContainer generatedParent = generateContainers(parentPath);
-					source.copy(destinationPath, IResource.SHALLOW,
-							new SubProgressMonitor(monitor, 1));
+					if ((createLinks || createGroups)
+							&& (source.isLinked() == false)) {
+						if (source.getType() == IResource.FILE) {
+							IFile file = workspaceRoot.getFile(destinationPath);
+							file.createLink(createRelativePath(
+									file.getProject().getPathVariableManager(),
+									source.getLocationURI(), relativeToVariable), 0,
+									new SubProgressMonitor(monitor, 1));
+						} else {
+							IFolder folder = workspaceRoot
+									.getFolder(destinationPath);
+							if (createGroups) {
+								folder.createGroup(0, new SubProgressMonitor(monitor, 1));
+								IResource[] members = ((IContainer) source).members();
+								if (members.length > 0) {
+									overwrittenResources.addAll(Arrays
+											.asList(copy(members,
+													destinationPath,
+													resourcesAtDestination,
+													new SubProgressMonitor(
+															monitor, 1),
+													uiInfo, false,
+													createGroups, createLinks,
+													relativeToVariable)));
+
+								}
+							} else
+								folder.createLink(createRelativePath(
+										folder.getProject().getPathVariableManager(),
+										source.getLocationURI(), relativeToVariable),
+										0, new SubProgressMonitor(monitor, 1));
+						}
+					} else
+						source.copy(destinationPath, IResource.SHALLOW,
+								new SubProgressMonitor(monitor, 1));
 					// Record the copy. If we had to generate a parent
 					// folder, that should be recorded as part of the copy
 					if (generatedParent == null) {
@@ -342,7 +512,28 @@ public class WorkspaceUndoUtil {
 		monitor.done();
 		return (ResourceDescription[]) overwrittenResources
 				.toArray(new ResourceDescription[overwrittenResources.size()]);
+	}
 
+	/**
+	 * Transform an absolute path URI to a relative path one (i.e. from
+	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
+	 * is "VAR" and points to "C:\foo\bar\").
+	 *
+	 * @param locationURI
+	 * @param pvm the IPathVariableManager to use for resolving variables
+	 * @return an URI that was made relative to a variable
+	 */
+	static private URI createRelativePath(IPathVariableManager pvm, URI locationURI, String relativeVariable) {
+		if (relativeVariable == null)
+			return locationURI;
+		IPath location = URIUtil.toPath(locationURI);
+		IPath result;
+		try {
+			result = pvm.convertToRelative(location, true, relativeVariable);
+		} catch (CoreException e) {
+			return locationURI;
+		}
+		return URIUtil.toURI(result);
 	}
 
 	/**

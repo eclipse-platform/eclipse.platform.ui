@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 
 package org.eclipse.ui.ide.dialogs;
@@ -15,14 +16,25 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.ProjectVariableProviderManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.ListViewer;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -36,6 +48,7 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.FileFolderSelectionDialog;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
 import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
+import org.eclipse.ui.internal.ide.dialogs.SimpleListContentProvider;
 
 /**
  * A selection dialog which shows the path variables defined in the 
@@ -62,6 +75,8 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 
     private PathVariablesGroup pathVariablesGroup;
 
+	private IProject currentProject = null;
+
     private int variableType;
 
     /**
@@ -85,7 +100,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
                         updateExtendButtonState();
                     }
                 });
-        setShellStyle(getShellStyle() | SWT.SHEET);
+		setShellStyle(getShellStyle() | SWT.RESIZE | SWT.SHEET);
     }
 
 
@@ -94,23 +109,48 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
      */
     protected void buttonPressed(int buttonId) {
         if (buttonId == EXTEND_ID) {
-            FileFolderSelectionDialog dialog = new FileFolderSelectionDialog(
-                    getShell(), false, variableType);
-            PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
-                    .getSelection()[0];
-            dialog.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
-            dialog.setMessage(NLS.bind(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description, selection.name));
-            //XXX This only works for variables that refer to local file system locations
-            try {
-				dialog.setInput(EFS.getStore(URIUtil.toURI(selection.path)));
-			} catch (CoreException e) {
-				ErrorDialog.openError(getShell(), null, null, e.getStatus());
+			PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
+					.getSelection()[0];
+			ProjectVariableProviderManager.Descriptor desc = ProjectVariableProviderManager
+					.getDefault().findDescriptor(selection.name);
+			if (desc != null
+					&& desc.getExtensions(selection.name, currentProject) != null) {
+				EnvSelectionDialog dialog = new EnvSelectionDialog(getShell(),
+						desc.getExtensions(selection.name, currentProject));
+				dialog.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
+				dialog.setMessage(NLS.bind(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description, selection.name));
+				if (dialog.open() == Window.OK
+						&& pathVariablesGroup.performOk()) {
+					setSelectionResult(new String[] { "${" + selection.name + "-" + dialog.getResult()[0] + "}" }); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					super.okPressed();
+				}
+			} else {
+				FileFolderSelectionDialog dialog = new FileFolderSelectionDialog(
+						getShell(), false, variableType);
+				dialog
+						.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
+				dialog
+						.setMessage(NLS
+								.bind(
+										IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description,
+										selection.name));
+				// XXX This only works for variables that refer to local file
+				// system locations
+				IPath selectionPath = selection.path;
+				if (currentProject != null)
+					selectionPath = currentProject.getPathVariableManager()
+							.resolvePath(selectionPath);
+				try {
+					dialog.setInput(EFS.getStore(URIUtil.toURI(selectionPath)));
+				} catch (CoreException e) {
+					ErrorDialog.openError(getShell(), null, null, e.getStatus());
+				}
+	            if (dialog.open() == Window.OK
+	                    && pathVariablesGroup.performOk()) {
+	                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
+	                super.okPressed();
+	            }
 			}
-            if (dialog.open() == Window.OK
-                    && pathVariablesGroup.performOk()) {
-                setExtensionResult(selection, (IFileStore) dialog.getResult()[0]);
-                super.okPressed();
-            }
         } else {
 			super.buttonPressed(buttonId);
 		}
@@ -188,13 +228,16 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
     private void setExtensionResult(
             PathVariablesGroup.PathVariableElement variable, IFileStore extensionFile) {
         IPath extensionPath = new Path(extensionFile.toString());
-        int matchCount = extensionPath.matchingFirstSegments(variable.path);
-        IPath resultPath = new Path(variable.name);
+		IPath selectionPath = variable.path;
+		if (currentProject != null)
+			selectionPath = currentProject.getPathVariableManager().resolvePath(selectionPath);
+		int matchCount = extensionPath.matchingFirstSegments(selectionPath);
+		IPath resultPath = new Path(variable.name);
 
         extensionPath = extensionPath.removeFirstSegments(matchCount);
         resultPath = resultPath.append(extensionPath);
-        setSelectionResult(new String[] { resultPath.toOSString() });
-    }
+		setSelectionResult(new String[] { resultPath.toPortableString() });
+	}
 
     /**
      * Updates the enabled state of the Extend button based on the 
@@ -209,8 +252,15 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 			return;
 		}
         if (selection.length == 1) {
-            IFileInfo info = IDEResourceInfoUtils.getFileInfo(selection[0].path);
-            if (info.exists() && info.isDirectory()) {
+			IPath selectionPath = selection[0].path;
+			if (currentProject != null)
+				selectionPath = currentProject.getPathVariableManager().resolvePath(selectionPath);
+			IFileInfo info = IDEResourceInfoUtils.getFileInfo(selectionPath);
+			ProjectVariableProviderManager.Descriptor desc = ProjectVariableProviderManager
+					.getDefault().findDescriptor(selection[0].name);
+			if (info.exists() && info.isDirectory()
+					|| (desc != null && desc.getExtensions(selection[0].name,
+							currentProject) != null)) {
 				extendButton.setEnabled(true);
 			} else {
 				extendButton.setEnabled(false);
@@ -221,4 +271,88 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 		}
     }
 
+	/**
+	 * Sets the project for which the path variable is being edited.
+	 * 
+	 * @param project
+	 */
+	public void setProject(IProject project) {
+		currentProject = project;
+		pathVariablesGroup.setProject(project);
+	}
+
+	class EnvSelectionDialog extends SelectionDialog {
+
+		ListViewer viewer;
+		Object[] extensions;
+
+		protected EnvSelectionDialog(Shell parentShell, Object[] ext) {
+			super(parentShell);
+			setShellStyle(getShellStyle() | SWT.RESIZE);
+			extensions = ext;
+		}
+
+		protected Control createDialogArea(Composite parent) {
+			Composite composite = (Composite) super.createDialogArea(parent);
+
+			// Create label
+			createMessageArea(composite);
+			// Create list viewer
+			viewer = new ListViewer(composite, SWT.SINGLE | SWT.H_SCROLL
+					| SWT.V_SCROLL | SWT.BORDER);
+			GridData data = new GridData(GridData.FILL_BOTH);
+			data.heightHint = convertHeightInCharsToPixels(10);
+			data.widthHint = convertWidthInCharsToPixels(30);
+			viewer.getList().setLayoutData(data);
+			viewer.getList().setFont(parent.getFont());
+			// Set the label provider
+			viewer.setLabelProvider(new LabelProvider() {
+				public String getText(Object element) {
+					if (element instanceof String)
+						return (String) element;
+					return null;
+				}
+			});
+
+			// Set the content provider
+			SimpleListContentProvider cp = new SimpleListContentProvider();
+			cp.setElements(extensions);
+			viewer.setContentProvider(cp);
+			viewer.setInput(new Object());
+			// it is ignored but must be non-null
+
+			// Set the initial selection
+			viewer.setSelection(new StructuredSelection(
+					getInitialElementSelections()), true);
+
+			// Add a selection change listener
+			viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+				public void selectionChanged(SelectionChangedEvent event) {
+					// Update OK button enablement
+					getOkButton().setEnabled(!event.getSelection().isEmpty());
+				}
+			});
+
+			// Add double-click listener
+			viewer.addDoubleClickListener(new IDoubleClickListener() {
+				public void doubleClick(DoubleClickEvent event) {
+					okPressed();
+				}
+			});
+			return composite;
+		}
+
+		protected Control createButtonBar(Composite parent) {
+			Control result = super.createButtonBar(parent);
+			getOkButton().setEnabled(false);
+			return result;
+		}
+
+		protected void okPressed() {
+			IStructuredSelection selection = (IStructuredSelection) viewer
+					.getSelection();
+			setResult(selection.toList());
+			super.okPressed();
+		}
+	}
 }

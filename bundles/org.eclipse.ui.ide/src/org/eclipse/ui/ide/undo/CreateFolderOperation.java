@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.ide.undo;
 
 import java.net.URI;
 
+import org.eclipse.core.resources.IFilter;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 
@@ -36,6 +37,10 @@ import org.eclipse.ui.internal.ide.undo.ContainerDescription;
  */
 public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 
+	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
+			String label) {
+		this(folderHandle, linkLocation, null, label);
+	}
 	/**
 	 * Create a CreateFolderOperation
 	 * 
@@ -46,7 +51,7 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 	 * @param label
 	 *            the label of the operation
 	 */
-	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
+	public CreateFolderOperation(IFolder folderHandle, URI linkLocation, IFilter[] filterList,
 			String label) {
 		super(null, label);
 		ContainerDescription containerDescription = ContainerDescription
@@ -54,6 +59,8 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 		if (linkLocation != null) {
 			containerDescription.getFirstLeafFolder().setLocation(linkLocation);
 		}
+		if (filterList != null)
+			containerDescription.getFirstLeafFolder().setFilters(filterList);
 		setResourceDescriptions(new ResourceDescription[] { containerDescription });
 	}
 }

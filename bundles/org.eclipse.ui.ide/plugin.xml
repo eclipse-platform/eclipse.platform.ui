@@ -177,6 +177,19 @@
                class="org.eclipse.core.resources.IResource">
          </selection>
       </wizard>
+      <wizard
+            name="%NewWizards.group"
+            icon="$nl$/icons/full/etool16/newgroup_wiz.gif"
+            category="org.eclipse.ui.Basic"
+        	class="org.eclipse.ui.wizards.newresource.BasicNewGroupResourceWizard"
+            id="org.eclipse.ui.wizards.new.group">
+         <description>
+            %NewWizards.group.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -362,6 +375,23 @@
          <enablement>
             <objectClass
                   name="org.eclipse.core.resources.IFile">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
+            adaptable="true"
+            class="org.eclipse.ui.internal.ide.ResourceFilterDecorator"
+            id="org.eclipse.ui.ResourceFilterDecorator"
+            label="%DecoratorSpecificResourceFilterType.label"
+            lightweight="true"
+            location="BOTTOM_LEFT"
+            state="true">
+         <description>
+            %DecoratorSpecificResourceFilterType.description
+         </description>
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IContainer">
             </objectClass>
          </enablement>
       </decorator>
@@ -621,6 +651,18 @@
          </enabledWhen>
       </page>
       <page
+            class="org.eclipse.ui.internal.ide.dialogs.ResourceFilterPage"
+            id="org.eclipse.ui.propertypages.resource.filters"
+            name="%PropertyPages.resource.filters"
+            >
+         <enabledWhen>
+            <or>
+            	<adapt type="org.eclipse.core.resources.IProject"/>
+           		<adapt type="org.eclipse.core.resources.IFolder"/>
+           	</or>
+         </enabledWhen>
+      </page>
+      <page
             class="org.eclipse.ui.internal.ide.dialogs.ResourceInfoPage"
             id="org.eclipse.ui.propertypages.info.file"
             name="%PropertyPages.info.file"
@@ -639,6 +681,15 @@
             </adapt>
          </enabledWhen>
       </page>
+      <page
+            class="org.eclipse.ui.internal.ide.dialogs.ProjectLinkedResourcePage"
+            id="org.eclipse.ui.propertypages.project.linkedResourcesPage"
+            name="%linked_resources"
+            >
+         <enabledWhen>
+            <adapt type="org.eclipse.core.resources.IProject"/>
+         </enabledWhen>
+      </page>    
    </extension>
    <extension
          point="org.eclipse.ui.commands">
@@ -2014,12 +2065,12 @@
                  <with variable="activePart">
                     <instanceof value="org.eclipse.ui.internal.views.markers.ExtendedMarkersView"/>
                  	<or>
-                        <test args="org.eclipse.ui.ide.allMarkersGenerator"
+                        		<test args="org.eclipse.ui.ide.allMarkersGenerator"
                           		property="org.eclipse.ui.ide.contentGenerator"/>
-                        <test args="org.eclipse.ui.ide.problemsGenerator"
-                          		property="org.eclipse.ui.ide.contentGenerator"/>
+                      			<test args="org.eclipse.ui.ide.problemsGenerator"
+                       	   			property="org.eclipse.ui.ide.contentGenerator"/>
                  	</or>
-                 </with>
+                    		</with>
                		<with variable="selection">
                           	<iterate ifEmpty="false" operator="and">
                           		<adapt type="org.eclipse.core.resources.IMarker" >
@@ -2188,6 +2239,41 @@
             properties="severity,type,superType,priority,done,message,resourceType"
             type="org.eclipse.core.resources.IMarker">
       </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filterProviders">
+      <filterProvider
+            argumentType="string"
+            class="org.eclipse.ui.internal.ide.misc.StringMatcherFilter"
+            description="%filterProvider.description"
+            id="org.eclipse.ui.ide.stringMatcherFilter"
+            name="%filterProvider.name"
+            ordering="first">
+      </filterProvider>
+      <filterProvider
+            argumentType="filters"
+            class="org.eclipse.ui.internal.ide.misc.OrFilter"
+            description="%orFilterProvider.description"
+            id="org.eclipse.ui.ide.orFilter"
+            name="%orFilterProvider.name"
+            ordering="first">
+      </filterProvider>
+      <filterProvider
+            argumentType="filters"
+            class="org.eclipse.ui.internal.ide.misc.AndFilter"
+            description="%andFilterProvider.description"
+            id="org.eclipse.ui.ide.andFilter"
+            name="%andFilterProvider.name"
+            ordering="first">
+      </filterProvider>
+      <filterProvider
+            argumentType="filter"
+            class="org.eclipse.ui.internal.ide.misc.NotFilter"
+            description="%notFilterProvider.description"
+            id="org.eclipse.ui.ide.notFilter"
+            name="%notFilterProvider.name"
+            ordering="first">
+      </filterProvider>
    </extension>
    <extension
          point="org.eclipse.ui.installationPages">

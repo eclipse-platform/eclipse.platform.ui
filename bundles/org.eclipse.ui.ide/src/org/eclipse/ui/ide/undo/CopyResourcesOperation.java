@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 
 package org.eclipse.ui.ide.undo;
@@ -154,7 +155,8 @@ public class CopyResourcesOperation extends
 					new IResource[] { resources[i] }, getDestinationPath(
 							resources[i], i), resourcesAtDestination,
 					new SubProgressMonitor(monitor, 1000 / resources.length),
-					uiInfo, true);
+					uiInfo, true, fCreateGroups, fCreateLinks,
+					fRelativeToVariable);
 			// Accumulate the overwrites into the full list
 			for (int j = 0; j < overwrites.length; j++) {
 				overwrittenResources.add(overwrites[j]);

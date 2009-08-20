@@ -85,4 +85,12 @@ public interface IDEInternalPreferences {
    	//Value of marker limits
     public static final String MARKER_LIMITS_VALUE = "MARKER_LIMITS_VALUE"; //$NON-NLS-1$
 
+    // Type of import
+    public static final String IMPORT_FILES_AND_FOLDERS_TYPE = "IMPORT_FILES_AND_FOLDERS_TYPE"; //$NON-NLS-1$
+    
+    // Preferred variable for file and folder imports
+    public static final String IMPORT_FILES_AND_FOLDERS_VARIABLE = "IMPORT_FILES_AND_FOLDERS_VARIABLE"; //$NON-NLS-1$
+
+    // Always show this import window
+    public static final String IMPORT_FILES_AND_FOLDERS_SHOW_DIALOG = "IMPORT_FILES_AND_FOLDERS_SHOW_DIALOG"; //$NON-NLS-1$
 }

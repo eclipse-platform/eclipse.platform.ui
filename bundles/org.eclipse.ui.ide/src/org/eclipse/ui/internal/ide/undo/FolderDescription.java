@@ -94,6 +94,12 @@ public class FolderDescription extends ContainerDescription {
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
+			if (filters != null) {
+				for (int i = 0; i < filters.length; i++) {
+					folderHandle.addFilter(filters[i].getId(), filters[i].getType(), filters[i].getArguments(), 0, new SubProgressMonitor(
+							monitor, 100));
+				}
+			}
 			if (location != null) {
 				folderHandle.createLink(location,
 						IResource.ALLOW_MISSING_LOCAL, new SubProgressMonitor(

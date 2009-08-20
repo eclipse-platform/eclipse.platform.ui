@@ -25,6 +25,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DropTargetEvent;
@@ -37,6 +38,7 @@ import org.eclipse.ui.actions.CopyFilesAndFoldersOperation;
 import org.eclipse.ui.actions.MoveFilesAndFoldersOperation;
 import org.eclipse.ui.actions.ReadOnlyStateChecker;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.ide.dialogs.ImportTypeDialog;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.part.PluginDropAdapter;
 import org.eclipse.ui.part.ResourceTransfer;
@@ -244,7 +246,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
             result = NavigatorDropAdapter.super.performDrop(data);
         }
         if (resources != null && resources.length > 0) {
-            if (getCurrentOperation() == DND.DROP_COPY) {
+            if ((getCurrentOperation() == DND.DROP_COPY) || (getCurrentOperation() == DND.DROP_LINK)) {
 				status = performResourceCopy(getShell(), resources);
 			} else {
 				status = performResourceMove(resources);
@@ -273,7 +275,34 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
                 getShell().forceActive();
                 CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
                         getShell());
-                operation.copyFiles(names, target);
+				// if the target is a group and all sources are files, then automatically create links
+				int type;
+				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
+				if (!target.isGroup() && (getCurrentOperation() != DND.DROP_LINK))
+					mask |= ImportTypeDialog.IMPORT_COPY;
+				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
+				dialog.setProject(target.getProject());
+				if (dialog.open() == Window.OK)
+					type = dialog.getSelection();
+				else
+					type = ImportTypeDialog.IMPORT_NONE;
+				switch(type) {
+					case ImportTypeDialog.IMPORT_COPY:
+						operation.copyFiles(names, target);
+						break;
+					case ImportTypeDialog.IMPORT_GROUPS_AND_LINKS:
+						if (dialog.getVariable() != null)
+							operation.setRelativeVariable(dialog.getVariable());
+						operation.createGroupAndLinks(names, target);
+						break;
+					case ImportTypeDialog.IMPORT_LINK:
+						if (dialog.getVariable() != null)
+							operation.setRelativeVariable(dialog.getVariable());
+						operation.linkFiles(names, target);
+						break;
+					case ImportTypeDialog.IMPORT_NONE:
+						break;
+				}
             }
         });
         return problems;
@@ -289,9 +318,56 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
                 getCurrentTransfer()));
 
         IContainer target = getActualTarget((IResource) getCurrentTarget());
-        CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
+
+        boolean shouldLinkAutomatically = false;
+		if (target.isGroup()) {
+			shouldLinkAutomatically = true;
+			for (int i = 0; i < sources.length; i++) {
+				if (sources[0].getType() != IResource.FILE) {
+					shouldLinkAutomatically = false;
+					break;
+				}
+			}
+		}
+
+		CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
                 shell);
-        operation.copyResources(sources, target);
+
+		// if the target is a group and all sources are files, then automatically create links
+		if (shouldLinkAutomatically) {
+			operation.setCreateLinks(true);
+			operation.copyResources(sources, target);
+		}
+		else {
+			boolean allSourceAreLinksOrGroups = true;
+			for (int i = 0; i < sources.length; i++) {
+				if (!sources[0].isGroup() && !sources[0].isLinked()) {
+					allSourceAreLinksOrGroups = false;
+					break;
+				}
+			}
+			// if all sources are either links or groups, copy then normally, don't show the dialog
+			if (!allSourceAreLinksOrGroups) {
+				int mask = ImportTypeDialog.IMPORT_GROUPS_AND_LINKS | ImportTypeDialog.IMPORT_LINK;
+				if (!target.isGroup() && (getCurrentOperation() != DND.DROP_LINK))
+					mask |= ImportTypeDialog.IMPORT_COPY;
+				ImportTypeDialog dialog = new ImportTypeDialog(getShell(), mask);
+				dialog.setProject(target.getProject());
+				if (dialog.open() == Window.OK) {
+					if (dialog.getSelection() == ImportTypeDialog.IMPORT_GROUPS_AND_LINKS)
+						operation.setCreateGroups(true);
+					if (dialog.getSelection() == ImportTypeDialog.IMPORT_LINK)
+						operation.setCreateLinks(true);
+					if (dialog.getVariable() != null)
+						operation.setRelativeVariable(dialog.getVariable());
+					operation.copyResources(sources, target);
+				}
+				else
+					return problems;
+			}
+			else
+				operation.copyResources(sources, target);
+		}
 
         return problems;
     }
@@ -306,14 +382,34 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
                 getCurrentTransfer()));
 
         IContainer target = getActualTarget((IResource) getCurrentTarget());
-        ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
-                getShell(),
-                ResourceNavigatorMessages.MoveResourceAction_title,
-                ResourceNavigatorMessages.MoveResourceAction_checkMoveMessage);
-        sources = checker.checkReadOnlyResources(sources);
-        MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(
-                getShell());
-        operation.copyResources(sources, target);
+        
+        boolean shouldLinkAutomatically = false;
+		if (target.isGroup()) {
+			shouldLinkAutomatically = true;
+			for (int i = 0; i < sources.length; i++) {
+				if (sources[0].isGroup() || sources[0].isLinked()) {
+					shouldLinkAutomatically = false;
+					break;
+				}
+			}		
+		}
+		
+		if (shouldLinkAutomatically) {
+			CopyFilesAndFoldersOperation operation = new CopyFilesAndFoldersOperation(
+	                getShell());
+			operation.setCreateLinks(true);
+	        operation.copyResources(sources, target);
+		}
+		else {
+			ReadOnlyStateChecker checker = new ReadOnlyStateChecker(
+	                getShell(),
+	                ResourceNavigatorMessages.MoveResourceAction_title,
+	                ResourceNavigatorMessages.MoveResourceAction_checkMoveMessage);
+	        sources = checker.checkReadOnlyResources(sources);
+	        MoveFilesAndFoldersOperation operation = new MoveFilesAndFoldersOperation(
+	                getShell());
+	        operation.copyResources(sources, target);
+		}
 
         return problems;
     }
@@ -359,8 +455,9 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
             lastValidOperation = dragOperation;
         }
         if (FileTransfer.getInstance().isSupportedType(transferType)
-                && lastValidOperation != DND.DROP_COPY) {
-            // only allow copying when dragging from outside Eclipse
+                && (lastValidOperation != DND.DROP_COPY)
+                && (lastValidOperation != DND.DROP_LINK)) {
+            // only allow copying and linking when dragging from outside Eclipse
             return false;
         }
         if (super.validateDrop(target, dragOperation, transferType)) {
@@ -393,13 +490,21 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements
 				message = ResourceNavigatorMessages.DropAdapter_dropOperationErrorOther;
 			} else {
                 CopyFilesAndFoldersOperation operation;
-                if (lastValidOperation == DND.DROP_COPY) {
+                if ((lastValidOperation == DND.DROP_COPY) || (lastValidOperation == DND.DROP_LINK)) {
                     operation = new CopyFilesAndFoldersOperation(getShell());
+					if (operation.validateDestination(destination, selectedResources) != null) {
+						operation.setCreateGroups(true);
+						message = operation.validateDestination(destination, selectedResources);
+					}
                 } else {
                     operation = new MoveFilesAndFoldersOperation(getShell());
+                	if (operation.validateDestination(destination, selectedResources) != null) {
+						operation.setCreateGroups(true);
+						message = operation.validateDestination(destination, selectedResources);
+						if (message == null)
+							lastValidOperation = DND.DROP_COPY;
+					}                
                 }
-                message = operation.validateDestination(destination,
-                        selectedResources);
             }
         } // file import?
         else if (FileTransfer.getInstance().isSupportedType(transferType)) {

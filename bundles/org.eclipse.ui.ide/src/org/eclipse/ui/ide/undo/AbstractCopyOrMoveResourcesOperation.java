@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 
 package org.eclipse.ui.ide.undo;
@@ -38,6 +39,12 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 
 	// Used when all resources are going to the same container (no name changes)
 	protected IPath destination = null;
+
+	protected boolean fCreateGroups = false;
+
+	protected boolean fCreateLinks = false;
+
+	protected String fRelativeToVariable = null;
 
 	/**
 	 * Create an AbstractCopyOrMoveResourcesOperation that moves or copies all
@@ -255,5 +262,17 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 			status = computeMoveOrCopyStatus();
 		}
 		return status;
+	}
+
+	public void setCreateGroups(boolean value) {
+		fCreateGroups = value;
+	}
+
+	public void setCreateLinks(boolean value) {
+		fCreateLinks = value;
+	}
+
+	public void setRelativeVariable(String value) {
+		fRelativeToVariable = value;
 	}
 }

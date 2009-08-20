@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Alexander Fedorov <Alexander.Fedorov@borland.com>
  *     		- Bug 172000 [Wizards] WizardNewFileCreationPage should support overwriting existing resources
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -20,6 +21,7 @@ import java.util.Iterator;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
 import org.eclipse.core.resources.IWorkspace;
@@ -190,6 +192,21 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 
 					public String getValue() {
 						return resourceGroup.getResource();
+					}
+
+					public IProject getProject() {
+						IPath path;
+						if (resourceGroup == null) {
+							path = initialContainerFullPath;
+						} else {
+							path = resourceGroup.getContainerFullPath();
+						}
+						IWorkspaceRoot root = ResourcesPlugin.getWorkspace()
+								.getRoot();
+						IResource res = root.findMember(path);
+						if (res != null)
+							return res.getProject();
+						return null;
 					}
 				});
 	}

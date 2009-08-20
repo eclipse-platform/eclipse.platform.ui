@@ -15,6 +15,7 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFilter;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -42,6 +43,8 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	URI location;
 
+	IFilter[] filters;
+	
 	String defaultCharSet;
 
 	AbstractResourceDescription[] members;
@@ -59,6 +62,26 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 */
 
 	public static ContainerDescription fromContainer(IContainer container) {
+		return fromContainer(container, false);
+	}
+	
+	/**
+	 * Create a group container description from the specified container handle that
+	 * can be used to create the container. The returned ContainerDescription
+	 * should represent any non-existing parents in addition to the specified
+	 * container.
+	 * 
+	 * @param container
+	 *            the handle of the container to be described
+	 * @return a container description describing the container and any
+	 *         non-existing parents.
+	 */
+
+	public static ContainerDescription fromGroupContainer(IContainer container) {
+		return fromContainer(container, true);
+	}
+	
+	protected static ContainerDescription fromContainer(IContainer container, boolean usingGroups) {
 		IPath fullPath = container.getFullPath();
 		ContainerDescription firstCreatedParent = null;
 		ContainerDescription currentContainerDescription = null;
@@ -90,8 +113,11 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 				} else {
 					IFolder folderHandle = currentContainer.getFolder(new Path(
 							currentSegment));
-					ContainerDescription currentFolder = new FolderDescription(
-							folderHandle);
+					ContainerDescription currentFolder;
+					if (usingGroups)
+						currentFolder = new GroupDescription(folderHandle);
+					else
+						currentFolder = new FolderDescription(folderHandle);
 					currentContainer = folderHandle;
 					if (currentContainerDescription != null) {
 						currentContainerDescription.addMember(currentFolder);
@@ -196,6 +222,13 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 							.getFolder(path);
 					members[i].recordStateFromHistory(folderHandle,
 							new SubProgressMonitor(monitor, 100 / members.length));
+				} else if (members[i] instanceof GroupDescription) {
+					IPath path = resource.getFullPath().append(
+							((GroupDescription) members[i]).name);
+					IFolder folderHandle = resource.getWorkspace().getRoot()
+							.getFolder(path);
+					members[i].recordStateFromHistory(folderHandle,
+							new SubProgressMonitor(monitor, 100 / members.length));
 				}
 			}
 		}
@@ -274,6 +307,16 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 */
 	public void setLocation(URI location) {
 		this.location = location;
+	}
+
+	/**
+	 * Set the filters to which should be created on this container.
+	 * 
+	 * @param location
+	 *            the location URI, or <code>null</code> if there is no link
+	 */
+	public void setFilters(IFilter[] filters) {
+		this.filters = filters;
 	}
 
 	/*

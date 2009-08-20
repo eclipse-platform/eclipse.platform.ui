@@ -14,7 +14,7 @@ import org.eclipse.osgi.util.NLS;
 
 public class ResourceMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ui.internal.wizards.newresource.messages";//$NON-NLS-1$
-	
+
 	// ==============================================================================
 	// New Resource Wizards
 	// ==============================================================================
@@ -25,6 +25,9 @@ public class ResourceMessages extends NLS {
 
 	public static String NewFolder_title;
 	public static String NewFolder_text;
+
+	public static String NewGroup_title;
+	public static String NewGroup_text;
 
 	public static String NewProject_windowTitle;
 	public static String NewProject_title;

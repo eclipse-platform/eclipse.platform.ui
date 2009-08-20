@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,17 +7,18 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -106,6 +107,13 @@ public class CreateLinkedResourceGroup {
 		 * @return the current value, or <code>null</code>
 		 */
 		String getValue();
+
+		/**
+		 * Gets the project to which the resource will belong
+		 * 
+		 * @return the IProject object, or <code>null</code>
+		 */
+		IProject getProject();
 	}
 
 	private String lastUpdatedValue;
@@ -353,21 +361,21 @@ public class CreateLinkedResourceGroup {
 		if (!createLink)
 			return null;
 		// resolve path variable if we have a relative path
-		if (!linkTarget.startsWith("/")) { //$NON-NLS-1$
-			IPathVariableManager pathVariableManager = ResourcesPlugin
-					.getWorkspace().getPathVariableManager();
-			try {
-				
-				URI path = new URI(linkTarget.replace(java.io.File.separatorChar, '/'));
-				URI resolved = pathVariableManager.resolveURI(path);
-				if (path != resolved) {
-					// we know this is a path variable, but return unresolved
-					// path so resource will be created with variable intact
-					return path;
-				}
-			} catch (URISyntaxException e) {
-				// link target is not a valid URI. Fall through to handle this
-				// below
+		IPath linkTargetPath = new Path(linkTarget);
+		if (!linkTargetPath.isAbsolute()) {
+			IPathVariableManager pathVariableManager;
+
+			if (updatableResourceName.getProject() != null)
+				pathVariableManager = updatableResourceName.getProject().getPathVariableManager();
+			else
+				pathVariableManager = ResourcesPlugin.getWorkspace().getPathVariableManager();
+
+			URI path = URIUtil.toURI(linkTargetPath);
+			URI resolved = pathVariableManager.resolveURI(path);
+			if (path != resolved) {
+				// we know this is a path variable, but return unresolved
+				// path so resource will be created with variable intact
+				return path;
 			}
 		}
 
@@ -475,6 +483,7 @@ public class CreateLinkedResourceGroup {
 
 		PathVariableSelectionDialog dialog = new PathVariableSelectionDialog(
 				linkTargetField.getShell(), variableTypes);
+		dialog.setProject(updatableResourceName.getProject());
 		if (dialog.open() == IDialogConstants.OK_ID) {
 			String[] variableNames = (String[]) dialog.getResult();
 			if (variableNames != null && variableNames.length == 1) {
@@ -590,7 +599,12 @@ public class CreateLinkedResourceGroup {
 	public IStatus validateLinkLocation(IResource linkHandle) {
 		if (linkTargetField == null || linkTargetField.isDisposed()
 				|| !createLink) {
-			return Status.OK_STATUS;
+			if (linkHandle.getParent().isGroup()) {
+				return createStatus(
+						IStatus.ERROR,
+						IDEWorkbenchMessages.CreateLinkedResourceGroup_linkRequiredUnderAGroup);
+			} else
+				return Status.OK_STATUS;
 		}
 		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
 		FileSystemConfiguration configuration = getSelectedConfiguration();
@@ -616,9 +630,19 @@ public class CreateLinkedResourceGroup {
 			return locationStatus;
 		}
 
+		IPathVariableManager pathVariableManager;
 		// use the resolved link target name
-		URI resolved = workspace.getPathVariableManager().resolveURI(
-				locationURI);
+		if (updatableResourceName.getProject() != null)
+			pathVariableManager = updatableResourceName.getProject().getPathVariableManager();
+		else
+			pathVariableManager = workspace.getPathVariableManager();
+
+		URI resolved = pathVariableManager.resolveURI(locationURI);
+		if (resolved.getScheme() == null) {
+			return createStatus(
+					IStatus.WARNING,
+					IDEWorkbenchMessages.CreateLinkedResourceGroup_linkTargetNonExistent);
+		}
 		IFileInfo linkTargetFile = IDEResourceInfoUtils.getFileInfo(resolved);
 		if (linkTargetFile != null && linkTargetFile.exists()) {
 			IStatus fileTypeStatus = validateFileType(linkTargetFile);

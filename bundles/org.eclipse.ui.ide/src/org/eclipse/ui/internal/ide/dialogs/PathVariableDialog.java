@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,13 +9,20 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - 19346, 42056
  *     Remy Chi Jian Suen - bug 204879
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.util.Set;
 
+import org.eclipse.core.filesystem.IFileInfo;
+import org.eclipse.core.internal.resources.PathVariableUtil;
+import org.eclipse.core.internal.resources.ProjectPathVariableManager;
 import org.eclipse.core.resources.IPathVariableManager;
+import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.dialogs.Dialog;
@@ -37,6 +44,7 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.ide.dialogs.PathVariableSelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 
 /**
@@ -53,15 +61,20 @@ public class PathVariableDialog extends TitleAreaDialog {
     private Label variableNameLabel;
 
     private Label variableValueLabel;
+    
+    private Label variableResolvedValueLabel;
 
     private Text variableNameField;
 
     private Text variableValueField;
 
+    private Label variableResolvedValueField;
+
     private Button fileButton;
 
     private Button folderButton;
 
+    private Button variableButton;
     /**
      * This dialog type: <code>NEW_VARIABLE</code> or
      * <code>EXISTING_VARIABLE</code>.
@@ -94,7 +107,7 @@ public class PathVariableDialog extends TitleAreaDialog {
      * Used to select the proper message depending on the current mode
      * (new/existing variable).
      */
-    private boolean newVariable;
+    private int operationMode = 0;
 
     /**
      * Reference to the path variable manager. It is used for validating
@@ -153,6 +166,14 @@ public class PathVariableDialog extends TitleAreaDialog {
     public final static int EXISTING_VARIABLE = 2;
 
     /**
+     * Constant for defining this dialog as intended to edit an existing link
+     * location (value = 3).
+     */
+    public final static int EDIT_LINK_LOCATION = 3;
+
+    private IProject currentProject = null;
+
+    /**
      * Constructs a dialog for editing a new/existing path variable.
      * 
      * @param parentShell the parent shell
@@ -166,19 +187,21 @@ public class PathVariableDialog extends TitleAreaDialog {
     public PathVariableDialog(Shell parentShell, int type, int variableType,
             IPathVariableManager pathVariableManager, Set namesInUse) {
         super(parentShell);
+        setShellStyle(getShellStyle() | SWT.RESIZE);
         this.type = type;
-        this.newVariable = type == NEW_VARIABLE;
+        this.operationMode = type;
         this.variableName = ""; //$NON-NLS-1$
         this.variableValue = ""; //$NON-NLS-1$
         this.variableType = variableType;
         this.pathVariableManager = pathVariableManager;
         this.namesInUse = namesInUse;
 
-        if (newVariable) {
-			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_newVariable;
-		} else {
-			this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
-		}
+        if (operationMode == NEW_VARIABLE)
+            this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_newVariable;
+        else if (operationMode == EXISTING_VARIABLE)
+            this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_existingVariable;
+        else
+            this.standardMessage = IDEWorkbenchMessages.PathVariableDialog_message_editLocation;
     }
 
     /**
@@ -188,12 +211,12 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     protected void configureShell(Shell shell) {
         super.configureShell(shell);
-        if (newVariable) {
-			shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_newVariable);
-		} else {
-			shell
-                    .setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_existingVariable);
-		}
+        if (operationMode == NEW_VARIABLE)
+            shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_newVariable);
+        else if (operationMode == EXISTING_VARIABLE)
+            shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_existingVariable);
+        else
+            shell.setText(IDEWorkbenchMessages.PathVariableDialog_shellTitle_editLocation);
     }
 
     /**
@@ -234,14 +257,15 @@ public class PathVariableDialog extends TitleAreaDialog {
         // creates a composite with standard margins and spacing
         Composite contents = new Composite(parentComposite, SWT.NONE);
 
-        contents.setLayout(new GridLayout(3, false));
+        contents.setLayout(new GridLayout(4, false));
         contents.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-        if (newVariable) {
-			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_newVariable);
-		} else {
-			setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_existingVariable);
-		}
+        if (operationMode == NEW_VARIABLE)
+            setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_newVariable);
+        else if (operationMode == EXISTING_VARIABLE)
+            setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_existingVariable);
+        else
+            setTitle(IDEWorkbenchMessages.PathVariableDialog_dialogTitle_editLinkLocation);
         setMessage(standardMessage);
         return contents;
     }
@@ -254,25 +278,28 @@ public class PathVariableDialog extends TitleAreaDialog {
     private void createWidgets(Composite contents) {
         String nameLabelText = IDEWorkbenchMessages.PathVariableDialog_variableName;
         String valueLabelText = IDEWorkbenchMessages.PathVariableDialog_variableValue;
+        String resolvedValueLabelText = IDEWorkbenchMessages.PathVariableDialog_variableResolvedValue;
 
-        // variable name label
-        variableNameLabel = new Label(contents, SWT.LEAD);
-        variableNameLabel.setText(nameLabelText);
-     
-        // variable name field.  Attachments done after all widgets created.
-        variableNameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
-        variableNameField.setText(variableName);
-        variableNameField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
-        		false));
-        variableNameField.addModifyListener(new ModifyListener() {
-            public void modifyText(ModifyEvent event) {
-                variableNameModified();
-            }
-        });
+        if (operationMode != EDIT_LINK_LOCATION) {
+	        // variable name label
+	        variableNameLabel = new Label(contents, SWT.LEAD);
+	        variableNameLabel.setText(nameLabelText);
+	     
+	        // variable name field.  Attachments done after all widgets created.
+	        variableNameField = new Text(contents, SWT.SINGLE | SWT.BORDER);
+	        variableNameField.setText(variableName);
+	        variableNameField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+	        		false, 3, 1));
+	        variableNameField.addModifyListener(new ModifyListener() {
+	            public void modifyText(ModifyEvent event) {
+	                variableNameModified();
+	            }
+	        });
+        }
         
         // this is a padding control to take up space in the GridLayout
         new Label(contents, SWT.LEAD);
-        
+
         // variable value label
         variableValueLabel = new Label(contents, SWT.LEAD);
         variableValueLabel.setText(valueLabelText);
@@ -290,8 +317,8 @@ public class PathVariableDialog extends TitleAreaDialog {
         
         Composite buttonsComposite = new Composite(contents, SWT.NONE);
         buttonsComposite.setLayoutData(new GridData(SWT.END, SWT.CENTER, false,
-        		false));
-        GridLayout layout = new GridLayout(2, true);
+        		false, 2, 1));
+        GridLayout layout = new GridLayout(3, true);
         layout.marginWidth = 0;
         layout.marginHeight = 0;
         buttonsComposite.setLayout(layout);
@@ -311,6 +338,18 @@ public class PathVariableDialog extends TitleAreaDialog {
             }
         });
 
+    	variableButton = new Button(buttonsComposite, SWT.PUSH);
+    	variableButton.setText(IDEWorkbenchMessages.PathVariableDialog_variable);
+
+ 	    variableButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
+    		false));
+
+        variableButton.addSelectionListener(new SelectionAdapter() {
+            public void widgetSelected(SelectionEvent e) {
+                selectVariable();
+            }
+        });
+
         // select folder path button
         folderButton = new Button(buttonsComposite, SWT.PUSH);
         folderButton.setText(IDEWorkbenchMessages.PathVariableDialog_folder);
@@ -325,8 +364,47 @@ public class PathVariableDialog extends TitleAreaDialog {
                 selectFolder();
             }
         });
+
+        // variable value label
+        variableResolvedValueLabel = new Label(contents, SWT.LEAD);
+        variableResolvedValueLabel.setText(resolvedValueLabelText);
+
+        // variable value field.  Attachments done after all widgets created.
+        variableResolvedValueField = new Label(contents, SWT.LEAD | SWT.SINGLE | SWT.READ_ONLY);
+        variableResolvedValueField.setText(getVariableResolvedValue());
+        variableResolvedValueField.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+        		false, 3, 1));
     }
 
+    private String getVariableResolvedValue() {
+        if (currentProject != null) {
+        	String[] variables = currentProject.getPathVariableManager().getPathVariableNames();
+    		String internalFormat = ((ProjectPathVariableManager) currentProject.getPathVariableManager()).convertFromUserEditableFormat(variableValue);
+        	String resolveValue = currentProject.getPathVariableManager().resolvePath(Path.fromPortableString(internalFormat)).toPortableString();
+        	// Delete intermediate variables that might have been created as
+        	// as a side effect of converting arbitrary relative paths to an internal string. 
+        	String[] newVariables = currentProject.getPathVariableManager().getPathVariableNames();
+        	for (int i = 0; i < newVariables.length; i++) {
+        		boolean found = false;
+            	for (int j = 0; j < variables.length; j++) {
+            		if (variables[j].equals(newVariables[i])) {
+            			found = true;
+            			break;
+            		}
+            	}
+            	if (!found) {
+					try {
+						currentProject.getPathVariableManager().setValue(newVariables[i], null);
+					} catch (CoreException e) {
+						// do nothing
+					}
+            	}
+        	}
+        	return resolveValue;
+        }
+        return variableValue;
+    }
+    
     /**
      * Fires validations (variable name first) and updates enabled state for the
      * "Ok" button accordingly.
@@ -349,6 +427,7 @@ public class PathVariableDialog extends TitleAreaDialog {
         validationStatus = IMessageProvider.NONE;
         okButton.setEnabled(validateVariableValue() && validateVariableName());
         locationEntered = true;
+        variableResolvedValueField.setText(getVariableResolvedValue());
     }
 
     /**
@@ -358,7 +437,8 @@ public class PathVariableDialog extends TitleAreaDialog {
         DirectoryDialog dialog = new DirectoryDialog(getShell(), SWT.SHEET);
         dialog.setText(IDEWorkbenchMessages.PathVariableDialog_selectFolderTitle);
         dialog.setMessage(IDEWorkbenchMessages.PathVariableDialog_selectFolderMessage);
-        dialog.setFilterPath(variableValue);
+        String filterPath = getVariableResolvedValue();
+        dialog.setFilterPath(filterPath);
         String res = dialog.open();
         if (res != null) {
             variableValue = new Path(res).makeAbsolute().toOSString();
@@ -372,11 +452,31 @@ public class PathVariableDialog extends TitleAreaDialog {
     private void selectFile() {
         FileDialog dialog = new FileDialog(getShell(), SWT.SHEET);
         dialog.setText(IDEWorkbenchMessages.PathVariableDialog_selectFileTitle);
-        dialog.setFilterPath(variableValue);
+        String filterPath = getVariableResolvedValue();
+        dialog.setFilterPath(filterPath);
         String res = dialog.open();
         if (res != null) {
             variableValue = new Path(res).makeAbsolute().toOSString();
             variableValueField.setText(variableValue);
+        }
+    }
+
+    private void selectVariable() {
+        PathVariableSelectionDialog dialog = new PathVariableSelectionDialog(
+                getShell(), IResource.FILE | IResource.FOLDER);
+        dialog.setProject(currentProject);
+        if (dialog.open() == IDialogConstants.OK_ID) {
+            String[] variableNames = (String[]) dialog.getResult();
+            if (variableNames != null && variableNames.length == 1) {
+                String newValue = variableNames[0];
+            	IPath path = Path.fromPortableString(newValue);
+                if (operationMode != EDIT_LINK_LOCATION && currentProject != null && !path.isAbsolute() && path.segmentCount() > 0) {
+                	path = PathVariableUtil.buildVariableMacro(path);
+                	newValue = path.toPortableString();
+                }
+                variableValue = newValue;
+                variableValueField.setText(newValue);
+            }
         }
     }
 
@@ -401,6 +501,9 @@ public class PathVariableDialog extends TitleAreaDialog {
      */
     private boolean validateVariableName() {
         boolean allowFinish = false;
+
+        if (operationMode == EDIT_LINK_LOCATION)
+            return true;
 
         // if the current validationStatus is ERROR, no additional validation applies
         if (validationStatus == IMessageProvider.ERROR) {
@@ -473,6 +576,29 @@ public class PathVariableDialog extends TitleAreaDialog {
                 newValidationStatus = IMessageProvider.ERROR;
                 message = IDEWorkbenchMessages.PathVariableDialog_variableValueEmptyMessage;
             }
+        }
+        if (currentProject != null) {
+            // While editing project path variables, the variable value can
+            // contain macros such as "${foo}\etc"
+            allowFinish = true;
+            String resolvedValue = getVariableResolvedValue();
+            IPath resolvedPath = Path.fromPortableString(resolvedValue);
+            if (!IDEResourceInfoUtils.exists(resolvedPath.toOSString())) {
+                // the path does not exist (warning)
+                message = IDEWorkbenchMessages.PathVariableDialog_pathDoesNotExistMessage;
+                newValidationStatus = IMessageProvider.WARNING;
+            } else {
+                IFileInfo info = IDEResourceInfoUtils.getFileInfo(resolvedPath
+                        .toOSString());
+                if (info.isDirectory() != ((variableType & IResource.FOLDER) != 0)) {
+                    allowFinish = false;
+                    newValidationStatus = IMessageProvider.ERROR;
+                    if (((variableType & IResource.FOLDER) != 0))
+                        message = IDEWorkbenchMessages.PathVariableDialog_variableValueIsWrongTypeFolder;
+                    else
+                        message = IDEWorkbenchMessages.PathVariableDialog_variableValueIsWrongTypeFile;
+                }
+            }
         } else if (!Path.EMPTY.isValidPath(variableValue)) {
             // the variable value is an invalid path
             message = IDEWorkbenchMessages.PathVariableDialog_variableValueInvalidMessage;
@@ -516,7 +642,11 @@ public class PathVariableDialog extends TitleAreaDialog {
      * @return the variable value
      */
     public String getVariableValue() {
-        return variableValue;
+    	if (currentProject != null) {
+    		String internalFormat = ((ProjectPathVariableManager) currentProject.getPathVariableManager()).convertFromUserEditableFormat(variableValue);
+    		return internalFormat;
+    	}
+    	return variableValue;
     }
 
     /**
@@ -534,10 +664,26 @@ public class PathVariableDialog extends TitleAreaDialog {
      * 
      * @param variableValue the new variable value
      */
-    public void setVariableValue(String variableValue) {
-        this.variableValue = variableValue;
+    public void setVariableValue(String variable) {
+    	String userEditableString = ProjectPathVariableManager.convertToUserEditableFormat(variable);
+        variableValue = userEditableString;
     }
-    
+
+    /**
+     * @param project 
+     */
+    public void setProject(IProject project) {
+        currentProject = project;
+    }
+
+    /**
+     * @param location
+     */
+    public void setLinkLocation(IPath location) {
+    	String userEditableString = ProjectPathVariableManager.convertToUserEditableFormat(location.toPortableString());
+        variableValue = userEditableString;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.eclipse.jface.dialogs.Dialog#isResizable()

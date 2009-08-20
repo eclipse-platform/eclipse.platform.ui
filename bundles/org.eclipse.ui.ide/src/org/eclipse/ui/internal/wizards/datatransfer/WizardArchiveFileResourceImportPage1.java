@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,14 +19,16 @@ import java.util.List;
 import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
-import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Listener;
+
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeContentProvider;
+
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.AdaptableList;
@@ -147,7 +149,6 @@ public class WizardArchiveFileResourceImportPage1 extends
     private boolean ensureZipSourceIsValid() {
         ZipFile specifiedFile = getSpecifiedZipSourceFile();
         if (specifiedFile == null) {
-			setErrorMessage(DataTransferMessages.ZipImport_badFormat);
             return false;
         }
         return ArchiveFileManipulations.closeZipFile(specifiedFile, getShell());
@@ -156,7 +157,6 @@ public class WizardArchiveFileResourceImportPage1 extends
     private boolean ensureTarSourceIsValid() {
     	TarFile specifiedFile = getSpecifiedTarSourceFile();
     	if( specifiedFile == null ) {
-			setErrorMessage(DataTransferMessages.TarImport_badFormat);
     		return false;
     	}
     	return ArchiveFileManipulations.closeTarFile(specifiedFile, getShell());
@@ -300,9 +300,9 @@ public class WizardArchiveFileResourceImportPage1 extends
         try {
             return new ZipFile(fileName);
         } catch (ZipException e) {
-			// ignore
+            displayErrorDialog(DataTransferMessages.ZipImport_badFormat);
         } catch (IOException e) {
-			// ignore
+            displayErrorDialog(DataTransferMessages.ZipImport_couldNotRead);
         }
 
         sourceNameField.setFocus();
@@ -329,9 +329,9 @@ public class WizardArchiveFileResourceImportPage1 extends
         try {
             return new TarFile(fileName);
         } catch (TarException e) {
-			// ignore
+        	displayErrorDialog(DataTransferMessages.TarImport_badFormat);
         } catch (IOException e) {
-			// ignore
+            displayErrorDialog(DataTransferMessages.ZipImport_couldNotRead);
         }
 
         sourceNameField.setFocus();
@@ -489,7 +489,7 @@ public class WizardArchiveFileResourceImportPage1 extends
             enableButtonGroup(false);
             return false;
         }
-
+        
         List resourcesToExport = selectionGroup.getAllWhiteCheckedItems();
         if (resourcesToExport.size() == 0){
         	setErrorMessage(DataTransferMessages.FileImport_noneSelected);

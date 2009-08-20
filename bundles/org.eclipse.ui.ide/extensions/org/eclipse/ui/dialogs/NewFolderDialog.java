@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 19346 - Dialog
  *     font should be activated and used by other components.
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 
 package org.eclipse.ui.dialogs;
@@ -104,6 +105,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 		super(parentShell);
 		this.container = container;
 		setTitle(IDEWorkbenchMessages.NewFolderDialog_title);
+		setShellStyle(getShellStyle() | SWT.RESIZE);
 		setStatusLineAboveButtons(true);
 	}
 
@@ -182,6 +184,10 @@ public class NewFolderDialog extends SelectionStatusDialog {
 
 					public String getValue() {
 						return folderNameField.getText();
+					}
+
+					public IProject getProject() {
+						return container.getProject();
 					}
 				});
 	}
