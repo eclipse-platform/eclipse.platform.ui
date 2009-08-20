@@ -92,6 +92,9 @@ public class NavigatorTestBase extends TestCase {
 	protected static final String ACTION_NESTED = "org.eclipse.ui.tests.navigator.NestedAction";
 	
 	public static final String TEST_VIEWER_HELP_CONTEXT = "org.eclipse.ui.tests.navigator.testHelpContext";
+
+	public static final String TEST_C_CONTENT = "org.eclipse.ui.tests.navigator.cdt.content";
+	
 	
 	protected String _navigatorInstanceId;
 
