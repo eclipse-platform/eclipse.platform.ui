@@ -1179,6 +1179,16 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
+	 * Return the help context for the view
+	 * 
+	 * @return contextId of the view
+	 */
+	
+	String getStaticContextId() {
+		return PlatformUI.PLUGIN_ID + ".markers_view_context";//$NON-NLS-1$
+	}
+	
+	/**
 	 * Return all of the markers in the current selection
 	 * 
 	 * @return Array of {@link IMarker}

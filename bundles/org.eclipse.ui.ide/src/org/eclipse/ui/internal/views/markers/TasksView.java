@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
@@ -28,4 +29,13 @@ public class TasksView extends MarkerSupportView {
 		super(MarkerSupportRegistry.TASKS_GENERATOR);
 		
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#getStaticContextId()
+	 */
+	String getStaticContextId() {
+		return PlatformUI.PLUGIN_ID + ".task_list_view_context"; //$NON-NLS-1$
+	}
+
 }

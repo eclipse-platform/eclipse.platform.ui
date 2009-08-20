@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
@@ -27,5 +28,13 @@ public class BookmarksView extends MarkerSupportView {
 	public BookmarksView() {
 		super(MarkerSupportRegistry.BOOKMARKS_GENERATOR);
 		
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#getStaticContextId()
+	 */
+	String getStaticContextId() {
+		return PlatformUI.PLUGIN_ID + ".bookmark_view_context"; //$NON-NLS-1$
 	}
 }

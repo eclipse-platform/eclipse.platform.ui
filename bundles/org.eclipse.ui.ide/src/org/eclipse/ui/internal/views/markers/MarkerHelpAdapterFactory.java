@@ -47,10 +47,12 @@ public class MarkerHelpAdapterFactory implements IAdapterFactory {
 					contextId = IDE.getMarkerHelpRegistry().getHelp(
 							markers[0]);
 				}
-
+				if(contextId==null){
+					contextId=view.getStaticContextId();
+				}
 				//TODO this needs to be migrated to the ide plug-in
 				if (contextId == null) 
-					contextId = PlatformUI.PLUGIN_ID + ".problem_view_context";//$NON-NLS-1$
+					contextId = PlatformUI.PLUGIN_ID + ".markers_view_context";//$NON-NLS-1$
 				
 				return HelpSystem.getContext(contextId);
 			}

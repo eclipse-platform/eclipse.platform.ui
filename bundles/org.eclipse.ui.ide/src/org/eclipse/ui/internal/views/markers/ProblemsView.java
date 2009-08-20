@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.markers.MarkerSupportView;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 
@@ -30,4 +31,10 @@ public class ProblemsView extends MarkerSupportView {
 		
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.internal.views.markers.ExtendedMarkersView#getStaticContextId()
+	 */
+	String getStaticContextId() {
+		return PlatformUI.PLUGIN_ID + ".problem_view_context";//$NON-NLS-1$;
+	}
 }
