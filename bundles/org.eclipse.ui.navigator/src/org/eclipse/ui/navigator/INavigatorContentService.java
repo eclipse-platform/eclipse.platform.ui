@@ -31,7 +31,8 @@ import org.eclipse.ui.ISaveablesSource;
  * particular <i>viewerId</i>.
  * 
  * <p>
- * Clients should create instances of the this class using the factory ({@link NavigatorContentServiceFactory}).
+ * Clients can get the instance of this associated with the {@link CommonNavigator} using
+ * {@link CommonNavigator#getNavigatorContentService()}.
  * </p>
  * 
  * <p>
@@ -87,9 +88,6 @@ import org.eclipse.ui.ISaveablesSource;
  * {@link IMemento}. Clients must call {@link #restoreState(IMemento)} and
  * {@link #saveState(IMemento)} at the appropriate times for these extensions to
  * prepare themselves with the memento.
- * </p>
- * <p>
- * This interface is not intended to be implemented by clients.
  * </p>
  * 
  * @since 3.2
