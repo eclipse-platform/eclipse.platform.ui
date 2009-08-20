@@ -84,6 +84,12 @@
          </includes>
       </viewerActionBinding>
 
+    <viewerContentBinding viewerId="org.eclipse.ui.navigator.ProjectExplorer">
+       <includes>
+          <contentExtension pattern="org.eclipse.ui.tests.navigator.cdt.*"/>
+       </includes>
+    </viewerContentBinding>
+
       <dragAssistant
             class="org.eclipse.ui.tests.navigator.extension.TestDragAssistant"
             viewerId="org.eclipse.ui.tests.navigator.TestView"/>
@@ -446,6 +452,46 @@
 	    </actionProvider>
 
       </navigatorContent>
+
+
+
+
+	<!-- CDT -->
+    <navigatorContent
+          contentProvider="org.eclipse.ui.tests.navigator.cdt.CNavigatorContentProvider"
+          icon="icons/view16/cview.gif"
+          id="org.eclipse.ui.tests.navigator.cdt.content"
+          labelProvider="org.eclipse.ui.tests.navigator.cdt.CNavigatorLabelProvider"
+          name="CDT"
+		  activeByDefault="false"
+          priority="normal">
+       <triggerPoints>
+          <or>
+             <instanceof value="org.eclipse.ui.tests.navigator.cdt.CElement"/>
+             <and>
+	             <instanceof value="org.eclipse.core.resources.IResource"/>
+	             <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+             </and>
+             <instanceof value="org.eclipse.core.resources.IWorkspaceRoot"/>
+          </or>
+       </triggerPoints>
+       <possibleChildren>
+          <or>
+             <instanceof value="org.eclipse.core.resources.IResource"/>
+             <instanceof value="org.eclipse.ui.tests.navigator.cdt.CElement"/>
+          </or>
+       </possibleChildren>
+       <override
+             policy="InvokeAlwaysRegardlessOfSuppressedExt"
+             suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
+       <commonSorter
+             class="org.eclipse.ui.tests.navigator.cdt.CElementSorter"
+             id="org.eclipse.ui.tests.navigator.cdt.sorter">
+       </commonSorter>
+    </navigatorContent>
+
+
+
 
       <actionProvider
             id="org.eclipse.ui.tests.navigator.extension.DependentActionProvider"
