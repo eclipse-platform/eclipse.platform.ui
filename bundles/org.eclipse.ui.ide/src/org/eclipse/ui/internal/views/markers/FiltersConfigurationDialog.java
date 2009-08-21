@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
@@ -31,7 +30,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -45,12 +43,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.preferences.ViewSettingsDialog;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
@@ -60,7 +60,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * @since 3.3
  * 
  */
-public class FiltersConfigurationDialog extends Dialog {
+public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private static final String SELECTED_FILTER_GROUP = "SELECTED_FILTER_GROUP"; //$NON-NLS-1$
 
@@ -84,6 +84,10 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private Button cloneButton;
 
+	private Button andButton;
+
+	private Button orButton;
+
 	/**
 	 * Create a new instance of the receiver on builder.
 	 * 
@@ -91,7 +95,7 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param builder
 	 *            The {@link CachedMarkerBuilder} to apply this to
 	 */
-	public FiltersConfigurationDialog(IShellProvider parentShell,
+	public FiltersConfigurationDialog(Shell parentShell,
 			CachedMarkerBuilder builder) {
 		super(parentShell);
 		filterGroups = makeWorkingCopy(builder.getAllFilters());
@@ -351,7 +355,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		});
 		setButtonLayoutData(removeButton);
 
-		Button andButton = new Button(filtersComposite, SWT.RADIO);
+		andButton = new Button(filtersComposite, SWT.RADIO);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true,
 				false);
 		data.horizontalSpan = 2;
@@ -370,7 +374,7 @@ public class FiltersConfigurationDialog extends Dialog {
 			}
 		});
 
-		Button orButton = new Button(filtersComposite, SWT.RADIO);
+		orButton = new Button(filtersComposite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true, false);
 		data.horizontalSpan = 2;
 		orButton.setLayoutData(data);
@@ -565,6 +569,22 @@ public class FiltersConfigurationDialog extends Dialog {
 				area.apply(filterGroup.getFilter(area.getField()));
 			}
 		}
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.preferences.ViewSettingsDialog#performDefaults()
+	 */
+	protected void performDefaults() {
+		filterGroups.clear();
+		filterGroups.addAll(builder.getDeclaredFilters());
+		filtersList.refresh();
+		filtersList.setSelection(new StructuredSelection(
+				filterGroups.size() > 1 ? filterGroups.iterator().next()
+						: new Object[0]));
+		andFilters=false;
+		andButton.setSelection(andFilters);
+		orButton.setSelection(!andFilters);
 	}
 
 	/**

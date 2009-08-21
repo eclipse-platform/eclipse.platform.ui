@@ -48,7 +48,6 @@ import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -1542,8 +1541,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void openFiltersDialog() {
 		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
-				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
-				builder);
+				getSite().getWorkbenchWindow().getShell(), builder);
 		if (dialog.open() == Window.OK) {
 			builder.updateFrom(dialog);
 		}
