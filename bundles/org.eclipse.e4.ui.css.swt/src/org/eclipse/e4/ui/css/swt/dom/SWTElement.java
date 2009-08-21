@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.utils.ClassUtils;
 import org.eclipse.e4.ui.css.core.utils.NumberUtils;
 import org.eclipse.e4.ui.css.swt.CSSSWTConstants;
+import org.eclipse.e4.ui.css.swt.engine.AbstractCSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.helpers.SWTStyleHelpers;
 import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.widgets.ETabItem;
@@ -26,6 +27,7 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Widget;
@@ -72,6 +74,23 @@ public class SWTElement extends ElementAdapter implements NodeList {
 	 */
 	public static void setID(Widget widget, String id) {
 		widget.setData(CSSSWTConstants.CSS_ID_KEY, id);
+	}
+
+	/**
+	 * Convenience method for getting the CSS engine responsible for a widget.
+	 * @param widget SWT widget which is styled by an engine
+	 */
+	public static CSSEngine getEngine(Widget widget) {
+		return (CSSEngine) widget.getDisplay().getData(CSSSWTConstants.CSS_ENGINE_KEY);
+	}
+
+	/**
+	 * Convenience method for setting the CSS engine responsible for a display.
+	 * @param widget SWT display which is styled by an engine
+	 * @param engine Engine to be associated with the display
+	 */
+	public static void setEngine(Display display, AbstractCSSSWTEngineImpl engine) {
+		display.setData(CSSSWTConstants.CSS_ENGINE_KEY, engine);
 	}
 
 	protected String localName;

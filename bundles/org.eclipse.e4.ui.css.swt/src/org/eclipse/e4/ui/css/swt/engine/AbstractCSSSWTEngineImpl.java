@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.css.swt.engine;
 
 import org.eclipse.e4.ui.css.core.impl.engine.CSSEngineImpl;
 import org.eclipse.e4.ui.css.core.resources.IResourcesRegistry;
+import org.eclipse.e4.ui.css.swt.dom.SWTElement;
 import org.eclipse.e4.ui.css.swt.dom.SWTElementProvider;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTColorConverterImpl;
 import org.eclipse.e4.ui.css.swt.properties.converters.CSSValueSWTCursorConverterImpl;
@@ -42,7 +43,7 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 
 	public AbstractCSSSWTEngineImpl(Display display, boolean lazyApplyingStyles) {
 		this.display = display;
-
+		
 		// Register SWT Element Provider to retrieve
 		// w3c Element SWTElement coming from SWT widget.
 		super.setElementProvider(SWTElementProvider.INSTANCE);
@@ -89,6 +90,8 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 		if (lazyApplyingStyles) {
 			new CSSSWTApplyStylesListener(display, this);
 		}
+		
+		SWTElement.setEngine(display, this);
 	}
 
 	protected abstract void initializeCSSPropertyHandlers();

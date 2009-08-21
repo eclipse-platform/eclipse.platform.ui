@@ -24,6 +24,7 @@ public class CssSwtTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public CssSwtTestSuite() {
+		addTestSuite(CSSSWTWidgetTest.class);		
 		addTestSuite(LabelTest.class);
 		addTestSuite(CTabFolderTest.class);
 		addTestSuite(CTabItemTest.class);

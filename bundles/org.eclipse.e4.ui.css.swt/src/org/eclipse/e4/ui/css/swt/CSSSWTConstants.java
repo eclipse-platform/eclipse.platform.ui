@@ -29,6 +29,12 @@ public class CSSSWTConstants {
 	 */
 	public static final String CSS_ID_KEY = "org.eclipse.e4.ui.css.id";
 
+	/**
+	 * Key value for setting and getting the CSS engine styling a widget.
+	 * Clients may rely on the value of this key if they want to avoid a dependency on this package.
+	 * @see Widget.getData(String) Widget.setData(String, Object)
+	 */
+	public static final String CSS_ENGINE_KEY = "org.eclipse.e4.ui.css.core.engine";
 	
 	//HACK non API - see bug #267434
 	public static final String MARGIN_WRAPPER_KEY = "org.eclipse.e4.ui.css.swt.marginWrapper";
