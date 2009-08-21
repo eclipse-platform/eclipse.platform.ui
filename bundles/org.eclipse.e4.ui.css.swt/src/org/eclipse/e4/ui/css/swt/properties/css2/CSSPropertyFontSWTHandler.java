@@ -170,7 +170,11 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 		private CSSEngine engine;
 
 		private Item selection;
-		
+
+		/**
+		 * Determines whether styling should be performed on the next paint
+		 * event.
+		 */
 		private boolean shouldStyle;
 
 		public FontSelectionListener(CSSEngine engine) {
@@ -180,13 +184,38 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 		public void setEngine(CSSEngine engine) {
 			this.engine = engine;
 		}
-		
+
+		/**
+		 * Sets whether the tab items should be restyled on the next paint
+		 * event. As paint events are fired multiple times while an application
+		 * is running, it is not desirable to restyle the items unless there is
+		 * a need. This method can be used to force the next paint event to be
+		 * processed as a restyling request.
+		 * 
+		 * @param shouldStyle
+		 *            whether the tab items should be restyled on the next paint
+		 *            event or not
+		 */
 		public void setShouldStyle(boolean shouldStyle) {
 			this.shouldStyle = shouldStyle;
 		}
 
+		/**
+		 * Applies the styles defined in the provided declaration onto the item.
+		 * Pseudo classes will be considered if one has been specified.
+		 * 
+		 * @param styleDeclaration
+		 *            the style declaration to be used to style the specified
+		 *            item
+		 * @param pseudo
+		 *            the pseudo class to use, or <code>null</code> if none is
+		 *            required
+		 * @param item
+		 *            the item to style
+		 */
 		private void applyStyles(CSSStyleDeclaration styleDeclaration,
 				String pseudo, Item item) {
+			// retrieve the css font properties pertaining to the item
 			CSS2FontProperties fontProperties = CSSSWTFontHelper
 					.getCSS2FontProperties(item, engine
 							.getCSSElementContext(item));
@@ -220,11 +249,18 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 			}
 		}
 
+		/**
+		 * Applies the regular unselected styles to the specified items.
+		 * 
+		 * @param items
+		 *            the items to style
+		 */
 		private void styleUnselected(Item[] items) {
 			for (int i = 0; i < items.length; i++) {
 				CSSStyleDeclaration unselectedStyle = engine.getViewCSS()
 						.getComputedStyle(engine.getElement(items[i]), null);
 				if (unselectedStyle == null) {
+					// no styles defined, just reset the font
 					setFont(items[i], null);
 				} else {
 					applyStyles(unselectedStyle, null, items[i]);
@@ -232,6 +268,13 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 			}
 		}
 
+		/**
+		 * Applies the style declaration for selected items to the specified
+		 * item if one has been defined.
+		 * 
+		 * @param selection
+		 *            the item to style
+		 */
 		private boolean styleSelected(Item selection) {
 			CSSStyleDeclaration selectedStyle = engine.getViewCSS()
 					.getComputedStyle(engine.getElement(selection), "selected");
@@ -265,8 +308,8 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 					ETabFolder folder = (ETabFolder) e.widget;
 					selection = (ETabItem) folder.getSelection();
 					items = folder.getItems();
-					// only style if the selection has changed
 				}
+				// only style if the selection has changed
 				if (!shouldStyle && this.selection == selection) {
 					return;	
 				}			
