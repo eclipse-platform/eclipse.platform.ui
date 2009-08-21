@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import org.eclipse.ui.tests.navigator.cdt.CdtTest;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -37,6 +39,9 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(LabelProviderTest.class));
 		addTest(new TestSuite(SorterTest.class));
 		addTest(new TestSuite(ViewerTest.class));
+		// Turn off until the changes to make this work are in
+		if (false)
+			addTest(new TestSuite(CdtTest.class));
 		//addTest(new TestSuite(DnDTest.class));
 		// Does not pass on all platforms see bug 264449
 		//addTest(new TestSuite(PerformanceTest.class));
