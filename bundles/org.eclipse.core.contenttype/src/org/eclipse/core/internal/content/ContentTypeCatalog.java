@@ -370,7 +370,7 @@ public final class ContentTypeCatalog {
 		return result;
 	}
 
-	synchronized private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName, boolean forceValidation) throws IOException {
+	private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName, boolean forceValidation) throws IOException {
 		final IContentType[][] subset;
 		final Comparator validPolicy;
 		Comparator indeterminatePolicy;
