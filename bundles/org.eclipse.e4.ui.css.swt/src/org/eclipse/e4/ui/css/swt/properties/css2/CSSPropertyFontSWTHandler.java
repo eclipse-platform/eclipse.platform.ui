@@ -239,7 +239,7 @@ public class CSSPropertyFontSWTHandler extends AbstractCSSPropertyFontHandler
 				return false;
 			}
 
-			applyStyles(selectedStyle, "pseudo", selection);
+			applyStyles(selectedStyle, "selected", selection);
 			return true;
 		}
 
