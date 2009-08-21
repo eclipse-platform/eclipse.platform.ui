@@ -453,16 +453,12 @@
 
       </navigatorContent>
 
-
-
-
 	<!-- CDT -->
     <navigatorContent
           contentProvider="org.eclipse.ui.tests.navigator.cdt.CNavigatorContentProvider"
-          icon="icons/view16/cview.gif"
           id="org.eclipse.ui.tests.navigator.cdt.content"
           labelProvider="org.eclipse.ui.tests.navigator.cdt.CNavigatorLabelProvider"
-          name="CDT"
+          name="CDT test"
 		  activeByDefault="false"
           priority="normal">
        <triggerPoints>
@@ -470,7 +466,7 @@
              <instanceof value="org.eclipse.ui.tests.navigator.cdt.CElement"/>
              <and>
 	             <instanceof value="org.eclipse.core.resources.IResource"/>
-	             <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.cdt.core.cnature"/>
+	             <test property="org.eclipse.core.resources.projectNature" value="org.eclipse.ui.tests.navigator.cdt.nature"/>
              </and>
              <instanceof value="org.eclipse.core.resources.IWorkspaceRoot"/>
           </or>
