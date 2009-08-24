@@ -520,6 +520,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 			for (int i = 0; i < objects.length; i++) {
 				if (objects[i] instanceof PluginActionSetBuilder.Binding) {
 					PluginActionSetBuilder.Binding binding = (PluginActionSetBuilder.Binding) objects[i];
+					binding.tracker = null;
 					binding.builder.removeActionExtensions(binding.set,
 							binding.window);
 					binding.set.dispose();
