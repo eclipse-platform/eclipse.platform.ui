@@ -17,11 +17,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -88,6 +91,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private Button orButton;
 
+	private Label andOrLabel;
 	/**
 	 * Create a new instance of the receiver on builder.
 	 * 
@@ -136,12 +140,15 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		initializeDialogUnits(top);
 
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = false;
 		top.setLayout(layout);
 
 		createFilterSelectionArea(top);
-
+		
+		Label seprator=new Label(top, SWT.SEPARATOR|SWT.VERTICAL);
+		seprator.setLayoutData(new GridData(SWT.NONE, SWT.FILL, false, true));
+		
 		final FormToolkit toolkit = new FormToolkit(top.getDisplay());
 		parent.addDisposeListener(new DisposeListener() {
 
@@ -303,7 +310,6 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 					public void selectionChanged(SelectionChangedEvent event) {
 						setSelectedFilter((MarkerFieldFilterGroup) ((IStructuredSelection) event
 								.getSelection()).getFirstElement());
-
 					}
 				});
 
@@ -355,10 +361,18 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		});
 		setButtonLayoutData(removeButton);
 
+		
+		andOrLabel = new Label(filtersComposite, SWT.NONE);
+		GridData labelData = new GridData();
+		labelData.horizontalSpan = 2;
+		andOrLabel.setLayoutData(labelData);
+		andOrLabel.setText(MarkerMessages.AND_OR_Label);
+		
 		andButton = new Button(filtersComposite, SWT.RADIO);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true,
 				false);
 		data.horizontalSpan = 2;
+		data.horizontalIndent = IDialogConstants.INDENT;
 		andButton.setLayoutData(data);
 		andButton.setText(MarkerMessages.AND_Title);
 		andButton.setSelection(andFilters);
@@ -377,6 +391,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		orButton = new Button(filtersComposite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true, false);
 		data.horizontalSpan = 2;
+		data.horizontalIndent = IDialogConstants.INDENT;
 		orButton.setLayoutData(data);
 		orButton.setText(MarkerMessages.OR_Title);
 		orButton.setSelection(!andFilters);
@@ -389,6 +404,11 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				andFilters = false;
+			}
+		});
+		filtersList.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				updateAndOrEnblement();				
 			}
 		});
 	}
@@ -444,8 +464,23 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		filtersList.refresh();
 		filtersList.setSelection(new StructuredSelection(group));
 		filtersList.setChecked(group, true);
+		updateAndOrEnblement();
 	}
 
+	/**
+	 * Enable/disable 'and', 'or' buttons
+	 */
+	private void updateAndOrEnblement() {
+		if(filtersList.getCheckedElements().length==0){
+			andOrLabel.setEnabled(false);
+			andButton.setEnabled(false);
+			orButton.setEnabled(false);
+		}else{
+			andOrLabel.setEnabled(true);
+			andButton.setEnabled(true);
+			orButton.setEnabled(true);
+		}
+	}
 	/**
 	 * Return the dialog settings for the receiver.
 	 * 
@@ -611,6 +646,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		filterGroups.remove(((IStructuredSelection) selection)
 				.getFirstElement());
 		filtersList.refresh();
+		updateAndOrEnblement();
 	}
 
 	/**

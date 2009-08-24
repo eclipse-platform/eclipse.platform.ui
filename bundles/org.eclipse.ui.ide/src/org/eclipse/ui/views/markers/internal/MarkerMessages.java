@@ -282,6 +282,7 @@ public class MarkerMessages extends NLS {
 
 	public static String PasteHandler_title;
 
+	public static String AND_OR_Label;
 	public static String AND_Title;
 	public static String OR_Title;
 
