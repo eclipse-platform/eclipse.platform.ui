@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -65,6 +66,7 @@ public class WorkbenchPreferenceInitializer extends
 		node.putInt(IPreferenceConstants.EDITOR_TAB_WIDTH, 3); // high
 		node.putInt(IPreferenceConstants.OPEN_VIEW_MODE,
 				IPreferenceConstants.OVM_EMBED);
+		node.putBoolean(IPreferenceConstants.FVB_HIDE, false);
 		node.putInt(IPreferenceConstants.OPEN_PERSP_MODE,
 				IPreferenceConstants.OPM_ACTIVE_PAGE);
 		node.put(IPreferenceConstants.ENABLED_DECORATORS, ""); //$NON-NLS-1$

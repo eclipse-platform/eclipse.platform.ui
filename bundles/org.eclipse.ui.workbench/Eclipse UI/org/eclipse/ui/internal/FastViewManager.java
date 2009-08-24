@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Carlos Devoto carlos.devoto@compuware.com Bug 213645
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -18,7 +19,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
@@ -303,7 +303,7 @@ public class FastViewManager {
 	 * @param id
 	 *            The id of the {@link IWindowTrim} to update
 	 */
-	private void updateTrim(String id) {
+	public void updateTrim(String id) {
 		// Get the trim part from the trim manager
 		IWindowTrim trim = tbm.getTrim(id);
 
@@ -313,8 +313,10 @@ public class FastViewManager {
 
 		// If there are no fast views for the bar then hide it
 		List fvs = (List) idToFastViewsMap.get(id);
-		if (fvs != null && fvs.size() == 0
-				&& !FastViewBar.FASTVIEWBAR_ID.equals(id)) {
+		boolean hideEmptyFVB = WorkbenchPlugin.getDefault()
+				.getPreferenceStore().getBoolean(IPreferenceConstants.FVB_HIDE);
+		if ((fvs == null || fvs.size() == 0)
+				&& (!FastViewBar.FASTVIEWBAR_ID.equals(id) || hideEmptyFVB)) {
 			if (trim.getControl().getVisible()) {
 				tbm.setTrimVisible(trim, false);
 				tbm.forceLayout();

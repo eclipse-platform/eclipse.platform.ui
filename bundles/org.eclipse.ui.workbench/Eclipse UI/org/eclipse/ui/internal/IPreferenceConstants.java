@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -60,6 +61,9 @@ public interface IPreferenceConstants {
     public static final int OVM_FAST = 1;
 
     public static final int OVM_FLOAT = 2;
+
+	// Boolean: true = hide fast view bar, when it is empty
+	public static final String FVB_HIDE = "FVB_HIDE"; //$NON-NLS-1$
 
     // (int) Mode for opening a new perspective
     public static final String OPEN_PERSP_MODE = "OPEN_PERSPECTIVE_MODE"; //$NON-NLS-1$

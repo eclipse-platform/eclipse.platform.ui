@@ -8,6 +8,7 @@
  * Contributors:
  * IBM - Initial API and implementation
  * Sebastian Davids - bug 128529
+ * Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -499,9 +500,12 @@ public class WorkbenchMessages extends NLS {
 	public static String OpenPerspectiveMode_sameWindow;
 	public static String OpenPerspectiveMode_newWindow;
 
+	public static String FastViewsGroup_title;
 	public static String OpenViewMode_title;
 	public static String OpenViewMode_embed;
 	public static String OpenViewMode_fast;
+
+	public static String FastViewBar_hide;
 
 	public static String PerspectivesPreference_MakeDefault;
 	public static String PerspectivesPreference_MakeDefaultTip;

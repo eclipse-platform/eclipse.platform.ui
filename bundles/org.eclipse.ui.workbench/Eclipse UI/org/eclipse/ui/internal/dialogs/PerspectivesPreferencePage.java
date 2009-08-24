@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 278064
  *******************************************************************************/
 
 package org.eclipse.ui.internal.dialogs;
@@ -15,7 +16,6 @@ import com.ibm.icu.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -44,11 +44,14 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.FastViewBar;
+import org.eclipse.ui.internal.FastViewManager;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.PerspectiveDescriptor;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.util.Descriptors;
@@ -81,6 +84,8 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	private Button setDefaultButton;
 
 	// widgets for open perspective mode;
+	private Label openViewModeLabel;
+
 	private Button openSameWindowButton;
 
 	private Button openNewWindowButton;
@@ -93,13 +98,21 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 	private Button openEmbedButton;
 
 	private Button openFastButton;
+
+	private Button fvbHideButton;
+	
+	private boolean isFVBConfigured;
     
 	// labels
+	private final String FVG_TITLE = WorkbenchMessages.FastViewsGroup_title;
+
 	private final String OVM_TITLE = WorkbenchMessages.OpenViewMode_title;
 
 	private final String OVM_EMBED = WorkbenchMessages.OpenViewMode_embed;
 
 	private final String OVM_FAST = WorkbenchMessages.OpenViewMode_fast; 
+
+	private final String FVB_HIDE = WorkbenchMessages.FastViewBar_hide;
 
 	private final String OPM_TITLE = WorkbenchMessages.OpenPerspectiveMode_optionsTitle; 
 
@@ -213,12 +226,18 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		Font font = composite.getFont();
 
 		Group buttonComposite = new Group(composite, SWT.LEFT);
-		buttonComposite.setText(OVM_TITLE);
+		buttonComposite.setText(FVG_TITLE);
 		buttonComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		buttonComposite.setFont(composite.getFont());
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
 		buttonComposite.setLayout(layout);
+
+		openViewModeLabel = new Label(buttonComposite, SWT.NONE);
+		openViewModeLabel.setText(OVM_TITLE);
+		GridData data = new GridData();
+		data.horizontalSpan = 2;
+		openViewModeLabel.setLayoutData(data);
 
 		openEmbedButton = new Button(buttonComposite, SWT.RADIO);
 		openEmbedButton.setText(OVM_EMBED);
@@ -247,6 +266,23 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 		});
 		openFastButton.setFont(font);
 
+		createFVBHideButton(buttonComposite);
+	}
+
+	protected void createFVBHideButton(Composite composite) {
+		if (!isFVBConfigured)
+			return;
+		Font font = composite.getFont();
+		fvbHideButton = new Button(composite, SWT.CHECK);
+		GridData data = new GridData();
+		// data.horizontalIndent = 10;
+		data.horizontalSpan = 2;
+		fvbHideButton.setLayoutData(data);
+		fvbHideButton.setText(FVB_HIDE);
+
+		fvbHideButton.setSelection(this.getPreferenceStore().getBoolean(
+				IPreferenceConstants.FVB_HIDE));
+		fvbHideButton.setFont(font);
 	}
 
 	/**
@@ -413,6 +449,9 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		openViewMode = store.getInt(IPreferenceConstants.OPEN_VIEW_MODE);
 		openPerspMode = store.getInt(IPreferenceConstants.OPEN_PERSP_MODE);
+		isFVBConfigured = ((WorkbenchWindow) workbench
+				.getActiveWorkbenchWindow()).getShowFastViewBars();
+
 	}
 
 	/**
@@ -432,6 +471,10 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 				.setSelection(openViewMode == IPreferenceConstants.OVM_EMBED);
 		openFastButton
 				.setSelection(openViewMode == IPreferenceConstants.OVM_FAST);
+
+		if (isFVBConfigured)
+			fvbHideButton.setSelection(store
+					.getDefaultBoolean(IPreferenceConstants.FVB_HIDE));
 
 		openPerspMode = store
 				.getDefaultInt(IPreferenceConstants.OPEN_PERSP_MODE);
@@ -552,6 +595,17 @@ public class PerspectivesPreferencePage extends PreferencePage implements
 
 		// store the open view mode setting
 		store.setValue(IPreferenceConstants.OPEN_VIEW_MODE, openViewMode);
+
+		if (isFVBConfigured) {
+			store.setValue(IPreferenceConstants.FVB_HIDE, fvbHideButton
+					.getSelection());
+			WorkbenchPage page = (WorkbenchPage) workbench
+					.getActiveWorkbenchWindow().getActivePage();
+			FastViewManager fvm = page.getActivePerspective()
+					.getFastViewManager();
+			if (fvm != null)
+				fvm.updateTrim(FastViewBar.FASTVIEWBAR_ID);
+		}
 
 		// store the open perspective mode setting
 		store.setValue(IPreferenceConstants.OPEN_PERSP_MODE, openPerspMode);
