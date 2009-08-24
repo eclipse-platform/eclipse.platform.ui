@@ -184,7 +184,6 @@
             id="org.eclipse.team.ui.WorkingSetContributions">
          <action
                class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
-               definitionId="org.eclipse.team.ui.applyPatch"
                enablesFor="*"
                id="org.eclipse.team.ui.applyPatch2"
                label="%ApplyPatch.label"
