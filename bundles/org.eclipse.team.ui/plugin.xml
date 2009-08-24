@@ -178,6 +178,20 @@
                id="org.eclipse.team.ui.applyPatch">
          </action>
       </objectContribution>
+      <objectContribution
+            objectClass="org.eclipse.ui.IWorkingSet"
+            adaptable="true"
+            id="org.eclipse.team.ui.WorkingSetContributions">
+         <action
+               class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
+               definitionId="org.eclipse.team.ui.applyPatch"
+               enablesFor="*"
+               id="org.eclipse.team.ui.applyPatch2"
+               label="%ApplyPatch.label"
+               menubarPath="team.main/group1"
+               tooltip="%ApplyPatch.tooltip">
+         </action>
+      </objectContribution>
    </extension>
 <!-- ************** Views ********************** -->
    <extension
