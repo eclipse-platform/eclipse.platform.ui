@@ -18,15 +18,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.eclipse.help.webapp.IFilter;
 
 /**
- * This class inserts a CSSs for narrow and disabled CSSs when called from the
- * dynamic help view.
+ * This class is a filter based on PluginsRootResolvingStream
+ * which replaces PLUGINS_ROOT with a relative path to eliminate redirects.
+ * It also performs preprocessing to add child links at runtime.
  */
 public class PluginsRootFilter implements IFilter {	
 	
     public OutputStream filter(HttpServletRequest req, OutputStream out) {
 		String pathPrefix = FilterUtils.getRelativePathPrefix(req);
 		if (pathPrefix.length() >= 3) {
-		    return new PluginsRootResolvingStream(out, pathPrefix.substring(0, pathPrefix.length() - 3));
+		    return new PluginsRootResolvingStream(out, req, pathPrefix.substring(0, pathPrefix.length() - 3));
 		}
 		return out;
 	}

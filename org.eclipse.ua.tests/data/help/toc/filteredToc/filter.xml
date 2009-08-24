@@ -128,4 +128,12 @@
     <topic href="data/help/toc/filteredToc/simple_page.html" label="A">
     </topic>
  </topic>	
+ <topic label="UTF8 page with child links" href = "data/help/toc/filteredToc/parentUTF8.html" >
+     <topic href="data/help/toc/filteredToc/simple_page.html" label="España">
+     </topic>
+ </topic>
+ <topic label="ISO 8859 page with child links" href = "data/help/toc/filteredToc/parent8859.html" >
+     <topic href="data/help/toc/filteredToc/simple_page.html" label="brasileño">
+     </topic>
+ </topic>
 </toc>
