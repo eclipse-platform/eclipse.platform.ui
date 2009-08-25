@@ -45,23 +45,23 @@ public class PrebuiltIndexChecker extends TestCase {
 		return new TestSuite(PrebuiltIndexChecker.class);
 	}
 	
-	public void testPlatformUser() throws Exception {
+	public void testPlatformUserIndex() throws Exception {
 		validateIndex(PLATFORM_USER, "index");
 	}
 	
-	public void testPlatformIsv() throws Exception {
+	public void testPlatformIsvIndex() throws Exception {
 		validateIndex(PLATFORM_ISV, "index");
 	}
 	
-	public void testPdeUser() throws Exception {
+	public void testPdeUserIndex() throws Exception {
 		validateIndex(PDE_USER, "index");
 	}
 	
-	public void testJdtUser() throws Exception {
+	public void testJdtUserIndex() throws Exception {
 		validateIndex(JDT_USER, "index");
 	}
 	
-	public void testJdtIsv() throws Exception {
+	public void testJdtIsvIndex() throws Exception {
 		validateIndex(JDT_ISV, "index");
 	}
 

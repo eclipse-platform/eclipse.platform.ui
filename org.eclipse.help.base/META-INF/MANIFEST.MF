@@ -26,7 +26,7 @@ Export-Package: org.apache.lucene.demo.html;x-internal:=true,
  org.eclipse.help.internal.search.federated;x-friends:="org.eclipse.help.ui,org.eclipse.ua.tests",
  org.eclipse.help.internal.server;x-friends:="org.eclipse.ua.tests",
  org.eclipse.help.internal.standalone;x-friends:="org.eclipse.ua.tests",
- org.eclipse.help.internal.validation;x-friends:="org.eclipse.ua.tests",
+ org.eclipse.help.internal.validation;x-friends:="org.eclipse.ua.tests,org.eclipse.ua.tests.doc",
  org.eclipse.help.internal.workingset;x-friends:="org.eclipse.help.ui,org.eclipse.help.webapp,org.eclipse.ua.tests",
  org.eclipse.help.internal.xhtml;
   x-friends:="org.eclipse.help.ui,

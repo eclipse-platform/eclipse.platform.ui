@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ua.tests.help.toc;
+package org.eclipse.ua.tests.doc.internal.linkchecker;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,20 @@ import junit.framework.Assert;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
+
+/**
+ * Contains tests for the documentation bundles that 
+ * are included with the Eclipse SDK. This tests that the
+ * table of contents can be parsed and that the file
+ * corresponding to each href actually exists.
+ * It does not check for broken links within the files or 
+ * references to missing images, css files etc.
+ * 
+ * Note that some API documents are generated as part of the 
+ * Eclipse build process. Tests for these documents contain
+ * "Generated" in their name and are not expected to pass
+ * if that project is checked out in your workspace.
+ */
 
 public class TocLinkChecker extends TestCase {
 	

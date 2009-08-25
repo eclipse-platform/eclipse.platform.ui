@@ -14,6 +14,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.ua.tests.doc.internal.linkchecker.PrebuiltIndexChecker;
+import org.eclipse.ua.tests.doc.internal.linkchecker.TocLinkChecker;
 
 /*
  * Tests all user assistance functionality (automated).
@@ -32,5 +33,6 @@ public class AllTests extends TestSuite {
 	 */
 	public AllTests() {
 		addTestSuite(PrebuiltIndexChecker.class);
+		addTestSuite(TocLinkChecker.class);
 	}
 }
