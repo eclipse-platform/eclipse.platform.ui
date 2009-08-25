@@ -193,6 +193,7 @@ public class ObservableTracker {
 	 * 
 	 * @see #getterCalled(IObservable)
 	 * @see #observableCreated(IObservable)
+	 * @since 1.3
 	 */
 	public static void setIgnore(boolean ignore) {
 		Integer lastCount = (Integer) currentIgnoreCount.get();
