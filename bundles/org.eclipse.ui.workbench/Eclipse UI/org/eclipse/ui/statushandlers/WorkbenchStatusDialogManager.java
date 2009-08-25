@@ -11,6 +11,7 @@
 
 package org.eclipse.ui.statushandlers;
 
+import com.ibm.icu.text.DateFormat;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
@@ -18,7 +19,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -97,8 +97,6 @@ import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.StatusManager.INotificationTypes;
 import org.eclipse.ui.views.IViewDescriptor;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * <p>
@@ -622,6 +620,10 @@ public class WorkbenchStatusDialogManager {
 			if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
 				launchTrayLink.setEnabled(supportTray.providesSupport() && !trayOpened);
 			}
+		}
+
+		public Point getInitialLocation(Point initialSize) {
+			return super.getInitialLocation(initialSize);
 		}
 		
 	}
@@ -1261,14 +1263,18 @@ public class WorkbenchStatusDialogManager {
 					dialog = new InternalDialog(getParentShell(),
 							WorkbenchStatusDialogManager.this, shouldBeModal());
 					setSelectedStatusAdapter(statusAdapter);
-					dialog.open();
+					dialog.create();
 					dialog.getShell().addDisposeListener(disposeListener);
+					if (supportTray.providesSupport() && showSupport) {
+						openTray(supportTray);
+						dialog.getShell().setLocation(
+								dialog.getInitialLocation(dialog.getShell()
+										.getSize()));
+					}
+					dialog.open();
 				}
 				refresh();
 				refreshDialogSize();
-				if(supportTray.providesSupport() && showSupport){
-					openTray(supportTray);
-				}
 			}
 
 		} else {
@@ -2032,7 +2038,7 @@ public class WorkbenchStatusDialogManager {
 	 */
 	private void openTray(DialogTray tray) throws IllegalStateException,
 			UnsupportedOperationException {
-		if (launchTrayLink != null) {
+		if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
 			launchTrayLink.setEnabled(false);
 		}
 		this.dialog.openTray(tray);
@@ -2342,6 +2348,8 @@ public class WorkbenchStatusDialogManager {
 			if (statusListViewer == null
 					|| statusListViewer.getControl().isDisposed()) {
 				fillListArea(listArea);
+				listArea.layout();
+				listArea.getParent().layout();
 				getShell().setSize(
 						getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 			}
