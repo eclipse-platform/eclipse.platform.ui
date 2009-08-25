@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.*;
@@ -34,7 +30,7 @@ import org.eclipse.team.internal.ui.*;
 import org.eclipse.team.ui.synchronize.*;
 
 /**
- * This class is reponsible for creating and maintaining a presentation model of
+ * This class is responsible for creating and maintaining a presentation model of
  * {@link SynchronizeModelElement} elements that can be shown in a viewer. The model
  * is based on the synchronization information contained in the provided {@link SyncInfoSet}.
  */
@@ -104,7 +100,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     }
 
     /**
-	 * Cosntructor for creating a root model provider.
+	 * Constructor for creating a root model provider.
 	 * @param configuration the sync page configuration
 	 * @param set the sync info set from which the model is built
 	 */
@@ -285,8 +281,8 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	}
     
 	/**
-	 * Return the logical model depth used for marker propogation
-	 * @param resource the resoure
+	 * Return the logical model depth used for marker propagation
+	 * @param resource the resource
 	 * @return the depth the resources should be traversed
 	 */
 	protected int getLogicalModelDepth(IResource resource) {
@@ -538,7 +534,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	}
 
 	/**
-	 * Restore the expansion state and seleciton of the viewer.
+	 * Restore the expansion state and selection of the viewer.
 	 * This method must be invoked from within the UI thread.
 	 */
 	protected void restoreViewerState() {
@@ -665,7 +661,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	protected void propogateConflictState(ISynchronizeModelElement element, boolean clear) {
 		boolean isConflict = clear ? false : isConflicting(element);
 		boolean wasConflict = element.getProperty(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY);
-		// Only propogate and update parent labels if the state of the element has changed
+		// Only propagate and update parent labels if the state of the element has changed
 		if (isConflict != wasConflict) {
 			element.setPropertyToRoot(ISynchronizeModelElement.PROPAGATED_CONFLICT_PROPERTY, isConflict);
 			updateHandler.updateParentLabels(element);
@@ -673,7 +669,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	}
 	
 	/**
-	 * Return whether the given model element represets a conflict.
+	 * Return whether the given model element represents a conflict.
 	 * @param element the element being tested
 	 * @return whether the element is a conflict
 	 */
@@ -731,7 +727,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 * <code>handleResourceRemovals(ISyncInfoSetChangeEvent)</code> and
 	 * <code>handleResourceAdditions(ISyncInfoSetChangeEvent)</code>.
 	 * @param event
-	 *            the event containing the changed resourcses.
+	 *            the event containing the changed resources.
 	 */
 	protected void handleChanges(ISyncInfoTreeChangeEvent event, IProgressMonitor monitor) {
 		handleResourceChanges(event);
@@ -799,13 +795,13 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	    }
 		propogateConflictState(node, false);
 		// Set the marker property on this node.
-		// There is no need to propogate this to the parents
+		// There is no need to propagate this to the parents
 		// as they will be displaying the proper marker already
 		String property = calculateProblemMarker(node);
 		if (property != null) {
 			node.setProperty(property, true);
 			// Parent resource nodes would have been properly calculated when they were added.
-			// However, non-resource nodes would not so we need to propogate the marker to them
+			// However, non-resource nodes would not so we need to propagate the marker to them
 			propogateMarkerPropertyToParent(node, property);
 		}
 		if (Utils.canUpdateViewer(getViewer())) {
@@ -815,8 +811,8 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	}
 	
 	/*
-     * Propogate the marker property to the parent if it is not already there.
-     * Only propogate warnings if the parent isn't an error already.
+     * Propagate the marker property to the parent if it is not already there.
+     * Only propagate warnings if the parent isn't an error already.
      */
     private void propogateMarkerPropertyToParent(ISynchronizeModelElement node, String property) {
         ISynchronizeModelElement parent = (ISynchronizeModelElement)node.getParent();
@@ -830,7 +826,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 
     /**
 	 * Remove any traces of the model element and any of it's descendants in the
-	 * hiearchy defined by the content provider from the content provider and
+	 * hierarchy defined by the content provider from the content provider and
 	 * the viewer it is associated with.
 	 * @param nodes the model elements to remove
 	 */
@@ -888,7 +884,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	}
 	
 	/**
-	 * Method that sublcasses can oiverride when clearing model objects.
+	 * Method that subclasses can override when clearing model objects.
      * @param node the node to be cleared recursively
      */
     protected void recursiveClearModelObjects(ISynchronizeModelElement node) {
@@ -941,7 +937,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	 * Return the provider that created and manages the given
 	 * model element. The default is to return the receiver.
 	 * Subclasses may override.
-     * @param element the synchronizew model element
+     * @param element the synchronize model element
      * @return the provider that created the element
      */
     protected ISynchronizeModelProvider getProvider(ISynchronizeModelElement element) {
@@ -1052,7 +1048,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
 	
     /**
      * Wait until the provider is done processing any events and
-     * the page conent are up-to-date.
+     * the page content are up-to-date.
      * This method is for testing purposes only.
      * @param monitor
      */
@@ -1090,7 +1086,7 @@ public abstract class AbstractSynchronizeModelProvider implements ISynchronizeMo
     /**
      * Execute a runnable which performs an update of the model being displayed
      * by this provider. The runnable should be executed in a thread-safe manner
-     * which esults in the view being updated.
+     * which results in the view being updated.
      * @param runnable the runnable which updates the model.
      * @param preserveExpansion whether the expansion of the view should be preserver
      * @param runInUIThread

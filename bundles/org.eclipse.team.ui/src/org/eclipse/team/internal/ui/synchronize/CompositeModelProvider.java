@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.team.core.synchronize.*;
@@ -24,7 +20,7 @@ import org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration;
 /**
  * This class provides functionality for defining composite synchronize model
  * providers. A composite provider is one that breaks up the displayed
- * {@link SyncInfoSet} into subsets that may be didplayed using one
+ * {@link SyncInfoSet} into subsets that may be displayed using one
  * or more synchronize model providers.
  * 
  */
@@ -150,9 +146,9 @@ public abstract class CompositeModelProvider extends AbstractSynchronizeModelPro
     }
     
     /**
-     * The state of the sync info for a resource has changed. Propogate the
+     * The state of the sync info for a resource has changed. Propagate the
      * change to any sub-providers that contain the resource.
-     * @param info the sync info for the resource whpose sync state has changed
+     * @param info the sync info for the resource whose sync state has changed
      */
     protected void handleChange(SyncInfo info) {
         handleRemoval(info.getLocal());
