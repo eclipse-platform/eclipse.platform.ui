@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.jface
-Bundle-Version: 3.5.0.qualifier
+Bundle-Version: 3.5.1.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -33,7 +33,7 @@ Export-Package: org.eclipse.jface,
  org.eclipse.jface.window,
  org.eclipse.jface.wizard,
  org.eclipse.jface.wizard.images
-Require-Bundle: org.eclipse.swt;bundle-version="[3.4.0,4.0.0)";visibility:=reexport,
+Require-Bundle: org.eclipse.swt;bundle-version="[3.5.0,4.0.0)";visibility:=reexport,
  org.eclipse.core.commands;bundle-version="[3.4.0,4.0.0)";visibility:=reexport,
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)"
 Bundle-RequiredExecutionEnvironment: J2SE-1.4,
