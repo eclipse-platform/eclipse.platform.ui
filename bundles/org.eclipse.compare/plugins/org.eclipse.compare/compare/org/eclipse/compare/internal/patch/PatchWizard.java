@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,11 +17,18 @@ import org.eclipse.compare.CompareConfiguration;
 import org.eclipse.compare.internal.CompareUIPlugin;
 import org.eclipse.compare.internal.ExceptionHandler;
 import org.eclipse.compare.internal.Utilities;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IStorage;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.jface.dialogs.*;
+import org.eclipse.jface.dialogs.ErrorDialog;
+import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
@@ -38,7 +45,6 @@ public class PatchWizard extends Wizard {
 	private PreviewPatchPage2 fPreviewPage2;
 	
 	private final WorkspacePatcher fPatcher;
-	private PatchWizardDialog fDialog;
 	
 	private CompareConfiguration fConfiguration;
 	private IStorage patch;
@@ -106,7 +112,7 @@ public class PatchWizard extends Wizard {
 	 */
 	public boolean performFinish() {
 		
-		IWizardPage currentPage = fDialog.getCurrentPage();
+		IWizardPage currentPage = getContainer().getCurrentPage();
 		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME)){
 			PreviewPatchPage2 previewPage = (PreviewPatchPage2) currentPage;
 			previewPage.ensureContentsSaved();
@@ -184,12 +190,8 @@ public class PatchWizard extends Wizard {
 		return true;
 	}
 
-	public void setDialog(PatchWizardDialog dialog) {
-		fDialog= dialog;
-	}
-	
 	public void showPage(IWizardPage page) {
-		fDialog.showPage(page);
+		getContainer().showPage(page);
 	}
 	
 	public IWizardPage getNextPage(IWizardPage page) {
@@ -221,7 +223,7 @@ public class PatchWizard extends Wizard {
 	}
 	
 	public boolean canFinish() {
-		IWizardPage currentPage = fDialog.getCurrentPage();
+		IWizardPage currentPage = getContainer().getCurrentPage();
 		if (currentPage.getName().equals(PreviewPatchPage2.PREVIEWPATCHPAGE_NAME)){
 			return currentPage.isPageComplete();
 		}

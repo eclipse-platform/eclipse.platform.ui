@@ -140,7 +140,6 @@ public class PatchUITest extends TestCase {
 		wizard.setNeedsProgressMonitor(true);
 
 		wizardDialog = new PatchWizardDialog(getShell(), wizard);
-		wizard.setDialog(wizardDialog);
 		wizardDialog.setBlockOnOpen(false);
 		wizardDialog.open();
 	}
