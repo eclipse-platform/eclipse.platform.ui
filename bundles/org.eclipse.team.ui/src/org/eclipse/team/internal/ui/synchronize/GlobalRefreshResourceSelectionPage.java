@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.synchronize;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -29,7 +27,7 @@ import org.eclipse.ui.dialogs.ContainerCheckedTreeViewer;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Page that allows the user to select a set of resources that are managed by a subscriber 
@@ -50,7 +48,7 @@ public class GlobalRefreshResourceSelectionPage extends GlobalRefreshElementSele
 	class MyContentProvider extends BaseWorkbenchContentProvider {
 		public Object[] getChildren(Object element) {
 			if(element instanceof List) {
-				return (IResource[]) ((List)element).toArray(new IResource[((List)element).size()]);
+				return ((List)element).toArray(new IResource[((List)element).size()]);
 			}
 			return super.getChildren(element);
 		}
@@ -104,7 +102,7 @@ public class GlobalRefreshResourceSelectionPage extends GlobalRefreshElementSele
 				updateOKStatus();
 			}
 		});
-		fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		fViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		fViewer.setInput(resources);
 		return fViewer;
 	}

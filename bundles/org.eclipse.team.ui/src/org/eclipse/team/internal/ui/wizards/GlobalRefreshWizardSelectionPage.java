@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ui.wizards;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.dialogs.Dialog;
@@ -31,7 +29,7 @@ import org.eclipse.team.internal.ui.synchronize.SynchronizeManager;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.BaseWorkbenchContentProvider;
-import org.eclipse.ui.views.navigator.ResourceSorter;
+import org.eclipse.ui.views.navigator.ResourceComparator;
 
 /**
  * Page that allows the user to select a set of resources that are managed
@@ -132,7 +130,7 @@ public class GlobalRefreshWizardSelectionPage extends WizardPage implements IDou
 		fViewer.setContentProvider(new MyContentProvider());
 		fViewer.addDoubleClickListener(this);
 		fViewer.setLabelProvider(new MyLabelProvider());
-		fViewer.setSorter(new ResourceSorter(ResourceSorter.NAME));
+		fViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
 		fViewer.setInput(TeamUI.getSynchronizeManager());
 		fViewer.addSelectionChangedListener(this);
 		
