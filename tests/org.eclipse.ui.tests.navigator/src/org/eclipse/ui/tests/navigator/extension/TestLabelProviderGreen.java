@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2009 Oakland Software Incorporated and others.
+ * Copyright (c) 2008 Oakland Software Incorporated and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,26 +12,28 @@
 package org.eclipse.ui.tests.navigator.extension;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * @since 3.3
  *
  */
 public class TestLabelProviderGreen extends TestLabelProvider {
-	public static TestLabelProviderGreen instance;
 
-	protected void initSubclass() {
-		backgroundColor = Display.getCurrent().getSystemColor(
-				SWT.COLOR_GREEN);
-		backgroundColorName = "Green";
-		font = new Font(Display.getDefault(), boldFontData);
-		image = PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_ELCL_COLLAPSEALL);
-		instance = this;
+	public static Color backgroundColor = Display.getCurrent().getSystemColor(
+			SWT.COLOR_GREEN);
+	
+	public static Color getTestColor() {
+		return backgroundColor;
 	}
+	public Color getBackground(Object element) {
+		return backgroundColor;
+	}
+
+	public String getColorName() {
+		return "Green";
+	}
+
 
 }

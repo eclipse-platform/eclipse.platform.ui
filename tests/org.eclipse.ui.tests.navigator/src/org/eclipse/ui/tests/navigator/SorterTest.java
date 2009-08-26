@@ -100,8 +100,7 @@ public class SorterTest extends NavigatorTestBase {
 		_viewer.add(newData, _project.getFile("AddedFile2.txt"));
 	}
 
-	// Test does not work until real sort overriding is provided
-	public void XXtestSorterContentOverride() throws Exception {
+	public void testSorterContentOverride() throws Exception {
 		waitForModelObjects();
 
 		_contentService.bindExtensions(

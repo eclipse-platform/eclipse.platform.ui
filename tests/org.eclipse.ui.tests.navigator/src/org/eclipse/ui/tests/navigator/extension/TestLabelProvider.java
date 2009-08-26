@@ -33,15 +33,8 @@ public abstract class TestLabelProvider extends LabelProvider implements
 		ICommonLabelProvider, IDescriptionProvider, IColorProvider,
 		IFontProvider, IStyledLabelProvider {
 
-	protected static FontData boldFontData = new FontData();
+	private FontData boldFontData = new FontData();
 
-	public Color backgroundColor;
-	public String backgroundColorName;
-	
-	public Image image;
-
-	public Font font;
-	
 	private Font boldFont;
 
 	public static boolean _blankStatic;
@@ -51,32 +44,20 @@ public abstract class TestLabelProvider extends LabelProvider implements
 		_blankStatic = false;
 	}
 	
-	static {
-		boldFontData.setStyle(SWT.BOLD);
-	}
-	
 	public void init(ICommonContentExtensionSite aSite) {
+		boldFontData.setStyle(SWT.BOLD);
 		boldFont = new Font(Display.getDefault(), boldFontData);
-		initSubclass();
 	}
 
-	protected void initSubclass() {
-		
-	}
-	
-	public Color getTestColor() {
-		return backgroundColor;
-	}
-
-	public String getColorName() {
-		return backgroundColorName;
+	protected String getColorName() {
+		return "";
 	}
 
 	public Image getImage(Object element) {
 		if (element instanceof TestExtensionTreeData)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_ELEMENT);
-		return image;
+		return null;
 	}
 
 	public String getText(Object element) {
@@ -115,14 +96,21 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
+	 */
 	public Color getForeground(Object element) {
-		return getTestColor();
+		return null;
 	}
 
-	public Color getBackground(Object element) {
-		return getTestColor();
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
+	 */
 	public Font getFont(Object element) {
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
@@ -130,7 +118,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 					&& data.getParent().getParent() == null)
 				return boldFont;
 		}
-		return font;
+		return null;
 	}
 
 	public void dispose() {
