@@ -1,0 +1,23 @@
+# Debugging options for the org.eclipse.ui.navigator plugin.
+
+# Turn on debugging for the org.eclipse.navigator plugin.
+org.eclipse.ui.navigator/debug=false
+
+# Drag and drop 
+org.eclipse.ui.navigator/debug/dnd=false
+
+# Extension resolution
+org.eclipse.ui.navigator/debug/resolution=false
+
+# Shows the reading and setup of the extensions
+org.eclipse.ui.navigator/debug/setup=false
+
+# Sort
+org.eclipse.ui.navigator/debug/sort=false
+
+# Map that associates objects in viewer with NavigatorContentDescriptors
+org.eclipse.ui.navigator/debug/viewermap=false
+
+#Reports the time to create the project explorer view
+org.eclipse.ui.navigator/perf/explorer/createPartControl=1300
+
