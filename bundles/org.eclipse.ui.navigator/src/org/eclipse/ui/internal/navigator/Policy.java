@@ -34,6 +34,11 @@ public class Policy {
 	public static boolean DEBUG_RESOLUTION = DEFAULT;
 
 	/**
+	 * Option for tracing sort
+	 */
+	public static boolean DEBUG_SORT = DEFAULT;
+
+	/**
 	 * Option for tracing drag and drop
 	 */
 	public static boolean DEBUG_DND = DEFAULT;
@@ -45,9 +50,10 @@ public class Policy {
 
 	static {
 		if (getDebugOption("/debug")) { //$NON-NLS-1$
-			DEBUG_EXTENSION_SETUP = getDebugOption("/debug/setup"); //$NON-NLS-1$
-			DEBUG_RESOLUTION = getDebugOption("/debug/resolution"); //$NON-NLS-1$
 			DEBUG_DND = getDebugOption("/debug/dnd"); //$NON-NLS-1$
+			DEBUG_RESOLUTION = getDebugOption("/debug/resolution"); //$NON-NLS-1$
+			DEBUG_EXTENSION_SETUP = getDebugOption("/debug/setup"); //$NON-NLS-1$
+			DEBUG_SORT = getDebugOption("/debug/sort"); //$NON-NLS-1$
 			DEBUG_VIEWER_MAP = getDebugOption("/debug/viewermap"); //$NON-NLS-1$
 		}
 	}

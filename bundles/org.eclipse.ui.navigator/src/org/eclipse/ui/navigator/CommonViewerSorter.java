@@ -22,7 +22,7 @@ import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorContentServiceContentProvider;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
+import org.eclipse.ui.internal.navigator.Policy;
 
 /**
  * 
@@ -180,18 +180,26 @@ public final class CommonViewerSorter extends TreePathViewerSorter {
     }
 
     
-    private INavigatorContentDescriptor getSource(Object o) {
-    	// Fast path - just an optimization for the common case
-    	NavigatorContentDescriptor ncd = contentService.getSourceOfContribution(o);
-    	if (ncd != null)
-    		return ncd;
+	private INavigatorContentDescriptor getSource(Object o) {
+		// Fast path - just an optimization for the common case
+		INavigatorContentDescriptor ncd = contentService.getSourceOfContribution(o);
+		if (ncd != null) {
+			if (Policy.DEBUG_SORT)
+				System.out.println("sort: " + ncd + " object: " + o); //$NON-NLS-1$//$NON-NLS-2$
+			return ncd;
+		}
+
 		Set descriptors = contentService.findDescriptorsByTriggerPoint(o, NavigatorContentService.CONSIDER_OVERRIDES);
 		if (descriptors != null && descriptors.size() > 0) {
-			return (INavigatorContentDescriptor) descriptors.iterator().next();
+			ncd = (INavigatorContentDescriptor) descriptors.iterator().next();
+			if (Policy.DEBUG_SORT)
+				System.out.println("sort: " + ncd + " object: " + o); //$NON-NLS-1$//$NON-NLS-2$
+			return ncd;
 		}
+		if (Policy.DEBUG_SORT)
+			System.out.println("sort: NULL object: " + o); //$NON-NLS-1$
 		return null;
 	}
-	
 	
 
 }

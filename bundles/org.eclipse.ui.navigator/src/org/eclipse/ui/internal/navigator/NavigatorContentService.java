@@ -685,7 +685,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public void rememberContribution(NavigatorContentDescriptor source, Object[] elements) {
 		for (int i = 0; i < elements.length; i++) {
 			if (Policy.DEBUG_RESOLUTION)
-				System.out.println("rememberContribution: " + source + ": " + elements[i]);  //$NON-NLS-1$//$NON-NLS-2$
+				System.out.println("rememberContribution1: " + source + ": " + elements[i]);  //$NON-NLS-1$//$NON-NLS-2$
 			contributionMemory.put(elements[i], source);
 		}
 	}
@@ -698,7 +698,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void rememberContribution(NavigatorContentDescriptor source, Object element) {
 		if (Policy.DEBUG_RESOLUTION)
-			System.out.println("rememberContribution: " + source + ": " + element);  //$NON-NLS-1$//$NON-NLS-2$
+			System.out.println("rememberContribution2: " + source + ": " + element);  //$NON-NLS-1$//$NON-NLS-2$
 		contributionMemory.put(element, source);
 	}
 	
