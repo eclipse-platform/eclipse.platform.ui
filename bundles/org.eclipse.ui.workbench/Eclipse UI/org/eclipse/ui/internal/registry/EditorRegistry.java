@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
+import com.ibm.icu.text.Collator;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -31,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
-
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -69,8 +69,6 @@ import org.eclipse.ui.internal.editorsupport.ComponentSupport;
 import org.eclipse.ui.internal.misc.ExternalProgramImageDescriptor;
 import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.util.Util;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Provides access to the collection of defined editors for resource types.
@@ -1266,25 +1264,26 @@ public class EditorRegistry extends EventManager implements IEditorRegistry,
      * @param desc
      *            the descriptor value to remove
      */
-    private void removeEditorFromMapping(HashMap map, IEditorDescriptor desc) {
-        Iterator iter = map.values().iterator();
-        FileEditorMapping mapping;
-        IEditorDescriptor[] editors;
-        while (iter.hasNext()) {
-            mapping = (FileEditorMapping) iter.next();
-            editors = mapping.getUnfilteredEditors();
-            for (int i = 0; i < editors.length; i++) {
+	private void removeEditorFromMapping(HashMap map, IEditorDescriptor desc) {
+		Iterator iter = map.entrySet().iterator();
+		while (iter.hasNext()) {
+			Map.Entry entry = (Entry) iter.next();
+			FileEditorMapping mapping = (FileEditorMapping) entry.getValue();
+			IEditorDescriptor[] editors = mapping.getUnfilteredEditors();
+
+			boolean removedEditor = false;
+			for (int i = 0; i < editors.length; i++) {
 				if (editors[i] == desc) {
-                    mapping.removeEditor((EditorDescriptor) editors[i]);
-                    break;
-                }
+					mapping.removeEditor((EditorDescriptor) editors[i]);
+					removedEditor = true;
+					break;
+				}
 			}
-            if (editors.length <= 0) {
-                map.remove(mapping);
-                break;
-            }
-        }
-    }
+			if (removedEditor && mapping.getUnfilteredEditors().length == 0) {
+				iter.remove();
+			}
+		}
+	}
 
 	
     /* (non-Javadoc)
