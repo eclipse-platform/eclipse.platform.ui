@@ -3,14 +3,17 @@
 # Turn on debugging for the org.eclipse.navigator plugin.
 org.eclipse.ui.navigator/debug=false
 
-# Shows the reading and setup of the extensions
-org.eclipse.ui.navigator/debug/setup=false
+# Drag and drop 
+org.eclipse.ui.navigator/debug/dnd=false
 
 # Extension resolution
 org.eclipse.ui.navigator/debug/resolution=false
 
-# Drag and drop 
-org.eclipse.ui.navigator/debug/dnd=false
+# Shows the reading and setup of the extensions
+org.eclipse.ui.navigator/debug/setup=false
+
+# Sort
+org.eclipse.ui.navigator/debug/sort=false
 
 # Map that associates objects in viewer with NavigatorContentDescriptors
 org.eclipse.ui.navigator/debug/viewermap=false
