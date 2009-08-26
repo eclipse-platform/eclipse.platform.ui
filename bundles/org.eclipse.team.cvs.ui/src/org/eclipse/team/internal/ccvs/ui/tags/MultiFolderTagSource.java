@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,17 +10,20 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui.tags;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.team.core.TeamException;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 import org.eclipse.team.internal.ccvs.ui.CVSUIPlugin;
+import org.eclipse.team.internal.ccvs.ui.repo.RepositoryManager;
 
 /**
- * A tag source for multiple folders.
+ * A tag source that returns the tags associated with multiple remote folders.
  * 
  * TODO: Temporarily a subclass of single folder until I 
  * can figure out how to handle the multi-folder case.
@@ -76,5 +79,40 @@ public class MultiFolderTagSource extends SingleFolderTagSource {
      */
     public ICVSResource[] getCVSResources() {
         return folders;
+    }
+    
+    public ICVSFolder[] getFolders(){
+    	return folders;
+    }
+    
+    /* (non-Javadoc)
+     * @see org.eclipse.team.internal.ccvs.ui.merge.TagSource#commit(org.eclipse.team.internal.ccvs.core.CVSTag[], boolean, org.eclipse.core.runtime.IProgressMonitor)
+     */
+    public void commit(final CVSTag[] tags, final boolean replace, IProgressMonitor monitor) throws CVSException {
+		try {
+            final RepositoryManager manager = CVSUIPlugin.getPlugin().getRepositoryManager();	
+            manager.run(new IRunnableWithProgress() {
+            	public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					try {
+						ICVSFolder[] folders = getFolders();
+						for (int i = 0; i < folders.length; i++) {
+							if (replace) {
+								CVSTag[] oldTags = manager
+										.getKnownTags(folders[i]);
+								manager.removeTags(folders[i], oldTags);
+							}
+							manager.addTags(folders[i], tags);
+						}
+					} catch (CVSException e) {
+						throw new InvocationTargetException(e);
+					}
+				}
+            }, monitor);
+        } catch (InvocationTargetException e) {
+            throw CVSException.wrapException(e);
+        } catch (InterruptedException e) {
+            // Ignore
+        }
+        fireChange();
     }
 }

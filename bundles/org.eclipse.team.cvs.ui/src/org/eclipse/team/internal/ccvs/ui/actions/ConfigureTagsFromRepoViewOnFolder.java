@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -45,15 +44,10 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 			while (elements.hasNext()) {
 				Object next = elements.next();
 				if (next instanceof RemoteModule) {
-					next = ((RemoteModule)next).getCVSResource();
+					next = ((RemoteModule) next).getCVSResource();
 				}
 				if (next instanceof ICVSRemoteFolder) {
-					ICVSRemoteFolder folder = (ICVSRemoteFolder)next;
-					if (folder.isDefinedModule()) {
-						resources.add(next);
-					} else if(new Path(null, ((ICVSRemoteFolder)next).getRepositoryRelativePath()).segmentCount()==1) {
-						resources.add(next);
-					}
+					resources.add(next);
 				}
 			}
 		}
@@ -89,8 +83,6 @@ public class ConfigureTagsFromRepoViewOnFolder extends CVSAction {
 	 * @see TeamAction#isEnabled()
 	 */
 	public boolean isEnabled() {
-		ICVSRemoteFolder[] roots = getSelectedRemoteFolders();
-		if (roots.length != 1) return false;
 		return true;
 	}
 	/**
