@@ -614,6 +614,33 @@ public class StatusDialogManagerTest extends TestCase {
 			fail();
 		}
 	}
+	
+	public void testBug276371(){
+		StatusAdapter bomb = new StatusAdapter(new Status(IStatus.ERROR,
+				"org.eclipse.ui.tests", "bomb"){
+			int i = 0;
+
+			public String getMessage() {
+				if (i == 0) {
+					throw new RuntimeException("the bomb!");
+				}
+				i++;
+				return super.getMessage();
+				
+			}
+		});
+		try{
+			wsdm.addStatusAdapter(bomb, false);
+		} catch (Throwable t) {
+			fail("no exception should be thrown");
+		}
+		assertTrue("Dialog should not display on failure",
+				StatusDialogUtil.getStatusShell() == null);
+		wsdm.addStatusAdapter(createStatusAdapter("normal one"), false);
+		assertTrue("Dialog could not be initialized after failure",
+				StatusDialogUtil.getStatusShell() != null);
+	}
+	
 	// checking if the statuses are correctly ignored.
 	public void testOKStatus1() {
 		try {

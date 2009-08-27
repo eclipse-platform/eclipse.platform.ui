@@ -642,11 +642,7 @@ public class WorkbenchStatusDialogManager {
 		 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
 		 */
 		public void widgetDisposed(org.eclipse.swt.events.DisposeEvent e) {
-			dialog = null;
-			statusListViewer = null;
-			statusAdapter = null;
-			errors.clear();
-			modals.clear();
+			cleanUp();
 		}
 	}
 
@@ -1225,6 +1221,40 @@ public class WorkbenchStatusDialogManager {
 	 */
 	public void addStatusAdapter(final StatusAdapter statusAdapter,
 			final boolean modal) {
+		try {
+			doAddStatusAdapter(statusAdapter, modal);
+		} catch (Exception e) {
+			// an exception occurred, so reset modality switch
+			modalitySwitch = false;
+			// if dialog is open, dispose it (and all child controls)
+			if (!isDialogClosed()) {
+				dialog.getShell().dispose();
+			}
+			// reset the state
+			cleanUp();
+			// log original problem
+			// TODO: check if is it possible to discover duplicates
+			WorkbenchPlugin.log(statusAdapter.getStatus());
+			// log the problem with status handling
+			WorkbenchPlugin.log(e);
+		}
+	}
+
+	private boolean isDialogClosed() {
+		return dialog == null || dialog.getShell() == null
+				|| dialog.getShell().isDisposed();
+	}
+
+	private void cleanUp() {
+		dialog = null;
+		statusListViewer = null;
+		statusAdapter = null;
+		errors.clear();
+		modals.clear();
+	}
+
+	private void doAddStatusAdapter(final StatusAdapter statusAdapter,
+			final boolean modal) {
 
 		if (ErrorDialog.AUTOMATED_MODE == true) {
 			return;
@@ -1246,7 +1276,7 @@ public class WorkbenchStatusDialogManager {
 
 		// Add the error in the UI thread to ensure thread safety in the
 		// dialog
-		if (dialog == null || dialog.getShell().isDisposed()) {
+		if (isDialogClosed()) {
 
 			errors.add(statusAdapter);
 			modals.put(statusAdapter, new Boolean(modal));
