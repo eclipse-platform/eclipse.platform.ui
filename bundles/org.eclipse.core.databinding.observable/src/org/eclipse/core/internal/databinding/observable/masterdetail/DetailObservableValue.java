@@ -83,6 +83,8 @@ public class DetailObservableValue extends AbstractObservableValue implements
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
+			if (isDisposed())
+				return;
 			ObservableTracker.runAndIgnore(new Runnable() {
 				public void run() {
 					Object oldValue = doGetValue();
