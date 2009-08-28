@@ -1,4 +1,4 @@
-Control {
+CTabItem, Label, Tree, Text {
 	font-family: "Arial";
 }
 	
@@ -6,27 +6,16 @@ Shell {
 	font-size: 12;
 }
 
-ToolBar, Button {
+CTabItem, ToolBar, Button, CBanner, CoolBar {
 	font-size: 9;
 	background-color: white;
 }
 
-CBanner {
-	background-color: white;
-}
-
-CoolBar {
-	background-color: white;
-}
-
-CTabFolder {
-    font-weight: normal;
-    font-size: 9;
-	color: #595959;
+CTabFolder, CTabItem {
     background-color: #F0F1F7;
 }
 
-CTabFolder:selected {
+CTabItem:selected {
     background-color: #FDFDFD;
 }
 

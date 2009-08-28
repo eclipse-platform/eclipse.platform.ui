@@ -20,7 +20,7 @@ import org.eclipse.ui.application.WorkbenchWindowAdvisor;
  */
 public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	
-	private final static String STYLE_SHEET_PATH = "styles/stylesheet.css";
+	private final static String STYLE_SHEET_PATH = "css/default.css";
 	public static ApplicationWorkbenchAdvisor INSTANCE;
 
 	public CSSEngine engine;
@@ -45,7 +45,12 @@ public class ApplicationWorkbenchAdvisor extends WorkbenchAdvisor {
 	
 	private CSSEngine initializeStyling() {
 		// Instantiate SWT CSS Engine
-		CSSEngine engine = new CSSSWTEngineImpl(Display.getDefault(), true);
+		Display display = Display.getDefault();
+		CSSEngine engine = new CSSSWTEngineImpl(display, true);
+		
+		// CRITICAL: this happens for free post 0.9 but this setData needed so CSSPresentation can find the engine
+		display.setData("org.eclipse.e4.ui.css.core.engine", engine);
+		
 		engine.setErrorHandler(new CSSErrorHandler() {
 			public void error(Exception e) {
 				e.printStackTrace();
