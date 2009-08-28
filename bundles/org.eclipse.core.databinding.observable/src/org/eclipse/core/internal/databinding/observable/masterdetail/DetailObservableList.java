@@ -93,6 +93,8 @@ public class DetailObservableList extends ObservableList implements IObserving {
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
+			if (isDisposed())
+				return;
 			ObservableTracker.setIgnore(true);
 			try {
 				List oldList = new ArrayList(wrappedList);

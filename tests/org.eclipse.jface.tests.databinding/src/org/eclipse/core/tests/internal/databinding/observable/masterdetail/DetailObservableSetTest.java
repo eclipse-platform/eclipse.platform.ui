@@ -9,6 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 221351, 213145
  *     Ovidio Mallo - bug 241318
+ *     Tom Schindl - bug 287601
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
@@ -28,6 +29,8 @@ import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservab
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableSet;
 import org.eclipse.core.runtime.AssertionFailedException;
@@ -131,6 +134,25 @@ public class DetailObservableSetTest extends AbstractDefaultRealmTestCase {
 
 		assertEquals(1, tracker.count);
 		assertTrue(detailObservable.isDisposed());
+	}
+
+	public void testDisposeWhileFiringEvents() {
+		IObservableValue master = new WritableValue();
+		WritableSetFactory factory = new WritableSetFactory();
+		master.setValue("");
+
+		final IObservableSet[] detailObservable = new IObservableSet[1];
+
+		master.addValueChangeListener(new IValueChangeListener() {
+			public void handleValueChange(ValueChangeEvent event) {
+				detailObservable[0].dispose();
+			}
+		});
+
+		detailObservable[0] = MasterDetailObservables.detailSet(master,
+				factory, null);
+
+		master.setValue("New Value");
 	}
 
 	private static class WritableSetFactory implements IObservableFactory {

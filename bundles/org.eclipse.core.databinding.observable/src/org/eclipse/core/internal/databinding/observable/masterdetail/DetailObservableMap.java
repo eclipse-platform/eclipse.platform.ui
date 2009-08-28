@@ -49,6 +49,8 @@ public class DetailObservableMap extends ObservableMap implements IObserving {
 
 	private IValueChangeListener masterChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
+			if (isDisposed())
+				return;
 			ObservableTracker.setIgnore(true);
 			try {
 				Map oldMap = new HashMap(wrappedMap);

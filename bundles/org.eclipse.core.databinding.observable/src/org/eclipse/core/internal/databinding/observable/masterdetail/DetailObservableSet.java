@@ -88,6 +88,8 @@ public class DetailObservableSet extends ObservableSet implements IObserving {
 
 	IValueChangeListener outerChangeListener = new IValueChangeListener() {
 		public void handleValueChange(ValueChangeEvent event) {
+			if (isDisposed())
+				return;
 			ObservableTracker.setIgnore(true);
 			try {
 				Set oldSet = new HashSet(wrappedSet);

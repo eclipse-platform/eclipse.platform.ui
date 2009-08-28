@@ -9,6 +9,7 @@
  *     Brad Reynolds - initial API and implementation
  *     Matthew Hall - bugs 221351, 213145
  *     Ovidio Mallo - bug 241318
+ *     Tom Schindl - bug 287601
  ******************************************************************************/
 
 package org.eclipse.core.tests.internal.databinding.observable.masterdetail;
@@ -19,6 +20,8 @@ import org.eclipse.core.databinding.observable.map.WritableMap;
 import org.eclipse.core.databinding.observable.masterdetail.IObservableFactory;
 import org.eclipse.core.databinding.observable.masterdetail.MasterDetailObservables;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.IValueChangeListener;
+import org.eclipse.core.databinding.observable.value.ValueChangeEvent;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.masterdetail.DetailObservableMap;
 import org.eclipse.core.runtime.AssertionFailedException;
@@ -122,6 +125,25 @@ public class DetailObservableMapTest extends AbstractDefaultRealmTestCase {
 
 		assertEquals(1, tracker.count);
 		assertTrue(detailObservable.isDisposed());
+	}
+
+	public void testDisposeWhileFiringEvents() {
+		IObservableValue master = new WritableValue();
+		WritableMapFactory factory = new WritableMapFactory();
+		master.setValue("");
+
+		final IObservableMap[] detailObservable = new IObservableMap[1];
+
+		master.addValueChangeListener(new IValueChangeListener() {
+			public void handleValueChange(ValueChangeEvent event) {
+				detailObservable[0].dispose();
+			}
+		});
+
+		detailObservable[0] = MasterDetailObservables.detailMap(master,
+				factory, null, null);
+
+		master.setValue("New Value");
 	}
 
 	private static class WritableMapFactory implements IObservableFactory {
