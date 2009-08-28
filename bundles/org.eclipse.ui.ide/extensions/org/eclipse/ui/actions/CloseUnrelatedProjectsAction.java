@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -21,11 +22,17 @@ import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.MessageDialogWithToggle;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDEActionFactory;
+import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.DisjointSet;
 
@@ -110,6 +117,53 @@ public class CloseUnrelatedProjectsAction extends CloseResourceAction {
 	public CloseUnrelatedProjectsAction(IShellProvider provider){
 		super(provider, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_text);
 		initAction();
+	}
+	
+	/*
+	 * (non-Javadoc)overrides method on CloseResourceAction.
+	 */
+	public void run() {
+		if(promptForConfirmation())
+				super.run();
+	}
+   
+   /**
+	 * Returns whether to close unrelated projects.
+	 * Consults the preference and prompts the user if necessary.
+	 * 
+	 * @return <code>true</code> if unrelated projects should be closed, and
+	 *         <code>false</code> otherwise.
+	 */
+	private boolean promptForConfirmation() {
+		IPreferenceStore store = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
+		if (store.getBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS))
+			return true;
+
+		// get first project name
+		List selection = super.getSelectedResources();
+		int selectionSize = selection.size();
+		if (selectionSize == 0)
+			return true;
+
+		String message = null;
+		if (selectionSize == 1) { // if one project is selected then print its name
+			Object firstSelected = selection.get(0);
+			String projectName = null;
+			if (firstSelected instanceof IProject)
+				projectName = ((IProject) firstSelected).getName();
+			message = NLS.bind(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_confirmMsg1, projectName);
+		} else // if more then one project is selected then print there number
+			message = NLS.bind(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_confirmMsgN,
+					new Integer(selectionSize));
+
+		MessageDialogWithToggle dialog = MessageDialogWithToggle.openOkCancelConfirm(
+						getShell(), IDEWorkbenchMessages.CloseUnrelatedProjectsAction_toolTip,
+						message, IDEWorkbenchMessages.CloseUnrelatedProjectsAction_AlwaysClose,
+						false, null, null);
+		if (dialog.getReturnCode() != IDialogConstants.OK_ID)
+			return false;
+		store.setValue(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, dialog.getToggleState());
+		return true;
 	}
 
 	/**

@@ -10,6 +10,7 @@
  * Benjamin Muskalla - bug 29633
  * Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
  *		- Bug 224997 [Workbench] Impossible to copy project
+ * Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -259,6 +260,10 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String CloseUnrelatedProjectsAction_text;
 	public static String CloseUnrelatedProjectsAction_toolTip;
+	public static String CloseUnrelatedProjectsAction_confirmMsg1;
+	public static String CloseUnrelatedProjectsAction_confirmMsgN;
+	public static String CloseUnrelatedProjectsAction_AlwaysClose;
+	public static String CloseUnrelatedProjectsAction_AlwaysCloseWithoutPrompt;
 
 	public static String BuildAction_text;
 	public static String BuildAction_toolTip;
@@ -439,6 +444,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkspacePreference_otherLineDelim;
 	public static String IDEWorkspacePreference_relatedLink;
 	public static String IDEWorkspacePreference_openReferencedProjects;
+	public static String IDEWorkspacePreference_closeUnrelatedProjectsToolTip;
 
 	// --- Linked Resources ---
 	public static String LinkedResourcesPreference_explanation;
