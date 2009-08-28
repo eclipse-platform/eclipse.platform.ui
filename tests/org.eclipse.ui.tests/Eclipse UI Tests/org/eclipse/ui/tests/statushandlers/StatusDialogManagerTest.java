@@ -702,6 +702,74 @@ public class StatusDialogManagerTest extends TestCase {
 		Shell shell = StatusDialogUtil.getStatusShell();
 		assertEquals("Dialog is not centered correctly",getInitialLocation(shell), shell.getLocation());
 	}
+	
+	//error link present
+	public void testBug278965_1(){
+		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
+		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
+
+			protected void configureStatusDialog(
+					WorkbenchStatusDialogManager statusDialog) {
+				wsdm[0] = statusDialog;
+				super.configureStatusDialog(statusDialog);
+			}
+
+		};
+		weh.handle(createStatusAdapter(MESSAGE_1), StatusManager.SHOW | StatusManager.LOG);
+		assertEquals(1, wsdm[0].getStatusAdapters().size());
+		assertNotNull("Link to error log should be present", StatusDialogUtil
+				.getErrorLogLink());
+		assertFalse("Link to error log should not be disposed",
+				StatusDialogUtil.getErrorLogLink().isDisposed());
+		assertTrue("Link to error log should be enabled",
+				StatusDialogUtil.getErrorLogLink().isEnabled());
+		assertTrue("Link to error log should be visible",
+				StatusDialogUtil.getErrorLogLink().isVisible());
+	}
+	
+	//error link hidden
+	public void testBug278965_2(){
+		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
+		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
+
+			protected void configureStatusDialog(
+					WorkbenchStatusDialogManager statusDialog) {
+				wsdm[0] = statusDialog;
+				super.configureStatusDialog(statusDialog);
+			}
+
+		};
+		weh.handle(createStatusAdapter(MESSAGE_1), StatusManager.SHOW);
+		assertEquals(1, wsdm[0].getStatusAdapters().size());
+		boolean status = StatusDialogUtil.getErrorLogLink() == null
+				|| StatusDialogUtil.getErrorLogLink().isDisposed()
+				|| !StatusDialogUtil.getErrorLogLink().isVisible();
+		assertTrue("Error log link should be null, disposed or invisible", status);
+	}
+	
+	//two statuses, present
+	public void testBug278965_3(){
+		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
+		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
+
+			protected void configureStatusDialog(
+					WorkbenchStatusDialogManager statusDialog) {
+				wsdm[0] = statusDialog;
+				super.configureStatusDialog(statusDialog);
+			}
+
+		};
+		weh.handle(createStatusAdapter(MESSAGE_1), StatusManager.SHOW);
+		weh.handle(createStatusAdapter(MESSAGE_2), StatusManager.SHOW | StatusManager.LOG);
+		assertNotNull("Link to error log should be present", StatusDialogUtil
+				.getErrorLogLink());
+		assertFalse("Link to error log should not be disposed",
+				StatusDialogUtil.getErrorLogLink().isDisposed());
+		assertTrue("Link to error log should be enabled",
+				StatusDialogUtil.getErrorLogLink().isEnabled());
+		assertTrue("Link to error log should be visible",
+				StatusDialogUtil.getErrorLogLink().isVisible());
+	}
 
 	/**
 	 * Delivers custom support area.

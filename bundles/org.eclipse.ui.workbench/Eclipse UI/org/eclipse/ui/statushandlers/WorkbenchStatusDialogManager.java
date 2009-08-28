@@ -22,6 +22,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
@@ -138,6 +139,8 @@ import org.eclipse.ui.views.IViewDescriptor;
 public class WorkbenchStatusDialogManager {
 	
 	private static final String LOG_VIEW_ID = "org.eclipse.pde.runtime.LogView"; //$NON-NLS-1$
+	static final QualifiedName HINT = new QualifiedName(
+			IStatusAdapterConstants.PROPERTY_PREFIX, "hint"); //$NON-NLS-1$
 	
 	/**
 	 * The default status label provider.
@@ -2347,6 +2350,20 @@ public class WorkbenchStatusDialogManager {
 	private IViewDescriptor shouldDisplayLinkToErrorLog(){
 		/* no support for error log */
 		if(!supportForErrorLog) {
+			return null;
+		}
+		/* check handling hint and display link if it is expected */
+		boolean shouldDisplay = false;
+		Iterator it = getStatusAdapters().iterator();
+		while (it.hasNext()) {
+			StatusAdapter adapter = (StatusAdapter) it.next();
+			Integer hint = (Integer) adapter.getProperty(HINT); 
+			if (hint != null && ((hint.intValue() & StatusManager.LOG) != 0)) {
+				shouldDisplay |= true;
+				break;
+			}
+		}
+		if (!shouldDisplay) {
 			return null;
 		}
 		/* view description */

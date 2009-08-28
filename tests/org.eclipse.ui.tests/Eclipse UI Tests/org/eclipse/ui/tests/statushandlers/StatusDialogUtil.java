@@ -117,6 +117,26 @@ public class StatusDialogUtil {
 		return null;
 	}
 	
+	public static Link getErrorLogLink() {
+		Composite c = getButtonBar();
+		if (c == null || c.isDisposed()) {
+			return null;
+		}
+		Composite linkArea = (Composite) c.getChildren()[0];
+		for (int i = 0; i < linkArea.getChildren().length; i++) {
+			Widget w = linkArea.getChildren()[i];
+			if (w instanceof Link) {
+				if (((Link) w)
+						.getText()
+						.equals(
+								WorkbenchMessages.ErrorLogUtil_ShowErrorLogHyperlink)) {
+					return (Link) w;
+				}
+			}
+		}
+		return null;
+	}
+	
 	public static Button getActionButton(){
 		Composite c = getButtonBar();
 		if(c == null || c.isDisposed()){
