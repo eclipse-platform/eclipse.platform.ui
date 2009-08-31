@@ -105,10 +105,10 @@ public class CompoundResourceFilter {
 		return writer.toString();
 	}
 	
-	protected abstract class FilterType implements IFileInfoFilter {
+	protected abstract class FileInfoFilter implements IFileInfoFilter {
 		protected IFileInfoFilter[] filterTypes;
 		protected IResourceFilter[] filters;
-		public FilterType(IProject project, IResourceFilter[] filters) {
+		public FileInfoFilter(IProject project, IResourceFilter[] filters) {
 			this.filters = filters;
 			filterTypes = new IFileInfoFilter[filters.length];
 			for (int i = 0; i < filters.length; i++)

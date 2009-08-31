@@ -13,12 +13,19 @@ package org.eclipse.ui.internal.ide.misc;
 import org.eclipse.core.filesystem.IFileInfoFilter;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.resources.IFilterTypeFactory;
+import org.eclipse.core.resources.IFileInfoFilterFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.internal.ide.StringMatcher;
 
-public class StringMatcherFilter implements IFilterTypeFactory {
+/**
+ * A file info filter that uses a simple string matcher to match on file name.
+ * @since 3.6
+ */
+public class StringMatcherFilter implements IFileInfoFilterFactory {
 
+	/**
+	 * Creates a new factory for this filter type.
+	 */
 	public StringMatcherFilter() {
 	}
 

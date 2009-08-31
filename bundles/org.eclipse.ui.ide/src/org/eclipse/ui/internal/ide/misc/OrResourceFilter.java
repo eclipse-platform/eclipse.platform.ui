@@ -16,17 +16,17 @@ import org.eclipse.core.filesystem.IFileInfoFilter;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IResourceFilter;
-import org.eclipse.core.resources.IFilterTypeFactory;
+import org.eclipse.core.resources.IFileInfoFilterFactory;
 import org.eclipse.core.resources.IProject;
 
 /** 
  * A Resource Filter Type Factory for supporting the OR logical preposition
  * @since 3.6
  */
-public class OrResourceFilter extends CompoundResourceFilter implements IFilterTypeFactory {
+public class OrResourceFilter extends CompoundResourceFilter implements IFileInfoFilterFactory {
 
-	class OrFilterType extends FilterType {
-		public OrFilterType(IProject project, IResourceFilter[] filters) {
+	class OrFileInfoFilter extends FileInfoFilter {
+		public OrFileInfoFilter(IProject project, IResourceFilter[] filters) {
 			super (project, filters);
 		}
 		public boolean matches(IFileInfo fileInfo) {
@@ -41,6 +41,6 @@ public class OrResourceFilter extends CompoundResourceFilter implements IFilterT
 		}
 	}
 	public IFileInfoFilter instantiate(IProject project, String arguments) {
-		return new OrFilterType(project, unserialize(project, arguments));
+		return new OrFileInfoFilter(project, unserialize(project, arguments));
 	}
 }

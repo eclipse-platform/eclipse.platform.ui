@@ -15,7 +15,7 @@ import org.eclipse.core.filesystem.IFileInfoFilter;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IResourceFilter;
-import org.eclipse.core.resources.IFilterTypeFactory;
+import org.eclipse.core.resources.IFileInfoFilterFactory;
 import org.eclipse.core.resources.IProject;
 
 /**
@@ -24,10 +24,10 @@ import org.eclipse.core.resources.IProject;
  * @since 3.6
  */
 public class NotResourceFilter extends CompoundResourceFilter implements
-		IFilterTypeFactory {
+		IFileInfoFilterFactory {
 
-	class NotFilterType extends FilterType {
-		public NotFilterType(IProject project, IResourceFilter[] filters) {
+	class NotFileInfoFilter extends FileInfoFilter {
+		public NotFileInfoFilter(IProject project, IResourceFilter[] filters) {
 			super(project, filters);
 		}
 
@@ -41,6 +41,6 @@ public class NotResourceFilter extends CompoundResourceFilter implements
 	}
 
 	public IFileInfoFilter instantiate(IProject project, String arguments) {
-		return new NotFilterType(project, unserialize(project, arguments));
+		return new NotFileInfoFilter(project, unserialize(project, arguments));
 	}
 }

@@ -15,17 +15,17 @@ import org.eclipse.core.filesystem.IFileInfoFilter;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IResourceFilter;
-import org.eclipse.core.resources.IFilterTypeFactory;
+import org.eclipse.core.resources.IFileInfoFilterFactory;
 import org.eclipse.core.resources.IProject;
 
 /** 
  * A Resource Filter Type Factory for supporting the AND logical preposition
  * @since 3.6
  */
-public class AndResourceFilter extends CompoundResourceFilter implements IFilterTypeFactory {
+public class AndResourceFilter extends CompoundResourceFilter implements IFileInfoFilterFactory {
 
-	class AndFilterType extends FilterType {
-		public AndFilterType(IProject project, IResourceFilter[] filters) {
+	class AndFileInfoFilter extends FileInfoFilter {
+		public AndFileInfoFilter(IProject project, IResourceFilter[] filters) {
 			super (project, filters);
 		}
 		public boolean matches(IFileInfo fileInfo) {
@@ -37,6 +37,6 @@ public class AndResourceFilter extends CompoundResourceFilter implements IFilter
 		}
 	}
 	public IFileInfoFilter instantiate(IProject project, String arguments) {
-		return new AndFilterType(project, unserialize(project, arguments));
+		return new AndFileInfoFilter(project, unserialize(project, arguments));
 	}
 }
