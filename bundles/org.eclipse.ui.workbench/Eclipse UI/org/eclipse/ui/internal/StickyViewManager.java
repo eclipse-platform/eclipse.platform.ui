@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
@@ -108,19 +109,40 @@ public class StickyViewManager implements IStickyViewManager {
 		}
 		IViewRegistry viewReg = WorkbenchPlugin.getDefault().getViewRegistry();
 		IStickyViewDescriptor[] stickyDescs = viewReg.getStickyViews();
+		IViewReference[] oldPerspectiveViewReferences = oldPersp
+				.getViewReferences();
+		IViewReference[] newPerspectiveViewReferences = newPersp
+				.getViewReferences();
 		for (int i = 0; i < stickyDescs.length; i++) {
 			final String viewId = stickyDescs[i].getId();
 			try {
-				// show a sticky view if it was in the last perspective and
-				// hasn't already been activated in this one
-				if (oldPersp.findView(viewId) != null) {
-					page.showView(viewId, null, IWorkbenchPage.VIEW_CREATE);
+				for (int j = 0; j < oldPerspectiveViewReferences.length; j++) {
+					String oldViewId = oldPerspectiveViewReferences[j].getId();
+					// check to see if a sticky view was shown in the previous
+					// perspective
+					if (viewId.equals(oldViewId)) {
+						String oldViewSecondaryId = oldPerspectiveViewReferences[j]
+								.getSecondaryId();
+						// materialize the same one in the new perspective
+						page.showView(viewId, oldViewSecondaryId,
+								IWorkbenchPage.VIEW_CREATE);
+					}
 				}
-				// remove a view if it's sticky and its not visible in the old
-				// perspective
-				else if (newPersp.findView(viewId) != null
-						&& oldPersp.findView(viewId) == null) {
-					page.hideView(newPersp.findView(viewId));
+
+				for (int j = 0; j < newPerspectiveViewReferences.length; j++) {
+					String newViewId = newPerspectiveViewReferences[j].getId();
+					// check if a sticky view is being shown in the new
+					// perspective
+					if (viewId.equals(newViewId)) {
+						String newViewSecondaryId = newPerspectiveViewReferences[j]
+								.getSecondaryId();
+						// if the original perspective didn't have it, that
+						// means this sticky view has been hidden, hide it in
+						// the new perspective also
+						if (oldPersp.findView(newViewId, newViewSecondaryId) == null) {
+							page.hideView(newPerspectiveViewReferences[j]);
+						}
+					}
 				}
 			} catch (PartInitException e) {
 				WorkbenchPlugin

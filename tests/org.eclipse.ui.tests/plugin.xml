@@ -198,6 +198,16 @@
             id="org.eclipse.ui.tests.api.MockViewPartMult">
       </view>
       <view
+            allowMultiple="true"
+            name="Mock View Mult"
+            icon="icons/view.gif"
+            class="org.eclipse.ui.tests.api.MockViewPartMult"
+            id="org.eclipse.ui.tests.api.MockViewPartMultSticky">
+      </view>
+      <stickyView
+            id="org.eclipse.ui.tests.api.MockViewPartMultSticky">
+      </stickyView>
+      <view
             name="Saveable Mock View"
             icon="icons\view.gif"
             class="org.eclipse.ui.tests.api.SaveableMockViewPart"

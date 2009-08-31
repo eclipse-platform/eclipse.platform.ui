@@ -59,5 +59,6 @@ public class InternalTestSuite extends TestSuite {
 		addTest(new TestSuite(MarkerTesterTest.class));
 		addTest(new TestSuite(TextHandlerTest.class));
         addTest(new TestSuite(PerspectiveSwitcherTest.class));
+        addTest(new TestSuite(StickyViewManagerTest.class));
     }
 }
