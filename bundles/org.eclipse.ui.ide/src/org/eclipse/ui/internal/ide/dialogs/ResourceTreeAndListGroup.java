@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
@@ -977,7 +978,9 @@ public class ResourceTreeAndListGroup extends EventManager implements
         setTreeChecked(treeElement, state);
 
         Object parent = treeContentProvider.getParent(treeElement);
-        if (parent == null) {
+        
+        // workspace root is not shown in the tree, so ignore it
+        if (parent == null || parent instanceof IWorkspaceRoot) {
 			return;
 		}
 
