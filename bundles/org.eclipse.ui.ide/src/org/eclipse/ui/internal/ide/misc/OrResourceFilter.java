@@ -12,9 +12,10 @@
 package org.eclipse.ui.internal.ide.misc;
 
 
+import org.eclipse.core.filesystem.IFileInfoFilter;
+
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IResourceFilter;
-import org.eclipse.core.resources.IFilterType;
 import org.eclipse.core.resources.IFilterTypeFactory;
 import org.eclipse.core.resources.IProject;
 
@@ -39,7 +40,7 @@ public class OrResourceFilter extends CompoundResourceFilter implements IFilterT
 			return true;
 		}
 	}
-	public IFilterType instantiate(IProject project, String arguments) {
+	public IFileInfoFilter instantiate(IProject project, String arguments) {
 		return new OrFilterType(project, unserialize(project, arguments));
 	}
 }

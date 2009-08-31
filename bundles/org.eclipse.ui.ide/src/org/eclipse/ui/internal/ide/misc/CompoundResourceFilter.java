@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.ide.misc;
 
+import org.eclipse.core.filesystem.IFileInfoFilter;
+
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -18,7 +20,6 @@ import java.util.LinkedList;
 
 import org.eclipse.core.resources.FilterTypeManager;
 import org.eclipse.core.resources.IResourceFilter;
-import org.eclipse.core.resources.IFilterType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.IMemento;
@@ -34,7 +35,7 @@ public class CompoundResourceFilter {
 
 	private static final String T_FILTERS = "filters"; //$NON-NLS-1$
 
-	protected IFilterType instantiate(IProject project, IResourceFilter filter) {
+	protected IFileInfoFilter instantiate(IProject project, IResourceFilter filter) {
 		FilterTypeManager.Descriptor desc = FilterTypeManager.getDefault().findDescriptor(filter.getId());
 		if (desc != null)
 			return desc.getFactory().instantiate(project, filter.getArguments());
@@ -104,12 +105,12 @@ public class CompoundResourceFilter {
 		return writer.toString();
 	}
 	
-	protected abstract class FilterType implements IFilterType {
-		protected IFilterType[] filterTypes;
+	protected abstract class FilterType implements IFileInfoFilter {
+		protected IFileInfoFilter[] filterTypes;
 		protected IResourceFilter[] filters;
 		public FilterType(IProject project, IResourceFilter[] filters) {
 			this.filters = filters;
-			filterTypes = new IFilterType[filters.length];
+			filterTypes = new IFileInfoFilter[filters.length];
 			for (int i = 0; i < filters.length; i++)
 				filterTypes[i] = instantiate(project, filters[i]);
 		}

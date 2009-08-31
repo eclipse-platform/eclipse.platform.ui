@@ -10,8 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
+import org.eclipse.core.filesystem.IFileInfoFilter;
+
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.resources.IFilterType;
 import org.eclipse.core.resources.IFilterTypeFactory;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.internal.ide.StringMatcher;
@@ -21,7 +22,7 @@ public class StringMatcherFilter implements IFilterTypeFactory {
 	public StringMatcherFilter() {
 	}
 
-	class FilterType implements IFilterType {
+	class FilterType implements IFileInfoFilter {
 
 		StringMatcher matcher;
 		/**
@@ -39,7 +40,7 @@ public class StringMatcherFilter implements IFilterTypeFactory {
 		
 	}
 	
-	public IFilterType instantiate(IProject project, String arguments) {
+	public IFileInfoFilter instantiate(IProject project, String arguments) {
 		return new FilterType(arguments);
 	}
 
