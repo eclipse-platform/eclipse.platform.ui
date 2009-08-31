@@ -21,7 +21,7 @@ import java.util.LinkedList;
 
 import org.eclipse.core.resources.FilterTypeManager;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -89,7 +89,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.misc.CompoundFilter;
+import org.eclipse.ui.internal.ide.misc.CompoundResourceFilter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -107,7 +107,7 @@ public class ResourceFilterGroup {
 
 	private TreeViewer filterView;
 	private Filters filters;
-	private IFilter[] initialFilters = new IFilter[0];
+	private IResourceFilter[] initialFilters = new IResourceFilter[0];
 	private LabelProvider labelProvider;
 	private Image checkIcon = null;
 	
@@ -153,7 +153,7 @@ public class ResourceFilterGroup {
 	class Filters extends FilterCopy {
 		public Filters(IContainer resource) {
 			try {
-				IFilter[] tmp = resource.getFilters();
+				IResourceFilter[] tmp = resource.getFilters();
 				children = new LinkedList();
 				for (int i = 0; i < tmp.length; i++)
 					addChild(new FilterCopy(tmp[i]));
@@ -164,7 +164,7 @@ public class ResourceFilterGroup {
 			}
 		}
 
-		public Filters(IFilter filters[]) {
+		public Filters(IResourceFilter filters[]) {
 			children = new LinkedList();
 			if (filters != null) {
 				for (int i = 0; i < filters.length; i++)
@@ -173,7 +173,7 @@ public class ResourceFilterGroup {
 		}
 
 		boolean changed = false;
-		public LinkedList/*<IFilter>*/ trash = new LinkedList/*<IFilter>*/();
+		public LinkedList/*<IResourceFilter>*/ trash = new LinkedList/*<IResourceFilter>*/();
 
 		public void add(FilterCopy newFilter) {
 			super.addChild(newFilter);
@@ -187,7 +187,7 @@ public class ResourceFilterGroup {
 			changed = true;
 		}
 
-		public void moveUp(IFilter filter) {
+		public void moveUp(IResourceFilter filter) {
 			FilterCopy[] content = getChildren();
 			for (int i = 1; i < content.length; i++) {
 				if (content[i] == filter) {
@@ -200,7 +200,7 @@ public class ResourceFilterGroup {
 			changed = true;
 		}
 
-		public void moveDown(IFilter filter) {
+		public void moveDown(IResourceFilter filter) {
 			FilterCopy[] content = getChildren();
 			for (int i = 0; i < (content.length - 1); i++) {
 				if (content[i] == filter) {
@@ -326,15 +326,15 @@ public class ResourceFilterGroup {
 			}
 			if (column.equals(FilterTypeUtil.MODE)) {
 				if (!isPartialFilter(filter)) {
-					if ((filter.getType() & IFilter.INCLUDE_ONLY) != 0)
+					if ((filter.getType() & IResourceFilter.INCLUDE_ONLY) != 0)
 						return NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_includeOnly, null);
 					return NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_excludeAll, null);
 				}
 				return getFilterTypeName(filter);
 			}
 			if (column.equals(FilterTypeUtil.TARGET)) {
-				boolean includeFiles = (filter.getType() & IFilter.FILES) != 0;
-				boolean includeFolders = (filter.getType() & IFilter.FOLDERS) != 0;
+				boolean includeFiles = (filter.getType() & IResourceFilter.FILES) != 0;
+				boolean includeFolders = (filter.getType() & IResourceFilter.FOLDERS) != 0;
 				if (includeFiles && includeFolders)
 					return NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_filesAndFolders, null);
 				if (includeFiles)
@@ -836,9 +836,9 @@ public class ResourceFilterGroup {
 	/**
 	 * @return the filters that were configured on this resource
 	 */
-	public IFilter[] getFilters() {
+	public IResourceFilter[] getFilters() {
 		FilterCopy[] newFilters = filters.getChildren();
-		IFilter[] result = new IFilter[newFilters.length];
+		IResourceFilter[] result = new IResourceFilter[newFilters.length];
 		for (int i = 0; i < newFilters.length; i++) {
 			result[i] = newFilters[i];
 		}
@@ -848,7 +848,7 @@ public class ResourceFilterGroup {
 	/**
 	 * @return the filters that were configured on this resource
 	 */
-	public void setFilters(IFilter[] filters) {
+	public void setFilters(IResourceFilter[] filters) {
 		initialFilters = filters;
 	}
 
@@ -864,7 +864,7 @@ public class ResourceFilterGroup {
 	
 			try {
 				if (resource != nonExistantResource) {
-					IFilter [] oldFilters = resource.getFilters();
+					IResourceFilter [] oldFilters = resource.getFilters();
 					for (int i = 0; i < oldFilters.length; i++) {
 						resource.removeFilter(oldFilters[i].getId(), oldFilters[i].getType(), oldFilters[i].getArguments(), IResource.BACKGROUND_REFRESH, new NullProgressMonitor());
 					}
@@ -987,26 +987,26 @@ class FilterTypeUtil {
 		}
 		if (property.equals(FilterTypeUtil.MODE)) {
 			int selection = ((Integer)value).intValue();
-			int type = filter.getType() & ~(IFilter.INCLUDE_ONLY | IFilter.EXCLUDE_ALL);
+			int type = filter.getType() & ~(IResourceFilter.INCLUDE_ONLY | IResourceFilter.EXCLUDE_ALL);
 			if (selection == 0)
-				filter.setType(type | IFilter.INCLUDE_ONLY);
+				filter.setType(type | IResourceFilter.INCLUDE_ONLY);
 			else
-				filter.setType(type | IFilter.EXCLUDE_ALL);
+				filter.setType(type | IResourceFilter.EXCLUDE_ALL);
 		}
 		if (property.equals(FilterTypeUtil.TARGET)) {
 			int selection = ((Integer)value).intValue();
-			int type = filter.getType() & ~(IFilter.FILES | IFilter.FOLDERS);
+			int type = filter.getType() & ~(IResourceFilter.FILES | IResourceFilter.FOLDERS);
 			if (selection == 0)
-					filter.setType(type | IFilter.FILES);
+					filter.setType(type | IResourceFilter.FILES);
 			if (selection == 1)
-				filter.setType(type | IFilter.FOLDERS);
+				filter.setType(type | IResourceFilter.FOLDERS);
 			if (selection == 2)
-				filter.setType(type | IFilter.FILES | IFilter.FOLDERS);
+				filter.setType(type | IResourceFilter.FILES | IResourceFilter.FOLDERS);
 		}
 		if (property.equals(FilterTypeUtil.INHERITABLE)) {
-			int type = filter.getType() & ~IFilter.INHERITABLE;
+			int type = filter.getType() & ~IResourceFilter.INHERITABLE;
 			if (((Boolean) value).booleanValue())
-				filter.setType(type | IFilter.INHERITABLE);
+				filter.setType(type | IResourceFilter.INHERITABLE);
 			else
 				filter.setType(type);
 		}
@@ -1032,20 +1032,20 @@ class FilterTypeUtil {
 		return -1;
 	}
 
-	static Object getValue(IFilter filter, String property) {
+	static Object getValue(IResourceFilter filter, String property) {
 		if (property.equals(ID)) {
 			String id = filter.getId();
 			int index = getDescriptorIndex(id);
 			return new Integer(index);
 		}
 		if (property.equals(MODE)) {
-			if ((filter.getType() & IFilter.INCLUDE_ONLY) != 0)
+			if ((filter.getType() & IResourceFilter.INCLUDE_ONLY) != 0)
 				return new Integer(0);
 			return new Integer(1);
 		}
 		if (property.equals(TARGET)) {
-			boolean includeFiles = (filter.getType() & IFilter.FILES) != 0;
-			boolean includeFolders = (filter.getType() & IFilter.FOLDERS) != 0;
+			boolean includeFiles = (filter.getType() & IResourceFilter.FILES) != 0;
+			boolean includeFolders = (filter.getType() & IResourceFilter.FOLDERS) != 0;
 			if (includeFiles && includeFolders)
 				return new Integer(2);
 			if (includeFiles)
@@ -1054,7 +1054,7 @@ class FilterTypeUtil {
 				return new Integer(1);
 		}
 		if (property.equals(INHERITABLE)) 
-			return new Boolean((filter.getType() & IFilter.INHERITABLE) != 0);
+			return new Boolean((filter.getType() & IResourceFilter.INHERITABLE) != 0);
 		
 		if (property.equals(ARGUMENTS))
 			return filter.getArguments();
@@ -1145,7 +1145,7 @@ class FilterTypeUtil {
 	}
 }
 
-class FilterCopy implements IFilter {
+class FilterCopy implements IResourceFilter {
 	static String EMPTY = ""; //$NON-NLS-1$
 	String arguments = EMPTY;
 	String id = null;
@@ -1154,11 +1154,11 @@ class FilterCopy implements IFilter {
 	int type = 0;
 	FilterCopy parent = null;
 	LinkedList children = null;
-	IFilter original = null;
+	IResourceFilter original = null;
 	int serialNumber = ++lastSerialNumber;
 	static private int lastSerialNumber = 0;
 
-	public FilterCopy(IFilter filter) {
+	public FilterCopy(IResourceFilter filter) {
 		internalCopy(filter);
 		original = filter;
 	}
@@ -1190,12 +1190,12 @@ class FilterCopy implements IFilter {
 		return parent;
 	}
 
-	public void copy(IFilter filter) {
+	public void copy(IResourceFilter filter) {
 		internalCopy(filter);
 		argumentsChanged();
 	}
 	
-	private void internalCopy(IFilter filter)  {
+	private void internalCopy(IResourceFilter filter)  {
 		children = null;
 		arguments = filter.getArguments();
 		id = filter.getId();
@@ -1218,7 +1218,7 @@ class FilterCopy implements IFilter {
 	public FilterCopy() {
 		path = null;
 		project = null;
-		type = IFilter.FILES | IFilter.INCLUDE_ONLY;
+		type = IResourceFilter.FILES | IResourceFilter.INCLUDE_ONLY;
 		id = FilterTypeUtil.getDefaultFilterID();
 	}
 
@@ -1308,7 +1308,7 @@ class FilterCopy implements IFilter {
 		if (children == null) {
 			if (getChildrenLimit() > 0) {
 				children = new LinkedList();
-				IFilter[] filters = CompoundFilter.unserialize(getProject(), getArguments());
+				IResourceFilter[] filters = CompoundResourceFilter.unserialize(getProject(), getArguments());
 				for (int i = 0; i < filters.length; i++) {
 					FilterCopy child = new FilterCopy(filters[i]);
 					child.parent = this;
@@ -1341,7 +1341,7 @@ class FilterCopy implements IFilter {
 	protected void argumentsChanged() {
 		initializeChildren();
 		if (children != null)
-			arguments = CompoundFilter.serialize((FilterCopy[]) children.toArray(new FilterCopy[0]));
+			arguments = CompoundResourceFilter.serialize((FilterCopy[]) children.toArray(new FilterCopy[0]));
 		FilterCopy up = parent;
 		while (up != null) {
 			up.serializeChildren();

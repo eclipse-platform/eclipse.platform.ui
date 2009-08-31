@@ -17,7 +17,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -95,7 +95,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 	private Composite linkedResourceComposite;
 
-	private IFilter[] filterList = null;
+	private IResourceFilter[] filterList = null;
 	
 	/**
 	 * Height of the "advanced" linked resource group. Set when the advanced

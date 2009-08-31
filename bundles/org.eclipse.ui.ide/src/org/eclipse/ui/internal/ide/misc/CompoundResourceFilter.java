@@ -17,7 +17,7 @@ import java.io.StringWriter;
 import java.util.LinkedList;
 
 import org.eclipse.core.resources.FilterTypeManager;
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.resources.IFilterType;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.IPath;
@@ -30,11 +30,11 @@ import org.eclipse.ui.XMLMemento;
  * @since 3.4
  *
  */
-public class CompoundFilter {
+public class CompoundResourceFilter {
 
 	private static final String T_FILTERS = "filters"; //$NON-NLS-1$
 
-	protected IFilterType instantiate(IProject project, IFilter filter) {
+	protected IFilterType instantiate(IProject project, IResourceFilter filter) {
 		FilterTypeManager.Descriptor desc = FilterTypeManager.getDefault().findDescriptor(filter.getId());
 		if (desc != null)
 			return desc.getFactory().instantiate(project, filter.getArguments());
@@ -51,13 +51,13 @@ public class CompoundFilter {
 	 * @param memento
 	 * @return the filter array
 	 */
-	public static IFilter[] unserialize(final IProject project, String memento) {
+	public static IResourceFilter[] unserialize(final IProject project, String memento) {
 		LinkedList filters = new LinkedList();
 		XMLMemento mementoObject = null;
 		try {
 			mementoObject = XMLMemento.createReadRoot(new StringReader(memento));
 		} catch (WorkbenchException e) {
-			return new IFilter[0];
+			return new IResourceFilter[0];
 		}
 		IMemento childMem = mementoObject.getChild(T_FILTERS);
 		if (childMem != null) {
@@ -67,7 +67,7 @@ public class CompoundFilter {
 				final int type = elementMem[i].getInteger(T_TYPE).intValue();
 				IMemento argumentMem = elementMem[i].getChild(T_ARGUMENTS);
 				final String arguments = argumentMem != null? argumentMem.getTextData(): ""; //$NON-NLS-1$
-				filters.add(new IFilter() {
+				filters.add(new IResourceFilter() {
 					public String getArguments() { return arguments; }
 					public String getId() { return id; }
 					public IPath getPath() { return null; }
@@ -76,14 +76,14 @@ public class CompoundFilter {
 				});
 			}
 		}
-		return (IFilter[]) filters.toArray(new IFilter[0]);
+		return (IResourceFilter[]) filters.toArray(new IResourceFilter[0]);
 	}
 
 	/** Serialize filters into in a memento 
 	 * @param filters
 	 * @return the memento
 	 */
-	public static String serialize(IFilter[] filters) {
+	public static String serialize(IResourceFilter[] filters) {
 		XMLMemento memento = XMLMemento.createWriteRoot("memento"); //$NON-NLS-1$
 	
 		IMemento expandedMem = memento.createChild(T_FILTERS);
@@ -106,8 +106,8 @@ public class CompoundFilter {
 	
 	protected abstract class FilterType implements IFilterType {
 		protected IFilterType[] filterTypes;
-		protected IFilter[] filters;
-		public FilterType(IProject project, IFilter[] filters) {
+		protected IResourceFilter[] filters;
+		public FilterType(IProject project, IResourceFilter[] filters) {
 			this.filters = filters;
 			filterTypes = new IFilterType[filters.length];
 			for (int i = 0; i < filters.length; i++)

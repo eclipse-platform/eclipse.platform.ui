@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,35 +7,39 @@
  *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
+ *     IBM Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.misc;
 
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.resources.IFilterType;
 import org.eclipse.core.resources.IFilterTypeFactory;
 import org.eclipse.core.resources.IProject;
 
-/** A Resource Filter Type Factory for supporting the NOT logical preposition
- * @since 3.4
- *
+/** 
+ * A Resource Filter Type Factory for supporting the OR logical preposition
+ * @since 3.6
  */
-public class NotFilter extends CompoundFilter implements IFilterTypeFactory {
+public class OrResourceFilter extends CompoundResourceFilter implements IFilterTypeFactory {
 
-	class NotFilterType extends FilterType {
-		public NotFilterType(IProject project, IFilter[] filters) {
+	class OrFilterType extends FilterType {
+		public OrFilterType(IProject project, IResourceFilter[] filters) {
 			super (project, filters);
 		}
 		public boolean matches(IFileInfo fileInfo) {
-			for (int i = 0; i < filterTypes.length; i++) {
-				if (filterTypes[i].matches(fileInfo))
-					return false;
+			if (filterTypes.length > 0) {
+				for (int i = 0; i < filterTypes.length; i++) {
+					if (filterTypes[i].matches(fileInfo))
+						return true;
+				}
+				return false;
 			}
 			return true;
 		}
 	}
 	public IFilterType instantiate(IProject project, String arguments) {
-		return new NotFilterType(project, unserialize(project, arguments));
+		return new OrFilterType(project, unserialize(project, arguments));
 	}
 }

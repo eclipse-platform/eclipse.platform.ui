@@ -14,7 +14,7 @@ package org.eclipse.ui.ide.undo;
 
 import java.net.URI;
 
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 
@@ -57,7 +57,7 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 	 * @since 3.6
 	 */
 	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
-			IFilter[] filterList, String label) {
+			IResourceFilter[] filterList, String label) {
 		super(null, label);
 		ContainerDescription containerDescription = ContainerDescription
 				.fromContainer(folderHandle);

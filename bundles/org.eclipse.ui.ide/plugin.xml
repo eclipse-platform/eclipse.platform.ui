@@ -2252,7 +2252,7 @@
       </filterProvider>
       <filterProvider
             argumentType="filters"
-            class="org.eclipse.ui.internal.ide.misc.OrFilter"
+            class="org.eclipse.ui.internal.ide.misc.OrResourceFilter"
             description="%orFilterProvider.description"
             id="org.eclipse.ui.ide.orFilter"
             name="%orFilterProvider.name"
@@ -2260,7 +2260,7 @@
       </filterProvider>
       <filterProvider
             argumentType="filters"
-            class="org.eclipse.ui.internal.ide.misc.AndFilter"
+            class="org.eclipse.ui.internal.ide.misc.AndResourceFilter"
             description="%andFilterProvider.description"
             id="org.eclipse.ui.ide.andFilter"
             name="%andFilterProvider.name"
@@ -2268,7 +2268,7 @@
       </filterProvider>
       <filterProvider
             argumentType="filter"
-            class="org.eclipse.ui.internal.ide.misc.NotFilter"
+            class="org.eclipse.ui.internal.ide.misc.NotResourceFilter"
             description="%notFilterProvider.description"
             id="org.eclipse.ui.ide.notFilter"
             name="%notFilterProvider.name"

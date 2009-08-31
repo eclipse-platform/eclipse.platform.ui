@@ -11,7 +11,7 @@
 package org.eclipse.ui.internal.ide;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IDecoration;
@@ -43,7 +43,7 @@ public class ResourceFilterDecorator implements ILightweightLabelDecorator {
 			return;
 		}
 		IContainer container = (IContainer) element;
-		IFilter[] filters = null;
+		IResourceFilter[] filters = null;
 		try {
 			filters = container.getFilters();
 			if ((filters.length > 0) && (descriptorImage != null))

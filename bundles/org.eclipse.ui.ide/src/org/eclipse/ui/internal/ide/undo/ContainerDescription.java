@@ -15,7 +15,7 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -43,7 +43,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	URI location;
 
-	IFilter[] filters;
+	IResourceFilter[] filters;
 	
 	String defaultCharSet;
 
@@ -315,7 +315,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 * @param location
 	 *            the location URI, or <code>null</code> if there is no link
 	 */
-	public void setFilters(IFilter[] filters) {
+	public void setFilters(IResourceFilter[] filters) {
 		this.filters = filters;
 	}
 

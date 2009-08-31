@@ -12,7 +12,7 @@
 package org.eclipse.ui.ide.dialogs;
 
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFilter;
+import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
@@ -105,14 +105,14 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 	/**
 	 * @return the filters that were configured on this resource
 	 */
-	public IFilter[] getFilters() {
+	public IResourceFilter[] getFilters() {
 		return resourceFilterGroup.getFilters();
 	}
 
 	/**
 	 * @param filters the initial filters of the dialog
 	 */
-	public void setFilters(IFilter[] filters) {
+	public void setFilters(IResourceFilter[] filters) {
 		resourceFilterGroup.setFilters(filters);
 	}
 
