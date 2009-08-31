@@ -11,6 +11,7 @@
  *     - Fix for bug 196553 - [Dialogs] Support IColorProvider/IFontProvider in FilteredItemsSelectionDialog
  *  Peter Friese <peter.friese@gentleware.com>
  *     - Fix for bug 208602 - [Dialogs] Open Type dialog needs accessible labels
+ *  Simon Muschel <smuschel@gmx.de> - bug 258493
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -27,7 +28,6 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
@@ -49,6 +49,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -3229,6 +3230,9 @@ public abstract class FilteredItemsSelectionDialog extends
 		 *            the new image
 		 */
 		private void doRefresh(String text, Image image) {
+			if ( text != null ) {
+				text = Util.replaceAll(text, "&", "&&"); //$NON-NLS-1$//$NON-NLS-2$
+			}
 			label.setText(text);
 			label.setImage(image);
 		}
