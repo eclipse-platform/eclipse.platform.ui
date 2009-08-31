@@ -153,10 +153,11 @@ public class WorkbenchSourceProvider extends AbstractSourceProvider implements
 			if (part.getSite() != null
 					&& part.getSite().getSelectionProvider() != null) {
 				sources = ISources.ACTIVE_CURRENT_SELECTION;
-				selection = part.getSite().getSelectionProvider()
+				ISelection currentSelection = part.getSite()
+						.getSelectionProvider()
 						.getSelection();
 				currentState.put(ISources.ACTIVE_CURRENT_SELECTION_NAME,
-						selection);
+						currentSelection);
 			}
 		}
 		return sources;
