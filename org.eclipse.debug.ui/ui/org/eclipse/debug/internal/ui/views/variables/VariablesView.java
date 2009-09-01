@@ -73,6 +73,7 @@ import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.ISelection;
@@ -111,7 +112,6 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.texteditor.IUpdate;
-import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
 /**
  * This view shows variables and their values for a particular stack frame
@@ -481,7 +481,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
      */
     protected void initDragAndDrop(TreeModelViewer viewer) {
         // Drag only
-        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getInstance()}, new SelectionDragAdapter(viewer));
+        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
     }    
 
 	/* (non-Javadoc)
@@ -1142,7 +1142,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void updateComplete(IViewerUpdate update) {
 		IStatus status = update.getStatus();
 		if (!update.isCanceled()) {
-			if (status != null && status.getCode() != IStatus.OK) {
+			if (status != null && !status.isOK()) {
 				showMessage(status.getMessage());
 			} else {
 				showViewer();
