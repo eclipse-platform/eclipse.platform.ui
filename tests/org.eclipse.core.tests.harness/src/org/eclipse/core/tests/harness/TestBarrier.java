@@ -128,6 +128,13 @@ public class TestBarrier {
 	}
 
 	/**
+	 * Creates a new test barrier suitable for a single thread, with the given initial status.
+	 */
+	public TestBarrier(int initalStatus) {
+		this(new int[] {initalStatus}, 0);
+	}
+
+	/**
 	 * Creates a new test barrier on the provided status array, suitable for 
 	 * acting as a barrier for multiple threads.
 	 */
