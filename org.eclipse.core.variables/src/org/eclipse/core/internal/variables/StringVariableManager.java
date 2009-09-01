@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,7 +22,6 @@ import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -39,11 +38,12 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -51,17 +51,17 @@ import org.eclipse.core.variables.IValueVariable;
 import org.eclipse.core.variables.IValueVariableListener;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.osgi.util.NLS;
+import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * Singleton string variable manager. 
  */
-public class StringVariableManager implements IStringVariableManager, IPropertyChangeListener {
+public class StringVariableManager implements IStringVariableManager, IPreferenceChangeListener {
 	
 	/**
 	 * Dynamic variables - maps variable names to variables.
@@ -205,7 +205,7 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			loadContributedValueVariables();
 			loadPersistedValueVariables();
 			loadDynamicVariables();
-			VariablesPlugin.getDefault().getPluginPreferences().addPropertyChangeListener(this);
+			new InstanceScope().getNode(VariablesPlugin.PI_CORE_VARIABLES).addPreferenceChangeListener(this);
 			fInternalChange = false;
 		}
 	}
@@ -270,30 +270,18 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	 * b) the variable is read-only.
 	 */
 	private void loadPersistedValueVariables() {
-		String variablesString= VariablesPlugin.getDefault().getPluginPreferences().getString(PREF_VALUE_VARIABLES);
+		String variablesString = Platform.getPreferencesService().getString(VariablesPlugin.PI_CORE_VARIABLES, PREF_VALUE_VARIABLES, "", null); //$NON-NLS-1$
 		if (variablesString.length() == 0) {
 			return;
 		}
 		Element root= null;
-		Throwable ex = null;
 		try {
 			ByteArrayInputStream stream = new ByteArrayInputStream(variablesString.getBytes("UTF-8")); //$NON-NLS-1$
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			parser.setErrorHandler(new DefaultHandler());
 			root = parser.parse(stream).getDocumentElement();
-		} catch (UnsupportedEncodingException e) {
-			ex = e;
-		} catch (ParserConfigurationException e) {
-			ex = e;
-		} catch (FactoryConfigurationError e) {
-			ex = e;
-		} catch (SAXException e) {
-			ex = e;
-		} catch (IOException e) {
-			ex = e;
-		}
-		if (ex != null) {
-			VariablesPlugin.logMessage("An exception occurred while loading persisted value variables.", ex); //$NON-NLS-1$
+		} catch (Exception e) {
+			VariablesPlugin.logMessage("An exception occurred while loading persisted value variables.", e); //$NON-NLS-1$
 			return;
 		}
 		if (!root.getNodeName().equals(VALUE_VARIABLES_TAG)) {
@@ -521,7 +509,6 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 	 * preference store. 
 	 */
 	private synchronized void storeValueVariables() {
-		Preferences prefs= VariablesPlugin.getDefault().getPluginPreferences();
 		String variableString= ""; //$NON-NLS-1$
 		if (!fValueVariables.isEmpty()) {
 			try {
@@ -538,8 +525,14 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
 			}
 		}
 		fInternalChange = true;
-		prefs.setValue(PREF_VALUE_VARIABLES, variableString);
-		VariablesPlugin.getDefault().savePluginPreferences();
+		try {
+			IEclipsePreferences prefs = new InstanceScope().getNode(VariablesPlugin.PI_CORE_VARIABLES);
+			prefs.put(PREF_VALUE_VARIABLES, variableString);
+			prefs.flush();
+		}
+		catch(BackingStoreException bse) {
+			VariablesPlugin.log(bse);
+		}
 		fInternalChange = false;
 	}
 
@@ -598,10 +591,10 @@ public class StringVariableManager implements IStringVariableManager, IPropertyC
     }
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
+	 * @see org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener#preferenceChange(org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent)
 	 */
-	public void propertyChange(PropertyChangeEvent event) {
-		if (PREF_VALUE_VARIABLES.equals(event.getProperty())) {
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (PREF_VALUE_VARIABLES.equals(event.getKey())) {
 			synchronized (this) {
 				if (!fInternalChange) {
 					fValueVariables.clear();
