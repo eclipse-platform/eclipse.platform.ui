@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -37,6 +37,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.LaunchConfigurationTabExtension;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchConfigurationTabGroup;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
@@ -106,6 +107,7 @@ public class LaunchConfigurationPresentationManager {
 			String typeId = null;
 			Map map = null;
 			List modes = null;
+			LaunchConfigurationTabGroupExtension oldext = null;
 			for (int i = 0; i < groups.length; i++) {
 				group = new LaunchConfigurationTabGroupExtension(groups[i]);
 				typeId = group.getTypeIdentifier();
@@ -116,10 +118,18 @@ public class LaunchConfigurationPresentationManager {
 				}
 				modes = group.getModes();
 				if(modes.isEmpty()) {
-					map.put("*", group); //$NON-NLS-1$
+					oldext = (LaunchConfigurationTabGroupExtension) map.put("*", group); //$NON-NLS-1$
+					if(oldext != null) {
+						DebugUIPlugin.logErrorMessage(NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0, 
+								new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), group.getIdentifier()}));
+					}
 				}
 				for(Iterator iter = modes.iterator(); iter.hasNext();) {
-					map.put(iter.next(), group);
+					oldext = (LaunchConfigurationTabGroupExtension) map.put(iter.next(), group);
+					if(oldext != null) {
+						DebugUIPlugin.logErrorMessage(NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0, 
+								new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), group.getIdentifier()}));
+					}
 				}
 			}
 		}
