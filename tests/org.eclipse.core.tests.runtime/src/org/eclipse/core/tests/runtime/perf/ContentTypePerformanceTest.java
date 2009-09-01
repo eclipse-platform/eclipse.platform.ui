@@ -329,7 +329,6 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 				Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 			}
 		};
-		runner.setRegressionReason("Loading the content types traverses all extensions to the content type extension point, and that operation became more expensive in 3.1. Thankfully, it happens only once per session.");
 		runner.run(this, 1, /* must run only once - the suite controls how many sessions are run */1);
 		// sanity check to make sure we are running with good data		
 		assertEquals("missing content types", TOTAL_NUMBER_OF_ELEMENTS, countTestContentTypes(Platform.getContentTypeManager().getAllContentTypes()));
