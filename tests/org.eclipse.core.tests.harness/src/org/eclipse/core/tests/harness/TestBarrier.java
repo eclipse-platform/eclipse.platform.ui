@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2006 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,37 +22,37 @@ import junit.framework.Assert;
 public class TestBarrier {
 
 	/**
-	 * Convience status constant that can be interpreted differently by each
+	 * Convenience status constant that can be interpreted differently by each
 	 * test.
 	 */
 	public static final int STATUS_BLOCKED = 6;
 	/**
-	 * Convience status constant that can be interpreted differently by each
+	 * Convenience status constant that can be interpreted differently by each
 	 * test.
 	 */
 	public static final int STATUS_DONE = 5;
 	/**
-	 * Convience status constant that can be interpreted differently by each
+	 * Convenience status constant that can be interpreted differently by each
 	 * test.
 	 */
 	public static final int STATUS_RUNNING = 3;
 	/**
-	 * Convience status constant that can be interpreted differently by each
+	 * Convenience status constant that can be interpreted differently by each
 	 * test.
 	 */
 	public static final int STATUS_START = 1;
 	/**
-	 * Convience status constant that can be interpreted differently by each
+	 * Convenience status constant that can be interpreted differently by each
 	 * test.
 	 */
 	public static final int STATUS_WAIT_FOR_DONE = 4;
 	/**
-	 * Convience status constant that can be interpreted differently by each
+	 * Convenience status constant that can be interpreted differently by each
 	 * test.
 	 */
 	public static final int STATUS_WAIT_FOR_RUN = 2;
 	/**
-	 * Convience status constant that can be interpreted differently by each
+	 * Convenience status constant that can be interpreted differently by each
 	 * test.
 	 */
 	public static final int STATUS_WAIT_FOR_START = 0;
