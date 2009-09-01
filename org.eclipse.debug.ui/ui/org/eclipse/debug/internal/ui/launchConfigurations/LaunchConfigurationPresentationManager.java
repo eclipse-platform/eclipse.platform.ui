@@ -107,7 +107,6 @@ public class LaunchConfigurationPresentationManager {
 			String typeId = null;
 			Map map = null;
 			List modes = null;
-			LaunchConfigurationTabGroupExtension oldext = null;
 			for (int i = 0; i < groups.length; i++) {
 				group = new LaunchConfigurationTabGroupExtension(groups[i]);
 				typeId = group.getTypeIdentifier();
@@ -118,22 +117,31 @@ public class LaunchConfigurationPresentationManager {
 				}
 				modes = group.getModes();
 				if(modes.isEmpty()) {
-					oldext = (LaunchConfigurationTabGroupExtension) map.put("*", group); //$NON-NLS-1$
-					if(oldext != null) {
-						DebugUIPlugin.logErrorMessage(NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0, 
-								new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), group.getIdentifier()}));
-					}
+					reportReplacement((LaunchConfigurationTabGroupExtension) map.put("*", group), group); //$NON-NLS-1$
 				}
 				for(Iterator iter = modes.iterator(); iter.hasNext();) {
-					oldext = (LaunchConfigurationTabGroupExtension) map.put(iter.next(), group);
-					if(oldext != null) {
-						DebugUIPlugin.logErrorMessage(NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0, 
-								new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), group.getIdentifier()}));
-					}
+					reportReplacement((LaunchConfigurationTabGroupExtension) map.put(iter.next(), group), group);
 				}
 			}
 		}
 	}	
+	
+	/**
+	 * Reports if a tab group extension has been replaced by another contribution
+	 * @param oldext the old tab group extension from the cache
+	 * @param newext the new one being cached
+	 * 
+	 * @since 3.6
+	 */
+	void reportReplacement(LaunchConfigurationTabGroupExtension oldext, LaunchConfigurationTabGroupExtension newext) {
+		if(oldext != null) {
+			Status status = new Status(IStatus.ERROR, 
+					DebugUIPlugin.getUniqueIdentifier(), 
+					NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0, 
+							new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), newext.getIdentifier()}));
+			DebugUIPlugin.log(status);
+		}
+	}
 	
 	/**
 	 * This method is used to collect all of the contributed tabs defined by the <code>launchConfigurationTabs</code>
