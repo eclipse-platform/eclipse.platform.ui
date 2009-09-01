@@ -117,10 +117,13 @@ public class LaunchConfigurationPresentationManager {
 				}
 				modes = group.getModes();
 				if(modes.isEmpty()) {
-					reportReplacement((LaunchConfigurationTabGroupExtension) map.put("*", group), group); //$NON-NLS-1$
+					String mode = "*"; //$NON-NLS-1$
+					reportReplacement((LaunchConfigurationTabGroupExtension) map.put(mode, group), group, mode);
 				}
+				Set ms = null;
 				for(Iterator iter = modes.iterator(); iter.hasNext();) {
-					reportReplacement((LaunchConfigurationTabGroupExtension) map.put(iter.next(), group), group);
+					ms = (Set) iter.next();
+					reportReplacement((LaunchConfigurationTabGroupExtension) map.put(ms, group), group, ms);
 				}
 			}
 		}
@@ -130,15 +133,16 @@ public class LaunchConfigurationPresentationManager {
 	 * Reports if a tab group extension has been replaced by another contribution
 	 * @param oldext the old tab group extension from the cache
 	 * @param newext the new one being cached
+	 * @param mode the mode(s) the group applies to
 	 * 
 	 * @since 3.6
 	 */
-	void reportReplacement(LaunchConfigurationTabGroupExtension oldext, LaunchConfigurationTabGroupExtension newext) {
+	void reportReplacement(LaunchConfigurationTabGroupExtension oldext, LaunchConfigurationTabGroupExtension newext, Object mode) {
 		if(oldext != null) {
 			Status status = new Status(IStatus.ERROR, 
 					DebugUIPlugin.getUniqueIdentifier(), 
 					NLS.bind(LaunchConfigurationsMessages.LaunchConfigurationPresentationManager_0, 
-							new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), newext.getIdentifier()}));
+							new String[]{oldext.getIdentifier(), oldext.getTypeIdentifier(), mode.toString(), newext.getIdentifier()}));
 			DebugUIPlugin.log(status);
 		}
 	}
