@@ -50,6 +50,7 @@
    <extension-point id="browserSupport" name="%ExtPoint.browserSupport" schema="schema/browserSupport.exsd"/>
    <extension-point id="internalTweaklets" name="%ExtPoint.tweaklets" schema="schema/internalTweaklets.exsd"/>
    <extension-point id="installationPages" name="%ExtPoint.installationPages" schema="schema/installationPages.exsd"/>
+   <extension-point id="propertiesView" name="%ExtPoint.propertiesView" schema="schema/propertiesView.exsd"/>
    
    <extension
          point="org.eclipse.ui.contexts">
@@ -1280,6 +1281,12 @@
       		location="RIGHT"
             id="org.eclipse.ui.internal.introview">
       </stickyView>
+   </extension>
+   <extension
+         point="org.eclipse.ui.propertiesView">
+      <excludeSources
+            id="org.eclipse.help.ui.HelpView">
+      </excludeSources>
    </extension>
    <extension
          point="org.eclipse.ui.elementFactories">

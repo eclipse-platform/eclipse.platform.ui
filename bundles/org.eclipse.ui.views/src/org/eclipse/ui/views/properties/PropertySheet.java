@@ -8,9 +8,18 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Markus Alexander Kuppe (Versant Corp.) - https://bugs.eclipse.org/248103
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 272564
  *******************************************************************************/
 package org.eclipse.ui.views.properties;
 
+import java.util.HashSet;
+
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IRegistryEventListener;
+import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -75,12 +84,17 @@ import org.eclipse.ui.part.ShowInContext;
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
-public class PropertySheet extends PageBookView implements ISelectionListener, IShowInTarget, IShowInSource {
+public class PropertySheet extends PageBookView implements ISelectionListener, IShowInTarget, IShowInSource, IRegistryEventListener {
     /**
      * No longer used but preserved to avoid api change
      */
     public static final String HELP_CONTEXT_PROPERTY_SHEET_VIEW = IPropertiesHelpContextIds.PROPERTY_SHEET_VIEW;
 
+    /**
+     * Extension point used to modify behavior of the view
+     */
+    private static final String EXT_POINT = "org.eclipse.ui.propertiesView"; //$NON-NLS-1$
+    
     /**
      * The initial selection when the property sheet opens
      */
@@ -100,6 +114,11 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	 * Whether this property sheet instance is pinned or not 
 	 */
 	private IAction pinPropertySheetAction;
+
+	/**
+	 * Set of workbench parts, which should not be used as a source for PropertySheet 
+	 */
+	private HashSet ignoredViews;
 	
     /**
      * Creates a property sheet view.
@@ -107,6 +126,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
     public PropertySheet() {
         super();
         pinPropertySheetAction = new PinPropertySheetAction();
+        RegistryFactory.getRegistry().addListener(this, EXT_POINT);
     }
 
     /* (non-Javadoc)
@@ -160,8 +180,9 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         // run super.
         super.dispose();
 
-        // remove ourselves as a selection listener
+        // remove ourselves as a selection and registry listener
         getSite().getPage().removeSelectionListener(this);
+        RegistryFactory.getRegistry().removeListener(this);
         
         currentPart = null;
         currentSelection = null;
@@ -242,14 +263,10 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
      * The property sheet may show properties for any view other than this view.
      */
     protected boolean isImportant(IWorkbenchPart part) {
-		// See Bug 252887...explicitly exclude the Help view as a
-		// participant
-		boolean isHelpView = "org.eclipse.help.ui.HelpView".equals(part.getSite().getId()); //$NON-NLS-1$
-		
 		// Don't interfere with other property views
-		boolean isPropertyView = getSite().getId().equals(part.getSite().getId());
-		
-		return !isPinned() && !isPropertyView && !isHelpView;
+    	String partID = part.getSite().getId();
+		boolean isPropertyView = getSite().getId().equals(partID);
+		return !isPinned() && !isPropertyView && !isViewIgnored(partID);
     }
 
     /* (non-Javadoc)
@@ -426,4 +443,59 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		pinPropertySheetAction.setChecked(pinned);
 		updateContentDescription();
 	}
+	
+	private HashSet getIgnoredViews() {
+		if (ignoredViews == null) {
+			ignoredViews = new HashSet();
+	        IExtensionRegistry registry = RegistryFactory.getRegistry();
+	        IExtensionPoint ep = registry.getExtensionPoint(EXT_POINT);
+			if (ep != null) {
+				IExtension[] extensions = ep.getExtensions();
+				for (int i = 0; i < extensions.length; i++) {
+					IConfigurationElement[] elements = extensions[i].getConfigurationElements();
+					for (int j = 0; j < elements.length; j++) {
+						if ("excludeSources".equalsIgnoreCase(elements[j].getName())) { //$NON-NLS-1$
+							String id = elements[j].getAttribute("id"); //$NON-NLS-1$
+							if (id != null)
+								ignoredViews.add(id);
+						}
+					}
+				}
+			}
+		}
+		return ignoredViews;
+	}
+
+	private boolean isViewIgnored(String partID) {
+		return getIgnoredViews().contains(partID);
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtension[])
+	 */
+	public void added(IExtension[] extensions) {
+		ignoredViews = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtensionPoint[])
+	 */
+	public void added(IExtensionPoint[] extensionPoints) {
+		ignoredViews = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtension[])
+	 */
+	public void removed(IExtension[] extensions) {
+		ignoredViews = null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtensionPoint[])
+	 */
+	public void removed(IExtensionPoint[] extensionPoints) {
+		ignoredViews = null;
+	}
+	
 }
