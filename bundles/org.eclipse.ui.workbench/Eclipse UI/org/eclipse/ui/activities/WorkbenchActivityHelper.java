@@ -625,7 +625,8 @@ public final class WorkbenchActivityHelper {
 				list.add(array[i]);
 			}
 		}
-		return list.toArray((Object[]) Array.newInstance(array.getClass().getComponentType(), array.length));
+		return list.toArray((Object[]) Array.newInstance(array.getClass()
+				.getComponentType(), list.size()));
 	}
 	
 	/**
@@ -666,7 +667,8 @@ public final class WorkbenchActivityHelper {
 				list.add(array[i]);
 			}
 		}
-		return list.toArray((Object[]) Array.newInstance(array.getClass().getComponentType(), array.length));
+		return list.toArray((Object[]) Array.newInstance(array.getClass()
+				.getComponentType(), list.size()));
 	}
 
 	/**
