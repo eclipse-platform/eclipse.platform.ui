@@ -294,7 +294,7 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	 * Loop the workspace build until no more builders request a rebuild.
 	 */
 	private void basicBuildLoop(IProject[] ordered, IProject[] unordered, int trigger, MultiStatus status, IProgressMonitor monitor) {
-		int projectWork = ordered.length + unordered.length;
+		int projectWork = ordered.length;
 		if (projectWork > 0)
 			projectWork = TOTAL_BUILD_WORK / projectWork;
 		int maxIterations = workspace.getDescription().getMaxBuildIterations();
