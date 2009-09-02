@@ -70,7 +70,7 @@ IFontProvider, IStyledLabelProvider {
 
 	private void _track(Map map, Object element) {
 		String entry = (String) map.get(element);
-		StringBuilder builder = new StringBuilder(entry==null ? "" : entry);
+		StringBuffer builder = new StringBuffer(entry==null ? "" : entry);
 		builder.append(_id);
 		map.put(element, builder.toString());
 		if (false)
