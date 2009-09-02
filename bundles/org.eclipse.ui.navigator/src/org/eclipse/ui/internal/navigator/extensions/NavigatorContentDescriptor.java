@@ -10,22 +10,29 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.extensions;
 
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.ListIterator;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
@@ -66,6 +73,7 @@ public final class NavigatorContentDescriptor implements
 	private IPluginContribution contribution;
 
 	private Set overridingExtensions;
+	private LinkedList overridingExtensionsReverseOrder2; // FIXME: will replace 'overridingExtensions' in 3.6
 
 	private OverridePolicy overridePolicy;
 
@@ -382,7 +390,7 @@ public final class NavigatorContentDescriptor implements
 	}
 	
 	/**
-	 * A convenience method to check all elements in a selection. 
+	 * A convenience method to check all elements in a selection.
 	 * 
 	 * @param aSelection A non-null selection
 	 * @return True if and only if every element in the selection is a possible child.
@@ -395,7 +403,7 @@ public final class NavigatorContentDescriptor implements
 			Object element = iter.next();
 			if(!isPossibleChild(element)) {
 				return false;
-			}			
+			}
 		}
 		return true;
 	}
@@ -419,6 +427,27 @@ public final class NavigatorContentDescriptor implements
 			overridingExtensions = new TreeSet(ExtensionPriorityComparator.DESCENDING);
 		}
 		return overridingExtensions;
+	}
+
+	/**
+	 * @param fromStart
+	 *            <code>true</code> if list iterator starts at the beginning and
+	 *            <code>false</code> if it starts at the end of the list
+	 * @return a list iterator over the overriding extensions which are ordered
+	 *         by ExtensionPriorityComparator.DESCENDING
+	 * @since 3.5.1
+	 */
+	public ListIterator getOverriddingExtensionsListIterator(boolean fromStart) {
+		if (overridingExtensions == null)
+			return Collections.EMPTY_LIST.listIterator();
+
+		if (overridingExtensionsReverseOrder2 == null) {
+			overridingExtensionsReverseOrder2 = new LinkedList();
+			Iterator iter = overridingExtensions.iterator();
+			while (iter.hasNext())
+				overridingExtensionsReverseOrder2.addLast(iter.next());
+		}
+		return overridingExtensionsReverseOrder2.listIterator(fromStart ? 0 : overridingExtensionsReverseOrder2.size());
 	}
 
 	/*

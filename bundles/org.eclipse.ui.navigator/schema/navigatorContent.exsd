@@ -567,8 +567,11 @@ Clients may use either &lt;b&gt;filterExpression&lt;/b&gt; or the &quot;class&qu
    <element name="override">
       <annotation>
          <documentation>
-            When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked, but its suppressed extension will not. Clients that specify an &lt;b&gt;override&lt;/b&gt; element may provide a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, which provides methods to intercept requests for children, parents, and direct updates to the viewer.
+            When the &lt;b&gt;triggerPoints&lt;/b&gt; expression of the suppressed extension and the declared extension are both &lt;i&gt;enabled&lt;/i&gt; on a given element, this extension will be invoked after its supressed extension.  The suppressed extension will contribute the original content and this extension can modify that content using the pipeline mechanism by implementing &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;.  
 &lt;br&gt;&lt;br&gt;
+When you specify an &lt;b&gt;override&lt;/b&gt; element with a content provider which implements &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, you can intercept requests for children, parents, and direct updates to the viewer.
+&lt;br&gt;&lt;br&gt;
+If the content provider in the &lt;b&gt;override&lt;/b&gt; element does not implement &lt;code&gt;org.eclipse.ui.navigator.IPipelinedTreeContentProvider&lt;/code&gt;, this extension will be considered to provide label/description information for content contributed by one of the overridden extensions.
          </documentation>
       </annotation>
       <complexType>

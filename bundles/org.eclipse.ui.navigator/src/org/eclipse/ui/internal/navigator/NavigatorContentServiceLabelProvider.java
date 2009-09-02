@@ -7,14 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides 
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
 
+import java.util.Collection;
 import java.util.Iterator;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.SafeRunner;
@@ -34,13 +33,9 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
-import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonLabelProvider;
-import org.eclipse.ui.navigator.INavigatorContentDescriptor;
-import org.eclipse.ui.navigator.INavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentService;
 
 /**
@@ -104,7 +99,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	}
 
 	public Image getColumnImage(Object element, int columnIndex) {
-		Set contentExtensions = contentService.findContentExtensionsByTriggerPoint(element);
+		Collection contentExtensions = contentService.findPossibleLabelExtensions(element);
 		Image image = null; 
 		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && image == null; ) { 
 			image = findImage((NavigatorContentExtension) itr.next(), element, columnIndex);
@@ -145,16 +140,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @see org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider#getStyledText(java.lang.Object)
 	 */
 	public StyledString getStyledText(Object anElement) {
-		SortedSet extensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
-		NavigatorContentDescriptor ncd = contentService.getSourceOfContribution(anElement);
-		if (ncd != null) {
-			extensions.add(contentService.getExtension(ncd));
-		}
-		Set possibleChildDescriptors = contentService.findContentExtensionsWithPossibleChild(anElement, true);
-		for (Iterator iter = possibleChildDescriptors.iterator(); iter.hasNext();) {
-			INavigatorContentExtension ext = (INavigatorContentExtension) iter.next();
-			extensions.add(ext);
-		}
+		Collection extensions = contentService.findPossibleLabelExtensions(anElement);
 
 		StyledString text = null; 
 		for (Iterator itr = extensions.iterator(); itr.hasNext() && text == null; ) { 
@@ -171,7 +157,6 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * @returns the styled text or <code>null</code> if no extension has been found that provides a label
 	 */
 	private StyledString findStyledText(NavigatorContentExtension foundExtension, Object anElement) { 
-		INavigatorContentDescriptor foundDescriptor;
 		ICommonLabelProvider labelProvider= foundExtension.getLabelProvider();
 		if (labelProvider instanceof IStyledLabelProvider) {
 			StyledString styledText= ((IStyledLabelProvider) labelProvider).getStyledText(anElement);
@@ -184,9 +169,6 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			if (text != null) {
 				return new StyledString(text);
 			}
-		}
-		if ((foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
-			return findStyledText(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement);
 		}  
 		return null;
 	}
@@ -205,16 +187,12 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 */
 	private Image findImage(NavigatorContentExtension foundExtension, Object anElement, int aColumn) { 
 		Image image = null;
-		INavigatorContentDescriptor foundDescriptor;  
 		ICommonLabelProvider provider = foundExtension.getLabelProvider();
 		if (provider instanceof ITableLabelProvider && aColumn >= 0)
 			image = ((ITableLabelProvider)provider).getColumnImage(anElement, aColumn);
 		else
 			image = provider.getImage(anElement);
-
-		if (image == null && (foundDescriptor = foundExtension.getDescriptor()).getOverriddenDescriptor() != null) {
-			return findImage(contentService.getExtension(foundDescriptor.getOverriddenDescriptor()), anElement, aColumn);
-		}  
+  
 		return image;
 	}
 	
@@ -367,7 +345,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 */
 	public void updateLabel(ViewerLabel label, TreePath elementPath) { 
 		 
-		Set contentExtensions = contentService.findContentExtensionsByTriggerPoint(elementPath.getLastSegment());
+		Collection contentExtensions = contentService.findPossibleLabelExtensions(elementPath.getLastSegment());
 		reusableLabel.reset(label);
 		for (Iterator itr = contentExtensions.iterator(); itr.hasNext() && !(reusableLabel.isValid() && reusableLabel.hasChanged()); ) {			 
 			findUpdateLabel((NavigatorContentExtension)itr.next(), reusableLabel, elementPath);			 
@@ -389,21 +367,9 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 		} else {
 			label.setImage(labelProvider.getImage(elementPath.getLastSegment()));
 			label.setText(labelProvider.getText(elementPath.getLastSegment()));
-		}		
-		 
-		if(shouldContinue(label, foundExtension)) {
-			findUpdateLabel(contentService.getExtension(foundExtension.getDescriptor().getOverriddenDescriptor()), label, elementPath);
-		}   
+		}
 	}
  
-	private boolean shouldContinue(ReusableViewerLabel label, NavigatorContentExtension foundExtension) {
-
-		if(foundExtension.getDescriptor().getOverriddenDescriptor() != null) {			
-			return !(label.isValid() && label.hasChanged()); 
-		}
-		return false;
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
 	 */

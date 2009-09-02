@@ -33,8 +33,15 @@ public abstract class TestLabelProvider extends LabelProvider implements
 		ICommonLabelProvider, IDescriptionProvider, IColorProvider,
 		IFontProvider, IStyledLabelProvider {
 
-	private FontData boldFontData = new FontData();
+	protected static FontData boldFontData = new FontData();
 
+	public Color backgroundColor;
+	public String backgroundColorName;
+	
+	public Image image;
+
+	public Font font;
+	
 	private Font boldFont;
 
 	public static boolean _blankStatic;
@@ -44,20 +51,32 @@ public abstract class TestLabelProvider extends LabelProvider implements
 		_blankStatic = false;
 	}
 	
-	public void init(ICommonContentExtensionSite aSite) {
+	static {
 		boldFontData.setStyle(SWT.BOLD);
+	}
+	
+	public void init(ICommonContentExtensionSite aSite) {
 		boldFont = new Font(Display.getDefault(), boldFontData);
+		initSubclass();
 	}
 
-	protected String getColorName() {
-		return "";
+	protected void initSubclass() {
+		
+	}
+	
+	public Color getTestColor() {
+		return backgroundColor;
+	}
+
+	public String getColorName() {
+		return backgroundColorName;
 	}
 
 	public Image getImage(Object element) {
 		if (element instanceof TestExtensionTreeData)
 			return PlatformUI.getWorkbench().getSharedImages().getImage(
 					ISharedImages.IMG_OBJ_ELEMENT);
-		return null;
+		return image;
 	}
 
 	public String getText(Object element) {
@@ -96,21 +115,14 @@ public abstract class TestLabelProvider extends LabelProvider implements
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.jface.viewers.IColorProvider#getForeground(java.lang.Object)
-	 */
 	public Color getForeground(Object element) {
-		return null;
+		return getTestColor();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IFontProvider#getFont(java.lang.Object)
-	 */
+	public Color getBackground(Object element) {
+		return getTestColor();
+	}
+
 	public Font getFont(Object element) {
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
@@ -118,7 +130,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 					&& data.getParent().getParent() == null)
 				return boldFont;
 		}
-		return null;
+		return font;
 	}
 
 	public void dispose() {

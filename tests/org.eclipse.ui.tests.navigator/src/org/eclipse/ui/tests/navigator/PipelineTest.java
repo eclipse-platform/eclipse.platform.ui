@@ -93,6 +93,4 @@ public class PipelineTest extends NavigatorTestBase {
 		}
 		assertTrue(found);
 	}
-
-
 }

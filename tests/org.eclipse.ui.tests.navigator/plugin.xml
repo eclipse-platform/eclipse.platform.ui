@@ -122,7 +122,8 @@
       </viewerActionBinding>
 
       <viewer viewerId="org.eclipse.ui.tests.navigator.ProgrammaticTestView"/>      
-      <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView"/>      
+      <viewer viewerId="org.eclipse.ui.tests.navigator.PipelineTestView"/>  
+          
       <viewer viewerId="org.eclipse.ui.tests.navigator.OverrideTestView"/>      
       <viewerContentBinding viewerId="org.eclipse.ui.tests.navigator.OverrideTestView">
           <includes>
@@ -238,6 +239,30 @@
          </triggerPoints> 
          <possibleChildren> 
          </possibleChildren> 
+	  </navigatorContent>      
+
+
+     <navigatorContent
+           activeByDefault="false"
+           contentProvider="org.eclipse.ui.tests.navigator.jst.WebJavaContentProvider"
+           id="org.eclipse.ui.tests.navigator.jst.ContentProvider"
+           labelProvider="org.eclipse.ui.tests.navigator.jst.WebJavaLabelProvider"
+           name="JST Content provider"
+           priority="higher">
+        <override
+              policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+              suppressedExtensionId="org.eclipse.jdt.java.ui.javaContent"/>					   
+        <triggerPoints>
+			<adapt type="org.eclipse.core.resources.IProject"/>
+        </triggerPoints>
+        <possibleChildren>
+           <or>
+              <instanceof value="org.eclipse.jdt.core.IPackageFragmentRoot"/>
+              <instanceof value="org.eclipse.jdt.core.IPackageFragment"/>
+              <instanceof value="org.eclipse.core.resources.IFolder"/>
+              <instanceof value="org.eclipse.jdt.internal.ui.packageview.ClassPathContainer"/>
+           </or>
+        </possibleChildren> 
 	  </navigatorContent>      
 
       <navigatorContent 
@@ -452,7 +477,111 @@
 	    </actionProvider>
 
       </navigatorContent>
-
+      
+      <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testTrackingLabel.A" 
+            name="Test Label Overrides A"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider"
+            activeByDefault="false"
+            priority="normal">
+         <triggerPoints>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </triggerPoints>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testTrackingLabel.B" 
+            name="Test Label Overrides B"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider"
+            activeByDefault="false"
+            priority="normal">
+         <override suppressedExtensionId="org.eclipse.ui.tests.navigator.testTrackingLabel.A"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testTrackingLabel.C" 
+            name="Test Label Overrides C"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider"
+            activeByDefault="false"
+            priority="low">
+         <override suppressedExtensionId="org.eclipse.ui.tests.navigator.testTrackingLabel.A"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testTrackingLabel.D" 
+            name="Test Label Overrides D"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider"
+            activeByDefault="false"
+            priority="low">
+         <override suppressedExtensionId="org.eclipse.ui.tests.navigator.testTrackingLabel.B"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testTrackingLabel.E" 
+            name="Test Label Overrides E"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider"
+            activeByDefault="false"
+            priority="low">
+         <override suppressedExtensionId="org.eclipse.ui.tests.navigator.testTrackingLabel.D"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testTrackingLabel.F" 
+            name="Test Label Overrides F"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider"
+            activeByDefault="false"
+            priority="high">
+         <override suppressedExtensionId="org.eclipse.ui.tests.navigator.testTrackingLabel.C"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testTrackingLabel.G" 
+            name="Test Label Overrides G"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider"
+            activeByDefault="false"
+            priority="normal">
+         <override suppressedExtensionId="org.eclipse.ui.tests.navigator.testTrackingLabel.C"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.core.resources.IResource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
 	<!-- CDT -->
     <navigatorContent
           contentProvider="org.eclipse.ui.tests.navigator.cdt.CNavigatorContentProvider"
@@ -485,8 +614,6 @@
              id="org.eclipse.ui.tests.navigator.cdt.sorter">
        </commonSorter>
     </navigatorContent>
-
-
 
 
       <actionProvider
