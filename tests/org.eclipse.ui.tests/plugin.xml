@@ -105,7 +105,7 @@
 
       <view
        		name="ERROR: View that allocates all available graphics handles"
-       		icon="icons\view.gif"
+       		icon="icons/view.gif"
       		category="org.eclipse.ui.tests.errorhandling"
        		class="org.eclipse.ui.tests.api.workbenchpart.HeavyResourceView"
        		id="org.eclipse.ui.tests.api.workbenchpart.HeavyResourceView">
@@ -113,7 +113,7 @@
       
       <view
        		name="ERROR: View that throws PartInitException in init"
-       		icon="icons\view.gif"
+       		icon="icons/view.gif"
       		category="org.eclipse.ui.tests.errorhandling"
        		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitException"
        		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitException">
@@ -121,7 +121,7 @@
 
       <view
        		name="ERROR: View that throws RuntimeException in init"
-       		icon="icons\view.gif"
+       		icon="icons/view.gif"
       		category="org.eclipse.ui.tests.errorhandling"
        		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitRuntimeException"
        		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithInitRuntimeException">
@@ -129,21 +129,21 @@
       <view
        		name="ERROR: View pointing to invalid class"
        		category="org.eclipse.ui.tests.errorhandling"
-       		icon="icons\view.gif"
+       		icon="icons/view.gif"
        		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithMissingClass"
        		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithMissingClass">
       </view>
       <view
        		name="ERROR: View that throws exception in dispose"
        		category="org.eclipse.ui.tests.errorhandling"
-       		icon="icons\view.gif"
+       		icon="icons/view.gif"
        		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithDisposeException"
        		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithDisposeException">
       </view>
       <view
        		name="ERROR: View that throws exception in createPartControls"
       		category="org.eclipse.ui.tests.errorhandling"
-       		icon="icons\view.gif"
+       		icon="icons/view.gif"
        		class="org.eclipse.ui.tests.api.workbenchpart.ViewWithCreateControlsException"
        		id="org.eclipse.ui.tests.api.workbenchpart.ViewWithCreateControlsException">
       </view>
@@ -155,45 +155,45 @@
 
       <view
        		name="Title Test View"
-       		icon="icons\view.gif"
+       		icon="icons/view.gif"
        		class="org.eclipse.ui.tests.api.workbenchpart.TitleTestView"
        		id="org.eclipse.ui.tests.api.TitleTestView">
       </view>
 
       <view
             name="Mock View 1"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPart">
       </view>
       <view
             name="Mock View 2"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPart2">
       </view>
       <view
             name="Mock View 3"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPart3">
       </view>
       <view
             name="Mock View 4"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.MockViewPart4">
       </view>
       <view
             name="Context Mock View 5"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.contexts.MockViewPart5"
             id="org.eclipse.ui.tests.contexts.MockViewPart5">
       </view>
       <view
             allowMultiple="true"
             name="Mock View Mult"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPartMult"
             id="org.eclipse.ui.tests.api.MockViewPartMult">
       </view>
@@ -209,69 +209,69 @@
       </stickyView>
       <view
             name="Saveable Mock View"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.SaveableMockViewPart"
             id="org.eclipse.ui.tests.api.SaveableMockViewPart">
       </view>
       <view
             allowMultiple="true"
             class="org.eclipse.ui.tests.api.UserSaveableMockViewPart"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             id="org.eclipse.ui.tests.api.UserSaveableMockViewPart"
             name="User Saveable Mock View">
       </view>
       <view
             allowMultiple="true"
             class="org.eclipse.ui.tests.api.UserSaveableSharedViewPart"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             id="org.eclipse.ui.tests.api.UserSaveableSharedViewPart"
             name="User Shared Mock View">
       </view>
       <view
             name="Session Test View"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.SessionView"
             id="org.eclipse.ui.tests.api.SessionView">
       </view>
       <view
             name="IViewActionDelegateTest View"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.MockViewPart"
             id="org.eclipse.ui.tests.api.IViewActionDelegateTest">
       </view>
       <view
             name="Action Filter Test View 1"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.ListView:-staticMenu"
             id="org.eclipse.ui.tests.api.IActionFilterTest1">
       </view>
       <view
             name="Action Expression Test View"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.ListView"
             id="org.eclipse.ui.tests.internal.ActionExpressionTest">
       </view>
       <view
             name="Action Filter Test View 2"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.api.ListView:-dynamicMenu"
             id="org.eclipse.ui.tests.api.IActionFilterTest2">
       </view>
       <view
             name="Selection Provider Test View"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.SelectionProviderView"
             id="org.eclipse.ui.tests.SelectionProviderView">
       </view>
       <view
             name="Selection Provider Test View 2"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.SelectionProviderView"
             id="org.eclipse.ui.tests.SelectionProviderView2">
       </view>
       <view
             name="Adapted Resource Navigator"
-            icon="icons\view.gif"
+            icon="icons/view.gif"
             class="org.eclipse.ui.tests.adaptable.AdaptedResourceNavigator"
             id="org.eclipse.ui.tests.adaptable.adaptedHierarchy">
       </view>
@@ -544,7 +544,7 @@
       <editor
             name="IEditorActionBarsTest"
             extensions="mock3"
-            icon="icons\mockeditorpart2.gif"
+            icon="icons/mockeditorpart2.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             contributorClass="org.eclipse.ui.tests.api.MockEditorActionBarContributor"
             id="org.eclipse.ui.tests.internal.EditorActionBarsTest">
@@ -552,7 +552,7 @@
       <editor
             name="ExtendedTextEditor"
             extensions="exttxt"
-            icon="icons\mockeditorpart2.gif"
+            icon="icons/mockeditorpart2.gif"
             class="org.eclipse.ui.tests.internal.ExtendedTextEditor"
             contributorClass="org.eclipse.ui.texteditor.BasicTextEditorActionContributor"
             id="org.eclipse.ui.tests.ExtendedTextEditor">
@@ -560,7 +560,7 @@
       <editor
             name="Test Multi-Page Editor"
             extensions="multi"
-            icon="icons\mockeditorpart1.gif"
+            icon="icons/mockeditorpart1.gif"
             class="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor"
             id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
       </editor>
@@ -661,7 +661,7 @@
              name="org.eclipse.ui.tests.contentType1Editor-fallback"/>       
       <editor
             name="Mock Matching Editor 1"
-            icon="icons\mockeditorpart1.gif"
+            icon="icons/mockeditorpart1.gif"
             class="org.eclipse.ui.tests.api.MockEditorPart"
             id="org.eclipse.ui.tests.api.MockMatchingEditorPart1"
             matchingStrategy="org.eclipse.ui.tests.api.MockEditorMatchingStrategy"/>
@@ -745,7 +745,7 @@
       <editor
             name="Context Menu Editor"
             extensions="cme"
-            icon="icons\mockeditorpart1.gif"
+            icon="icons/mockeditorpart1.gif"
             class="org.eclipse.ui.tests.leaks.ContextEditorPart"
             id="org.eclipse.ui.tests.leak.contextEditor">
       </editor>
@@ -1882,7 +1882,7 @@
          point="org.eclipse.ui.ide.markerImageProviders">
       <imageprovider
             class="org.eclipse.ui.tests.adaptable.TestMarkerImageProvider"
-            icon="icons\dynamic.gif"
+            icon="icons/dynamic.gif"
             id="testmarker.imageProvider2"
             markertype="org.eclipse.ui.tests.testmarker2">
       </imageprovider>
