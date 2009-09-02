@@ -42,6 +42,9 @@ import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -54,6 +57,8 @@ import org.eclipse.ui.texteditor.IWorkbenchActionDefinitionIds;
  */
 public class ExpressionView extends VariablesView {
 	
+    private PasteWatchExpressionsAction fPasteAction;
+    
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
 	 */
@@ -159,8 +164,8 @@ public class ExpressionView extends VariablesView {
      */
     protected void createActions() {
     	super.createActions();
-    	PasteWatchExpressionsAction paste = new PasteWatchExpressionsAction(this);
-    	configure(paste, IWorkbenchActionDefinitionIds.PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
+    	fPasteAction = new PasteWatchExpressionsAction(this);
+    	configure(fPasteAction, IWorkbenchActionDefinitionIds.PASTE, PASTE_ACTION, ISharedImages.IMG_TOOL_PASTE);
     }
     
     /**
@@ -200,6 +205,27 @@ public class ExpressionView extends VariablesView {
     	return false;
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createTreeViewer(org.eclipse.swt.widgets.Composite)
+     */
+    protected TreeModelViewer createTreeViewer(Composite parent) {
+        TreeModelViewer viewer = super.createTreeViewer(parent);
+        viewer.getTree().addFocusListener(new FocusListener() {
+			public void focusLost(FocusEvent e) {
+				if (fPasteAction != null) {
+                    getViewSite().getActionBars().setGlobalActionHandler(PASTE_ACTION, null);
+                }
+			}
+			
+			public void focusGained(FocusEvent e) {
+				 if (fPasteAction != null) {
+	                    getViewSite().getActionBars().setGlobalActionHandler(PASTE_ACTION, fPasteAction);
+                }
+			}
+		});       
+        return viewer;
+    }
+       
     /**
      * Pastes the selection into the given target
      * 
