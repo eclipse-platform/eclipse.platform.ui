@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,9 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -267,25 +264,17 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	protected void writeNewFile(IProgressMonitor monitor) throws CoreException {
 		String xml = null;
-		Exception e= null;
 		try {
 			xml = getInfo().getAsXML();
-		} catch (IOException ioe) {
-			e= ioe;			
-		} catch (ParserConfigurationException pce) {
-			e= pce;
-		} catch (TransformerException te) {
-			e= te;		
-		}
-		if (e != null) {
+		} catch (Exception e) {
 			throw new DebugException(
-				new Status(
-					IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
-					DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy__0__occurred_generating_launch_configuration_XML__1, new String[]{e.toString()}), null 
-					)
-				);		
+					new Status(
+						IStatus.ERROR, DebugPlugin.getUniqueIdentifier(),
+						DebugException.REQUEST_FAILED, MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy__0__occurred_generating_launch_configuration_XML__1, new String[]{e.toString()}), null 
+						)
+					);			
 		}
-		SubMonitor lmonitor = SubMonitor.convert(monitor, "", 5); //$NON-NLS-1$
+		SubMonitor lmonitor = SubMonitor.convert(monitor, IInternalDebugCoreConstants.EMPTY_STRING, 5);
 		try {
 			if (isLocal()) {
 				// use java.io to update configuration file

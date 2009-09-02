@@ -76,7 +76,6 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -1551,8 +1550,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	private synchronized void initializePreferredDelegates() {
 		if(fPreferredDelegates == null) {
 			fPreferredDelegates = new HashSet();
-			Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
-			String preferred = prefs.getString(LaunchManager.PREF_PREFERRED_DELEGATES);
+			String preferred = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_PREFERRED_DELEGATES, IInternalDebugCoreConstants.EMPTY_STRING, null);
 			if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(preferred)) {
 				try {
 					Element root = DebugPlugin.parseDocument(preferred);
@@ -1603,8 +1601,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		// @since 3.5
 		// If the legacy mechanism didn't work, try the new preference name for 
 		// the given launch type.  
-        Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
-        String preferred = prefs.getString(LaunchManager.PREF_PREFERRED_DELEGATES + '/' + typeid);
+        String preferred = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_PREFERRED_DELEGATES + '/' + typeid, IInternalDebugCoreConstants.EMPTY_STRING, null);
         if (preferred != null && preferred.length() != 0) {
             StringTokenizer tokenizer = new StringTokenizer(preferred, ";"); //$NON-NLS-1$
             while(tokenizer.hasMoreTokens()) {
@@ -2014,7 +2011,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @return whether to auto-delete configurations
 	 */
 	private boolean isDeleteConfigurations() {
-		return DebugPlugin.getDefault().getPluginPreferences().getBoolean(PREF_DELETE_CONFIGS_ON_PROJECT_DELETE);
+		return Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true, null);
 	}
 	
 	/* (non-Javadoc)
@@ -2330,7 +2327,6 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @since 3.3
 	 */
 	private void persistPreferredLaunchDelegates() {
-        Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
         ILaunchConfigurationType[] types = getLaunchConfigurationTypes();
         Map preferred = null;
         ILaunchDelegate delegate = null;
@@ -2357,14 +2353,14 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
                         }
                     }
                 }
-                prefs.setValue(preferenceName, str.toString());
+                Preferences.setString(DebugPlugin.getUniqueIdentifier(), preferenceName, str.toString(), null);
             } else {
-                prefs.setToDefault(preferenceName);
+            	Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), preferenceName);
             }
         }
 
         // Reset the legacy preference string.
-        prefs.setToDefault(PREF_PREFERRED_DELEGATES);
+        Preferences.setToDefault(DebugPlugin.getUniqueIdentifier(), PREF_PREFERRED_DELEGATES);
 	}
 	
 	/**

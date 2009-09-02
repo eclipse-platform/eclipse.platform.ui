@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.debug.core.DebugPlugin;
 
@@ -25,10 +24,11 @@ public class DebugPreferenceInitializer extends AbstractPreferenceInitializer {
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
-		Preferences prefs = DebugPlugin.getDefault().getPluginPreferences();
 		// Step filter preferences
-		prefs.setDefault(StepFilterManager.PREF_USE_STEP_FILTERS, false);
-		prefs.setDefault(LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true);
+		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), StepFilterManager.PREF_USE_STEP_FILTERS, false);
+		//launch configurations preferences
+		Preferences.setDefaultBoolean(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true);
+		Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
 	}
 
 }

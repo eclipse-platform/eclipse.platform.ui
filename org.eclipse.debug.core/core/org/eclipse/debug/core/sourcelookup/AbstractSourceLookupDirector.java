@@ -255,15 +255,17 @@ public abstract class AbstractSourceLookupDirector implements ISourceLookupDirec
 				abort(SourceLookupMessages.AbstractSourceLookupDirector_11, null); 
 			}
 			ISourceContainerType type = DebugPlugin.getDefault().getLaunchManager().getSourceContainerType(typeId);
-			if(type == null) {
-				abort(MessageFormat.format(SourceLookupMessages.AbstractSourceLookupDirector_12, new String[]{typeId}), null); 
-			}			
-			String memento = element.getAttribute(CONTAINER_MEMENTO_ATTR);
-			if (memento == null || memento.equals("")) {	 //$NON-NLS-1$
-				abort(SourceLookupMessages.AbstractSourceLookupDirector_13, null); 
+			if(type != null) {		
+				String memento = element.getAttribute(CONTAINER_MEMENTO_ATTR);
+				if (memento == null || memento.equals("")) {	 //$NON-NLS-1$
+					abort(SourceLookupMessages.AbstractSourceLookupDirector_13, null); 
+				}
+				ISourceContainer container = type.createSourceContainer(memento);
+				containers.add(container);
 			}
-			ISourceContainer container = type.createSourceContainer(memento);
-			containers.add(container);
+			else {
+				abort(MessageFormat.format(SourceLookupMessages.AbstractSourceLookupDirector_12, new String[]{typeId}), null); 
+			}	
 		}	
 		return containers;
 	}

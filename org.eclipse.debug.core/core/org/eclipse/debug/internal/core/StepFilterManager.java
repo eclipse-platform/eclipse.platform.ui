@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchListener;
@@ -63,7 +64,7 @@ public class StepFilterManager implements ILaunchListener {
 	 * @return whether to use step filters
 	 */
 	public boolean isUseStepFilters() {
-		return DebugPlugin.getDefault().getPluginPreferences().getBoolean(PREF_USE_STEP_FILTERS);
+		return Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), PREF_USE_STEP_FILTERS, false, null);
 	}
 	
 	/**
@@ -72,7 +73,7 @@ public class StepFilterManager implements ILaunchListener {
 	 * @param useFilters whether to use step filters
 	 */
 	public void setUseStepFilters(boolean useFilters) {
-		DebugPlugin.getDefault().getPluginPreferences().setValue(PREF_USE_STEP_FILTERS, useFilters);
+		Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), PREF_USE_STEP_FILTERS, useFilters, null);
 		ILaunch[] launchs = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		for (int i = 0; i < launchs.length; i++) {
 			ILaunch launch = launchs[i];

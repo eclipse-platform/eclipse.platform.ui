@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -29,7 +29,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PlatformObject;
-import org.eclipse.core.runtime.Preferences;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
@@ -150,7 +149,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * 		will cause an infinite loop (see Bug 27281).
 	 */
 	private void loadPersistedExpressions() {
-		String expressionsString= DebugPlugin.getDefault().getPluginPreferences().getString(PREF_WATCH_EXPRESSIONS);
+		String expressionsString = Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), PREF_WATCH_EXPRESSIONS, IInternalDebugCoreConstants.EMPTY_STRING, null);
 		if (expressionsString.length() == 0) {
 			return;
 		}
@@ -213,8 +212,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 * preference store. 
 	 */
 	public void storeWatchExpressions() {
-		Preferences prefs= DebugPlugin.getDefault().getPluginPreferences();
-		String expressionString= ""; //$NON-NLS-1$
+		String expressionString = IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
 			expressionString= getWatchExpressionsAsXML();
 		} catch (IOException e) {
@@ -224,7 +222,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		} catch (TransformerException e) {
 			DebugPlugin.log(e);
 		}
-		prefs.setValue(PREF_WATCH_EXPRESSIONS, expressionString);
+		Preferences.setString(DebugPlugin.getUniqueIdentifier(), PREF_WATCH_EXPRESSIONS, expressionString, null);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.internal.core.Preferences;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.AbstractDebugCheckboxSelectionDialog;
@@ -336,8 +338,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			editor.setPreferenceStore(getPreferenceStore());
 			editor.load();
 		}
-		fDeleteConfigs.setSelection(DebugPlugin.getDefault().getPluginPreferences().getBoolean(
-				LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE));
+		fDeleteConfigs.setSelection(
+				Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(),
+				LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true, null));
 		//restore the tables' checked state
 		String[] types = getPreferenceStore().getString(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST).split("\\,"); //$NON-NLS-1$
 		TableItem[] items = fTable.getItems();
@@ -356,6 +359,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
 	 */
 	protected void performDefaults() {
+		fDeleteConfigs.setSelection(Preferences.getDefaultBoolean(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true));
 		FieldEditor editor = null;
 		for(int i = 0; i < fFieldEditors.size(); i++) {
 			editor = (FieldEditor)fFieldEditors.get(i);
@@ -375,8 +379,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		for(int i = 0; i < fFieldEditors.size(); i++) {
 			((FieldEditor)fFieldEditors.get(i)).store();
 		}
-		DebugPlugin.getDefault().getPluginPreferences().setValue(
-				LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, fDeleteConfigs.getSelection());
+		Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), LaunchManager.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, fDeleteConfigs.getSelection(), null);
 		//save table
 		String types = IInternalDebugCoreConstants.EMPTY_STRING;
 		TableItem[] items = fTable.getItems();

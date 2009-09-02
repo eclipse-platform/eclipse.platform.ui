@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -57,6 +57,7 @@ import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.DebugOptions;
+import org.eclipse.debug.internal.core.Preferences;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
@@ -604,7 +605,7 @@ public class DebugPlugin extends Plugin {
 			SourceLookupUtils.shutdown();
 			setDefault(null);
 			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
-			savePluginPreferences();
+			Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
 		} finally {
 			super.stop(context);
 		}
@@ -619,7 +620,7 @@ public class DebugPlugin extends Plugin {
 		ResourcesPlugin.getWorkspace().addSaveParticipant(this,
 				new ISaveParticipant() {
 					public void saving(ISaveContext saveContext) throws CoreException {
-						savePluginPreferences();
+						Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
 					}				
 					public void rollback(ISaveContext saveContext) {}
 					public void prepareToSave(ISaveContext saveContext) throws CoreException {}

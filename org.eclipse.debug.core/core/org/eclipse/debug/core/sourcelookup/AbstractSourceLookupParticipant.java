@@ -66,7 +66,9 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 					if (container != null) {
 						Object[] objects = container.findSourceElements(name);
 						if (objects.length > 0) {
-							if (isFindDuplicates()) {
+							//it will only not be null when we care about duplicates
+							//saves the computation in isFindDuplicates()
+							if (results != null) {
 								for (int j = 0; j < objects.length; j++) {
 									results.add(objects[j]);
 								}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 					return EMPTY;
 				}
 				// See bug 98090 - we need to handle relative path names
-				IFileStore target = fRootFile.getChild(new Path(name));
+				IFileStore target = fRootFile.getFileStore(new Path(name));
 				if (target.fetchInfo().exists()) {
 					// We no longer have to account for bug 95832, and URIs take care
 					// of canonical paths (fix to bug 95679 was removed).

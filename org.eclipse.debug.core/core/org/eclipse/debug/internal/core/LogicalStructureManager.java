@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -107,7 +107,7 @@ public class LogicalStructureManager {
      */
     private void loadStructureTypeSelections() {
         fStructureTypeSelections= new HashMap();
-        String selections= DebugPlugin.getDefault().getPluginPreferences().getString(PREF_STRUCTURE_SELECTIONS);
+        String selections= Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_SELECTIONS, IInternalDebugCoreConstants.EMPTY_STRING, null);
     	// selections are stored in the form:
     	// selection|selection|...selection|
         StringTokenizer tokenizer= new StringTokenizer(selections, "|"); //$NON-NLS-1$
@@ -136,7 +136,7 @@ public class LogicalStructureManager {
             buffer.append(entry.getValue());
             buffer.append('|');
         }
-        DebugPlugin.getDefault().getPluginPreferences().setValue(PREF_STRUCTURE_SELECTIONS, buffer.toString());
+        Preferences.setString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_SELECTIONS, buffer.toString(), null);
     }
     
     /**
@@ -145,7 +145,7 @@ public class LogicalStructureManager {
     private void loadStructureTypeIds() {
         fStructureTypeIds= new ArrayList();
     	// Types are stored as a comma-separated, ordered list.
-        String types= DebugPlugin.getDefault().getPluginPreferences().getString(PREF_STRUCTURE_IDS);
+        String types= Platform.getPreferencesService().getString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_IDS, IInternalDebugCoreConstants.EMPTY_STRING, null);
         StringTokenizer tokenizer= new StringTokenizer(types, ","); //$NON-NLS-1$
         while (tokenizer.hasMoreTokens()) {
             String id= tokenizer.nextToken();
@@ -164,7 +164,7 @@ public class LogicalStructureManager {
         while (iter.hasNext()) {
             buffer.append(iter.next()).append(',');
         }
-        DebugPlugin.getDefault().getPluginPreferences().setValue(PREF_STRUCTURE_IDS, buffer.toString());
+        Preferences.setString(DebugPlugin.getUniqueIdentifier(), PREF_STRUCTURE_IDS, buffer.toString(), null);
     }
     
     /**
