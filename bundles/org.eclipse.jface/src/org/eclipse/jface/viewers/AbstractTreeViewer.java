@@ -197,10 +197,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * parent element.
 	 * <p>
 	 * EXPERIMENTAL. Not to be used except by JDT. This method was added to
-	 * support JDT's explorations into grouping by working sets, which requires
-	 * viewers to support multiple equal elements. See bug 76482 for more
-	 * details. This support will likely be removed in Eclipse 3.2 in favor of
-	 * proper support for multiple equal elements.
+	 * support JDT's explorations into grouping by working sets. This method
+	 * cannot be removed without breaking binary backwards compatibility, but
+	 * should not be called by clients.
 	 * </p>
 	 *
 	 * @param widget
@@ -1800,10 +1799,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Refreshes the tree starting at the given widget.
 	 * <p>
 	 * EXPERIMENTAL. Not to be used except by JDT. This method was added to
-	 * support JDT's explorations into grouping by working sets, which requires
-	 * viewers to support multiple equal elements. See bug 76482 for more
-	 * details. This support will likely be removed in Eclipse 3.2 in favor of
-	 * proper support for multiple equal elements.
+	 * support JDT's explorations into grouping by working sets. This method
+	 * cannot be removed without breaking binary backwards compatibility, but
+	 * should not be called by clients.
 	 * </p>
 	 *
 	 * @param widget
@@ -1877,10 +1875,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Removes the given elements from this viewer.
 	 * <p>
 	 * EXPERIMENTAL. Not to be used except by JDT. This method was added to
-	 * support JDT's explorations into grouping by working sets, which requires
-	 * viewers to support multiple equal elements. See bug 76482 for more
-	 * details. This support will likely be removed in Eclipse 3.2 in favor of
-	 * proper support for multiple equal elements.
+	 * support JDT's explorations into grouping by working sets. This method
+	 * cannot be removed without breaking binary backwards compatibility, but
+	 * should not be called by clients.
 	 * </p>
 	 *
 	 * @param elementsOrPaths
