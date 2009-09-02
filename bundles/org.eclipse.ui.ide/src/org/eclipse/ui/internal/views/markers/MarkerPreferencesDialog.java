@@ -344,6 +344,9 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 				visible.removeAll(selection);
 				visibleViewer.refresh();
 				nonVisibleViewer.refresh();
+				setValid(
+						visible.size() > 0,
+						MarkerMessages.MarkerPreferences_AtLeastOneVisibleColumn);
 			}
 		});
 
@@ -375,6 +378,9 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 				visible.addAll(selection);
 				visibleViewer.refresh();
 				nonVisibleViewer.refresh();
+				setValid(
+						visible.size() > 0,
+						MarkerMessages.MarkerPreferences_AtLeastOneVisibleColumn);
 			}
 		});
 
