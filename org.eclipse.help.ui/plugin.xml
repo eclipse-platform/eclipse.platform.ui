@@ -85,6 +85,12 @@
             id="org.eclipse.help.ui.HelpView"/>            
    </extension>
    <extension
+         point="org.eclipse.ui.propertiesView">
+      <excludeSources
+            id="org.eclipse.help.ui.HelpView">
+      </excludeSources>
+   </extension>
+   <extension
          point="org.eclipse.help.ui.searchEngine">
       <engineType
             scopeFactory="org.eclipse.help.ui.internal.search.LocalSearchScopeFactory"
