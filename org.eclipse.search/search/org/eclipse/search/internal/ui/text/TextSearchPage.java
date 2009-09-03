@@ -507,7 +507,7 @@ public class TextSearchPage extends DialogPage implements ISearchPage, IReplaceP
 				contentAdapter,
 				findProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
-				new char[] {'\\', '[', '('},
+				new char[0],
 				true);
 		fPatterFieldContentAssist.setEnabled(fIsRegExSearch);
 

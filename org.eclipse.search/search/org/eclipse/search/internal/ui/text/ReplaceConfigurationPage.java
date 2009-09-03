@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -126,7 +126,7 @@ public class ReplaceConfigurationPage extends UserInputWizardPage {
 				fTextField,
 				contentAdapter, replaceProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
-				new char[] {'$', '\\'},
+				new char[0],
 				true);
 
 		new Label(result, SWT.NONE);

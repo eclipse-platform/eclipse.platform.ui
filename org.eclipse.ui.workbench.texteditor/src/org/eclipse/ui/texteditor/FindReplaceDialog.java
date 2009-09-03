@@ -592,7 +592,7 @@ class FindReplaceDialog extends Dialog {
 				contentAdapter,
 				findProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
-				new char[] {'\\', '[', '('},
+				new char[0],
 				true);
 		setGridData(fFindField, SWT.FILL, true, SWT.CENTER, false);
 		addDecorationMargin(fFindField);
@@ -609,7 +609,7 @@ class FindReplaceDialog extends Dialog {
 				fReplaceField,
 				contentAdapter, replaceProposer,
 				ITextEditorActionDefinitionIds.CONTENT_ASSIST_PROPOSALS,
-				new char[] {'$', '\\'},
+				new char[0],
 				true);
 		setGridData(fReplaceField, SWT.FILL, true, SWT.CENTER, false);
 		addDecorationMargin(fReplaceField);
