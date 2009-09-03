@@ -14,12 +14,17 @@ package org.eclipse.ui.views.properties;
 
 import java.util.HashSet;
 
+import org.eclipse.osgi.util.NLS;
+
+import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryEventListener;
 import org.eclipse.core.runtime.RegistryFactory;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -27,8 +32,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.widgets.Composite;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
@@ -62,14 +66,14 @@ import org.eclipse.ui.part.ShowInContext;
  * <p>
  * Property sheet pages are discovered by the property sheet view automatically
  * when a part is first activated. The property sheet view asks the active part
- * for its property sheet page; this is done by invoking 
- * <code>getAdapter(IPropertySheetPage.class)</code> on the part. If the part 
+ * for its property sheet page; this is done by invoking
+ * <code>getAdapter(IPropertySheetPage.class)</code> on the part. If the part
  * returns a page, the property sheet view then creates the controls for that
- * property sheet page (using <code>createControl</code>), and adds the page to 
+ * property sheet page (using <code>createControl</code>), and adds the page to
  * the property sheet view. Whenever this part becomes active, its corresponding
  * property sheet page is shown in the property sheet view (which may or may not
  * be visible at the time). A part's property sheet page is discarded when the
- * part closes. The property sheet view has a default page (an instance of 
+ * part closes. The property sheet view has a default page (an instance of
  * <code>PropertySheetPage</code>) which services all parts without a property
  * sheet page of their own.
  * </p>
@@ -111,12 +115,12 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 	private IWorkbenchPart currentPart;
 
 	/**
-	 * Whether this property sheet instance is pinned or not 
+	 * Whether this property sheet instance is pinned or not
 	 */
 	private IAction pinPropertySheetAction;
 
 	/**
-	 * Set of workbench parts, which should not be used as a source for PropertySheet 
+	 * Set of workbench parts, which should not be used as a source for PropertySheet
 	 */
 	private HashSet ignoredViews;
 	
@@ -209,7 +213,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
             return new PageRec(part, page);
         }
 
-        // Use the default page		
+        // Use the default page
         return null;
     }
 
@@ -224,7 +228,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 
     /* (non-Javadoc)
      * Method declared on PageBookView.
-     * Returns the active part on the same workbench page as this property 
+     * Returns the active part on the same workbench page as this property
      * sheet view.
      */
     protected IWorkbenchPart getBootstrapPart() {
@@ -232,7 +236,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         if (page != null) {
             bootstrapSelection = page.getSelection();
             return page.getActivePart();
-        } 
+        }
         return null;
     }
 
@@ -297,9 +301,9 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         // our target part is hidden, we should still show whatever content we
         // have been pinned on
         if (!isPinned()) {
-            super.partHidden(part);     
+            super.partHidden(part);
         }
-    }	
+    }
     
 	/**
      * The <code>PropertySheet</code> implementation of this <code>IPartListener</code>
@@ -327,7 +331,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         	currentSelection = null;
         }
         
-        // When the view is first opened, pass the selection to the page		
+        // When the view is first opened, pass the selection to the page
         if (bootstrapSelection != null) {
             IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
             if (page != null) {
@@ -355,7 +359,7 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
         currentPart = part;
         currentSelection = sel;
         
-        // pass the selection to the page		
+        // pass the selection to the page
         IPropertySheetPage page = (IPropertySheetPage) getCurrentPage();
         if (page != null) {
 			page.selectionChanged(currentPart, currentSelection);
@@ -470,29 +474,33 @@ public class PropertySheet extends PageBookView implements ISelectionListener, I
 		return getIgnoredViews().contains(partID);
 	}
 	
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtension[])
+	 * @since 3.5
 	 */
 	public void added(IExtension[] extensions) {
 		ignoredViews = null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.runtime.IRegistryEventListener#added(org.eclipse.core.runtime.IExtensionPoint[])
+	 * @since 3.5
 	 */
 	public void added(IExtensionPoint[] extensionPoints) {
 		ignoredViews = null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtension[])
+	 * @since 3.5
 	 */
 	public void removed(IExtension[] extensions) {
 		ignoredViews = null;
 	}
 
-	/* (non-Javadoc)
+	/**
 	 * @see org.eclipse.core.runtime.IRegistryEventListener#removed(org.eclipse.core.runtime.IExtensionPoint[])
+	 * @since 3.5
 	 */
 	public void removed(IExtensionPoint[] extensionPoints) {
 		ignoredViews = null;
