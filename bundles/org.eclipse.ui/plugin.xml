@@ -1283,12 +1283,6 @@
       </stickyView>
    </extension>
    <extension
-         point="org.eclipse.ui.propertiesView">
-      <excludeSources
-            id="org.eclipse.help.ui.HelpView">
-      </excludeSources>
-   </extension>
-   <extension
          point="org.eclipse.ui.elementFactories">
       <factory
             class="org.eclipse.ui.internal.WorkingSetFactory"
