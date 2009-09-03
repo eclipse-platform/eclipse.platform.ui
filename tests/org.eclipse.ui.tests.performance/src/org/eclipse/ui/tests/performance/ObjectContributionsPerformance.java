@@ -50,7 +50,6 @@ public class ObjectContributionsPerformance extends BasicPerformanceTest {
                 "testObjectContributions");
         tagIfNecessary("UI - " + selection.size() + " contribution(s)",
                 Dimension.ELAPSED_PROCESS);
-        setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=270795>See Bug 270795</a> ");
         startMeasuring();
         for (int i = 0; i < 5000; i++) {
             tests.assertPopupMenus("1", new String[] { "bogus" }, selection,

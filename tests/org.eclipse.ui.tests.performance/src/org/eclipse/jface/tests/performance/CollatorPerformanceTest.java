@@ -38,7 +38,6 @@ public class CollatorPerformanceTest extends BasicPerformanceTest {
 	 *  test Collator by sorting the array
 	 */
 	public void testCollator(){
-		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=275170>See Bug 275170</a> ");
 		Comparator comparator=Policy.getComparator();
 		for (int i = 0; i < 15; i++) {
 			String[] array=(String[]) fArray.clone();

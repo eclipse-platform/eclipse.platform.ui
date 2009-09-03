@@ -46,7 +46,6 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
      * Test perspective switching performance. 
      */
     protected void runTest() throws CoreException, WorkbenchException {
-    	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=179581>See Bug 179581</a>");
         // Get the two perspectives to switch between.
         final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
                 .getPerspectiveRegistry();

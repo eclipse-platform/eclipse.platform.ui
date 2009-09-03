@@ -56,9 +56,6 @@ public class LayoutTest extends BasicPerformanceTest {
 		Rectangle initialBounds = widget.getBounds();
 		final Rectangle newBounds = Geometry.copy(initialBounds);
 
-		// This test is different now duw to trim API changes so 'gray' it...
-       	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=129001>See Bug 129001</a> ");
-		
 		for (int xIteration = 0; xIteration < xIterations; xIteration++) {
 
 			processEvents();

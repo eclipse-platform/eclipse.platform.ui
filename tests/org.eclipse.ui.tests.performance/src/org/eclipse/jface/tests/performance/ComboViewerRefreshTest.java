@@ -53,8 +53,6 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	 * @throws Throwable
 	 */
 	public void testRefresh() throws Throwable {
-
-		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=98265>See Bug 98265</a> ");
 		ELEMENT_COUNT = 1000;
 		openBrowser();
 
@@ -77,9 +75,6 @@ public class ComboViewerRefreshTest extends ViewerTest {
 	 * @throws Throwable
 	 */
 	public void testRefreshSmall() throws Throwable {
-
-		setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=98265>See Bug 98265</a> ");
-
 		ELEMENT_COUNT = 50;
 		openBrowser();
 

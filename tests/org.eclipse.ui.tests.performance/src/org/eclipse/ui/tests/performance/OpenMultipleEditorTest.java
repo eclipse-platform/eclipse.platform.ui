@@ -36,7 +36,6 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
     }
     
     protected void runTest() throws Throwable {
-    	setDegradationComment("<a href=https://bugs.eclipse.org/bugs/show_bug.cgi?id=270797>See Bug 270797</a>");
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		IWorkbenchPage activePage = window.getActivePage();
         
