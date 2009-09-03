@@ -11,6 +11,8 @@
 
 package org.eclipse.ui.internal.navigator.dnd;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -147,8 +149,8 @@ public class NavigatorDnDService implements INavigatorDnDService {
 				assistants.add(asst);
 			}
 		}
-		return (CommonDropAdapterAssistant[]) assistants
-				.toArray(new CommonDropAdapterAssistant[assistants.size()]);
+		return sortAssistants((CommonDropAdapterAssistant[]) assistants
+				.toArray(new CommonDropAdapterAssistant[assistants.size()]));
 
 	}
 
@@ -163,10 +165,28 @@ public class NavigatorDnDService implements INavigatorDnDService {
 			}
 		}  
 
-		return (CommonDropAdapterAssistant[]) assistants
-				.toArray(new CommonDropAdapterAssistant[assistants.size()]);
+		return sortAssistants((CommonDropAdapterAssistant[]) assistants
+				.toArray(new CommonDropAdapterAssistant[assistants.size()]));
 	}
 
+	private CommonDropAdapterAssistant[] sortAssistants(CommonDropAdapterAssistant[] array) {
+		Arrays.sort(array, new Comparator() {
+			public int compare(Object arg0, Object arg1) {
+				CommonDropAdapterAssistant a = (CommonDropAdapterAssistant) arg0;
+				CommonDropAdapterAssistant b = (CommonDropAdapterAssistant) arg1;
+				// This is to ensure that the navigator resources drop assistant will
+				// always be first on the list of drop assistant, if a conflict ever 
+				// occurs.
+				String id = "org.eclipse.ui.navigator.resources."; //$NON-NLS-1$
+				if (a.getClass().getName().startsWith(id))
+					return -1;
+				if (b.getClass().getName().startsWith(id))
+					return 1;
+				return a.getClass().getName().compareTo(b.getClass().getName());
+			}
+		});
+		return array;
+	}
 	private CommonDropAdapterAssistant getAssistant(
 			CommonDropAdapterDescriptor descriptor) {
 		CommonDropAdapterAssistant asst = (CommonDropAdapterAssistant) dropAssistants
