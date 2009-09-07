@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.internal.utils.FileUtil;
-
 import java.io.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
@@ -166,6 +164,11 @@ public class File extends Resource implements IFile {
 						workspace.deleteResource(this);
 						store.delete(EFS.NONE, null);
 						throw e; // rethrow
+					} catch (OperationCanceledException e) {
+						// the operation of setting contents has been canceled, so delete the file from the workspace and disk
+						workspace.deleteResource(this);
+						store.delete(EFS.NONE, null);
+						throw e;
 					}
 				}
 				internalSetLocal(local, DEPTH_ZERO);
