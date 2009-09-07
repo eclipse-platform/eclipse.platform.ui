@@ -53,6 +53,7 @@ import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
  *   <li><code>handleEvent</code></li>
  * </ul>
  * </p>
+ * @since 3.6
  */
 public class WizardNewGroupMainPage extends WizardPage implements Listener {
     private static final int SIZING_CONTAINER_GROUP_HEIGHT = 250;

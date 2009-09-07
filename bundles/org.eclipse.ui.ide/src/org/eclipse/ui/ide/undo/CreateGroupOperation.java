@@ -25,7 +25,7 @@ import org.eclipse.ui.internal.ide.undo.ContainerDescription;
  * This class is intended to be instantiated and used by clients. It is not
  * intended to be subclassed by clients.
  * 
- * @since 3.3
+ * @since 3.6
  * 
  */
 public class CreateGroupOperation extends AbstractCreateResourcesOperation {

@@ -24,6 +24,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.ResourceFilterGroup;
 
+/**
+ * @since 3.6
+ */
 public class ResourceFilterEditDialog extends SelectionDialog {
 
 	private ResourceFilterGroup resourceFilterGroup;

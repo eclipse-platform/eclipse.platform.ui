@@ -24,6 +24,9 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
 
+/**
+ * @since 3.6
+ */
 public class PathVariableEditDialog extends SelectionDialog {
 
 	private PathVariablesGroup pathVariablesGroup;

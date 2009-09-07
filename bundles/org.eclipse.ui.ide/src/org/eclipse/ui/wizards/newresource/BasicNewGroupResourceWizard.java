@@ -39,8 +39,8 @@ import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
  * <code>open</code> returns.
  * </p>
  * @noextend This class is not intended to be subclassed by clients.
+ * @since 3.6
  */
-
 public class BasicNewGroupResourceWizard extends BasicNewResourceWizard {
     private WizardNewGroupMainPage mainPage;
 

@@ -921,6 +921,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Set Whether groups and links will be created instead of files and folders
      * 
      * @param groups
+     * @since 3.6
      */
     public void setCreateGroups(boolean groups) {
         createGroups = groups;
@@ -930,6 +931,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Set Whether links will be created instead of files and folders
      * 
      * @param links
+     * @since 3.6
      */
     public void setCreateLinks(boolean links) {
         createLinks = links;
@@ -939,6 +941,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * Set a variable relative to which the links are created
      * 
      * @param variable
+     * @since 3.6
      */
     public void setRelativeVariable(String variable) {
         relativeVariable = variable;

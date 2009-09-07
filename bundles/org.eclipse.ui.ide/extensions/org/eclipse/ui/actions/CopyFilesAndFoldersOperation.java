@@ -14,7 +14,6 @@ package org.eclipse.ui.actions;
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -68,12 +67,15 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileStoreStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Perform the copy of file and folder resources from the clipboard when paste
  * action is invoked.
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
+ * 
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CopyFilesAndFoldersOperation {
@@ -457,7 +459,8 @@ public class CopyFilesAndFoldersOperation {
 							&& (source.isGroup() == false)) {
 						if (source.getType() == IResource.FILE) {
 							IFile file = workspaceRoot.getFile(destinationPath);
-							file.createLink(createRelativePath(file.getProject().getPathVariableManager(),
+							file.createLink(createRelativePath(file
+									.getProject().getPathVariableManager(),
 									source.getLocationURI()), 0,
 									new SubProgressMonitor(subMonitor, 1));
 						} else {
@@ -473,7 +476,8 @@ public class CopyFilesAndFoldersOperation {
 											new SubProgressMonitor(subMonitor,
 													1));
 							} else
-								folder.createLink(createRelativePath(folder.getProject().getPathVariableManager(),
+								folder.createLink(createRelativePath(folder
+										.getProject().getPathVariableManager(),
 										source.getLocationURI()), 0,
 										new SubProgressMonitor(subMonitor, 1));
 						}
@@ -493,7 +497,7 @@ public class CopyFilesAndFoldersOperation {
 	 * Transform an absolute path URI to a relative path one (i.e. from
 	 * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
 	 * is "VAR" and points to "C:\foo\bar\").
-	 *
+	 * 
 	 * @param locationURI
 	 * @return an URI that was made relative to a variable
 	 */
@@ -719,7 +723,8 @@ public class CopyFilesAndFoldersOperation {
 			try {
 				store = EFS.getStore(uris[i]);
 			} catch (CoreException e) {
-				StatusManager.getManager().handle(e, IDEWorkbenchPlugin.IDE_WORKBENCH);
+				StatusManager.getManager().handle(e,
+						IDEWorkbenchPlugin.IDE_WORKBENCH);
 				reportFileInfoNotFound(uris[i].toString());
 				return null;
 			}
@@ -1124,8 +1129,8 @@ public class CopyFilesAndFoldersOperation {
 	 *            source resource
 	 * @param destination
 	 *            destination resource
-	 * @return boolean <code>true</code> if both resources are either linked
-	 *         or unlinked. <code>false</code> otherwise.
+	 * @return boolean <code>true</code> if both resources are either linked or
+	 *         unlinked. <code>false</code> otherwise.
 	 */
 	protected boolean homogenousResources(IResource source,
 			IResource destination) {
@@ -1166,8 +1171,8 @@ public class CopyFilesAndFoldersOperation {
 	 *            the source resources
 	 * @param destination
 	 *            the destination container
-	 * @return <code>true</code> if at least one of the given source
-	 *         resource's parent container is the same as the destination
+	 * @return <code>true</code> if at least one of the given source resource's
+	 *         parent container is the same as the destination
 	 */
 	boolean isDestinationSameAsSource(IResource[] sourceResources,
 			IContainer destination) {
@@ -1205,8 +1210,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            the path of the destination container
 	 * @param monitor
 	 *            a progress monitor for showing progress and for cancelation
-	 * @return <code>true</code> if the copy operation completed without
-	 *         errors
+	 * @return <code>true</code> if the copy operation completed without errors
 	 */
 	private boolean performCopy(IResource[] resources, IPath destination,
 			IProgressMonitor monitor) {
@@ -1248,8 +1252,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            the resources to copy
 	 * @param destination
 	 *            the path of the destination container
-	 * @return <code>true</code> if the copy operation completed without
-	 *         errors.
+	 * @return <code>true</code> if the copy operation completed without errors.
 	 */
 	private boolean performCopyWithAutoRename(IResource[] resources,
 			IPath destination, IProgressMonitor monitor) {
@@ -1550,7 +1553,8 @@ public class CopyFilesAndFoldersOperation {
 			try {
 				destinationStore = EFS.getStore(destination.getLocationURI());
 			} catch (CoreException exception) {
-				IDEWorkbenchPlugin.log(exception.getLocalizedMessage(), exception);
+				IDEWorkbenchPlugin.log(exception.getLocalizedMessage(),
+						exception);
 				return NLS
 						.bind(
 								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_internalError,
@@ -1739,7 +1743,8 @@ public class CopyFilesAndFoldersOperation {
 				performCopyWithAutoRename(copyResources, destinationPath,
 						new SubProgressMonitor(monitor, 90));
 			} else {
-				performCopy(copyResources, destinationPath, new SubProgressMonitor(monitor, 90));
+				performCopy(copyResources, destinationPath,
+						new SubProgressMonitor(monitor, 90));
 			}
 		}
 		monitor.done();
@@ -1789,7 +1794,7 @@ public class CopyFilesAndFoldersOperation {
 	 * destination. The current Thread is halted while the resources are copied
 	 * using a WorkspaceModifyOperation. This method should be called from the
 	 * UI Thread.
-	 *
+	 * 
 	 * @param fileNames
 	 *            names of the files to copy
 	 * @param destination
@@ -1797,7 +1802,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @see WorkspaceModifyOperation
 	 * @see Display#getThread()
 	 * @see Thread#currentThread()
-	 * @since 3.2
+	 * @since 3.6
 	 */
 	public void createGroupAndLinks(final String[] fileNames,
 			IContainer destination) {
@@ -1815,7 +1820,7 @@ public class CopyFilesAndFoldersOperation {
 	 * current Thread is halted while the resources are copied using a
 	 * WorkspaceModifyOperation. This method should be called from the UI
 	 * Thread.
-	 *
+	 * 
 	 * @param fileNames
 	 *            names of the files to copy
 	 * @param destination
@@ -1823,7 +1828,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @see WorkspaceModifyOperation
 	 * @see Display#getThread()
 	 * @see Thread#currentThread()
-	 * @since 3.2
+	 * @since 3.6
 	 */
 	public void linkFiles(final String[] fileNames, IContainer destination) {
 		IFileStore[] stores = buildFileStores(fileNames);
@@ -1838,8 +1843,9 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Set whether or not groups and links will be created under the destination
 	 * container.
-	 *
+	 * 
 	 * @param value
+	 * @since 3.6
 	 */
 	public void setCreateGroups(boolean value) {
 		createGroupsAndLinks = value;
@@ -1847,8 +1853,9 @@ public class CopyFilesAndFoldersOperation {
 
 	/**
 	 * Set whether or not links will be created under the destination container.
-	 *
+	 * 
 	 * @param value
+	 * @since 3.6
 	 */
 	public void setCreateLinks(boolean value) {
 		createLinks = value;
@@ -1856,8 +1863,9 @@ public class CopyFilesAndFoldersOperation {
 
 	/**
 	 * Set a variable relative to which the links are created
-	 *
+	 * 
 	 * @param variable
+	 * @since 3.6
 	 */
 	public void setRelativeVariable(String variable) {
 		relativeVariable = variable;

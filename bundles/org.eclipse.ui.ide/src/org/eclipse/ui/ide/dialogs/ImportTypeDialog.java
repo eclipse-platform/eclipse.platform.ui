@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
 /**
- * @since 3.4
+ * @since 3.6
  *
  */
 public class ImportTypeDialog extends MessageDialog implements SelectionListener {

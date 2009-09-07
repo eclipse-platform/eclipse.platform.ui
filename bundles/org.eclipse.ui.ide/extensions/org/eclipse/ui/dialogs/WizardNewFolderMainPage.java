@@ -452,7 +452,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	/**
 	 * Show the Resource Filter dialog.
 	 */
-	protected void handleEditFilterSelect() {
+	private void handleEditFilterSelect() {
 		ResourceFilterEditDialog dialog = new ResourceFilterEditDialog(getShell());
 		dialog.setFilters(filterList);
 		if (dialog.open() == Window.OK)

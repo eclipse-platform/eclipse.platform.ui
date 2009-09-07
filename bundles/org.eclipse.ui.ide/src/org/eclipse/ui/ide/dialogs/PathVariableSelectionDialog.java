@@ -275,6 +275,7 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 	 * Sets the project for which the path variable is being edited.
 	 * 
 	 * @param project
+	 * @since 3.6
 	 */
 	public void setProject(IProject project) {
 		currentProject = project;
