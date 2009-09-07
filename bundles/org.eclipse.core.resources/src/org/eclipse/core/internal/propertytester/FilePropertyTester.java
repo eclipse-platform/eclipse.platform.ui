@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.core.internal.propertytester;
 
 import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
 
@@ -26,11 +25,20 @@ import org.eclipse.core.runtime.content.IContentType;
 public class FilePropertyTester extends ResourcePropertyTester {
 
 	/**
-	 * A property indicating that we are looking to verify that the file matches
-	 * the content type matching the given identifier. The identifier is
-	 * provided as the expected value.
+	 * A property indicating a content type on the selected file (value <code>"contentTypeId"</code>). 
+	 * <code>"kindOf"</code> indicates that the file content type should be the kind of the one given as the expected value.
+	 * If <code>"kindOf"</code> is not specified, the file content type identifier should equals the expected value.
+	 * @see IContentType#isKindOf(IContentType)
 	 */
 	private static final String CONTENT_TYPE_ID = "contentTypeId"; //$NON-NLS-1$
+
+	/**
+	 * An argument for <code>"contentTypeId"</code>.
+	 * <code>"kindOf"</code> indicates that the file content type should be the kind of the one given as the expected value.
+	 * If <code>"kindOf"</code> is not specified, the file content type identifier should equals the expected value.
+	 * @see IContentType#isKindOf(IContentType)
+	 */
+	private static final String IS_KIND_OF = "kindOf"; //$NON-NLS-1$
 
 	/*
 	 * (non-Javadoc)
@@ -40,39 +48,58 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	 */
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 		if ((receiver instanceof IFile) && method.equals(CONTENT_TYPE_ID))
-			return testContentType((IFile) receiver, toString(expectedValue));
+			return testContentType((IFile) receiver, toString(expectedValue), isKindOfUsed(args));
 		return false;
 	}
 
+	private boolean isKindOfUsed(Object[] args) {
+		return ((args.length > 0) && IS_KIND_OF.equals(args[0]));
+	}
+
 	/**
-	 * Tests whether the content type for <code>file</code> matches the
-	 * <code>contentTypeId</code>. It is possible that this method call could
+	 * <p>
+	 * Tests whether the content type for <code>file</code> matches 
+	 * or is a kind of <code>contentTypeId</code>.
+	 * </p>
+	 * <p>
+	 * It is possible that this method call could
 	 * cause the file to be read. It is also possible (through poor plug-in
 	 * design) for this method to load plug-ins.
+	 * </p>
 	 * 
 	 * @param file
-	 *            The file for which the content type should be determined; must
-	 *            not be <code>null</code>.
+	 *            The file to test. Must not be <code>null</code>.
 	 * @param contentTypeId
-	 *            The expected content type; must not be <code>null</code>.
-	 * @return <code>true</code> iff the best matching content type has an
-	 *         identifier that matches <code>contentTypeId</code>;
-	 *         <code>false</code> otherwise.
+	 *            The content type to test. Must not be <code>null</code>.
+	 * @param isKindOfUsed
+	 *            Indicates whether the file content type should match <code>contentTypeId</code> 
+	 *            or should be a kind of <code>contentTypeId</code>.
+	 * @return <code>true</code>, if the best matching content type for <code>file</code>
+	 * 		<ul>
+	 *			<li>has an identifier that matches <code>contentTypeId</code> 
+	 *			and <code>isKindOfUsed</code> is <code>false</code>, or</li>
+	 * 			<li>is a kind of <code>contentTypeId</code> 
+	 * 			and <code>isKindOfUsed</code> is <code>true</code>.</li>
+	 * 		</ul>
+	 * Otherwise it returns <code>false</code>.
 	 */
-	private boolean testContentType(final IFile file, String contentTypeId) {
+	private boolean testContentType(final IFile file, String contentTypeId, boolean isKindOfUsed) {
 		final String expectedValue = contentTypeId.trim();
-
-		String actualValue = null;
+		IContentType actualContentType = null;
 		try {
 			IContentDescription contentDescription = file.getContentDescription();
 			if (contentDescription != null) {
-				IContentType contentType = contentDescription.getContentType();
-				actualValue = contentType.getId();
+				actualContentType = contentDescription.getContentType();
 			}
 		} catch (CoreException e) {
 			Policy.log(IStatus.ERROR, "Core exception while retrieving the content description", e);//$NON-NLS-1$
 		}
-		return expectedValue.equals(actualValue);
+		if (actualContentType != null) {
+			if (isKindOfUsed) {
+				return actualContentType.isKindOf(Platform.getContentTypeManager().getContentType(expectedValue));
+			}
+			return expectedValue.equals(actualContentType.getId());
+		}
+		return false;
 	}
-
 }
