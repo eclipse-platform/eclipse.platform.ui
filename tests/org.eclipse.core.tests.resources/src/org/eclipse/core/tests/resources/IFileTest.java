@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -632,6 +632,29 @@ public class IFileTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("7.3", e);
 		}
+	}
+
+	public void testFileCreation_Bug107188() {
+		//create from stream that is canceled
+		IFile target = projects[0].getFile("file1");
+		ensureDoesNotExistInWorkspace(target);
+		ensureDoesNotExistInFileSystem(target);
+
+		InputStream content = new InputStream() {
+			public int read() {
+				throw new OperationCanceledException();
+			}
+		};
+		try {
+			target.create(content, false, getMonitor());
+			fail("1.0");
+		} catch (OperationCanceledException e) {
+			// expected
+		} catch (CoreException e) {
+			fail("2.0");
+		}
+		assertDoesNotExistInWorkspace("3.0", target);
+		assertDoesNotExistInFileSystem("4.0", target);
 	}
 
 	public void testFileDeletion() throws Throwable {
