@@ -101,7 +101,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private int overwriteState = OVERWRITE_NOT_SET;
 
-    /**
+	private static final String ABSOLUTE_PATH = "<Absolute Path>"; //$NON-NLS-1$
+
+	/**
      * Creates a new operation that recursively imports the entire contents of the
      * specified root file system object.
      * <p>
@@ -719,11 +721,13 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * "C:\foo\bar\file.txt" to "VAR\file.txt" granted that the relativeVariable
      * is "VAR" and points to "C:\foo\bar\").
      * 
-     * @param locationURI
+     * @param location
      * @return an URI that was made relative to a variable
      */
     private IPath createRelativePath(IProject project, IPath location) {
 		if (relativeVariable == null)
+			return location;
+		if (relativeVariable.equals(ABSOLUTE_PATH))
 			return location;
 		IPathVariableManager pathVariableManager = project.getPathVariableManager();
 		try {
