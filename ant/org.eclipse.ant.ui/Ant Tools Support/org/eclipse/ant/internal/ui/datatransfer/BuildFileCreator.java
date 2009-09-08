@@ -63,6 +63,7 @@ import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.w3c.dom.ProcessingInstruction;
 import org.xml.sax.SAXException;
 
@@ -92,7 +93,7 @@ public class BuildFileCreator
     private String projectRoot;
     private Map variable2valueMap;
     private Shell shell;
-    private Set visited = new TreeSet(); // record used sub classpaths
+    private Set visited = new TreeSet(); // record used subclasspaths
     private Node classpathNode;
     
     /**
@@ -301,7 +302,7 @@ public class BuildFileCreator
     }
     
     /**
-     * Find buildfiles in project root directory and automatically import them.
+     * Find buildfiles in projectroot directory and automatically import them.
      */
     public void createImports()
     {
@@ -311,7 +312,7 @@ public class BuildFileCreator
         {
             public boolean accept(File acceptDir, String name)
             {
-                return name.endsWith(".xml") && !name.endsWith(BUILD_XML); //$NON-NLS-1$
+                return name.endsWith(".xml"); //$NON-NLS-1$
             }
         };
 
@@ -328,12 +329,16 @@ public class BuildFileCreator
             Document docCandidate;
             try {
                 docCandidate = ExportUtil.parseXmlFile(file);
-                Node node = docCandidate.getFirstChild();
-                if (node instanceof ProcessingInstruction &&  
-                        IMPORT_BUILDFILE_PROCESSING_TARGET.equals(((ProcessingInstruction) node).getTarget().trim())) {
-                    Element element = doc.createElement("import"); //$NON-NLS-1$
-                    element.setAttribute("file", file.getName()); //$NON-NLS-1$
-                    root.appendChild(element);
+                NodeList nodes = docCandidate.getChildNodes();
+                for (int j = 0; j < nodes.getLength(); j++) {
+                    Node node = nodes.item(j);
+                    if (node instanceof ProcessingInstruction &&  
+                            IMPORT_BUILDFILE_PROCESSING_TARGET.equals(((ProcessingInstruction) node).getTarget().trim())) {
+                        Element element = doc.createElement("import"); //$NON-NLS-1$
+                        element.setAttribute("file", file.getName()); //$NON-NLS-1$
+                        root.appendChild(element);
+                        break;
+                    }
                 }
             } catch (ParserConfigurationException e){
                 AntUIPlugin.log("invalid XML file not imported: " + file.getAbsolutePath(), e); //$NON-NLS-1$
@@ -518,7 +523,7 @@ public class BuildFileCreator
     }
     
     /**
-     * Add properties of sub-projects to internal properties map.
+     * Add properties of subprojects to internal properties map.
      */
     public void addSubProperties(IJavaProject subproject, EclipseClasspath classpath) throws JavaModelException
     { 
@@ -575,7 +580,7 @@ public class BuildFileCreator
         List filters = Collections.list(tokenizer);
         filters.add("*.java"); //$NON-NLS-1$
         
-        // prefix filters with wild card
+        // prefix filters with wildcard
         for (int i = 0; i < filters.size(); i++)
         {
             String item = ((String) filters.get(i)).trim();
@@ -675,12 +680,12 @@ public class BuildFileCreator
     }
     
     /**
-     * Create clean all target.
+     * Create cleanall target.
      */
     public void createCleanAll() throws JavaModelException
     {
         // <target name="cleanall" depends="clean">
-        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" inheritAll="false" target="clean"/>
+        //     <ant antfile="build.xml" dir="${hello.location}" inheritAll="false" target="clean"/>
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", "cleanall"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -690,7 +695,7 @@ public class BuildFileCreator
         {
             IJavaProject subProject = (IJavaProject) iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
-            antElement.setAttribute("antfile", "${" + subProject.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
             antElement.setAttribute("dir", "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "clean");  //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
@@ -701,10 +706,10 @@ public class BuildFileCreator
 
     /**
      * Create build target.
-     * @param srcDirs           source directories of main project
-     * @param classDirs         class directories of main project
-     * @param inclusionLists    inclusion filters of main project 
-     * @param exclusionLists    exclusion filters of main project
+     * @param srcDirs           source directories of mainproject
+     * @param classDirs         class directories of mainproject
+     * @param inclusionLists    inclusion filters of mainproject 
+     * @param exclusionLists    exclusion filters of mainproject
      */
     public void createBuild(List srcDirs, List classDirs, List inclusionLists, List exclusionLists) throws JavaModelException
     {
@@ -715,7 +720,7 @@ public class BuildFileCreator
         root.appendChild(element);
         
         // <target name="build-subprojects">
-        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" inheritAll="false" target="build-project"/>
+        //     <ant antfile="build.xml" dir="${hello.location}" inheritAll="false" target="build-project"/>
         // </target>
         element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", "build-subprojects"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -724,7 +729,7 @@ public class BuildFileCreator
         {
             IJavaProject subProject = (IJavaProject) iterator.next();
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
-            antElement.setAttribute("antfile", "${" + subProject.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
             antElement.setAttribute("dir", "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "build-project");  //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
@@ -817,8 +822,8 @@ public class BuildFileCreator
         }
         
         // <target name="build-refprojects">
-        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" target="clean" inheritAll="false"/> 
-        //     <ant antfile="${hello.location}/build.xml" dir="${hello.location}" target="build" inheritAll="false"/> 
+        //     <ant antfile="build.xml" dir="${hello.location}" target="clean" inheritAll="false"/> 
+        //     <ant antfile="build.xml" dir="${hello.location}" target="build" inheritAll="false"/> 
         // </target>
         Element element = doc.createElement("target"); //$NON-NLS-1$
         element.setAttribute("name", "build-refprojects"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -833,14 +838,14 @@ public class BuildFileCreator
             variable2valueMap.put(location, relativePath);
 
             Element antElement = doc.createElement("ant"); //$NON-NLS-1$
-            antElement.setAttribute("antfile", "${" + p.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
             antElement.setAttribute("dir", "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false"); //$NON-NLS-1$ //$NON-NLS-2$
             element.appendChild(antElement);
             
             antElement = doc.createElement("ant"); //$NON-NLS-1$
-            antElement.setAttribute("antfile", "${" + p.getProject().getName() + ".location}/" + BUILD_XML); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+            antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
             antElement.setAttribute("dir", "${" + p.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
             antElement.setAttribute("target", "build"); //$NON-NLS-1$ //$NON-NLS-2$
             antElement.setAttribute("inheritAll", "false");  //$NON-NLS-1$ //$NON-NLS-2$
@@ -869,7 +874,7 @@ public class BuildFileCreator
                 value.toString(), projectRoot));
         }
         // <target name="init-eclipse-compiler" description="copy Eclipse compiler jars to ant lib directory">
-        //     <property name="ECLIPSE_HOME" value="C:/Program/eclipse-3.1" />
+        //     <property name="ECLIPSE_HOME" value="C:/Programme/eclipse-3.1" />
         //     <copy todir="${ant.library.dir}">
         //         <fileset dir="${ECLIPSE_HOME}/plugins" includes="org.eclipse.jdt.core_*.jar" />
         //     </copy>
@@ -921,7 +926,7 @@ public class BuildFileCreator
     }
 
     /**
-     * Add all boot classpaths in srcDirs to given javacElement.
+     * Add all bootclasspaths in srcDirs to given javacElement.
      */
     private void addCompilerBootClasspath(List srcDirs, Element javacElement)
     {
@@ -1178,7 +1183,7 @@ public class BuildFileCreator
     }
     
     /**
-     * Add JUnit report target. 
+     * Add junitreport target. 
      */
     public void addJUnitReport()
     {
