@@ -1341,19 +1341,19 @@
                id="org.eclipse.debug.ui.actions.EnableBreakpoint">
         </action>
         <action
-              class="org.eclipse.debug.internal.ui.importexport.breakpoints.ImportBreakpoints"
-              helpContextId="import_breakpoints_action_context"
-              icon="$nl$/icons/full/elcl16/import_brkpts.gif"
-              id="org.eclipse.debug.internal.ui.importexport.breakpoints.importBreakpointsContext"
-              label="%importBreakpoints.label"
-              menubarPath="additions"/>
-        <action
               class="org.eclipse.debug.internal.ui.importexport.breakpoints.ExportBreakpoints"
               enablesFor="+"
               helpContextId="export_breakpoints_action_context"
               icon="$nl$/icons/full/elcl16/export_brkpts.gif"
               id="org.eclipse.debug.internal.ui.importexport.breakpoints.exportBreakpointsContext"
               label="%exportBreakpoints.label"
+              menubarPath="additions"/>
+        <action
+              class="org.eclipse.debug.internal.ui.importexport.breakpoints.ImportBreakpoints"
+              helpContextId="import_breakpoints_action_context"
+              icon="$nl$/icons/full/elcl16/import_brkpts.gif"
+              id="org.eclipse.debug.internal.ui.importexport.breakpoints.importBreakpointsContext"
+              label="%importBreakpoints.label"
               menubarPath="additions"/>
       </viewerContribution>
       <!-- Breakpoint actions -->
