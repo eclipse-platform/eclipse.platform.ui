@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -111,7 +111,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 		fName= name;
 		fTerminated= true;
 		try {
-			process.exitValue();
+			fExitValue = process.exitValue();
 		} catch (IllegalThreadStateException e) {
 			fTerminated= false;
 		}
@@ -183,7 +183,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see ITerminate#isTerminated()
 	 */
-	public boolean isTerminated() {
+	public synchronized boolean isTerminated() {
 		return fTerminated;
 	}
 
@@ -230,15 +230,17 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * has terminated.
 	 */
 	protected void terminated() {
-		if (fStreamsProxy instanceof StreamsProxy) {
-			((StreamsProxy)fStreamsProxy).close();
+		synchronized (this) {
+			if (fStreamsProxy instanceof StreamsProxy) {
+				((StreamsProxy)fStreamsProxy).close();
+			}
+			fTerminated= true;
+			try {
+				fExitValue = fProcess.exitValue();
+			} catch (IllegalThreadStateException ie) {
+			}
+			fProcess= null;			
 		}
-		fTerminated= true;
-		try {
-			fExitValue = fProcess.exitValue();
-		} catch (IllegalThreadStateException ie) {
-		}
-		fProcess= null;
 		fireTerminateEvent();
 	}
 		
@@ -353,7 +355,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see IProcess#getExitValue()
 	 */
-	public int getExitValue() throws DebugException {
+	public synchronized int getExitValue() throws DebugException {
 		if (isTerminated()) {
 			return fExitValue;
 		} 
