@@ -366,11 +366,11 @@ public class IDEResourceInfoUtils {
 		}
 
 		if (resource.getType() == IResource.FOLDER) {
-			if (resource.isLinked()) {
-				return LINKED_FOLDER_LABEL;
-			}
 			if (resource.isGroup()) {
 				return GROUP_FOLDER_LABEL;
+			}
+			if (resource.isLinked()) {
+				return LINKED_FOLDER_LABEL;
 			}
 
 			return FOLDER_LABEL;

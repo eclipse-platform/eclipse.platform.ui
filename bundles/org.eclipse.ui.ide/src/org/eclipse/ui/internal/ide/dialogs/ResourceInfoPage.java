@@ -167,7 +167,7 @@ public class ResourceInfoPage extends PropertyPage {
 		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 
-		if (resource.isLinked()) {
+		if (resource.isLinked() && !resource.isGroup()) {
 			// The group for location
 			Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
 			locationTitle.setText(LOCATION_TITLE);
@@ -200,7 +200,6 @@ public class ResourceInfoPage extends PropertyPage {
 			locationValue.setLayoutData(gd);
 			locationValue.setBackground(locationValue.getDisplay().getSystemColor(
 					SWT.COLOR_WIDGET_BACKGROUND));
-
 
 			Button editButton = new Button(locationComposite, SWT.PUSH);
 			editButton.setText(EDIT_TITLE);
