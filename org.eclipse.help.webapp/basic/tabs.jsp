@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2004 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 <% 
 	LayoutData data = new LayoutData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
-	View[] views = data.getViews();
+	AbstractView[] views = data.getViews();
 %>
 
 <html>
@@ -52,26 +52,25 @@ function resynch()
 		if("bookmarks".equals(views[i].getName())){
 			continue;
 		}
+		// do not show non enabled views
+		if(!views[i].isBasicEnabled()){
+			continue;
+		}
 		
 		// search view is not called "advanced view"
-		String title = ServletResources.getString(views[i].getName(), request);
+		String title = data.getTitle(views[i]);
 		if("search".equals(views[i].getName())){
 			title=ServletResources.getString("Search", request);
 		}
 		
-		String viewHref="view.jsp?view="+views[i].getName();
-		// always pass query string to "links view"
-		if("links".equals(views[i].getName())){
-			viewHref=viewHref+(request.getQueryString()!=null?"&"+request.getQueryString():"");
-		}
-		
+		String viewHref="view.jsp?view="+views[i].getName();		
 %>
 		<td nowrap>
 		<b>
 		<a  href='<%=viewHref%>' > 
 	         <img alt="<%=title%>" 
 	              title="<%=title%>" 
-	              src="<%=views[i].getOnImage()%>" border=0>
+	              src="<%=data.getImageURL(views[i])%>" border=0>
 	         
 	     <%=title%>
 	     </a>

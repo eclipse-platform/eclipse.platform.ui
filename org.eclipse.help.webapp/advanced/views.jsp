@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2008 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@
 <% 
 	LayoutData data = new LayoutData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
-	View[] views = data.getViews();
+	AbstractView[] views = data.getViews();
 %>	
 
 
@@ -99,9 +99,10 @@ if (data.isIE()){
 <%
 	for (int i=0; i<views.length; i++) 
 	{
-		// normally we would hide the views first, but mozilla needs all iframes to be visible to load 
-		// other frames
-		String className =  data.getVisibleView().equals(views[i].getName()) ? "visible" : "hidden";
+	    if (views[i].isEnabled()) {
+		    // normally we would hide the views first, but mozilla needs all iframes to be visible to load 
+		    // other frames
+		    String className =  data.getVisibleView().equals(views[i].getName()) ? "visible" : "hidden";
 %>
  	<iframe frameborder="0" 
  		    class="<%=className%>"  
@@ -112,6 +113,7 @@ if (data.isIE()){
  		    src='<%="view.jsp?view="+views[i].getName()+(request.getQueryString()==null?"":("&"+UrlUtil.htmlEncode(request.getQueryString())))%>'>
  	</iframe> 
 <%
+        }
 	}
 %>	
 

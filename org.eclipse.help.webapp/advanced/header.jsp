@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2007 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -9,7 +9,9 @@
      IBM Corporation - initial API and implementation
 --%><%@
 page import="org.eclipse.help.internal.webapp.data.*"  contentType="text/html; charset=UTF-8"
-%><% 
+%>
+<%@ page import="org.eclipse.help.webapp.*" %>
+<% 
 request.setCharacterEncoding("UTF-8");
 boolean isRTL = UrlUtil.isRTL(request, response);
 String  direction = isRTL?"rtl":"ltr";

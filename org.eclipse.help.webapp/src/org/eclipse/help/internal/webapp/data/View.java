@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-public class View {
+import java.util.Locale;
+
+import org.eclipse.help.internal.webapp.WebappResources;
+import org.eclipse.help.webapp.AbstractView ;
+
+public class View extends AbstractView {
     public static char NO_SHORTCUT = (char)0;
 	private String name;
 	private String url;
@@ -35,22 +40,14 @@ public class View {
 	}
 
 	/**
-	 * Returns the enabled gray image
+	 * Returns the image shown on the view tab
 	 * 
 	 * @return String
 	 */
-	public String getImage() {
+	public String getImageURL() {
 		int i = imageURL.lastIndexOf('/');
 		return imageURL.substring(0, i) + "/e_" + imageURL.substring(i + 1); //$NON-NLS-1$
-	}
-
-	/**
-	 * Returns the image when selected
-	 * 
-	 * @return String
-	 */
-	public String getOnImage() {
-		return getImage();
+	
 	}
 	/**
 	 * Returns the image when selected
@@ -67,5 +64,18 @@ public class View {
 	 */
 	public boolean isDeferred() {
 		return isDeferred;
+	}
+
+	public String getAdvancedUrl() {
+		return null;
+	}
+
+	public String getImageUrl() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public String getTitle(Locale locale) {
+		return WebappResources.getString(name, locale);
 	}
 }

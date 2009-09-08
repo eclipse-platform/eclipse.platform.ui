@@ -13,7 +13,7 @@
 <% 
 	LayoutData data = new LayoutData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
-	View[] views = data.getViews();
+	AbstractView[] views = data.getViews();
 %>
 
 <html>
@@ -127,10 +127,12 @@ function getTarget(e) {
 
 <%
 for (int i=0; i<views.length; i++) {
+    if (views[i].isEnabled()) {
 %>
 	var <%=views[i].getName()%> = new Image();
-	<%=views[i].getName()%>.src = "<%=views[i].getOnImage()%>";
+	<%=views[i].getName()%>.src = "<%=data.getImageURL(views[i])%>";
 <%
+    }
 }
 %>
 
@@ -253,13 +255,14 @@ function getPreviousLink(currentLink){
 <%
 	for (int i=0; i<views.length; i++) 
 	{
-		String title = ServletResources.getString(views[i].getName(), request);
-		if (i != 0) {
+	    if (views[i].isEnabled()) {
+		    String title = data.getTitle(views[i]);
+		    if (i != 0) {
 %>
 	<td width="1px" class="separator"><div style="width:1px;height:1px;display:block;"></div></td>
 	<%-- div inside separator cell fixes top separator pixel that was not white on IE, or first separator not displayed when frame width happens to be even number of pixels --%>
 <%
-		}
+		    }
 %>
 	<td  title="<%=UrlUtil.htmlEncode(title)%>" 
 	     align="center"  
@@ -277,13 +280,14 @@ function getPreviousLink(currentLink){
 	         <%=views[i].getKey()==View.NO_SHORTCUT?"":"ACCESSKEY=\""+views[i].getKey()+"\""%>>
 	         <img alt="<%=UrlUtil.htmlEncode(title)%>" 
 	              title="<%=UrlUtil.htmlEncode(title)%>" 
-	              src="<%=views[i].getOnImage()%>"
+	              src="<%=data.getImageURL(views[i])%>"
 	              id="img<%=views[i].getName()%>"
 	              height="16"
 	         >
 	     </a>
 	</td>
 <%
+        }
 	}
 %>
  

@@ -13,7 +13,7 @@
 <% 
 	new ActivitiesData(application, request, response); // here it can turn filtering on or off
 	LayoutData data = new LayoutData(application,request, response);
-	View view = data.getCurrentView();
+	AbstractView view = data.getCurrentView();
 	if (view == null) return;
 %>
 
@@ -33,7 +33,9 @@ function onloadHandler(e)
 function resize()
 {
 <% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
-%>	var h=window.<%=view.getName()%>ToolbarFrame.document.getElementById("titleText").offsetHeight; <%-- default 13 --%>
+%>	var titleText=window.<%=view.getName()%>ToolbarFrame.document.getElementById("titleText");
+	if (!titleText) return;
+	var h=titleText.offsetHeight; <%-- default 13 --%>
 	if(h<=19){
 		return; <%-- no need to resize up to 19px --%>
 	}
@@ -64,16 +66,19 @@ function onShow()
 </head>
 
 <frameset id="viewFrameset" onload="onloadHandler()" rows="24,*" frameborder="0" framespacing="0" border=0  >
-	<frame id="toolbar" name="<%=view.getName()%>ToolbarFrame" title="<%=ServletResources.getString(view.getName()+"ViewToolbar", request)%>" src='<%=view.getURL()+view.getName()+"Toolbar.jsp"%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+	<frame id="toolbar" name="<%=view.getName()%>ToolbarFrame" title="<%=ServletResources.getString(view.getName()+"ViewToolbar", request)%>" 
+	    src='<%=data.getAdvancedURL(view,"Toolbar.jsp")%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<%
 	if (view.isDeferred()) {
 	%>
-		<frame name='<%=view.getName()%>ViewFrame' title="<%=ServletResources.getString(view.getName()+"View", request)%>" src='<%=UrlUtil.htmlEncode(view.getURL())+"deferredView.jsp?href="+view.getURL()+view.getName()+"View.jsp?"+UrlUtil.htmlEncode(request.getQueryString())%>'  marginwidth="10" marginheight="0" frameborder="0" >
+		<frame name='<%=view.getName()%>ViewFrame' title="<%=ServletResources.getString(view.getName()+"View", request)%>" 
+		    src='<%="deferredView.jsp?href="+data.getAdvancedURL(view,"View.jsp")+"?"+UrlUtil.htmlEncode(request.getQueryString())%>'  marginwidth="10" marginheight="0" frameborder="0" >
 	<%
 	}
 	else {
 	%>
-		<frame name='<%=view.getName()%>ViewFrame' title="<%=ServletResources.getString(view.getName()+"View", request)%>" src='<%=UrlUtil.htmlEncode(view.getURL())+view.getName()+"View.jsp?"+UrlUtil.htmlEncode(request.getQueryString())%>'  marginwidth="10" marginheight="0" frameborder="0" >
+		<frame name='<%=view.getName()%>ViewFrame' title="<%=ServletResources.getString(view.getName()+"View", request)%>" 
+		    src='<%=data.getAdvancedURL(view,"View.jsp") + "?" + UrlUtil.htmlEncode(request.getQueryString())%>'  marginwidth="10" marginheight="0" frameborder="0" >
 	<%
 	}
 	%>

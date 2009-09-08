@@ -17,7 +17,9 @@ Require-Bundle: org.junit,
  org.eclipse.ui.intro,
  org.eclipse.ui.intro.universal,
  org.eclipse.ui.forms,
- org.eclipse.ui.browser;bundle-version="3.2.300"
+ org.eclipse.ui.browser;bundle-version="3.2.300",
+ org.eclipse.equinox.jsp.jasper;bundle-version="1.0.200",
+ org.eclipse.equinox.jsp.jasper.registry;bundle-version="1.0.100"
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: Eclipse.org
 Bundle-ClassPath: ua-tests.jar

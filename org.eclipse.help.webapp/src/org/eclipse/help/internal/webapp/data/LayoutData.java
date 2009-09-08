@@ -16,10 +16,14 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.help.webapp.AbstractView;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -27,8 +31,9 @@ import org.osgi.framework.ServiceReference;
 
 public class LayoutData extends RequestData {
 
+	private static final String VIEW_EXTENSION_POINT = "org.eclipse.help.webapp.view"; //$NON-NLS-1$
 	private String query = ""; //$NON-NLS-1$
-	private View[] views;
+	private AbstractView[] views;
 
 	public LayoutData(ServletContext context, HttpServletRequest request,
 			HttpServletResponse response) {
@@ -119,7 +124,7 @@ public class LayoutData extends RequestData {
 	/**
 	 * Return array of length 0 if no views
 	 */
-	public View[] getViews() {
+	public AbstractView[] getViews() {
 		if (views != null)
 			return views;
 
@@ -151,13 +156,29 @@ public class LayoutData extends RequestData {
 			viewList.add(bookmarksview);
 		}
 		
-		views = (View[]) viewList.toArray(new View[viewList.size()]);
+		IExtensionRegistry registry = Platform.getExtensionRegistry();
+		IConfigurationElement[] elements = registry
+				.getConfigurationElementsFor(VIEW_EXTENSION_POINT); 
+		for (int i = 0; i < elements.length; i++) {
+			Object obj = null;
+			try {
+				obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+			} catch (CoreException e) {
+				HelpWebappPlugin.logError("Create extension failed:[" //$NON-NLS-1$
+						+ VIEW_EXTENSION_POINT + "].", e); //$NON-NLS-1$
+			}
+			if (obj instanceof AbstractView) {
+				viewList.add(obj);
+			}
+		}
+		
+		views = (AbstractView[]) viewList.toArray(new AbstractView[viewList.size()]);
 		return views;
 	}
 
 	public String getVisibleView() {
 		String requestedView = request.getParameter("tab"); //$NON-NLS-1$
-		View[] allViews = getViews();
+		AbstractView[] allViews = getViews();
 		for (int i = 0; i < allViews.length; i++) {
 			if (allViews[i].getName().equals(requestedView)) {
 				return requestedView;
@@ -166,7 +187,7 @@ public class LayoutData extends RequestData {
 		return "toc"; //$NON-NLS-1$
 	}
 
-	public View getCurrentView() {
+	public AbstractView getCurrentView() {
 		String name = request.getParameter("view"); //$NON-NLS-1$
 		views = getViews();
 		for (int i = 0; i < views.length; i++)
@@ -174,6 +195,7 @@ public class LayoutData extends RequestData {
 				return views[i];
 		return null;
 	}
+	
 	public String getWindowTitle() {
 		String titlePref = preferences.getTitleResource();
 		int slash = titlePref.indexOf('/');
@@ -196,5 +218,41 @@ public class LayoutData extends RequestData {
 					BaseHelpSystem.getProductName(), request);
 		}
 		return BaseHelpSystem.getProductName();
+	}
+
+	/**
+	 * Returns the URL of a JSP file in the advanced presentation
+	 */
+	public String getAdvancedURL(AbstractView view, String fileSuffix) {
+		return createURL(view.getURL(), view.getName(), fileSuffix);
+	}
+	
+	/**
+	 * Returns the URL of a JSP file in the basic presentation
+	 */
+	public String getBasicURL(AbstractView view, String fileSuffix) {
+		return createURL(view.getBasicURL(), view.getName(), fileSuffix);
+	}
+
+	private String createURL(String path, String viewName, String fileSuffix) {
+		if (path == null || path.length() == 0) {
+			return viewName + fileSuffix;
+		}
+		if (path.charAt(path.length() -1) != '/') {
+			path = path + '/';
+		}
+		return request.getContextPath() + path + viewName + fileSuffix;
+	}
+	
+	public String getImageURL(AbstractView view) {
+		String filename = view.getImageURL();
+		if (filename.length() != 0 && filename.charAt(0) == '/') {
+			return request.getContextPath() + filename;
+		}
+		return filename;
+	}
+	
+	public String getTitle(AbstractView view) {
+		return view.getTitle(UrlUtil.getLocaleObj(request, null));
 	}
 }

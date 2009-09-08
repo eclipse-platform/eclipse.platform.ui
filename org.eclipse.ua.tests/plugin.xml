@@ -512,5 +512,34 @@
             producer="org.eclipse.ua.tests.util.UATestContentProducer">
       </contentProducer>
    </extension>
+   
+   <extension
+         point="org.eclipse.equinox.http.registry.servlets">
+       <servlet
+            alias="/titlesearch/*.jsp"
+            class="org.eclipse.equinox.jsp.jasper.registry.JSPFactory:/"
+            httpcontextId="org.eclipse.help.webapp.help">
+      </servlet>
+      <serviceSelector
+            filter="(other.info=org.eclipse.help)">
+      </serviceSelector>
+   </extension>
+   <extension
+         point="org.eclipse.equinox.http.registry.resources">
+      <resource
+            alias="/titlesearch/icons"
+            base-name="/icons">
+      </resource>
+      <serviceSelector
+            filter="(other.info=org.eclipse.help)">
+      </serviceSelector>
+   </extension>
+   <extension
+         point="org.eclipse.help.webapp.view">
+      <view
+            class="org.eclipse.ua.tests.help.webextension.TitleSearchView">
+      </view>
+   </extension>
+   
 
 </plugin>
