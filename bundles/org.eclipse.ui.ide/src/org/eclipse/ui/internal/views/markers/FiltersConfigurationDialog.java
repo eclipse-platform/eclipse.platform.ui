@@ -85,6 +85,8 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private Button removeButton;
 
+	private Button renameButton;
+	
 	private Button cloneButton;
 
 	private Button andButton;
@@ -92,6 +94,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	private Button orButton;
 
 	private Label andOrLabel;
+
 	/**
 	 * Create a new instance of the receiver on builder.
 	 * 
@@ -253,6 +256,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 		filtersList = CheckboxTableViewer.newCheckList(filtersComposite,
 				SWT.BORDER);
+		
 		filtersList.setContentProvider(new IStructuredContentProvider() {
 			/*
 			 * (non-Javadoc)
@@ -360,7 +364,17 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 			}
 		});
 		setButtonLayoutData(removeButton);
-
+		
+		renameButton = new Button(buttons, SWT.PUSH);
+		renameButton.setText(MarkerMessages.MarkerFilter_renameName);
+		renameButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MarkerFieldFilterGroup filterGroup = (MarkerFieldFilterGroup) ((IStructuredSelection) filtersList
+						.getSelection()).getFirstElement();
+				renameFilter(filterGroup);
+			}
+		});
+		setButtonLayoutData(renameButton);
 		
 		andOrLabel = new Label(filtersComposite, SWT.NONE);
 		GridData labelData = new GridData();
@@ -420,34 +434,62 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 * 				
 	 */
 	private void addNewFilter(boolean cloneSelected) {
+		String newName =getNewFilterName(getCurrentFilterNames(),null);
+		if (newName != null) {
+			createNewFilter(newName,cloneSelected);
+		}
+	}
+	/**
+	 * Opens Input Dialog for a new filter name
+	 * @param avoidNames filter names to avoid
+	 * @param initialName initial name of the filter
+	 * @return new filter name or null if canceled
+	 * 				
+	 */
+	private String getNewFilterName(final Collection avoidNames,String initialName){
 		InputDialog newDialog = new InputDialog(getShell(),
 				MarkerMessages.MarkerFilterDialog_title,
 				MarkerMessages.MarkerFilterDialog_message,
-				MarkerMessages.MarkerFilter_newFilterName,
-				new IInputValidator() {
-					public String isValid(String newText) {
-						if (newText.length() == 0)
-							return MarkerMessages.MarkerFilterDialog_emptyMessage;
-						Iterator filterIterator = filterGroups
-								.iterator();
-						while (filterIterator.hasNext()) {
-							if (((MarkerFieldFilterGroup) filterIterator
-									.next()).getName().equals(newText))
-								return NLS
-										.bind(
-												MarkerMessages.filtersDialog_conflictingName,
-												newText);
-						}
-
-						return null;
-					}
-				});
+				initialName != null ? initialName
+						: MarkerMessages.MarkerFilter_newFilterName,
+				getNameValidator(avoidNames));
 		if (Window.OK == newDialog.open()) {
-			String newName = newDialog.getValue();
-			if (newName != null) {
-				createNewFilter(newName,cloneSelected);
-			}
+			return newDialog.getValue();
 		}
+		return null;
+	}
+
+	/**
+	 * Get IInputValidator for checking if the new name is valid
+	 * @param avoidNames
+	 * @return IInputValidator
+	 */
+	private IInputValidator getNameValidator(final Collection avoidNames) {
+		return new IInputValidator() {
+			public String isValid(String value) {
+				String newText=value.trim();
+				if (newText.length() == 0)
+					return MarkerMessages.MarkerFilterDialog_emptyMessage;
+				if (avoidNames.contains(newText))
+					return NLS.bind(
+							MarkerMessages.filtersDialog_conflictingName,
+							newText);
+				return null;
+			}
+		};
+	}
+	
+	/**
+	 * Get a collection of names of the filters currently in the list
+	 * @return Collection
+	 */
+	private Collection getCurrentFilterNames() {
+		Collection names = new ArrayList();
+		Iterator filterIterator = filterGroups.iterator();
+		while (filterIterator.hasNext()) {
+			names.add(((MarkerFieldFilterGroup) filterIterator.next()).getName());
+		}
+		return names;
 	}
 	/**
 	 * Create a new filterGroup, and adds it to the filterGroups 
@@ -467,6 +509,23 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		updateAndOrEnblement();
 	}
 
+	/**
+	 * Renames the supplied MarkerFieldFilterGroup
+	 * @param filterGroup
+	 */
+	private void renameFilter(MarkerFieldFilterGroup filterGroup) {
+		if (filterGroup != null) {
+			Collection names = getCurrentFilterNames();
+			String initial = null;
+			initial = filterGroup.getName();
+			names.remove(initial);
+			String newName=getNewFilterName(names, initial);
+			if(newName!=null){
+				filterGroup.setName(newName);
+				filtersList.update(filterGroup, null);
+			}
+		}
+	}
 	/**
 	 * Enable/disable 'and', 'or' buttons
 	 */
@@ -689,8 +748,13 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 * @param markerFieldFilterGroup
 	 */
 	private void setSelectedFilter(MarkerFieldFilterGroup markerFieldFilterGroup) {
-
+		if(selectedFilterGroup==markerFieldFilterGroup){
+			return;
+		}
 		removeButton
+				.setEnabled(!(markerFieldFilterGroup == null || markerFieldFilterGroup
+						.isSystem()));
+		renameButton
 				.setEnabled(!(markerFieldFilterGroup == null || markerFieldFilterGroup
 						.isSystem()));
 		cloneButton.setEnabled(markerFieldFilterGroup != null);
