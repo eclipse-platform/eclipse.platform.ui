@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,7 +90,23 @@ public class MessageConsole extends IOConsole {
      * @since 3.4
      */
 	public MessageConsole(String name, String consoleType, ImageDescriptor imageDescriptor, boolean autoLifecycle) {
-		super(name, consoleType, imageDescriptor, autoLifecycle);
+		this(name, consoleType, imageDescriptor, null, autoLifecycle);
+	}
+	
+    /**
+     * Constructs a message console with the given name, type, image, encoding, and lifecycle specification.
+     * 
+     * @param name the name to display for this console
+     * @param consoleType console type identifier or <code>null</code>
+     * @param imageDescriptor console image descriptor or <code>null</code>
+     * @param encoding the encoding that should be used to render the text, or <code>null</code>
+     * 	if the system default encoding should be used
+     * @param autoLifecycle whether lifecycle methods should be called automatically
+	 *  when added and removed from the console manager
+	 * @since 3.5
+     */
+	public MessageConsole(String name, String consoleType, ImageDescriptor imageDescriptor, String encoding, boolean autoLifecycle) {
+		super(name, consoleType, imageDescriptor, encoding, autoLifecycle);
 	}
 		
 	/**
