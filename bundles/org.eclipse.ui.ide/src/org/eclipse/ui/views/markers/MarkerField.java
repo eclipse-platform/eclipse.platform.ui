@@ -153,6 +153,16 @@ public abstract class MarkerField {
 	 * @see #getColumnTooltipText() this is the default column tooltip text
 	 */
 	public String getColumnHeaderText() {
+		return getName();
+	}
+	
+	/**
+	 * Return the name of this field.
+	 * 
+	 * @return String
+	 * @since 3.5
+	 */
+	public String getName() {
 		return configurationElement
 				.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
 	}

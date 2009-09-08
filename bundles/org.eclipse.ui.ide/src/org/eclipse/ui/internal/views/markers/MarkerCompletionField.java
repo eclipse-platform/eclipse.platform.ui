@@ -23,7 +23,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
  * MarkerCompletionField is the class that specifies the completion entry.
@@ -138,7 +137,7 @@ public class MarkerCompletionField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
 	 */
 	public String getColumnTooltipText() {
-		return MarkerMessages.completion_description;
+		return getName();
 	}
 
 	/**

@@ -125,9 +125,7 @@ public class SortFieldContribution extends MarkersContribution {
 			 */
 			public void fill(Menu menu, int index) {
 				MenuItem item = new MenuItem(menu, SWT.RADIO);
-				String title = field.getColumnHeaderText();
-				if (title.length() == 0)
-					title = field.getColumnTooltipText();
+				String title = field.getName();
 				item.setText(title);
 				ExtendedMarkersView view = getView();
 				item.addListener(SWT.Selection,

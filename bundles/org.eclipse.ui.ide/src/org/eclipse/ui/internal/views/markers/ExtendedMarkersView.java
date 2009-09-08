@@ -1719,7 +1719,7 @@ public class ExtendedMarkersView extends ViewPart {
 		StatusManager.getManager().handle(
 				StatusUtil.newStatus(IStatus.WARNING,
 						"Sorting by non visible field " //$NON-NLS-1$
-								+ field.getColumnHeaderText(), null));
+								+ field.getName(), null));
 	}
 
 	/**

@@ -398,7 +398,7 @@ public class MarkerPreferencesDialog extends ViewSettingsDialog {
 			 * @see org.eclipse.jface.viewers.LabelProvider#getText(java.lang.Object)
 			 */
 			public String getText(Object element) {
-				return ((MarkerField) element).getColumnHeaderText();
+				return ((MarkerField) element).getName();
 			}
 		};
 	}

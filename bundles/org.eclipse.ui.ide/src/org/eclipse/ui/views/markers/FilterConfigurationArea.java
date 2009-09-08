@@ -65,7 +65,7 @@ public abstract class FilterConfigurationArea {
 	 * @return String
 	 */
 	public String getTitle() {
-		return field.getColumnHeaderText();
+		return field.getName();
 	}
 
 	/**
