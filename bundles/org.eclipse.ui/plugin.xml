@@ -1157,6 +1157,20 @@
             name="%command.previousPage.name">
       </command>
       <command
+            description="%command.nextTab.description"
+            id="org.eclipse.ui.navigate.nextTab"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%command.nextTab.name"
+            defaultHandler="org.eclipse.ui.internal.handlers.TraversePageHandler:next">
+      </command>
+      <command
+            description="%command.previousTab.description"
+            id="org.eclipse.ui.navigate.previousTab"
+            categoryId="org.eclipse.ui.category.navigate"
+            name="%command.previousTab.name"
+            defaultHandler="org.eclipse.ui.internal.handlers.TraversePageHandler:previous">
+      </command>
+      <command
             description="%command.nextSubTab.description"
             id="org.eclipse.ui.navigate.nextSubTab"
             categoryId="org.eclipse.ui.category.navigate"
