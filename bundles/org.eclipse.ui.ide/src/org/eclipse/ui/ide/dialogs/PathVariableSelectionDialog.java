@@ -16,8 +16,8 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.ProjectVariableProviderManager;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -111,12 +111,13 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
         if (buttonId == EXTEND_ID) {
 			PathVariablesGroup.PathVariableElement selection = pathVariablesGroup
 					.getSelection()[0];
-			ProjectVariableProviderManager.Descriptor desc = ProjectVariableProviderManager
-					.getDefault().findDescriptor(selection.name);
-			if (desc != null
-					&& desc.getExtensions(selection.name, currentProject) != null) {
+			IPathVariable pathVariable = null;
+			if (currentProject != null)
+				pathVariable = currentProject.getPathVariableManager().getPathVariable(selection.name);
+			if (pathVariable != null
+					&& pathVariable.getExtensions(selection.name, currentProject) != null) {
 				EnvSelectionDialog dialog = new EnvSelectionDialog(getShell(),
-						desc.getExtensions(selection.name, currentProject));
+						pathVariable.getExtensions(selection.name, currentProject));
 				dialog.setTitle(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_title);
 				dialog.setMessage(NLS.bind(IDEWorkbenchMessages.PathVariableSelectionDialog_ExtensionDialog_description, selection.name));
 				if (dialog.open() == Window.OK
@@ -256,10 +257,11 @@ public final class PathVariableSelectionDialog extends SelectionDialog {
 			if (currentProject != null)
 				selectionPath = currentProject.getPathVariableManager().resolvePath(selectionPath);
 			IFileInfo info = IDEResourceInfoUtils.getFileInfo(selectionPath);
-			ProjectVariableProviderManager.Descriptor desc = ProjectVariableProviderManager
-					.getDefault().findDescriptor(selection[0].name);
+			IPathVariable pathVariable = null;
+			if (currentProject != null)
+				pathVariable = currentProject.getPathVariableManager().getPathVariable(selection[0].name);
 			if (info.exists() && info.isDirectory()
-					|| (desc != null && desc.getExtensions(selection[0].name,
+					|| (pathVariable != null && pathVariable.getExtensions(selection[0].name,
 							currentProject) != null)) {
 				extendButton.setEnabled(true);
 			} else {

@@ -20,10 +20,10 @@ import java.util.TreeMap;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.internal.resources.ProjectPathVariableManager;
+import org.eclipse.core.resources.IPathVariable;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ProjectVariableProviderManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
@@ -599,14 +599,9 @@ public class PathVariablesGroup {
      */
     private boolean isBuiltInVariable(String varName) {
         if (currentProject != null) {
-            ProjectVariableProviderManager.Descriptor descriptors[] = ProjectVariableProviderManager
-                    .getDefault().getDescriptors();
-            if (descriptors != null) {
-                for (int j = 0; j < descriptors.length; j++) {
-                    if (varName.equals(descriptors[j].getName()))
-                        return true;
-                }
-            }
+        	IPathVariable variable = pathVariableManager.getPathVariable(varName);
+            if (variable != null) 
+            	return variable.isReadOnly();
         }
         return false;
     }
