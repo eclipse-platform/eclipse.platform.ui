@@ -2767,7 +2767,7 @@ M4 = Platform-specific fourth key
           <description>
           	%exportBreakpoints.description
           </description>
-          <selection class="org.eclipse.core.resources.IResource"/>
+          <selection class="org.eclipse.debug.core.model.IBreakpoint"/>
        </wizard>
        <wizard
              category="org.eclipse.debug.ui"
