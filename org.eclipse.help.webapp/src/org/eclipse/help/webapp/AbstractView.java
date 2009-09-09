@@ -75,14 +75,14 @@ public abstract class AbstractView {
     /**
      * @return true if the view should be shown in the advanced presentation
      */
-    public boolean isEnabled() {
+    public boolean isVisible() {
         return true;
     }
     
     /**
      * @return true if the view should be shown in the basic presentation
      */
-    public boolean isBasicEnabled() {
+    public boolean isVisibleBasic() {
         return true;
     }
     

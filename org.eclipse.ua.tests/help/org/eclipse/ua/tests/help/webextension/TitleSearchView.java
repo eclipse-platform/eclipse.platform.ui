@@ -44,11 +44,11 @@ public class TitleSearchView extends AbstractView {
 		return "/titlesearch/jsp/basic/";
 	}
 	
-	public boolean isEnabled() {
+	public boolean isVisible() {
 		return true;
 	}
 	
-	public boolean isBasicEnabled() {
+	public boolean isVisibleBasic() {
 		return true;
 	}
 

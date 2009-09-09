@@ -99,7 +99,7 @@ if (data.isIE()){
 <%
 	for (int i=0; i<views.length; i++) 
 	{
-	    if (views[i].isEnabled()) {
+	    if (views[i].isVisible()) {
 		    // normally we would hide the views first, but mozilla needs all iframes to be visible to load 
 		    // other frames
 		    String className =  data.getVisibleView().equals(views[i].getName()) ? "visible" : "hidden";

@@ -53,7 +53,7 @@ function resynch()
 			continue;
 		}
 		// do not show non enabled views
-		if(!views[i].isBasicEnabled()){
+		if(!views[i].isVisibleBasic()){
 			continue;
 		}
 		

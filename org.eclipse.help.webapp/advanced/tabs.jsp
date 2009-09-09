@@ -127,7 +127,7 @@ function getTarget(e) {
 
 <%
 for (int i=0; i<views.length; i++) {
-    if (views[i].isEnabled()) {
+    if (views[i].isVisible()) {
 %>
 	var <%=views[i].getName()%> = new Image();
 	<%=views[i].getName()%>.src = "<%=data.getImageURL(views[i])%>";
@@ -255,7 +255,7 @@ function getPreviousLink(currentLink){
 <%
 	for (int i=0; i<views.length; i++) 
 	{
-	    if (views[i].isEnabled()) {
+	    if (views[i].isVisible()) {
 		    String title = data.getTitle(views[i]);
 		    if (i != 0) {
 %>
