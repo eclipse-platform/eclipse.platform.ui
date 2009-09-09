@@ -29,7 +29,7 @@ import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
  * 
  * @author Hitesh
  */
-class MarkerSortUtil {
+public class MarkerSortUtil {
 	
 	/**
 	 * Sorts [from,first+k-1] in the array of [from,to] using a variant of
