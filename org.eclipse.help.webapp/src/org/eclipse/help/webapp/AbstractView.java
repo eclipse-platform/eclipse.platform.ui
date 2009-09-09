@@ -67,8 +67,8 @@ public abstract class AbstractView {
     
     /**
      * A user visible title for the view which will appear in the tooltip
-     * @param locale
-     * @return
+     * @param locale the locale of the client
+     * @return the tooltip text to be used in this locale
      */
     public abstract String getTitle(Locale locale);
 
