@@ -11,32 +11,23 @@
 
 package org.eclipse.ui.internal.ide.misc;
 
-import org.eclipse.core.filesystem.IFileInfoFilter;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.LinkedList;
-
-import org.eclipse.core.resources.FilterTypeManager;
-import org.eclipse.core.resources.IResourceFilter;
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.filesystem.IFileInfoFilter;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.ui.IMemento;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
+import org.eclipse.ui.*;
 
 /**
  * Resource Filter Type allowing serializing sub filters as the arguments
- * @since 3.4
- *
+ * @since 3.6
  */
 public class CompoundResourceFilter {
 
 	private static final String T_FILTERS = "filters"; //$NON-NLS-1$
 
 	protected IFileInfoFilter instantiate(IProject project, IResourceFilter filter) {
-		FilterTypeManager.Descriptor desc = FilterTypeManager.getDefault().findDescriptor(filter.getId());
+		IFilterDescriptor desc =project.getWorkspace().getFilterDescriptor(filter.getId());
 		if (desc != null)
 			return desc.getFactory().instantiate(project, filter.getArguments());
 		return null;

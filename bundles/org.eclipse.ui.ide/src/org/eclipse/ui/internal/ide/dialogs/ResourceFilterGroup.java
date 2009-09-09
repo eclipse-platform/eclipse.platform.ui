@@ -10,6 +10,8 @@
  */
 package org.eclipse.ui.internal.ide.dialogs;
 
+import org.eclipse.core.resources.IFilterDescriptor;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
@@ -19,7 +21,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.eclipse.core.resources.FilterTypeManager;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResourceFilter;
 import org.eclipse.core.resources.IProject;
@@ -320,7 +321,7 @@ public class ResourceFilterGroup {
 		private String getValue(FilterCopy filter, String column) {
 			if (column.equals(FilterTypeUtil.ID)) {
 				String id = filter.getId();
-				FilterTypeManager.Descriptor descriptor = FilterTypeUtil.getDescriptor(id);
+				IFilterDescriptor descriptor = FilterTypeUtil.getDescriptor(id);
 				if (descriptor != null)
 					return descriptor.getName();
 			}
@@ -352,7 +353,7 @@ public class ResourceFilterGroup {
 		}
 
 		private String getFilterTypeName(FilterCopy filter) {
-			FilterTypeManager.Descriptor desc = FilterTypeUtil.getDescriptor(filter.getId());
+			IFilterDescriptor desc = FilterTypeUtil.getDescriptor(filter.getId());
 			if (desc != null)
 				return desc.getName();
 			return ""; //$NON-NLS-1$
@@ -975,7 +976,7 @@ class FilterTypeUtil {
 
 	public static void setValue(FilterCopy filter, String property, Object value) {
 		if (property.equals(FilterTypeUtil.ID)) {
-			FilterTypeManager.Descriptor descriptor;
+			IFilterDescriptor descriptor;
 			if (value instanceof Integer) {
 				int selection = ((Integer)value).intValue();
 				descriptor = FilterTypeUtil.getDescriptorFromIndex(selection);
@@ -1014,8 +1015,8 @@ class FilterTypeUtil {
 			filter.setArguments((String) value);
 	}
 
-	static FilterTypeManager.Descriptor getDescriptor(String id) {
-		FilterTypeManager.Descriptor[] descriptors = FilterTypeManager.getDefault().getDescriptors();
+	static IFilterDescriptor getDescriptor(String id) {
+		IFilterDescriptor[] descriptors = ResourcesPlugin.getWorkspace().getFilterDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
 			if (descriptors[i].getId().equals(id))
 				return descriptors[i];
@@ -1024,7 +1025,7 @@ class FilterTypeUtil {
 	}
 
 	static int getDescriptorIndex(String id) {
-		FilterTypeManager.Descriptor descriptors[] = FilterTypeManager.getDefault().getDescriptors();
+		IFilterDescriptor descriptors[] = ResourcesPlugin.getWorkspace().getFilterDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
 			if (descriptors[i].getId().equals(id))
 				return i;
@@ -1065,32 +1066,32 @@ class FilterTypeUtil {
 	}
 
 	static String[] getFilterNames(boolean childrenOnly) {
-		FilterTypeManager.Descriptor[] descriptors = FilterTypeManager.getDefault().getDescriptors();
+		IFilterDescriptor[] descriptors = ResourcesPlugin.getWorkspace().getFilterDescriptors();
 		LinkedList names = new LinkedList();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (!childrenOnly || descriptors[i].getArgumentType().equals(FilterTypeManager.ARGUMENT_TYPE_FILTER) ||
-					descriptors[i].getArgumentType().equals(FilterTypeManager.ARGUMENT_TYPE_FILTERS))
+			if (!childrenOnly || descriptors[i].getArgumentType().equals(IFilterDescriptor.ARGUMENT_TYPE_FILTER) ||
+					descriptors[i].getArgumentType().equals(IFilterDescriptor.ARGUMENT_TYPE_FILTERS))
 				names.add(descriptors[i].getName());
 		}
 		return (String[]) names.toArray(new String[0]);
 	}
 	
 	static String getDefaultFilterID() {
-		FilterTypeManager.Descriptor descriptors[] = FilterTypeManager.getDefault().getDescriptors();
+		IFilterDescriptor descriptors[] = ResourcesPlugin.getWorkspace().getFilterDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
-			if (descriptors[i].getArgumentType().equals(FilterTypeManager.ARGUMENT_TYPE_STRING))
+			if (descriptors[i].getArgumentType().equals(IFilterDescriptor.ARGUMENT_TYPE_STRING))
 				return descriptors[i].getId();
 		}
 		return descriptors[0].getId();
 	}
 	
-	static FilterTypeManager.Descriptor getDescriptorFromIndex(int index) {
-		FilterTypeManager.Descriptor descriptors[] = FilterTypeManager.getDefault().getDescriptors();
+	static IFilterDescriptor getDescriptorFromIndex(int index) {
+		IFilterDescriptor descriptors[] = ResourcesPlugin.getWorkspace().getFilterDescriptors();
 		return descriptors[index];
 	}
 
-	static FilterTypeManager.Descriptor getDescriptorByName(String name) {
-		FilterTypeManager.Descriptor[] descriptors = FilterTypeManager.getDefault().getDescriptors();
+	static IFilterDescriptor getDescriptorByName(String name) {
+		IFilterDescriptor[] descriptors = ResourcesPlugin.getWorkspace().getFilterDescriptors();
 		for (int i = 0; i < descriptors.length; i++) {
 			if (descriptors[i].getName().equals(name))
 				return descriptors[i];
@@ -1254,17 +1255,17 @@ class FilterCopy implements IResourceFilter {
 		this.type = type;
 	}
 	public boolean hasStringArguments() {
-		FilterTypeManager.Descriptor descriptor = FilterTypeUtil.getDescriptor(id);
+		IFilterDescriptor descriptor = FilterTypeUtil.getDescriptor(id);
 		if (descriptor != null)
-			return descriptor.getArgumentType().equals(FilterTypeManager.ARGUMENT_TYPE_STRING);
+			return descriptor.getArgumentType().equals(IFilterDescriptor.ARGUMENT_TYPE_STRING);
 		return false;
 	}
 	public int getChildrenLimit() {
-		FilterTypeManager.Descriptor descriptor = FilterTypeUtil.getDescriptor(id);
+		IFilterDescriptor descriptor = FilterTypeUtil.getDescriptor(id);
 		if (descriptor != null) {
-			if (descriptor.getArgumentType().equals(FilterTypeManager.ARGUMENT_TYPE_FILTER))
+			if (descriptor.getArgumentType().equals(IFilterDescriptor.ARGUMENT_TYPE_FILTER))
 				return 1;
-			if (descriptor.getArgumentType().equals(FilterTypeManager.ARGUMENT_TYPE_FILTERS))
+			if (descriptor.getArgumentType().equals(IFilterDescriptor.ARGUMENT_TYPE_FILTERS))
 				return Integer.MAX_VALUE;
 		}
 		return 0;
