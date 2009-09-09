@@ -901,13 +901,16 @@ public final class Platform {
 
 	/**
 	 * Returns the extension registry for this platform.
-	 *
+	 * <p>
+	 * Note this method is purely a convenience and {@link RegistryFactory#getRegistry()}
+	 * should generally be used instead.
+	 * </p>
 	 * @return the extension registry
 	 * @see IExtensionRegistry
 	 * @since 3.0
 	 */
 	public static IExtensionRegistry getExtensionRegistry() {
-		return InternalPlatform.getDefault().getRegistry();
+		return RegistryFactory.getRegistry();
 	}
 
 	/**
