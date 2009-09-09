@@ -42,8 +42,7 @@ public class WidgetObservableThreadTest extends AbstractSWTTestCase {
 			}
 		}.start();
 
-		while (!threadRealm.isBlocking())
-			Thread.sleep(1);
+        threadRealm.waitUntilBlocking();
 	}
 
 	protected void tearDown() throws Exception {

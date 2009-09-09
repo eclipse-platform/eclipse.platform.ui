@@ -118,6 +118,11 @@ public class ThreadRealm extends Realm {
         
         try {
             block = true;
+
+            synchronized (queue) {
+                queue.notifyAll(); // so waitUntilBlocking can return
+            }
+
             while (block) {
                 Runnable runnable = null;
                 synchronized (queue) {
@@ -155,6 +160,26 @@ public class ThreadRealm extends Realm {
         // Awaken the thread if waiting.
         synchronized (queue) {
             queue.notifyAll();
+        }
+    }
+
+    /**
+     * Blocks until the ThreadRealm is blocking on its own thread.
+     */
+    public void waitUntilBlocking() {
+        if (Thread.currentThread() == thread) {
+            throw new IllegalStateException(
+                    "Cannot execute this method in the realm's own thread");
+        }
+
+        while (!block) {
+            synchronized (queue) {
+                try {
+                    queue.wait();
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
+            }
         }
     }
 }
