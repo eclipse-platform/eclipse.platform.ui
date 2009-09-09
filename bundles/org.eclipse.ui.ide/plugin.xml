@@ -2241,39 +2241,48 @@
       </propertyTester>
    </extension>
    <extension
-         point="org.eclipse.core.resources.filterProviders">
-      <filterProvider
+         point="org.eclipse.core.resources.filters"
+         id="stringMatcherFilter">
+      <filter
             argumentType="string"
             class="org.eclipse.ui.internal.ide.misc.StringMatcherFilter"
             description="%filterProvider.description"
-            id="org.eclipse.ui.ide.stringMatcherFilter"
             name="%filterProvider.name"
             ordering="first">
-      </filterProvider>
-      <filterProvider
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filters"
+         id="orFilter">
+      <filter
             argumentType="filters"
             class="org.eclipse.ui.internal.ide.misc.OrResourceFilter"
             description="%orFilterProvider.description"
-            id="org.eclipse.ui.ide.orFilter"
             name="%orFilterProvider.name"
             ordering="first">
-      </filterProvider>
-      <filterProvider
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filters"
+         id="andFilter">
+      <filter
             argumentType="filters"
             class="org.eclipse.ui.internal.ide.misc.AndResourceFilter"
             description="%andFilterProvider.description"
-            id="org.eclipse.ui.ide.andFilter"
             name="%andFilterProvider.name"
             ordering="first">
-      </filterProvider>
-      <filterProvider
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filters"
+         id="notFilter">
+      <filter
             argumentType="filter"
             class="org.eclipse.ui.internal.ide.misc.NotResourceFilter"
             description="%notFilterProvider.description"
-            id="org.eclipse.ui.ide.notFilter"
             name="%notFilterProvider.name"
             ordering="first">
-      </filterProvider>
+      </filter>
    </extension>
    <extension
          point="org.eclipse.ui.installationPages">
