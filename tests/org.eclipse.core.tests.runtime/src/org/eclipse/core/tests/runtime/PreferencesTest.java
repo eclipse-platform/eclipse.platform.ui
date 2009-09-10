@@ -91,11 +91,11 @@ public class PreferencesTest extends RuntimeTest {
 
 	public void testConstants() {
 		// make sure that the preference store constants are defined properly
-		assertTrue(Preferences.BOOLEAN_DEFAULT_DEFAULT == false);
-		assertTrue(Preferences.INT_DEFAULT_DEFAULT == 0);
-		assertTrue(Preferences.LONG_DEFAULT_DEFAULT == 0L);
-		assertTrue(Preferences.FLOAT_DEFAULT_DEFAULT == 0.0f);
-		assertTrue(Preferences.DOUBLE_DEFAULT_DEFAULT == 0.0);
+		assertSame("Different values", Preferences.BOOLEAN_DEFAULT_DEFAULT, false);
+		assertSame("Different values", Preferences.INT_DEFAULT_DEFAULT, 0);
+		assertSame("Different values", Preferences.LONG_DEFAULT_DEFAULT, 0L);
+		assertSame("Different values", Preferences.FLOAT_DEFAULT_DEFAULT, 0.0f);
+		assertSame("Different values", Preferences.DOUBLE_DEFAULT_DEFAULT, 0.0);
 		assertTrue(Preferences.STRING_DEFAULT_DEFAULT.equals(""));
 	}
 
