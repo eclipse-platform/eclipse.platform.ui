@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.jface.action.IAction;
 
 /**
  * Toggle step filters action delegate.
@@ -29,11 +29,8 @@ public class ToggleStepFiltersCommandActionDelegate extends DebugCommandActionDe
         setAction(new ToggleStepFiltersAction());
     }
 
-	/**
-	 * @see org.eclipse.debug.internal.ui.commands.actions.DebugCommandActionDelegate#init(org.eclipse.ui.IWorkbenchWindow)
-	 */
-	public void init(IWorkbenchWindow window) {
-		super.init(window);
-		setChecked(DebugUITools.isUseStepFilters());
-	}
+    public void init(IAction action) {
+        super.init(action);
+        action.setChecked(DebugUITools.isUseStepFilters());
+    }
 }

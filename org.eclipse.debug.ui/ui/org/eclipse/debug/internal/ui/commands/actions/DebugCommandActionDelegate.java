@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 
 package org.eclipse.debug.internal.ui.commands.actions;
 
+import org.eclipse.debug.ui.actions.DebugCommandAction;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Event;
@@ -21,7 +22,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 /**
  * Abstract base class for debug action delegates performing debug commands.
  * 
- * @since 3.3
+ * @since 3.3.
  */
 public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActionDelegate, IActionDelegate2 {
 
@@ -30,27 +31,16 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
 	 */
 	private DebugCommandAction fDebugAction;
     
-    /**
-     * The underlying action for this delegate
-     */
-    private IAction fWindowAction;
-    
-    /**
-     * Whether this action has been initialized before it has been run
-     * (ensures enablement state is up to date when lazily instantiated)
-     */
-    private boolean fInitialized = false;
-
-	public DebugCommandActionDelegate() {
+	protected void setAction(DebugCommandAction action) {
+	    fDebugAction = action;
 	}
-
+	
 	/*
      * (non-Javadoc)
      * @see org.eclipse.ui.IWorkbenchWindowActionDelegate#dispose()
 	 */
 	public void dispose() {
         fDebugAction.dispose();
-
 	}
 
     /*
@@ -58,7 +48,7 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
      */
     public void init(IAction action) {
-        fWindowAction = action;
+        fDebugAction.setActionProxy(action);
     }
     
     /*
@@ -74,14 +64,6 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
      * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
      */
 	public void run(IAction action) {
-		synchronized (this) {
-			if (!fInitialized) {
-				try {
-					wait();
-				} catch (InterruptedException e) {
-				}
-			}			
-		}
         fDebugAction.run();
 	}
 
@@ -105,30 +87,4 @@ public abstract class DebugCommandActionDelegate implements IWorkbenchWindowActi
 	protected DebugCommandAction getAction() {
 		return fDebugAction;
 	}
-    
-    protected void setAction(DebugCommandAction action) {
-        fDebugAction = action;
-        action.setDelegate(this);
-    }
-
-    public void setEnabled(boolean enabled) {
-    	synchronized (this) {
-	    	if (!fInitialized) {
-	    		fInitialized = true;
-	    		notifyAll();
-	    	}
-    	}
-        fWindowAction.setEnabled(enabled);
-    }
-    
-    public void setChecked(boolean checked) {
-    	fWindowAction.setChecked(checked);
-    }
-    
-    protected IAction getWindowAction()
-    {
-    	return fWindowAction;
-    }
-    
-    
 }

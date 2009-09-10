@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.commands.actions;
 
-import org.eclipse.jface.action.IAction;
 
 /**
  * Collects votes from handler update requests.
@@ -20,13 +19,13 @@ import org.eclipse.jface.action.IAction;
  */
 public class ActionsUpdater {
 	
-	private IAction[] fActions;
+	private IEnabledTarget[] fActions;
 	private int fNumVoters;
 	private int fNumOfVotes = 0;
 	private boolean fDone = false;
 	private boolean fEnabled = true;
 	
-	public ActionsUpdater(IAction[] actions, int numVoters) {
+	public ActionsUpdater(IEnabledTarget[] actions, int numVoters) {
 		fActions = actions;
 		fNumVoters = numVoters;
 	}

@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IStepIntoHandler;
 import org.eclipse.debug.core.model.IStep;
 
@@ -30,9 +31,9 @@ public class StepIntoCommand extends StepCommand implements IStepIntoHandler {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#getUpdateJobFamily()
+	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
-	protected Object getUpdateJobFamily() {
+	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IStepIntoHandler.class;
 	}
 

@@ -24,7 +24,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
-import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -111,7 +110,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param monitor
 	 */
-	public void postUpdateCommand(Class commandType, Action action) {
+	public void postUpdateCommand(Class commandType, IEnabledTarget action) {
 		synchronized (fCommandUpdates) {
 			Job.getJobManager().cancel(commandType);
 			List actions = (List) fCommandUpdates.get(commandType);
@@ -129,11 +128,11 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param commandType
 	 * @param requestMonitor
 	 */
-	public void updateCommand(Class commandType, IAction action) {
+	public void updateCommand(Class commandType, IEnabledTarget action) {
 		ISelection context = fContextService.getActiveContext();
 		if (context instanceof IStructuredSelection && !context.isEmpty()) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
-			updateCommand(commandType, elements, new IAction[]{action});
+			updateCommand(commandType, elements, new IEnabledTarget[]{action});
 		} else {
 			action.setEnabled(false);
 		}
@@ -152,7 +151,7 @@ public class DebugCommandService implements IDebugContextListener {
 				Entry entry = (Entry) iterator.next();
 				Class commandType = (Class)entry.getKey();
 				List actions = (List) entry.getValue();
-				updateCommand(commandType, elements, (IAction[]) actions.toArray(new IAction[actions.size()]));
+				updateCommand(commandType, elements, (IEnabledTarget[]) actions.toArray(new IEnabledTarget[actions.size()]));
 			}
 		} else {
 			Iterator iterator = commands.values().iterator();
@@ -174,7 +173,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param elements elements to update for
 	 * @param monitor status monitor
 	 */
-	private void updateCommand(Class handlerType, Object[] elements, IAction[] actions) {
+	private void updateCommand(Class handlerType, Object[] elements, IEnabledTarget[] actions) {
 		if (elements.length == 1) {
 			// usual case - one element
 			Object element = elements[0];

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.core.commands;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.IRequest;
+import org.eclipse.debug.core.commands.AbstractDebugCommand;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
@@ -20,7 +21,7 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
  * 
  * @since 3.3
  */
-public abstract class ForEachCommand extends DebugCommand {
+public abstract class ForEachCommand extends AbstractDebugCommand {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#doExecute(java.lang.Object[], org.eclipse.core.runtime.IProgressMonitor, org.eclipse.debug.core.IRequest)

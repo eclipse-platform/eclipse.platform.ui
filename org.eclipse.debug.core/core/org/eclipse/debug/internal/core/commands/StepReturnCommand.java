@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IStepReturnHandler;
 import org.eclipse.debug.core.model.IStep;
 
@@ -29,10 +30,11 @@ public class StepReturnCommand extends StepCommand implements IStepReturnHandler
 		((IStep)target).stepReturn();
 	}
 
+
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#getUpdateJobFamily()
+	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
-	protected Object getUpdateJobFamily() {
+	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IStepReturnHandler.class;
 	}
 

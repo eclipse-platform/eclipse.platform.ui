@@ -12,7 +12,6 @@ package org.eclipse.debug.internal.ui.commands.actions;
 
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.internal.core.commands.DebugCommandRequest;
-import org.eclipse.jface.action.IAction;
 
 /**
  * Boolean collector that collects boolean results from a number of voters.
@@ -23,10 +22,10 @@ import org.eclipse.jface.action.IAction;
  */
 public class UpdateActionsRequest extends DebugCommandRequest implements IEnabledStateRequest {
 	
-	private IAction[] fActions;
+	private IEnabledTarget[] fActions;
 	private boolean fEnabled = false;
 	
-	public UpdateActionsRequest(Object[] elements, IAction[] actions) {
+	public UpdateActionsRequest(Object[] elements, IEnabledTarget[] actions) {
 		super(elements);
 		fActions = actions;
 	}

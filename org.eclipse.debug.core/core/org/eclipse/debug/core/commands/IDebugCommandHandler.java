@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,7 +66,7 @@ public interface IDebugCommandHandler {
 	 * given request. Errors can reported by setting an appropriate status
 	 * on the given request. A request can be canceled by this handler or the caller. 
 	 * A <code>null</code> status is equivalent to an OK status. When a request is
-	 * complete, has encountered an error, or cancelled, implementations must call
+	 * complete, has encountered an error, or canceled, implementations must call
 	 * <code>done()</code> on the given collector.
 	 * </p>
 	 * <p>

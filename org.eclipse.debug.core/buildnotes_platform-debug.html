@@ -11,6 +11,17 @@
 
 <h2>Summary of API changes in 3.6</h2>
 
+<h3>DebugCommandAction base class</h3>
+<p><strong>What is affected:</strong>
+<ul>
+  <li>Class addition: <code>org.eclipse.debug.ui.actions.DebugCommandAction</code> </li>
+  <li>Class addition: <code>org.eclipse.debug.ui.actions.DebugCommandHandler</code> </li>
+  <li>Class addition: <code>org.eclipse.debug.core.commands.AbstractDebugCommand</code> </li>
+</ul>
+</p>
+<p><strong>Description:</strong>The <code>IDebugCommandHandler</code> interface allows debugger to implement debug action handlers which execute asynchronously.  Most of the debugger actions user this interface to communicate with the debug model.  However, debuggers which need to add their own asynchronous actions had to duplicate the debug framework actions which invoke the <code>IDebugCommandHandler</code> handlers.  <code>DebugCommandAction</code> and <code>DebugCommandHandler</code> are base classes which can be extended by debuggers to implement new types of actions with asynchronous execution handlers.  Also, this change includes a standard base class <code>AbstractDebugCommand</code> to help implement the <code>IDebugCommandHandler</code> interface.</p>
+<p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
+
 <p>&nbsp;</p>
 </body>
 </html>

@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.core.commands;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IStepFiltersHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
@@ -90,9 +91,9 @@ public class StepFiltersCommand extends ForEachCommand implements IStepFiltersHa
 	}
 	
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#getUpdateJobFamily()
+	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
-	protected Object getUpdateJobFamily() {
+	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IStepFiltersHandler.class;
 	}	
 }

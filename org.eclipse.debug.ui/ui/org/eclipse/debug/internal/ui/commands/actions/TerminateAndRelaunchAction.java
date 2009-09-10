@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2004, 2008 IBM Corporation and others.
+ *  Copyright (c) 2004, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.RelaunchActionDelegate;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
+import org.eclipse.debug.ui.actions.DebugCommandAction;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelection;
@@ -30,37 +31,21 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  */
 public class TerminateAndRelaunchAction extends DebugCommandAction {
 	
-	class Participant implements ICommandParticipant {
-		
-		private Object[] fTargets;
+    public void postExecute(IRequest request, final Object[] targets) {
+        if (request.getStatus() == null || request.getStatus().isOK()) {
+            DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
+                public void run() {
+                    // Must be run in the UI thread since the launch can require
+                    // prompting to proceed
+                    for (int i = 0; i < targets.length; i++) {
+                        ILaunch launch = RelaunchActionDelegate.getLaunch(targets[i]);
+                        RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+                    }
+                }
+            }); 
+        }
+    }
 
-		public Participant(Object[] targets) {
-			fTargets = targets;
-		}
-
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.commands.actions.ICommandParticipant#requestDone(org.eclipse.debug.core.commands.IRequest)
-		 */
-		public void requestDone(IRequest request) {
-			if (request.getStatus() == null || request.getStatus().isOK()) {
-				DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-		            public void run() {
-		                // Must be run in the UI thread since the launch can require
-		                // prompting to proceed
-		            	for (int i = 0; i < fTargets.length; i++) {
-		            		ILaunch launch = RelaunchActionDelegate.getLaunch(fTargets[i]);
-		            		RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
-						}
-		            }
-		        });	
-			}
-		}
-		
-	}
-
-	protected ICommandParticipant getCommandParticipant(Object[] targets) {
-		return new Participant(targets);
-	}
 
 	protected Class getCommandType() {
 		return ITerminateHandler.class;

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,6 +17,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.IRequest;
+import org.eclipse.debug.core.commands.AbstractDebugCommand;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IStep;
@@ -26,7 +27,7 @@ import org.eclipse.debug.core.model.IStep;
  * 
  * @since 3.3
  */
-public abstract class StepCommand extends DebugCommand {
+public abstract class StepCommand extends AbstractDebugCommand {
 
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
 		for (int i = 0; i < targets.length; i++) {

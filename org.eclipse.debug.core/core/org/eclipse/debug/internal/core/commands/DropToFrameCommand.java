@@ -11,6 +11,7 @@
 package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IDropToFrameHandler;
 import org.eclipse.debug.core.model.IDropToFrame;
 
@@ -40,9 +41,9 @@ public class DropToFrameCommand extends StepCommand implements IDropToFrameHandl
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.core.commands.DebugCommand#getUpdateJobFamily()
+	 * @see org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(org.eclipse.debug.core.commands.IDebugCommandRequest)
 	 */
-	protected Object getUpdateJobFamily() {
+	protected Object getEnabledStateJobFamily(IDebugCommandRequest request) {
 		return IDropToFrameHandler.class;
 	}
 }

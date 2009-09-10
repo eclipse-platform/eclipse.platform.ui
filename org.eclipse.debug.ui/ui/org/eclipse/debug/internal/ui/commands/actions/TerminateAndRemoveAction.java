@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,6 +20,7 @@ import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
+import org.eclipse.debug.ui.actions.DebugCommandAction;
 import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
@@ -28,38 +29,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * @since 3.3
  */
 public class TerminateAndRemoveAction extends DebugCommandAction {
-
-    
-    class TerminateAndRemoveParticipant implements ICommandParticipant {
-        private Object[] fElements;
-        
-        TerminateAndRemoveParticipant(Object[] elements) {
-            fElements = elements;
-        }
-        
-		/* (non-Javadoc)
-		 * @see org.eclipse.debug.internal.ui.commands.actions.ICommandParticipant#requestDone(org.eclipse.debug.core.commands.IRequest)
-		 */
-		public void requestDone(IRequest request) {
-			IStatus status = request.getStatus();
-			if(status == null || status.isOK()) {
-				for (int i = 0; i < fElements.length; i++) {
-					Object element = fElements[i];
-	                ILaunch launch= null;
-	                if (element instanceof ILaunch) {
-	                    launch= (ILaunch) element;
-	                } else if (element instanceof IDebugElement) {
-	                    launch= ((IDebugElement) element).getLaunch();
-	                } else if (element instanceof IProcess) {
-	                    launch= ((IProcess) element).getLaunch();
-	                }   
-	                if (launch != null)
-	                    DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);					
-				}
-            }
-		}
-        
-    }
 
     public String getText() {
         return ActionMessages.TerminateAndRemoveAction_0;
@@ -93,9 +62,24 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 		return ITerminateHandler.class;
 	}
 
-	protected ICommandParticipant getCommandParticipant(Object[] targets) {
-		return new TerminateAndRemoveParticipant(targets);
-	}
+    protected void requestDone(Object[] elements, IRequest request) {
+        IStatus status = request.getStatus();
+        if(status == null || status.isOK()) {
+            for (int i = 0; i < elements.length; i++) {
+                Object element = elements[i];
+                ILaunch launch= null;
+                if (element instanceof ILaunch) {
+                    launch= (ILaunch) element;
+                } else if (element instanceof IDebugElement) {
+                    launch= ((IDebugElement) element).getLaunch();
+                } else if (element instanceof IProcess) {
+                    launch= ((IProcess) element).getLaunch();
+                }   
+                if (launch != null)
+                    DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);                   
+            }
+        }
+    }
 
     
 }
