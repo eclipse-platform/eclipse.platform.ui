@@ -24,7 +24,6 @@ import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IWindowListener;
@@ -159,7 +158,7 @@ public class DebugCommandService implements IDebugContextListener {
 				List actionList = (List) iterator.next();
 				Iterator actions = actionList.iterator();
 				while (actions.hasNext()) {
-					((IAction)actions.next()).setEnabled(false);
+					((IEnabledTarget)actions.next()).setEnabled(false);
 				}
 			}
 		}
