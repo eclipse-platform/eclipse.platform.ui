@@ -230,7 +230,7 @@ public class CoreTest extends TestCase {
 			fail("createSymLink", e);
 		}
 	}
-	
+
 	protected void ensureDoesNotExistInFileSystem(java.io.File file) {
 		FileSystemHelper.clear(file);
 	}
@@ -357,4 +357,78 @@ public class CoreTest extends TestCase {
 		}
 	}
 
+	public static void assertSame(String message, int expected, int actual) {
+		if (expected == actual)
+			return;
+		failNotSame(message, expected, actual);
+	}
+
+	public static void failNotSame(String message, int expected, int actual) {
+		StringBuffer formatted = new StringBuffer();
+		if (message != null) {
+			formatted.append(message).append(' ');
+		}
+		formatted.append("expected same:<").append(expected).append("> was not:<").append(actual).append(">");
+		fail(String.valueOf(formatted));
+	}
+
+	public static void assertSame(String message, boolean expected, boolean actual) {
+		if (expected == actual)
+			return;
+		failNotSame(message, expected, actual);
+	}
+
+	public static void failNotSame(String message, boolean expected, boolean actual) {
+		StringBuffer formatted = new StringBuffer();
+		if (message != null) {
+			formatted.append(message).append(' ');
+		}
+		formatted.append("expected same:<").append(expected).append("> was not:<").append(actual).append(">");
+		fail(String.valueOf(formatted));
+	}
+
+	public static void assertSame(String message, float expected, float actual) {
+		if (expected == actual)
+			return;
+		failNotSame(message, expected, actual);
+	}
+
+	public static void failNotSame(String message, float expected, float actual) {
+		StringBuffer formatted = new StringBuffer();
+		if (message != null) {
+			formatted.append(message).append(' ');
+		}
+		formatted.append("expected same:<").append(expected).append("> was not:<").append(actual).append(">");
+		fail(String.valueOf(formatted));
+	}
+
+	public static void assertSame(String message, double expected, double actual) {
+		if (expected == actual)
+			return;
+		failNotSame(message, expected, actual);
+	}
+
+	public static void failNotSame(String message, double expected, double actual) {
+		StringBuffer formatted = new StringBuffer();
+		if (message != null) {
+			formatted.append(message).append(' ');
+		}
+		formatted.append("expected same:<").append(expected).append("> was not:<").append(actual).append(">");
+		fail(String.valueOf(formatted));
+	}
+
+	public static void assertSame(String message, long expected, long actual) {
+		if (expected == actual)
+			return;
+		failNotSame(message, expected, actual);
+	}
+
+	public static void failNotSame(String message, long expected, long actual) {
+		StringBuffer formatted = new StringBuffer();
+		if (message != null) {
+			formatted.append(message).append(' ');
+		}
+		formatted.append("expected same:<").append(expected).append("> was not:<").append(actual).append(">");
+		fail(String.valueOf(formatted));
+	}
 }
