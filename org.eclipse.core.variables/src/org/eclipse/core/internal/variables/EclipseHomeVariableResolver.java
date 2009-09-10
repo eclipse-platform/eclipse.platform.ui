@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ package org.eclipse.core.internal.variables;
 import java.net.URL;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
@@ -31,7 +33,17 @@ public class EclipseHomeVariableResolver implements IDynamicVariableResolver {
         if (installLocation != null) {
             URL url = installLocation.getURL();
             if (url != null) {
-                String file = url.getFile();
+            	
+				// Try to convert the URL to an OS string, to be consistent with
+				// how other variables, like ${workspace_loc} resolve. See
+				// ResourceResolver.translateToValue(). [bugzilla 263535]
+            	String file = url.getFile();
+            	IPath path = Path.fromOSString(file);
+            	String osstr = path.toOSString();
+            	if (osstr.length() != 0) {
+            		return osstr;
+            	}
+
                 if (file.length() != 0) {
                     return file;
                 }
