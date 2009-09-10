@@ -13,6 +13,7 @@ package org.eclipse.ui.progress;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobChangeEvent;
 import org.eclipse.core.runtime.jobs.IJobChangeListener;
@@ -50,7 +51,7 @@ public class DeferredTreeContentManager {
 
 	IWorkbenchSiteProgressService progressService;
 
-	private IJobChangeListener updateCompleteListener;
+	private ListenerList updateCompleteListenerList;
 
 	/**
 	 * The DeferredContentFamily is a class used to keep track of a
@@ -404,8 +405,13 @@ public class DeferredTreeContentManager {
 		};
 		clearJob.setSystem(true);
 		
-		if(updateCompleteListener != null)
-			clearJob.addJobChangeListener(updateCompleteListener);
+		if (updateCompleteListenerList != null) {
+			Object[] listeners = updateCompleteListenerList.getListeners();
+			for (int i = 0; i < listeners.length; i++) {
+				clearJob
+						.addJobChangeListener((IJobChangeListener) listeners[i]);
+			}
+		}
 		clearJob.schedule();
 	}
 
@@ -466,14 +472,59 @@ public class DeferredTreeContentManager {
 			}
 		};
 	}
-	
+
 	/**
-	 * Add a listener to the job that updates the content after all
-	 * has been loaded by clearing the Pending entry etc.
+	 * Add a listener to list of update complete listeners. These listeners are
+	 * attached to the job that updates the viewer content (clears the pending
+	 * entry, etc.) after all deferred content has been retrieved.
+	 * 
+	 * This method has no effect if the listener has already been added to the
+	 * list of listeners.
+	 * 
+	 * Since 3.6, this listener is added to a list of listeners rather than
+	 * replacing the previously added listener. For backward compatibility,
+	 * adding a null listener will be interpreted as removal of a listener if
+	 * only one listener has been registered.
+	 * 
 	 * @param listener
+	 *            the listener to add to the list of update listeners
 	 * @since 3.4
 	 */
 	public void addUpdateCompleteListener(IJobChangeListener listener){
-		updateCompleteListener = listener;
+		// Maintain backward compatibility.
+		// Earlier only one listener was supported, so it can be removed by
+		// passing null
+		if (listener == null && updateCompleteListenerList != null) {
+			Object[] listeners = updateCompleteListenerList.getListeners();
+			if (listeners.length == 1) {
+				removeUpdateCompleteListener((IJobChangeListener) listeners[0]);
+			}
+		} else {
+			if (updateCompleteListenerList == null) {
+				updateCompleteListenerList = new ListenerList();
+			}
+			updateCompleteListenerList.add(listener);
+		}
 	}
+
+	/**
+	 * Removes the listener from the list of update listeners that are attached
+	 * to the job that updates the viewer content (clears the pending entry,
+	 * etc.) after all deferred content has been retrieved. If the listener is
+	 * already attached to a running job, it is not removed, but it will not be
+	 * added to any subsequent jobs that are run.
+	 * 
+	 * This method has no effect if the listener was not previously added to the
+	 * listener list.
+	 * 
+	 * @param listener
+	 *            the listener to be removed
+	 * @since 3.6
+	 */
+	public void removeUpdateCompleteListener(IJobChangeListener listener) {
+		if (updateCompleteListenerList != null) {
+			updateCompleteListenerList.remove(listener);
+		}
+	}
+
 }
