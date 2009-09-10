@@ -194,19 +194,24 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Create the child widgets of the receiver.
 	 */
-	/**
-	 * 
-	 */
 	protected void createChildren() {
 
 		FormLayout layout = new FormLayout();
 		setLayout(layout);
 
 		jobImageLabel = new Label(this, SWT.NONE);
-		jobImageLabel.setImage(getInfoImage());
+		Image infoImage = getInfoImage();
+		jobImageLabel.setImage(infoImage);
 		FormData imageData = new FormData();
-		imageData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
-		imageData.left = new FormAttachment(
+		if (infoImage != null) {
+			// position it in the center
+			imageData.top = new FormAttachment(50,
+					-infoImage.getBounds().height / 2);
+		} else {
+			imageData.top = new FormAttachment(0,
+					IDialogConstants.VERTICAL_SPACING);
+		}
+		imageData.left = new FormAttachment(0,
 				IDialogConstants.HORIZONTAL_SPACING / 2);
 		jobImageLabel.setLayoutData(imageData);
 
@@ -214,14 +219,10 @@ public class ProgressInfoItem extends Composite {
 		setMainText();
 
 		actionBar = new ToolBar(this, SWT.FLAT);
-		actionBar.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW)); // set
-		// cursor
-		// to
-		// overwrite
-		// any
-		// busy
+		actionBar.setCursor(getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
 
-		// cursor we might have
+		// set cursor to overwrite any busy cursor we might have
+
 		actionButton = new ToolItem(actionBar, SWT.NONE);
 		actionButton
 				.setToolTipText(ProgressMessages.NewProgressView_CancelJobToolTip);
@@ -255,11 +256,12 @@ public class ProgressInfoItem extends Composite {
 		updateToolBarValues();
 
 		FormData progressData = new FormData();
-		progressData.top = new FormAttachment(IDialogConstants.VERTICAL_SPACING);
+		progressData.top = new FormAttachment(0,
+				IDialogConstants.VERTICAL_SPACING);
 		progressData.left = new FormAttachment(jobImageLabel,
 				IDialogConstants.HORIZONTAL_SPACING / 2);
 		progressData.right = new FormAttachment(actionBar,
-				IDialogConstants.HORIZONTAL_SPACING);
+				IDialogConstants.HORIZONTAL_SPACING * -1);
 		progressLabel.setLayoutData(progressData);
 
 		mouseListener = new MouseAdapter() {
@@ -709,7 +711,7 @@ public class ProgressInfoItem extends Composite {
 			FormData linkData = new FormData();
 			linkData.top = new FormAttachment(progressBar,
 					IDialogConstants.VERTICAL_SPACING);
-			linkData.left = new FormAttachment(
+			linkData.left = new FormAttachment(0,
 					IDialogConstants.HORIZONTAL_SPACING);
 			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
 			// Give an initial value so as to constrain the link shortening
