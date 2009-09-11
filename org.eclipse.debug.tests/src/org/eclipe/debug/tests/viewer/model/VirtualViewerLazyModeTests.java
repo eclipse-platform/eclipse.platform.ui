@@ -154,7 +154,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
         {
             for (int i = 0; i < requested.getChildDeltas().length; i++) {
                 ModelDelta requestedChildDelta = (ModelDelta)requested.getChildDeltas()[i];
-                ModelDelta receivedChildDelta = (ModelDelta)received.getChildDelta(requestedChildDelta.getElement());
+                ModelDelta receivedChildDelta = received.getChildDelta(requestedChildDelta.getElement());
                 if ( receivedChildDelta == null || !deltaMatches(requestedChildDelta, receivedChildDelta) ) {
                     return false;
                 }
