@@ -328,7 +328,6 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 	 * @param element element to retrieve adapter for
 	 * @param type adapter type
 	 * @return adapter or <code>null</code>
-	 * @see {@link DebugPlugin#getAdapter(Object, Class)}
 	 */
 	protected Object getAdapter(Object element, Class type) {
     	return DebugPlugin.getAdapter(element, type);	
