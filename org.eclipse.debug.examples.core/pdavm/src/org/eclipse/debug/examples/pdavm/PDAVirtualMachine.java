@@ -454,7 +454,7 @@ public class PDAVirtualMachine {
 
         fSuspendVM = "client";
     }
-
+    
     void run() {
         int id = fNextThreadId++;
         sendDebugEvent("vmstarted", false);
@@ -687,6 +687,7 @@ public class PDAVirtualMachine {
         else if ("popdata".equals(command)) debugPopData(args);
         else if ("pushdata".equals(command)) debugPushData(args);
         else if ("registers".equals(command)) debugRegisters(args);
+        else if ("restart".equals(command)) debugRestart(args);
         else if ("resume".equals(command)) debugResume(args);
         else if ("set".equals(command)) debugSetBreakpoint(args);
         else if ("setdata".equals(command)) debugSetData(args);
@@ -944,7 +945,25 @@ public class PDAVirtualMachine {
         response.append('\n');
         sendCommandResponse(response.toString());
     }
-    
+
+    void debugRestart(Args args) {
+        fSuspendVM = "restart";
+
+        for (Iterator itr = fThreads.keySet().iterator(); itr.hasNext();) {
+            Integer id = (Integer)itr.next();
+            sendDebugEvent("exited " + id, false);            
+        }
+        fThreads.clear();
+
+        int id = fNextThreadId++;
+        fThreads.put(new Integer(id), new PDAThread(id, "main", 0));
+        sendDebugEvent("started " + id, false);            
+        
+        fRegisters.clear();
+        
+        sendCommandResponse("ok\n");
+    }
+
     void debugResume(Args args) {
         PDAThread thread = args.getThreadArg();
         if (thread == null) {

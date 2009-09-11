@@ -197,7 +197,11 @@ public class ActionMessages extends NLS {
 
 	public static String LaunchAction_2;
 
-	public static String ResumeAction_0;
+	public static String RestartCommandAction__text;
+
+    public static String RestartCommandAction_tooltip;
+
+    public static String ResumeAction_0;
     public static String ResumeAction_3;
     public static String StepIntoAction_0;
     public static String StepIntoAction_3;

@@ -204,6 +204,14 @@
 			<adapter type="org.eclipse.debug.ui.actions.IRunToLineTarget"/>
 <!--#endif -->
       </factory>
+      <factory
+            adaptableType="org.eclipse.debug.examples.core.pda.model.PDADebugElement"
+            class="org.eclipse.debug.examples.ui.pda.adapters.CommandAdapterFactory">
+         <adapter
+               type="org.eclipse.debug.core.commands.IRestartHandler">
+         </adapter>
+      </factory>
+-->
 <!-- FLEXIBLE HIERARCHY EXAMPLE
       <factory
             adaptableType="org.eclipse.debug.examples.core.pda.model.PDADebugTarget"

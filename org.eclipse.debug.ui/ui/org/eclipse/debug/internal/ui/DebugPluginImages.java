@@ -126,6 +126,7 @@ public class DebugPluginImages {
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_TOGGLE_STEP_FILTERS, DLCL+"stepbystep_co.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_NEXT_THREAD, DLCL+"next_thread_nav.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_PREVIOUS_THREAD, DLCL+"prev_thread_nav.gif"); //$NON-NLS-1$
+        declareRegistryImage(IInternalDebugUIConstants.IMG_DLCL_RESTART, DLCL+"restart_co.gif"); //$NON-NLS-1$
         
 		// enabled local toolbars
 		declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_DETAIL_PANE, ELCL + "toggledetailpane_co.gif"); //$NON-NLS-1$
@@ -163,6 +164,7 @@ public class DebugPluginImages {
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_STANDARD_ERR, ELCL+"writeerr_co.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_NEXT_THREAD, ELCL+"next_thread_nav.gif"); //$NON-NLS-1$
         declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_PREVIOUS_THREAD, ELCL+"prev_thread_nav.gif"); //$NON-NLS-1$
+        declareRegistryImage(IInternalDebugUIConstants.IMG_ELCL_RESTART, ELCL+"restart_co.gif"); //$NON-NLS-1$
         
 		//Object
 		declareRegistryImage(IDebugUIConstants.IMG_OBJS_LAUNCH_DEBUG, OBJECT + "ldebug_obj.gif"); //$NON-NLS-1$

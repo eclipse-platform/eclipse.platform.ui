@@ -52,6 +52,7 @@ import org.eclipse.debug.examples.core.pda.protocol.PDACommandResult;
 import org.eclipse.debug.examples.core.pda.protocol.PDAEvent;
 import org.eclipse.debug.examples.core.pda.protocol.PDAEventStopCommand;
 import org.eclipse.debug.examples.core.pda.protocol.PDAExitedEvent;
+import org.eclipse.debug.examples.core.pda.protocol.PDARestartCommand;
 import org.eclipse.debug.examples.core.pda.protocol.PDAStartedEvent;
 import org.eclipse.debug.examples.core.pda.protocol.PDATerminateCommand;
 import org.eclipse.debug.examples.core.pda.protocol.PDAVMResumeCommand;
@@ -568,4 +569,14 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	    }
 		return null;
 	}
+	
+	/**
+	 * Restarts the current debug session
+	 * 
+	 * @throws DebugException
+	 */
+	public void restart() throws DebugException {
+        sendCommand(new PDARestartCommand());
+    }   
+
 }

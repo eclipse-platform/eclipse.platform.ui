@@ -31,6 +31,7 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.commands.IRestartHandler;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
@@ -43,6 +44,7 @@ import org.eclipse.debug.internal.ui.actions.AddToFavoritesAction;
 import org.eclipse.debug.internal.ui.actions.EditLaunchConfigurationAction;
 import org.eclipse.debug.internal.ui.commands.actions.DisconnectCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.DropToFrameCommandAction;
+import org.eclipse.debug.internal.ui.commands.actions.RestartCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.ResumeCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.StepIntoCommandAction;
 import org.eclipse.debug.internal.ui.commands.actions.StepOverCommandAction;
@@ -155,7 +157,9 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
     private static final String TERMINATE_AND_RELAUNCH = "terminate_relaunch"; //$NON-NLS-1$
     
     private static final String TOGGLE_STEP_FILTERS = "toggle_step_filters"; //$NON-NLS-1$
-			
+
+    private static final String RESTART = "restart"; //$NON-NLS-1$
+
     private static final int BREADCRUMB_TRIGGER_RANGE = 5; // pixels
     
     private static final int BREADCRUMB_STICKY_RANGE = 20; // pixels
@@ -502,6 +506,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         addCapabilityAction(new DropToFrameCommandAction(), DROP_TO_FRAME);
         addCapabilityAction(new TerminateAndRemoveAction(), TERMINATE_AND_REMOVE);
         addCapabilityAction(new TerminateAndRelaunchAction(), TERMINATE_AND_RELAUNCH);
+        addCapabilityAction(new RestartCommandAction(), RESTART);
         addCapabilityAction(new TerminateAllAction(), TERMINATE_ALL);
         addCapabilityAction(new ToggleStepFiltersAction(), TOGGLE_STEP_FILTERS);
 	}
@@ -1019,6 +1024,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         disposeCommandAction(DROP_TO_FRAME);
         disposeCommandAction(TERMINATE_AND_REMOVE);
         disposeCommandAction(TERMINATE_AND_RELAUNCH);
+        disposeCommandAction(RESTART);
         disposeCommandAction(TERMINATE_ALL);
     }
 
@@ -1103,6 +1109,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * @see org.eclipse.debug.ui.AbstractDebugView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	protected void fillContextMenu(IMenuManager menu) {
+        TreeSelection sel = (TreeSelection) fTreeViewerDebugContextProvider.getActiveContext();
+        Object element = sel != null && sel.size() > 0 ? sel.getFirstElement() : null; 
 		
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EDIT_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EDIT_GROUP));
@@ -1129,12 +1137,7 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		/**
 		 * TODO hack to get around bug 148424, remove if UI ever fixes the PropertyDialogAction to respect enablesWhen conditions
 		 */
-		TreeSelection sel = (TreeSelection) fTreeViewerDebugContextProvider.getActiveContext();
-		boolean enabled = true;
-		if(sel != null && sel.size() > 0) {
-			enabled = !(sel.getFirstElement() instanceof ILaunch);
-		}
-		action.setEnabled(action.isApplicableForSelection() && enabled);
+		action.setEnabled(action.isApplicableForSelection() && !(element instanceof ILaunch));
 		menu.add(action);
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
         
@@ -1145,6 +1148,9 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
         menu.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(SUSPEND));
         menu.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(TERMINATE));
         menu.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(TERMINATE_AND_RELAUNCH));
+        if (element instanceof IAdaptable && ((IAdaptable)element).getAdapter(IRestartHandler.class) != null) {
+            menu.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(RESTART));
+        }
         menu.appendToGroup(IDebugUIConstants.THREAD_GROUP, getAction(DISCONNECT));
         
         menu.appendToGroup(IDebugUIConstants.STEP_INTO_GROUP, getAction(STEP_INTO));

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Example Debug Core Plug-in
 Bundle-SymbolicName: org.eclipse.debug.examples.core;singleton:=true
-Bundle-Version: 1.1.0
+Bundle-Version: 1.2.0
 Bundle-Activator: org.eclipse.debug.examples.core.pda.DebugCorePlugin
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources,
