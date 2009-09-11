@@ -659,7 +659,7 @@ public class PathVariablesGroup {
     }
 
     /**
-     * @param receivingProject
+     * @param project
      */
     public void setProject(IProject project) {
         currentProject = project;
