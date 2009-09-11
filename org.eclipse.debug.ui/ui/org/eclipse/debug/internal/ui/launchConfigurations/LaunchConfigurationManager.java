@@ -1097,6 +1097,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * the specified mode, or <code>null</code> if none
 	 */
 	public ILaunchGroup getLaunchGroup(ILaunchConfigurationType type, String mode) {
+		if (!type.supportsMode(mode)) {
+			return null;
+		}
 		String category = type.getCategory();
 		ILaunchGroup[] groups = getLaunchGroups();
 		ILaunchGroup extension = null;
