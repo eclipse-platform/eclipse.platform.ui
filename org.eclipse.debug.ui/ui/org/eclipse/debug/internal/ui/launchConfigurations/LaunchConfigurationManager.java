@@ -1088,7 +1088,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	}
 	
 	/**
-	 * Returns the launch group the given launch configuration belongs to, in
+	 * Returns the launch group the given launch configuration type belongs to, in
 	 * the specified mode, or <code>null</code> if none.
 	 * 
 	 * @param type the type
