@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.ui.ide.dialogs;
+
+import org.eclipse.core.resources.IPathVariable;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -25,6 +27,10 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
 
 /**
+ * A dialog that allows a user to browse, edit, add, and remove path variables
+ * for a given project.
+ * 
+ * @see IPathVariable
  * @since 3.6
  */
 public class PathVariableEditDialog extends SelectionDialog {
@@ -45,10 +51,6 @@ public class PathVariableEditDialog extends SelectionDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	public void setProject(IProject receivingProject) {
-		pathVariablesGroup.setProject(receivingProject);
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -56,6 +58,16 @@ public class PathVariableEditDialog extends SelectionDialog {
 	 */
 	protected void buttonPressed(int buttonId) {
 		super.buttonPressed(buttonId);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.jface.window.Window#close()
+	 */
+	public boolean close() {
+		pathVariablesGroup.dispose();
+		return super.close();
 	}
 
 	/*
@@ -97,16 +109,6 @@ public class PathVariableEditDialog extends SelectionDialog {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
-	public boolean close() {
-		pathVariablesGroup.dispose();
-		return super.close();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
 	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
 	protected void okPressed() {
@@ -128,5 +130,13 @@ public class PathVariableEditDialog extends SelectionDialog {
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+	}
+
+	/**
+	 * Sets the project for which variables are being edited
+	 * @param project The project whose variables are being edited
+	 */
+	public void setProject(IProject project) {
+		pathVariablesGroup.setProject(project);
 	}
 }
