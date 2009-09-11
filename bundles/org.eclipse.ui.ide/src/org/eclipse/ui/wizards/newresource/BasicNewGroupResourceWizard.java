@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 Freescale Semiconductor and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
+ *     IBM Corporation - ongoing development
  *******************************************************************************/
 package org.eclipse.ui.wizards.newresource;
 
@@ -17,7 +18,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.dialogs.WizardNewGroupMainPage;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
-
 
 /**
  * Standard workbench wizard that create a new group resource in the workspace.
@@ -42,13 +42,12 @@ import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
  * @since 3.6
  */
 public class BasicNewGroupResourceWizard extends BasicNewResourceWizard {
-    private WizardNewGroupMainPage mainPage;
-
-	/**
+    /**
 	 * The wizard id for creating new groups in the workspace.
-	 * @since 3.4
 	 */
 	public static final String WIZARD_ID = "org.eclipse.ui.wizards.new.group"; //$NON-NLS-1$
+
+	private WizardNewGroupMainPage mainPage;
 
 	/**
      * Creates a wizard for creating a new folder resource in the workspace.
