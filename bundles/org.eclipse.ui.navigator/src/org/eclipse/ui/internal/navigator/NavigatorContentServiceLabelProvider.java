@@ -166,7 +166,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			}
 		} else {
 			String text= labelProvider.getText(anElement);
-			if (text != null) {
+			if (text != null && text.length() > 0) {
 				return new StyledString(text);
 			}
 		}  
