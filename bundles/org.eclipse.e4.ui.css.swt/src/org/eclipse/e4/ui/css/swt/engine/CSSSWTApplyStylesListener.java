@@ -31,7 +31,6 @@ public class CSSSWTApplyStylesListener {
 	public CSSSWTApplyStylesListener(Display display, CSSEngine engine) {
 		this.engine = engine;
 		display.addFilter(SWT.Resize, new ResizeListener());
-		display.addFilter(SWT.Show, new ShowListener());
 	}
 
 	private final boolean isWidgetAlreadyAdded(Widget widget) {
@@ -51,15 +50,6 @@ public class CSSSWTApplyStylesListener {
 					engine.applyStyles(widget, false);
 				}
 			}
-		}
-	}
-
-	private class ShowListener implements Listener {
-
-		public void handleEvent(Event event) {
-			Widget widget = event.widget;
-//			if (widget instanceof Shell)
-//				((Shell) widget).pack();
 		}
 	}
 }
