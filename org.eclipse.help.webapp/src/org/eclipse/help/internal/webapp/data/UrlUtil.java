@@ -697,4 +697,21 @@ public class UrlUtil {
 		int slash2 = uri.indexOf('/', 1);
 		return (slash1 == 0 && slash2 >= 0 && uri.substring(slash2).startsWith("/nav")); //$NON-NLS-1$
 	}
+	
+	// Create a relative path based on the current URL
+	public static String getRelativePath(HttpServletRequest req, String filePath) {
+		StringBuffer result = new StringBuffer(""); //$NON-NLS-1$
+		String reqPath = req.getPathInfo();
+		if (reqPath != null) {
+			for (int i; 0 <= (i = reqPath.indexOf('/', 1));) {
+				if (result.length() == 0 && filePath.startsWith(reqPath.substring(0, i + 1))) {
+					filePath = filePath.substring(i);
+				} else {
+					result.append("../"); //$NON-NLS-1$
+				}
+				reqPath = reqPath.substring(i);
+			}
+		}
+		return result.toString() + filePath.substring(1);
+	}
 }

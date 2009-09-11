@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,6 +35,7 @@ public class MockServletRequest implements HttpServletRequest {
 	private Locale locale;
 	private Map parameterMap = new HashMap();
 	private Cookie[] cookies = new Cookie[0];
+	private String pathInfo = null;
 
 	public MockServletRequest() {
 		
@@ -89,8 +90,11 @@ public class MockServletRequest implements HttpServletRequest {
 	}
 
 	public String getPathInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		return pathInfo;
+	}
+	
+	public void setPathInfo(String info) {
+		this.pathInfo = info;
 	}
 
 	public String getPathTranslated() {
