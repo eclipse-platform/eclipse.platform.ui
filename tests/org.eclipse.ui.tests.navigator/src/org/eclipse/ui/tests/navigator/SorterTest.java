@@ -100,7 +100,12 @@ public class SorterTest extends NavigatorTestBase {
 		_viewer.add(newData, _project.getFile("AddedFile2.txt"));
 	}
 
-	public void testSorterContentOverride() throws Exception {
+	/* 
+	 * This test will not work properly until real sort overriding is implemented.  It worked 
+	 * for a while in 3.5 as a side effect of bug 273660, however with the correct fix
+	 * in bug 287103 the tests needs to be disabled.
+	 */
+	public void XXtestSorterContentOverride() throws Exception {
 		waitForModelObjects();
 
 		_contentService.bindExtensions(

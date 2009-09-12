@@ -61,5 +61,18 @@ public class Policy {
 	private static boolean getDebugOption(String option) {
 		return "true".equalsIgnoreCase(Platform.getDebugOption(NavigatorPlugin.PLUGIN_ID + option)); //$NON-NLS-1$
 	}
+	
+	/**
+	 * @param obj
+	 * @return a String
+	 */
+	public static String getObjectString(Object obj) {
+		if (obj == null)
+			return "(null)"; //$NON-NLS-1$
+		String elemStr = obj.toString();
+		if (elemStr.length() > 30)
+			elemStr = elemStr.substring(0, 29);
+		return "(" + obj.getClass().getName() + "): " + elemStr;  //$NON-NLS-1$//$NON-NLS-2$
+	}
 
 }

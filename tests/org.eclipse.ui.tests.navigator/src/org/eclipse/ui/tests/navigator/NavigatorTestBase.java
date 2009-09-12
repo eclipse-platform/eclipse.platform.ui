@@ -82,6 +82,10 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_DROP_COPY = "org.eclipse.ui.tests.navigator.testContentDropCopy";
 	public static final String TEST_CONTENT_HAS_CHILDREN = "org.eclipse.ui.tests.navigator.testContentHasChildren";
 	public static final String TEST_CONTENT_ACTION_PROVIDER = "org.eclipse.ui.tests.navigator.testContentActionProvider";
+	
+	public static final String TEST_CONTENT_TRACKING_LABEL = "org.eclipse.ui.tests.navigator.testTrackingLabel";
+
+	public static final String TEST_CONTENT_JST = "org.eclipse.ui.tests.navigator.jst.ContentProvider";
 
 	protected static final String TEST_ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
 	protected static final String TEST_ACTIVITY_PROVIDER = "org.eclipse.ui.tests.navigator.testActivityProvider";

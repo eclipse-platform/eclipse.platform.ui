@@ -307,12 +307,11 @@ public class NavigatorContentServiceContentProvider implements
 		ContributorTrackingSet pipelinedChildren = theCurrentChildren;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
 
-			// Update contributor even if not pipelining as this is where it is recorded by viewer
-			pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());				
+						
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
-				
+				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());	
 				if (elements) {
 					pipelinedContentProvider.getPipelinedElements(aParentOrPath,
 							pipelinedChildren);
@@ -321,7 +320,7 @@ public class NavigatorContentServiceContentProvider implements
 							pipelinedChildren);
 				}
 				
-				//pipelinedChildren.setContributor(null);
+				pipelinedChildren.setContributor(null);
 				
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(aParentOrPath);

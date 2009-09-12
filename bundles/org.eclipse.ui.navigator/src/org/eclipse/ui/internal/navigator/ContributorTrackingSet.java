@@ -11,7 +11,6 @@
 
 package org.eclipse.ui.internal.navigator;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
@@ -81,12 +80,6 @@ public class ContributorTrackingSet extends LinkedHashSet {
 	 * @param newContributor The contributor to record for the next series of adds.
 	 */
 	public void setContributor(NavigatorContentDescriptor newContributor) {
-		if (newContributor != contributor) {
-			Iterator it = iterator();
-			while (it.hasNext()) {
-				contentService.rememberContribution(newContributor, it.next());
-			}
-		}
 		contributor = newContributor;
 	}
 

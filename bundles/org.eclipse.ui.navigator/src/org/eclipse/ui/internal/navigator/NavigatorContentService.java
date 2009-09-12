@@ -7,6 +7,7 @@
  *
  * Contributors:
  * IBM Corporation - initial API and implementation
+ * Fair Issac Corp - bug 287103 - NCSLabelProvider does not properly handle overrides
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator;
 
@@ -16,11 +17,17 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import org.osgi.service.prefs.BackingStoreException;
+
+import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
@@ -29,11 +36,12 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.widgets.Shell;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.dnd.NavigatorDnDService;
 import org.eclipse.ui.internal.navigator.extensions.ExtensionPriorityComparator;
@@ -59,7 +67,6 @@ import org.eclipse.ui.navigator.INavigatorPipelineService;
 import org.eclipse.ui.navigator.INavigatorSaveablesService;
 import org.eclipse.ui.navigator.INavigatorSorterService;
 import org.eclipse.ui.navigator.INavigatorViewerDescriptor;
-import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * <p>
@@ -352,7 +359,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	protected void updateService(Viewer aViewer, Object anOldInput,
 			Object aNewInput) {
 
-		// Prevents the world from being started again once we have been disposed.  In 
+		// Prevents the world from being started again once we have been disposed.  In
 		// the dispose process, the ContentViewer will call setInput() on the
 		// NavigatorContentServiceContentProvider, which gets us here
 		if (isDisposed)
@@ -426,7 +433,48 @@ public class NavigatorContentService implements IExtensionActivationListener,
 		}
 		return rootContentProviders;
 	}
+	
+	/**
+	 * Returns the list of extensions that should be considered as possible
+	 * contributors of CNF artifacts (labels, sorters, ...). The algorithm
+	 * first considers the source of contribution and its overrides, and then
+	 * any possibleChildren and their overrides in order.
+	 * 
+	 * @param anElement
+	 *            An element from the tree (any element contributed to the
+	 *            tree).
+	 * @return A Collection of NCEs sorted in the correct order for label provider application
+	 */
+	public Collection findPossibleLabelExtensions(Object anElement) {
+		LinkedHashSet contributors = new LinkedHashSet();
+		INavigatorContentDescriptor sourceDescriptor = getSourceOfContribution(anElement);
+		
+		if (sourceDescriptor != null) {
+			findOverridingLabelExtensions(anElement, sourceDescriptor, contributors);
+		}
+		
+		// This is a TreeSet sorted ascending
+		Set possibleChildDescriptors = findDescriptorsWithPossibleChild(anElement, false);
+		for (Iterator iter = possibleChildDescriptors.iterator(); iter.hasNext();) {
+			NavigatorContentDescriptor ncd = (NavigatorContentDescriptor) iter.next();
+			findOverridingLabelExtensions(anElement, ncd, contributors);
+		}
 
+		return contributors;
+	}
+
+	private void findOverridingLabelExtensions(Object anElement,
+			INavigatorContentDescriptor descriptor, LinkedHashSet contributors) {
+		ListIterator iter = ((NavigatorContentDescriptor) descriptor).getOverridingExtensionsListIterator(false);
+		while (iter.hasPrevious()) {
+			INavigatorContentDescriptor child = (INavigatorContentDescriptor) iter.previous();
+			if (assistant.isVisibleAndActive(child) && child.isPossibleChild(anElement)) {
+				findOverridingLabelExtensions(anElement, child, contributors);
+			}
+		}
+		contributors.add(getExtension(descriptor));
+	}
+	
 	/**
 	 * 
 	 * The label provider that is are enabled for the given element.
@@ -439,17 +487,8 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * @return The label provider
 	 */
 	public ILabelProvider[] findRelevantLabelProviders(Object anElement) {
-		SortedSet extensions = new TreeSet(ExtensionPriorityComparator.INSTANCE);
-		NavigatorContentDescriptor ncd = getSourceOfContribution(anElement);
-		if (ncd != null) {
-			extensions.add(getExtension(ncd));
-		}
-		Set possibleChildDescriptors = findContentExtensionsByTriggerPoint(anElement, true, CONSIDER_OVERRIDES);
-		for (Iterator iter = possibleChildDescriptors.iterator(); iter.hasNext();) {
-			INavigatorContentExtension ext = (INavigatorContentExtension) iter.next();
-			extensions.add(ext);
-		}
-
+		Collection extensions = findPossibleLabelExtensions(anElement);
+		
 		if (extensions.size() == 0) {
 			return NO_LABEL_PROVIDERS;
 		}
@@ -623,7 +662,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 *            The element to use in the query
 	 * @param toLoadIfNecessary
 	 *            True will force the load of the extension, False will not
-	 * @param computeOverrides 
+	 * @param computeOverrides
 	 * @return The set of {@link INavigatorContentExtension}s that are
 	 *         <i>visible</i> and <i>active</i> for this content service and
 	 *         have a <b>triggerPoints</b> expression that is <i>enabled</i> for
@@ -685,7 +724,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	public void rememberContribution(NavigatorContentDescriptor source, Object[] elements) {
 		for (int i = 0; i < elements.length; i++) {
 			if (Policy.DEBUG_RESOLUTION)
-				System.out.println("rememberContribution1: " + source + ": " + elements[i]);  //$NON-NLS-1$//$NON-NLS-2$
+				System.out.println("rememberContribution1: " + Policy.getObjectString(elements[i]) + " source: " + source);  //$NON-NLS-1$//$NON-NLS-2$
 			contributionMemory.put(elements[i], source);
 		}
 	}
@@ -698,7 +737,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 */
 	public void rememberContribution(NavigatorContentDescriptor source, Object element) {
 		if (Policy.DEBUG_RESOLUTION)
-			System.out.println("rememberContribution2: " + source + ": " + element);  //$NON-NLS-1$//$NON-NLS-2$
+			System.out.println("rememberContribution2: " + Policy.getObjectString(element) + " source: " + source);  //$NON-NLS-1$//$NON-NLS-2$
 		contributionMemory.put(element, source);
 	}
 	
@@ -752,7 +791,7 @@ public class NavigatorContentService implements IExtensionActivationListener,
 	 * 
 	 * @param anElement
 	 *            The element to use in the query
-	 * @param considerOverrides 
+	 * @param considerOverrides
 	 * 
 	 * @return The set of {@link INavigatorContentDescriptor}s that are
 	 *         <i>visible</i> and <i>active</i> for this content service and

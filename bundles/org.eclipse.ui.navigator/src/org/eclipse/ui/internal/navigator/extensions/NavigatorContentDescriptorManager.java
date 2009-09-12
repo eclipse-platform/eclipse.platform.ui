@@ -204,8 +204,8 @@ public class NavigatorContentDescriptorManager {
 		if (considerOverrides) {
 			addDescriptorsConsideringOverrides(anElement, firstClassDescriptorsSet, aVisibilityAssistant, descriptors, possibleChild);
 			if (Policy.DEBUG_RESOLUTION) {
-				System.out.println("Find descriptors for: (" + anElement + //$NON-NLS-1$
-						"): " + descriptors); //$NON-NLS-1$
+				System.out.println("Find descriptors for: " + Policy.getObjectString(anElement) + //$NON-NLS-1$
+						": " + descriptors); //$NON-NLS-1$
 			}
 		} else {
 
