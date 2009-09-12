@@ -21,8 +21,8 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.3
  *
  */
-public class TestLabelProviderGreen extends TestLabelProvider {
-	public static TestLabelProviderGreen instance;
+public class TestLabelProviderStyledGreen extends TestStyledLabelProvider {
+	public static TestLabelProviderStyledGreen instance;
 
 	protected void initSubclass() {
 		backgroundColor = Display.getCurrent().getSystemColor(

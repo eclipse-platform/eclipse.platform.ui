@@ -13,11 +13,12 @@
 package org.eclipse.ui.tests.navigator;
 
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlank;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProviderCyan;
-import org.eclipse.ui.tests.navigator.extension.TestLabelProviderGreen;
+import org.eclipse.ui.tests.navigator.extension.TestLabelProviderStyledGreen;
 import org.eclipse.ui.tests.navigator.extension.TrackingLabelProvider;
 
 public class LabelProviderTest extends NavigatorTestBase {
@@ -26,27 +27,55 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_navigatorInstanceId = "org.eclipse.ui.tests.navigator.OverrideTestView";
 	}
 
-	// Backed out this test because the blank label provider was actually
-	// used to signify no label content see bug 268250
-	public void XXXtestBlankLabelProvider() throws Exception {
-
-		TestLabelProvider._blankStatic = true;
-
-		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1,
-				TEST_CONTENT_OVERRIDE1 }, false);
+	private static final boolean BLANK = true;
+	private static final boolean NULL = false;
+	
+	private static final String PLAIN = "Plain";
+	
+	// Bug 289090 label provider returning blank in getText() not properly skipped
+	public void blankLabelProviderOverride(boolean blank, String suffix) throws Exception {
+		
+		String overriddenCp = TEST_CONTENT_OVERRIDDEN1 + suffix;
+		String overrideCp = TEST_CONTENT_OVERRIDE1 + suffix;
+		
+		
+		NavigatorContentExtension ext = (NavigatorContentExtension) _contentService.getContentExtensionById(overrideCp);
+		TestLabelProvider tp = (TestLabelProvider) ext.getLabelProvider();
+		if (blank)
+			tp._blank = true;
+		else 
+			tp._null = true;
+		
+		_contentService.bindExtensions(new String[] { overriddenCp, overrideCp }, false);
 		_contentService.getActivationService()
 				.activateExtensions(
-						new String[] { TEST_CONTENT_OVERRIDE1,
-								TEST_CONTENT_OVERRIDDEN1 }, true);
+						new String[] { overrideCp, overriddenCp }, true);
 
 		refreshViewer();
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
-		if (!rootItems[0].getText().equals(""))
+		// The overriding is blank, so we go to the overridden
+		if (!rootItems[0].getText().startsWith("Red"))
 			fail("Wrong text: " + rootItems[0].getText());
 	}
 
+	public void testBlankLabelProviderOverride() throws Exception {
+		blankLabelProviderOverride(BLANK, "");
+	}	
+	
+	public void testNullLabelProviderOverride() throws Exception {
+		blankLabelProviderOverride(NULL, "");
+	}	
+	
+	public void testPlainBlankLabelProviderOverride() throws Exception {
+		blankLabelProviderOverride(BLANK, PLAIN);
+	}	
+	
+	public void testPlainNullLabelProviderOverride() throws Exception {
+		blankLabelProviderOverride(NULL, PLAIN);
+	}	
+	
 	private void checkItemsAll(TreeItem[] rootItems, TestLabelProvider tlp) {
 		if (!rootItems[0].getText().startsWith(tlp.getColorName()))
 			fail("Wrong text: " + rootItems[0].getText());
@@ -75,7 +104,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 		refreshViewer();
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
-		checkItemsAll(rootItems, TestLabelProviderGreen.instance);
+		checkItemsAll(rootItems, TestLabelProviderStyledGreen.instance);
 	}
 	
 	/**

@@ -130,7 +130,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 				text = ((ITableLabelProvider)labelProviders[i]).getColumnText(anElement, aColumn);
 			else
 				text = labelProviders[i].getText(anElement);
-			if (text != null)
+			if (text != null && text.length() > 0)
 				return text;
 		}
 		return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement));	
@@ -166,7 +166,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			}
 		} else {
 			String text= labelProvider.getText(anElement);
-			if (text != null) {
+			if (text != null && text.length() > 0) {
 				return new StyledString(text);
 			}
 		}  

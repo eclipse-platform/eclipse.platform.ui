@@ -14,8 +14,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -31,7 +29,7 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 
 public abstract class TestLabelProvider extends LabelProvider implements
 		ICommonLabelProvider, IDescriptionProvider, IColorProvider,
-		IFontProvider, IStyledLabelProvider {
+		IFontProvider {
 
 	protected static FontData boldFontData = new FontData();
 
@@ -44,11 +42,10 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	
 	private Font boldFont;
 
-	public static boolean _blankStatic;
 	public boolean _blank;
+	public boolean _null;
 	
 	public static void resetTest() {
-		_blankStatic = false;
 	}
 	
 	static {
@@ -80,8 +77,10 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public String getText(Object element) {
-		if (_blankStatic || _blank)
+		if (_blank)
 			return "";
+		if (_null)
+			return null;
 		
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
@@ -91,12 +90,6 @@ public abstract class TestLabelProvider extends LabelProvider implements
 			return getColorName() + ((IResource) element).getName();
 		}
 		return null;
-	}
-
-	public StyledString getStyledText(Object element) {
-		if (_blankStatic || _blank)
-			return new StyledString("");
-		return new StyledString(getText(element));
 	}
 
 	public String getDescription(Object anElement) {
