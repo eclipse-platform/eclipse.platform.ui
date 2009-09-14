@@ -1699,7 +1699,7 @@ class FindReplaceDialog extends Dialog {
 	private void readConfiguration() {
 		IDialogSettings s= getDialogSettings();
 
-		fWrapInit= s.getBoolean("wrap"); //$NON-NLS-1$
+		fWrapInit= s.get("wrap") == null || s.getBoolean("wrap"); //$NON-NLS-1$ //$NON-NLS-2$
 		fCaseInit= s.getBoolean("casesensitive"); //$NON-NLS-1$
 		fWholeWordInit= s.getBoolean("wholeword"); //$NON-NLS-1$
 		fIncrementalInit= s.getBoolean("incremental"); //$NON-NLS-1$
