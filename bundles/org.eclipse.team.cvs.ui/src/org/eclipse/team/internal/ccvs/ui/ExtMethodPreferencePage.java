@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.ui;
 
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -18,14 +17,14 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
 import org.eclipse.team.internal.ccvs.core.IConnectionMethod;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ui.SWTUtils;
 import org.eclipse.ui.*;
+import org.eclipse.ui.dialogs.PreferenceLinkArea;
 import org.eclipse.ui.preferences.IWorkbenchPreferenceContainer;
 
 public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
@@ -43,12 +42,6 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 	 */
 	protected Control createContents(Composite parent) {
 		Composite composite = new Composite(parent, SWT.NULL);
-		GridLayout layout = new GridLayout();
-		layout.marginWidth = 0;
-		layout.marginHeight = 0;
-		layout.numColumns = 1;
-		composite.setLayout(layout);
-		composite.setLayoutData(new GridData());
 		
 		SelectionAdapter selectionListener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
@@ -56,17 +49,58 @@ public class ExtMethodPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		};
 		
+		// create radio buttons in a consecutive manner (see bug 282032)
 		useExternal = createRadioButton(composite, CVSUIMessages.ExtMethodPreferencePage_0, 1); 
 		useExternal.addSelectionListener(selectionListener);
-		external = createExternalArea(composite);
-		
 		useInternal = createRadioButton(composite, CVSUIMessages.ExtMethodPreferencePage_1, 1); 
 		useInternal.addSelectionListener(selectionListener);
+
+		external = createExternalArea(composite);
 		internal = createInternalArea(composite);
 		
-		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_52, CVSUIMessages.CVSPreferencesPage_53);
+		PreferenceLinkArea proxyLink = SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_52, CVSUIMessages.CVSPreferencesPage_53);
+
+		PreferenceLinkArea ssh2Link = SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_54, CVSUIMessages.CVSPreferencesPage_55);
+
+		// lay out controls in a different order than they were created in
+		FormLayout formLayout = new FormLayout();
+		composite.setLayout(formLayout);
+
+		FormData data = new FormData();
+		data.top = new FormAttachment(0, SWT.DEFAULT);
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(100, 0);
+		useExternal.setLayoutData(data);
+
+		data = new FormData();
+		data.top = new FormAttachment(useExternal, 5, SWT.DEFAULT);
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(100, 0);
+		external.setLayoutData(data);
+
+		data = new FormData();
+		data.top = new FormAttachment(external, 5, SWT.DEFAULT);
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(100, 0);		
+		useInternal.setLayoutData(data);
+
+		data = new FormData();
+		data.top = new FormAttachment(useInternal, 5, SWT.DEFAULT);
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(100, 0);		
+		internal.setLayoutData(data);
+
+		data = new FormData();
+		data.top = new FormAttachment(internal, 5, SWT.DEFAULT);
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(100, 0);		
+		proxyLink.getControl().setLayoutData(data);
 		
-		SWTUtils.createPreferenceLink((IWorkbenchPreferenceContainer) getContainer(), composite, CVSUIMessages.CVSPreferencesPage_54, CVSUIMessages.CVSPreferencesPage_55);
+		data = new FormData();
+		data.top = new FormAttachment(proxyLink.getControl(), 5, SWT.DEFAULT);
+		data.left = new FormAttachment(0, 0);
+		data.right = new FormAttachment(100, 0);		
+		ssh2Link.getControl().setLayoutData(data);
 
 		initializeDefaults();
         PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IHelpContextIds.EXT_PREFERENCE_PAGE);
