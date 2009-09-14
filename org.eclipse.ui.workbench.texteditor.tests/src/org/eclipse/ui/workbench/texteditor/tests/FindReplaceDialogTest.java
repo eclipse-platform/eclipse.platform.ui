@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,7 +63,7 @@ public class FindReplaceDialogTest extends TestCase {
 		value= (Boolean)fFindReplaceDialog.invoke("isWholeWordSetting", null);
 		assertFalse(value.booleanValue());
 		value= (Boolean)fFindReplaceDialog.invoke("isWrapSearch", null);
-		assertFalse(value.booleanValue());
+		assertTrue(value.booleanValue());
 		value= (Boolean)fFindReplaceDialog.invoke("isRegExSearch", null);
 		assertFalse(value.booleanValue());
 		value= (Boolean)fFindReplaceDialog.invoke("isRegExSearchAvailableAndChecked", null);
