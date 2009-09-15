@@ -18,9 +18,11 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
+
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
+
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.internal.navigator.NavigatorContentService;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
@@ -362,19 +364,19 @@ public class NavigatorContentExtension implements IMementoAware,
 			return NO_EXTENSIONS;
 		}
 
-		NavigatorContentDescriptor overriddingDescriptor;
+		NavigatorContentDescriptor overridingDescriptor;
 		Set overridingExtensions = new LinkedHashSet();
 		for (Iterator contentDescriptorsItr = descriptor
 				.getOverriddingExtensions().iterator(); contentDescriptorsItr
 				.hasNext();) {
-			overriddingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+			overridingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 					.next();
 
-			if (contentService.isActive(overriddingDescriptor.getId())
-					&& contentService.isVisible(overriddingDescriptor.getId())
-					&& overriddingDescriptor.isTriggerPoint(anElement)) {
+			if (contentService.isActive(overridingDescriptor.getId())
+					&& contentService.isVisible(overridingDescriptor.getId())
+					&& overridingDescriptor.isTriggerPoint(anElement)) {
 				overridingExtensions.add(contentService
-						.getExtension(overriddingDescriptor));
+						.getExtension(overridingDescriptor));
 			}
 		}
 		if (overridingExtensions.size() == 0) {
@@ -401,19 +403,19 @@ public class NavigatorContentExtension implements IMementoAware,
 			return NO_EXTENSIONS;
 		}
 
-		NavigatorContentDescriptor overriddingDescriptor;
+		NavigatorContentDescriptor overridingDescriptor;
 		Set overridingExtensions = new LinkedHashSet();
 		for (Iterator contentDescriptorsItr = descriptor
 				.getOverriddingExtensions().iterator(); contentDescriptorsItr
 				.hasNext();) {
-			overriddingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
+			overridingDescriptor = (NavigatorContentDescriptor) contentDescriptorsItr
 					.next();
 
-			if (contentService.isActive(overriddingDescriptor.getId())
-					&& contentService.isVisible(overriddingDescriptor.getId())
-					&& overriddingDescriptor.isPossibleChild(anElement)) {
+			if (contentService.isActive(overridingDescriptor.getId())
+					&& contentService.isVisible(overridingDescriptor.getId())
+					&& overridingDescriptor.isPossibleChild(anElement)) {
 				overridingExtensions.add(contentService
-						.getExtension(overriddingDescriptor));
+						.getExtension(overridingDescriptor));
 			}
 		}
 		if (overridingExtensions.size() == 0) {
