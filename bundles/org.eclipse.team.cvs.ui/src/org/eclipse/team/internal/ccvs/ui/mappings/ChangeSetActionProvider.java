@@ -311,17 +311,6 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 		return null;
 	}
 
-	private boolean onlyUnassingedChanges(IStructuredSelection selection) {
-		IDiff[] diffArray = getLocalChanges(selection);
-		DiffChangeSet unass = getContentProvider().getUnassignedSet();
-		IResource[] resources = getResources(diffArray);
-		for (int i = 0; i < resources.length; i++) {
-			if (!unass.contains(resources[i]))
-				return false;
-		}
-		return true;
-	}
-
 	private IResource[] getResources(IDiff[] diffArray) {
 		List result = new ArrayList();
 		for (int i = 0; i < diffArray.length; i++) {
@@ -350,17 +339,16 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 					getSynchronizePageConfiguration())
 					&& containsOnlyLocalChanges(selection)) {
 
-				if (!onlyUnassingedChanges(selection)) {
-					// only local changes, but not unassigned
+				if (containsOnlyUnassignedChanges(selection)) {
+					// only local unassigned changes
+					addToChangeSet = new MenuManager(
+							TeamUIMessages.ChangeLogModelProvider_13);
+					appendToGroup(menu, CHANGE_SET_GROUP, addToChangeSet);
+				} else {
 					addToChangeSet = new MenuManager(
 							TeamUIMessages.ChangeLogModelProvider_12);
 					appendToGroup(menu, CHANGE_SET_GROUP, addToChangeSet);
 					appendToGroup(menu, CHANGE_SET_GROUP, removeChangeSet);
-
-				} else {
-					addToChangeSet = new MenuManager(
-							TeamUIMessages.ChangeLogModelProvider_13);
-					appendToGroup(menu, CHANGE_SET_GROUP, addToChangeSet);
 				}
 
 				addChangeSets(addToChangeSet);
@@ -470,6 +458,20 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 	private IResourceDiffTree getDiffTree(TreePath path) {
 		return getContentProvider().getDiffTree(path);
 	}
+	
+	
+	private boolean containsOnlyUnassignedChanges(IStructuredSelection selection) {
+		IDiff[] diffArray = getLocalChanges(selection);
+		ChangeSet[] activeChangeSets = getActiveChangeSetManager().getSets();
+		IResource[] resources = getResources(diffArray);
+		for (int i = 0; i < activeChangeSets.length; i++) {
+			for (int j = 0; j < resources.length; j++) {
+				if (activeChangeSets[i].contains(resources[j]))
+					return false;
+			}
+		}
+		return true;
+	}
 
 	public boolean containsOnlyLocalChanges(IStructuredSelection selection) {
 		if (selection instanceof ITreeSelection) {
@@ -477,7 +479,7 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 			TreePath[] paths = ts.getPaths();
 			for (int i = 0; i < paths.length; i++) {
 				TreePath path = paths[i];
-				if (!containsLocalChanges(path)) {
+				if (!containsOnlyLocalChanges(path)) {
 					return false;
 				}
 			}
@@ -485,10 +487,10 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 		return true;
 	}
 
-	private boolean containsLocalChanges(TreePath path) {
+	private boolean containsOnlyLocalChanges(TreePath path) {
 		IResourceDiffTree tree = getDiffTree(path);
 		ResourceTraversal[] traversals = getTraversals(path.getLastSegment());
-		return tree.hasMatchingDiffs(traversals, getVisibleLocalChangesFilter());
+		return !tree.hasMatchingDiffs(traversals, getNonLocalChangesFilter());
 	}
 
 	private ResourceTraversal[] getTraversals(Object element) {
@@ -516,17 +518,18 @@ public class ChangeSetActionProvider extends ResourceModelActionProvider {
 		}
 		return new ResourceTraversal[0];
 	}
-
-	private FastDiffFilter getVisibleLocalChangesFilter() {
+	
+	private FastDiffFilter getNonLocalChangesFilter() {
 		return new FastDiffFilter() {
 			public boolean select(IDiff diff) {
 				if (diff instanceof IThreeWayDiff && isVisible(diff)) {
 					IThreeWayDiff twd = (IThreeWayDiff) diff;
-					if (twd.getDirection() == IThreeWayDiff.OUTGOING || twd.getDirection() == IThreeWayDiff.CONFLICTING) {
-						return true;
+					if (twd.getDirection() == IThreeWayDiff.OUTGOING
+							|| twd.getDirection() == IThreeWayDiff.CONFLICTING) {
+						return false;
 					}
 				}
-				return false;
+				return true;
 			}
 		};
 	}
