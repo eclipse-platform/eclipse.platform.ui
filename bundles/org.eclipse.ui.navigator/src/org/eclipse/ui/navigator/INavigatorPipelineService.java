@@ -26,7 +26,6 @@ package org.eclipse.ui.navigator;
  * @since 3.2
  */
 public interface INavigatorPipelineService {
-	
 
 	/**
 	 * Intercept attempts to add elements directly to the viewer.
@@ -35,7 +34,7 @@ public interface INavigatorPipelineService {
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
 	 * to add elements to the tree. These attempts must be intercepted and
-	 * mapped to the correct set of model elements in the overridding extension.
+	 * mapped to the correct set of model elements in the overriding extension.
 	 * Clients may add, remove, or modify elements in the given set of added
 	 * children. Clients should return a set for downstream extensions to
 	 * massage further.
@@ -55,7 +54,7 @@ public interface INavigatorPipelineService {
 	 */
 	public PipelinedShapeModification interceptAdd(
 			PipelinedShapeModification anAddModification);
-	
+
 	/**
 	 * Intercept attempts to remove elements directly from the viewer.
 	 * 
@@ -63,7 +62,7 @@ public interface INavigatorPipelineService {
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
 	 * to remove elements to the tree. These attempts must be intercepted and
-	 * mapped to the correct set of model elements in the overridding extension.
+	 * mapped to the correct set of model elements in the overriding extension.
 	 * Clients may add, remove, or modify elements in the given set of removed
 	 * children. Clients should return a set for downstream extensions to
 	 * massage further.

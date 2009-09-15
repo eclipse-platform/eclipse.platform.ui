@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,14 +20,14 @@ import java.util.Set;
  * type from intercept methods on {@link IPipelinedTreeContentProvider}.
  * 
  * <p>
- * Overridding extensions should use these to map attempts to directly modify
- * the tree down to the overridden model. A shape modification can either be an
- * <i>add</i> or <i>remove</i> shape modification, and the type is determined
- * by the context of its use. If supplied to an <code>interceptRemove</code>
+ * Overriding extensions should use these to map attempts to directly modify the
+ * tree down to the overridden model. A shape modification can either be an
+ * <i>add</i> or <i>remove</i> shape modification, and the type is determined by
+ * the context of its use. If supplied to an <code>interceptRemove</code>
  * method, then it is a remove shape modification, otherwise if supplied to an
  * <code>interceptAdd</code> method, then it is an add shape modification.
  * </p>
- *  
+ * 
  * 
  * @since 3.2
  * 

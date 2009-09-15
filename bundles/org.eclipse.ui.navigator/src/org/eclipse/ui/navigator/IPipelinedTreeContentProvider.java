@@ -23,24 +23,22 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
  * <p>
  * An "upstream" extension is either:
  * <ul>
- * <li> the extension overridden by this extension using the
- * <b>org.eclipse.ui.navigatorContent/navigatorContent/override</b> element, or
- * </li>
+ * <li>the extension overridden by this extension using the
+ * <b>org.eclipse.ui.navigatorContent/navigatorContent/override</b> element, or</li>
  * <li>another extension that overrides the same extension this extension
- * overrides, but with higher priority than this extension. </li>
+ * overrides, but with higher priority than this extension.</li>
  * </ul>
  * </p>
  * <p>
  * Overridden extensions form a tree where the nodes of the tree represent the
- * content extensions, children represent overridding extensions, and the
+ * content extensions, children represent overriding extensions, and the
  * children are sorted by priority. Pipeline contributions traverse the tree,
  * allowing children to override the contributions of their parent, giving
  * precedence to the children of highest priority.
- * </p> 
+ * </p>
  * 
  * <p>
- * {@link ITreeContentProvider} is respected by the Common
- * Navigator.
+ * {@link ITreeContentProvider} is respected by the Common Navigator.
  * </p>
  * 
  * @see INavigatorPipelineService
@@ -97,19 +95,19 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
 	 * to add elements to the tree. These attempts must be intercepted and
-	 * mapped to the correct set of model elements in the overridding extension.
+	 * mapped to the correct set of model elements in the overriding extension.
 	 * Clients may add, remove, or modify elements in the given set of added
 	 * children. Clients should return a set for downstream extensions to
-	 * massage further. 
+	 * massage further.
 	 * </p>
 	 * <p>
 	 * Clients may change what parent the reshaped elements are added to, so
 	 * long as that parent is not the root of the viewer.
 	 * </p>
 	 * <p>
-	 * Clients should never create their own pipeline shape
-	 * modifications, but instead return the shape modification that was passed
-	 * in with appropriate changes.
+	 * Clients should never create their own pipeline shape modifications, but
+	 * instead return the shape modification that was passed in with appropriate
+	 * changes.
 	 * </p>
 	 * <p>
 	 * <b>Clients should not call any of the add, remove, refresh, or update
@@ -134,7 +132,7 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
 	 * to remove elements to the tree. These attempts must be intercepted and
-	 * mapped to the correct set of model elements in the overridding extension.
+	 * mapped to the correct set of model elements in the overriding extension.
 	 * Clients may add, remove, or modify elements in the given set of removed
 	 * children. Clients should return a set for downstream extensions to
 	 * massage further.
@@ -142,9 +140,9 @@ public interface IPipelinedTreeContentProvider extends ICommonContentProvider {
 	 * <p>
 	 * The parent will be <b>null</b> for remove modifications.
 	 * <p>
-	 * Clients should never create their own pipeline shape
-	 * modifications, but instead return the shape modification that was passed
-	 * in with appropriate changes.
+	 * Clients should never create their own pipeline shape modifications, but
+	 * instead return the shape modification that was passed in with appropriate
+	 * changes.
 	 * </p>
 	 * <p>
 	 * <b>Clients should not call any of the add, remove, refresh, or update

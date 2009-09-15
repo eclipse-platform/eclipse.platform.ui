@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.TreePath;
+
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
@@ -50,7 +51,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
 	 * to add elements to the tree. These attempts must be intercepted and
-	 * mapped to the correct set of model elements in the overridding extension.
+	 * mapped to the correct set of model elements in the overriding extension.
 	 * Clients may add, remove, or modify elements in the given set of added
 	 * children. Clients should return a set for downstream extensions to
 	 * massage further.
@@ -78,17 +79,17 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		
 		for (Iterator descriptorsItr = contentDescriptors.iterator(); descriptorsItr.hasNext();) {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorsItr.next();
-			pipelineInterceptAdd(anAddModification, trackedSet, descriptor); 
-		}		 
+			pipelineInterceptAdd(anAddModification, trackedSet, descriptor);
+		}
 
 		// for consistency, we register the contribution from our best known match
-		registerContribution(anAddModification.getParent(), anAddModification.getChildren().toArray()); 
+		registerContribution(anAddModification.getParent(), anAddModification.getChildren().toArray());
 		return anAddModification;
 
 	}
  
-	/** 
-	 * @param parent The object to which data was contributed 
+	/**
+	 * @param parent The object to which data was contributed
 	 * @param contributions Data contributed to the viewer
 	 */
 	private void registerContribution(Object parent, Object[] contributions) {
@@ -98,8 +99,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		Set possibleMatches = null;
 		for (int i = 0; i < contributions.length; i++) {
 			// returns an array sorted by reverse priority
-			possibleMatches = contentService.findDescriptorsByTriggerPoint(contributions[i], NavigatorContentService.CONSIDER_OVERRIDES); 
-			NavigatorContentDescriptor[] descriptors = (NavigatorContentDescriptor[]) possibleMatches.toArray(new NavigatorContentDescriptor[possibleMatches.size()]); 
+			possibleMatches = contentService.findDescriptorsByTriggerPoint(contributions[i], NavigatorContentService.CONSIDER_OVERRIDES);
+			NavigatorContentDescriptor[] descriptors = (NavigatorContentDescriptor[]) possibleMatches.toArray(new NavigatorContentDescriptor[possibleMatches.size()]);
 			for (int indx = possibleMatches.size()-1; indx > -1; indx--) {
 								
 				// terminates once the highest priority match is found for this child
@@ -120,14 +121,13 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				if(contentService.isVisible(overridingDescriptor.getId()) && contentService.isActive(overridingDescriptor.getId())) {
 					trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor);
 					NavigatorContentExtension extension = contentService.getExtension(overridingDescriptor);
-					((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);					
+					((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);
 					trackedSet.setContributor(null);
 					pipelineInterceptAdd(anAddModification, trackedSet, overridingDescriptor);
 				}
-			}		
-		}  
-	} 
-	 
+			}
+		}
+	}
 
 	/**
 	 * Intercept attempts to remove elements directly from the viewer.
@@ -136,7 +136,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	 * For content extensions that reshape the structure of children in a
 	 * viewer, their overridden extensions may sometimes use optimized refreshes
 	 * to remove elements to the tree. These attempts must be intercepted and
-	 * mapped to the correct set of model elements in the overridding extension.
+	 * mapped to the correct set of model elements in the overriding extension.
 	 * Clients may add, remove, or modify elements in the given set of removed
 	 * children. Clients should return a set for downstream extensions to
 	 * massage further.
@@ -157,19 +157,19 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	public PipelinedShapeModification interceptRemove(
 			PipelinedShapeModification aRemoveModification) {
 		
-		ContributorTrackingSet trackedSet =(ContributorTrackingSet) aRemoveModification.getChildren(); 
+		ContributorTrackingSet trackedSet =(ContributorTrackingSet) aRemoveModification.getChildren();
 
-		Set interestedExtensions = new LinkedHashSet(); 	
+		Set interestedExtensions = new LinkedHashSet();
 		for (Iterator iter = trackedSet.iterator(); iter.hasNext();) {
 			Object element = (Object) iter.next();
 			if(element instanceof TreePath) {
 				interestedExtensions.addAll(contentService.findOverrideableContentExtensionsForPossibleChild(((TreePath)element).getLastSegment()));
-			} else { 
+			} else {
 				interestedExtensions = contentService.findOverrideableContentExtensionsForPossibleChild(element);
 				
-			} 
+			}
 		}
-		for (Iterator overridingExtensionsIter = interestedExtensions.iterator(); overridingExtensionsIter.hasNext();)  
+		for (Iterator overridingExtensionsIter = interestedExtensions.iterator(); overridingExtensionsIter.hasNext();)
 			pipelineInterceptRemove(aRemoveModification, trackedSet, (NavigatorContentExtension) overridingExtensionsIter.next());
 		return aRemoveModification;
 	}
@@ -185,9 +185,9 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				Object element = (Object) iter.next();
 				if(element instanceof TreePath) {
 					overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(((TreePath)element).getLastSegment())));
-				} else { 
-					overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(element)));				
-				} 
+				} else {
+					overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(element)));
+				}
 			}
 			 
 			for (Iterator extensionsItr = overridingExtensions.iterator(); extensionsItr.hasNext();) {
@@ -200,12 +200,12 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 				if(overridingExtension.getDescriptor().hasOverridingExtensions())
 					pipelineInterceptRemove(aRemoveModification, trackedSet, overridingExtension);
 												
-			} 	
+			}
 			
 		} catch (Throwable e) {
 			String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
 			NavigatorPlugin.logError(0, msg, e);
-		}  
+		}
 	}
 
 	/**
@@ -237,7 +237,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			refreshable = iter.next();
 			overrideableExtensions.addAll(contentService.findOverrideableContentExtensionsForPossibleChild(refreshable));
 		}
-		for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
+		for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) {
 			pipelined |= pipelineInterceptRefresh((NavigatorContentExtension) overrideableExtensionItr.next(), aRefreshSynchronization, refreshable);
 		}
 
@@ -251,7 +251,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 		boolean intercepted = false;
 		
 		NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension.getOverridingExtensionsForPossibleChild(refreshable);
-		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) { 
+		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) {
 			try {
 				if (overridingExtensionsForPossibleChild[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 
@@ -259,13 +259,13 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 							.getContentProvider())
 							.interceptRefresh(aRefreshSynchronization);
 					
-					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())  
-						intercepted |= pipelineInterceptRefresh(overridingExtensionsForPossibleChild[i], aRefreshSynchronization, refreshable);					
+					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())
+						intercepted |= pipelineInterceptRefresh(overridingExtensionsForPossibleChild[i], aRefreshSynchronization, refreshable);
 				}
 			} catch (Throwable e) {
 				String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
 				NavigatorPlugin.logError(0, msg, e);
-			}  
+			}
 		}
 
 		return intercepted;
@@ -294,7 +294,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	 * @return The (potentially reshaped) update to execute against the viewer.
 	 */
 	public boolean interceptUpdate(
-			PipelinedViewerUpdate anUpdateSynchronization) { 
+			PipelinedViewerUpdate anUpdateSynchronization) {
 		 
 		boolean pipelined = false;
 		Object refreshable = null;
@@ -304,7 +304,7 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			refreshable = iter.next();
 			overrideableExtensions.addAll(contentService.findOverrideableContentExtensionsForPossibleChild(refreshable));
 		}
-		for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) { 
+		for (Iterator overrideableExtensionItr = overrideableExtensions.iterator(); overrideableExtensionItr.hasNext();) {
 			pipelined |= pipelineInterceptUpdate((NavigatorContentExtension) overrideableExtensionItr.next(), anUpdateSynchronization, refreshable);
 		}
 
@@ -315,9 +315,9 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	private boolean pipelineInterceptUpdate(NavigatorContentExtension overrideableExtension,
 					PipelinedViewerUpdate anUpdateSynchronization, Object refreshable) {
 
-		boolean intercepted = false; 
+		boolean intercepted = false;
 		NavigatorContentExtension[] overridingExtensionsForPossibleChild = overrideableExtension.getOverridingExtensionsForPossibleChild(refreshable);
-		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) { 
+		for (int i=0; i<overridingExtensionsForPossibleChild.length; i++) {
 			try {
 				if (overridingExtensionsForPossibleChild[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 
@@ -325,16 +325,16 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 							.getContentProvider())
 							.interceptUpdate(anUpdateSynchronization);
 					
-					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())  
-						intercepted |= pipelineInterceptUpdate(overridingExtensionsForPossibleChild[i], anUpdateSynchronization, refreshable);					
+					if (overridingExtensionsForPossibleChild[i].getDescriptor().hasOverridingExtensions())
+						intercepted |= pipelineInterceptUpdate(overridingExtensionsForPossibleChild[i], anUpdateSynchronization, refreshable);
 				}
 			} catch (Throwable e) {
 				String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
 				NavigatorPlugin.logError(0, msg, e);
-			}  
+			}
 		}
 
 		return intercepted;
-	} 
+	}
 
 }

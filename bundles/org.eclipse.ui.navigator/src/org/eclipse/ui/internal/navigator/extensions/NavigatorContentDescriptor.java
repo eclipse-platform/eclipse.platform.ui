@@ -413,7 +413,7 @@ public final class NavigatorContentDescriptor implements
 	 * 
 	 * Does not force the creation of the set of overriding extensions.
 	 * 
-	 * @return True if this extension has overridding extensions.
+	 * @return True if this extension has overriding extensions.
 	 */
 	public boolean hasOverridingExtensions() {
 		return overridingExtensions != null && overridingExtensions.size() > 0;
