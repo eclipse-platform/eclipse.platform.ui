@@ -60,6 +60,9 @@
             <separator
                   name="group1">
             </separator>
+            <groupMarker
+                  name="applyPatchGroup">
+            </groupMarker>
             <separator
                   name="group2">
             </separator>
@@ -165,30 +168,17 @@
          </action>
       </objectContribution>
       <objectContribution
-            objectClass="org.eclipse.core.resources.IResource"
+            objectClass="org.eclipse.core.resources.mapping.ResourceMapping"
             adaptable="true"
-            id="org.eclipse.team.ui.ResourceContributions">
+            id="org.eclipse.team.ui.ResourceMappingContributions">
          <action
                label="%ApplyPatch.label"
                tooltip="%ApplyPatch.tooltip"
                class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
-               menubarPath="team.main/group1"
+               menubarPath="team.main/applyPatchGroup"
                enablesFor="*"
                definitionId="org.eclipse.team.ui.applyPatch"
                id="org.eclipse.team.ui.applyPatch">
-         </action>
-      </objectContribution>
-      <objectContribution
-            objectClass="org.eclipse.ui.IWorkingSet"
-            adaptable="true"
-            id="org.eclipse.team.ui.WorkingSetContributions">
-         <action
-               class="org.eclipse.team.internal.ui.actions.ApplyPatchAction"
-               enablesFor="*"
-               id="org.eclipse.team.ui.applyPatch2"
-               label="%ApplyPatch.label"
-               menubarPath="team.main/group1"
-               tooltip="%ApplyPatch.tooltip">
          </action>
       </objectContribution>
    </extension>
