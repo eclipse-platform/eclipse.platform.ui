@@ -10,12 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
@@ -27,28 +24,16 @@ import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
 import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.MultiRule;
-import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.ide.IDE;
-import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.model.AdaptableList;
-import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 
 /**
  * Standard action for closing the currently selected project(s).
@@ -118,80 +103,6 @@ public class CloseResourceAction extends WorkspaceAction implements
 				IIDEHelpContextIds.CLOSE_RESOURCE_ACTION);
 	}
     
-    /**
-     * Return a list of dirty editors associated with the given projects.  Return
-     * editors from all perspectives.
-     * 
-     * @return List the dirty editors
-     */
-    List getDirtyEditors(List projects) {
-        List dirtyEditors = new ArrayList(0);
-        IWorkbenchWindow[] windows = PlatformUI.getWorkbench()
-                .getWorkbenchWindows();
-        for (int i = 0; i < windows.length; i++) {
-            IWorkbenchPage[] pages = windows[i].getPages();
-            for (int j = 0; j < pages.length; j++) {
-                IWorkbenchPage page = pages[j];
-                IEditorPart[] editors = page.getDirtyEditors();
-                for (int k = 0; k < editors.length; k++) {
-                    IEditorPart editor = editors[k];
-                    IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
-                    if (inputFile != null) {
-                        if (projects.contains(inputFile.getProject())) {
-                            dirtyEditors.add(editor);
-                        }
-                    }
-                }
-            }
-        }
-        return dirtyEditors;
-    }
-
-    /**
-     * Open a dialog that can be used to select which of the given
-     * editors to save. Return the list of editors to save.  A value of 
-     * null implies that the operation was cancelled.
-     * 
-     * @return List the editors to save
-     */
-    List getEditorsToSave(List dirtyEditors) {
-        if (dirtyEditors.isEmpty()) {
-			return new ArrayList(0);
-		}
-
-        // The list may have multiple editors opened for the same input,
-        // so process the list for duplicates.
-        List saveEditors = new ArrayList(0);
-        List dirtyInputs = new ArrayList(0);
-        Iterator iter = dirtyEditors.iterator();
-        while (iter.hasNext()) {
-            IEditorPart editor = (IEditorPart) iter.next();
-            IFile inputFile = ResourceUtil.getFile(editor.getEditorInput());
-            if (inputFile != null) {
-                // if the same file is open in multiple perspectives,
-                // we don't want to count it as dirty multiple times
-                if (!dirtyInputs.contains(inputFile)) {
-                    dirtyInputs.add(inputFile);
-                    saveEditors.add(editor);
-                }
-            }
-        }
-        AdaptableList input = new AdaptableList(saveEditors);
-        ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input,
-                new WorkbenchContentProvider(),
-                new WorkbenchPartLabelProvider(), IDEWorkbenchMessages.EditorManager_saveResourcesMessage);
-
-        dlg.setInitialSelections(saveEditors.toArray(new Object[saveEditors
-                .size()]));
-        dlg.setTitle(IDEWorkbenchMessages.EditorManager_saveResourcesTitle);
-        int result = dlg.open();
-
-        if (result == IDialogConstants.CANCEL_ID) {
-			return null;
-		}
-        return Arrays.asList(dlg.getResult());
-    }
-
     /* (non-Javadoc)
      * Method declared on WorkspaceAction.
      */
@@ -224,7 +135,17 @@ public class CloseResourceAction extends WorkspaceAction implements
      * it.
      */
     public void run() {
-        if (!saveDirtyEditors()) {
+        // Get the items to close.
+        List projects = getSelectedResources();
+        if (projects == null || projects.isEmpty()) {
+			// no action needs to be taken since no projects are selected
+            return;
+		}
+
+		IResource[] projectArray = (IResource[]) projects
+				.toArray(new IResource[projects.size()]);
+
+		if (!IDE.saveAllEditors(projectArray, true)) {
 			return;
 		}
         if (!validateClose()) {
@@ -240,53 +161,6 @@ public class CloseResourceAction extends WorkspaceAction implements
        		rule = MultiRule.combine(rule, factory.modifyRule(project));
         }
         runInBackground(rule);
-    }
-
-    /**
-     * Causes all dirty editors associated to the resource(s) to be saved, if so
-     * specified by the user, and closed.
-     */
-    boolean saveDirtyEditors() {
-        // Get the items to close.
-        List projects = getSelectedResources();
-        if (projects == null || projects.isEmpty()) {
-			// no action needs to be taken since no projects are selected
-            return false;
-		}
-
-        // Collect all the dirty editors that are associated to the projects that are
-        // to be closed.
-        final List dirtyEditors = getDirtyEditors(projects);
-
-        // See which editors should be saved.
-        final List saveEditors = getEditorsToSave(dirtyEditors);
-        if (saveEditors == null) {
-			// the operation was cancelled
-            return false;
-		}
-
-        // Save and close the dirty editors.
-        Shell localShell = getShell();
-        Display disp = localShell == null ? PlatformUI.getWorkbench()
-				.getDisplay() : localShell.getDisplay();
-		BusyIndicator.showWhile(disp, new Runnable() {
-            public void run() {
-                Iterator iter = dirtyEditors.iterator();
-                while (iter.hasNext()) {
-                    IEditorPart editor = (IEditorPart) iter.next();
-                    IWorkbenchPage page = editor.getEditorSite().getPage();
-                    if (saveEditors.contains(editor)) {
-                        // do a direct save vs. using page.saveEditor, so that 
-                        // progress dialogs do not flash up on the screen multiple 
-                        // times
-                        editor.doSave(new NullProgressMonitor());
-                    }
-                    page.closeEditor(editor, false);
-                }
-            }
-        });
-
-        return true;
     }
 
     /* (non-Javadoc)
