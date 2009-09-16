@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.eclipse.ant.launching
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.eclipse.ant.internal.launching.AntLaunching
+Require-Bundle: org.eclipse.core.runtime
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
+Bundle-ActivationPolicy: lazy
+Bundle-Vendor: %providerName
+Export-Package: org.eclipse.ant.internal.launching;x-internal:=true
