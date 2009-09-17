@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,9 +17,7 @@ import java.util.Observer;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.AbstractWorkbenchBrowserSupport;
-import org.eclipse.ui.browser.IWebBrowser;
-import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
+import org.eclipse.ui.browser.*;
 
 /**
  * Implementation of the workbench browser support.
@@ -101,28 +99,20 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 
 		// AS_EXTERNAL will force the external browser regardless of the user
 		// preference
-		// The help editor will open in an editor regardless of the user preferences
-		boolean isHelpEditor = ((style & AS_EDITOR) != 0) && HELP_BROWSER_ID.equals(browserId);
+		// The help editor will open in an editor regardless of the user
+		// preferences
+		boolean isHelpEditor = ((style & AS_EDITOR) != 0)
+				&& HELP_BROWSER_ID.equals(browserId);
 		if ((style & AS_EXTERNAL) != 0 || 
-		    (WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL && !isHelpEditor)
-		    || !WebBrowserUtil.canUseInternalWebBrowser()) {
+				(WebBrowserPreference.getBrowserChoice() != WebBrowserPreference.INTERNAL && !isHelpEditor)
+				|| !WebBrowserUtil.canUseInternalWebBrowser()) {
 			IBrowserDescriptor ewb = BrowserManager.getInstance()
 					.getCurrentWebBrowser();
 			if (ewb == null)
 				throw new PartInitException(Messages.errorNoBrowser);
-			
-			if (ewb instanceof SystemBrowserDescriptor)
-				webBrowser = new SystemBrowserInstance(browserId);
-			else {
-				IBrowserExt ext = null;
-				if (ewb != null)
-					ext = WebBrowserUIPlugin.findBrowsers(ewb.getLocation());
-				if (ext != null)
-					webBrowser = ext.createBrowser(browserId,
-							ewb.getLocation(), ewb.getParameters());
-				if (webBrowser == null)
-					webBrowser = new ExternalBrowserInstance(browserId, ewb);
-			}
+
+			webBrowser = getExternalBrowser(ewb, browserId);
+
 		} else {
 			if ((style & IWorkbenchBrowserSupport.AS_VIEW) != 0)
 				webBrowser = new InternalBrowserViewInstance(browserId, style,
@@ -133,18 +123,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		}
 
 		if (webBrowser instanceof InternalBrowserInstance) {
-			// we should only share internal browsers within one
-			// workbench window. Each workbench window can have
-			// a shared browser with the same id
-			IWorkbenchWindow window = PlatformUI.getWorkbench()
-					.getActiveWorkbenchWindow();
-			Integer key = getWindowKey(window);
-			HashMap wmap = (HashMap) browserIdMap.get(browserId);
-			if (wmap == null) {
-				wmap = new HashMap();
-				browserIdMap.put(browserId, wmap);
-			}
-			wmap.put(key, webBrowser);
+			storeInternalBrowser(browserId, webBrowser);
 		} else {
 			// external and system browsers are shared
 			// for the entire workbench
@@ -160,6 +139,89 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 	 */
 	public IWebBrowser createBrowser(String browserId) throws PartInitException {
 		return createBrowser(0, browserId, null, null);
+	}
+
+	public IWebBrowser createInternalBrowser(int style, String browserId,
+			String name, String tooltip) throws PartInitException {
+		if (browserId == null)
+			browserId = getDefaultId();
+		IWebBrowser browser = getExistingWebBrowser(browserId);
+		if (browser != null && browser instanceof InternalBrowserInstance) {
+			InternalBrowserInstance instance2 = (InternalBrowserInstance) browser;
+			instance2.setName(name);
+			instance2.setTooltip(tooltip);
+			return browser;
+		}
+
+		if (!WebBrowserUtil.canUseInternalWebBrowser())
+			throw new PartInitException(Messages.errorNoBrowser);
+
+		IWebBrowser webBrowser = null;
+		if ((style & IWorkbenchBrowserSupport.AS_VIEW) != 0)
+			webBrowser = new InternalBrowserViewInstance(browserId, style,
+					name, tooltip);
+		else
+			webBrowser = new InternalBrowserEditorInstance(browserId, style,
+					name, tooltip);
+
+		storeInternalBrowser(browserId, webBrowser);
+		return webBrowser;
+	}
+
+	/**
+	 * Creates a browser instance from the given descriptor.
+	 * 
+	 * @param descriptor
+	 * @param browserId
+	 * @return
+	 */
+	public IWebBrowser createExternalBrowser(IBrowserDescriptor descriptor,
+			String browserId) {
+		if (browserId == null)
+			browserId = getDefaultId();
+		IWebBrowser browser = getExistingWebBrowser(browserId);
+		if (browser != null && !(browser instanceof InternalBrowserInstance)) {
+			return browser;
+		}
+
+		IWebBrowser webBrowser = getExternalBrowser(descriptor, browserId);
+		browserIdMap.put(browserId, webBrowser);
+		return webBrowser;
+	}
+
+	private IWebBrowser getExternalBrowser(IBrowserDescriptor descriptor,
+			String browserId) {
+		if (browserId == null)
+			browserId = getDefaultId();
+		IWebBrowser webBrowser = null;
+		if (descriptor instanceof SystemBrowserDescriptor)
+			webBrowser = new SystemBrowserInstance(browserId);
+		else {
+			IBrowserExt ext = null;
+			if (descriptor != null)
+				ext = WebBrowserUIPlugin.findBrowsers(descriptor.getLocation());
+			if (ext != null)
+				webBrowser = ext.createBrowser(browserId, descriptor
+						.getLocation(), descriptor.getParameters());
+			if (webBrowser == null)
+				webBrowser = new ExternalBrowserInstance(browserId, descriptor);
+		}
+		return webBrowser;
+	}
+
+	private void storeInternalBrowser(String browserId, IWebBrowser webBrowser) {
+		// we should only share internal browsers within one
+		// workbench window. Each workbench window can have
+		// a shared browser with the same id
+		IWorkbenchWindow window = PlatformUI.getWorkbench()
+				.getActiveWorkbenchWindow();
+		Integer key = getWindowKey(window);
+		HashMap wmap = (HashMap) browserIdMap.get(browserId);
+		if (wmap == null) {
+			wmap = new HashMap();
+			browserIdMap.put(browserId, wmap);
+		}
+		wmap.put(key, webBrowser);
 	}
 
 	/*
@@ -187,7 +249,7 @@ public class DefaultBrowserSupport extends AbstractWorkbenchBrowserSupport {
 		} else
 			browserIdMap.remove(baseId);
 	}
-	
+
 	private String getDefaultId() {
 		String id = null;
 		for (int i = 0; i < Integer.MAX_VALUE; i++) {

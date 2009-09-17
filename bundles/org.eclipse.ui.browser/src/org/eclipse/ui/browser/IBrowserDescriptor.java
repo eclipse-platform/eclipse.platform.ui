@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,14 +8,16 @@
  * Contributors:
  *     IBM Corporation - Initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.internal.browser;
+package org.eclipse.ui.browser;
+
+
 /**
  * An interface to an external Web browser.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
  * @see IBrowserDescriptorWorkingCopy
- * @since 1.0
+ * @since 3.3
  */
 public interface IBrowserDescriptor {
 	public static final String URL_PARAMETER = "%URL%"; //$NON-NLS-1$
