@@ -285,7 +285,7 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	 *			TeamUIPlugin.log(e);
 	 *		}
 	 * </pre>
-	 * where <code>PARTICIPANT_ID</code> is the id of the particant as defined in the plugin manifest.
+	 * where <code>PARTICIPANT_ID</code> is the id of the participant as defined in the plugin manifest.
 	 * </p>
 	 * @see org.eclipse.team.ui.synchronize.ISynchronizeParticipant#init(String, org.eclipse.ui.IMemento)
 	 */
@@ -331,7 +331,7 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 	 * 		in a compare editor or compare dialog
 	 * @param config the compare configuration that will be used to configure the compare editor or dialog
 	 * @param monitor a progress monitor that can be used if contacting a server to prepare the element and configuration
-	 * @throws TeamException if an error occurred that shoudl rpevent the display of the compare editor containing
+	 * @throws TeamException if an error occurred that should prevent the display of the compare editor containing
 	 * the element
 	 * 
 	 * @since 3.1
