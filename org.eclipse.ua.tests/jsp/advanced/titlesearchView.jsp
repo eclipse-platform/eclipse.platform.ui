@@ -12,6 +12,11 @@
 <%@ page import="org.eclipse.ua.tests.help.webextension.*" %>
 <% 
 	TitleSearchData data = new TitleSearchData(application, request, response);
+	String searchWord = request.getParameter("searchWord");
+	if (searchWord == null) {
+	    searchWord = "";
+	}
+	
 %>
 
 <html>
@@ -38,15 +43,14 @@ function doSearch(query)
 	</tr>
 
 	<tr>
-		<td width="100%"><input type="text" id="typein"></td>
+		<td width="100%"><input type="text" id="typein" value = "<%=searchWord%>"></td>
 
 		<td><input type="button" id="button" value="Go" onclick="this.blur();doSearch()"></td>
 
 	</tr>
 </table>
 <% 
-    String searchWord = request.getParameter("searchWord");
-    if (searchWord != null) {
+    if (searchWord != "") {
         TitleSearchData.SearchResult[] results = data.getSearchResults();
         if (results.length > 0) {
             for (int r = 0; r < results.length; r++) {

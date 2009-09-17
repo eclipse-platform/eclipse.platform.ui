@@ -153,6 +153,16 @@ HTML {
 
 </style>
 
+<%
+    String[] scripts = data.getScriptFiles();
+    for (int s = 0; s < scripts.length; s++) {
+        String path = scripts[s];
+%>
+    <script language="JavaScript" src = "<%=path%>" ></script>
+<%
+    }
+%>
+
 <script language="JavaScript">
 
 var bRestore = false;
@@ -163,7 +173,7 @@ for (int i=0; i<buttons.length; i++) {
 	if (!buttons[i].isSeparator()) {
 %>
 	var <%=buttons[i].getName()%> = new Image();
-	<%=UrlUtil.JavaScriptEncode(buttons[i].getName())%>.src = "<%=UrlUtil.JavaScriptEncode(buttons[i].getOnImage())%>";
+	<%=UrlUtil.JavaScriptEncode(buttons[i].getName())%>.src = "<%=UrlUtil.JavaScriptEncode(buttons[i].getImage())%>";
 <%
 	}
 }
@@ -452,7 +462,7 @@ if(buttons.length > 0){
 							   onmouseover="javascript:setWindowStatus('<%=UrlUtil.htmlEncode(buttons[i].getName())%>');return true;" 
 							   onmouseout="window.status='';"
 							   id="b<%=i%>">
-							   <img src="<%=UrlUtil.htmlEncode(buttons[i].getOnImage())%>" 
+							   <img src="<%=UrlUtil.htmlEncode(buttons[i].getImage())%>" 
 									alt='<%=UrlUtil.htmlEncode(buttons[i].getTooltip())%>' 
 									title='<%=UrlUtil.htmlEncode(buttons[i].getTooltip())%>'
 									border="0"

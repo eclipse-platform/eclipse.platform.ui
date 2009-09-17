@@ -530,6 +530,10 @@
             alias="/titlesearch/icons"
             base-name="/icons">
       </resource>
+      <resource
+            alias="/titlesearch/script"
+            base-name="/script">
+      </resource>
       <serviceSelector
             filter="(other.info=org.eclipse.help)">
       </serviceSelector>
@@ -540,6 +544,11 @@
             class="org.eclipse.ua.tests.help.webextension.TitleSearchView">
       </view>
    </extension>
-   
+   <extension
+         point="org.eclipse.help.webapp.toolbarButton">
+      <button
+            class="org.eclipse.ua.tests.help.webextension.TitleSearchButton">
+      </button>
+   </extension>
 
 </plugin>
