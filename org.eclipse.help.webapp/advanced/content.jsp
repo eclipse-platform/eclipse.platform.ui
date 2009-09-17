@@ -12,6 +12,7 @@
 
 <% 
 	LayoutData data = new LayoutData(application,request, response);
+	FrameData frameData = new FrameData(application,request, response);
 	WebappPreferences prefs = data.getPrefs();
 %>
 
@@ -43,11 +44,19 @@ FRAMESET {
 </style>
 
 </head>
-
-
-<frameset id="contentFrameset" rows="24,*" frameborder="0" framespacing="0" border=0 spacing=0>
-	<frame name="ContentToolbarFrame" title="<%=ServletResources.getString("topicViewToolbar", request)%>" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+    <frameset id="contentFrameset" rows="<%=frameData.getContentAreaFrameSizes()%>" frameborder=0" framespacing="0" border="0" spacing="0">
+	<frame name="ContentToolbarFrame" title="<%=ServletResources.getString("topicViewToolbar", request)%>" src='<%="contentToolbar.jsp"+data.getQuery()%>'  marginwidth="0" marginheight="0" scrolling="no" frameborder="0" >
 	<frame ACCESSKEY="K" name="ContentViewFrame" title="<%=ServletResources.getString("topicView", request)%>" src='<%=UrlUtil.htmlEncode(data.getContentURL())%>'  marginwidth="10"<%=(data.isIE() && "6.0".compareTo(data.getIEVersion()) <=0)?"scrolling=\"yes\"":""%> marginheight="0" frameborder="0" >
+	<%
+	    AbstractFrame[] frames = frameData.getFrames(AbstractFrame.BELOW_CONTENT);
+	    for (int f = 0; f < frames.length; f++) {
+	        AbstractFrame frame = frames[f];
+	        String url = frameData.getUrl(frame);
+	%>
+	<frame name="<%=frame.getName()%>" src="<%=url %>" <%=frame.getFrameAttributes()%> >
+	<% 
+	 } 
+	%>
 </frameset>
 
 </html>

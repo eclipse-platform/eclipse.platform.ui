@@ -12,9 +12,10 @@
 
 <plugin>
    <extension-point id="contentFilter" name="Content Filter" schema="schema/contentFilter.exsd"/>
-  <extension-point id="view" name="View" schema="schema/view.exsd"/>
-  <extension-point id="toolbarButton" name="Toolbar Button" schema="schema/toolbarButton.exsd"/>
-   <extension
+   <extension-point id="view" name="View" schema="schema/view.exsd"/>
+   <extension-point id="frame" name="Webapp Frame" schema="schema/frame.exsd"/> 
+   <extension-point id="toolbarButton" name="Toolbar Button" schema="schema/toolbarButton.exsd"/>
+  <extension
          point="org.eclipse.equinox.http.registry.httpcontexts">
       <httpcontext
             id="help">

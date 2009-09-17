@@ -550,5 +550,11 @@
             class="org.eclipse.ua.tests.help.webextension.TitleSearchButton">
       </button>
    </extension>
+   <extension
+         point="org.eclipse.help.webapp.frame">
+      <frame
+            class="org.eclipse.ua.tests.help.webextension.TestFrame">
+      </frame>
+   </extension>
 
 </plugin>
