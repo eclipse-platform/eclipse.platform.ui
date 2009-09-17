@@ -217,7 +217,7 @@ public abstract class AbstractSynchronizeParticipant extends PlatformObject impl
 		
 		// Title.
 		fName = config.getAttribute("name"); //$NON-NLS-1$
-		if (config == null) {
+		if (fName == null) {
 			fName = "Unknown"; //$NON-NLS-1$
 		}
 
