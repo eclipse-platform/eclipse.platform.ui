@@ -220,7 +220,12 @@ public class ContextFileProvider extends AbstractContextProvider {
 							Context context = (Context)children[i];
 							String id = context.getId();
 							if (id != null) {
-								contexts.put(id, context);
+								Object existingContext =  contexts.get(id);
+								if (existingContext != null) {
+									((Context)existingContext).mergeContext(context);									
+								} else {
+								    contexts.put(id, context);
+								}
 							}
 						}
 					}
