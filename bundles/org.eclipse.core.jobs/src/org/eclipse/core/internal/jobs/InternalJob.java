@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,7 +48,7 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * flag on a job indicating that it was about to run, but has been canceled
 	 */
 	private static final int M_ABOUT_TO_RUN_CANCELED = 0x0400;
-	
+
 	/*
 	 * Flag on a job indicating that it was canceled when running. This flag
 	 * is used to ensure that #canceling is only ever called once on a job in
@@ -97,14 +97,14 @@ public abstract class InternalJob extends PlatformObject implements Comparable {
 	 * or -1 if the job should not be rescheduled.
 	 */
 	private long startTime;
-	
+
 	/**
 	 * Stamp added when a job is added to the wait queue. Used to ensure
 	 * jobs in the wait queue maintain their insertion order even if they are
 	 * removed from the wait queue temporarily while blocked
 	 */
 	private long waitQueueStamp = T_NONE;
-	
+
 	/*
 	 * The thread that is currently running this job
 	 */

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,7 +25,7 @@ import org.eclipse.core.internal.jobs.LockManager;
  * @since 3.0
  */
 public class LockListener {
-	private final LockManager manager = ((JobManager)Job.getJobManager()).getLockManager();
+	private final LockManager manager = ((JobManager) Job.getJobManager()).getLockManager();
 
 	/**
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
