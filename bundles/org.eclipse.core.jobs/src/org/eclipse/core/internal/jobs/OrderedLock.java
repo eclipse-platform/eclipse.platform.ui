@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * The lock avoids circular waiting deadlocks by detecting the deadlocks
  * and resolving them through the suspension of all locks owned by one 
  * of the threads involved in the deadlock. This makes it impossible for n such 
- * locks to deadlock while waiting for each other.  The downside is that this means
+ * locks to deadlock while waiting for each other.  The down side is that this means
  * that during an interval when a process owns a lock, it can be forced
  * to give the lock up and wait until all locks it requires become
  * available.  This removes the feature of exclusive access to the
@@ -105,7 +105,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 		success = doAcquire(semaphore, delay);
 		manager.resumeSuspendedLocks(Thread.currentThread());
 		if (DEBUG)
-			System.out.println("[" + Thread.currentThread() +  //$NON-NLS-1$
+			System.out.println("[" + Thread.currentThread() + //$NON-NLS-1$
 					(success ? "] Operation started... " : "] Operation timed out... ") + this); //$NON-NLS-1$ //$NON-NLS-2$ //}
 		return success;
 	}
@@ -129,7 +129,7 @@ public class OrderedLock implements ILock, ISchedulingRule {
 	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
 	 */
 	public boolean contains(ISchedulingRule rule) {
-		return false;
+		return rule == this;
 	}
 
 	/**
