@@ -10,27 +10,29 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.core.services.annotations.In;
-
+import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.ui.services.events.UIEventHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.osgi.service.event.Event;
 
-public class Location {
+public class Location extends UIEventHandler {
 
 	private Browser browser;
 	private Composite browserParent;
 	private Exif exif;
 
 	public Location(Composite parent) {
+		super(ExifTable.EVENT_NAME, null);
 		parent.setLayout(new FillLayout());
 		parent.setData("org.eclipse.e4.ui.css.id", "location");
 		browserParent = parent;
 	}
 
-	@In
-	public void setExif(Exif input) {
+	public void handleUIEvent(Event event) {
+		Exif input = (Exif) event.getProperty(IEventBroker.DATA);
 		if (input == null || this.exif == input) {
 			return;
 		}

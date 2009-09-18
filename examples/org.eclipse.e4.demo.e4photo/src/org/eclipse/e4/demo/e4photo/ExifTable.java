@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.core.services.annotations.*;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-
 import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +22,9 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.JSONObject;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.annotations.In;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -45,13 +45,18 @@ public class ExifTable {
 	private WritableList inputList = new WritableList();
 	private IContainer input;
 	private String persistedState;
-
-	private IEclipseContext context;
+	
+	static public String EVENT_NAME = "org/eclipse/e4/demo/e4photo/exif"; 
 
 	@In
 	private Composite parent;
 	@In
 	private Logger logger;
+	
+	@In
+	private IEventBroker eventBroker;
+	
+	
 
 	public ExifTable() {
 		super();
@@ -149,7 +154,8 @@ public class ExifTable {
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				Object selected = ((StructuredSelection) event.getSelection()).getFirstElement();
-				context.modify("exif",  selected);
+				if (eventBroker != null)
+					eventBroker.post(EVENT_NAME, selected);
 			}
 		});
 
@@ -164,9 +170,4 @@ public class ExifTable {
 	void dispose() {
 		//nothing to do
 	}
-	
-	public void contextSet(IEclipseContext context) {
-		this.context = context;
-	}
-
 }

@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.services.events.EventBrokerFactory;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -89,6 +90,8 @@ public class WorkbenchApplication implements IApplication {
 					appContext.set(IResourceUtiltities.class.getName(),
 							new ResourceUtility(Activator.getDefault()
 									.getBundleAdmin()));
+					appContext.set(IContextConstants.EVENT, EventBrokerFactory
+							.newEventBroker());
 					Workbench wb = new Workbench(Activator.getDefault()
 							.getInstanceLocation(), RegistryFactory
 							.getRegistry(), Activator.getDefault()
