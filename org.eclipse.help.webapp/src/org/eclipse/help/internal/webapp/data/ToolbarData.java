@@ -116,6 +116,10 @@ public class ToolbarData extends RequestData {
 			if (obj instanceof AbstractButton) {
 				AbstractButton button = (AbstractButton) obj;
 				String toolbarName = request.getParameter("view"); //$NON-NLS-1$
+				if (toolbarName == null)
+				{
+					toolbarName = request.getParameter("toolbar"); //$NON-NLS-1$
+				}
 				if (button.isAddedToToolbar(toolbarName)) {	
 				    extensionButtons.add(button);
 				}

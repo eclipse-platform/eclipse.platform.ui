@@ -31,7 +31,6 @@
 <jsp:include page="toolbar.jsp">
 	<jsp:param name="script" value="contentActions.js"/>
 	<jsp:param name="toolbar" value="content"/>
-	<jsp:param name="view" value="content"/>
 		
 	<jsp:param name="name"     value="toggle_highlight"/>
 	<jsp:param name="tooltip"  value='highlight_tip'/>
