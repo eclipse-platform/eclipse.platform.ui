@@ -1019,6 +1019,8 @@ public class ExpressionTests extends TestCase {
 
 	public void testSubTypeTiming() throws Exception {
 		HashSet o1= new HashSet();
+		
+		System.gc();
 		long cachedStart= System.currentTimeMillis();
 		for (int i= 0; i < TYPE_ITERATIONS; i++) {
 			assertTrue(Expressions.isInstanceOf(o1, "java.util.Set"));
@@ -1026,13 +1028,15 @@ public class ExpressionTests extends TestCase {
 		}
 		long cachedDelta= System.currentTimeMillis() - cachedStart;
 
+		System.gc();
 		long instanceStart= System.currentTimeMillis();
 		for (int i= 0; i < TYPE_ITERATIONS; i++) {
 			assertTrue(Expressions.uncachedIsSubtype(o1.getClass(), "java.util.Set"));
 			assertFalse(Expressions.uncachedIsSubtype(o1.getClass(), "java.util.List"));
 		}
 		long instanceDelta= System.currentTimeMillis() - instanceStart;
-		assertTrue(cachedDelta * 2 < instanceDelta);
+		
+		assertTrue("cachedDelta: " + cachedDelta + ", instanceDelta: " + instanceDelta, cachedDelta * 2 < instanceDelta);
 	}
 
 }
