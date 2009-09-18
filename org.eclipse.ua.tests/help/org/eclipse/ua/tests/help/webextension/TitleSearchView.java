@@ -13,7 +13,9 @@ package org.eclipse.ua.tests.help.webextension;
 
 import java.util.Locale;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.webapp.AbstractView;
+import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
 public class TitleSearchView extends AbstractView {
 
@@ -45,11 +47,13 @@ public class TitleSearchView extends AbstractView {
 	}
 	
 	public boolean isVisible() {
-		return true;
+		return Platform.getPreferencesService().getBoolean
+		    (UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
 	}
 	
 	public boolean isVisibleBasic() {
-		return true;
+		return Platform.getPreferencesService().getBoolean
+	        (UserAssistanceTestPlugin.getPluginId(), "extraView", false, null);
 	}
 
 }

@@ -11,7 +11,9 @@
 
 package org.eclipse.ua.tests.help.webextension;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.webapp.AbstractFrame;
+import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
 public class TestFrame extends AbstractFrame {
 
@@ -25,6 +27,11 @@ public class TestFrame extends AbstractFrame {
 	
 	public String getSize() {
 		return "24";
+	}
+	
+	public boolean isVisible() {
+		return Platform.getPreferencesService().getBoolean
+	    (UserAssistanceTestPlugin.getPluginId(), "extraFrame", false, null);
 	}
 
 }
