@@ -2323,9 +2323,66 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * </ul>
 	 * @see #isDerived()
 	 * @since 2.0
+	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which 
+	 * is a workspace operation and reports changes in resource deltas.
 	 */
 	public void setDerived(boolean isDerived) throws CoreException;
 
+	/**
+	 * Sets whether this resource subtree is marked as derived.
+	 * <p>
+	 * A <b>derived</b> resource is a regular file or folder that is
+	 * created in the course of translating, compiling, copying, or otherwise 
+	 * processing other files. Derived resources are not original data, and can be
+	 * recreated from other resources. It is commonplace to exclude derived 
+	 * resources from version and configuration management because they would
+	 * otherwise clutter the team repository with version of these ever-changing
+	 * files as each user regenerates them.
+	 * </p>
+	 * <p>
+	 * If a resource or any of its ancestors is marked as derived, a team 
+	 * provider should assume that the resource is not under version and
+	 * configuration management <i>by default</i>. That is, the resource
+	 * should only be stored in a team repository if the user explicitly indicates
+	 * that this resource is worth saving.
+	 * </p>
+	 * <p>
+	 * Newly-created resources are not marked as derived; rather, the mark must be
+	 * set explicitly using <code>setDerived(true, IProgressMonitor)</code>. Derived marks are maintained
+	 * in the in-memory resource tree, and are discarded when the resources are deleted.
+	 * Derived marks are saved to disk when a project is closed, or when the workspace
+	 * is saved.
+	 * </p>
+	 * <p>
+	 * Projects and the workspace root are never considered derived; attempts to
+	 * mark them as derived are ignored.
+	 * </p>
+	 * <p>
+	 * These changes will be reported in a subsequent resource change event, 
+	 * including an indication that this file's derived flag has changed.
+	 * </p>
+	 * <p>
+	 * This method is long-running; progress and cancellation are provided
+	 * by the given progress monitor. 
+	 * </p>
+	 * 
+	 * @param isDerived <code>true</code> if this resource is to be marked
+	 * 		as derived, and <code>false</code> otherwise
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 * 		reporting is not desired
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * 		Cancellation can occur even if no progress monitor is provided.
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li> This resource does not exist.</li>
+	 * <li> Resource changes are disallowed during certain types of resource change 
+	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
+	 * </ul>
+	 * @see #isDerived()
+	 * @since 3.6
+	 */
+	public void setDerived(boolean isDerived, IProgressMonitor monitor) throws CoreException;
+	
 	/**
 	 * Sets whether this resource and its members are hidden in the resource tree.
 	 * <p>

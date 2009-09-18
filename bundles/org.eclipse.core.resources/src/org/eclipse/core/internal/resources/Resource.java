@@ -15,6 +15,13 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.runtime.IProgressMonitor;
+
+import org.eclipse.core.internal.utils.Messages;
+import org.eclipse.core.internal.utils.Policy;
+import org.eclipse.core.runtime.OperationCanceledException;
+
 import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
@@ -1573,6 +1580,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 	/* (non-Javadoc)
 	 * @see IResource#setDerived(boolean)
+	 * @deprecated Replaced by {@link #setDerived(boolean, IProgressMonitor)} which 
+	 * is a workspace operation and reports changes in resource deltas.
 	 */
 	public void setDerived(boolean isDerived) throws CoreException {
 		// fetch the info but don't bother making it mutable even though we are going
@@ -1588,6 +1597,41 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			} else {
 				info.clear(ICoreConstants.M_DERIVED);
 			}
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#setDerived(boolean, IProgressMonitor)
+	 */
+	public void setDerived(boolean isDerived, IProgressMonitor monitor) throws CoreException {
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = NLS.bind(Messages.resources_settingDerivedFlag, getFullPath());
+			monitor.beginTask(message, Policy.totalWork);
+			final ISchedulingRule rule = null;
+			try {
+				workspace.prepareOperation(rule, monitor);
+				ResourceInfo info = getResourceInfo(false, false);
+				checkAccessible(getFlags(info));
+				// ignore attempts to set derived flag on anything except files and folders
+				if (info.getType() != FILE && info.getType() != FOLDER)
+					return;				
+				workspace.beginOperation(true);
+				info = getResourceInfo(false, true);
+				if (isDerived)
+					info.set(ICoreConstants.M_DERIVED);
+				else {
+					info.clear(ICoreConstants.M_DERIVED);
+				}
+				monitor.worked(Policy.opWork);
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
 		}
 	}
 

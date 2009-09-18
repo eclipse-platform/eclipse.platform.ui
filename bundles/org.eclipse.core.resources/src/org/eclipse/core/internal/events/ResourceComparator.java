@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -116,6 +116,8 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 			result |= IResourceDelta.LOCAL_CHANGED;
 		if (!compareCharsets(oldElement, newElement))
 			result |= IResourceDelta.ENCODING;
+		if (!compareDerived(oldElement, newElement))
+			result |= IResourceDelta.DERIVED_CHANGED;
 		if (notification && !compareSync(oldElement, newElement))
 			result |= IResourceDelta.SYNC;
 		if (notification && !compareMarkers(oldElement, newElement))
@@ -123,6 +125,10 @@ public class ResourceComparator implements IElementComparator, ICoreConstants {
 		if (save && !compareUsed(oldElement, newElement))
 			result |= IResourceDelta.CHANGED;
 		return result == 0 ? 0 : result | IResourceDelta.CHANGED;
+	}
+
+	private boolean compareDerived(ResourceInfo oldElement, ResourceInfo newElement) {
+		return oldElement.isSet(ICoreConstants.M_DERIVED) == newElement.isSet(ICoreConstants.M_DERIVED);
 	}
 
 	private boolean compareCharsets(ResourceInfo oldElement, ResourceInfo newElement) {

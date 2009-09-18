@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -873,9 +873,149 @@ public class IResourceTest extends ResourceTest {
 
 	/**
 	 * Performs black box testing of the following methods: isDerived() and
-	 * setDerived(boolean)
+	 * setDerived(boolean, IProgressMonitor)
 	 */
 	public void testDerived() {
+		IWorkspaceRoot root = getWorkspace().getRoot();
+		IProject project = root.getProject("Project");
+		IFolder folder = project.getFolder("folder");
+		IFile file = folder.getFile("target");
+		try {
+			project.create(getMonitor());
+			project.open(getMonitor());
+			folder.create(true, true, getMonitor());
+			file.create(getRandomContents(), true, getMonitor());
+
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		verifier = new ResourceDeltaVerifier();
+		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
+
+		// all resources have independent derived flag; all non-derived by
+		// default; check each type
+		try {
+
+			// root - cannot be marked as derived
+			assertTrue("2.1.1", !root.isDerived());
+			assertTrue("2.1.2", !project.isDerived());
+			assertTrue("2.1.3", !folder.isDerived());
+			assertTrue("2.1.4", !file.isDerived());
+
+			root.setDerived(true, new NullProgressMonitor());
+			assertTrue("2.2.1", !root.isDerived());
+			assertTrue("2.2.2", !project.isDerived());
+			assertTrue("2.2.3", !folder.isDerived());
+			assertTrue("2.2.4", !file.isDerived());
+			assertTrue("2.2.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+			root.setDerived(false, new NullProgressMonitor());
+			assertTrue("2.3.1", !root.isDerived());
+			assertTrue("2.3.2", !project.isDerived());
+			assertTrue("2.3.3", !folder.isDerived());
+			assertTrue("2.3.4", !file.isDerived());
+			assertTrue("2.3.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+			// project - cannot be marked as derived
+			project.setDerived(true, new NullProgressMonitor());
+			assertTrue("3.1.1", !root.isDerived());
+			assertTrue("3.1.2", !project.isDerived());
+			assertTrue("3.1.3", !folder.isDerived());
+			assertTrue("3.1.4", !file.isDerived());
+			assertTrue("3.1.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+			project.setDerived(false, new NullProgressMonitor());
+			assertTrue("3.2.1", !root.isDerived());
+			assertTrue("3.2.2", !project.isDerived());
+			assertTrue("3.2.3", !folder.isDerived());
+			assertTrue("3.2.4", !file.isDerived());
+			assertTrue("3.2.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+			// folder
+			verifier.addExpectedChange(folder, IResourceDelta.CHANGED, IResourceDelta.DERIVED_CHANGED);
+			folder.setDerived(true, new NullProgressMonitor());
+			assertTrue("4.1.1", !root.isDerived());
+			assertTrue("4.1.2", !project.isDerived());
+			assertTrue("4.1.3", folder.isDerived());
+			assertTrue("4.1.4", !file.isDerived());
+			assertTrue("4.1.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+			verifier.addExpectedChange(folder, IResourceDelta.CHANGED, IResourceDelta.DERIVED_CHANGED);
+			folder.setDerived(false, new NullProgressMonitor());
+			assertTrue("4.2.1", !root.isDerived());
+			assertTrue("4.2.2", !project.isDerived());
+			assertTrue("4.2.3", !folder.isDerived());
+			assertTrue("4.2.4", !file.isDerived());
+			assertTrue("4.2.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+			// file
+			verifier.addExpectedChange(file, IResourceDelta.CHANGED, IResourceDelta.DERIVED_CHANGED);
+			file.setDerived(true, new NullProgressMonitor());
+			assertTrue("5.1.1", !root.isDerived());
+			assertTrue("5.1.2", !project.isDerived());
+			assertTrue("5.1.3", !folder.isDerived());
+			assertTrue("5.1.4", file.isDerived());
+			assertTrue("5.1.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+			verifier.addExpectedChange(file, IResourceDelta.CHANGED, IResourceDelta.DERIVED_CHANGED);
+			file.setDerived(false, new NullProgressMonitor());
+			assertTrue("5.2.1", !root.isDerived());
+			assertTrue("5.2.2", !project.isDerived());
+			assertTrue("5.2.3", !folder.isDerived());
+			assertTrue("5.2.4", !file.isDerived());
+			assertTrue("5.2.5" + verifier.getMessage(), verifier.isDeltaValid());
+			verifier.reset();
+
+		} catch (CoreException e) {
+			fail("6.0", e);
+		}
+
+		/* remove trash */
+		try {
+			project.delete(true, getMonitor());
+		} catch (CoreException e) {
+			fail("7.0", e);
+		}
+
+		// isDerived should return false when resource does not exist
+		assertTrue("8.1", !project.isDerived());
+		assertTrue("8.2", !folder.isDerived());
+		assertTrue("8.3", !file.isDerived());
+
+		// setDerived should fail when resource does not exist
+		try {
+			project.setDerived(false, new NullProgressMonitor());
+			assertTrue("9.1", false);
+		} catch (CoreException e) {
+			// pass
+		}
+		try {
+			folder.setDerived(false, new NullProgressMonitor());
+			assertTrue("9.2", false);
+		} catch (CoreException e) {
+			// pass
+		}
+		try {
+			file.setDerived(false, new NullProgressMonitor());
+			assertTrue("9.3", false);
+		} catch (CoreException e) {
+			// pass
+		}
+	}
+
+	/**
+	 * Performs black box testing of the following methods: isDerived() and
+	 * setDerived(boolean)
+	 */
+	public void testDeprecatedDerived() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IProject project = root.getProject("Project");
 		IFolder folder = project.getFolder("folder");
@@ -982,7 +1122,7 @@ public class IResourceTest extends ResourceTest {
 			// pass
 		}
 	}
-	
+
 	/**
 	 * Test the isDerived() and isDerived(int) methods
 	 */
@@ -1002,28 +1142,28 @@ public class IResourceTest extends ResourceTest {
 			IResource resource = resources[i];
 			assertTrue("1.0: " + resource.getFullPath(), !resource.isDerived());
 		}
-		
+
 		// now set the root as derived
 		try {
-			root.setDerived(true);
+			root.setDerived(true, new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail("2.0: " + root.getFullPath(), e);
 		}
-		
+
 		// we can't mark the root as derived, so none of its children should be derived
 		assertTrue("2.1: " + root.getFullPath(), !root.isDerived(IResource.CHECK_ANCESTORS));
 		assertTrue("2.2: " + project.getFullPath(), !project.isDerived(IResource.CHECK_ANCESTORS));
 		assertTrue("2.3: " + folder.getFullPath(), !folder.isDerived(IResource.CHECK_ANCESTORS));
 		assertTrue("2.4: " + file1.getFullPath(), !file1.isDerived(IResource.CHECK_ANCESTORS));
 		assertTrue("2.5: " + file2.getFullPath(), !file2.isDerived(IResource.CHECK_ANCESTORS));
-		
+
 		// now set the project as derived
 		try {
-			project.setDerived(true);
+			project.setDerived(true, new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail("3.0: " + project.getFullPath(), e);
 		}
-		
+
 		// we can't mark a project as derived, so none of its children should be derived
 		// even when CHECK_ANCESTORS is used
 		assertTrue("3.0: " + project.getFullPath(), !project.isDerived(IResource.CHECK_ANCESTORS));
@@ -1033,7 +1173,7 @@ public class IResourceTest extends ResourceTest {
 
 		// now set the folder as derived
 		try {
-			folder.setDerived(true);
+			folder.setDerived(true, new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail("4.0: " + folder.getFullPath(), e);
 		}
@@ -1050,7 +1190,7 @@ public class IResourceTest extends ResourceTest {
 
 		// clear the values
 		try {
-			folder.setDerived(false);
+			folder.setDerived(false, new NullProgressMonitor());
 		} catch (CoreException e) {
 			fail("6.0: " + folder.getFullPath(), e);
 		}
@@ -1696,14 +1836,14 @@ public class IResourceTest extends ResourceTest {
 		project.open(null);
 		assertEquals(stamp, file.getModificationStamp());
 	}
-	
+
 	/**
 	 * Tests IResource#getPersistentProperties and IResource#getSessionProperties
 	 */
 	public void testProperties() throws CoreException {
 		QualifiedName qn1 = new QualifiedName("package", "property1");
 		QualifiedName qn2 = new QualifiedName("package", "property2");
-		
+
 		IProject project = getWorkspace().getRoot().getProject("P1");
 		IProject project2 = getWorkspace().getRoot().getProject("P2");
 		project.create(null);
@@ -1712,34 +1852,34 @@ public class IResourceTest extends ResourceTest {
 		project.setPersistentProperty(qn2, "value2");
 		project.setSessionProperty(qn1, "value1");
 		project.setSessionProperty(qn2, "value2");
-		
+
 		assertEquals("value1", project.getPersistentProperty(qn1));
 		assertEquals("value2", project.getPersistentProperty(qn2));
 		assertEquals("value1", project.getSessionProperty(qn1));
 		assertEquals("value2", project.getSessionProperty(qn2));
-		
+
 		Map props = project.getPersistentProperties();
 		assertEquals(2, props.size());
-		assertEquals("value1",props.get(qn1));
-		assertEquals("value2",props.get(qn2));
-		
+		assertEquals("value1", props.get(qn1));
+		assertEquals("value2", props.get(qn2));
+
 		props = project.getSessionProperties();
 		// Don't check the size, because other plugins (like team) may add
 		// a property depending on if they are present or not
-		assertEquals("value1",props.get(qn1));
-		assertEquals("value2",props.get(qn2));
-		
+		assertEquals("value1", props.get(qn1));
+		assertEquals("value2", props.get(qn2));
+
 		project.setPersistentProperty(qn1, null);
 		project.setSessionProperty(qn1, null);
 
 		props = project.getPersistentProperties();
 		assertEquals(1, props.size());
 		assertNull(props.get(qn1));
-		assertEquals("value2",props.get(qn2));
-		
+		assertEquals("value2", props.get(qn2));
+
 		props = project.getSessionProperties();
 		assertNull(props.get(qn1));
-		assertEquals("value2",props.get(qn2));
+		assertEquals("value2", props.get(qn2));
 
 		// Copy
 		project.copy(project2.getFullPath(), true, null);
@@ -1748,15 +1888,14 @@ public class IResourceTest extends ResourceTest {
 		props = project2.getPersistentProperties();
 		assertEquals(1, props.size());
 		assertNull(props.get(qn1));
-		assertEquals("value2",props.get(qn2));
+		assertEquals("value2", props.get(qn2));
 
 		// Session properties don't
 		props = project2.getSessionProperties();
 		// Don't check size (see above)
 		assertNull(props.get(qn1));
 		assertNull(props.get(qn2));
-		
-		
+
 		// Test persistence
 		project.close(null);
 		project.open(null);
@@ -1765,14 +1904,14 @@ public class IResourceTest extends ResourceTest {
 		props = project.getPersistentProperties();
 		assertEquals(1, props.size());
 		assertNull(props.get(qn1));
-		assertEquals("value2",props.get(qn2));
+		assertEquals("value2", props.get(qn2));
 
 		// Make sure they don't persist
 		props = project.getSessionProperties();
 		// Don't check size (see above)
 		assertNull(props.get(qn1));
 		assertNull(props.get(qn2));
-		
+
 	}
 
 	/**

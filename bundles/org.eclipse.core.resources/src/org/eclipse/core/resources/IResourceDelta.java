@@ -192,6 +192,14 @@ public interface IResourceDelta extends IAdaptable {
 	public static final int LOCAL_CHANGED = 0x200000;
 
 	/**
+	 * Change constant (bit mask) indicating that the derived flag of the resource has changed.
+	 * 
+	 * @see IResourceDelta#getFlags()
+	 * @since 3.6
+	 */
+	public static final int DERIVED_CHANGED = 0x400000;
+
+	/**
 	 * Accepts the given visitor.
 	 * The only kinds of resource deltas visited 
 	 * are <code>ADDED</code>, <code>REMOVED</code>, 
