@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,17 +13,15 @@ package org.eclipse.team.internal.ui.synchronize;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.team.core.subscribers.Subscriber;
 import org.eclipse.team.internal.ui.TeamUIPlugin;
-import org.eclipse.team.ui.synchronize.ISynchronizeParticipantDescriptor;
-import org.eclipse.team.ui.synchronize.ISynchronizeScope;
-import org.eclipse.team.ui.synchronize.SubscriberParticipant;
+import org.eclipse.team.ui.synchronize.*;
 
 /**
- * subscriber particpant that supports filtering using scopes.
+ * Subscriber participant that supports filtering using scopes.
  */
 public abstract class ScopableSubscriberParticipant extends SubscriberParticipant {
 	
 	/**
-	 * No arg contructor used to create workspace scope and for
+	 * No arg constructor used to create workspace scope and for
 	 * creation of persisted participant after startup
 	 */
 	public ScopableSubscriberParticipant() {
