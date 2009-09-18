@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Stephan Wahlbrink  - Fix for bug 200997.
  *     Danail Nachev - Fix for bug 109898
+ *     Mike Moreaty - Fix for bug 289790
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -81,8 +82,7 @@ public class JobManager implements IJobManager {
 
 	/**
 	 * True if this manager is active, and false otherwise.  A job manager
-	 * starts out active, and becomes inactive if it has been shutdown
-	 * and not restarted.
+	 * starts out active, and becomes inactive if it has been shutdown.
 	 */
 	private volatile boolean active = true;
 
@@ -477,15 +477,14 @@ public class JobManager implements IJobManager {
 	private void doShutdown() {
 		Job[] toCancel = null;
 		synchronized (lock) {
-			if (active) {
-				active = false;
-				//cancel all running jobs
-				toCancel = (Job[]) running.toArray(new Job[running.size()]);
-				//clean up
-				sleeping.clear();
-				waiting.clear();
-				running.clear();
-			}
+			if (!active)
+				return;
+			active = false;
+			//cancel all running jobs
+			toCancel = (Job[]) running.toArray(new Job[running.size()]);
+			//discard any jobs that have not yet started running
+			sleeping.clear();
+			waiting.clear();
 		}
 
 		// Give running jobs a chance to finish. Wait 0.1 seconds for up to 3 times.
@@ -537,6 +536,10 @@ public class JobManager implements IJobManager {
 				// One the logging story is improved, the System.err output below can be removed:
 				System.err.println(msg);
 			}
+		}
+		synchronized (lock) {
+			//discard reference to any jobs still running at this point
+			running.clear();
 		}
 
 		pool.shutdown();
