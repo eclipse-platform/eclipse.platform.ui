@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Checkbox support for Flexible Hierachy view (Bug 286310)
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.midi.adapters;
 
@@ -46,6 +47,8 @@ public class MidiAdapterFactory implements IAdapterFactory {
 	private static IElementMementoProvider fgMementoProvider = new ControlsMementoProvider();
 	
 	private static IStepOverHandler fgStepOverHandler = new MidiStepOverHandler();
+	
+	private static IModelProxyFactory fgCheckboxModelProxyFactory = new CheckboxModelProxyFactory();
 
 	public Object getAdapter(Object adaptableObject, Class adapterType) {
 		if (IElementContentProvider.class.equals(adapterType)) {
@@ -81,9 +84,14 @@ public class MidiAdapterFactory implements IAdapterFactory {
 				return new ControlEditor();
 			}
 		}
+		
 		if (IModelProxyFactory.class.equals(adapterType)) {
 			if (adaptableObject instanceof MidiLaunch) {
 				return fgSequencerModelProxyFactory;
+			} else if (adaptableObject instanceof Track) {
+				return fgCheckboxModelProxyFactory;
+			} else if (adaptableObject instanceof MidiEvent) {
+				return fgCheckboxModelProxyFactory;
 			}
 		}
 		if (IElementMementoProvider.class.equals(adapterType)) {
@@ -92,10 +100,11 @@ public class MidiAdapterFactory implements IAdapterFactory {
 		if (IStepOverHandler.class.equals(adapterType)) {
 			return fgStepOverHandler;
 		}
+		
 		return null;
 	}
 
 	public Class[] getAdapterList() {
-		return new Class[]{IElementContentProvider.class, IElementLabelProvider.class, IStepOverHandler.class};
+		return new Class[]{IElementContentProvider.class, IElementLabelProvider.class, IStepOverHandler.class,};
 	}
 }

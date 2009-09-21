@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
+ *     Patrick Chuong (Texas Instruments) - added support for checkbox (Bug 286310)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -24,6 +25,8 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.commands.Request;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -33,6 +36,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProv
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
@@ -43,6 +47,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.ICellModifier;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreePath;
@@ -55,6 +60,7 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
+import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -78,7 +84,7 @@ import org.eclipse.ui.IMemento;
  * @since 3.3
  */
 public class InternalTreeModelViewer extends TreeViewer 
-    implements ITreeModelViewer,  ITreeModelContentProviderTarget, ITreeModelLabelProviderTarget
+    implements ITreeModelViewer,  ITreeModelContentProviderTarget, ITreeModelLabelProviderTarget, ITreeModelCheckProviderTarget
 {
 	
 	private IPresentationContext fContext;
@@ -1015,6 +1021,9 @@ public class InternalTreeModelViewer extends TreeViewer
 		if (fIsPopup) {
 		    ((ITreeModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
 		}
+        if ((style & SWT.CHECK) != 0) {
+            context.setProperty(ICheckUpdate.PROP_CHECK, Boolean.TRUE);
+        }
 	}
 	
 	/**
@@ -2248,4 +2257,52 @@ public class InternalTreeModelViewer extends TreeViewer
     public void updateViewer(IModelDelta delta) {
         ((ITreeModelContentProvider)getContentProvider()).updateModel(delta);
     }
+
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.viewers.model.ITreeModelCheckProvider#setElementChecked(org.eclipse.jface.viewers.TreePath, boolean, boolean)
+     */
+	public void setElementChecked(TreePath path, boolean checked, boolean grayed) {
+	   	 Widget widget = findItem(path);
+		 
+		 if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+	         TreeItem item = (TreeItem)widget;
+	         
+	         item.setChecked(checked);
+	         item.setGrayed(grayed);
+		 }
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
+	 */
+	protected void handleSelect(SelectionEvent event) {
+	       if (event.detail == SWT.CHECK) {
+	            TreeItem item = (TreeItem) event.item;
+	            super.handleSelect(event);
+
+	            Object element = item.getData();
+	            if (element != null) {
+	            	boolean checked = item.getChecked();	            	
+	            	
+	            	TreePath path = getTreePathFromItem(item);
+	            	
+	            	boolean accepted = false;
+	            	IContentProvider contentProvider = getContentProvider();
+	            	if (contentProvider instanceof TreeModelContentProvider) {
+	            		IModelProxy elementProxy = ((TreeModelContentProvider) contentProvider).getElementProxy(path);
+	            		if (elementProxy instanceof ICheckboxModelProxy) {
+	            			accepted = ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getInput(), path, checked);
+	            		}	            		
+	            	} 
+
+            	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
+	            	if (!accepted)
+	            		item.setChecked(!checked);	            	
+	            }
+	        } else {
+				super.handleSelect(event);
+			}
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - added support for checkbox (Bug 286310)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.model.elements;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -214,6 +216,12 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			update.setBackground(getBackground(elementPath, presentationContext, columnId), i);
 			update.setForeground(getForeground(elementPath, presentationContext, columnId), i);
 			update.setFontData(getFontData(elementPath, presentationContext, columnId), i);
+			if (update instanceof ICheckUpdate && 
+			    Boolean.TRUE.equals(presentationContext.getProperty(ICheckUpdate.PROP_CHECK))) 
+			{
+				((ICheckUpdate) update).setChecked(
+				    getChecked(elementPath, presentationContext), getGrayed(elementPath, presentationContext));
+			}
 		}
 	}
 
@@ -270,6 +278,36 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 */
 	protected abstract String getLabel(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException;	
 
+	/**
+	 * Returns the checked state for the given path.
+	 * 
+     * @param path Path of the element to retrieve the grayed state for.
+     * @param presentationContext Presentation context where the element is 
+     * displayed.
+     * @return <code>true<code> if the element check box should be checked
+     * @throws CoreException 
+	 * 
+	 * @since 3.6
+	 */
+	protected boolean getChecked(TreePath path, IPresentationContext presentationContext) throws CoreException {
+		return false;
+	}
+	
+	/**
+	 * Returns the grayed state for the given path.
+	 * 
+	 * @param path Path of the element to retrieve the grayed state for.
+     * @param presentationContext Presentation context where the element is 
+     * displayed.
+	 * @return <code>true<code> if the element check box should be grayed
+	 * @throws CoreException 
+     * 
+     * @since 3.6
+	 */
+	protected boolean getGrayed(TreePath path, IPresentationContext presentationContext) throws CoreException {
+		return false;
+	}
+	
     /* (non-Javadoc)
      * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider#update(org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate[])
      */

@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.Viewer;
  * @see IModelDelta
  * @see IModelProxyFactory
  * @see IModelChangedListener
+ * @see ICheckboxModelProxy
  * @since 3.2
  */
 public interface IModelProxy {

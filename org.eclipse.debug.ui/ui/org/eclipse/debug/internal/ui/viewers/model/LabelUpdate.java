@@ -8,10 +8,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
+ *     Patrick Chuong (Texas Instruments) - added support for checkbox (Bug 286310)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
 import org.eclipse.debug.internal.core.commands.Request;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -22,7 +24,7 @@ import org.eclipse.swt.graphics.RGB;
 /**
  * @since 3.3
  */
-class LabelUpdate extends Request implements ILabelUpdate {
+class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	
 	private TreePath fElementPath;
 	private String[] fColumnIds;
@@ -36,6 +38,8 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	private int fNumColumns; 
 	private IPresentationContext fContext;
 	private Object fViewerInput;
+	private boolean fChecked;
+	private boolean fGrayed;
 	
 	/**
 	 * @param viewerInput input at the time the request was made
@@ -151,6 +155,9 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 */
 	public void update() {
 	    fTreeViewer.setElementData(fElementPath, fNumColumns, fLabels, fImageDescriptors, fFontDatas, fForegrounds, fBackgrounds);
+		if (fTreeViewer instanceof ITreeModelCheckProviderTarget)
+			((ITreeModelCheckProviderTarget) fTreeViewer).setElementChecked(fElementPath, fChecked, fGrayed);
+
 		fProvider.updateComplete(this);
 	}
 
@@ -173,5 +180,14 @@ class LabelUpdate extends Request implements ILabelUpdate {
 	 */
 	public Object getViewerInput() {
 		return fViewerInput;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckable#setChecked(boolean, boolean)
+	 */
+	public void setChecked(boolean checked, boolean grayed) {
+		fChecked = checked;
+		fGrayed = grayed;
 	}
 }

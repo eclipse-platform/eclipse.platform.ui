@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Checkbox support for Flexible Hierachy view (Bug 286310)
  *******************************************************************************/
 package org.eclipse.debug.examples.ui.midi.adapters;
 
@@ -55,6 +56,16 @@ public class MidiEventLabelProvider extends ElementLabelProvider {
 			}
 		}
 		return "";
+	}
+	
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.model.elements.ElementLabelProvider#getChecked(org.eclipse.jface.viewers.TreePath, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext)
+	 */
+	public boolean getChecked(TreePath path, IPresentationContext presentationContext) throws CoreException {
+		Boolean result = (Boolean) MidiEventModelProxy.gChecked.get(path);
+		return result == null ? false : result.booleanValue();		
 	}
 	
 	/**
