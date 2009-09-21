@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -21,8 +21,6 @@ public class ComparePreferenceInitializer extends AbstractPreferenceInitializer 
 
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = CompareUIPlugin.getDefault().getPreferenceStore();
-		store.setDefault(ICompareUIConstants.PREF_NAVIGATION_END_ACTION, ICompareUIConstants.PREF_VALUE_PROMPT);
-		store.setDefault(ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL, ICompareUIConstants.PREF_VALUE_LOOP);
 		ComparePreferencePage.initDefaults(store);
 	}
 

@@ -125,6 +125,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, HIGHLIGHT_TOKEN_CHANGES),
 		//new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, USE_RESOLVE_UI),
 		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, PATH_FILTER),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICompareUIConstants.PREF_NAVIGATION_END_ACTION),
+		new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL),
 	};
 	private RadioGroupFieldEditor editor;
 	
@@ -145,6 +147,8 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 		store.setDefault(HIGHLIGHT_TOKEN_CHANGES, true);
 		//store.setDefault(USE_RESOLVE_UI, false);
 		store.setDefault(PATH_FILTER, ""); //$NON-NLS-1$
+		store.setDefault(ICompareUIConstants.PREF_NAVIGATION_END_ACTION, ICompareUIConstants.PREF_VALUE_PROMPT);
+		store.setDefault(ICompareUIConstants.PREF_NAVIGATION_END_ACTION_LOCAL, ICompareUIConstants.PREF_VALUE_LOOP);
 	}
 
 	public ComparePreferencePage() {
@@ -181,9 +185,9 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 	public boolean performOk() {
 		fOverlayStore.setValue(ADDED_LINES_REGEX, addedLinesRegex.getText());
 		fOverlayStore.setValue(REMOVED_LINES_REGEX, removedLinesRegex.getText());
-		
+
+		editor.store();		
 		fOverlayStore.propagate();
-		editor.store();
 		return true;
 	}
 	
@@ -354,7 +358,7 @@ public class ComparePreferencePage extends PreferencePage implements IWorkbenchP
 					new String[] { CompareMessages.ComparePreferencePage_4, ICompareUIConstants.PREF_VALUE_DO_NOTHING}
 				},
 		radioGroup, true);
-		editor.setPreferenceStore(CompareUIPlugin.getDefault().getPreferenceStore());
+		editor.setPreferenceStore(fOverlayStore);
 		editor.fillIntoGrid(radioGroup, 1);
 		
 		// a spacer
