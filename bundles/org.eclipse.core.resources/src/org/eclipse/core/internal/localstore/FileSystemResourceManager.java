@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -724,8 +724,6 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 			error = new ResourceException(IResourceStatus.FAILED_READ_METADATA, target.getFullPath(), msg, null);
 		}
 		if (description != null) {
-			//don't trust the project name in the description file
-			description.setName(target.getName());
 			if (!isDefaultLocation)
 				description.setLocationURI(projectLocation);
 			if (creation && privateDescription != null)
