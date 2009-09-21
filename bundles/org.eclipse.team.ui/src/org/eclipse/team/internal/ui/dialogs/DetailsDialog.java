@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,14 +112,14 @@ abstract public class DetailsDialog extends TrayDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Details buttons
+		if(includeDetailsButton()) {
+			detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, getDetailsButtonLabelShow(), false);
+		}
 		if(includeOkButton()) {
 			okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 		}
 		if (includeCancelButton()) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
-		}
-		if(includeDetailsButton()) {
-			detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, getDetailsButtonLabelShow(), false);
 		}
 		updateEnablements();
 	}
