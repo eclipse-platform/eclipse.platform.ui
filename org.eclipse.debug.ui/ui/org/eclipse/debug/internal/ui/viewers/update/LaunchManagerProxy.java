@@ -42,7 +42,9 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	public void installed(Viewer viewer) {
 		// expand existing launches
 		ILaunch[] launches = fLaunchManager.getLaunches();
-		launchesAdded(launches);
+		if (launches.length > 0) {
+			launchesAdded(launches);
+		}
 	}
 
 	/* (non-Javadoc)
