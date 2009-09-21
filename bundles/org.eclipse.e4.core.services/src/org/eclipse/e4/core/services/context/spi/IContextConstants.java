@@ -89,9 +89,4 @@ public interface IContextConstants {
 	 */
 	public static final String PARENT = "parentContext"; //$NON-NLS-1$
 
-	/**
-	 * A context key (value "eventBroker") identifying the event administration service, which can be
-	 * retrieved with {@link IEclipseContext#get(String)}.
-	 */
-	public static final String EVENT = "eventBroker"; //$NON-NLS-1$
 }
