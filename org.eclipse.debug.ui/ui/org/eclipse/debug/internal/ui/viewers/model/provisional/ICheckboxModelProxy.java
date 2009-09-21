@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 286310)
+ *     IBM Corporation - ongoing enhancements
  *****************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model.provisional;
 
@@ -24,6 +25,11 @@ public interface ICheckboxModelProxy extends IModelProxy {
     /**
      * Notifies the receiver that the given element has had its 
      * checked state modified in the viewer.
+     * <p>
+     * This method is called in the UI thread. Clients that execute long running operations or
+     * communicate with a potentially unreliable or blocking model should run those operations
+     * asynchronously.
+     * </p>
      * 
      * @param context Presentation context in which the element was updated.
      * @param viewerInput The root element of the viewer where the check
