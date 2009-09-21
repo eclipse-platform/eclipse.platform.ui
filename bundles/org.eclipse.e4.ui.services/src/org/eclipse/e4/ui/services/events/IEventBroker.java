@@ -17,7 +17,7 @@ import org.osgi.service.event.EventHandler;
  * To obtain an instance of the event broker service from the @link {@link IEclipseContext} 
  * context, use 
  * <pre>
- * 	(IEventBroker) context.get(IContextConstants.EVENT)
+ * 	(IEventBroker) context.get(IEventBroker.class.getName())
  * </pre>
  * <p>
  * To create a new instance of the event broker service, use @link {@link EventBrokerFactory}.
@@ -27,39 +27,62 @@ import org.osgi.service.event.EventHandler;
 public interface IEventBroker {
 	
 	/**
-	 * The name of the event attribute used by default to pass event data.
+	 * The name of the default event attribute used to pass data.
 	 */
-	public String DATA = "data";
+	public String DATA = "org.eclipse.e4.data";
 
 	/**
 	 * Publish event synchronously (the method does not return until the event is processed).
+	 * <p>
+	 * If data is a {@link Map} or a {@link Dictionary}, it is passed as is. Otherwise, a new 
+	 * Map is constructed and its {@link #DATA} attribute is populated with this value.
+	 * </p>
 	 * @param topic topic of the event to be published
 	 * @param data data to be published with the event
-	 * @return <code> true if this operation was performed successfully; <code>false</code> otherwise
+	 * @return <code>true</code> if this operation was performed successfully; <code>false</code> otherwise
 	 */
 	public boolean send(String topic, Object data);
 
 	/**
 	 * Publish event asynchronously (this method returns immediately).
+	 * <p>
+	 * If data is a {@link Map} or a {@link Dictionary}, it is passed as is. Otherwise, a new 
+	 * Map is constructed and its {@link #DATA} attribute is populated with this value.
+	 * </p>
 	 * @param topic topic of the event to be published
 	 * @param data data to be published with the event
-	 * @return <code> true if this operation was performed successfully; <code>false</code> otherwise
+	 * @return <code>true</code> if this operation was performed successfully; <code>false</code> otherwise
 	 */
 	public boolean post(String topic, Object data);
 
 	/**
 	 * Subscribe for events on the given topic.
+	 * <p>
+	 * The handler will be called on the UI thread.
+	 * </p> 
 	 * @param topic topic of interest 
-	 * @param filter filter for events, might be <code>null</code>
 	 * @param eventHandler object to call when an event of interest arrives  
-	 * @return <code> true if this operation was performed successfully; <code>false</code> otherwise
+	 * @return <code>true</code> if this operation was performed successfully; <code>false</code> otherwise
 	 */
-	public boolean subscribe(String topic, String filter, EventHandler eventReceiver);
+	public boolean subscribe(String topic, EventHandler eventHandler);
+	
+	/**
+	 * Subscribe for events on the given topic.
+	 * <p>
+	 * The handler will be called on the UI thread if "headless" is set to <code>true</code>.
+	 * </p> 
+	 * @param topic topic of interest
+	 * @param filter the LDAP event filter
+	 * @param eventHandler object to call when an event of interest arrives
+	 * @param headless <code>true</code> if handing of the events does not require UI; <code>false</code> otherwise
+	 * @return <code>true</code> if this operation was performed successfully; <code>false</code> otherwise
+	 */
+	public boolean subscribe(String topic, String filter, EventHandler eventHandler, boolean headless);
 
 	/**
 	 * Unsubscribe handler previously registered using {@link #subscribe(String, String, EventHandler)}.
-	 * @param eventReceiver
-	 * @return <code> true if this operation was performed successfully; <code>false</code> otherwise
+	 * @param eventHandler previously registered event handler
+	 * @return <code>true</code> if this operation was performed successfully; <code>false</code> otherwise
 	 */
-	public boolean unsubscribe(EventHandler eventReceiver);
+	public boolean unsubscribe(EventHandler eventHandler);
 }

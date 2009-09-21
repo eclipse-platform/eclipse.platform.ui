@@ -86,7 +86,7 @@ public class EventBroker implements IEventBroker {
 		} else if (data instanceof Map<?,?>) {
 			event = new Event(topic, (Map<?,?>)data);
 		} else {
-			Dictionary<String, Object> d = new Hashtable<String, Object>();
+			Dictionary<String, Object> d = new Hashtable<String, Object>(2);
 			d.put(EventConstants.EVENT_TOPIC, topic);
 			d.put(IEventBroker.DATA, data);
 			event = new Event(topic, d);
@@ -94,7 +94,11 @@ public class EventBroker implements IEventBroker {
 		return event;
 	}
 
-	public boolean subscribe(String topic, String filter, EventHandler eventHandler) {
+	public boolean subscribe(String topic, EventHandler eventHandler) {
+		return subscribe(topic, null, eventHandler, false);
+	}
+	
+	public boolean subscribe(String topic, String filter, EventHandler eventHandler, boolean headless) {
 		BundleContext bundleContext = Activator.getDefault().getBundleContext();
 		if (bundleContext == null) {
 			Activator.getDefault().logError(NLS.bind(ServiceMessages.NO_BUNDLE_CONTEXT, topic));
@@ -105,13 +109,14 @@ public class EventBroker implements IEventBroker {
 		d.put(EventConstants.EVENT_TOPIC, topics);
 		if (filter != null)
 			d.put(EventConstants.EVENT_FILTER, filter);
-		ServiceRegistration registration = bundleContext.registerService(EventHandler.class.getName(), eventHandler, d);
+		EventHandler wrappedHandler = new UIEventHandler(eventHandler, headless);
+		ServiceRegistration registration = bundleContext.registerService(EventHandler.class.getName(), wrappedHandler, d);
 		registrations.put(eventHandler, registration);
 		return true;
 	}
 
-	public boolean unsubscribe(EventHandler eventReceiver) {
-		ServiceRegistration registration = (ServiceRegistration) registrations.remove(eventReceiver);
+	public boolean unsubscribe(EventHandler eventHandler) {
+		ServiceRegistration registration = (ServiceRegistration) registrations.remove(eventHandler);
 		if (registration == null)
 			return false;
 		registration.unregister();
