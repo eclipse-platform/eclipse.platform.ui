@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.operations;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -325,7 +319,7 @@ public abstract class RepositoryProviderOperation extends CVSOperation {
 	 * Helper method. Return a Map mapping provider to a list of resources
 	 * shared with that provider.
 	 */
-	private Map getProviderTraversalMapping(IProgressMonitor monitor) throws CoreException {
+	Map getProviderTraversalMapping(IProgressMonitor monitor) throws CoreException {
 		Map result = new HashMap();
 		ResourceMapping[] mappings = getScope().getMappings();
         for (int j = 0; j < mappings.length; j++) {

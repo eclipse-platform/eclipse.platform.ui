@@ -170,7 +170,27 @@ public abstract class DiffOperation extends SingleCommandOperation {
 	 * @return a stream for the diff output
 	 */
 	protected abstract PrintStream openStream() throws CVSException;
-
+	
+	private static Comparator COMPARATOR = new Comparator() {
+		private int compare(IResource r1, IResource r2) {
+			return r1.getFullPath().toString().compareTo(r2.getFullPath().toString());
+		}
+		public int compare(Object o1, Object o2) {
+			IResource r1 = null;
+			IResource r2 = null;
+			if (o1 instanceof ICVSResource) {
+				r1 = ((ICVSResource)o1).getIResource();
+			} else {
+				r1 = (IResource)o1;
+			}
+			if (o2 instanceof ICVSResource) {
+				r2 = ((ICVSResource)o2).getIResource();
+			} else {
+				r2 = (IResource)o2;
+			}
+			return compare(r1, r2);
+		}
+	};
 	protected void execute(CVSTeamProvider provider, IResource[] resources, boolean recurse, IProgressMonitor monitor) throws CVSException, InterruptedException {
 		
 		//add this project to the total projects encountered
@@ -207,6 +227,11 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				}
 			}, recurse);
 		}
+
+		final SortedSet allFiles = new TreeSet(COMPARATOR);
+		allFiles.addAll(existingFiles);
+		allFiles.addAll(newFiles);
+
 		subMonitor.done();
 		
 		//Check options 
@@ -233,13 +258,6 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				IProject project=resources[0].getProject();
 				stream.println(WorkspacePatcherUI.getWorkspacePatchProjectHeader(project));
 			}
-			try{
-				super.execute(provider, (IResource[]) existingFiles.toArray(new IResource[existingFiles.size()]), recurse, Policy.subMonitorFor(monitor, 90));
-			} catch(CVSCommunicationException ex){ // see bug 123430
-				CVSUIPlugin.openError(getShell(), null, null, ex, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
-			} catch (CVSException ex) {
-				handleCVSException(ex);
-			}
 		}
 
 		if (!newFiles.isEmpty() && Diff.INCLUDE_NEWFILES.isElementOf(localoptions)){
@@ -251,14 +269,36 @@ public abstract class DiffOperation extends SingleCommandOperation {
 				IProject project=resources[0].getProject();
 				stream.println(WorkspacePatcherUI.getWorkspacePatchProjectHeader(project));
 			}
-			
-			for (Iterator iter = newFiles.iterator(); iter.hasNext();) {
-				ICVSFile cvsFile = (ICVSFile) iter.next();
+		}
+		
+		List existingFilesSubList = new ArrayList();
+		for (Iterator iter = allFiles.iterator(); iter.hasNext();) {
+			Object file = iter.next();
+			if (existingFiles.contains(file)) {
+				existingFilesSubList.add(file);
+			} else if (newFiles.contains(file)){
+				addExistingFilesSubListToDiff(provider, existingFilesSubList, recurse, monitor, existingFiles.size());
+				ICVSFile cvsFile = (ICVSFile) file;
 				addFileToDiff(getNewFileRoot(cvsFile), cvsFile,stream,format);
 			}
 		}
-		
+		addExistingFilesSubListToDiff(provider, existingFilesSubList, recurse, monitor, existingFiles.size());
+
 		monitor.done();
+	}
+
+	private void addExistingFilesSubListToDiff(CVSTeamProvider provider, Collection subList, boolean recurse, IProgressMonitor monitor, int existingFilesTotal) throws InterruptedException {
+		if (!subList.isEmpty()) {
+			int ticks = 90 * subList.size() / existingFilesTotal;
+			try{
+				super.execute(provider, (IResource[]) subList.toArray(new IResource[subList.size()]), recurse, Policy.subMonitorFor(monitor, ticks));
+			} catch(CVSCommunicationException ex){ // see bug 123430
+				CVSUIPlugin.openError(getShell(), null, null, ex, CVSUIPlugin.PERFORM_SYNC_EXEC | CVSUIPlugin.LOG_OTHER_EXCEPTIONS);
+			} catch (CVSException ex) {
+				handleCVSException(ex);
+			}
+			subList.clear();
+		}
 	}
 
 	/**
@@ -321,6 +361,19 @@ public abstract class DiffOperation extends SingleCommandOperation {
 		return CVSUIMessages.DiffOperation_1;
 	}
 	
+	Map getProviderTraversalMapping(IProgressMonitor monitor) throws CoreException {
+		Map providerTraversal = super.getProviderTraversalMapping(monitor);
+		SortedMap result = new TreeMap(new Comparator() {
+			public int compare(Object o1, Object o2) {
+				CVSTeamProvider p1 = (CVSTeamProvider) o1;
+				CVSTeamProvider p2 = (CVSTeamProvider) o2;
+				return COMPARATOR.compare(p1.getProject(), p2.getProject());
+			}
+		});
+		result.putAll(providerTraversal);
+		return result;
+	}
+
 	private void addFileToDiff(ICVSFolder patchRoot, ICVSFile file, PrintStream printStream, int format) throws CVSException {
 		
 		String nullFilePrefix = ""; //$NON-NLS-1$
