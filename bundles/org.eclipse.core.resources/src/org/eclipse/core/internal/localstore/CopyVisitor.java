@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,6 +85,8 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			localManager.updateLocalSync(info, destinationStore.fetchInfo().getLastModified());
 			//update timestamps on aliases
 			getWorkspace().getAliasManager().updateAliases(destination, destinationStore, IResource.DEPTH_ZERO, monitor);
+			if (destination.getType() == IResource.FILE)
+				((File) destination).updateMetadataFiles();
 		} catch (CoreException e) {
 			status.add(e.getStatus());
 		}

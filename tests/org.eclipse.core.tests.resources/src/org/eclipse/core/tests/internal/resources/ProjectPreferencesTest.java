@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -305,7 +305,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 	public void testProjectMove() {
 		IProject project1 = getProject(getUniqueString());
 		IProject project2 = getProject(getUniqueString());
-		
+
 		ensureExistsInWorkspace(new IResource[] {project1}, true);
 		String qualifier = getUniqueString();
 		String key = getUniqueString();
@@ -323,7 +323,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
-		
+
 		// ensure that preferences for the old project are removed
 		node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 		assertNotNull("2.1", node);
@@ -332,7 +332,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		} catch (BackingStoreException e) {
 			fail("2.3", e);
 		}
-		
+
 		// ensure preferences are preserved
 		node = Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE);
 		assertNotNull("2.3", node);
@@ -720,6 +720,47 @@ public class ProjectPreferencesTest extends ResourceTest {
 		assertNull("3.3", node.get("key3", null));
 	}
 
+	/*
+	 * Bug 256900 - When the preferences file is copied between projects, the corresponding preferences 
+	 * should be updated.
+	 */
+	public void test_256900() {
+		IProject project = getProject(getUniqueString());
+		ensureExistsInWorkspace(project, true);
+
+		// create the destination project and the .settings folder inside
+		IProject project2 = getProject(getUniqueString());
+		ensureExistsInWorkspace(project2, true);
+		ensureExistsInWorkspace(project2.getFolder(DIR_NAME), true);
+
+		// get the pref node for the project and add a sample key/value to it
+		Preferences node = new ProjectScope(project).getNode(ResourcesPlugin.PI_RESOURCES);
+		String key = "key";
+		String value = getUniqueString();
+		node.put(key, value);
+		try {
+			node.flush();
+		} catch (BackingStoreException e) {
+			fail("1.0", e);
+		}
+
+		IFile prefFile = getFileInWorkspace(project, ResourcesPlugin.PI_RESOURCES);
+		assertTrue("2.0", prefFile.exists());
+
+		// get the pref node for the destination project
+		Preferences project2Node = new ProjectScope(project2).getNode(ResourcesPlugin.PI_RESOURCES);
+		assertNull("3.0", project2Node.get(key, null));
+
+		// copy the pref file to the destination project
+		try {
+			prefFile.copy(getFileInWorkspace(project2, ResourcesPlugin.PI_RESOURCES).getFullPath(), true, null);
+		} catch (CoreException e) {
+			fail("4.0", e);
+		}
+
+		assertEquals("5.0", value, project2Node.get(key, null));
+	}
+
 	public void testProjectOpenClose() {
 		IProject project = getProject(getUniqueString());
 		ensureExistsInWorkspace(project, true);
@@ -895,7 +936,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 		IEclipsePreferences projectNode = (IEclipsePreferences) service.getRootNode().node(ProjectScope.SCOPE).node(project.getName());
 		try {
 			// when the pref file is deleted, the node will be cleared, but not removed
-			assertTrue("3.2", isNodeCleared(projectNode, new String[]{qualifier}));
+			assertTrue("3.2", isNodeCleared(projectNode, new String[] {qualifier}));
 		} catch (BackingStoreException e) {
 			fail("3.91", e);
 		}
@@ -922,22 +963,24 @@ public class ProjectPreferencesTest extends ResourceTest {
 		node = context.getNode(qualifier);
 		assertEquals("5.0", newValue, node.get(key, null));
 	}
-	
+
 	/**
 	 * @param node the node to check
 	 * @param childrenNames the names of children to check
 	 * @return true, if the node and its children have no associated values
 	 * @throws BackingStoreException
 	 */
-	private boolean isNodeCleared(Preferences node, String[] childrenNames) throws BackingStoreException {	
+	private boolean isNodeCleared(Preferences node, String[] childrenNames) throws BackingStoreException {
 		// check if the node has associate values
-		if (node.keys().length !=0) return false;
-	
+		if (node.keys().length != 0)
+			return false;
+
 		// perform a subsequent check for the node children
 		Preferences childNode = null;
-		for (int i=0; i<childrenNames.length; i++){
+		for (int i = 0; i < childrenNames.length; i++) {
 			childNode = node.node(childrenNames[i]);
-			if (!isNodeCleared(childNode, childNode.childrenNames())) return false;
+			if (!isNodeCleared(childNode, childNode.childrenNames()))
+				return false;
 		}
 		return true;
 	}
