@@ -1764,7 +1764,7 @@ public class TextViewer extends Viewer implements
 		fTextWidget= createTextWidget(parent, styles);
 
 		// Support scroll page upon MOD1+MouseWheel
-		fTextWidget.addListener(SWT.MouseWheel, new Listener() {
+		fTextWidget.addListener(SWT.MouseVerticalWheel, new Listener() {
 
 			public void handleEvent(Event event) {
 				if (((event.stateMask & SWT.MOD1) == 0))

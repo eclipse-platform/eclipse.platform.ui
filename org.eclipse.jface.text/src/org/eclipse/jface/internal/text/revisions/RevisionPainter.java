@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -295,7 +295,7 @@ public final class RevisionPainter {
 		 */
 		public void handleEvent(Event event) {
 			switch (event.type) {
-				case SWT.MouseWheel:
+				case SWT.MouseVerticalWheel:
 					handleMouseWheel(event);
 					break;
 				case SWT.MouseDown:
@@ -1277,7 +1277,7 @@ public final class RevisionPainter {
 	 * Uninstalls the mouse wheel handler.
 	 */
 	private void uninstallWheelHandler() {
-		fControl.removeListener(SWT.MouseWheel, fMouseHandler);
+		fControl.removeListener(SWT.MouseVerticalWheel, fMouseHandler);
 		fWheelHandlerInstalled= false;
 	}
 
@@ -1289,7 +1289,7 @@ public final class RevisionPainter {
 			//FIXME: does not work on Windows, because Canvas cannot get focus and therefore does not send out mouse wheel events:
 			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=81189
 			//see also https://bugs.eclipse.org/bugs/show_bug.cgi?id=75766
-			fControl.addListener(SWT.MouseWheel, fMouseHandler);
+			fControl.addListener(SWT.MouseVerticalWheel, fMouseHandler);
 			fWheelHandlerInstalled= true;
 		}
 	}
