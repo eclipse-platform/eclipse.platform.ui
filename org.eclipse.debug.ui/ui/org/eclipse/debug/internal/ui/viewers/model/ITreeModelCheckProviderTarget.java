@@ -31,4 +31,20 @@ public interface ITreeModelCheckProviderTarget extends ITreeModelLabelProviderTa
      * @param grayed
      */
     public void setElementChecked(TreePath path, boolean checked, boolean grayed);    
+
+    /**
+     * Retrieves the element check state.
+     * 
+     * @param path
+     * @return checked
+     */
+    public boolean getElementChecked(TreePath path);    
+
+    /**
+     * Retrieves the element's check box grayed state.
+     * 
+     * @param path
+     * @return grayed
+     */
+    public boolean getElementGrayed(TreePath path);    
 }

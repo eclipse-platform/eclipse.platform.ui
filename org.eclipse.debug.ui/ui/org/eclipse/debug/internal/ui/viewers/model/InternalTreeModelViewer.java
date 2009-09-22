@@ -2273,6 +2273,34 @@ public class InternalTreeModelViewer extends TreeViewer
 		 }
 	}
 	
+    public boolean getElementChecked(TreePath path) {
+        Widget widget = findItem(path);
+        
+        if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+            TreeItem item = (TreeItem)widget;
+            
+            return item.getChecked();
+        }        
+        return false;
+    }
+
+    /**
+     * Retrieves the element's check box grayed state.
+     * 
+     * @param path
+     * @return grayed
+     */
+    public boolean getElementGrayed(TreePath path) {
+        Widget widget = findItem(path);
+        
+        if (widget != null && widget instanceof TreeItem && !widget.isDisposed()) {
+            TreeItem item = (TreeItem)widget;
+            
+            return item.getGrayed();
+        }        
+        return false;
+    }
+
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)

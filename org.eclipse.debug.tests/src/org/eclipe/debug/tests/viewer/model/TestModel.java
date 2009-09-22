@@ -15,8 +15,10 @@ import java.util.Arrays;
 import junit.framework.Assert;
 
 import org.eclipse.core.runtime.PlatformObject;
+import org.eclipse.debug.internal.ui.viewers.model.ITreeModelCheckProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
@@ -176,12 +178,11 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         for (int i = 0; i < updates.length; i++) {
             TestElement element = (TestElement)updates[i].getElement();
             updates[i].setLabel(element.fID, 0);
-// TODO: wait for bug 286310
-//            if (updates[i] instanceof ICheckUpdate && 
-//                Boolean.TRUE.equals(updates[i].getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
-//            {
-//                ((ICheckUpdate)updates[i]).setChecked(element.getChecked(), element.getGrayed());
-//            }
+            if (updates[i] instanceof ICheckUpdate && 
+                Boolean.TRUE.equals(updates[i].getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK))) 
+            {
+                ((ICheckUpdate)updates[i]).setChecked(element.getChecked(), element.getGrayed());
+            }
             updates[i].done();
         }        
     }
@@ -224,12 +225,11 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     public void validateData(ITreeModelViewer _viewer, TreePath path, boolean expandedElementsOnly) {
         ITreeModelContentProviderTarget viewer = (ITreeModelContentProviderTarget)_viewer;
         TestElement element = getElement(path);
-// TODO: wait for bug 286310
-//        if ( Boolean.TRUE.equals(_viewer.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)) ) {
-//            ITreeModelCheckProviderTarget checkTarget = (ITreeModelCheckProviderTarget)_viewer;  
-//            Assert.assertEquals(element.getChecked(), checkTarget.getElementChecked(path));
-//            Assert.assertEquals(element.getGrayed(), checkTarget.getElementGrayed(path));
-//        }
+        if ( Boolean.TRUE.equals(_viewer.getPresentationContext().getProperty(ICheckUpdate.PROP_CHECK)) ) {
+            ITreeModelCheckProviderTarget checkTarget = (ITreeModelCheckProviderTarget)_viewer;  
+            Assert.assertEquals(element.getChecked(), checkTarget.getElementChecked(path));
+            Assert.assertEquals(element.getGrayed(), checkTarget.getElementGrayed(path));
+        }
         
         if (!expandedElementsOnly || path.getSegmentCount() == 0 || viewer.getExpandedState(path) ) {
             TestElement[] children = element.getChildren();
