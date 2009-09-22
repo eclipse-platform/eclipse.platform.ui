@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,7 +19,7 @@ import org.eclipse.team.core.mapping.provider.MergeContext;
 
 /**
  * Provides the context for an <code>IResourceMappingMerger</code> or a model
- * specific synchronization view that supports merging. *
+ * specific synchronization view that supports merging.
  * <p>
  * <a name="async">The diff tree associated with this context may be updated
  * asynchronously in response to calls to any method of this context (e.g. merge

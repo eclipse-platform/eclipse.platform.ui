@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -381,7 +381,13 @@ public abstract class SubscriberEventHandler extends BackgroundEventHandler {
 
 	/**
 	 * Queue up the given runnable in an event to be processed by this job
-	 * @param runnable the runnable to be run by the handler
+	 *
+	 * @param runnable
+	 *            the runnable to be run by the handler
+	 * @param frontOnQueue
+	 *            the frontOnQueue flag is used to indicate that the runnable
+	 *            should be placed on the front of the queue and be processed as
+	 *            soon as possible
 	 */
 	public void run(IWorkspaceRunnable runnable, boolean frontOnQueue) {
 		queueEvent(new RunnableEvent(runnable, frontOnQueue), frontOnQueue);

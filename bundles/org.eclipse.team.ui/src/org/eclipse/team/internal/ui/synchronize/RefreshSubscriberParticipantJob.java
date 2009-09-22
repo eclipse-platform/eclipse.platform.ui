@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -94,7 +94,7 @@ public class RefreshSubscriberParticipantJob extends RefreshParticipantJob {
 	
 	/**
 	 * If a collector is available then run the refresh and the background event processing 
-	 * within the same progess group.
+	 * within the same progress group.
 	 */
 	public boolean shouldRun() {
 		// Ensure that any progress shown as a result of this refresh occurs hidden in a progress group.

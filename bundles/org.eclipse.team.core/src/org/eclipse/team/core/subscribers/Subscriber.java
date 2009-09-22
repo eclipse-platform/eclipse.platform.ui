@@ -50,12 +50,12 @@ import org.eclipse.team.internal.core.mapping.SyncInfoToDiffConverter;
  * resource)
  * to determine if the file represents an outgoing change so that <code>SyncInfo</code> obtained
  * after a delta will indicate that the file has an outgoing change. The subscriber must also notify listeners 
- * when roots and added 
+ * when roots are added 
  * or removed. For example, a subscriber for a repository provider would fire a root added event when a project 
  * was shared
  * with a repository. No event is required when a root is deleted as this is available through the 
  * <code>IResource</code> delta mechanism. It is up to clients to re-query the subscriber
- * when the state of a resource changes locally by listening to IResource deltas.
+ * when the state of a resource changes locally by listening to <code>IResource</code> deltas.
  * </p><p>
  * The remote and base states can also include the state for resources that do not exist locally (i.e outgoing deletions 
  * or incoming additions). When queried for the members of a local resource, the subscriber should include any children

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -288,7 +288,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * that of the remote. This method is invoked by the
 	 * {@link #merge(IDiff, boolean, IProgressMonitor)} method. By default, it
 	 * either overwrites the local contexts with the remote contents if both
-	 * exist, deletes the local if the rmeote does not exists or addes the local
+	 * exist, deletes the local if the remote does not exists or adds the local
 	 * if the local doesn't exist but the remote does. It then calls
 	 * {@link #makeInSync(IDiff, IProgressMonitor)} to give subclasses a change
 	 * to make the file associated with the diff in-sync.
@@ -296,7 +296,7 @@ public abstract class MergeContext extends SynchronizationContext implements IMe
 	 * @param diff
 	 *            the diff whose local is to be replaced
 	 * @param monitor
-	 *            a progrss monitor
+	 *            a progress monitor
 	 * @throws CoreException
 	 */
     protected void performReplace(final IDiff diff, IProgressMonitor monitor) throws CoreException {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -194,11 +194,16 @@ public class SubscriberSyncInfoEventHandler extends SubscriberEventHandler {
 	}
 	
 	/**
-	 * Initialize all resources for the subscriber associated with the set. This will basically recalculate
-	 * all synchronization information for the subscriber.
+	 * Initialize all resources for the subscriber associated with the set. This
+	 * will basically recalculate all synchronization information for the
+	 * subscriber.
 	 * <p>
-	 * This method is synchronized with the queueEvent method to ensure that the two events
-	 * queued by this method are back-to-back
+	 * This method is synchronized with the queueEvent method to ensure that the
+	 * two events queued by this method are back-to-back.
+	 * 
+	 * @param roots
+	 *            the new roots or <code>null</code> if the roots from the
+	 *            subscriber should be used.
 	 */
 	public void reset(IResource[] roots) {
 		RootResourceSynchronizationScope scope = (RootResourceSynchronizationScope)getScope();

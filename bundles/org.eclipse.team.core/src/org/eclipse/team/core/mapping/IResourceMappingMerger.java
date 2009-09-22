@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
  * auto-merging. It is helpful in the cases where a file may contain multiple
  * model elements or a model element consists of multiple files. It can also be
  * used for cases where there is a one-to-one mapping between model elements and
- * files, although <code>IStreamMerger</code> can also be used in that case.
+ * files, although <code>IStorageMerger</code> can also be used in that case.
  * 
  * Clients should group resource mappings by model provider and then attempt to
  * obtain a merger from the model provider using the adaptable mechanism as
@@ -88,12 +88,12 @@ public interface IResourceMappingMerger {
      * Return the scheduling rule that is required to merge
      * all the changes that apply to this merger in the given 
      * context. When calling {@link #merge(IMergeContext, IProgressMonitor)},
-     * lients must ensure that they either have obtained
+     * clients must ensure that they either have obtained
      * a rule that covers the rule returned by this method or
      * they must not hold any rule.
      * @param context the context that contains the changes to be merged
      * @return the scheduling rule required by this merger to merge all
-     * the changes in the gibven context belonging to the merger's
+     * the changes in the given context belonging to the merger's
      * model provider.
      */
     public ISchedulingRule getMergeRule(IMergeContext context);
