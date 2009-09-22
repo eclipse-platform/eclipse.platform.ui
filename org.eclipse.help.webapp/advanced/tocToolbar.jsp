@@ -16,6 +16,9 @@
 	String printError = UrlUtil.JavaScriptEncode(ServletResources.getString("PrintError", request));
 	String menuData = printTopicLabel + "=printTopic(\\'" + printError + "\\')," + printTocLabel + "=printToc(\\'" + printError + "\\')";
     String quickSearchError = UrlUtil.JavaScriptEncode(ServletResources.getString("QuickSearchError", request));
+    // See  Bug 290064 for an explanation of why these constants are used
+    final String ON = "on";
+    final String OFF = "off";
 %>
 
 <jsp:include page="toolbar.jsp">
@@ -62,6 +65,6 @@
 	<jsp:param name="image"    value="auto_synch_toc.gif"/>
 	<jsp:param name="action"   value="toggleAutosynch"/>
 	<jsp:param name="param"    value=""/>	
-	<jsp:param name="state"    value="<%=((new CookiesData(application, request, response)).isSynchToc() ? "on" : "off")%>"/>
+	<jsp:param name="state"    value="<%=((new CookiesData(application, request, response)).isSynchToc() ? ON : OFF)%>"/>
 	
 </jsp:include>

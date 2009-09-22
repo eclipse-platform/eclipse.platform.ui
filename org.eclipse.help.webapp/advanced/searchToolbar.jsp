@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2000, 2007 IBM Corporation and others.
+ Copyright (c) 2000, 2009 IBM Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -9,6 +9,11 @@
      IBM Corporation - initial API and implementation
 --%>
 <%@ include file="header.jsp"%>
+<%
+    // See  Bug 290064 for an explanation of why these constants are used
+    final String ON = "on";
+    final String OFF = "off";
+%>
 
 
 <jsp:include page="toolbar.jsp">
@@ -27,13 +32,13 @@
 	<jsp:param name="image"    value="show_categories.gif"/>
 	<jsp:param name="action"   value="toggleShowCategories"/>
 	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowCategories() ? "on" : "off")%>"/>
+	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowCategories() ? ON : OFF)%>"/>
 
 	<jsp:param name="name"     value="show_descriptions"/>
 	<jsp:param name="tooltip"  value='show_descriptions'/>
 	<jsp:param name="image"    value="show_descriptions.gif"/>
 	<jsp:param name="action"   value="toggleShowDescriptions"/>
 	<jsp:param name="param"    value=""/>
-	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowDescriptions() ? "on" : "off")%>"/>
+	<jsp:param name="state"    value="<%=((new SearchData(application, request, response)).isShowDescriptions() ? ON : OFF)%>"/>
 
 </jsp:include>
