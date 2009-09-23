@@ -266,7 +266,6 @@ public final class ResourceEncodingFieldEditor extends
 		}
 
 		String defaultCharset = getCharsetFromDescription();
-		defaultCharset = getCharsetFromDescription();
 
 		if (defaultCharset != null && defaultCharset.length() > 0) {
 			return defaultCharset;
