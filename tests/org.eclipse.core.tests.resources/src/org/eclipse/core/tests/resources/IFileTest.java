@@ -454,6 +454,24 @@ public class IFileTest extends ResourceTest {
 		assertTrue("2.1", !derived.isTeamPrivateMember());
 	}
 
+	public void testDeltaOnCreateDerived() {
+		IFile derived = projects[0].getFile("derived.txt");
+		ensureExistsInWorkspace(projects[0], true);
+
+		ResourceDeltaVerifier verifier = new ResourceDeltaVerifier();
+		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
+
+		verifier.addExpectedChange(derived, IResourceDelta.ADDED, IResource.NONE);
+
+		try {
+			derived.create(getRandomContents(), IResource.FORCE | IResource.DERIVED, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		assertTrue("2.0", verifier.isDeltaValid());
+	}
+
 	public void testCreateDerivedTeamPrivate() {
 		IFile teamPrivate = projects[0].getFile("teamPrivateDerived.txt");
 		ensureExistsInWorkspace(projects[0], true);

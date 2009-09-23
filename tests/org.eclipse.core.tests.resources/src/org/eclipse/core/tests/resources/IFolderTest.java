@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,6 +112,25 @@ public class IFolderTest extends ResourceTest {
 		}
 		assertTrue("2.0", !derived.isDerived());
 		assertTrue("2.1", !derived.isTeamPrivateMember());
+	}
+
+	public void testDeltaOnCreateDerived() {
+		IProject project = getWorkspace().getRoot().getProject("Project");
+		IFolder derived = project.getFolder("derived");
+		ensureExistsInWorkspace(project, true);
+
+		ResourceDeltaVerifier verifier = new ResourceDeltaVerifier();
+		getWorkspace().addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
+
+		verifier.addExpectedChange(derived, IResourceDelta.ADDED, IResource.NONE);
+
+		try {
+			derived.create(IResource.FORCE | IResource.DERIVED, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		assertTrue("2.0", verifier.isDeltaValid());
 	}
 
 	public void testCreateDerivedTeamPrivate() {
