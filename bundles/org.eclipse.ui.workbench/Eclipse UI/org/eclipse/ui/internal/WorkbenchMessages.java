@@ -336,6 +336,12 @@ public class WorkbenchMessages extends NLS {
 	public static String AboutSystemDialog_noLogTitle;
 	public static String AboutSystemDialog_noLogMessage;
 
+
+	public static String AboutSystemPage_FetchJobTitle;
+
+
+	public static String AboutSystemPage_RetrievingSystemInfo;
+
 	// --- Shortcutbar ---
 	public static String PerspectiveBarContributionItem_toolTip;
 	public static String PerspectiveBarNewContributionItem_toolTip;

@@ -11,12 +11,13 @@
 package org.eclipse.ui.internal.about;
 
 import java.io.File;
-
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -28,6 +29,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ConfigurationInfo;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Displays system information about the eclipse application. The content of
@@ -62,12 +64,8 @@ public final class AboutSystemPage extends ProductInfoPage {
 		gridData.heightHint = convertVerticalDLUsToPixels(300);
 		gridData.widthHint = convertHorizontalDLUsToPixels(400);
 		text.setLayoutData(gridData);
-		BusyIndicator.showWhile(text.getDisplay(), new Runnable() {
-			public void run() {
-				text.setText(ConfigurationInfo.getSystemSummary());
-			}		
-		});
 		text.setFont(JFaceResources.getTextFont());
+		fetchConfigurationInfo(text);
 		setControl(outer);
 	}
 
@@ -146,5 +144,19 @@ public final class AboutSystemPage extends ProductInfoPage {
 				clipboard.dispose();
 			}
 		}
+	}
+
+	private void fetchConfigurationInfo(final Text text) {
+		text.setText(WorkbenchMessages.AboutSystemPage_RetrievingSystemInfo);
+		WorkbenchJob job = new WorkbenchJob(
+				WorkbenchMessages.AboutSystemPage_FetchJobTitle) {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				String info = ConfigurationInfo.getSystemSummary();
+				if (!text.isDisposed())
+					text.setText(info);
+				return Status.OK_STATUS;
+			}
+		};
+		job.schedule();
 	}
 }
