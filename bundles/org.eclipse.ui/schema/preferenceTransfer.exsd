@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.ui">
+<schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="preferenceTransfer" name="Preference Transfer"/>
@@ -14,6 +14,11 @@ Typically this is used for operations such as Import and Export.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="transfer" minOccurs="0" maxOccurs="unbounded"/>
@@ -148,9 +153,22 @@ default (org.eclipse.core.resources.ProjectScope.SCOPE)
          <attribute name="name" type="string" use="required">
             <annotation>
                <documentation>
-                  an attribute specifing a comma separated list of preference keys within the given node to be transferred, specifying the key attribute without specifying a matching node will result in a runtime error.
+                  Specifies the preference key to be transferred. Specifying the key attribute without specifying a matching node will result in a runtime error.
                </documentation>
             </annotation>
+         </attribute>
+         <attribute name="match">
+            <annotation>
+               <documentation>
+                  Setting match to &quot;prefix&quot; treats the name as if it were a regular expression with an asterisk at the end. Otherwise name must be an exact match. Added in 3.6.
+               </documentation>
+            </annotation>
+            <simpleType>
+               <restriction base="string">
+                  <enumeration value="prefix">
+                  </enumeration>
+               </restriction>
+            </simpleType>
          </attribute>
       </complexType>
    </element>
@@ -265,10 +283,11 @@ default (org.eclipse.core.resources.ProjectScope.SCOPE)
             id=&quot;org.eclipse.ui.tests.all&quot;&gt;
             &lt;mapping scope=&quot;instance&quot;&gt;
                 &lt;entry node=&quot;org.eclipse.ui&quot;&gt;
-                   &lt;key name=&quot;showIntro,DOCK_PERSPECTIVE_BAR&quot;/&gt;
+                   &lt;key name=&quot;DOCK_PERSPECTIVE_BAR&quot;/&gt;
                 &lt;/entry&gt;
                 &lt;entry node=&quot;org.eclipse.ui.workbench&quot;&gt;
-                   &lt;key name=&quot;bogus,RUN_IN_BACKGROUND&quot;/&gt;
+                   &lt;key name=&quot;RUN_IN_BACKGROUND&quot;/&gt;
+                   &lt;key name=&quot;OPEN_&quot; match=&quot;prefix&quot;/&gt;
                 &lt;/entry&gt;   
                 &lt;entry node=&quot;org.eclipse.ui.ide&quot;/&gt;
                 &lt;entry node=&quot;org.eclipse.core.resources&quot;/&gt;
@@ -284,30 +303,14 @@ default (org.eclipse.core.resources.ProjectScope.SCOPE)
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="apiInfo"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2005, 2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 

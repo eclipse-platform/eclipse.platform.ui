@@ -10,6 +10,7 @@
  *     Dan Rubel <dan_rubel@instantiations.com>
  *     - Fix for bug 11490 - define hidden view (placeholder for view) in plugin.xml    
  *     Markus Alexander Kuppe, Versant Corporation - bug #215797
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -326,6 +327,11 @@ public interface IWorkbenchRegistryConstants {
 	 * Name attribute. Value <code>name</code>.
 	 */
 	public static String ATT_NAME = "name"; //$NON-NLS-1$
+
+	/**
+	 * Match type attribute. Value <code>match</code>.
+	 */
+	public static String ATT_MATCH_TYPE = "match"; //$NON-NLS-1$
 
 	/**
 	 * Name filter attribute. Value <code>nameFilter</code>.

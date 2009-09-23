@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564     
  *******************************************************************************/
 
 package org.eclipse.ui.internal.registry;
@@ -18,7 +19,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
@@ -170,7 +170,9 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 				for (int j = 0; j < keys.length; j++) {
 					IConfigurationElement keyElement = keys[j];
 					prefFilters[j] = new PreferenceFilterEntry(keyElement
-							.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
+									.getAttribute(IWorkbenchRegistryConstants.ATT_NAME),
+							keyElement
+									.getAttribute(IWorkbenchRegistryConstants.ATT_MATCH_TYPE));
 				}
 			}
 			map.put(entry.getAttribute(IWorkbenchRegistryConstants.ATT_NODE),
