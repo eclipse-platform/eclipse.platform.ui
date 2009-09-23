@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -322,12 +322,13 @@ public class FilterTransform {
 
 	/**
 	 * Filters the specified child of the given parent and returns
-	 * whether the child was already filtered.
+	 * whether the filter was added.
 	 * 
 	 * @param parentPath path to parent element
 	 * @param childIndex index of filtered child relative to parent (in model coordinates)
 	 * @param element the filtered element
-	 * @return whether the child was already filtered
+	 * @return whether the filter was added - returns <code>true</code> if the filter is
+	 *  added, and <code>false</code> if the index was already filtered
 	 */
 	public synchronized boolean addFilteredIndex(TreePath parentPath, int childIndex, Object element) {
 		return root.addFilter(parentPath, childIndex, 0, element);
