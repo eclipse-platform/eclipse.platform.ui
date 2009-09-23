@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 66889
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -329,7 +329,12 @@ public final class PaneFolder {
         topCenterCache.flush();
         viewForm.changed(new Control[] {viewFormTopCenterProxy.getControl()});
     }
-    
+
+	public void flushTopLeftSize() {
+		topLeftCache.flush();
+		viewForm.changed(new Control[] { viewFormTopLeftProxy.getControl() });
+	}
+
     /**
      * Sets the top-center control (usually a toolbar), or null if none. Note
      * that the control can have any parent.

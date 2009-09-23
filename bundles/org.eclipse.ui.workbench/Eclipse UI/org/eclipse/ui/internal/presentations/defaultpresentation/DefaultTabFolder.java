@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 145557 [WorkbenchParts] Content description label needs a hover 
+ *     Semion Chichelnitsky <semion@il.ibm.com> - Bug 66889 [ViewMgmt] Package explorer message clipped
  *******************************************************************************/
 package org.eclipse.ui.internal.presentations.defaultpresentation;
 
@@ -298,25 +299,31 @@ public class DefaultTabFolder extends AbstractTabFolder {
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setSelectedInfo(org.eclipse.ui.internal.presentations.util.PartInfo)
-     */
-    public void setSelectedInfo(PartInfo info) {
-        String newTitle = DefaultTabItem.escapeAmpersands(info.contentDescription);
-        
-        if (!Util.equals(titleLabel.getText(), newTitle)) {
-            titleLabel.setText(newTitle);
-            titleLabel.setToolTipText(newTitle);
-        }
-    	
-        if (!info.contentDescription.equals(Util.ZERO_LENGTH_STRING)) {
-            paneFolder.setTopLeft(titleLabel);
-            titleLabel.setVisible(true);
-        } else {
-            paneFolder.setTopLeft(null);
-            titleLabel.setVisible(false);
-        }
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.presentations.util.AbstractTabFolder#setSelectedInfo
+	 * (org.eclipse.ui.internal.presentations.util.PartInfo)
+	 */
+	public void setSelectedInfo(PartInfo info) {
+		String newTitle = DefaultTabItem
+				.escapeAmpersands(info.contentDescription);
+
+		if (!Util.equals(titleLabel.getText(), newTitle)) {
+			titleLabel.setText(newTitle);
+			titleLabel.setToolTipText(newTitle);
+		}
+
+		if (!info.contentDescription.equals(Util.ZERO_LENGTH_STRING)) {
+			paneFolder.flushTopLeftSize();
+			paneFolder.setTopLeft(titleLabel);
+			titleLabel.setVisible(true);
+		} else {
+			paneFolder.setTopLeft(null);
+			titleLabel.setVisible(false);
+		}
+	}
 
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getPaneMenuLocation()
