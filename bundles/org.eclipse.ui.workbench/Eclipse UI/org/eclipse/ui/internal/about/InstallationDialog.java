@@ -300,13 +300,12 @@ public class InstallationDialog extends TrayDialog implements
 		GridData gd = (GridData) button.getLayoutData();
 		gd.horizontalAlignment = SWT.BEGINNING;
 		gd.horizontalIndent = convertHorizontalDLUsToPixels(IDialogConstants.BUTTON_WIDTH) / 2;
-		// Layout the button manager again now that the OK button is there.
-		// Must do this before we layout the button bar or else the button
-		// manager will not know about the OK button
-		buttonManager.getParent().layout();
-		// Now we layout the button bar itself so it will accommodate the
-		// button manager's buttons
-		getButtonBar().getParent().layout();
+		// Layout the button bar's parent and all of its children.  We must
+		// cascade through all children because the buttons have changed and
+		// because tray dialog inserts an extra composite in the button bar
+		// hierarchy.
+		getButtonBar().getParent().layout(true, true);
+
 	}
 
 	protected void createButtons(InstallationPage page) {
