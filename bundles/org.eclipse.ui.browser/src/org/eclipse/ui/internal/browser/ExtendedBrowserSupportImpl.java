@@ -63,4 +63,36 @@ public class ExtendedBrowserSupportImpl extends ExtendedBrowserSupport {
   public boolean internalBrowserAvailable() {
     return WebBrowserUtil.canUseInternalWebBrowser();
   }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.browser.ExtendedBrowserSupport#isInternalBrowserDefault()
+   */
+  public boolean isInternalBrowserDefault() {
+    return WebBrowserPreference.getBrowserChoice() == WebBrowserPreference.INTERNAL;
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.browser.ExtendedBrowserSupport#setInternalBrowserDefault()
+   */
+  public void setInternalBrowserDefault(boolean useInternalBrowser) {
+    if (useInternalBrowser)
+   	 WebBrowserPreference.setBrowserChoice(WebBrowserPreference.INTERNAL);
+    else
+   	 WebBrowserPreference.setBrowserChoice(WebBrowserPreference.EXTERNAL);
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.browser.ExtendedBrowserSupport#getDefaultWebBrowser()
+   */
+  public IBrowserDescriptor getDefaultWebBrowser() {
+    return BrowserManager.getInstance().getCurrentWebBrowser();
+  }
+
+  /* (non-Javadoc)
+   * @see org.eclipse.ui.browser.ExtendedBrowserSupport#setDefaultWebBrowser()
+   */
+  public void setDefaultWebBrowser(IBrowserDescriptor wb) {
+	  WebBrowserPreference.setBrowserChoice(WebBrowserPreference.EXTERNAL);
+	  BrowserManager.getInstance().setCurrentWebBrowser(wb);
+  }
 }

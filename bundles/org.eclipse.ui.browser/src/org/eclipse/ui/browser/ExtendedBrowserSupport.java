@@ -63,4 +63,40 @@ public abstract class ExtendedBrowserSupport {
    * @return <code>true</code> if the internal browser is available, <code>false</code> otherwise.
    */
   public abstract boolean internalBrowserAvailable();
+
+  /**
+   * Returns whether the internal browser is the default browser.
+   * 
+   * @see #getDefaultWebBrowser()
+   * @return <code>true</code> if the internal browser is the current default (or is
+   *    not available), and <code>false</code> if there is no default or an
+   *    external browser is the default
+   */
+  public abstract boolean isInternalBrowserDefault();
+
+  /**
+   * Sets whether the internal browser is the default browser.
+   * 
+   * @param useInternalBrowser <code>true</code> to set the internal browser as the
+   *    default (has no effect if the internal browser is not available),
+   *    and <code>false</code> to set an external browser as the default
+   */
+  public abstract void setInternalBrowserDefault(boolean useInternalBrowser);
+
+  /**
+   * Returns which external web browser is the default browser when using an
+   * external browser. The default browser may still be the internal browser,
+   * which can be verified using isInternalBrowserDefault().
+   * 
+   * @see #isInternalBrowserDefault()
+   * @return the current default external browser
+   */
+  public abstract IBrowserDescriptor getDefaultWebBrowser();
+
+  /**
+   * Sets the given external web browser as the default.
+   * 
+   * @param browser the default browser for launching 
+   */
+  public abstract void setDefaultWebBrowser(IBrowserDescriptor browser);
 }
