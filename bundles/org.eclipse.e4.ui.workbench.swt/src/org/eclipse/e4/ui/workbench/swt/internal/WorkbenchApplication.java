@@ -79,6 +79,12 @@ public class WorkbenchApplication implements IApplication {
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				try {
+					String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"; //$NON-NLS-1$
+					engineURI += "org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine"; //$NON-NLS-1$
+
+					//					String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt.engine/"; //$NON-NLS-1$
+					//					engineURI += "org.eclipse.e4.ui.workbench.swt.engine.internal.WorkbenchRenderingEngine"; //$NON-NLS-1$
+
 					// parent of the global workbench context is an OSGi service
 					// context that can provide OSGi services
 					IEclipseContext serviceContext = EclipseContextFactory
@@ -97,7 +103,7 @@ public class WorkbenchApplication implements IApplication {
 							.getInstanceLocation(), RegistryFactory
 							.getRegistry(), Activator.getDefault()
 							.getBundleAdmin(), appContext,
-							new WorkbenchWindowHandler());
+							new WorkbenchWindowHandler(), engineURI);
 					wb.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
 					if (cssURI != null) {
 						CSSStylingSupport.initializeStyling(display, cssURI,
