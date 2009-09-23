@@ -22,7 +22,6 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -53,10 +52,9 @@ import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
-import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
-import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
@@ -79,27 +77,32 @@ public class Workbench implements IWorkbench {
 	private static final boolean saveAndRestore = true;
 	private File workbenchData;
 	private IWorkbenchWindowHandler windowHandler;
-	private final IExtensionRegistry registry;
+	// private final IExtensionRegistry registry;
 	private ResourceSetImpl resourceSet;
+
+	// private PresentationEngineFactory presentationEngineFactory;
 
 	public IEclipseContext getContext() {
 		return workbenchContext;
 	}
 
 	// UI Construction...
-	private PartRenderingEngine renderer;
+	private IPresentationEngine renderer;
 	private int rv;
 
 	private ExceptionHandler exceptionHandler;
 	private IEclipseContext workbenchContext;
 	private ReflectionContributionFactory contributionFactory;
+	private String renderingEngineURI;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
 			PackageAdmin packageAdmin, IEclipseContext applicationContext,
-			IWorkbenchWindowHandler windowHandler) {
+			IWorkbenchWindowHandler windowHandler, String renderingEngineURI) {
+		System.err.println("NEw Workbenc"); //$NON-NLS-1$
 		this.windowHandler = windowHandler;
+		this.renderingEngineURI = renderingEngineURI;
 		exceptionHandler = new ExceptionHandler();
-		this.registry = registry;
+		// this.registry = registry;
 		try {
 			workbenchData = new File(URIUtil.toURI(instanceLocation.getURL()));
 		} catch (URISyntaxException e) {
@@ -127,6 +130,9 @@ public class Workbench implements IWorkbench {
 				contributionFactory);
 		workbenchContext.set(Workbench.class.getName(), this);
 		workbenchContext.set(IWorkbench.class.getName(), this);
+		workbenchContext.set(IExtensionRegistry.class.getName(), registry);
+		workbenchContext.set(IContributionFactory.class.getName(), contributionFactory);
+		workbenchContext.set(IEclipseContext.class.getName(), workbenchContext);
 	}
 
 	public void setWorkbenchModel(MApplication<? extends MWindow> model) {
@@ -460,62 +466,12 @@ public class Workbench implements IWorkbench {
 		}
 	}
 
-	/**
-	 * Initialize a part renderer from the extension point.
-	 * 
-	 * @param registry
-	 *            the registry for the EP
-	 * @param r
-	 *            the created renderer
-	 * @param context
-	 *            the context for the part factories
-	 * @param f
-	 *            the IContributionFactory already provided to <code>r</code>
-	 */
-	public static void initializeRenderer(IExtensionRegistry registry, PartRenderingEngine r,
-			IEclipseContext context, IContributionFactory f) {
-		// add the factories from the extension point, sort by dependency
-		// * Need to make the EP more declarative to avoid aggressive
-		// loading
-		IConfigurationElement[] factories = registry
-				.getConfigurationElementsFor("org.eclipse.e4.workbench.partfactory"); //$NON-NLS-1$
-
-		// Sort the factories based on their dependence
-		// This is a hack, should be based on plug-in dependencies
-		int offset = 0;
-		for (int i = 0; i < factories.length; i++) {
-			String clsSpec = factories[i].getAttribute("class"); //$NON-NLS-1$
-			if (clsSpec.indexOf("Legacy") >= 0 //$NON-NLS-1$
-					|| clsSpec.indexOf("PartSash") >= 0) { //$NON-NLS-1$
-				IConfigurationElement tmp = factories[offset];
-				factories[offset++] = factories[i];
-				factories[i] = tmp;
-			}
-		}
-
-		for (int i = 0; i < factories.length; i++) {
-			AbstractPartRenderer factory = null;
-			try {
-				factory = (AbstractPartRenderer) factories[i].createExecutableExtension("class"); //$NON-NLS-1$
-			} catch (CoreException e) {
-				e.printStackTrace();
-			}
-			if (factory != null) {
-				factory.init(r, context, f);
-				ContextInjectionFactory.inject(factory, context);
-				r.addPartFactory(factory);
-			}
-		}
-
-		// Add the renderer to the context
-		context.set(PartRenderingEngine.SERVICE_NAME, r);
-	}
-
 	public void createGUI(MPart part) {
 		if (renderer == null) {
-			renderer = new PartRenderingEngine(contributionFactory, workbenchContext);
-			initializeRenderer(registry, renderer, workbenchContext, contributionFactory);
-
+			Object newEngine = contributionFactory.create(renderingEngineURI, workbenchContext);
+			if (newEngine != null) {
+				renderer = (IPresentationEngine) newEngine;
+			}
 		}
 
 		renderer.createGui(part);

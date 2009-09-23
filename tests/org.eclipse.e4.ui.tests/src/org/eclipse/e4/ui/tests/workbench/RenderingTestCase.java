@@ -32,9 +32,9 @@ import org.eclipse.e4.ui.model.internal.application.MSashFormImpl;
 import org.eclipse.e4.ui.model.internal.application.MStackImpl;
 import org.eclipse.e4.ui.model.internal.application.MWindowImpl;
 import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
-import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.custom.CTabFolder;
@@ -117,14 +117,8 @@ public class RenderingTestCase extends TestCase {
 				RegistryFactory.getRegistry(), null, null);
 		appContext.set(MApplication.class.getName(), app);
 
-		// Create a new renderer based on the new app context
-		renderer = new PartRenderingEngine(contributionFactory, appContext);
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-			public void run() {
-				Workbench.initializeRenderer(RegistryFactory.getRegistry(),
-						renderer, appContext, contributionFactory);
-			}
-		});
+		renderer = (PartRenderingEngine) contributionFactory.create(
+				PartRenderingEngine.engineURI, appContext);
 	}
 
 	/*

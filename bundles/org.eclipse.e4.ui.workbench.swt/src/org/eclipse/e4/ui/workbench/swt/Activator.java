@@ -1,6 +1,8 @@
 package org.eclipse.e4.ui.workbench.swt;
 
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.osgi.service.debug.DebugOptions;
+import org.eclipse.osgi.service.debug.DebugTrace;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -13,13 +15,18 @@ import org.osgi.util.tracker.ServiceTracker;
  * The activator class controls the plug-in life cycle
  */
 public class Activator implements BundleActivator {
+	public static final String PI_RENDERERS = "org.eclipse.e4.ui.workbench.swt"; //$NON-NLS-1$
 
 	private BundleContext context;
 	private ServiceTracker pkgAdminTracker;
 	private ServiceTracker locationTracker;
 	private static Activator activator;
+	private ServiceTracker debugTracker;
+	private DebugTrace trace;
+
 	/**
 	 * Get the default activator.
+	 * 
 	 * @return a BundleActivator
 	 */
 	public static Activator getDefault() {
@@ -32,7 +39,7 @@ public class Activator implements BundleActivator {
 	public BundleContext getContext() {
 		return context;
 	}
-	
+
 	/**
 	 * @return the bundle object
 	 */
@@ -46,7 +53,7 @@ public class Activator implements BundleActivator {
 	}
 
 	public void stop(BundleContext context) throws Exception {
-		if (pkgAdminTracker!=null) {
+		if (pkgAdminTracker != null) {
 			pkgAdminTracker.close();
 			pkgAdminTracker = null;
 		}
@@ -85,7 +92,8 @@ public class Activator implements BundleActivator {
 	}
 
 	/**
-	 * @param bundleName the bundle id
+	 * @param bundleName
+	 *            the bundle id
 	 * @return A bundle if found, or <code>null</code>
 	 */
 	public Bundle getBundleForName(String bundleName) {
@@ -99,5 +107,35 @@ public class Activator implements BundleActivator {
 			}
 		}
 		return null;
+	}
+
+	public static void trace(String option, String msg, Throwable error) {
+		final DebugOptions debugOptions = activator.getDebugOptions();
+		if (debugOptions.isDebugEnabled()
+				&& debugOptions.getBooleanOption(PI_RENDERERS + option, false)) {
+			System.out.println(msg);
+			if (error != null) {
+				error.printStackTrace(System.out);
+			}
+		}
+		activator.getTrace().trace(option, msg, error);
+	}
+
+	public DebugOptions getDebugOptions() {
+		if (debugTracker == null) {
+			if (context == null)
+				return null;
+			debugTracker = new ServiceTracker(context, DebugOptions.class
+					.getName(), null);
+			debugTracker.open();
+		}
+		return (DebugOptions) debugTracker.getService();
+	}
+
+	public DebugTrace getTrace() {
+		if (trace == null) {
+			trace = getDebugOptions().newDebugTrace(PI_RENDERERS);
+		}
+		return trace;
 	}
 }

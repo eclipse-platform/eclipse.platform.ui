@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.workbench.ui.renderers;
+package org.eclipse.e4.ui.workbench.swt.internal;
 
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -17,12 +17,13 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 
 public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
-	protected PartRenderingEngine renderer;
+	protected IPresentationEngine renderer;
 	protected IContributionFactory contributionFactory;
 	protected IEclipseContext context;
 	protected EMFDataBindingContext dbc;
@@ -31,7 +32,7 @@ public abstract class AbstractPartRenderer {
 		dbc = new EMFDataBindingContext();
 	}
 
-	public void init(PartRenderingEngine renderer, IEclipseContext context,
+	public void init(IPresentationEngine renderer, IEclipseContext context,
 			IContributionFactory contributionFactory) {
 		this.renderer = renderer;
 		this.contributionFactory = contributionFactory;
@@ -73,8 +74,7 @@ public abstract class AbstractPartRenderer {
 	 * 
 	 * @param part
 	 *            the part to start searching from
-	 * @return the parent's closest context, or global context if none in the
-	 *         hierarchy
+	 * @return the parent's closest context, or global context if none in the hierarchy
 	 */
 	protected IEclipseContext getContextForParent(MPart<?> part) {
 		MPart<?> parent = part.getParent();

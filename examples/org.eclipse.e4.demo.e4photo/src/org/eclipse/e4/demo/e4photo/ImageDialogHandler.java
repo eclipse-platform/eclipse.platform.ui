@@ -20,9 +20,9 @@ import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
-import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -35,10 +35,10 @@ import org.eclipse.swt.widgets.Shell;
 public class ImageDialogHandler {
 
 	private class ImageDialog extends Dialog {
-		private PartRenderingEngine theRenderer;
+		private IPresentationEngine theRenderer;
 		private IEclipseContext dlgContext;
 
-		public ImageDialog(Shell shell, MApplication<?> app, PartRenderingEngine renderer) {
+		public ImageDialog(Shell shell, MApplication<?> app, IPresentationEngine renderer) {
 			super(shell);
 
 			theRenderer = renderer;
@@ -131,7 +131,7 @@ public class ImageDialogHandler {
 		}
 	}
 	
-	public void execute(Shell shell, MApplication<?> app, PartRenderingEngine renderer) {
+	public void execute(Shell shell, MApplication<?> app, IPresentationEngine renderer) {
 		ImageDialog dlg = new ImageDialog(shell, app, renderer);
 		dlg.open();
 	}

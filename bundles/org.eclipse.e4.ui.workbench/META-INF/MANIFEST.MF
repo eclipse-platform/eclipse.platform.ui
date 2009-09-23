@@ -22,7 +22,6 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.eclipse.e4.workbench.modeling,
  org.eclipse.e4.workbench.ui,
  org.eclipse.e4.workbench.ui.behaviors,
- org.eclipse.e4.workbench.ui.internal;x-friends:="org.eclipse.e4.ui.workbench.fragment,org.eclipse.e4.ui.workbench.renderers.swt",
- org.eclipse.e4.workbench.ui.renderers
+ org.eclipse.e4.workbench.ui.internal;x-friends:="org.eclipse.e4.ui.workbench.fragment,org.eclipse.e4.ui.workbench.renderers.swt"
 Bundle-Activator: org.eclipse.e4.workbench.ui.internal.Activator
 Service-Component: OSGI-INF/progress.xml

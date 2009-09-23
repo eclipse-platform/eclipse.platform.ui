@@ -40,10 +40,11 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 			final Composite newComposite = new Composite(
 					(Composite) parentWidget, SWT.NONE);
 			newWidget = newComposite;
-			bindWidget(part, newWidget);
+			// bindWidget(part, newWidget);
 			final MContributedPart<?> contributedPart = (MContributedPart<?>) part;
 			final IEclipseContext localContext = part.getContext();
 			localContext.set(Composite.class.getName(), newComposite);
+			localContext.set(MContributedPart.class.getName(), part);
 			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 			Object newPart = contributionFactory.create(contributedPart
 					.getURI(), localContext);

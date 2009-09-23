@@ -30,10 +30,10 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.widgets.ETabFolder;
+import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
+import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
-import org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer;
-import org.eclipse.e4.workbench.ui.renderers.PartRenderingEngine;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
@@ -120,11 +120,10 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(
-								getCFactory(), context);
-						Workbench.initializeRenderer(RegistryFactory
-								.getRegistry(), renderer, appContext,
-								getCFactory());
+
+						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+								.create(PartRenderingEngine.engineURI, context);
+
 						Object o = renderer.createGui(window);
 						assertNotNull(o);
 						topWidget = (Widget) o;
@@ -143,11 +142,10 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(
-								getCFactory(), context);
-						Workbench.initializeRenderer(RegistryFactory
-								.getRegistry(), renderer, appContext,
-								getCFactory());
+
+						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+								.create(PartRenderingEngine.engineURI, context);
+
 						Object o = renderer.createGui(window);
 						assertNotNull(o);
 						topWidget = (Widget) o;
@@ -184,11 +182,10 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(
-								getCFactory(), context);
-						Workbench.initializeRenderer(RegistryFactory
-								.getRegistry(), renderer, appContext,
-								getCFactory());
+
+						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+								.create(PartRenderingEngine.engineURI, context);
+
 						Object o = renderer.createGui(window);
 						assertNotNull(o);
 						topWidget = (Widget) o;
@@ -239,11 +236,10 @@ public class MWindowTest extends TestCase {
 					public void run() {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
-						PartRenderingEngine renderer = new PartRenderingEngine(
-								getCFactory(), context);
-						Workbench.initializeRenderer(RegistryFactory
-								.getRegistry(), renderer, appContext,
-								getCFactory());
+
+						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+								.create(PartRenderingEngine.engineURI, context);
+
 						Object o = renderer.createGui(window);
 						assertNotNull(o);
 						topWidget = (Widget) o;

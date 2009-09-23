@@ -19,6 +19,7 @@ import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
 import org.eclipse.e4.ui.workbench.swt.internal.WorkbenchWindowHandler;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
@@ -160,7 +161,8 @@ public class RunApplicationTest extends TestCase {
 											RegistryFactory.getRegistry(),
 											getBundleAdmin(),
 											applicationContext,
-											new WorkbenchWindowHandler());
+											new WorkbenchWindowHandler(),
+											PartRenderingEngine.engineURI);
 									workbench
 											.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
 									workbench.createUIFromModel();
