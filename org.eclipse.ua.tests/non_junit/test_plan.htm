@@ -208,7 +208,7 @@ create the cheat sheet can be found <a href="legacy_tests.htm">here</a>.</p>
 
 <h3>Scenario D: Customization</h3>
 
-<h4>D1: Help preferences </h4>
+<h4>D1: Help preferences and Webapp extensibility </h4>
 
 <p >Create a file plugin_customization.ini in the root of
 Eclipse installation. Edit the file and paste the following key/values pairs: </p>
@@ -239,7 +239,10 @@ org.eclipse.help.base/advanced.viewBackground=yellow<br>
 org.eclipse.help.base/advanced.toolbarFont=bold 1.0em sans-serif<br>
 org.eclipse.help.base/advanced.viewFont=italic 1.0em sans-serif<br>
 org.eclipse.help.base/showDisabledActivityTopics=never<br>
-org.eclipse.help.base/activeHelp=false </span></p>
+org.eclipse.help.base/activeHelp=false<br>
+org.eclipse.ua.tests/extraFrame=true<br>
+org.eclipse.ua.tests/extraButton=true<br>
+org.eclipse.ua.tests/extraView=true </span></p>
 
 <p>&nbsp;</p>
 
@@ -290,9 +293,8 @@ there are no hits from Workbench User Guide that is not present.</p>
   </li>
   <li>
 
-<p  >Verify there is only Contents, 
-Index and Search tabs at the bottom of navigation frame, other views (Links and 
-Bookmarks) are not present.</p>
+<p  >Verify that the Contents, 
+Index and Search tabs show at the bottom of navigation frame, the bookmarks view is not present.</p>
 
   </li>
   <li>
@@ -396,6 +398,17 @@ capability that is currently disabled. ..... &quot;. </p>
 
 <p  >Verify that in the list of Questions 
  each bulleted item has a green box around it</p>
+
+  </li>
+   <li>
+<p  >Verify that there is an additional tab with a welcome icon, a button over the content frame which is a welcome icon
+and a narrow frame beneath the content frame titled 'Extra frame inserted by extension point'</p>
+
+  </li>
+   <li>
+
+<p  >Click on the welcome button in the content toolbar, verify that the new view shows. Verify that it 
+allows topic titles to be searched and test it by entering the word 'platform' and hitting the Go button/</p>
 
   </li>
 </ol>
