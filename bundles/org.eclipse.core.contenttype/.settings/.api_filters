@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.core.contenttype" version="2">
+    <resource path="src/org/eclipse/core/runtime/content/XMLRootElementContentDescriber.java" type="org.eclipse.core.runtime.content.XMLRootElementContentDescriber">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.content.XMLRootElementContentDescriber"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/runtime/content/XMLRootElementContentDescriber2.java" type="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.runtime.content.XMLRootElementContentDescriber2"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

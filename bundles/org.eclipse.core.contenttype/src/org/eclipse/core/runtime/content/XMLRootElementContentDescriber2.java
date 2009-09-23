@@ -62,6 +62,7 @@ import org.xml.sax.SAXException;
  * </p>
  * 
  * @since org.eclipse.core.contenttype 3.3
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class XMLRootElementContentDescriber2 extends XMLContentDescriber implements IExecutableExtension {
 	private static final String ELEMENT_TO_FIND = "element"; //$NON-NLS-1$
