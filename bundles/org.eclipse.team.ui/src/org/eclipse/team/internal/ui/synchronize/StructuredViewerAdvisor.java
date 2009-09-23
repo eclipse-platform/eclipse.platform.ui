@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,7 +41,7 @@ import org.eclipse.ui.actions.ActionGroup;
  * steps required:
  * <ul>
  * <li>Create a viewer contribution with a <code>targetID</code> that groups
- * sets of actions that are related. A common pratice for synchronize view
+ * sets of actions that are related. A common practice for synchronize view
  * configurations is to use the participant id as the targetID.
  * 
  * <pre>
@@ -183,7 +183,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 		if(actionBars != null) {
 			IToolBarManager manager = actionBars.getToolBarManager();
 			
-			// Populate the toobar menu with the configured groups
+			// Populate the toolbar menu with the configured groups
 			Object o = getConfiguration().getProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU);
 			if (!(o instanceof String[])) {
 				o = ISynchronizePageConfiguration.DEFAULT_TOOLBAR_MENU;
@@ -198,7 +198,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 			// view menu
 			IMenuManager menu = actionBars.getMenuManager();
 			if (menu != null) {
-				// Populate the view dropdown menu with the configured groups
+				// Populate the view drop-down menu with the configured groups
 				o = getConfiguration().getProperty(ISynchronizePageConfiguration.P_VIEW_MENU);
 				if (!(o instanceof String[])) {
 					o = ISynchronizePageConfiguration.DEFAULT_VIEW_MENU;
@@ -289,7 +289,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	}
 
 	/**
-	 * Register the context menu with the platform if apropriate.
+	 * Register the context menu with the platform if appropriate.
 	 * @param viewer the viewer
 	 * @param menuMgr the context menu manager
 	 */
@@ -324,7 +324,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	
 	/**
 	 * Callback that is invoked when a context menu is about to be shown in the
-	 * viewer. Subsclasses must implement to contribute menus. Also, menus can
+	 * viewer. Subclasses must implement to contribute menus. Also, menus can
 	 * contributed by creating a viewer contribution with a <code>targetID</code> 
 	 * that groups sets of actions that are related.
 	 * 
@@ -350,7 +350,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 		String[] groups = (String[])o;
 		for (int i = 0; i < groups.length; i++) {
 			String group = groups[i];
-			// There is no need to adjust the group ids in a contetx menu (see setActionBars)
+			// There is no need to adjust the group ids in a context menu (see setActionBars)
 			manager.add(new Separator(group));
 		}
 	}
@@ -370,7 +370,7 @@ public abstract class StructuredViewerAdvisor extends AbstractViewerAdvisor {
 	
 	/**
 	 * Invoked each time the selection in the view changes in order
-	 * to update the ction bars.
+	 * to update the action bars.
 	 * @param selection the selection from the viewer
 	 */
 	protected void updateActionBars(IStructuredSelection selection) {
