@@ -116,6 +116,7 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
@@ -386,6 +387,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	private IPositionUpdater fPositionUpdater;
 	private boolean fIsMotif;
 	private boolean fIsCarbon;
+	private boolean fIsMac;
 	
 	private boolean fHasErrors;
 		
@@ -1454,9 +1456,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		
 		fSymbolicFontName= getSymbolicFontName();
 		
-		String platform= SWT.getPlatform();
-		fIsMotif= "motif".equals(platform); //$NON-NLS-1$
-		fIsCarbon= "carbon".equals(platform); //$NON-NLS-1$
+		fIsMotif= Util.isMotif();
+		fIsCarbon= Util.isCarbon();
+		fIsMac= Util.isMac();
 		
 		if (fIsMotif)
 			fMarginWidth= 0;
@@ -2057,20 +2059,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 						st2.setHorizontalPixel(v);
 					if (st3.isVisible())
 						st3.setHorizontalPixel(v);
-					workaround65205();
 			    }
 			}
 		});
-	}
-
-	/**
-	 * A workaround for bug #65205.
-	 * On MacOS X a Display.update() is required to flush pending paint requests after
-	 * programmatically scrolling.
-	 */
-	private void workaround65205() {
-		if (fIsCarbon && fComposite != null && !fComposite.isDisposed())
-			fComposite.getDisplay().update();
 	}
 
 	private void setCurrentDiff2(Diff diff, boolean reveal) {
@@ -2301,7 +2292,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 				
 				new HoverResizer(canvas, HORIZONTAL);
 								
-				fCenterButton= new Button(canvas, fIsCarbon ? SWT.FLAT : SWT.PUSH);
+				fCenterButton= new Button(canvas, fIsMac ? SWT.FLAT : SWT.PUSH);
 				if (fNormalCursor == null) fNormalCursor= new Cursor(canvas.getDisplay(), SWT.CURSOR_ARROW);
 				fCenterButton.setCursor(fNormalCursor);
 				fCenterButton.setText(COPY_RIGHT_TO_LEFT_INDICATOR);
@@ -3227,7 +3218,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
   		if (fBirdsEyeCanvas != null) {
   			int verticalScrollbarButtonHeight= scrollbarWidth;
 			int horizontalScrollbarButtonHeight= scrollbarHeight;
-			if (fIsCarbon) {
+			if (fIsMac) {
 				verticalScrollbarButtonHeight+= 2;
 				horizontalScrollbarButtonHeight= 18;
 			}
@@ -4985,7 +4976,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 
 	private void synchronizedScrollVertical(int vpos) {
 		scrollVertical(vpos, vpos, vpos, null);
-		workaround65205();
 	}
 	
 	private boolean isIgnoreAncestor() {
