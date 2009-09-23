@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Semion Chichelnitsky (semion@il.ibm.com) - bug 208564     
  *******************************************************************************/
 package org.eclipse.core.tests.internal.preferences;
 
@@ -1074,6 +1075,58 @@ public class PreferencesServiceTest extends RuntimeTest {
 		node.put("invalidkey2", "value2");
 
 		verifier.verify();
+	}
+
+	/*
+	 * See Bug 208564 - [Preferences] preferenceTransfer: Allow wildcards on keys
+	 * Since 3.6 preferenceTransfer allows to define common prefix for group of 
+	 * preferences 
+	 */
+	public void testExportWithTransfers4() {
+		final String VALID_QUALIFIER = getUniqueString();
+		final String COMMON_PREFIX = "PREFIX.";
+		IPreferenceFilter transfer = new IPreferenceFilter() {
+			Map result;
+
+			public Map getMapping(String scope) {
+				if (result == null) {
+					result = new HashMap();
+					result.put(VALID_QUALIFIER, new PreferenceFilterEntry[] {new PreferenceFilterEntry(COMMON_PREFIX, "prefix")});
+				}
+				return result;
+			}
+
+			public String[] getScopes() {
+				return new String[] {InstanceScope.SCOPE};
+			}
+		};
+		IPreferenceFilter[] matching = null;
+		IPreferencesService service = Platform.getPreferencesService();
+
+		IEclipsePreferences node = new InstanceScope().getNode(VALID_QUALIFIER);
+		String VALID_KEY_1 = COMMON_PREFIX + "key1";
+		String VALID_KEY_2 = COMMON_PREFIX + "key2";
+		String VALID_KEY_3 = "key3";
+		String VALID_KEY_4 = "key4";
+		node.put(VALID_KEY_1, "value1");
+		node.put(VALID_KEY_2, "value2");
+		node.put(VALID_KEY_3, "value3");
+		node.put(VALID_KEY_4, "value4");
+
+		try {
+			matching = service.matches(service.getRootNode(), new IPreferenceFilter[] {transfer});
+		} catch (CoreException e) {
+			fail("1.00", e);
+		}
+		assertEquals("2.00", 1, matching.length);
+
+		ExportVerifier verifier = new ExportVerifier(service.getRootNode(), new IPreferenceFilter[] {transfer});
+		verifier.addVersion();
+		verifier.addExportRoot(service.getRootNode());
+		verifier.addExpected(node.absolutePath(), VALID_KEY_1);
+		verifier.addExpected(node.absolutePath(), VALID_KEY_2);
+		verifier.verify();
+
 	}
 
 	public void testApplyWithTransfers() {
