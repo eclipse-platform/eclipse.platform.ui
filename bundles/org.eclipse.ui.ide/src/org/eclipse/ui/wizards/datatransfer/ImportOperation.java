@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.ZipEntry;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -43,8 +44,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
 import org.eclipse.ui.dialogs.ContainerGenerator;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.DataTransferMessages;
+import org.eclipse.ui.internal.wizards.datatransfer.TarEntry;
 import org.eclipse.ui.internal.wizards.datatransfer.TarLeveledStructureProvider;
 
 /**
@@ -556,13 +557,6 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			}
             setResourceAttributes(targetResource,fileObject);
             
-            if (provider instanceof TarLeveledStructureProvider) {
-            	try {
-            		targetResource.setResourceAttributes(((TarLeveledStructureProvider) provider).getResourceAttributes(fileObject));
-            	} catch (CoreException e) {
-            		errorTable.add(e.getStatus());
-            	}
-            }
         } catch (CoreException e) {
             errorTable.add(e.getStatus());
         } finally {
@@ -587,15 +581,34 @@ public class ImportOperation extends WorkspaceModifyOperation {
      */
     private void setResourceAttributes(IFile targetResource, Object fileObject) {
     	
+    	long timeStamp = 0;
     	if(fileObject instanceof File) {
 			try {
 				targetResource.setResourceAttributes(ResourceAttributes.fromFile((File) fileObject));
+				timeStamp = ((File)fileObject).lastModified();
 			} catch (CoreException e) {
-				//Inform the log that the attributes reading failed
-				IDEWorkbenchPlugin.log(e.getStatus().getMessage(), e);
+        		errorTable.add(e.getStatus());
 			}
-		}
+		}else if (fileObject instanceof TarEntry) {
+        	try {
+        		targetResource.setResourceAttributes(((TarLeveledStructureProvider) provider).getResourceAttributes(fileObject));
+        		timeStamp = ((TarEntry)fileObject).getTime()*1000; // TarEntry time is in secs. Convert to msecs
+        	} catch (CoreException e) {
+        		errorTable.add(e.getStatus());
+        	}
+        }else if (fileObject instanceof ZipEntry) {
+			long zipTimeStamp = ((ZipEntry)fileObject).getTime();
+			if(zipTimeStamp != -1)
+				timeStamp = zipTimeStamp;
+        }
 		
+    	if(timeStamp!= 0) {
+    		try {
+				targetResource.setLocalTimeStamp(timeStamp);
+			} catch (CoreException e) {
+        		errorTable.add(e.getStatus());
+			}
+    	}
 	}
 
 	/**

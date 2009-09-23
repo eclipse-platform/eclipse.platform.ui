@@ -18,6 +18,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -84,6 +85,11 @@ public class ZipFileExporter implements IFileExporter {
             entry.setCrc(checksumCalculator.getValue());
         }
 
+        // set the timestamp
+        long localTimeStamp = contents.getLocalTimeStamp();
+        if(localTimeStamp != IResource.NULL_STAMP)
+        	entry.setTime(localTimeStamp);
+        
         outputStream.putNextEntry(entry);
     	InputStream contentStream = contents.getContents(false);
         try {
