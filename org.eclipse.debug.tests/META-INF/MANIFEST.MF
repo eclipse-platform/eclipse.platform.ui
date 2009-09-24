@@ -9,5 +9,5 @@ Require-Bundle: org.eclipse.ui,
  org.eclipse.debug.ui;bundle-version="3.6.0",
  org.junit;bundle-version="3.8.2"
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: J2SE-1.4
 Bundle-Vendor: %providerName
