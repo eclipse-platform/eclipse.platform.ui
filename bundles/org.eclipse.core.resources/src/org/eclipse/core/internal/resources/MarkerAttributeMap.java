@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,7 +33,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * Creates a new marker attribute map of default size
 	 */
 	public MarkerAttributeMap() {
-		super();
+		this(DEFAULT_SIZE);
 	}
 
 	/**
@@ -57,17 +57,17 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * @see Map#clear()
 	 */
 	public void clear() {
-		elements = null;
 		count = 0;
+		elements = new Object[0];
 	}
 
 	/* (non-Javadoc)
 	 * @see Map#containsKey(java.lang.Object)
 	 */
 	public boolean containsKey(Object key) {
-		key = ((String) key).intern();
-		if (elements == null || count == 0)
+		if (count == 0)
 			return false;
+		key = ((String) key).intern();
 		for (int i = 0; i < elements.length; i = i + 2)
 			if (elements[i] == key)
 				return true;
@@ -78,7 +78,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * @see Map#containsValue(java.lang.Object)
 	 */
 	public boolean containsValue(Object value) {
-		if (elements == null || count == 0)
+		if (count == 0)
 			return false;
 		for (int i = 1; i < elements.length; i = i + 2)
 			if (elements[i] != null && elements[i].equals(value))
@@ -107,6 +107,9 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 		if (count != other.size())
 			return false;
 
+		if (count == 0)
+			return true;
+
 		//keysets must be equal
 		if (!keySet().equals(other.keySet()))
 			return false;
@@ -123,9 +126,9 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * @see Map#get(java.lang.Object)
 	 */
 	public Object get(Object key) {
-		key = ((String) key).intern();
-		if (elements == null || count == 0)
+		if (count == 0)
 			return null;
+		key = ((String) key).intern();
 		for (int i = 0; i < elements.length; i = i + 2)
 			if (elements[i] == key)
 				return elements[i + 1];
@@ -147,6 +150,8 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 */
 	public int hashCode() {
 		int hash = 0;
+		if (count == 0)
+			return hash;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				hash += elements[i].hashCode();
@@ -170,6 +175,8 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 */
 	public Set keySet() {
 		Set result = new HashSet(size());
+		if (count == 0)
+			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add(elements[i]);
@@ -188,9 +195,10 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 			return remove(key);
 		key = ((String) key).intern();
 
+		if (elements.length <= (count * 2))
+			grow();
+
 		// handle the case where we don't have any attributes yet
-		if (elements == null)
-			elements = new Object[DEFAULT_SIZE];
 		if (count == 0) {
 			elements[0] = key;
 			elements[1] = value;
@@ -208,9 +216,6 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 		}
 
 		// otherwise add it to the list of elements.
-		// grow if necessary
-		if (elements.length <= (count * 2))
-			grow();
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] == null) {
 				elements[i] = key;
@@ -237,9 +242,9 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * @see Map#remove(java.lang.Object)
 	 */
 	public Object remove(Object key) {
-		key = ((String) key).intern();
-		if (elements == null || count == 0)
+		if (count == 0)
 			return null;
+		key = ((String) key).intern();
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] == key) {
 				elements[i] = null;
@@ -264,16 +269,17 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 */
 	public void shareStrings(StringPool set) {
 		//copy elements for thread safety
-		Object[] array = elements;
+		Object[] array = new Object[elements.length];
+		System.arraycopy(elements, 0, array, 0, array.length);
 		if (array == null)
 			return;
 		//don't share keys because they are already interned
 		for (int i = 1; i < array.length; i = i + 2) {
 			Object o = array[i];
 			if (o instanceof String)
-				array[i] = set.add((String)o);
+				array[i] = set.add((String) o);
 			else if (o instanceof IStringPoolParticipant)
-				((IStringPoolParticipant)o).shareStrings(set);
+				((IStringPoolParticipant) o).shareStrings(set);
 		}
 	}
 
@@ -282,6 +288,8 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 */
 	private HashMap toHashMap() {
 		HashMap result = new HashMap(size());
+		if (count == 0)
+			return result;
 		for (int i = 0; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.put(elements[i], elements[i + 1]);
@@ -298,6 +306,8 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 */
 	public Collection values() {
 		Set result = new HashSet(size());
+		if (count == 0)
+			return result;
 		for (int i = 1; i < elements.length; i = i + 2) {
 			if (elements[i] != null) {
 				result.add(elements[i]);
