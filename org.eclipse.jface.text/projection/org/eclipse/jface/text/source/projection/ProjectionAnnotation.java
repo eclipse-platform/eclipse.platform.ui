@@ -141,9 +141,9 @@ public class ProjectionAnnotation extends Annotation implements IAnnotationPrese
 	private void initializeImages(Display display) {
 		if (fgCollapsedImage == null) {
 
-			ImageDescriptor descriptor= ImageDescriptor.createFromFile(ProjectionAnnotation.class, "images/collapsed.gif"); //$NON-NLS-1$
+			ImageDescriptor descriptor= ImageDescriptor.createFromFile(ProjectionAnnotation.class, "images/collapsed.png"); //$NON-NLS-1$
 			fgCollapsedImage= descriptor.createImage(display);
-			descriptor= ImageDescriptor.createFromFile(ProjectionAnnotation.class, "images/expanded.gif"); //$NON-NLS-1$
+			descriptor= ImageDescriptor.createFromFile(ProjectionAnnotation.class, "images/expanded.png"); //$NON-NLS-1$
 			fgExpandedImage= descriptor.createImage(display);
 			display.disposeExec(new DisplayDisposeRunnable());
 		}
