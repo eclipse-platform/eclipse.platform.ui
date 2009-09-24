@@ -160,7 +160,7 @@ default (org.eclipse.core.resources.ProjectScope.SCOPE)
          <attribute name="match">
             <annotation>
                <documentation>
-                  Setting match to &quot;prefix&quot; treats the name as if it were a regular expression with an asterisk at the end. Otherwise name must be an exact match. Added in 3.6.
+                  If match is set to &quot;prefix&quot;, all keys on the preference node that start with the specified name will be transferred. If the match type is not specified, only keys equal to the name will be included. Added in 3.6.
                </documentation>
             </annotation>
             <simpleType>
