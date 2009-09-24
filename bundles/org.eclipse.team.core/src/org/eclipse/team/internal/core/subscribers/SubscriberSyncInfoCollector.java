@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -108,7 +108,7 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 	}
 
 	/**
-	 * Disposes of the background job associated with this collector and deregisters
+	 * Disposes of the background job associated with this collector and de-registers
 	 * all it's listeners. This method must be called when the collector is no longer
 	 * referenced and could be garbage collected.
 	 */
@@ -157,9 +157,9 @@ public final class SubscriberSyncInfoCollector extends SubscriberResourceCollect
 	}
 	
 	/**
-	 * Return the <code>SyncInfoSet</code> that contains all the all the out-of-sync resources for the
+	 * Return the <code>SyncInfoSet</code> that contains all the out-of-sync resources for the
 	 * subscriber that are descendants of the roots of this collector. The set will contain only those resources that are children of the roots
-	 * of the collector unless the roots of the colletor has been set to <code>null</code>
+	 * of the collector unless the roots of the collector has been set to <code>null</code>
 	 * in which case all out-of-sync resources from the subscriber are collected.
 	 * @return the subscriber sync info set
 	 */
