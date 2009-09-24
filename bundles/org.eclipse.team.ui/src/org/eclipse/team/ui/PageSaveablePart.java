@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -44,9 +44,9 @@ import org.eclipse.ui.progress.IProgressService;
  * Abstract class for hosting a page based structure input view for the purposes
  * of feeding compare viewers.
  * <p>
- * This class is not intended to be subclassed by clients outside of the Team framework.
  * 
  * @since 3.2
+ * @noextend This class is not intended to be subclassed by clients outside of the Team framework.
  * @deprecated Clients should use a subclass of {@link CompareEditorInput}
  *      and {@link CompareUI#openCompareDialog(org.eclipse.compare.CompareEditorInput)}
  */

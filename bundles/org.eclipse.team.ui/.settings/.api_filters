@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.team.ui" version="2">
+    <resource path="src/org/eclipse/team/ui/PageSaveablePart.java" type="org.eclipse.team.ui.PageSaveablePart">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.team.ui.PageSaveablePart"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/team/ui/synchronize/ISynchronizePageConfiguration.java" type="org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration">
         <filter id="403853384">
             <message_arguments>
