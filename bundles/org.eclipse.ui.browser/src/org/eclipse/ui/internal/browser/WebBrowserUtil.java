@@ -25,8 +25,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.browser.IBrowserDescriptor;
-import org.eclipse.ui.browser.IBrowserDescriptorWorkingCopy;
 /**
  * Utility class for the Web browser tools.
  */
