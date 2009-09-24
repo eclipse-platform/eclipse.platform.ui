@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.Splitter;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -23,6 +24,7 @@ import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.diff.*;
 import org.eclipse.team.core.mapping.IResourceDiffTree;
@@ -43,7 +45,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 	private static final String PAGE_HEIGHT = "SyncPageHeight"; //$NON-NLS-1$
 	private static final String PAGE_WIDTH = "SyncPageWidth"; //$NON-NLS-1$
 	
-	private ParticipantPageSaveablePart input;
+	private ParticipantPageCompareEditorInput input;
 	private ISynchronizePageConfiguration configuration;
 	private IProject project;
 	
@@ -98,7 +100,13 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 	private Control createSyncPage(PageBook pageBook) {
 		Composite composite = createComposite(pageBook, 1, false);
 		input = createCompareInput();
-		input.createPartControl(composite);
+		Control c = input.createContents(composite);
+		if (c instanceof Splitter) {
+			Splitter s = (Splitter) c;
+			// hide the content pane by maximizing the outline control
+			s.setMaximizedControl(s.getChildren()[0]);
+		}
+		c.setLayoutData(new GridData(GridData.FILL_BOTH));
 		getDiffTree().addDiffChangeListener(this);
 		
 		fCheckbox= new Button(composite, SWT.CHECK);
@@ -135,7 +143,7 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 		});
 	}
 	
-	private ParticipantPageSaveablePart createCompareInput() {	
+	private ParticipantPageCompareEditorInput createCompareInput() {	
 		ISynchronizeParticipant participant = createParticipant();
 		configuration = participant.createPageConfiguration();
 		configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ISynchronizePageConfiguration.NAVIGATE_GROUP, SharingWizardPageActionGroup.ACTION_GROUP});
@@ -146,8 +154,11 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 		CompareConfiguration cc = new CompareConfiguration();
 		cc.setLeftEditable(false);
 		cc.setRightEditable(false);
-		ParticipantPageSaveablePart part = new ParticipantPageSaveablePart(getShell(), cc, configuration, participant);
-		part.setShowContentPanes(false);
+		ParticipantPageCompareEditorInput part = new ParticipantPageCompareEditorInput(cc, configuration, participant) {
+			protected boolean isOfferToRememberParticipant() {
+				return false;
+			}
+		};
 		return part;
 	}
 
@@ -161,7 +172,6 @@ public class SharingWizardSyncPage extends CVSWizardPage implements IDiffChangeL
 	public void dispose() {
 		if (input != null) {
 			input.getParticipant().dispose();
-			input.dispose();
 		}
 	}
 	
