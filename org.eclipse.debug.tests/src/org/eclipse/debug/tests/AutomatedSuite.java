@@ -13,12 +13,17 @@ package org.eclipse.debug.tests;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
+import org.eclipe.debug.tests.launching.AcceleratorSubstitutionTests;
+import org.eclipe.debug.tests.view.memory.MemoryRenderingTests;
+import org.eclipe.debug.tests.viewer.model.ChildrenUpdateTests;
+import org.eclipe.debug.tests.viewer.model.FilterTransformTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerCheckTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerContentTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerDeltaTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerSelectionTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerStateTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerUpdateTests;
+import org.eclipe.debug.tests.viewer.model.PresentationContextTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerDeltaTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerLazyModeTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerSelectionTests;
@@ -59,5 +64,16 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(VirtualViewerSelectionTests.class));
 		addTest(new TestSuite(VirtualViewerStateTests.class));
 		addTest(new TestSuite(VirtualViewerUpdateTests.class));
+		
+		// Viewer neutral tests
+		addTest(new TestSuite(FilterTransformTests.class));
+		addTest(new TestSuite(ChildrenUpdateTests.class));
+		addTest(new TestSuite(PresentationContextTests.class));
+		
+		// Memory view
+		addTest(new TestSuite(MemoryRenderingTests.class));
+		
+		// Launch framework
+		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
 	}
 }

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<!--
+     Copyright (c) 2009 IBM Corporation and others.
+     All rights reserved. This program and the accompanying materials
+     are made available under the terms of the Eclipse Public License v1.0
+     which accompanies this distribution, and is available at
+     http://www.eclipse.org/legal/epl-v10.html
+    
+     Contributors:
+         IBM Corporation - initial API and implementation
+ -->
+
+<plugin>
+
+   <extension point="org.eclipse.debug.ui.memoryRenderings">
+      <renderingType
+            id="rendering_type_1"
+            name="Rendering One"
+            class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
+      </renderingType>
+      <renderingType
+            id="rendering_type_2"
+            name="Rendering Two"
+            class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
+      </renderingType>
+      <renderingType
+            id="rendering_type_3"
+            name="Rendering Default"
+            class="org.eclipe.debug.tests.view.memory.RenderingTypeDelegate">
+      </renderingType>      
+      <renderingBindings
+      		primaryId="rendering_type_1">
+      		<enablement>
+      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockOne"/>
+      		</enablement>
+      </renderingBindings>
+      <renderingBindings
+      		renderingIds="rendering_type_1, rendering_type_2">
+      		<enablement>
+      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockTwo"/>
+      		</enablement>
+      </renderingBindings>
+      <renderingBindings
+      		defaultIds="rendering_type_3">
+      		<enablement>
+      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockThree"/>
+      		</enablement>
+      </renderingBindings>  
+      <renderingBindings
+      		class="org.eclipe.debug.tests.view.memory.DynamicRenderingBindings">
+      		<enablement>
+      			<instanceof value="org.eclipe.debug.tests.view.memory.MemoryBlockDynamic"/>
+      		</enablement>
+      </renderingBindings>                  
+   </extension>
+</plugin>
