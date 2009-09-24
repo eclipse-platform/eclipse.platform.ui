@@ -27,7 +27,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
@@ -467,7 +466,7 @@ public class ProgressManager extends ProgressProvider implements
 					}
 
 					StatusManager.getManager().handle(statusAdapter,
-							StatusManager.SHOW);
+							StatusManager.SHOW | StatusManager.LOG);
 				}
 			}
 
