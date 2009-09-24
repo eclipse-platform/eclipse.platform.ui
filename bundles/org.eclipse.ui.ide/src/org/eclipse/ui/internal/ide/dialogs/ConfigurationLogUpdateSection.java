@@ -56,6 +56,8 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			if (registry == null)
 				return;
 			IProfile profile = registry.getProfile(IProfileRegistry.SELF);
+			if (profile == null)
+				return;
 
 			writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_installConfiguration);
 			writer.println(" " + NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_lastChangedOn, DateFormat.getDateInstance().format(new Date(profile.getTimestamp())))); //$NON-NLS-1$
