@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,10 +25,8 @@ import org.eclipse.ui.IWorkbenchActionConstants;
  * <li>add and configure the actions available to the user (context menu,
  * toolbar and view menu)
  * </ul>
- * <p>
- * This interface is not intended to be implemented by clients.
- * </p>
  * @since 3.0
+ * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface ISynchronizePageConfiguration {
 	
@@ -66,7 +64,7 @@ public interface ISynchronizePageConfiguration {
 	public static final String P_CONTEXT_MENU = TeamUIPlugin.ID + ".P_CONTEXT_MENU"; //$NON-NLS-1$
 	
 	/**
-	 * Property constant that defines the groups in the dropdown view 
+	 * Property constant that defines the groups in the drop-down view 
 	 * menu of the page. The value for this
 	 * property should be a string array. If this property is
 	 * set to <code>null</code>, the <code>DEFAULT_VIEW_MENU</code>
@@ -165,7 +163,7 @@ public interface ISynchronizePageConfiguration {
 
 	/**
 	 * The id of the preferences group that determines whether the preferences
-	 * actions appear in the view dropdown.
+	 * actions appear in the view drop-down.
 	 */
 	public static final String PREFERENCES_GROUP = "preferences"; //$NON-NLS-1$
 	
@@ -179,7 +177,7 @@ public interface ISynchronizePageConfiguration {
 	
 	/**
 	 * The id of the layout group that determines whether the layout selection
-	 * actions appear in the view dropdown or toolbar.
+	 * actions appear in the view drop-down or toolbar.
 	 */
 	public static final String LAYOUT_GROUP = "layout"; //$NON-NLS-1$
 
@@ -202,7 +200,7 @@ public interface ISynchronizePageConfiguration {
 	public static final String[] DEFAULT_TOOLBAR_MENU = new String[] { SYNCHRONIZE_GROUP, NAVIGATE_GROUP, MODE_GROUP, LAYOUT_GROUP };
 	
 	/**
-	 * These are the default groups used for the dropdown view menu of a page.
+	 * These are the default groups used for the drop-down view menu of a page.
 	 * These groups will always appear in this order in the view menu.
 	 * Clients can disable one or more of these groups by setting
 	 * the <code>P_VIEW_MENU</code> property to an array that
@@ -363,7 +361,7 @@ public interface ISynchronizePageConfiguration {
 	
 	/**
 	 * Set the P_SUPPORTED_MODES property of this configuration to the
-	 * ORed combination of one or more mode flags (<code>INCOMING_MODE</code>,
+	 * given combination of one or more mode flags (<code>INCOMING_MODE</code>,
 	 * <code>OUTGOING_MODE</code>, <code>BOTH_MODE</code>
 	 * and <code>CONFLICTING_MODE</code>).
 	 * @param modes the supported modes
