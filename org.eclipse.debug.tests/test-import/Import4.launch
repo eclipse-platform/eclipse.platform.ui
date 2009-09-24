@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<launchConfiguration type="org.eclipse.jdt.launching.localJavaApplication">
+<stringAttribute key="org.eclipse.jdt.launching.MAIN_TYPE" value="ByteArrayTests"/>
+<stringAttribute key="org.eclipse.jdt.launching.PROJECT_ATTR" value="DebugTests"/>
+<mapAttribute key="org.eclipse.jdt.launchingVM_INSTALL_TYPE_SPECIFIC_ATTRS_MAP">
+<mapEntry key="org.eclipse.jdt.launching.JAVA_COMMAND" value="java"/>
+</mapAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_PATHS">
+<listEntry value="/DebugTests/src/ByteArrayTests.java"/>
+</listAttribute>
+<listAttribute key="org.eclipse.debug.core.MAPPED_RESOURCE_TYPES">
+<listEntry value="1"/>
+</listAttribute>
+</launchConfiguration>

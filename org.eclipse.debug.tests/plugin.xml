@@ -54,4 +54,13 @@
       		</enablement>
       </renderingBindings>                  
    </extension>
+   <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            delegate="org.eclipe.debug.tests.launching.TestLaunchDelegate"
+            id="org.eclipse.debug.tests.launch.type"
+            modes="run, debug"
+            name="Test Launch Type">
+      </launchConfigurationType>
+   </extension>
 </plugin>
