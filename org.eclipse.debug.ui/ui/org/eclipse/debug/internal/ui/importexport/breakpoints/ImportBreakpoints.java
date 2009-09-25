@@ -43,7 +43,7 @@ public class ImportBreakpoints extends AbstractDebugActionDelegate {
 		WizardDialog wizdialog = new WizardDialog(DebugUIPlugin.getShell(), wiz);
 		wizdialog.setBlockOnOpen(true);
 		wizdialog.open();
-	}//end run
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#doAction(java.lang.Object)
@@ -55,5 +55,5 @@ public class ImportBreakpoints extends AbstractDebugActionDelegate {
 	 */
 	protected void update(IAction action, ISelection s) {
 		getAction().setEnabled(true);
-	}//end update
-}//end class
+	}
+}

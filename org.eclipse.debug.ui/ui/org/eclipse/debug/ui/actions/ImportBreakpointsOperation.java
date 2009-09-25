@@ -159,7 +159,9 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				fCurrentWorkingSetProperty = null;
 				localmonitor.worked(1);
 			}
-			fManager.addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]));
+			if(fAdded.size() > 0) {
+				fManager.addBreakpoints((IBreakpoint[])fAdded.toArray(new IBreakpoint[fAdded.size()]));
+			}
 		} 
 		catch(FileNotFoundException e) {
 			throw new InvocationTargetException(e, 
@@ -288,9 +290,10 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			}
 			catch(CoreException ce) {}
 		}
+		IBreakpoint breakpoint = null;
 		try {
 			// create the breakpoint
-			IBreakpoint breakpoint = fManager.createBreakpoint(marker);
+			breakpoint = fManager.createBreakpoint(marker);
 			breakpoint.setEnabled(((Boolean)attributes.get(IImportExportConstants.IE_BP_ENABLED)).booleanValue());
 			breakpoint.setPersisted(((Boolean)attributes.get(IImportExportConstants.IE_BP_PERSISTANT)).booleanValue());
 			breakpoint.setRegistered(((Boolean)attributes.get(IImportExportConstants.IE_BP_REGISTERED)).booleanValue());
@@ -305,7 +308,16 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				}
 			}
 		}
-		catch(CoreException ce) {}
+		catch(CoreException ce) {
+			//Something bad happened while trying to restore the breakpoint, remove it from the cached list and delete the marker
+			//to ensure the manager does not hold bogus breakpoints
+			if(breakpoint != null) {
+				try {
+					fAdded.remove(breakpoint);
+					marker.delete();
+				} catch (CoreException e) {}
+			}
+		}
 	}
 	
 	/**
