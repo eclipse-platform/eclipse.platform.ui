@@ -11,6 +11,10 @@
 package org.eclipse.debug.ui;
 
  
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -25,6 +29,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.progress.WorkbenchJob;
 
 /**
  * Common function for launch configuration tabs.
@@ -66,6 +71,12 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	 * @since 2.1
 	 */
 	private boolean fDirty = true;	
+	
+	/**
+	 * Job to update the tab after a delay. Used to delay updates while
+	 * the user is typing.
+	 */
+	private Job fRereshJob;	
 		
 	/**
 	 * Returns the dialog this tab is contained in, or
@@ -373,6 +384,57 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		performApply(workingCopy);
 	}
+	
+	/**
+	 * Returns the job to update the launch configuration dialog.
+	 * 
+	 * @return update job
+	 */
+	private Job getUpdateJob() {
+		if (fRereshJob == null) {
+			fRereshJob = createUpdateJob();
+			fRereshJob.setSystem(true);
+		}
+		return fRereshJob;
+	}
+	
+	/**
+	 * Schedules the update job to run for this tab based on this tab's delay.
+	 * 
+	 * @since 3.6
+	 */
+	protected void scheduleUpdateJob() {
+		Job job = getUpdateJob();
+		job.cancel(); // cancel existing job
+		job.schedule(getUpdateJobDelay());
+	}
+	
+	/**
+	 * Creates and returns a job used to update the launch configuration dialog
+	 * for this tab. Subclasses may override.
+	 * 
+	 * @return job to update the launch dialog for this tab
+	 * @since 3.6
+	 */
+	protected Job createUpdateJob() {
+		return  new WorkbenchJob(getControl().getDisplay(), "Update LCD") { //$NON-NLS-1$
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				updateLaunchConfigurationDialog();
+				return Status.OK_STATUS;
+			}
+		};
+	}
+	
+	/**
+	 * Return the time delay that should be used when scheduling the
+	 * update job. Subclasses may override.
+	 * 
+	 * @return a time delay in milliseconds before the job should run
+	 * @since 3.6
+	 */
+	protected long getUpdateJobDelay() {
+		return 200;
+	}	
 
 }
 
