@@ -63,4 +63,15 @@
             name="Test Launch Type">
       </launchConfigurationType>
    </extension>
+   <extension
+        id="debugFS"
+        name="Debug File System"
+        point="org.eclipse.core.filesystem.filesystems">
+     <filesystem
+           scheme="debug">
+        <run
+              class="org.eclipe.debug.tests.launching.DebugFileSystem">
+        </run>
+     </filesystem>
+   </extension>   
 </plugin>
