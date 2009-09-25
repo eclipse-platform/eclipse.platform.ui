@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -135,7 +135,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed()) {
 					fDisplay.addFilter(SWT.Activate, this);
-					fDisplay.addFilter(SWT.MouseWheel, this);
+					fDisplay.addFilter(SWT.MouseVerticalWheel, this);
 
 					fDisplay.addFilter(SWT.FocusOut, this);
 
@@ -179,7 +179,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 
 			if (fDisplay != null && !fDisplay.isDisposed()) {
 				fDisplay.removeFilter(SWT.Activate, this);
-				fDisplay.removeFilter(SWT.MouseWheel, this);
+				fDisplay.removeFilter(SWT.MouseVerticalWheel, this);
 
 				fDisplay.removeFilter(SWT.FocusOut, this);
 
@@ -276,7 +276,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 		public void handleEvent(Event event) {
 			switch (event.type) {
 				case SWT.Activate:
-				case SWT.MouseWheel:
+				case SWT.MouseVerticalWheel:
 					if (!hasInformationControlReplacer())
 						hideInformationControl();
 					else if (!isReplaceInProgress()) {
@@ -287,7 +287,7 @@ abstract public class AbstractHoverInformationControlManager extends AbstractInf
 							IInformationControlExtension5 iControl5= (IInformationControlExtension5) infoControl;
 							if (!(iControl5.containsControl(control)))
 								hideInformationControl();
-							else if (event.type == SWT.MouseWheel && cancelReplacingDelay())
+							else if (event.type == SWT.MouseVerticalWheel && cancelReplacingDelay())
 								replaceInformationControl(false);
 						} else if (infoControl != null && infoControl.isFocusControl() && cancelReplacingDelay()) {
 							replaceInformationControl(true);
