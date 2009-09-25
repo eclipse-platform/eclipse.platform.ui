@@ -29,6 +29,8 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	protected static final int DEFAULT_SIZE = 16;
 	protected static final int GROW_SIZE = 10;
 
+	private static final Object[] EMPTY = new Object[0]; 
+
 	/**
 	 * Creates a new marker attribute map of default size
 	 */
@@ -41,7 +43,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 * @param initialCapacity The initial number of elements that will fit in the map.
 	 */
 	public MarkerAttributeMap(int initialCapacity) {
-		elements = new Object[Math.max(initialCapacity * 2, 0)];
+		elements = initialCapacity > 0 ? new Object[initialCapacity * 2] : EMPTY;
 	}
 
 	/**
@@ -58,7 +60,7 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 */
 	public void clear() {
 		count = 0;
-		elements = new Object[0];
+		elements = EMPTY;
 	}
 
 	/* (non-Javadoc)
@@ -269,17 +271,16 @@ public class MarkerAttributeMap implements Map, IStringPoolParticipant {
 	 */
 	public void shareStrings(StringPool set) {
 		//copy elements for thread safety
-		Object[] array = new Object[elements.length];
-		System.arraycopy(elements, 0, array, 0, array.length);
+		Object[] array = elements;
 		if (array == null)
 			return;
 		//don't share keys because they are already interned
 		for (int i = 1; i < array.length; i = i + 2) {
 			Object o = array[i];
 			if (o instanceof String)
-				array[i] = set.add((String) o);
+				array[i] = set.add((String)o);
 			else if (o instanceof IStringPoolParticipant)
-				((IStringPoolParticipant) o).shareStrings(set);
+				((IStringPoolParticipant)o).shareStrings(set);
 		}
 	}
 
