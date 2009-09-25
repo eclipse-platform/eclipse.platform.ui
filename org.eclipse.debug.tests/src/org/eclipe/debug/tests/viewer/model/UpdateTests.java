@@ -94,9 +94,9 @@ abstract public class UpdateTests extends TestCase {
         TestElement root = model.getRootElement();
         TreePath rootPath = new TreePath(new Object[] {});
         TestElement[] newElements = new TestElement[] {
-            model.new TestElement("1", new TestElement[0]),
-            model.new TestElement("2", new TestElement[0]),
-            model.new TestElement("3", new TestElement[0]),
+            new TestElement(model, "1", new TestElement[0]),
+            new TestElement(model, "2", new TestElement[0]),
+            new TestElement(model, "3", new TestElement[0]),
         };
         model.setElementChildren(rootPath, newElements);
         
@@ -133,9 +133,9 @@ abstract public class UpdateTests extends TestCase {
         TestElement element = model.getRootElement().getChildren()[0];
         TreePath elementPath = new TreePath(new Object[] { element });
         TestElement[] newChildren = new TestElement[] {
-            model.new TestElement("1.1", new TestElement[0]),
-            model.new TestElement("1.2", new TestElement[0]),
-            model.new TestElement("1.3", new TestElement[0]),
+            new TestElement(model, "1.1", new TestElement[0]),
+            new TestElement(model, "1.2", new TestElement[0]),
+            new TestElement(model, "1.3", new TestElement[0]),
         };
         model.setElementChildren(elementPath, newChildren);
 
@@ -166,7 +166,7 @@ abstract public class UpdateTests extends TestCase {
     }
     
     private void addElement(TestModel model, String label, int position) {
-        ModelDelta delta = model.addElementChild(TreePath.EMPTY, position, model.new TestElement(label, new TestElement[0]));
+        ModelDelta delta = model.addElementChild(TreePath.EMPTY, position, new TestElement(model, label, new TestElement[0]));
         
         // Remove delta should generate no new updates, but we still need to wait for the event to
         // be processed.

@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementEditor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicyFactory;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
@@ -72,7 +73,7 @@ public class ViewerAdapterService {
     }    
     
 	/**
-	 * Returns the model proxy factory for the given element or
+ 	 * Returns the model proxy factory for the given element or
 	 * <code>null</code> if none.
 	 * 
 	 * @param element element to retrieve adapter for
@@ -81,7 +82,18 @@ public class ViewerAdapterService {
 	public static IModelProxyFactory getModelProxyFactory(Object element) {
 		return (IModelProxyFactory)getAdapter(element, IModelProxyFactory.class);
 	}    
-    
+
+	/**
+     * Returns the model proxy factory v.2 for the given element or
+     * <code>null</code> if none.
+     * 
+     * @param element element to retrieve adapter for
+     * @return model proxy factory or <code>null</code>
+     */
+    public static IModelProxyFactory2 getModelProxyFactory2(Object element) {
+        return (IModelProxyFactory2)getAdapter(element, IModelProxyFactory2.class);
+    }    
+ 
 	/**
 	 * Returns the memento provider for the given element or
 	 * <code>null</code> if none.

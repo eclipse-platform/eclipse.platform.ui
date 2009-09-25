@@ -45,6 +45,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory2;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
@@ -73,7 +74,20 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      */
 	private boolean fSuppressModelControlRequests = false;
 	
-	private Map fModelProxies = new LinkedHashMap(); // model proxy by element
+	/**
+	 * Map tree paths to model proxy responsible for element
+	 * 
+	 * Used to install different model proxy instances for one element depending on the tree path.
+	 */
+	private Map fTreeModelProxies = new HashMap(); // tree model proxy by element tree path
+	
+	/**
+	 * Map element to model proxy responsible for it.
+	 * 
+	 * Used to install a single model proxy which is responsible 
+	 * for all instances of an element in the model tree.
+	 */
+	private Map fModelProxies = new HashMap(); // model proxy by element
 	
 	/**
 	 * Map of nodes that have been filtered from the viewer.
@@ -273,7 +287,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             cancelSubtreeUpdates(TreePath.EMPTY);			
 			fTransform.clear();
 			if (newInput != null) {
-				installModelProxy(newInput);
+				installModelProxy(newInput, TreePath.EMPTY);
 				restoreViewerState(newInput);
 			}
 		}
@@ -757,8 +771,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * 
 	 * @param element
 	 */
-	protected synchronized void disposeModelProxy(Object element) {
-		IModelProxy proxy = (IModelProxy) fModelProxies.remove(element);
+	protected synchronized void disposeModelProxy(TreePath path) {
+		IModelProxy proxy = (IModelProxy) fTreeModelProxies.remove(path);
+		if (proxy != null) {
+			proxy.dispose();
+		}
+		proxy = (IModelProxy) fModelProxies.remove(path.getLastSegment());
 		if (proxy != null) {
 			proxy.dispose();
 		}
@@ -774,19 +792,36 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			proxy.dispose();
 		}
 		fModelProxies.clear();
+
+		updatePolicies = fTreeModelProxies.values().iterator();
+		while (updatePolicies.hasNext()) {
+			IModelProxy proxy = (IModelProxy) updatePolicies.next();
+			proxy.dispose();
+		}
+		fTreeModelProxies.clear();
 	}
 
 	protected synchronized IModelProxy[] getModelProxies() {
-	    return (IModelProxy[])fModelProxies.values().toArray(new IModelProxy[fModelProxies.size()]);
+		IModelProxy[] proxies = new IModelProxy[fTreeModelProxies.size() + fModelProxies.size()];
+		fTreeModelProxies.values().toArray(proxies);
+		System.arraycopy(fModelProxies.values().toArray(), 0, proxies, fModelProxies.size(), fModelProxies.size());
+		return proxies;
 	}
 	
 	protected synchronized IModelProxy getElementProxy(TreePath path) {
-	    for (int i = path.getSegmentCount() - 1; i >= 0; i--) {
-	        IModelProxy proxy = (IModelProxy)fModelProxies.get(path.getSegment(i));
+		while (path != null) {
+	        IModelProxy proxy = (IModelProxy)fTreeModelProxies.get(path);
 	        if (proxy != null) {
 	            return proxy;
 	        }
-	    }
+	    	
+	        proxy = (IModelProxy)fModelProxies.get(path.getLastSegment());
+	        if (proxy != null) {
+	            return proxy;
+	        }
+
+	        path = path.getParentPath(); 
+		}
 	    return null;
 	}
 	
@@ -797,14 +832,30 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	 * @param element
 	 *            element to install an update policy for
 	 */
-	protected synchronized void installModelProxy(Object element) {
-		if (!fModelProxies.containsKey(element)) {
-			IModelProxyFactory modelProxyFactory = ViewerAdapterService.getModelProxyFactory(element);
-			if (modelProxyFactory != null) {
-				final IModelProxy proxy = modelProxyFactory.createModelProxy(
-						element, getPresentationContext());
+	protected synchronized void installModelProxy(Object input, TreePath path) {
+		if (!fTreeModelProxies.containsKey(path) && !fModelProxies.containsKey(path.getLastSegment())) {
+			Object element = path.getSegmentCount() != 0 ? path.getLastSegment() : input;
+            IModelProxy proxy = null;
+            IModelProxyFactory2 modelProxyFactory2 = ViewerAdapterService.getModelProxyFactory2(element);
+            if (modelProxyFactory2 != null) {
+				proxy = modelProxyFactory2.createTreeModelProxy(input, path, getPresentationContext());
 				if (proxy != null) {
-					fModelProxies.put(element, proxy);
+                    fTreeModelProxies.put(path, proxy);
+				}					
+			}
+            if (proxy == null) {
+                IModelProxyFactory modelProxyFactory = ViewerAdapterService.getModelProxyFactory(element);
+                if (modelProxyFactory != null) {
+                    proxy = modelProxyFactory.createModelProxy(element, getPresentationContext());
+                    if (proxy != null) {
+                        fModelProxies.put(element, proxy);
+                    }
+                }
+            }
+            
+            if (proxy != null) {
+				final IModelProxy finalProxy = proxy;
+				if (proxy != null) {
 					Job job = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
 						protected IStatus run(IProgressMonitor monitor) {
 							if (!monitor.isCanceled()) {
@@ -816,10 +867,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 									    viewer = (Viewer)getViewer();
 									}
 								}
-								if (context != null && !proxy.isDisposed()) {
-    								proxy.init(context);
-    								proxy.addModelChangedListener(ModelContentProvider.this);
-    								proxy.installed(viewer);
+								if (context != null && !finalProxy.isDisposed()) {
+									finalProxy.init(context);
+									finalProxy.addModelChangedListener(ModelContentProvider.this);
+									finalProxy.installed(viewer);
 								}
 							}
 							return Status.OK_STATUS;
@@ -975,12 +1026,28 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	protected abstract void handleReveal(IModelDelta delta);
 	
 	protected void handleInstall(IModelDelta delta) {
-		installModelProxy(delta.getElement());
+		installModelProxy(getViewer().getInput(), getFullTreePath(delta));
 	}
 	
 	protected void handleUninstall(IModelDelta delta) {
-		disposeModelProxy(delta.getElement());
+		disposeModelProxy(getFullTreePath(delta));
 	}	
+
+	/**
+	 * Returns a tree path for the node including the root element.
+	 * 
+	 * @param node
+	 *            model delta
+	 * @return corresponding tree path
+	 */
+	protected TreePath getFullTreePath(IModelDelta node) {
+		ArrayList list = new ArrayList();
+		while (node.getParentDelta() != null) {
+			list.add(0, node.getElement());
+			node = node.getParentDelta();
+		}
+		return new TreePath(list.toArray());
+	}
 
 	/**
 	 * Returns a tree path for the node, *not* including the root element.

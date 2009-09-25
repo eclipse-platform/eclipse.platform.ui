@@ -12,6 +12,7 @@ package org.eclipe.debug.tests.viewer.model;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -39,13 +40,14 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
     public static final int CHILDREN_COUNT_UPDATES = 0X0010;
     public static final int CHILDREN_UPDATES = 0X0020;
     public static final int MODEL_CHANGED_COMPLETE = 0X0040; 
+    public static final int MODEL_PROXIES_INSTALLED = 0X0080; 
     
     public static final int LABEL_COMPLETE = LABEL_UPDATES_COMPLETE | LABEL_UPDATES;
     public static final int CONTENT_COMPLETE = 
         CONTENT_UPDATES_COMPLETE | HAS_CHILDREN_UPDATES | CHILDREN_COUNT_UPDATES | CHILDREN_UPDATES;
     
     
-    public static final int ALL_UPDATES_COMPLETE = LABEL_COMPLETE | CONTENT_COMPLETE;
+    public static final int ALL_UPDATES_COMPLETE = LABEL_COMPLETE | CONTENT_COMPLETE | MODEL_PROXIES_INSTALLED;
     
     private boolean fFailOnRedundantUpdates;
     private boolean fFailOnMultipleUpdateSequences;
@@ -54,6 +56,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
     private Map fChildrenUpdates = new HashMap();
     private Set fChildCountUpdates = new HashSet();
     private Set fLabelUpdates = new HashSet();
+    private Set fProxyModels = new HashSet();
     private boolean fViewerUpdatesComplete;
     private boolean fLabelUpdatesComplete;
     private boolean fModelChangedComplete;
@@ -74,7 +77,8 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 
     public void reset(TreePath path, TestElement element, int levels, boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
         reset();
-        addUpdates(path, element, levels);        
+        addUpdates(path, element, levels);
+        addProxies(element);
         setFailOnRedundantUpdates(failOnRedundantUpdates);
         setFailOnMultipleUpdateSequences(failOnMultipleUpdateSequences);
     }
@@ -84,6 +88,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
         fChildrenUpdates.clear();
         fChildCountUpdates.clear();
         fLabelUpdates.clear();
+        fProxyModels.clear();
         fViewerUpdatesComplete = false;
         fLabelUpdatesComplete = false;
         fModelChangedComplete = false;
@@ -156,6 +161,17 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
             }
         }
     }
+
+    private void addProxies(TestElement element) {
+        TestModel model = element.getModel();
+        if (model.getModelProxy() == null) {
+            fProxyModels.add(element.getModel());
+        }
+        TestElement[] children = element.getChildren();
+        for (int i = 0; i < children.length; i++) {
+            addProxies(children[i]);
+        }
+    }
     
     public boolean isFinished() {
         return isFinished(ALL_UPDATES_COMPLETE);
@@ -182,6 +198,9 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
         }
         if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
             if (!fModelChangedComplete) return false;
+        }
+        if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
+            if (fProxyModels.size() != 0) return false;
         }
         return true;
     }
@@ -256,6 +275,14 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
             Assert.fail("Multiple model changed sequences detected");
         }
         fModelChangedComplete = true;
+
+        for (Iterator itr = fProxyModels.iterator(); itr.hasNext();) {
+            TestModel model = (TestModel)itr.next();
+            if (model.getModelProxy() == proxy) {
+                itr.remove();
+                break;
+            }
+        }
     }
 }
 

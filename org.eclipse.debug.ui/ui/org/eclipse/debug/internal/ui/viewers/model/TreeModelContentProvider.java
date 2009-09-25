@@ -107,6 +107,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 					System.out.println("handleAdd(" + delta.getElement() + ") viewIndex: " + viewCount + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				}
 				getViewer().setChildCount(parentPath, viewCount);
+				getViewer().autoExpand(parentPath);
 				int viewIndex = modelToViewIndex(parentPath, modelIndex);
 				getViewer().replace(parentPath, viewIndex, element);
 				TreePath childPath = parentPath.createChildPath(element);
