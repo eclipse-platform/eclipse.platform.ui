@@ -41,5 +41,6 @@ public class AllOtherHelpTests extends TestSuite {
 		addTestSuite(ConcurrentTocAccess.class);
 		addTestSuite(XHTMLEntityTest.class);
 		addTestSuite(PathResolutionTest.class);
+		addTestSuite(IndexEntryTest.class);
 	}
 }
