@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -130,7 +130,8 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fDisplay= fSubjectControl.getDisplay();
 				if (!fDisplay.isDisposed() && fHideOnMouseWheel) {
 					fHasWheelFilter= true;
-					fDisplay.addFilter(SWT.MouseWheel, this);
+					fDisplay.addFilter(SWT.MouseHorizontalWheel, this);
+					fDisplay.addFilter(SWT.MouseVerticalWheel, this);
 				}
 			}
 		}
@@ -153,8 +154,10 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 				fSubjectControl.removeKeyListener(this);
 			}
 
-			if (fDisplay != null && !fDisplay.isDisposed() && fHasWheelFilter)
-				fDisplay.removeFilter(SWT.MouseWheel, this);
+			if (fDisplay != null && !fDisplay.isDisposed() && fHasWheelFilter) {
+				fDisplay.removeFilter(SWT.MouseHorizontalWheel, this);
+				fDisplay.removeFilter(SWT.MouseVerticalWheel, this);
+			}
 			fHasWheelFilter= false;
 
 			fDisplay= null;
@@ -204,7 +207,7 @@ public class AnnotationBarHoverManager extends AbstractHoverInformationControlMa
 		 * @since 3.2
 		 */
 		public void handleEvent(Event event) {
-			if (event.type == SWT.MouseWheel)
+			if (event.type == SWT.MouseHorizontalWheel || event.type == SWT.MouseVerticalWheel)
 				hideInformationControl();
 		}
 
