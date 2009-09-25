@@ -3361,7 +3361,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		} else if (value.equals(ICompareUIConstants.PREF_VALUE_LOOP)) {
 			return isNavigationPossible();
 		} else if (value.equals(ICompareUIConstants.PREF_VALUE_NEXT)) {
-			return hasNextElement(down);
+			return getNextVisibleDiff(down, deep) != null || hasNextElement(down);
 		} else if (value.equals(ICompareUIConstants.PREF_VALUE_PROMPT)) {
 			return isNavigationPossible() || hasNextElement(true);
 		}
