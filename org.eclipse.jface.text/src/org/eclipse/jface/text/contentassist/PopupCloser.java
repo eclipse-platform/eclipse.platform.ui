@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -100,10 +100,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 				fScrollbar.addSelectionListener(this);
 
 			fDisplay.addFilter(SWT.Activate, this);
-			fDisplay.addFilter(SWT.MouseWheel, this);
+			fDisplay.addFilter(SWT.MouseVerticalWheel, this);
 
 			fDisplay.addFilter(SWT.Deactivate, this);
-
 			fDisplay.addFilter(SWT.MouseUp, this);
 		}
 	}
@@ -122,10 +121,9 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 			fTable.removeFocusListener(this);
 		if (fDisplay != null && ! fDisplay.isDisposed()) {
 			fDisplay.removeFilter(SWT.Activate, this);
-			fDisplay.removeFilter(SWT.MouseWheel, this);
+			fDisplay.removeFilter(SWT.MouseVerticalWheel, this);
 
 			fDisplay.removeFilter(SWT.Deactivate, this);
-
 			fDisplay.removeFilter(SWT.MouseUp, this);
 		}
 	}
@@ -200,7 +198,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 	public void handleEvent(Event event) {
 		switch (event.type) {
 			case SWT.Activate:
-			case SWT.MouseWheel:
+			case SWT.MouseVerticalWheel:
 				if (fAdditionalInfoController == null)
 					return;
 				if (event.widget == fShell || event.widget == fTable || event.widget == fScrollbar)
@@ -216,7 +214,7 @@ class PopupCloser extends ShellAdapter implements FocusListener, SelectionListen
 						IInformationControlExtension5 iControl5= (IInformationControlExtension5) infoControl;
 						if (!(iControl5.containsControl(control)))
 							fAdditionalInfoController.hideInformationControl();
-						else if (event.type == SWT.MouseWheel)
+						else if (event.type == SWT.MouseVerticalWheel)
 							fAdditionalInfoController.getInternalAccessor().replaceInformationControl(false);
 					} else if (infoControl != null && infoControl.isFocusControl()) {
 						fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
