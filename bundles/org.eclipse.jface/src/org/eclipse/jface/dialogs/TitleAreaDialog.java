@@ -517,13 +517,16 @@ public class TitleAreaDialog extends TrayDialog {
 	 * @param newImage
 	 */
 	private void showMessage(String newMessage, Image newImage) {
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=249915
+		if (newMessage == null)
+			newMessage = ""; //$NON-NLS-1$
+		
 		// Any change?
 		if (message.equals(newMessage) && messageImage == newImage) {
 			return;
 		}
 		message = newMessage;
-		if (message == null)
-			message = "";//$NON-NLS-1$
+		
 		// Message string to be shown - if there is an image then add in
 		// a space to the message for layout purposes
 		String shownMessage = (newImage == null) ? message : " " + message; //$NON-NLS-1$  
