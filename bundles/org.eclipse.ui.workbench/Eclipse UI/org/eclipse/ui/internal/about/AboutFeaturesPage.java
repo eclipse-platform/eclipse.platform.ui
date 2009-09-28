@@ -21,7 +21,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
 import org.eclipse.core.runtime.Platform;
@@ -209,7 +208,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		infoArea = new Composite(parent, SWT.BORDER);
 		infoArea.setBackground(infoArea.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
-		GridData data = new GridData(GridData.FILL, GridData.FILL, true, true);
+		GridData data = new GridData(GridData.FILL, GridData.FILL, true, false);
 		// need to provide space for arbitrary feature infos, not just the
 		// one selected by default
 		data.heightHint = convertVerticalDLUsToPixels(INFO_HEIGHT);
