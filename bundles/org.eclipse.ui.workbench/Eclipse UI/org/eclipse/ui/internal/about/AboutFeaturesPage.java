@@ -208,6 +208,7 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		infoArea = new Composite(parent, SWT.BORDER);
 		infoArea.setBackground(infoArea.getDisplay().getSystemColor(
 				SWT.COLOR_LIST_BACKGROUND));
+		infoArea.setBackgroundMode(SWT.INHERIT_FORCE);
 		GridData data = new GridData(GridData.FILL, GridData.FILL, true, false);
 		// need to provide space for arbitrary feature infos, not just the
 		// one selected by default
