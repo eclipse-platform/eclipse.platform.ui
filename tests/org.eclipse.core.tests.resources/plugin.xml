@@ -192,6 +192,19 @@
          id="anotherXML"
          base-type="org.eclipse.core.runtime.xml"          
          describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.tests.resources.anotherXML"/>
+   <content-type
+         name="Describer used in testBug182337"
+         id="Bug182337_A"
+         file-names="Bug182337.Bug182337"
+         file-extensions="Bug182337"
+         base-type="org.eclipse.core.runtime.xml"          
+         describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.tests.resources.Bug182337_A"/>
+   <content-type
+         name="Describer used in testBug182337"
+         id="Bug182337_B"
+         file-extensions="Bug182337"
+         base-type="org.eclipse.core.runtime.xml"          
+         describer="org.eclipse.core.runtime.content.XMLRootElementContentDescriber:org.eclipse.core.tests.resources.Bug182337_B"/>
    <!-- content types for nature-content type association tests -->
    <content-type
          name="A content type for testing nature association"

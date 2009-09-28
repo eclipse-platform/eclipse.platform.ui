@@ -11,7 +11,8 @@
 package org.eclipse.core.tests.resources.content;
 
 import java.io.*;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 import junit.framework.*;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
@@ -1347,4 +1348,29 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		IContentType result = manager.findContentTypeFor("test.mytext");
 		assertNull("3.0", result);
 	}
+
+	public void testDescriberInvalidation() throws UnsupportedEncodingException, IOException {
+		IContentTypeManager contentTypeManager = Platform.getContentTypeManager();
+		IContentType type_bug182337_A = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".Bug182337_A");
+		IContentType type_bug182337_B = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".Bug182337_B");
+
+		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, "UTF-8"), "Bug182337.Bug182337");
+		assertTrue("1.0", contentTypes.length == 2);
+		assertEquals("1.1", type_bug182337_A, contentTypes[0]);
+		assertEquals("1.1", type_bug182337_B, contentTypes[1]);
+
+		InputStream is = new InputStream() {
+			public int read() {
+				// throw a non checked exception to emulate a problem with the describer itself
+				throw new RuntimeException();
+			}
+		};
+		contentTypes = contentTypeManager.findContentTypesFor(is, "Bug182337.Bug182337");
+		assertTrue("1.2", contentTypes.length == 0);
+
+		// Describer should be invalidated by now
+		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, "UTF-8"), "Bug182337.Bug182337");
+		assertTrue("1.3", contentTypes.length == 0);
+	}
+
 }
