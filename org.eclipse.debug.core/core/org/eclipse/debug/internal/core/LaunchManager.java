@@ -130,7 +130,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
      * preference for each launch configuration type.  The name of this 
      * preference is composed of the prefix, followed by a slash, followed by 
      * the launch configuration type id.  The values contain a set of launch 
-     * delegates, delimited by a semi-colon, and each delegate entry contains 
+     * delegates, delimited by a semicolon, and each delegate entry contains 
      * the delegate ID, followed by a comma, followed by comma-delimited 
      * launch modes.
      * 
@@ -152,6 +152,22 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	private static final String DEBUG_UI = "org.eclipse.debug.ui"; //$NON-NLS-1$
     
+	/**
+	 * Listing of unsupported launch configuration names for the Win 32 platform
+	 * @since 3.5
+	 */
+	static final String[] UNSUPPORTED_WIN32_CONFIG_NAMES = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
+		"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
+		"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
+	
+	/**
+	 * Disallowed characters for launch configuration names
+	 * '@' and '&' are disallowed because they corrupt menu items.
+	 * 
+	 * @since 3.5
+	 */
+	static final char[] DISALLOWED_CONFIG_NAME_CHARS = new char[] { '@', '&','\\', '/', ':', '*', '?', '"', '<', '>', '|', '\0' };
+	
 	/**
 	 * Status code for which a UI prompter is registered.
 	 * 
@@ -989,9 +1005,9 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	public void fireUpdate(ILaunch[] launches, int update) {
 		new LaunchesNotifier().notify(launches, update);
 	}
-	
-	/**
-	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(String)
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchManager#generateUniqueLaunchConfigurationNameFrom(java.lang.String)
 	 */
 	public String generateUniqueLaunchConfigurationNameFrom(String baseName) {
 		int index = 1;
@@ -1011,8 +1027,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		while (isExistingLaunchConfigurationName(newName)) {
 			newName = MessageFormat.format(DebugCoreMessages.LaunchManager_31, new String[] {baseName, Integer.toString(index)});
 			index++;
-		}		
-			
+		}	
 		return newName;
 	}
 	
@@ -2596,5 +2611,50 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			}
 		}
 		return fActiveModes.contains(mode);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#generateLaunchConfigurationName(java.lang.String)
+	 */
+	public String generateLaunchConfigurationName(String namePrefix) {
+		String name = generateUniqueLaunchConfigurationNameFrom(namePrefix);
+		try {
+			isValidLaunchConfigurationName(name);
+		}
+		catch(IllegalArgumentException iae) {
+			//blanket change all reserved names
+			if(Platform.OS_WIN32.equals(Platform.getOS())) {
+				for(int i = 0; i < UNSUPPORTED_WIN32_CONFIG_NAMES.length; i++) {
+					if(UNSUPPORTED_WIN32_CONFIG_NAMES[i].equals(name)) {
+						name = "launch_configuration"; //$NON-NLS-1$
+					}
+				}
+			}
+			//blanket replace all invalid chars
+			for (int i = 0; i < DISALLOWED_CONFIG_NAME_CHARS.length; i++) {
+				name = name.replace(DISALLOWED_CONFIG_NAME_CHARS[i], '_');
+			}
+		}
+		//run it through the generator once more in case a replaced name has already been done
+		return generateUniqueLaunchConfigurationNameFrom(name);
+	}
+
+	/**
+	 * @see org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(java.lang.String)
+	 */
+	public boolean isValidLaunchConfigurationName(String configname) throws IllegalArgumentException {
+		if(Platform.OS_WIN32.equals(Platform.getOS())) {
+			for(int i = 0; i < UNSUPPORTED_WIN32_CONFIG_NAMES.length; i++) {
+				if(configname.equals(UNSUPPORTED_WIN32_CONFIG_NAMES[i])) {
+					throw new IllegalArgumentException(MessageFormat.format(DebugCoreMessages.LaunchManager_invalid_config_name, new String[] {configname}));
+				}
+			}
+		}
+		for (int i = 0; i < DISALLOWED_CONFIG_NAME_CHARS.length; i++) {
+			if (configname.indexOf(DISALLOWED_CONFIG_NAME_CHARS[i]) > -1) {
+				throw new IllegalArgumentException(MessageFormat.format(DebugCoreMessages.LaunchManager_invalid_config_name_char, new String[] {String.valueOf(DISALLOWED_CONFIG_NAME_CHARS[i])}));
+			}
+		}
+		return true;
 	}	
 }

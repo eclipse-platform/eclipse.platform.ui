@@ -19,13 +19,13 @@ import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchDelegate;
+import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchConfigurationWorkingCopy;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -73,20 +73,6 @@ import com.ibm.icu.text.MessageFormat;
  * buttons.
  */
 public class LaunchConfigurationTabGroupViewer {
-
-	/**
-	 * Listing of invalid names for launch configurations
-	 * @since 3.5
-	 */
-	static final String[] INVALID_CONFIG_NAMES = new String[] {"aux", "clock$", "com1", "com2", "com3", "com4", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ 
-		"com5", "com6", "com7", "com8", "com9", "con", "lpt1", "lpt2", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$
-		"lpt3", "lpt4", "lpt5", "lpt6", "lpt7", "lpt8", "lpt9", "nul", "prn"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$ //$NON-NLS-7$ //$NON-NLS-8$ //$NON-NLS-9$
-	
-	/**
-	 * Listing of characters that cannot appear in launch configuration names
-	 * @since 3.5
-	 */
-	static final char[] INVALID_CONFIG_NAME_CHARS = new char[] { '@', '&','\\', '/', ':', '*', '?', '"', '<', '>', '|', '\0' };
 	
 	/**
 	 * Containing launch dialog
@@ -1232,6 +1218,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	protected void verifyName() throws CoreException {
 		if (fNameWidget.isVisible()) {
+			ILaunchManager mgr = DebugPlugin.getDefault().getLaunchManager();
 			String currentName = fNameWidget.getText().trim();
 	
 			// If there is no name, complain
@@ -1242,33 +1229,20 @@ public class LaunchConfigurationTabGroupViewer {
 													 LaunchConfigurationsMessages.LaunchConfigurationDialog_Name_required_for_launch_configuration_11, 
 													 null));
 			}
-			if(Platform.OS_WIN32.equals(Platform.getOS())) {
-				for(int i = 0; i < INVALID_CONFIG_NAMES.length; i++) {
-					if(currentName.equals(INVALID_CONFIG_NAMES[i])) {
-						throw new CoreException(new Status(IStatus.ERROR,
-								DebugUIPlugin.getUniqueIdentifier(),
-								0,
-								MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_19, new String[] { currentName }), 
-								null));
-					}
-				}
+			try {
+				mgr.isValidLaunchConfigurationName(currentName);
 			}
-			// See if name contains any characters that we deem illegal.
-			// '@' and '&' are disallowed because they corrupt menu items
-			for (int i = 0; i < INVALID_CONFIG_NAME_CHARS.length; i++) {
-				char c = INVALID_CONFIG_NAME_CHARS[i];
-				if (currentName.indexOf(c) > -1) {
-					throw new CoreException(new Status(IStatus.ERROR,
-														DebugUIPlugin.getUniqueIdentifier(),
-														0,
-														MessageFormat.format(LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_0, new String[] { new String(new char[] {c}) }), 
-														null));
-				}
+			catch(IllegalArgumentException iae) {
+				throw new CoreException(new Status(IStatus.ERROR,
+						 DebugUIPlugin.getUniqueIdentifier(),
+						 0,
+						 iae.getMessage(),
+						 null));
 			}
 			// Otherwise, if there's already a config with the same name, complain
 			if (fOriginal != null && !fOriginal.getName().equals(currentName)) {
 				Set reservednames = ((LaunchConfigurationsDialog)getLaunchConfigurationDialog()).getReservedNameSet();
-				if (DebugPlugin.getDefault().getLaunchManager().isExistingLaunchConfigurationName(currentName) || (reservednames != null ? reservednames.contains(currentName) : false)) {
+				if (mgr.isExistingLaunchConfigurationName(currentName) || (reservednames != null ? reservednames.contains(currentName) : false)) {
 					throw new CoreException(new Status(IStatus.ERROR,
 														 DebugUIPlugin.getUniqueIdentifier(),
 														 0,

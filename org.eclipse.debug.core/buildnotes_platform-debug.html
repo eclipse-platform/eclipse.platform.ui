@@ -11,6 +11,26 @@
 
 <h2>Summary of API changes in 3.6</h2>
 
+<h3>ILaunchManager and LaunchManager base class</h3>
+<p><strong>What is affected:</strong>
+<ul>
+  <li>Method addition: <code>public String generateLaunchConfigurationName(String namePrefix)</code> </li>
+  <li>Method addition: <code>public boolean isValidLaunchConfigurationName(String configname) throws IllegalArgumentException</code> </li>
+</ul>
+</p>
+<p><strong>Description: </strong>The <code>generateLaunchConfigurationName(String namePrefix)</code> method is a replacement for the traditional <code>generateUniqueLaunchConfigurationNameFrom(configname)</code> method - which has been deprecated. 
+The new method behaves the same as its predecessor but also provides error checking on the new name to ensure it does not use any system reserved characters or names, like <code>com</code> on Windows for example. If an invalid name or character is found
+the method makes an effort to correct the name in one of two ways:
+<ul>
+<li>If an invalid name is given the configuration will be renamed to <code>launch_configuration</code></li>
+<li>Any invalid characters found will be replaced with <code>_</code></li>
+</ul></p>
+<p>
+The <code>isValidLaunchConfigurationName(String configname)</code> method is used to validate the specified configuration name and throws an <code>IllegalArgumentException</code>. This method provides
+the validation for the <code>generateLaunchConfigurationName(String namePrefix)</code> method.
+</p>
+<p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
+
 <h3>DebugCommandAction base class</h3>
 <p><strong>What is affected:</strong>
 <ul>

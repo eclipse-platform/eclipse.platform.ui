@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -114,12 +114,46 @@ public interface ILaunchManager {
 	 * there is no existing launch configuration with this name, then <code>namePrefix</code>
 	 * is returned.  Otherwise, the value returned consists of the specified prefix plus
 	 * some suffix that guarantees uniqueness.
-	 * 
+	 *
 	 * @param namePrefix the String that the returned name must begin with
 	 * @return launch configuration name
 	 * @since 2.0
+	 * @deprecated since 3.5 clients should use the {@link #generateLaunchConfigurationName(String)} method which
+	 * will perform validation of the name and correct unsupported name parts. 
 	 */
 	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
+	
+	/**
+	 * Returns a string that can be used as the name of a launch configuration.  The name
+	 * is guaranteed to be unique (no existing launch configurations will have this name).
+	 * The name that is returned uses the <code>namePrefix</code> as a starting point.  If 
+	 * there is no existing launch configuration with this name, then <code>namePrefix</code>
+	 * is returned.  Otherwise, the value returned consists of the specified prefix plus
+	 * some suffix that guarantees uniqueness.
+	 * <p>
+	 * If the name prefix does not pass name validation any illegal parts of the name will be removed
+	 * during the name generation. Illegal characters will be replaced with '_' and illegal names wil be 
+	 * replaced with "_reserved_".
+	 * </p>
+	 * @param namePrefix the string that the returned name should begin with
+	 * @return launch configuration name
+	 * @since 3.6
+	 */
+	public String generateLaunchConfigurationName(String namePrefix);
+	
+	/**
+	 * Returns if the given name is valid or not. If an invalid name part is located 
+	 * an {@link IllegalArgumentException} is thrown.
+	 * 
+	 * @param configname the name to check
+	 * @return true if the given name is valid or throws an exception if not, where an invalid name
+	 * is either a reserved system name (like 'aux' on Win 32) or the name contains invalid characters (like ':' or '/').
+	 * @throws IllegalArgumentException if the name is invalid, where an invalid
+	 * is either a reserved system name (like 'aux' on Win 32) or the name contains invalid characters (like ':' or '/').
+	 * @since 3.6
+	 */
+	public boolean isValidLaunchConfigurationName(String configname) throws IllegalArgumentException;
+	
 	/**
 	 * Returns the collection of debug targets currently registered with this
 	 * launch manager.
