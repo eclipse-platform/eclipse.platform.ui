@@ -117,6 +117,7 @@ abstract public class DetailsDialog extends TrayDialog {
 		}
 		if(includeOkButton()) {
 			okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+			okButton.setFocus();
 		}
 		if (includeCancelButton()) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
