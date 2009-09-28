@@ -22,8 +22,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
@@ -36,7 +34,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -50,7 +47,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Tests for launch configurations
  */
-public class LaunchConfigurationTests extends TestCase implements ILaunchConfigurationListener {
+public class LaunchConfigurationTests extends AbstractLaunchTest implements ILaunchConfigurationListener {
 	
 	/**
 	 * Identifier of test launch configuration type extension
@@ -121,15 +118,6 @@ public class LaunchConfigurationTests extends TestCase implements ILaunchConfigu
 	 */
 	protected IProject getProject() throws CoreException {
 		return TestsPlugin.createProject("LaunchConfigurationTests");
-	}
-	
-	/**
-	 * Returns the launch manager.
-	 * 
-	 * @return launch manager
-	 */
-	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
 	/** 

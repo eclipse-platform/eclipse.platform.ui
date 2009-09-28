@@ -16,6 +16,7 @@ import junit.framework.TestSuite;
 import org.eclipe.debug.tests.launching.AcceleratorSubstitutionTests;
 import org.eclipe.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipe.debug.tests.launching.LaunchHistoryTests;
+import org.eclipe.debug.tests.launching.LaunchManagerTests;
 import org.eclipe.debug.tests.view.memory.MemoryRenderingTests;
 import org.eclipe.debug.tests.viewer.model.ChildrenUpdateTests;
 import org.eclipe.debug.tests.viewer.model.FilterTransformTests;
@@ -79,5 +80,6 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(LaunchConfigurationTests.class));
 		addTest(new TestSuite(AcceleratorSubstitutionTests.class));
 		addTest(new TestSuite(LaunchHistoryTests.class));
+		addTest(new TestSuite(LaunchManagerTests.class));
 	}
 }

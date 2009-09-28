@@ -10,17 +10,12 @@
  *******************************************************************************/
 package org.eclipe.debug.tests.launching;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 
@@ -34,7 +29,7 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * 
  * @since 3.3
  */
-public class LaunchHistoryTests extends TestCase {
+public class LaunchHistoryTests extends AbstractLaunchTest {
 
 	/**
 	 * Constructor
@@ -42,46 +37,6 @@ public class LaunchHistoryTests extends TestCase {
 	 */
 	public LaunchHistoryTests(String name) {
 		super(name);
-	}
-	
-	/**
-	 * Returns the singleton instance of the <code>LaunchConfigurationManager</code>
-	 * 
-	 * @return the singleton instance of the <code>LaunchConfigurationManager</code>
-	 */
-	protected LaunchConfigurationManager getLaunchConfigurationManager() {
-		return DebugUIPlugin.getDefault().getLaunchConfigurationManager();
-	}	
-	
-	/**
-	 * Returns the launch manager.
-	 * 
-	 * @return launch manager
-	 */
-	protected ILaunchManager getLaunchManager() {
-		return DebugPlugin.getDefault().getLaunchManager();
-	}	
-	
-	/**
-	 * Returns a launch configuration with the given name, creating one if required.
-	 * 
-	 * @param name configuration name
-	 * @return launch configuration
-	 * @throws CoreException
-	 */
-	protected ILaunchConfiguration getLaunchConfiguration(String name) throws CoreException {
-		ILaunchManager manager = getLaunchManager();
-		ILaunchConfiguration[] configurations = manager.getLaunchConfigurations();
-		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration config = configurations[i];
-			if (config.getName().equals(name)) {
-				return config;
-			}
-		}
-		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(LaunchConfigurationTests.ID_TEST_LAUNCH_TYPE);
-		 ILaunchConfigurationWorkingCopy wc = type.newInstance(null, name);
-		 ILaunchConfiguration saved = wc.doSave();
-		 return saved;
 	}
 	
 	/**
