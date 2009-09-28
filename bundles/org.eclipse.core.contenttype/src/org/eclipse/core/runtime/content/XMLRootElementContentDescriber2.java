@@ -14,7 +14,8 @@ package org.eclipse.core.runtime.content;
 import java.io.*;
 import java.util.*;
 import javax.xml.parsers.ParserConfigurationException;
-import org.eclipse.core.internal.content.*;
+import org.eclipse.core.internal.content.ContentMessages;
+import org.eclipse.core.internal.content.XMLRootHandler;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -65,8 +66,14 @@ import org.xml.sax.SAXException;
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public final class XMLRootElementContentDescriber2 extends XMLContentDescriber implements IExecutableExtension {
+
+	static final String DTD = "org.eclipse.core.runtime.content.XMLRootElementContentDescriber2.dtd"; //$NON-NLS-1$
+	static final String NAMESPACE = "org.eclipse.core.runtime.content.XMLRootElementContentDescriber2.namespace"; //$NON-NLS-1$
+	static final String ELEMENT = "org.eclipse.core.runtime.content.XMLRootElementContentDescriber2.element"; //$NON-NLS-1$
+	static final String RESULT = "org.eclipse.core.runtime.content.XMLRootElementContentDescriber2.result"; //$NON-NLS-1$
+
 	private static final String ELEMENT_TO_FIND = "element"; //$NON-NLS-1$
-	
+
 	/* (Intentionally not included in javadoc)
 	 * The top-level elements we are looking for. This value will be initialized
 	 * by the <code>setInitializationData</code> method. If no value is
@@ -78,23 +85,23 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	/* (Intentionally not included in javadoc)
 	 * Simple value holder for root element name, its namespace and dtd.
 	 */
-	 private class QualifiedElement {
+	private class QualifiedElement {
 		private String namespace;
 		private String element;
 		private String dtd;
-		
+
 		public QualifiedElement(String qualifiedElement) {
 			// Extract namespace part
 			int openBrace = qualifiedElement.indexOf('{');
 			int closeBrace = qualifiedElement.indexOf('}');
-			if (openBrace == 0 && closeBrace >=1 ) {
+			if (openBrace == 0 && closeBrace >= 1) {
 				namespace = qualifiedElement.substring(1, closeBrace);
-				qualifiedElement = qualifiedElement.substring(closeBrace+1);
+				qualifiedElement = qualifiedElement.substring(closeBrace + 1);
 			}
 			// Extract dtd part
 			int dtdSlash = qualifiedElement.indexOf('/');
 			if (dtdSlash > 0) {
-				dtd = qualifiedElement.substring(dtdSlash+1);
+				dtd = qualifiedElement.substring(dtdSlash + 1);
 				qualifiedElement = qualifiedElement.substring(0, dtdSlash);
 			}
 			// Check if the name is a wildcard
@@ -108,7 +115,7 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 			return nsMatch && elementEquals && dtdEquals;
 		}
 	}
-	
+
 	/* (Intentionally not included in javadoc)
 	 * Determines the validation status for the given contents.
 	 * 
@@ -120,25 +127,24 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	 * </ul>
 	 * @throws IOException
 	 */
-	private int checkCriteria(InputSource contents) throws IOException {
-		XMLRootHandler xmlHandler = new XMLRootHandler(elementsToFind != null);
-		try {
-			if (!xmlHandler.parseContents(contents))
-				return INDETERMINATE;
-		} catch (SAXException e) {
-			// we may be handed any kind of contents... it is normal we fail to parse
+	private int checkCriteria(InputSource contents, Map properties) throws IOException {
+		if (!isProcessed(properties))
+			fillContentProperties(contents, properties);
+		return checkCriteria(properties);
+	}
+
+	private int checkCriteria(Map properties) throws IOException {
+		Boolean result = (Boolean) properties.get(RESULT);
+		if (!result.booleanValue())
 			return INDETERMINATE;
-		} catch (ParserConfigurationException e) {
-			// some bad thing happened - force this describer to be disabled
-			String message = ContentMessages.content_parserConfiguration;
-			RuntimeLog.log(new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, e));
-			throw new RuntimeException(message);
-		}
 		// Check to see if we matched our criteria.
 		if (elementsToFind != null) {
 			boolean foundOne = false;
 			for (int i = 0; i < elementsToFind.length && !foundOne; ++i) {
-				foundOne |= elementsToFind[i].matches(xmlHandler.getRootNamespace(), xmlHandler.getRootName(), xmlHandler.getDTD());
+				String dtd = (String) properties.get(DTD);
+				String namespace = (String) properties.get(NAMESPACE);
+				String element = (String) properties.get(ELEMENT);
+				foundOne |= elementsToFind[i].matches(namespace, element, dtd);
 			}
 			if (!foundOne)
 				return INDETERMINATE;
@@ -151,26 +157,77 @@ public final class XMLRootElementContentDescriber2 extends XMLContentDescriber i
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
+		return describe(contents, description, new HashMap());
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public int describe(InputStream contents, IContentDescription description, Map properties) throws IOException {
 		// call the basic XML describer to do basic recognition
-		if (super.describe(contents, description) == INVALID)
+		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
 		// super.describe will have consumed some chars, need to rewind		
 		contents.reset();
 		// Check to see if we matched our criteria.		
-		return checkCriteria(new InputSource(contents));
+		return checkCriteria(new InputSource(contents), properties);
 	}
 
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(Reader, IContentDescription)
 	 */
 	public int describe(Reader contents, IContentDescription description) throws IOException {
+		return describe(contents, description, new HashMap());
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public int describe(Reader contents, IContentDescription description, Map properties) throws IOException {
 		// call the basic XML describer to do basic recognition
-		if (super.describe(contents, description) == INVALID)
+		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
 		// super.describe will have consumed some chars, need to rewind
 		contents.reset();
 		// Check to see if we matched our criteria.
-		return checkCriteria(new InputSource(contents));
+		return checkCriteria(new InputSource(contents), properties);
+	}
+
+	static boolean isProcessed(Map properties) {
+		Boolean result = (Boolean) properties.get(RESULT);
+		// It can be set to false which means that content can't be parsed
+		if (result != null)
+			return true;
+		return false;
+	}
+
+	static void fillContentProperties(InputSource input, Map properties) throws IOException {
+		XMLRootHandler xmlHandler = new XMLRootHandler(true);
+		try {
+			if (!xmlHandler.parseContents(input)) {
+				properties.put(RESULT, new Boolean(false));
+				return;
+			}
+		} catch (SAXException e) {
+			// we may be handed any kind of contents... it is normal we fail to parse
+			properties.put(RESULT, new Boolean(false));
+			return;
+		} catch (ParserConfigurationException e) {
+			// some bad thing happened - force this describer to be disabled
+			String message = ContentMessages.content_parserConfiguration;
+			RuntimeLog.log(new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, e));
+			throw new RuntimeException(message);
+		}
+		String element = xmlHandler.getRootName();
+		if (element != null)
+			properties.put(ELEMENT, element);
+		String dtd = xmlHandler.getDTD();
+		if (dtd != null)
+			properties.put(DTD, dtd);
+		String namespace = xmlHandler.getRootNamespace();
+		if (namespace != null)
+			properties.put(NAMESPACE, namespace);
+		properties.put(RESULT, new Boolean(true));
 	}
 
 	/* (Intentionally not included in javadoc)

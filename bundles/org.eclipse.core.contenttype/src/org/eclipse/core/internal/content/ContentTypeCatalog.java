@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.content.IContentTypeManager.ISelectionPolicy;
 import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.osgi.util.NLS;
 
 public final class ContentTypeCatalog {
 	private static final IContentType[] NO_CONTENT_TYPES = new IContentType[0];
@@ -177,7 +178,7 @@ public final class ContentTypeCatalog {
 		existing.add(contentType);
 	}
 
-	private int collectMatchingByContents(int valid, IContentType[] subset, List destination, ILazySource contents) throws IOException {
+	private int collectMatchingByContents(int valid, IContentType[] subset, List destination, ILazySource contents, Map properties) throws IOException {
 		for (int i = 0; i < subset.length; i++) {
 			ContentType current = (ContentType) subset[i];
 			IContentDescriber describer = current.getDescriber();
@@ -186,7 +187,7 @@ public final class ContentTypeCatalog {
 				if (contents.isText() && !(describer instanceof ITextContentDescriber))
 					// for text streams we skip content types that do not provide text-based content describers
 					continue;
-				status = current.describe(describer, contents, null);
+				status = describe(current, contents, null, properties);
 				if (status == IContentDescriber.INVALID)
 					continue;
 			}
@@ -196,6 +197,48 @@ public final class ContentTypeCatalog {
 				destination.add(current);
 		}
 		return valid;
+	}
+
+	int describe(ContentType type, ILazySource contents, ContentDescription description, Map properties) throws IOException {
+		IContentDescriber describer = type.getDescriber();
+		try {
+			if (contents.isText()) {
+				if (describer instanceof XMLRootElementContentDescriber2) {
+					return ((XMLRootElementContentDescriber2) describer).describe((Reader) contents, description, properties);
+				} else if (describer instanceof XMLRootElementContentDescriber) {
+					return ((XMLRootElementContentDescriber) describer).describe((Reader) contents, description, properties);
+				}
+				return ((ITextContentDescriber) describer).describe((Reader) contents, description);
+			} else {
+				if (describer instanceof XMLRootElementContentDescriber2) {
+					return ((XMLRootElementContentDescriber2) describer).describe((InputStream) contents, description, properties);
+				} else if (describer instanceof XMLRootElementContentDescriber) {
+					return ((XMLRootElementContentDescriber) describer).describe((InputStream) contents, description, properties);
+				}
+				return (describer).describe((InputStream) contents, description);
+			}
+		} catch (RuntimeException re) {
+			// describer seems to be buggy. just disable it (logging the reason)
+			type.invalidateDescriber(re);
+		} catch (Error e) {
+			// describer got some serious problem. disable it (logging the reason) and throw the error again 
+			type.invalidateDescriber(e);
+			throw e;
+		} catch (LowLevelIOException llioe) {
+			// throw the actual exception
+			throw llioe.getActualException();
+		} catch (IOException ioe) {
+			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
+			if (ContentTypeManager.DEBUGGING) {
+				String message = NLS.bind(ContentMessages.content_errorReadingContents, type.getId());
+				ContentType.log(message, ioe);
+			}
+			// we don't know what the describer would say if the exception didn't occur
+			return IContentDescriber.INDETERMINATE;
+		} finally {
+			contents.rewind();
+		}
+		return IContentDescriber.INVALID;
 	}
 
 	synchronized void dissociate(ContentType contentType, String text, int type) {
@@ -353,10 +396,11 @@ public final class ContentTypeCatalog {
 	}
 
 	private IContentType[] internalFindContentTypesFor(ILazySource buffer, IContentType[][] subset, Comparator validPolicy, Comparator indeterminatePolicy) throws IOException {
+		Map properties = new HashMap();
 		final List appropriate = new ArrayList(5);
-		final int validFullName = collectMatchingByContents(0, subset[0], appropriate, buffer);
+		final int validFullName = collectMatchingByContents(0, subset[0], appropriate, buffer, properties);
 		final int appropriateFullName = appropriate.size();
-		final int validExtension = collectMatchingByContents(validFullName, subset[1], appropriate, buffer) - validFullName;
+		final int validExtension = collectMatchingByContents(validFullName, subset[1], appropriate, buffer, properties) - validFullName;
 		final int appropriateExtension = appropriate.size() - appropriateFullName;
 		IContentType[] result = (IContentType[]) appropriate.toArray(new IContentType[appropriate.size()]);
 		if (validFullName > 1)

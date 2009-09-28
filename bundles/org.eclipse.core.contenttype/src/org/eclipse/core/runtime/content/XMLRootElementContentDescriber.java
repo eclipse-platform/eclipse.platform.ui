@@ -11,14 +11,11 @@
 package org.eclipse.core.runtime.content;
 
 import java.io.*;
-import java.util.Hashtable;
-import javax.xml.parsers.ParserConfigurationException;
-import org.eclipse.core.internal.content.*;
-import org.eclipse.core.internal.runtime.RuntimeLog;
+import java.util.*;
+import org.eclipse.core.internal.content.ContentMessages;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 /**
  * A content describer for detecting the name of the top-level element or the
@@ -70,24 +67,20 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * </ul>
 	 * @throws IOException
 	 */
-	private int checkCriteria(InputSource contents) throws IOException {
-		XMLRootHandler xmlHandler = new XMLRootHandler(elementToFind != null);
-		try {
-			if (!xmlHandler.parseContents(contents))
-				return INDETERMINATE;
-		} catch (SAXException e) {
-			// we may be handed any kind of contents... it is normal we fail to parse
+	private int checkCriteria(InputSource contents, Map properties) throws IOException {
+		if (!XMLRootElementContentDescriber2.isProcessed(properties))
+			XMLRootElementContentDescriber2.fillContentProperties(contents, properties);
+		return checkCriteria(properties);
+	}
+
+	private int checkCriteria(Map properties) throws IOException {
+		Boolean result = (Boolean) properties.get(XMLRootElementContentDescriber2.RESULT);
+		if (!result.booleanValue())
 			return INDETERMINATE;
-		} catch (ParserConfigurationException e) {
-			// some bad thing happened - force this describer to be disabled
-			String message = ContentMessages.content_parserConfiguration;
-			RuntimeLog.log(new Status(IStatus.ERROR, ContentMessages.OWNER_NAME, 0, message, e));
-			throw new RuntimeException(message);
-		}
 		// Check to see if we matched our criteria.
-		if ((elementToFind != null) && (!elementToFind.equals(xmlHandler.getRootName())))
+		if ((dtdToFind != null) && (!dtdToFind.equals(properties.get(XMLRootElementContentDescriber2.DTD))))
 			return INDETERMINATE;
-		if ((dtdToFind != null) && (!dtdToFind.equals(xmlHandler.getDTD())))
+		if ((elementToFind != null) && (!elementToFind.equals(properties.get(XMLRootElementContentDescriber2.ELEMENT))))
 			return INDETERMINATE;
 		// We must be okay then.		
 		return VALID;
@@ -97,26 +90,40 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 * @see IContentDescriber#describe(InputStream, IContentDescription)
 	 */
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
+		return describe(contents, description, new HashMap());
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public int describe(InputStream contents, IContentDescription description, Map properties) throws IOException {
 		// call the basic XML describer to do basic recognition
-		if (super.describe(contents, description) == INVALID)
+		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
 		// super.describe will have consumed some chars, need to rewind		
 		contents.reset();
 		// Check to see if we matched our criteria.		
-		return checkCriteria(new InputSource(contents));
+		return checkCriteria(new InputSource(contents), properties);
 	}
 
 	/* (Intentionally not included in javadoc)
 	 * @see IContentDescriber#describe(Reader, IContentDescription)
 	 */
 	public int describe(Reader contents, IContentDescription description) throws IOException {
+		return describe(contents, description, new HashMap());
+	}
+
+	/**
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	public int describe(Reader contents, IContentDescription description, Map properties) throws IOException {
 		// call the basic XML describer to do basic recognition
-		if (super.describe(contents, description) == INVALID)
+		if (super.describe2(contents, description, properties) == INVALID)
 			return INVALID;
 		// super.describe will have consumed some chars, need to rewind
 		contents.reset();
 		// Check to see if we matched our criteria.
-		return checkCriteria(new InputSource(contents));
+		return checkCriteria(new InputSource(contents), properties);
 	}
 
 	/* (Intentionally not included in javadoc)

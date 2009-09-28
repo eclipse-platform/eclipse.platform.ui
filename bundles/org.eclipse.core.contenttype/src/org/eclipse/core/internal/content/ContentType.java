@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -496,7 +496,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 		return false;
 	}
 
-	private IContentDescriber invalidateDescriber(Throwable reason) {
+	public IContentDescriber invalidateDescriber(Throwable reason) {
 		String message = NLS.bind(ContentMessages.content_invalidContentDescriber, id);
 		log(message, reason);
 		return (IContentDescriber) (describer = new InvalidDescriber());

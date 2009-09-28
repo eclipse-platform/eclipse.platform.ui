@@ -11,6 +11,8 @@
 package org.eclipse.core.runtime.content;
 
 import java.io.*;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.internal.content.TextContentDescriber;
 import org.eclipse.core.internal.content.Util;
 import org.eclipse.core.runtime.QualifiedName;
@@ -49,7 +51,39 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final String XML_DECL_END = "?>"; //$NON-NLS-1$
 
+	private static final String BOM = "org.eclipse.core.runtime.content.XMLContentDescriber.bom"; //$NON-NLS-1$
+	private static final String CHARSET = "org.eclipse.core.runtime.content.XMLContentDescriber.charset"; //$NON-NLS-1$
+	private static final String FULL_XML_DECL = "org.eclipse.core.runtime.content.XMLContentDescriber.fullXMLDecl"; //$NON-NLS-1$
+	private static final String RESULT = "org.eclipse.core.runtime.content.XMLContentDescriber.processed"; //$NON-NLS-1$
+
 	public int describe(InputStream input, IContentDescription description) throws IOException {
+		return describe2(input, description, new HashMap());
+	}
+
+	int describe2(InputStream input, IContentDescription description, Map properties) throws IOException {
+		if (!isProcessed(properties))
+			fillContentProperties(input, description, properties);
+		return internalDescribe(description, properties);
+	}
+
+	public int describe(Reader input, IContentDescription description) throws IOException {
+		return describe2(input, description, new HashMap());
+	}
+
+	int describe2(Reader input, IContentDescription description, Map properties) throws IOException {
+		if (!isProcessed(properties))
+			fillContentProperties(readXMLDecl(input), description, properties);
+		return internalDescribe(description, properties);
+	}
+
+	private boolean isProcessed(Map properties) {
+		Boolean result = (Boolean) properties.get(RESULT);
+		if (result != null)
+			return true;
+		return false;
+	}
+
+	private void fillContentProperties(InputStream input, IContentDescription description, Map properties) throws IOException {
 		byte[] bom = Util.getByteOrderMark(input);
 		String xmlDeclEncoding = "UTF-8"; //$NON-NLS-1$
 		input.reset();
@@ -60,64 +94,76 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 				xmlDeclEncoding = "UTF-16LE"; //$NON-NLS-1$
 			// skip BOM to make comparison simpler
 			input.skip(bom.length);
-			// set the BOM in the description if requested
-			if (description != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
+			properties.put(BOM, bom);
+		}
+		fillContentProperties(readXMLDecl(input, xmlDeclEncoding), description, properties);
+	}
+
+	private void fillContentProperties(String line, IContentDescription description, Map properties) throws IOException {
+		// XMLDecl should be the first string (no blanks allowed)
+		if (line != null && line.startsWith(XML_PREFIX))
+			properties.put(FULL_XML_DECL, new Boolean(true));
+		String charset = getCharset(line);
+		if (charset != null)
+			properties.put(CHARSET, charset);
+		properties.put(RESULT, new Boolean(true));
+	}
+
+	private int internalDescribe(IContentDescription description, Map properties) {
+		if (description != null) {
+			byte[] bom = (byte[]) properties.get(BOM);
+			if (bom != null && description.isRequested(IContentDescription.BYTE_ORDER_MARK))
 				description.setProperty(IContentDescription.BYTE_ORDER_MARK, bom);
 		}
-		return internalDescribe(readXMLDecl(input, xmlDeclEncoding), description);
-	}
-	
-	public int describe(Reader input, IContentDescription description) throws IOException {
-		return internalDescribe(readXMLDecl(input), description);
-	}
-	
-	private int internalDescribe(String line, IContentDescription description) throws IOException {
-		// end of stream
-		if (line == null)
-			return INDETERMINATE;
-		// XMLDecl should be the first string (no blanks allowed)
-		if (!line.startsWith(XML_PREFIX))
+		Boolean fullXMLDecl = (Boolean) properties.get(FULL_XML_DECL);
+		if (fullXMLDecl == null || !fullXMLDecl.booleanValue())
 			return INDETERMINATE;
 		if (description == null)
 			return VALID;
-		// describe charset if requested
-		if ((description.isRequested(IContentDescription.CHARSET))) {
-			String charset = getCharset(line);
+		String charset = (String) properties.get(CHARSET);
+		if (description.isRequested(IContentDescription.CHARSET)) {
 			if (charset != null && !isCharsetValid(charset))
 				return INVALID;
-			if (charset != null && !charset.equalsIgnoreCase("utf8") && !charset.equalsIgnoreCase("utf-8")) //$NON-NLS-1$ //$NON-NLS-2$
-				// only set property if value is not default (avoid using a non-default content description)
+			if (isNonDefaultCharset(charset))
 				description.setProperty(IContentDescription.CHARSET, charset);
 		}
 		return VALID;
 	}
-	
+
+	private boolean isNonDefaultCharset(String charset) {
+		if (charset == null)
+			return false;
+		if (charset.equalsIgnoreCase("utf8") || charset.equalsIgnoreCase("utf-8")) //$NON-NLS-1$ //$NON-NLS-2$
+			return false;
+		return true;
+	}
+
 	private boolean isFullXMLDecl(String xmlDecl) {
 		return xmlDecl.endsWith(XML_DECL_END);
 	}
-	
+
 	private String readXMLDecl(InputStream input, String encoding) throws IOException {
 		byte[] xmlDeclEndBytes = XML_DECL_END.getBytes(encoding);
-		
+
 		// allocate an array for the input
-		int xmlDeclSize = 100 * xmlDeclEndBytes.length/2;
+		int xmlDeclSize = 100 * xmlDeclEndBytes.length / 2;
 		byte[] xmlDecl = new byte[xmlDeclSize];
-		
+
 		// looks for XMLDecl end (?>)
 		int c = 0;
 		int read = 0;
-		
+
 		// count is incremented when subsequent read characters match the xmlDeclEnd bytes,
 		// the end of xmlDecl is reached, when count equals the xmlDeclEnd length
 		int count = 0;
-	
-		while (read < xmlDecl.length && (c = input.read()) != -1){
+
+		while (read < xmlDecl.length && (c = input.read()) != -1) {
 			if (c == xmlDeclEndBytes[count])
 				count++;
 			else
 				count = 0;
 			xmlDecl[read++] = (byte) c;
-			if (count == xmlDeclEndBytes.length) 
+			if (count == xmlDeclEndBytes.length)
 				break;
 		}
 		return new String(xmlDecl, 0, read, encoding);
