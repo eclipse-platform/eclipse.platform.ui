@@ -16,11 +16,9 @@ import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
-
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.w3c.dom.Attr;
@@ -32,6 +30,7 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This class represents the default implementation of the
@@ -91,6 +90,7 @@ public final class XMLMemento implements IMemento {
             if (baseDir != null) {
 				source.setSystemId(baseDir);
 			}
+            parser.setErrorHandler(new DefaultHandler());
             Document document = parser.parse(source);
             NodeList list = document.getChildNodes();
             for (int i = 0; i < list.getLength(); i++) {
