@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Jacek Pospychala - bug 187762
+ *     Mohamed Tarief - tarief@eg.ibm.com - IBM - Bug 174481
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -57,6 +58,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
@@ -760,11 +762,14 @@ public class FilteredTree extends Composite {
 								filterText.getText().trim());
 						if (hasFocus && textChanged
 								&& filterText.getText().trim().length() > 0) {
-							TreeItem item = getFirstMatchingItem(getViewer()
-									.getTree().getItems());
+							Tree tree = getViewer().getTree();
+							TreeItem item;
+							if (tree.getSelectionCount() > 0)
+								item = getFirstMatchingItem(tree.getSelection());
+							else
+								item = getFirstMatchingItem(tree.getItems());
 							if (item != null) {
-								getViewer().getTree().setSelection(
-										new TreeItem[] { item });
+								tree.setSelection(new TreeItem[] { item });
 								ISelection sel = getViewer().getSelection();
 								getViewer().setSelection(sel, true);
 							}
@@ -837,6 +842,8 @@ public class FilteredTree extends Composite {
 	 */
 	protected void textChanged() {
 		narrowingDown = previousFilterText == null
+				|| previousFilterText
+						.equals(WorkbenchMessages.FilteredTree_FilterMessage)
 				|| getFilterString().startsWith(previousFilterText);
 		previousFilterText = getFilterString();
 		// cancel currently running job first, to prevent unnecessary redraw
