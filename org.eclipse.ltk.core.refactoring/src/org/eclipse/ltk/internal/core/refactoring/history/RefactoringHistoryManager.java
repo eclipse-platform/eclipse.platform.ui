@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,11 +35,13 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.Map.Entry;
 
+import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -934,7 +936,9 @@ public final class RefactoringHistoryManager {
 	private Document getCachedDocument(final IPath path, final InputStream input) throws SAXException, IOException, ParserConfigurationException {
 		if (path.equals(fCachedPath) && fCachedDocument != null)
 			return fCachedDocument;
-		final Document document= DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(input));
+		DocumentBuilder parser= DocumentBuilderFactory.newInstance().newDocumentBuilder();
+		parser.setErrorHandler(new DefaultHandler());
+		final Document document= parser.parse(new InputSource(input));
 		fCachedDocument= document;
 		fCachedPath= path;
 		return document;
