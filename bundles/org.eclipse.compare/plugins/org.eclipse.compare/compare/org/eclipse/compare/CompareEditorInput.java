@@ -529,7 +529,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				
 		Control outline= createOutlineContents(fComposite, SWT.HORIZONTAL);
 					
-		fContentInputPane= new CompareContentViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT, this);
+		fContentInputPane= createContentViewerSwitchingPane(fComposite, SWT.BORDER | SWT.FLAT, this);
 
 		if (fFocusPane == null)
 			fFocusPane= fContentInputPane;
@@ -537,7 +537,7 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 			fComposite.setVisible(outline, false);
 		fComposite.setVisible(fContentInputPane, true);
 		
-		if (fStructureInputPane != null)
+		if (fStructureInputPane != null && fComposite.getChildren().length == 2)
 			fComposite.setWeights(new int[] { 30, 70 });
 		
 		fComposite.layout();
@@ -555,7 +555,19 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		contentsCreated();
 		return fComposite;
 	}
-
+	
+	/**
+	 * @param parent the parent control under which the control must be created
+	 * @param style  the style of widget to construct
+	 * @param cei the compare editor input for the viewer
+	 * @return the pane displaying content changes
+	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @noreference This method is not intended to be referenced by clients.
+	 */
+	protected CompareViewerSwitchingPane createContentViewerSwitchingPane(Splitter parent, int style, CompareEditorInput cei) {
+		return new CompareContentViewerSwitchingPane(parent, style, cei);
+	}
+	
 	/**
 	 * Disposes this editor input. Clients should not call this method. The
 	 * Compare Editor calls this method at appropriate times i.e. when disposing.

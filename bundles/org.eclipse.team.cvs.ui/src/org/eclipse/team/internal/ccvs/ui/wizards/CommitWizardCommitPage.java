@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -73,8 +73,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 
 	private boolean fIsEmpty;
     
-    private CompareViewerSwitchingPane compareViewerPane;
-	private SashForm horizontalSash;
+	private Splitter horizontalSash;
 	private SashForm verticalSash;
 	private boolean showCompare;
 	
@@ -105,7 +104,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         PlatformUI.getWorkbench().getHelpSystem().setHelp(composite, IHelpContextIds.COMMIT_COMMENT_PAGE);
         
         
-        horizontalSash = new SashForm(composite, SWT.HORIZONTAL);
+        horizontalSash = new Splitter(composite, SWT.HORIZONTAL);
         horizontalSash.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
         
         verticalSash = new SashForm(horizontalSash, SWT.VERTICAL);
@@ -115,17 +114,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         
         createChangesArea(verticalSash, converter);
 
-        compareViewerPane = new CompareViewerSwitchingPane(horizontalSash, SWT.BORDER | SWT.FLAT) {
-			protected Viewer getViewer(Viewer oldViewer, Object input) {
-				CompareConfiguration cc = new CompareConfiguration();
-				cc.setLeftEditable(false);
-				cc.setRightEditable(false);
-				
-				return CompareUI.findContentViewer(oldViewer, input, this, cc);	
-			}
-		};
-        compareViewerPane.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-        
         IDialogSettings section = getDialogSettings().getSection(CommitWizard.COMMIT_WIZARD_DIALOG_SETTINGS);
 		showCompare = section == null ? false : section.getBoolean(SHOW_COMPARE);
 		int vWeight1 = 50;
@@ -162,10 +150,6 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         fCommentArea.setFocus();
         
         validatePage(false);
-    }
-    
-    public void setCompareInput(final Object input) {
-		compareViewerPane.setInput(input);
     }
     
     private void createCommentArea(Composite parent, PixelConverter converter) {
@@ -221,11 +205,39 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 
     private Control createChangesPage(final Composite composite, CommitWizardParticipant participant) {
         fConfiguration= participant.createPageConfiguration();
-        fPagePane= new ParticipantPagePane(getShell(), true /* modal */, fConfiguration, participant);
-        Control control = fPagePane.createPartControl(composite);
-        return control;
+		CompareConfiguration cc = new CompareConfiguration();
+		cc.setLeftEditable(false);
+		cc.setRightEditable(false);
+		ParticipantPageCompareEditorInput input = new CommitWizardParticipantPageCompareEditorInput(cc, fConfiguration, participant);
+		Control control = input.createContents(composite);
+		control.setLayoutData(new GridData(GridData.FILL_BOTH));
+		return control;
     }
+    
+    private class CommitWizardParticipantPageCompareEditorInput extends ParticipantPageCompareEditorInput {
+		public CommitWizardParticipantPageCompareEditorInput(
+				CompareConfiguration cc,
+				ISynchronizePageConfiguration configuration,
+				CommitWizardParticipant participant) {
+			super(cc, configuration, participant);
+		}
 
+		protected boolean isOfferToRememberParticipant() {
+			return false;
+		}
+		
+		protected CompareViewerSwitchingPane createContentViewerSwitchingPane(
+				Splitter parent, int style, CompareEditorInput cei) {
+			return super.createContentViewerSwitchingPane(horizontalSash, style, cei);
+		}
+		
+		protected CompareViewerPane createStructureInputPane(Composite parent) {
+			CompareViewerPane pane = super.createStructureInputPane(parent);
+			pane.setText(TeamUIMessages.ParticipantPageSaveablePart_0);
+			return pane;
+		}
+    }
+    
 	private int getFileDisplayThreshold() {
         return CVSUIPlugin.getPlugin().getPreferenceStore().getInt(ICVSUIConstants.PREF_COMMIT_FILES_DISPLAY_THRESHOLD);
     }

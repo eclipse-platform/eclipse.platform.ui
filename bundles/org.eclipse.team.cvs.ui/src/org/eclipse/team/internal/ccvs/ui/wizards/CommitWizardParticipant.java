@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,15 +16,14 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
+import org.eclipse.team.internal.ccvs.ui.Policy;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
 import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
@@ -104,7 +103,6 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				CONTEXT_MENU_CONTRIBUTION_GROUP_3);
         configuration.addActionContribution(new ActionContribution());
-        configuration.setRunnableContext(fWizard.getContainer());
         
         // Wrap the container so that we can update the enablements after the runnable
         // (i.e. the container resets the state to what it was at the beginning of the
@@ -140,26 +138,8 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
 				if(selection instanceof IStructuredSelection) {
 					final Object obj = ((IStructuredSelection) selection).getFirstElement();
 					if (obj instanceof SyncInfoModelElement) {
-						try {
-							fWizard.getContainer().run(true, true, new IRunnableWithProgress() {
-								public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-									try {
-										((SyncInfoModelElement)obj).cacheContents(monitor);
-									} catch (TeamException e) {
-										throw new InvocationTargetException(e);
-									}
-							    	fWizard.getContainer().getShell().getDisplay().syncExec(new Runnable() {
-										public void run() {
-											fWizard.getCommitPage().showComparePane(true);
-											showComparePaneAction.setChecked(true);
-											fWizard.getCommitPage().setCompareInput(obj);						
-										}
-							    	});
-								}
-							});
-						} catch (InvocationTargetException e) {
-						} catch (InterruptedException e) {
-						}
+						fWizard.getCommitPage().showComparePane(true);
+						showComparePaneAction.setChecked(true);
 					}
 				}
 			}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,7 @@ public final class ParticipantPagePane {
 	private Shell shell;
 	private boolean isModal;
 	
-	//	 SWT controls
+	// SWT controls
 	private CompareViewerPane fEditionPane;
 	private IPageBookViewPage fPage;
 	private DialogSynchronizePageSite site;
@@ -107,7 +107,7 @@ public final class ParticipantPagePane {
 		shell = parent.getShell();
 		
 		fEditionPane = new CompareViewerPane(top, SWT.BORDER | SWT.FLAT);		
-		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0); //		
+		fEditionPane.setText(TeamUIMessages.ParticipantPageSaveablePart_0);		
 		
 		fEditionPane.setLayoutData(SWTUtils.createHVFillGridData());
 		
