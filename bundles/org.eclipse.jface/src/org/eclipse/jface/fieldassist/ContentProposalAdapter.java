@@ -56,7 +56,8 @@ import org.eclipse.jface.viewers.ILabelProvider;
  * is activated, and whether any filtering should be done on the proposals as
  * the user types characters.
  * <p>
- * This class is not intended to be subclassed.
+ * This class provides some overridable methods to allow clients to manually
+ * control the popup. However, most of the implementation remains private.
  * 
  * @since 3.2
  */
