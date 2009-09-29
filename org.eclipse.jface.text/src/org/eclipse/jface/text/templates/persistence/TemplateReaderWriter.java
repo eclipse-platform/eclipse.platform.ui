@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -34,6 +34,7 @@ import javax.xml.transform.stream.StreamResult;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.helpers.DefaultHandler;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
@@ -148,6 +149,7 @@ public class TemplateReaderWriter {
 
 			DocumentBuilderFactory factory= DocumentBuilderFactory.newInstance();
 			DocumentBuilder parser= factory.newDocumentBuilder();
+			parser.setErrorHandler(new DefaultHandler());
 			Document document= parser.parse(source);
 
 			NodeList elements= document.getElementsByTagName(TEMPLATE_ELEMENT);
