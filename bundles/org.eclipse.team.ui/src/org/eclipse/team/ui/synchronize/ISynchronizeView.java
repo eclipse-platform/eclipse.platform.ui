@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,11 +23,10 @@ import org.eclipse.ui.IViewPart;
  * to all participants. Instead, add participant specific actions as described
  * in {@link org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration}.
  * </p>
- * <p>
- * Clients are not intended to implement this interface.
- * </p>
  * @see ISynchronizeManager#showSynchronizeViewInActivePage()
  * @since 3.0
+ * @noimplement Clients are not intended to implement this interface.
+ * 
  */
 public interface ISynchronizeView extends IViewPart {
 	/**
