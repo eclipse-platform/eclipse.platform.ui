@@ -41,7 +41,7 @@ import org.eclipse.swt.widgets.Composite;
  *  <li>When a part becomes visible in the workbench:
  * 	  <ul> 
  *		<li>add part to presentation by calling 
- *        <code>part.createControl(parent)</code> to create actual widgets</li>
+ *        <code>part.createPartControl(parent)</code> to create actual widgets</li>
  *		<li>fire <code>partOpened</code> event to all listeners</li>
  *	  </ul>
  *   </li>
@@ -79,7 +79,7 @@ import org.eclipse.swt.widgets.Composite;
  * </p>
  * <p>
  * An important point to note about this lifecycle is that following 
- * a call to init, createControl may never be called. Thus in the dispose
+ * a call to init, createPartControl may never be called. Thus in the dispose
  * method, implementors must not assume controls were created.
  * </p>
  * <p>
