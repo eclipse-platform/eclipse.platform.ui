@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,26 +11,26 @@
 package org.eclipse.ui;
 
 /**
- * A editor action bar contributor defines the actions for
- * one or more editors.  
+ * A editor action bar contributor defines the actions for one or more editors.
  * <p>
  * Within the workbench there may be more than one open editor of a particular
- * type.  For instance, there may be 1 or more open Java Editors.  To avoid the 
- * creation of duplicate actions and action images the editor concept has been 
- * split into two.  An action contributor is responsable for the creation of 
- * actions.  The editor is responsible for action implementation.  Furthermore,
- * the contributor is shared by each open editor.  As a result of this design
+ * type. For instance, there may be 1 or more open Java Editors. To avoid the
+ * creation of duplicate actions and action images the editor concept has been
+ * split into two. An action contributor is responsible for the creation of
+ * actions. The editor is responsible for action implementation. Furthermore,
+ * the contributor is shared by each open editor. As a result of this design
  * there is only 1 set of actions for 1 or more open editors.
- * </p><p>
- * The relationship between editor and contributor is defined by
- * the <code>org.eclipse.ui.editors</code> extension point in the plugin registry.  
- * For each extension an editor class and a contributor class must be defined. 
- * </p><p>
- * This interface should not be implemented directly. An implementation of this 
- * interface has been created in <code>EditorActionBarContributor</code>.  
+ * </p>
+ * <p>
+ * The relationship between editor and contributor is defined by the
+ * <code>org.eclipse.ui.editors</code> extension point in the plugin registry.
+ * </p>
+ * <p>
+ * This interface should not be implemented directly. An implementation of this
+ * interface has been created in <code>EditorActionBarContributor</code>.
  * Implementors should subclass this and specialize as required.
  * </p>
- *
+ * 
  * @see IEditorActionBarContributor
  */
 public interface IEditorActionBarContributor {
