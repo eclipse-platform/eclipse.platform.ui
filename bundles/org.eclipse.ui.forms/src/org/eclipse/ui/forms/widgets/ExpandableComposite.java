@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Kai Nacke - Fix for Bug 202382
+ *     Bryan Hunt - Fix for Bug 245457
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -133,6 +134,14 @@ public class ExpandableComposite extends Canvas {
 	 */
 	public static final int LEFT_TEXT_CLIENT_ALIGNMENT = 1 << 13;
 
+	/**
+	 * By default, a focus box is painted around the title when it receives focus.
+	 * If this style is used, the focus box will not be painted.  This style does
+	 * not apply when FOCUS_TITLE is used.
+	 * @since 3.5
+	 */
+	public static final int NO_TITLE_FOCUS_BOX = 1 << 14;
+	
 	/**
 	 * Width of the margin that will be added around the control (default is 0).
 	 */
@@ -634,7 +643,7 @@ public class ExpandableComposite extends Canvas {
 							}
 							break;
 						case SWT.Paint:
-							if (toggle != null) {
+							if (toggle != null && (getExpansionStyle() & NO_TITLE_FOCUS_BOX) == 0) {
 								paintTitleFocus(e.gc);
 							}
 							break;
