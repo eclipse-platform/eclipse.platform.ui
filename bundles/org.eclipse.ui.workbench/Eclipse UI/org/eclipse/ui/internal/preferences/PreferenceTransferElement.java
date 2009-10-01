@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.preferences;
 
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
-
+import java.util.Set;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
@@ -29,132 +31,159 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 3.1
  */
 public class PreferenceTransferElement extends WorkbenchAdapter implements
-        IPluginContribution {
-    private String id;
-    
-    private ImageDescriptor imageDescriptor;
+		IPluginContribution {
+	private String id;
 
-    private IConfigurationElement configurationElement;
+	private ImageDescriptor imageDescriptor;
 
-    private IPreferenceFilter filter;
+	private IConfigurationElement configurationElement;
 
-    /**
-     * Create a new instance of this class
-     * 
-     * @param configurationElement
-     *              
-     */
-    public PreferenceTransferElement(IConfigurationElement configurationElement) {
-        this.configurationElement = configurationElement;
-        id = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
-    }
+	private IPreferenceFilter filter;
 
-    /**
-     * @return IConfigurationElement
-     */
-    public IConfigurationElement getConfigurationElement() {
-        return configurationElement;
-    }
+	/**
+	 * Create a new instance of this class
+	 * 
+	 * @param configurationElement
+	 * 
+	 */
+	public PreferenceTransferElement(IConfigurationElement configurationElement) {
+		this.configurationElement = configurationElement;
+		id = configurationElement
+				.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+	}
 
-    /**
-     * Answer the preference filter of this element
-     * If the class attribute is specified it will be used, if not then look to the 
-     * 
-     * @return java.lang.String
-     * @throws CoreException 
-     */
-    public IPreferenceFilter getFilter() throws CoreException {
-        //TODO: can the CoreException be removed?
-        if (filter == null) {
-            IConfigurationElement[] mappings = PreferenceTransferRegistryReader.getMappings(configurationElement);
-            PreferenceFilter prefFilter = new PreferenceFilter();
-            prefFilter.scopes = new String[mappings.length];
-            prefFilter.maps = new Map[mappings.length];
-            for (int i = 0; i < mappings.length; i++) {
-                prefFilter.scopes[i] = PreferenceTransferRegistryReader.getScope(mappings[i]);
-                prefFilter.maps[i] = PreferenceTransferRegistryReader.getEntry(mappings[i]);
-            } 
-            filter = prefFilter;
-        }
-        return filter;
-    }
+	/**
+	 * @return IConfigurationElement
+	 */
+	public IConfigurationElement getConfigurationElement() {
+		return configurationElement;
+	}
 
-    /**
-     * Answer the description parameter of this element
-     * 
-     * @return java.lang.String
-     */
-    public String getDescription() {
-        return RegistryReader.getDescription(configurationElement);
-    }
-    
-    /**
-     * Answer the id as specified in the extension.
-     * 
-     * @return java.lang.String
-     */
-    public String getID() {
-        return id;
-    }
+	/**
+	 * Answer the preference filter of this element.
+	 * 
+	 * @return a preference filter
+	 * @throws CoreException
+	 */
+	public IPreferenceFilter getFilter() throws CoreException {
+		if (filter == null) {
+			IConfigurationElement[] mappingConfigurations = PreferenceTransferRegistryReader
+					.getMappings(configurationElement);
+			int size = mappingConfigurations.length;
+			Set scopes = new HashSet(size);
+			Map mappingsMap = new HashMap(size);
+			for (int i = 0; i < size; i++) {
+				String scope = PreferenceTransferRegistryReader
+						.getScope(mappingConfigurations[i]);
+				scopes.add(scope);
 
-    /**
-     * Answer the icon of this element.
-     * 
-     * @return an image descriptor
-     */
-    public ImageDescriptor getImageDescriptor() {
-    	if (imageDescriptor == null) {
-    		String iconName = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-	        if (iconName == null) {
+				Map mappings;
+				if (!mappingsMap.containsKey(scope)) {
+					mappings = new HashMap(size);
+					mappingsMap.put(scope, mappings);
+				} else {
+					mappings = (Map) mappingsMap.get(scope);
+					if (mappings == null) {
+						continue;
+					}
+				}
+
+				Map entries = PreferenceTransferRegistryReader
+						.getEntry(mappingConfigurations[i]);
+				if (entries == null) {
+					mappingsMap.put(scope, null);
+				} else {
+					mappings.putAll(entries);
+				}
+			}
+			filter = new PreferenceFilter((String[]) scopes
+					.toArray(new String[scopes.size()]), mappingsMap);
+		}
+		return filter;
+	}
+
+	/**
+	 * Answer the description parameter of this element
+	 * 
+	 * @return java.lang.String
+	 */
+	public String getDescription() {
+		return RegistryReader.getDescription(configurationElement);
+	}
+
+	/**
+	 * Answer the id as specified in the extension.
+	 * 
+	 * @return java.lang.String
+	 */
+	public String getID() {
+		return id;
+	}
+
+	/**
+	 * Answer the icon of this element.
+	 * 
+	 * @return an image descriptor
+	 */
+	public ImageDescriptor getImageDescriptor() {
+		if (imageDescriptor == null) {
+			String iconName = configurationElement
+					.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+			if (iconName == null) {
 				return null;
 			}
-            imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-                    configurationElement.getNamespace(), iconName);    
-    	}
-        return imageDescriptor;
-    }
-    
-    /**
-     * Returns the name of this preference transfer element.
-     * @return the name of the element
-     */
-    public String getName() {
-        return configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-    }
+			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+					getPluginId(), iconName);
+		}
+		return imageDescriptor;
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getLocalId()
-     */
-    public String getLocalId() {
-        return getID();
-    }
+	/**
+	 * Returns the name of this preference transfer element.
+	 * 
+	 * @return the name of the element
+	 */
+	public String getName() {
+		return configurationElement
+				.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPluginContribution#getPluginId()
-     */
-    public String getPluginId() {
-        return (configurationElement != null) ? configurationElement
-                .getNamespace() : null;
-    }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IPluginContribution#getLocalId()
+	 */
+	public String getLocalId() {
+		return getID();
+	}
 
-    class PreferenceFilter implements IPreferenceFilter {
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IPluginContribution#getPluginId()
+	 */
+	public String getPluginId() {
+		return (configurationElement != null) ? configurationElement
+				.getContributor().getName() : null;
+	}
 
-        protected String[] scopes;
-        protected Map[] maps;
-        
-        public String[] getScopes() {
-            return scopes;
-        }
+	class PreferenceFilter implements IPreferenceFilter {
 
-        public Map getMapping(String scope) {
-            for (int i = 0; i < scopes.length; i++) {
-                String item = scopes[i];
-                if (item.equals(scope)) {
-					return maps[i];
-				}                
-            }
-            return null;
-        }
-        
-    }
+		private String[] scopes;
+		private Map mappings;
+
+		public PreferenceFilter(String[] scopes, Map mappings) {
+			this.scopes = scopes;
+			this.mappings = mappings;
+		}
+
+		public String[] getScopes() {
+			return scopes;
+		}
+
+		public Map getMapping(String scope) {
+			return (Map) mappings.get(scope);
+		}
+
+	}
 }
