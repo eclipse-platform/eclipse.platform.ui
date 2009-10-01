@@ -888,7 +888,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	protected void restoreWidgetValues() {
 		IDialogSettings settings = getDialogSettings();
-		boolean all = true;
 		if (settings != null) {
 			String[] directoryNames = settings
 					.getArray(STORE_DESTINATION_NAMES_ID);
@@ -908,15 +907,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 					overwriteExistingFilesCheckbox.setSelection(settings
 							.getBoolean(STORE_OVERWRITE_EXISTING_FILES_ID));
 				}
-				all = settings.getBoolean(TRANSFER_ALL_PREFERENCES_ID);
 			}
 		}
-		if (all) {
-			allButton.setSelection(true);
-		} else {
-			chooseImportsButton.setSelection(true);
-		}
 
+		allButton.setSelection(true);
 	}
 
 	private boolean getOverwriteExisting() {
