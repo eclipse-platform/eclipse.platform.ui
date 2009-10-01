@@ -294,11 +294,17 @@ public class ErrorDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * Create this dialog's drop-down list component.
+	 * Create this dialog's drop-down list component. The list is displayed
+	 * after the user presses details button. It is developer responsibility
+	 * to display details button if and only if there is some content on 
+	 * drop down list. The visibility of the details button is controlled by
+	 * {@link #shouldShowDetailsButton()}, which should also be overridden
+	 * together with this method.
 	 * 
 	 * @param parent
 	 *            the parent composite
 	 * @return the drop-down list component
+	 * @see #shouldShowDetailsButton()
 	 */
 	protected List createDropDownList(Composite parent) {
 		// create the list
@@ -422,10 +428,24 @@ public class ErrorDialog extends IconAndMessageDialog {
 	 * 
 	 * @param listToPopulate
 	 *            The list to fill.
+	 * 
+	 * @see #listContentExists()
 	 */
 	private void populateList(List listToPopulate) {
 		populateList(listToPopulate, status, 0,
 				shouldIncludeTopLevelErrorInDetails);
+	}
+	
+	/**
+	 * This method checks if any content will be placed on the list.
+	 * It mimics the behavior of {@link #populateList(List)}.
+	 * 
+	 * @return true if {@link #populateList(List)} will add anything to a list
+	 * 
+	 * @see #populateList(List)
+	 */
+	private boolean listContentExists() {
+		return listContentExists(status, shouldIncludeTopLevelErrorInDetails);
 	}
 
 	/**
@@ -502,6 +522,58 @@ public class ErrorDialog extends IconAndMessageDialog {
 		for (int i = 0; i < children.length; i++) {
 			populateList(listToPopulate, children[i], nesting, true);
 		}
+	}
+	
+	/**
+	 * This method checks if {@link #populateList(List, IStatus, int, boolean)}
+	 * will add anything to the list.
+	 * 
+	 * @param buildingStatus
+	 *            A status to be considered.
+	 * @param includeStatus
+	 *            This flag indicates if top level status should be placed on a
+	 *            list.
+	 * @return true if any new content will be added to the list.
+	 * @see #listContentExists(IStatus, boolean)
+	 */
+	private boolean listContentExists(IStatus buildingStatus,
+			boolean includeStatus) {
+		
+		if (!buildingStatus.matches(displayMask)) {
+			return false;
+		}
+
+		Throwable t = buildingStatus.getException();
+		boolean isCoreException = t instanceof CoreException;
+
+		if (includeStatus) {
+			return true;
+		}
+
+		if (!isCoreException && t != null) {
+			return true;
+		}
+		
+		boolean result = false;
+
+		// Look for a nested core exception
+		if (isCoreException) {
+			CoreException ce = (CoreException) t;
+			IStatus eStatus = ce.getStatus();
+			// Gets exception message if it is not contained in the
+			// parent message
+			if (message == null || message.indexOf(eStatus.getMessage()) == -1) {
+				result |= listContentExists(eStatus, true);
+			}
+		}
+
+		// Look for child status
+		IStatus[] children = buildingStatus.getChildren();
+		for (int i = 0; i < children.length; i++) {
+			result |= listContentExists(children[i], true);
+		}
+		
+		return result;
 	}
 
 	/**
@@ -640,16 +712,16 @@ public class ErrorDialog extends IconAndMessageDialog {
 
 	/**
 	 * Return whether the Details button should be included. This method is
-	 * invoked once when the dialog is built. By default, the Details button is
-	 * only included if the status used when creating the dialog was a
-	 * multi-status or if the status contains an exception. Subclasses may
-	 * override.
+	 * invoked once when the dialog is built. Default implementation is tight to
+	 * default implementation of {@link #createDropDownList(Composite)} and 
+	 * displays details button if there is anything on the display list.
 	 * 
 	 * @return whether the Details button should be included
 	 * @since 3.1
+	 * @see #createDropDownList(Composite)
 	 */
 	protected boolean shouldShowDetailsButton() {
-		return status.isMultiStatus() || status.getException() != null;
+		return listContentExists();
 	}
 
 	/**
