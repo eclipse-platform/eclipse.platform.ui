@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -591,15 +591,15 @@ public class TextSegment extends ParagraphSegment {
 			reverse = true;
 		if (reverse) {
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
-			drawString(gc, s, clipX, clipY);
+			drawText(gc, s, clipX, clipY);
 		} else {
-			drawString(gc, s, clipX, clipY);
+			drawText(gc, s, clipX, clipY);
 			drawUnderline(gc, swidth, clipX, clipLineY, hover, rolloverMode);
 		}
 	}
 	
-	protected void drawString(GC gc, String s, int clipX, int clipY) {
-		gc.drawString(s, clipX, clipY, true);
+	protected void drawText(GC gc, String s, int clipX, int clipY) {
+		gc.drawText(s, clipX, clipY, true);
 	}
 
 	private void drawUnderline(GC gc, int swidth, int x, int y, boolean hover,
