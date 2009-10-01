@@ -633,6 +633,6 @@ public class EditorSashContainer extends PartSashContainer {
 				}});
            
         }
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+        return Status.OK_STATUS;
     }
 }

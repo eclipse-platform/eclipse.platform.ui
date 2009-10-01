@@ -153,8 +153,7 @@ public class EditorHistoryItem {
     public IStatus restoreState() {
         Assert.isTrue(!isRestored());
 
-        Status result = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0,
-                "", null); //$NON-NLS-1$
+        IStatus result = Status.OK_STATUS;
         IMemento memento = this.memento;
         this.memento = null;
 
@@ -235,7 +234,7 @@ public class EditorHistoryItem {
                         .getToolTipText());
             }
         }
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+        return Status.OK_STATUS;
     }
 
 }

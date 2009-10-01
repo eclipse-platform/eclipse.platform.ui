@@ -21,7 +21,6 @@ import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -337,7 +336,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 				image = descriptor.getImageDescriptor();
 			}
 		}
-		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -370,7 +369,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor,
 		if (singleton) {
 			childMem.putInteger(IWorkbenchConstants.TAG_SINGLETON, 1);
 		}
-		return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	/**

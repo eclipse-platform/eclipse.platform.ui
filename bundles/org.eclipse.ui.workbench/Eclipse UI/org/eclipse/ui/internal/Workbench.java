@@ -1885,8 +1885,7 @@ public final class Workbench extends EventManager implements IWorkbench {
 					IWorkbenchConfigurer.RESTORE_CODE_RESET, msg, null);
 		}
 
-		final IStatus result[] = { new Status(IStatus.OK,
-				WorkbenchPlugin.PI_WORKBENCH, IStatus.OK, "", null) }; //$NON-NLS-1$
+		final IStatus result[] = { Status.OK_STATUS };
 		SafeRunner.run(new SafeRunnable(WorkbenchMessages.ErrorReadingState) {
 			public void run() throws Exception {
 				FileInputStream input = new FileInputStream(stateFile);

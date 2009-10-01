@@ -270,7 +270,7 @@ public class ViewFactory implements IExtensionChangeHandler {
             //for dynamic UI - add the next line to replace subsequent code that is commented out
             restoreViewState(mem[i]);
         }
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+        return Status.OK_STATUS;
     }
 
     /**

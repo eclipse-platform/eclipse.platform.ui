@@ -42,7 +42,6 @@ import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.StartupThreading.StartupRunnable;
 import org.eclipse.ui.internal.dnd.AbstractDropTarget;
@@ -1024,7 +1023,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
                 
         
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+        return Status.OK_STATUS;
     }
 
     /* (non-Javadoc)
@@ -1158,7 +1157,7 @@ public abstract class PartStack extends LayoutPart implements ILayoutContainer {
         }
         
 
-        return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+        return Status.OK_STATUS;
     }
 
     protected WorkbenchPage getPage() {

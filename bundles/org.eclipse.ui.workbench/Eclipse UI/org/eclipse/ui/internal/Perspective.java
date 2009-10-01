@@ -1262,7 +1262,7 @@ public class Perspective {
      */
     public IStatus restoreState() {
         if (this.memento == null) {
-			return new Status(IStatus.OK, PlatformUI.PLUGIN_ID, 0, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 		}
 
         MultiStatus result = new MultiStatus(
