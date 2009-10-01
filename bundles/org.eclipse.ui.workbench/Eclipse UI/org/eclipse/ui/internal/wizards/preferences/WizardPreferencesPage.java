@@ -17,7 +17,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
@@ -138,8 +137,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		Button button = new Button(parent, SWT.PUSH);
 		button.setFont(parent.getFont());
 
-		GridData buttonData = new GridData(GridData.FILL_HORIZONTAL);
-		button.setLayoutData(buttonData);
+		setButtonLayoutData(button);
 
 		button.setData(new Integer(id));
 		button.setText(label);
@@ -406,6 +404,8 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * @param bool
 	 */
 	protected void setAllChecked(boolean bool) {
+		allButton.setSelection(false);
+		chooseImportsButton.setSelection(true);
 		TableItem[] items = transfersTable.getItems();
 		for (int i = 0; i < items.length; i++) {
 			TableItem item = items[i];
@@ -445,8 +445,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				SWT.PUSH);
 		destinationBrowseButton
 				.setText(PreferencesMessages.PreferencesExport_browse);
-		destinationBrowseButton.setLayoutData(new GridData(
-				GridData.HORIZONTAL_ALIGN_FILL));
+		setButtonLayoutData(destinationBrowseButton);
 		destinationBrowseButton.addListener(SWT.Selection, this);
 		
 		new Label(parent, SWT.NONE); // vertical spacer
