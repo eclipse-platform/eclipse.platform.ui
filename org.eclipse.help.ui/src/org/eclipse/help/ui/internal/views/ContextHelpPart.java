@@ -138,9 +138,9 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 		text.addHyperlinkListener(new IHyperlinkListener() {
 			public void linkActivated(HyperlinkEvent e) {
-				Object href = e.getHref();
-				if (href.equals(MORE_HREF)) {
-					doMore();
+				String href = (String) e.getHref();
+				if (href.startsWith(MORE_HREF)) {
+					doMore(href.substring(MORE_HREF.length()));
 				}  else {
 				   doOpenLink(e.getHref());
 				}
@@ -313,7 +313,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	
 	private long lastUpdate = 0;
 
-	private String phrase;
+	private String[] searchTerms;
 	
 	/*
 	 * If F1 was pressed within the last half second and this is a context change do not
@@ -366,27 +366,26 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 
 	private void updateSearchExpression(String expression, Control c) {
 		if (expression == null) {
-			expression = computeDefaultSearchExpression(c);
+			searchTerms = computeSearchTerms(c);
+		} else {
+		    searchTerms = new String[] { expression };
 		}
-		phrase = expression;
 	}
 	
 	private void updateDynamicHelp() {
 		RelatedTopicsPart part = (RelatedTopicsPart) parent
 				.findPart(IHelpUIConstants.HV_RELATED_TOPICS);
 		if (part != null) {
-			if (phrase != null) {
+			if (searchTerms != null) {
 				if (HelpPlugin.DEBUG_CONTEXT) {
-				    System.out.println("Dynamic help - search for " + phrase); //$NON-NLS-1$
+				    System.out.println("Dynamic help - search for " + searchTerms); //$NON-NLS-1$
 			    }
-				part.startSearch(phrase, lastContext);
+				part.startSearch(buildSearchExpression(searchTerms), lastContext);
 			}
 		}
 	}
 
-	private String computeDefaultSearchExpression(Control c) {
-		String[] searchTerms = computeSearchTerms(c);
-		
+	private String buildSearchExpression(String[] searchTerms) {
 		StringBuffer buff = new StringBuffer();
 		for (int i = 0; i < searchTerms.length; i++) {
 			if (buff.length() > 0)
@@ -587,21 +586,24 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 				}
 			}
 		}
-		if (!RelatedTopicsPart.isUseDynamicHelp() && phrase != null && phrase.length() > 0) {
+		if (!RelatedTopicsPart.isUseDynamicHelp() && searchTerms != null && searchTerms.length > 0) {
 			sbuf.append("<p><span color=\""); //$NON-NLS-1$
 			sbuf.append(IFormColors.TITLE);
 			sbuf.append("\">"); //$NON-NLS-1$
 			sbuf.append(Messages.ContextHelpPart_more);
 			sbuf.append("</span></p>"); //$NON-NLS-1$
-			sbuf.append("<p><img href=\""); //$NON-NLS-1$
-			sbuf.append(IHelpUIConstants.IMAGE_HELP_SEARCH);
-			sbuf.append("\"/>"); //$NON-NLS-1$
-			sbuf.append(" <a href=\""); //$NON-NLS-1$
-			sbuf.append(MORE_HREF);
-			sbuf.append("\">"); //$NON-NLS-1$
-			String searchForMessage = NLS.bind(Messages.ContextHelpPart_searchFor, phrase);
-			sbuf.append(EscapeUtils.escapeSpecialChars(searchForMessage));
-			sbuf.append("</a></p>"); //$NON-NLS-1$
+			for (int term = 0; term < searchTerms.length; term++) {
+				sbuf.append("<p><img href=\""); //$NON-NLS-1$
+				sbuf.append(IHelpUIConstants.IMAGE_HELP_SEARCH);
+				sbuf.append("\"/>"); //$NON-NLS-1$
+				sbuf.append(" <a href=\""); //$NON-NLS-1$
+				sbuf.append(MORE_HREF);
+				sbuf.append(term);
+				sbuf.append("\">"); //$NON-NLS-1$
+				String searchForMessage = NLS.bind(Messages.ContextHelpPart_searchFor, searchTerms[term]);
+				sbuf.append(EscapeUtils.escapeSpecialChars(searchForMessage));
+				sbuf.append("</a></p>"); //$NON-NLS-1$
+			}
 		}
 		sbuf.append("</form>"); //$NON-NLS-1$
 		return sbuf.toString();
@@ -705,7 +707,8 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 	public void saveState(IMemento memento) {
 	}
 	
-	private void doMore() {
-		parent.startSearch(phrase);
+	private void doMore(String moreText) {
+		int index = Integer.parseInt(moreText);
+		parent.startSearch(searchTerms[index]);
 	}
 }
