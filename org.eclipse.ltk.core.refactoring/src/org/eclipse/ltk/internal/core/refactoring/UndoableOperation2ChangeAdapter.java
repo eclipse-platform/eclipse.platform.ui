@@ -165,7 +165,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 			fUndoChange= result.reverseChange;
 			fActiveChange= fUndoChange;
 			fExecuteChange= null;
-			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
@@ -193,7 +193,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 			fRedoChange= result.reverseChange;
 			fActiveChange= fRedoChange;
 			fUndoChange= null;
-			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
@@ -217,7 +217,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 				// return OK in all other cases. This by passes the dialog shown
 				// in the operation approver and allows refactoring to show its
 				// own dialog again inside the runnable.
-				return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 			}
 		} catch (CoreException e) {
 			throw new ExecutionException(e.getStatus().getMessage(), e);
@@ -246,7 +246,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 			fUndoChange= result.reverseChange;
 			fActiveChange= fUndoChange;
 			fRedoChange= null;
-			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), 0, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 		} catch (CoreException e) {
 			throw new ExecutionException(e.getStatus().getMessage(), e);
 		}
@@ -270,7 +270,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 				// return OK in all other cases. This by passes the dialog shown
 				// in the operation approver and allows refactoring to show its
 				// own dialog again inside the runnable.
-				return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+				return Status.OK_STATUS;
 			}
 		} catch (CoreException e) {
 			throw new ExecutionException(e.getStatus().getMessage(), e);
@@ -363,7 +363,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 
 	private IStatus asStatus(RefactoringStatus status) {
 		if (status.isOK()) {
-			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 		} else {
 			return status.getEntryWithHighestSeverity().toStatus();
 		}

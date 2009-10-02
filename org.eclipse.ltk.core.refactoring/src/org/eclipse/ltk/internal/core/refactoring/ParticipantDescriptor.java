@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,8 +64,7 @@ public class ParticipantDescriptor {
 				Messages.format( RefactoringCoreMessages.ParticipantDescriptor_error_class_missing, getId()),
 				null);
 		}
-		return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK,
-			RefactoringCoreMessages.ParticipantDescriptor_correct, null);
+		return Status.OK_STATUS;
 	}
 
 	public boolean matches(IEvaluationContext context, IParticipantDescriptorFilter filter, RefactoringStatus status) throws CoreException {

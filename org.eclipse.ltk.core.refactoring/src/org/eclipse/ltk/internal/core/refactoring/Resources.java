@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,7 +64,7 @@ public class Resources {
 		}
 		if (result != null)
 			return result;
-		return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -104,7 +104,7 @@ public class Resources {
 				readOnlyFiles.add(resource);
 		}
 		if (readOnlyFiles.size() == 0)
-			return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 
 		Map oldTimeStamps= createModificationStampMap(readOnlyFiles);
 		IStatus status= ResourcesPlugin.getWorkspace().validateEdit(
@@ -121,7 +121,7 @@ public class Resources {
 		}
 		if (modified != null)
 			return modified;
-		return new Status(IStatus.OK, RefactoringCorePlugin.getPluginId(), IStatus.OK, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	private static Map createModificationStampMap(List files){

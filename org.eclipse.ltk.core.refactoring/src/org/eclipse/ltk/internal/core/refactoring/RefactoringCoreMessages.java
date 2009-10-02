@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,8 +117,6 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String FolderDescription_SavingUndoInfoProgress;
 
 	public static String NullChange_name;
-
-	public static String ParticipantDescriptor_correct;
 
 	public static String ParticipantDescriptor_error_class_missing;
 

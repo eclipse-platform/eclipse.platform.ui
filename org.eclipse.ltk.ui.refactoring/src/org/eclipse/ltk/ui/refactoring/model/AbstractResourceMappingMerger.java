@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -51,7 +51,6 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
-import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
 import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
@@ -248,7 +247,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		} finally {
 			monitor.done();
 		}
-		return new Status(IStatus.OK, RefactoringCore.ID_PLUGIN, 0, "", null); //$NON-NLS-1$
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -408,7 +407,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 */
 	public IStatus merge(final IMergeContext context, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(context);
-		IStatus status= new Status(IStatus.OK, RefactoringCore.ID_PLUGIN, 0, "", null); //$NON-NLS-1$
+		IStatus status= Status.OK_STATUS;
 		if (monitor == null)
 			monitor= new NullProgressMonitor();
 		try {
@@ -449,7 +448,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		Assert.isNotNull(monitor);
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_merge_message, 1);
-			return new Status(IStatus.OK, RefactoringCore.ID_PLUGIN, 0, "", null); //$NON-NLS-1$
+			return Status.OK_STATUS;
 		} finally {
 			monitor.done();
 		}
