@@ -87,10 +87,6 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 	 */
 	private static final int BUFFER_SIZE= 8 * READER_CHUNK_SIZE;
 	/**
-	 * Constant for representing the OK status. This is considered a value object.
-	 */
-	private static final IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_ok, null);
-	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
 	private static final IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_error, null);
@@ -184,7 +180,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 		if (!isDisconnected()) {
 			if (fStatus != null)
 				return fStatus;
-			return (fDocument == null ? STATUS_ERROR : STATUS_OK);
+			return (fDocument == null ? STATUS_ERROR : Status.OK_STATUS);
 		}
 		return STATUS_ERROR;
 	}

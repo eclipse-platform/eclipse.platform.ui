@@ -112,7 +112,7 @@ class AdditionalInfoController extends AbstractInformationControlManager {
                         	return new Status(IStatus.WARNING, "org.eclipse.jface.text", IStatus.OK, "", x); //$NON-NLS-1$ //$NON-NLS-2$
                         }
 						setInfo((ICompletionProposal) proposal, info);
-					    return new Status(IStatus.OK, "org.eclipse.jface.text", IStatus.OK, "", null); //$NON-NLS-1$ //$NON-NLS-2$
+						return Status.OK_STATUS;
 					}
 				};
 				job.schedule();

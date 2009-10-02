@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -185,7 +185,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 							FileBufferOperationRunner runner= new FileBufferOperationRunner(FileBuffers.getTextFileBufferManager(), getShell());
 							runner.execute(locations, fileBufferOperation, new SubProgressMonitor(monitor, ticks));
 						}
-						status= new Status(IStatus.OK, EditorsUI.PLUGIN_ID, IStatus.OK, "", null);  //$NON-NLS-1$
+						status= Status.OK_STATUS;
 					} finally {
 						monitor.done();
 					}

@@ -92,10 +92,6 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 	 */
 	static final private QualifiedName ENCODING_KEY= new QualifiedName(FileBuffersPlugin.PLUGIN_ID, "encoding");  //$NON-NLS-1$
 	/**
-	 * Constant for representing the OK status. This is considered a value object.
-	 */
-	static final private IStatus STATUS_OK= new Status(IStatus.OK, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_ok, null);
-	/**
 	 * Constant for representing the error status. This is considered a value object.
 	 */
 	static final private IStatus STATUS_ERROR= new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, FileBuffersMessages.FileBuffer_status_error, null);
@@ -206,7 +202,7 @@ public class ResourceTextFileBuffer extends ResourceFileBuffer implements ITextF
 		if (!isDisconnected()) {
 			if (fStatus != null)
 				return fStatus;
-			return (fDocument == null ? STATUS_ERROR : STATUS_OK);
+			return (fDocument == null ? STATUS_ERROR : Status.OK_STATUS);
 		}
 		return STATUS_ERROR;
 	}

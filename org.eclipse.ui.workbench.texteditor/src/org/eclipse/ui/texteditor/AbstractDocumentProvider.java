@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -178,7 +178,9 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 
 	/**
 	 * Constant for representing the OK status. This is considered a value object.
+	 * 
 	 * @since 2.0
+	 * @deprecated As of 3.6, replaced by {@link Status#OK_STATUS}
 	 */
 	static final protected IStatus STATUS_OK= new Status(IStatus.OK, TextEditorPlugin.PLUGIN_ID, IStatus.OK, EditorMessages.AbstractDocumentProvider_ok, null);
 
@@ -963,7 +965,7 @@ public abstract class AbstractDocumentProvider implements IDocumentProvider, IDo
 		if (info != null) {
 			if (info.fStatus != null)
 				return info.fStatus;
-			return (info.fDocument == null ? STATUS_ERROR : STATUS_OK);
+			return (info.fDocument == null ? STATUS_ERROR : Status.OK_STATUS);
 		}
 
 		return STATUS_ERROR;

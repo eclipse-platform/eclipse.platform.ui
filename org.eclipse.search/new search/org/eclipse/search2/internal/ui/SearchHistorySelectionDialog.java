@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -168,7 +168,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 				status= new Status(IStatus.ERROR, SearchPlugin.getID(), IStatus.ERROR, SearchMessages.SearchHistorySelectionDialog_history_size_error, null);
 			}
 			if (status == null) {
-				status= new Status(IStatus.OK, SearchPlugin.getID(), IStatus.OK, new String(), null);
+				status= Status.OK_STATUS;
 			}
 			updateStatus(status);
 			return !status.matches(IStatus.ERROR);
