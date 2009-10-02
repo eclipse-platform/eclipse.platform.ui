@@ -64,6 +64,8 @@ public class MWindowTest extends TestCase {
 			MApplication<MWindow<?>> app = ApplicationFactory.eINSTANCE
 					.createMApplication();
 			appContext.set(MApplication.class.getName(), app);
+			appContext.set(IContributionFactory.class.getName(), getCFactory());
+			appContext.set(IEclipseContext.class.getName(), appContext);
 		}
 		return appContext;
 	}
@@ -121,7 +123,7 @@ public class MWindowTest extends TestCase {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
 
-						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
 
 						Object o = renderer.createGui(window);
@@ -143,7 +145,7 @@ public class MWindowTest extends TestCase {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
 
-						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
 
 						Object o = renderer.createGui(window);
@@ -183,7 +185,7 @@ public class MWindowTest extends TestCase {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
 
-						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
 
 						Object o = renderer.createGui(window);
@@ -237,7 +239,7 @@ public class MWindowTest extends TestCase {
 						IEclipseContext context = getAppContext();
 						Workbench.initializeContext(context, window);
 
-						PartRenderingEngine renderer = (PartRenderingEngine) contributionFactory
+						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
 
 						Object o = renderer.createGui(window);
