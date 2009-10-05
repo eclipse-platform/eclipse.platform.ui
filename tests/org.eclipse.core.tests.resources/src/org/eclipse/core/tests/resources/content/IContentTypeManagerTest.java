@@ -64,7 +64,10 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	private final static String XML_UTF_16BE = "<?xml version=\"1.0\" encoding=\"UTF-16BE\"?><org.eclipse.core.resources.tests.root/>";
 	private final static String XML_UTF_16LE = "<?xml version=\"1.0\" encoding=\"UTF-16LE\"?><org.eclipse.core.resources.tests.root/>";
 	private final static String XML_UTF_8 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.core.resources.tests.root/>";
-	private static final String XML_ROOT_ELEMENT_NS_MATCH1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><prefix:rootElement1 xmlns:prefix='urn:eclipse.core.runtime.ns1'/>";
+	
+	// used also by FilePropertyTesterTest
+	public static final String XML_ROOT_ELEMENT_NS_MATCH1 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><prefix:rootElement1 xmlns:prefix='urn:eclipse.core.runtime.ns1'/>";
+	
 	private static final String XML_ROOT_ELEMENT_NS_MATCH2 = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><!DOCTYPE rootElement2 SYSTEM \"org.eclipse.core.resources.tests.nothing\"><rootElement2 xmlns='urn:eclipse.core.runtime.ns2'/>";
 	private static final String XML_ROOT_ELEMENT_NS_WRONG_ELEM = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><rootElement3 xmlns='urn:eclipse.core.runtime.ns2'/>";
 	private static final String XML_ROOT_ELEMENT_NS_WRONG_NS = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><prefix:rootElement1 xmlns='http://example.com/'/>";
