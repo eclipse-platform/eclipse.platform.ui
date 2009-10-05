@@ -144,7 +144,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 			return root;
 		//treat a move across projects as a create on the destination and a delete on the source
 		if (!source.getFullPath().segment(0).equals(destination.getFullPath().segment(0)))
-			return MultiRule.combine(deleteRule(source), createRule(destination));
+			return MultiRule.combine(modifyRule(source.getProject()), modifyRule(destination.getProject()));
 		return factoryFor(source).moveRule(source, destination);
 	}
 

@@ -33,8 +33,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
-			for (int i = 0; i < aliases.length; i++)
-				super.createResource(node, (Resource) aliases[i]);
+			for (int i = 0; i < aliases.length; i++) {
+				if (aliases[i].getProject().isOpen() && !((Resource) aliases[i]).isFilteredFromParent())
+					super.createResource(node, (Resource) aliases[i]);
+			}
 	}
 
 	protected void deleteResource(UnifiedTreeNode node, Resource target) throws CoreException {
@@ -43,9 +45,21 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 		if (store == null)
 			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
-		if (aliases != null)
-			for (int i = 0; i < aliases.length; i++)
-				super.deleteResource(node, (Resource) aliases[i]);
+		if (aliases != null) {
+			boolean wasFilteredOut = false;
+			if (store.fetchInfo() != null && store.fetchInfo().exists())
+				wasFilteredOut = target.isFilteredFromParent();
+			for (int i = 0; i < aliases.length; i++) {
+				if (aliases[i].getProject().isOpen()) {
+					if (wasFilteredOut) {
+						if (((Resource) aliases[i]).isFilteredFromParent())
+							super.deleteResource(node, (Resource) aliases[i]);
+					}
+					else
+						super.deleteResource(node, (Resource) aliases[i]);
+				}
+			}
+		}
 	}
 
 	protected void resourceChanged(UnifiedTreeNode node, Resource target) {
@@ -55,8 +69,10 @@ public class RefreshLocalAliasVisitor extends RefreshLocalVisitor {
 			return;
 		IResource[] aliases = workspace.getAliasManager().computeAliases(target, store);
 		if (aliases != null)
-			for (int i = 0; i < aliases.length; i++)
-				super.resourceChanged(node, (Resource) aliases[i]);
+			for (int i = 0; i < aliases.length; i++) {
+				if (aliases[i].getProject().isOpen())
+					super.resourceChanged(node, (Resource) aliases[i]);
+			}
 	}
 
 	protected void fileToFolder(UnifiedTreeNode node, Resource target) throws CoreException {

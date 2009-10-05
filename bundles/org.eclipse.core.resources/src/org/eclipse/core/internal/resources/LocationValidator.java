@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -47,12 +48,16 @@ public class LocationValidator {
 	 */
 	private IStatus validateAbsolute(URI location, boolean error) {
 		if (!location.isAbsolute()) {
-			IPath pathPart = new Path(location.getSchemeSpecificPart());
 			String message;
-			if (pathPart.segmentCount() > 0)
-				message = NLS.bind(Messages.pathvar_undefined, location.toString(), pathPart.segment(0));
-			else
+			if (location.getSchemeSpecificPart() == null)
 				message = Messages.links_noPath;
+			else {
+				IPath pathPart = new Path(location.getSchemeSpecificPart());
+				if (pathPart.segmentCount() > 0)
+					message = NLS.bind(Messages.pathvar_undefined, location.toString(), pathPart.segment(0));
+				else
+					message = Messages.links_noPath;
+			}
 			int code = error ? IResourceStatus.VARIABLE_NOT_DEFINED : IResourceStatus.VARIABLE_NOT_DEFINED_WARNING;
 			return new ResourceStatus(code, null, message);
 		}
@@ -79,6 +84,8 @@ public class LocationValidator {
 	}
 
 	public IStatus validateLinkLocationURI(IResource resource, URI unresolvedLocation) {
+		if (unresolvedLocation.getSchemeSpecificPart() == null)
+			return new ResourceStatus(IResourceStatus.INVALID_VALUE, resource.getFullPath(), Messages.links_noPath);
 		String message;
 		//check if resource linking is disabled
 		if (ResourcesPlugin.getPlugin().getPluginPreferences().getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING)) {

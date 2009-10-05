@@ -340,10 +340,10 @@ public class ContentDescriptionManager implements IManager, IRegistryChangeListe
 				// there was a description in the cache, and it was up to date
 				return (IContentDescription) entry.getCached();
 		}
-		
-		// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
+			
+			// either we didn't find a description in the cache, or it was not up-to-date - has to be read again
 		// reading description can call 3rd party code, so don't synchronize it
-		IContentDescription newDescription = readDescription(file);
+			IContentDescription newDescription = readDescription(file);
 		
 		synchronized (this) {
 			// tries to get a description from the cache

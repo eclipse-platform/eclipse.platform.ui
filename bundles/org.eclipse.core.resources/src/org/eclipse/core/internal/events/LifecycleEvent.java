@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group Support
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
@@ -33,6 +34,16 @@ public class LifecycleEvent {
 	public static final int PRE_LINK_DELETE = 0x400;
 	public static final int PRE_LINK_MOVE = 0x800;
 	public static final int PRE_REFRESH = 0x1000;
+
+	public static final int PRE_GROUP_COPY = 0x2000;
+	public static final int PRE_GROUP_CREATE = 0x4000;
+	public static final int PRE_GROUP_DELETE = 0x8000;
+	public static final int PRE_GROUP_MOVE = 0x10000;
+
+	public static final int PRE_FILTER_ADD = 0x20000;
+	public static final int PRE_FILTER_REMOVE = 0x40000;
+
+	public static final int PRE_LINK_CHANGE = 0x80000;
 
 	/**
 	 * The kind of event

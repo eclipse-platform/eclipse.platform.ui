@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -693,6 +694,10 @@ class ResourceTree implements IResourceTree {
 			try {
 				//moving linked resources may have modified the description in memory
 				((ProjectDescription) destDescription).setLinkDescriptions(destination.internalGetDescription().getLinks());
+				// moving filters may have modified the description in memory
+				((ProjectDescription) destDescription).setFilterDescriptions(destination.internalGetDescription().getFilters());
+				// moving variables may have modified the description in memory
+				((ProjectDescription) destDescription).setVariableDescriptions(destination.internalGetDescription().getVariables());
 				destination.internalSetDescription(destDescription, true);
 				destination.writeDescription(IResource.FORCE);
 			} catch (CoreException e) {
@@ -976,7 +981,7 @@ class ResourceTree implements IResourceTree {
 
 			//for linked resources, nothing needs to be moved in the file system
 			boolean isDeep = (flags & IResource.SHALLOW) == 0;
-			if (!isDeep && source.isLinked()) {
+			if (!isDeep && (source.isLinked() || source.isGroup())) {
 				movedFolderSubtree(source, destination);
 				return;
 			}
@@ -1118,7 +1123,7 @@ class ResourceTree implements IResourceTree {
 		IResourceVisitor visitor = new IResourceVisitor() {
 			public boolean visit(IResource resource) {
 				if (resource.isLinked()) {
-					if (isDeep) {
+					if (isDeep && !((Resource) resource).isUnderGroup()) {
 						//clear the linked resource bit, if any
 						ResourceInfo info = ((Resource) resource).getResourceInfo(false, true);
 						info.clear(ICoreConstants.M_LINK);

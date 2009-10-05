@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,10 +7,12 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 
@@ -19,6 +21,15 @@ import org.eclipse.core.runtime.*;
  * in the project description.
  */
 public class LinkDescription implements Comparable {
+	public static final URI GROUP_LOCATION = getGroupLocation();
+	private static URI getGroupLocation() {
+		try {
+			return  new URI("group:/group"); //$NON-NLS-1$
+		} catch (URISyntaxException e) {
+			//cannot happen
+			return null;
+		}
+	}
 
 	private URI localLocation;
 
@@ -49,7 +60,7 @@ public class LinkDescription implements Comparable {
 		if (!(o.getClass() == LinkDescription.class))
 			return false;
 		LinkDescription other = (LinkDescription) o;
-		return localLocation.equals(other.localLocation) && type == other.type;
+		return localLocation.equals(other.localLocation) && path.equals(other.path) && type == other.type;
 	}
 
 	public URI getLocationURI() {
@@ -67,9 +78,13 @@ public class LinkDescription implements Comparable {
 	public int getType() {
 		return type;
 	}
+	
+	public boolean isGroup() {
+		return localLocation.equals(GROUP_LOCATION);
+	}
 
 	public int hashCode() {
-		return type + localLocation.hashCode();
+		return type + path.hashCode() + localLocation.hashCode();
 	}
 
 	public void setLocationURI(URI location) {
@@ -87,7 +102,7 @@ public class LinkDescription implements Comparable {
 	/**
 	 * Compare link descriptions in a way that sorts them topologically by path.
 	 * This is important to ensure we process links in topological (breadth-first) order when reconciling
-	 * links.  See {@link Project#reconcileLinks(ProjectDescription)}.
+	 * links.  See {@link Project#reconcileLinksAndGroups(ProjectDescription)}.
 	 */
 	public int compareTo(Object o) {
 		LinkDescription that = (LinkDescription) o;

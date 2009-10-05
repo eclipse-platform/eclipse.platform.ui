@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -30,6 +31,7 @@ public class Folder extends Container implements IFolder {
 		Container parent = (Container) getParent();
 		ResourceInfo info = parent.getResourceInfo(false, false);
 		parent.checkAccessible(getFlags(info));
+		checkValidGroupContainer(parent, false, false);
 
 		final boolean force = (updateFlags & IResource.FORCE) != 0;
 		if (!force && localInfo.exists()) {
@@ -118,7 +120,17 @@ public class Folder extends Container implements IFolder {
 		create((force ? IResource.FORCE : IResource.NONE), local, monitor);
 	}
 
-	/** 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.core.resources.IFolder#createGroup(int,
+	 *      IProgressMonitor)
+	 */
+	public void createGroup(int updateFlags, IProgressMonitor monitor) throws CoreException {
+		createLink(LinkDescription.GROUP_LOCATION, updateFlags, monitor);
+	}
+
+	/**
 	 * Ensures that this folder exists in the workspace. This is similar in
 	 * concept to mkdirs but it does not work on projects.
 	 * If this folder is created, it will be marked as being local.
@@ -138,7 +150,10 @@ public class Folder extends Container implements IFolder {
 			parent.checkExists(getFlags(info), true);
 		} else
 			((Folder) parent).ensureExists(monitor);
-		internalCreate(IResource.FORCE, true, monitor);
+		if (getType() == FOLDER && isUnderGroup())
+			createGroup(IResource.FORCE, monitor);
+		else
+			internalCreate(IResource.FORCE, true, monitor);
 	}
 
 	/* (non-Javadoc)

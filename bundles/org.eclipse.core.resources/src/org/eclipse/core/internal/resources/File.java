@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -120,6 +121,7 @@ public class File extends Resource implements IFile {
 				Container parent = (Container) getParent();
 				ResourceInfo info = parent.getResourceInfo(false, false);
 				parent.checkAccessible(getFlags(info));
+				checkValidGroupContainer(parent, false, false);
 
 				workspace.beginOperation(true);
 				IFileStore store = getStore();

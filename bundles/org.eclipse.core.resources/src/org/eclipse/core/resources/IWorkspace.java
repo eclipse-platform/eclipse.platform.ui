@@ -601,6 +601,26 @@ public interface IWorkspace extends IAdaptable {
 	public void forgetSavedTree(String pluginId);
 
 	/**
+	 * Returns all filter descriptors known to this workspace. Returns an empty
+	 * array if there are no installed filters.
+	 * 
+	 * @return the filter descriptors known to this workspace
+	 * @since 3.6
+	 */
+	public IFilterDescriptor[] getFilterDescriptors();
+
+	/**
+	 * Returns the filter descriptor with the given unique identifier, or
+	 * <code>null</code> if there is no such filter.
+	 * 
+	 * @param filterId the filter extension identifier (e.g.
+	 * <code>"com.example.coolFilter"</code>).
+	 * @return the filter descriptor, or <code>null</code>
+	 * @since 3.6
+	 */
+	public IFilterDescriptor getFilterDescriptor(String filterId);
+
+	/**
 	 * Returns all nature descriptors known to this workspace. Returns an empty
 	 * array if there are no installed natures.
 	 * 

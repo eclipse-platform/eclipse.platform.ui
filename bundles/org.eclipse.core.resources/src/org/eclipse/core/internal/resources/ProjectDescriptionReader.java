@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -51,6 +52,16 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_PROJECT_NAME = 19;
 	protected static final int S_PROJECTS = 20;
 	protected static final int S_REFERENCED_PROJECT_NAME = 21;
+	protected static final int S_FILTER = 22;
+	protected static final int S_FILTER_ID = 23;
+	protected static final int S_FILTER_ARGUMENTS = 24;
+	protected static final int S_FILTER_PATH = 25;
+	protected static final int S_FILTER_TYPE = 26;
+	protected static final int S_FILTERED_RESOURCES = 27;
+	protected static final int S_VARIABLE_LIST = 31;
+	protected static final int S_VARIABLE = 32;
+	protected static final int S_VARIABLE_NAME = 33;
+	protected static final int S_VARIABLE_VALUE = 34;
 
 	/**
 	 * Singleton sax parser factory
@@ -301,7 +312,19 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				break;
 			case S_LINKED_RESOURCES :
 				endLinkedResourcesElement(elementName);
-				return;
+				break;
+			case S_VARIABLE :
+				endVariableElement(elementName);
+				break;
+			case S_FILTER:
+				endFilterElement(elementName);
+				break;
+			case S_FILTERED_RESOURCES :
+				endFilteredResourcesElement(elementName);
+				break;
+			case S_VARIABLE_LIST :
+				endVariableListElement(elementName);
+				break;
 			case S_PROJECT_COMMENT :
 				if (elementName.equals(COMMENT)) {
 					projectDescription.setComment(charBuffer.toString());
@@ -354,6 +377,24 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_LINK_LOCATION_URI :
 				endLinkLocationURI(elementName);
 				break;
+			case S_FILTER_PATH :
+				endFilterPath(elementName);
+				break;
+			case S_FILTER_TYPE :
+				endFilterType(elementName);
+				break;
+			case S_FILTER_ID :
+				endFilterID(elementName);
+				break;
+			case S_FILTER_ARGUMENTS:
+				endFilterArguments(elementName);
+				break;
+			case S_VARIABLE_NAME :
+				endVariableName(elementName);
+				break;
+			case S_VARIABLE_VALUE :
+				endVariableValue(elementName);
+				break;
 		}
 		charBuffer.setLength(0);
 	}
@@ -368,6 +409,33 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			if (linkedResources.isEmpty())
 				return;
 			projectDescription.setLinkDescriptions(linkedResources);
+		}
+	}
+
+	/**
+	 * End this group of linked resources and add them to the project description.
+	 */
+	private void endFilteredResourcesElement(String elementName) {
+		if (elementName.equals(FILTERED_RESOURCES)) {
+			HashMap filteredResources = (HashMap) objectStack.pop();
+			state = S_PROJECT_DESC;
+			if (filteredResources.isEmpty())
+				return;
+			projectDescription.setFilterDescriptions(filteredResources);
+		}
+	}
+
+	/**
+	 * End this group of group resources and add them to the project
+	 * description.
+	 */
+	private void endVariableListElement(String elementName) {
+		if (elementName.equals(VARIABLE_LIST)) {
+			HashMap variableList = (HashMap) objectStack.pop();
+			state = S_PROJECT_DESC;
+			if (variableList.isEmpty())
+				return;
+			projectDescription.setVariableDescriptions(variableList);
 		}
 	}
 
@@ -398,6 +466,63 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 			// The HashMap of linked resources is the next thing on the stack
 			((HashMap) objectStack.peek()).put(link.getProjectRelativePath(), link);
+		}
+	}
+
+	/**
+	 * End a single filtered resource and add it to the HashMap.
+	 */
+	private void endFilterElement(String elementName) {
+		if (elementName.equals(FILTER)) {
+			state = S_FILTERED_RESOURCES;
+			// Pop off the filter description
+			FilterDescription filter = (FilterDescription) objectStack.pop();
+			// Make sure that you have something reasonable
+			IPath path = filter.getProjectRelativePath();
+			int type = filter.getType();
+			String id = filter.getFilterID();
+			// arguments can be null
+			if (id == null) {
+				parseProblem(NLS.bind(Messages.projRead_badFilterID, path, Integer.toString(type)));
+				return;
+			}
+			if (path == null) {
+				parseProblem(NLS.bind(Messages.projRead_emptyFilterName, Integer.toString(type), id));
+				return;
+			}
+			if (type == -1) {
+				parseProblem(NLS.bind(Messages.projRead_badFilterType, path, id));
+				return;
+			}
+
+			// The HashMap of filtered resources is the next thing on the stack
+			HashMap map = ((HashMap) objectStack.peek());
+			LinkedList/*FilterDescription*/ list = (LinkedList/*FilterDescription*/) map.get(filter.getProjectRelativePath());
+			if (list == null) {
+				list = new LinkedList/*FilterDescription*/();
+				map.put(filter.getProjectRelativePath(), list);
+			}
+			list.add(filter);
+		}
+	}
+
+	/**
+	 * End a single group resource and add it to the HashMap.
+	 */
+	private void endVariableElement(String elementName) {
+		if (elementName.equals(VARIABLE)) {
+			state = S_VARIABLE_LIST;
+			// Pop off the link description
+			VariableDescription desc = (VariableDescription) objectStack.pop();
+			// Make sure that you have something reasonable
+			if (desc.getName().length() == 0) {
+				parseProblem(NLS.bind(Messages.projRead_emptyVariableName,
+						project.getName()));
+				return;
+			}
+
+			// The HashMap of variables is the next thing on the stack
+			((HashMap) objectStack.peek()).put(desc.getName(), desc);
 		}
 	}
 
@@ -461,6 +586,92 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 	}
 
+	private void endFilterID(String elementName) {
+		if (elementName.equals(ID)) {
+			// A filter is an String.
+			String newID = charBuffer.toString().trim();
+			// objectStack has a FilterDescription on it. Set the type on this FilterDescription.
+			String oldID = ((FilterDescription) objectStack.peek()).getFilterID();
+			if (oldID != null) {
+				parseProblem(NLS.bind(Messages.projRead_badID, oldID, newID));
+			} else {
+				((FilterDescription) objectStack.peek()).setFilterID(newID);
+			}
+			state = S_FILTER;
+		}
+	}
+
+	private void endFilterArguments(String elementName) {
+		if (elementName.equals(ARGUMENTS)) {
+			String newArguments = charBuffer.toString();
+			// objectStack has a FilterDescription on it. Set the type on this FilterDescription.
+			String oldArguments = ((FilterDescription) objectStack.peek()).getArguments();
+			if (oldArguments != null) {
+				parseProblem(NLS.bind(Messages.projRead_badArguments, oldArguments, newArguments));
+			} else
+				((FilterDescription) objectStack.peek()).setArguments(newArguments);
+			state = S_FILTER;
+		}
+	}
+
+	private void endFilterPath(String elementName) {
+		if (elementName.equals(NAME)) {
+			IPath newPath = new Path(charBuffer.toString());
+			// objectStack has a FilterDescription on it. Set the name
+			// on this FilterDescription.
+			IPath oldPath = ((FilterDescription) objectStack.peek()).getProjectRelativePath();
+			if (oldPath.segmentCount() != 0) {
+				parseProblem(NLS.bind(Messages.projRead_badFilterName, oldPath, newPath));
+			} else {
+				((FilterDescription) objectStack.peek()).setPath(newPath);
+			}
+			state = S_FILTER;
+		}
+	}
+
+	private void endFilterType(String elementName) {
+		if (elementName.equals(TYPE)) {
+			int newType = -1;
+			try {
+				// parseInt expects a string containing only numerics
+				// or a leading '-'.  Ensure there is no leading/trailing
+				// whitespace.
+				newType = Integer.parseInt(charBuffer.toString().trim());
+			} catch (NumberFormatException e) {
+				log(e);
+			}
+			// objectStack has a FilterDescription on it. Set the type
+			// on this FilterDescription.
+			int oldType = ((FilterDescription) objectStack.peek()).getType();
+			if (oldType != -1) {
+				parseProblem(NLS.bind(Messages.projRead_badFilterType2, Integer.toString(oldType), Integer.toString(newType)));
+			} else {
+				((FilterDescription) objectStack.peek()).setType(newType);
+			}
+			state = S_FILTER;
+		}
+	}
+
+	private void endVariableName(String elementName) {
+		if (elementName.equals(NAME)) {
+			String value = charBuffer.toString();
+			// objectStack has a VariableDescription on it. Set the value
+			// on this ValueDescription.
+			((VariableDescription) objectStack.peek()).setName(value);
+			state = S_VARIABLE;
+		}
+	}
+
+	private void endVariableValue(String elementName) {
+		if (elementName.equals(VALUE)) {
+			String value = charBuffer.toString();
+			// objectStack has a VariableDescription on it. Set the value
+			// on this ValueDescription.
+			((VariableDescription) objectStack.peek()).setValue(value);
+			state = S_VARIABLE;
+		}
+	}
+
 	private void endLinkType(String elementName) {
 		if (elementName.equals(TYPE)) {
 			//FIXME we should handle this case by removing the entire link
@@ -485,7 +696,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_LINK;
 		}
 	}
-
+	
 	/**
 	 * End of an element that is part of a nature list
 	 */
@@ -587,6 +798,18 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Push a HashMap to collect all the links.
 			objectStack.push(new HashMap());
 			state = S_LINKED_RESOURCES;
+			return;
+		}
+		if (elementName.equals(FILTERED_RESOURCES)) {
+			// Push a HashMap to collect all the filters.
+			objectStack.push(new HashMap());
+			state = S_FILTERED_RESOURCES;
+			return;
+		}
+		if (elementName.equals(VARIABLE_LIST)) {
+			// Push a HashMap to collect all the variables.
+			objectStack.push(new HashMap());
+			state = S_VARIABLE_LIST;
 			return;
 		}
 	}
@@ -713,6 +936,14 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					objectStack.push(new LinkDescription());
 				}
 				break;
+			case S_VARIABLE_LIST:
+				if (elementName.equals(VARIABLE)) {
+					state = S_VARIABLE;
+					// Push place holders for the name, type and location of
+					// this link.
+					objectStack.push(new VariableDescription());
+				}
+				break;
 			case S_LINK :
 				if (elementName.equals(NAME)) {
 					state = S_LINK_PATH;
@@ -722,6 +953,32 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_LINK_LOCATION;
 				} else if (elementName.equals(LOCATION_URI)) {
 					state = S_LINK_LOCATION_URI;
+				}
+				break;
+			case S_FILTERED_RESOURCES :
+				if (elementName.equals(FILTER)) {
+					state = S_FILTER;
+					// Push place holders for the name, type, id and argumkents of
+					// this filter.
+					objectStack.push(new FilterDescription());
+				}
+				break;
+			case S_FILTER:
+				if (elementName.equals(NAME)) {
+					state = S_FILTER_PATH;
+				} else if (elementName.equals(TYPE)) {
+					state = S_FILTER_TYPE;
+				} else if (elementName.equals(ID)) {
+					state = S_FILTER_ID;
+				} else if (elementName.equals(ARGUMENTS)) {
+					state = S_FILTER_ARGUMENTS;
+				}
+				break;
+			case S_VARIABLE:
+				if (elementName.equals(NAME)) {
+					state = S_VARIABLE_NAME;
+				} else if (elementName.equals(VALUE)) {
+					state = S_VARIABLE_VALUE;
 				}
 				break;
 		}

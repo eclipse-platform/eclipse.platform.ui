@@ -7,6 +7,8 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
@@ -57,6 +59,15 @@ public class Messages extends NLS {
 	public static String links_vetoNature;
 	public static String links_workspaceVeto;
 	public static String links_wrongLocalType;
+	public static String links_resourceIsNotALink;
+	public static String links_setLocation;
+
+	public static String group_creating;
+	public static String group_errorGroupReconcile;
+	public static String group_invalidParent;
+
+	public static String filter_creating;
+	public static String filters_missingFilterType;
 
 	// local store
 	public static String localstore_copying;
@@ -121,6 +132,19 @@ public class Messages extends NLS {
 	public static String projRead_whichKey;
 	public static String projRead_whichValue;
 
+	public static String projRead_badGroupName;
+	public static String projRead_emptyGroupName;
+
+	public static String projRead_emptyVariableName;
+
+	public static String projRead_badFilterName;
+	public static String projRead_emptyFilterName;
+	public static String projRead_badFilterID;
+	public static String projRead_badFilterType;
+	public static String projRead_badFilterType2;
+	public static String projRead_badID;
+	public static String projRead_badArguments;
+	
 	public static String properties_couldNotClose;
 	public static String properties_qualifierIsNull;
 	public static String properties_readProperties;
@@ -271,6 +295,8 @@ public class Messages extends NLS {
 	public static String resources_writeWorkspaceMeta;
 
 	public static String synchronizer_partnerNotRegistered;
+
+	public static String parentVariableProvider_noVariableSpecified;
 
 	// URL
 	public static String url_badVariant;

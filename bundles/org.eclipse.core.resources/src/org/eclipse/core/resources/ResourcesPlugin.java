@@ -7,8 +7,12 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add PT_FILTER_PROVIDERS
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] add PT_VARIABLE_PROVIDERS
  *******************************************************************************/
 package org.eclipse.core.resources;
+
+import org.osgi.framework.ServiceRegistration;
 
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
@@ -94,6 +98,22 @@ public final class ResourcesPlugin extends Plugin {
 	 */
 	public static final String PT_MODEL_PROVIDERS = "modelProviders"; //$NON-NLS-1$
 	
+	/**
+	 * Simple identifier constant (value <code>"variableProviders"</code>)
+	 * for the variable providers extension point.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String PT_VARIABLE_PROVIDERS = "variableResolvers"; //$NON-NLS-1$
+
+	/**
+	 * Simple identifier constant (value <code>"filters"</code>)
+	 * for the filters extension point.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String PT_FILTERS = "filters"; //$NON-NLS-1$
+
 	/**
 	 * Constant identifying the job family identifier for the background autobuild job.
 	 * 

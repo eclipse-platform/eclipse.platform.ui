@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [105554] handle cyclic symbolic links
  *     Martin Oberhuber (Wind River) - [232426] shared prefix histories for symlinks
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -331,6 +332,7 @@ public class UnifiedTree {
 			IFileInfo[] list = fileTree != null ? fileTree.getChildInfos(store) : store.childInfos(EFS.NONE, null);
 			if (list == null)
 				return NO_CHILDREN;
+			list = ((Resource) node.getResource()).filterChildren(list);
 			int size = list.length;
 			if (size > 1)
 				quickSort(list, 0, size - 1);

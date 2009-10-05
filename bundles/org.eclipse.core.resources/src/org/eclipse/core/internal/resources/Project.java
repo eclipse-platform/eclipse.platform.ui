@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -518,8 +519,7 @@ public class Project extends Container implements IProject {
 					try {
 						IStatus result;
 						workspace.prepareOperation(buildRule, innerMonitor);
-						//don't open the tree eagerly because it will be wasted if no build occurs
-						workspace.beginOperation(false);
+						workspace.beginOperation(true);
 						result = workspace.getBuildManager().build(Project.this, trigger, builderName, args, Policy.subMonitorFor(innerMonitor, Policy.opWork));
 						if (!result.isOK())
 							throw new ResourceException(result);
@@ -527,8 +527,7 @@ public class Project extends Container implements IProject {
 						workspace.endOperation(buildRule, false, innerMonitor);
 						try {
 							workspace.prepareOperation(rule, innerMonitor);
-							//don't open the tree eagerly because it will be wasted if no change occurs
-							workspace.beginOperation(false);
+							workspace.beginOperation(true);
 							workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
 							//building may close the tree, so open it
 							if (workspace.getElementTree().isImmutable())
@@ -749,6 +748,10 @@ public class Project extends Container implements IProject {
 		return false;//projects are never linked
 	}
 
+	public boolean isGroup() {
+		return false;// projects are never groups
+	}
+
 	/* (non-Javadoc)
 	 * @see IResource#isTeamPrivateMember(int)
 	 */
@@ -908,8 +911,8 @@ public class Project extends Container implements IProject {
 					minorIssuesDuringRestore = workspace.getSaveManager().restore(this, Policy.subMonitorFor(monitor, Policy.opWork * 20 / 100));
 				} else {
 					info.set(M_USED);
-					//reconcile any links in the project description
-					IStatus result = reconcileLinks(info.getDescription());
+					//reconcile any links and groups in the project description
+					IStatus result = reconcileLinksAndGroups(info.getDescription());
 					if (!result.isOK())
 						throw new CoreException(result);
 					workspace.updateModificationStamp(info);
@@ -956,9 +959,9 @@ public class Project extends Container implements IProject {
 	 * @return status ok if everything went well, otherwise an ERROR multi-status 
 	 * 	describing the problems encountered.
 	 */
-	public IStatus reconcileLinks(ProjectDescription newDescription) {
-		HashMap newLinks = newDescription.getLinks();
+	public IStatus reconcileLinksAndGroups(ProjectDescription newDescription) {
 		String msg = Messages.links_errorLinkReconcile;
+		HashMap newLinks = newDescription.getLinks();
 		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.OPERATION_FAILED, msg, null);
 		//walk over old linked resources and remove those that are no longer defined
 		ProjectDescription oldDescription = internalGetDescription();
@@ -986,21 +989,44 @@ public class Project extends Container implements IProject {
 				}
 			}
 		}
-		//walk over new links and create if necessary
+		// walk over new links and groups and create if necessary
+		// Recreate them in order of the higher up in the tree hierarchy first,
+		// so we don't have to create intermediate directories that would turn
+		// out
+		// to be groups or link folders.
 		if (newLinks == null)
 			return status;
 		//sort links to avoid creating nested links before their parents
-		List sortedLinks = new ArrayList(newLinks.values());
-		Collections.sort(sortedLinks);
-		for (Iterator it = sortedLinks.iterator(); it.hasNext();) {
-			LinkDescription newLink = (LinkDescription) it.next();
+		TreeSet newLinksAndGroups = new TreeSet(new Comparator() {
+			public int compare(Object arg0, Object arg1) {
+				int numberOfSegments0 = ((LinkDescription) arg0).getProjectRelativePath().segmentCount();
+				int numberOfSegments1 = ((LinkDescription) arg1).getProjectRelativePath().segmentCount();
+				if (numberOfSegments0 != numberOfSegments1)
+					return numberOfSegments0 - numberOfSegments1;
+				else if (arg0.equals(arg1))
+					return 0;
+
+				return -1;
+			}
+
+		});
+		if (newLinks != null)
+			newLinksAndGroups.addAll(newLinks.values());
+
+		for (Iterator it = newLinksAndGroups.iterator(); it.hasNext();) {
+			Object description = it.next();
+			LinkDescription newLink = (LinkDescription) description;
 			try {
 				Resource toLink = workspace.newResource(getFullPath().append(newLink.getProjectRelativePath()), newLink.getType());
 				IContainer parent = toLink.getParent();
 				if (parent != null && !parent.exists() && parent.getType() == FOLDER)
 					((Folder) parent).ensureExists(Policy.monitorFor(null));
-				if (!toLink.exists() || !toLink.isLinked())
-					toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
+				if (!toLink.exists() || !toLink.isLinked()) {
+					if (newLink.isGroup())
+						((Folder) toLink).createGroup(IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
+					else
+						toLink.createLink(newLink.getLocationURI(), IResource.REPLACE | IResource.ALLOW_MISSING_LOCAL, null);
+				}
 			} catch (CoreException e) {
 				status.merge(e.getStatus());
 			}
@@ -1134,7 +1160,7 @@ public class Project extends Container implements IProject {
 			//links can only be created if the project is open
 			IStatus result = null;
 			if (isOpen())
-				result = reconcileLinks(description);
+				result = reconcileLinksAndGroups(description);
 			internalSetDescription(description, true);
 			if (result != null && !result.isOK())
 				throw new CoreException(result);

@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - get/setResourceAttribute code
  *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add hasFilters()
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -1700,6 +1702,27 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	public boolean isLinked();
 
 	/**
+	 * Returns whether this resource is a group.
+	 * 
+	 * @return <code>true</code> if this resource is a group, and
+	 *         <code>false</code> otherwise
+	 * @see IFolder#createGroup(int, IProgressMonitor)
+	 * @since 3.6
+	 */
+	public boolean isGroup();
+
+	/**
+	 * Returns whether this resource has filters.
+	 * 
+	 * @return <code>true</code> if this resource has filters, and 
+	 *   <code>false</code> otherwise
+	 * @see IContainer#addFilter(String, int, String, int, IProgressMonitor)
+	 * @see IContainer#removeFilter(String, int, String, int, IProgressMonitor)
+	 * @since 3.6
+	 */
+	public boolean hasFilters();
+
+	/**
 	 * Returns <code>true</code> if this resource has been linked to 
 	 * a location other than the default location calculated by the platform. This
 	 * location can be outside the project's content area or another location
@@ -2647,6 +2670,42 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceDelta#DESCRIPTION
 	 */
 	public void touch(IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Sets the value of the link location for a linked resource.
+	 * 
+	 * @param location
+	 *            the new location of the target link resource
+	 * @param updateFlags
+	 *            bit-wise or of update flag constants ({@link #FORCE},
+	 *            {@link #KEEP_HISTORY}, {@link #SHALLOW},
+	 *            {@link #BACKGROUND_REFRESH} and {@link #REPLACE}).
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception CoreException
+	 *                if isLinked() returns false.
+	 * @since 3.6
+	 */
+	public void setLinkLocation(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Sets the value of the link location for a linked resource.
+	 * 
+	 * @param location
+	 *            the new location of the target link resource
+	 * @param updateFlags
+	 *            bit-wise or of update flag constants ({@link #FORCE},
+	 *            {@link #KEEP_HISTORY}, {@link #SHALLOW},
+	 *            {@link #BACKGROUND_REFRESH} and {@link #REPLACE}).
+	 * @param monitor
+	 *            a progress monitor, or <code>null</code> if progress
+	 *            reporting is not desired
+	 * @exception CoreException
+	 *                if isLinked() returns false.
+	 * @since 3.6
+	 */
+	public void setLinkLocation(IPath location, int updateFlags, IProgressMonitor monitor) throws CoreException;
 	
 	
 }

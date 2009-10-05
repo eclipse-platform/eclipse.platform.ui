@@ -7,6 +7,8 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -91,6 +93,27 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.endTag(LINK);
 	}
 
+	protected void write(FilterDescription description, XMLWriter writer) {
+		writer.startTag(FILTER, null);
+		if (description != null) {
+			writer.printSimpleTag(NAME, description.getProjectRelativePath());
+			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
+			writer.printSimpleTag(ID, description.getFilterID());
+			if (description.getArguments() != null)
+				writer.printSimpleTag(ARGUMENTS, description.getArguments());
+		}
+		writer.endTag(FILTER);
+	}
+
+	protected void write(VariableDescription description, XMLWriter writer) {
+		writer.startTag(VARIABLE, null);
+		if (description != null) {
+			writer.printSimpleTag(NAME, description.getName());
+			writer.printSimpleTag(VALUE, description.getValue());
+		}
+		writer.endTag(VARIABLE);
+	}
+
 	/**
 	 * Writes a location to the XML writer.  For backwards compatibility,
 	 * local file system locations are written and read using a different tag
@@ -153,6 +176,14 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			write((LinkDescription) obj, writer);
 			return;
 		}
+		if (obj instanceof FilterDescription) {
+			write((FilterDescription) obj, writer);
+			return;
+		}
+		if (obj instanceof VariableDescription) {
+			write((VariableDescription) obj, writer);
+			return;
+		}
 		writer.printTabulation();
 		writer.println(obj.toString());
 	}
@@ -173,6 +204,22 @@ public class ModelObjectWriter implements IModelObjectConstants {
 				Collections.sort(sorted);
 				write(LINKED_RESOURCES, sorted, writer);
 			}
+			HashMap filters = description.getFilters();
+			if (filters != null) {
+				List sorted = new ArrayList();
+				for (Iterator it = filters.values().iterator(); it.hasNext();) {
+					List list = (List) it.next();
+					sorted.addAll(list);
+				}
+				Collections.sort(sorted);
+				write(FILTERED_RESOURCES, sorted, writer);
+			}
+			HashMap variables = description.getVariables();
+			if (variables != null) {
+				List sorted = new ArrayList(variables.values());
+				Collections.sort(sorted);
+				write(VARIABLE_LIST, sorted, writer);
+			}
 		}
 		writer.endTag(PROJECT_DESCRIPTION);
 	}
@@ -190,19 +237,19 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	protected void write(String name, Map table, XMLWriter writer) {
 		writer.startTag(name, null);
 		if (table != null) {
-			// ensure consistent order of map elements
-			List sorted = new ArrayList(table.keySet());
-			Collections.sort(sorted);
-
-			for (Iterator it = sorted.iterator(); it.hasNext();) {
-				String key = (String) it.next();
-				Object value = table.get(key);
-				writer.startTag(DICTIONARY, null);
-				{
-					writer.printSimpleTag(KEY, key);
-					writer.printSimpleTag(VALUE, value);
-				}
-				writer.endTag(DICTIONARY);
+		// ensure consistent order of map elements
+		List sorted = new ArrayList(table.keySet());
+		Collections.sort(sorted);
+		
+		for (Iterator it = sorted.iterator(); it.hasNext();) {
+			String key = (String) it.next();
+			Object value = table.get(key);
+			writer.startTag(DICTIONARY, null);
+			{
+				writer.printSimpleTag(KEY, key);
+				writer.printSimpleTag(VALUE, value);
+			}
+			writer.endTag(DICTIONARY);
 			}
 		}
 		writer.endTag(name);

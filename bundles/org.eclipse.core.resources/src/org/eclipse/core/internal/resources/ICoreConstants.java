@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -57,6 +58,11 @@ public interface ICoreConstants {
 	 * @since 2.1
 	 */
 	static final int M_LINK = 0x10000;
+	/**
+	 * Marks this resource as a group.
+	 * @since 3.6
+	 */
+	static final int M_GROUP = 0x80000;
 	/**
 	 * The file has no content description.
 	 * @since 3.0

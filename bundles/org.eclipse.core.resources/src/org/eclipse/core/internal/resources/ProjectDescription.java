@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,13 +7,13 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Martin Oberhuber (Wind River) - [245937] setLinkLocation() detects non-change
+ *     Martin Oberhuber (Wind River) - [245937] setLinkLocation() detects non-change
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.net.URI;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.utils.FileUtil;
@@ -46,6 +46,18 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	 * in this project, where IPath is the project relative path of the resource.
 	 */
 	protected HashMap linkDescriptions = null;
+	
+	/**
+	 * Map of (IPath -> LinkedList<FilterDescription>) pairs for each filtered resource
+	 * in this project, where IPath is the project relative path of the resource.
+	 */
+	protected HashMap filterDescriptions = null;
+
+	/**
+	 * Map of (String -> VariableDescription) pairs for each variable in this
+	 * project, where String is the name of the variable.
+	 */
+	protected HashMap variableDescriptions = null;
 
 	// fields
 	protected URI location = null;
@@ -60,6 +72,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		ProjectDescription clone = (ProjectDescription) super.clone();
 		//don't want the clone to have access to our internal link locations table or builders
 		clone.linkDescriptions = null;
+		clone.filterDescriptions = null;
+		if (variableDescriptions != null)
+			clone.variableDescriptions = (HashMap) variableDescriptions.clone();
 		clone.buildSpec = getBuildSpec(true);
 		return clone;
 	}
@@ -163,12 +178,40 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
+	 * Returns the filter for the given resource name. Returns null if
+	 * no such filter exists.
+	 */
+	synchronized public LinkedList/*<FilterDescription>*/ getFilter(IPath aPath) {
+		if (filterDescriptions == null)
+			return null;
+		return (LinkedList /*<FilterDescription> */) filterDescriptions.get(aPath);
+	}
+
+	/**
 	 * Returns the map of link descriptions (IPath (project relative path) -> LinkDescription).
 	 * Since this method is only used internally, it never creates a copy.
 	 * Returns null if the project does not have any linked resources.
 	 */
 	public HashMap getLinks() {
 		return linkDescriptions;
+	}
+
+	/**
+	 * Returns the map of filter descriptions (IPath (project relative path) -> LinkedList<FilterDescription>).
+	 * Since this method is only used internally, it never creates a copy.
+	 * Returns null if the project does not have any filtered resources.
+	 */
+	public HashMap getFilters() {
+		return filterDescriptions;
+	}
+
+	/**
+	 * Returns the map of variable descriptions (String (variable name) ->
+	 * VariableDescription). Since this method is only used internally, it never
+	 * creates a copy. Returns null if the project does not have any variables.
+	 */
+	public HashMap getVariables() {
+		return variableDescriptions;
 	}
 
 	/**
@@ -233,7 +276,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	public boolean hasPrivateChanges(ProjectDescription description) {
 		if (!Arrays.equals(dynamicRefs, description.getDynamicReferences(false)))
 			return true;
-		URI otherLocation = description.getLocationURI();
+		IPath otherLocation = description.getLocation();
 		if (location == null)
 			return otherLocation != null;
 		return !location.equals(otherLocation);
@@ -256,6 +299,19 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			return true;
 		if (!Arrays.equals(natures, description.getNatureIds(false)))
 			return true;
+		
+		HashMap otherFilters = description.getFilters();
+		if ((filterDescriptions == null) && (otherFilters != null))
+			return otherFilters != null;
+		if ((filterDescriptions != null) && !filterDescriptions.equals(otherFilters))
+			return true;
+
+		HashMap otherVariables = description.getVariables();
+		if ((variableDescriptions == null) && (otherVariables != null))
+			return true;
+		if ((variableDescriptions != null) && !variableDescriptions.equals(otherVariables))
+			return true;
+
 		HashMap otherLinks = description.getLinks();
 		if (linkDescriptions == null)
 			return otherLinks != null;
@@ -316,6 +372,24 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
+	 * Sets the map of filter descriptions (String name -> LinkedList<LinkDescription>).
+	 * Since this method is only used internally, it never creates a copy. May
+	 * pass null if this project does not have any filtered resources
+	 */
+	public void setFilterDescriptions(HashMap filterDescriptions) {
+		this.filterDescriptions = filterDescriptions;
+	}
+
+	/**
+	 * Sets the map of variable descriptions (String name ->
+	 * VariableDescription). Since this method is only used internally, it never
+	 * creates a copy. May pass null if this project does not have any variables
+	 */
+	public void setVariableDescriptions(HashMap variableDescriptions) {
+		this.variableDescriptions = variableDescriptions;
+	}
+
+	/**
 	 * Sets the description of a link. Setting to a description of null will
 	 * remove the link from the project description.
 	 * @return <code>true</code> if the description was actually changed,
@@ -353,6 +427,112 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		return true;
 	}
 
+	/**
+	 * Add the description of a filter. Setting to a description of null will
+	 * remove the filter from the project description.
+	 */
+	synchronized public void addFilter(IPath path, FilterDescription description) {
+		Assert.isNotNull(description);
+		if (filterDescriptions == null)
+			filterDescriptions = new HashMap(10);
+		LinkedList/*<FilterDescription>*/ descList = (LinkedList /*<FilterDescription> */) filterDescriptions.get(path);
+		if (descList == null) {
+			descList = new LinkedList/*<FilterDescription>*/();
+			filterDescriptions.put(path, descList);
+		}
+		descList.add(description);
+	}
+	
+	/**
+	 * Add the description of a filter. Setting to a description of null will
+	 * remove the filter from the project description.
+	 */
+	synchronized public void removeFilter(IPath path, FilterDescription description) {
+		if (filterDescriptions != null) {
+			LinkedList/*<FilterDescription>*/ descList = (LinkedList /*<FilterDescription> */) filterDescriptions.get(path);
+			if (descList != null) {
+				descList.remove(description);
+				if (descList.size() == 0) {
+					filterDescriptions.remove(path);
+					if (filterDescriptions.size() == 0)
+						filterDescriptions = null;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Sets the description of a variable. Setting to a description of null will
+	 * remove the variable from the project description.
+	 * @return <code>true</code> if the description was actually changed,
+	 *     <code>false</code> otherwise.
+	 * @since 3.5
+	 */
+	public boolean setVariableDescription(String name,
+			VariableDescription description) {
+		HashMap tempMap = variableDescriptions;
+		if (description != null) {
+			// addition or modification
+			if (tempMap == null)
+				tempMap = new HashMap(10);
+			else
+				// copy on write to protect against concurrent read
+				tempMap = (HashMap) tempMap.clone();
+			Object oldValue = tempMap.put(name, description);
+			if (oldValue!=null && description.equals(oldValue)) {
+				//not actually changed anything
+				return false;
+			}
+			variableDescriptions = tempMap;
+		} else {
+			// removal
+			if (tempMap == null)
+				return false;
+			// copy on write to protect against concurrent access
+			HashMap newMap = (HashMap) tempMap.clone();
+			Object oldValue = newMap.remove(name);
+			if (oldValue == null) {
+				//not actually changed anything
+				return false;
+			}
+			variableDescriptions = newMap.size() == 0 ? null : newMap;
+		}
+		return true;
+	}
+
+	/**
+	 * set the filters for a given resource. Setting to a description of null will
+	 * remove the filter from the project description.
+	 * @return <code>true</code> if the description was actually changed,
+	 *     <code>false</code> otherwise.
+	 */
+	synchronized public boolean setFilters(IPath path, LinkedList/*<FilterDescription>*/ descriptions) {
+		if (descriptions != null) {
+			// addition
+			if (filterDescriptions == null)
+				filterDescriptions = new HashMap(10);
+			Object oldValue = filterDescriptions.put(path, descriptions);
+			if (oldValue!=null && descriptions.equals(oldValue)) {
+				//not actually changed anything
+				return false;
+			}
+		}
+		else { 
+			// removal
+			if (filterDescriptions == null)
+				return false;
+			
+			Object oldValue = filterDescriptions.remove(path);
+			if (oldValue == null) {
+				//not actually changed anything
+				return false;
+			}
+			if (filterDescriptions.size() == 0)
+				filterDescriptions = null;
+		}
+		return true;
+	}
+
 	/* (non-Javadoc)
 	 * @see IProjectDescription#setLocation(IPath)
 	 */
@@ -385,5 +565,9 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 		Assert.isLegal(value != null);
 		staticRefs = copyAndRemoveDuplicates(value);
 		cachedRefs = null;
+	}
+
+	public URI getGroupLocationURI(IPath projectRelativePath) {
+		return LinkDescription.GROUP_LOCATION;
 	}
 }

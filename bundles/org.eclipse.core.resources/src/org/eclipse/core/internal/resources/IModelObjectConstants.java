@@ -7,11 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 public interface IModelObjectConstants {
 	public static final String ARGUMENTS = "arguments"; //$NON-NLS-1$
+	public static final String ID = "id"; //$NON-NLS-1$
 	public static final String AUTOBUILD = "autobuild"; //$NON-NLS-1$
 	public static final String BUILD_COMMAND = "buildCommand"; //$NON-NLS-1$
 	public static final String BUILD_ORDER = "buildOrder"; //$NON-NLS-1$
@@ -44,4 +47,8 @@ public interface IModelObjectConstants {
 	public static final String WORKSPACE_DESCRIPTION = "workspaceDescription"; //$NON-NLS-1$
 	public static final String LINKED_RESOURCES = "linkedResources"; //$NON-NLS-1$
 	public static final String LINK = "link"; //$NON-NLS-1$
+	public static final String FILTERED_RESOURCES = "filteredResources"; //$NON-NLS-1$
+	public static final String FILTER = "filter"; //$NON-NLS-1$
+	public static final String VARIABLE = "variable"; //$NON-NLS-1$
+	public static final String VARIABLE_LIST = "variableList"; //$NON-NLS-1$
 }

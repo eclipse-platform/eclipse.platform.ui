@@ -9,8 +9,11 @@
  *     IBM Corporation - initial API and implementation
  *     manklu@web.de - fix for bug 156082
  *     Bert Vingerhoets - fix for bug 169975
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Fix Concurency Exception
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
+
+import org.eclipse.core.runtime.CoreException;
 
 import java.net.URI;
 import java.util.*;
@@ -360,7 +363,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	}
 
 	private void addToLocationsMap(IResource link, IFileStore location) {
-		if (location != null)
+		if (location != null && !link.isGroup())
 			if (locationsMap.add(location, link))
 				nonDefaultResourceCount++;
 	}
@@ -537,11 +540,18 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		 * next alias request.
 		 */
 		switch (event.kind) {
+			case LifecycleEvent.PRE_LINK_CHANGE:
 			case LifecycleEvent.PRE_LINK_DELETE :
 				Resource link = (Resource) event.resource;
 				if (link.isLinked())
 					removeFromLocationsMap(link, link.getStore());
 				//fall through
+			case LifecycleEvent.PRE_FILTER_ADD:
+				changedLinks.add(event.resource);
+				break;
+			case LifecycleEvent.PRE_FILTER_REMOVE:
+				changedLinks.add(event.resource);
+				break;
 			case LifecycleEvent.PRE_LINK_CREATE :
 				changedLinks.add(event.resource);
 				break;
@@ -675,7 +685,8 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 		if (aliases.size() == 0)
 			return;
 		FileSystemResourceManager localManager = workspace.getFileSystemManager();
-		for (Iterator it = aliases.iterator(); it.hasNext();) {
+		HashSet aliasesCopy = (HashSet) aliases.clone();
+		for (Iterator it = aliasesCopy.iterator(); it.hasNext();) {
 			IResource alias = (IResource) it.next();
 			monitor.subTask(NLS.bind(Messages.links_updatingDuplicate, alias.getFullPath()));
 			if (alias.getType() == IResource.PROJECT) {
@@ -683,7 +694,8 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 					continue;
 				//project did not require deletion, so fall through below and refresh it
 			}
-			localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
+			if (!((Resource)alias).isFilteredFromParent())
+				localManager.refresh(alias, IResource.DEPTH_INFINITE, false, null);
 		}
 	}
 

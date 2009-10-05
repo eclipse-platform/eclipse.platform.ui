@@ -12,6 +12,8 @@
  *     Oakland Software Incorporated - added getSessionProperties and getPersistentProperties
  *     Holger Oehm <holger.oehm@sap.com> - [226264] race condition in Workspace.isTreeLocked()/setTreeLocked()
  *     Martin Oberhuber (Wind River) -  [245937] ProjectDescription#setLinkLocation() detects non-change
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -23,9 +25,11 @@ import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.runtime.OperationCanceledException;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
+import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.events.LifecycleEvent;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.properties.IPropertyManager;
@@ -239,7 +243,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 		ResourceInfo info;
 		checkAccessibleAndLocal(DEPTH_INFINITE);
-		
+
+		IPath destinationParent = destination.removeLastSegments(1);
+		checkValidGroupContainer(destinationParent, isLinked(), isGroup());
+
 		Resource dest = workspace.newResource(destination, destinationType);
 		dest.checkDoesNotExist();
 
@@ -269,7 +276,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
 			}
 			URI destLocation = dest.getLocationURI();
-			if (destLocation == null) {
+			if (destLocation == null && (dest.isUnderGroup() == false)) {
 				message = NLS.bind(Messages.localstore_locationUndefined, dest.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, dest.getFullPath(), message, null);
 			}
@@ -370,6 +377,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		ResourceInfo info;
 		checkAccessibleAndLocal(DEPTH_INFINITE);
 
+		IPath destinationParent = destination.removeLastSegments(1);
+		checkValidGroupContainer(destinationParent, isLinked(), isGroup());
+
 		Resource dest = workspace.newResource(destination, destinationType);
 
 		// check if we are only changing case
@@ -403,7 +413,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, getFullPath(), message, null);
 			}
 			URI destLocation = dest.getLocationURI();
-			if (destLocation == null) {
+			if (destLocation == null && (dest.isUnderGroup() == false)) {
 				message = NLS.bind(Messages.localstore_locationUndefined, dest.getFullPath());
 				throw new ResourceException(IResourceStatus.FAILED_READ_LOCAL, dest.getFullPath(), message, null);
 			}
@@ -427,6 +437,49 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		IStatus result = workspace.locationValidator.validatePath(toValidate, type, lastSegmentOnly);
 		if (!result.isOK())
 			throw new ResourceException(result);
+	}
+
+	/**
+	 * Checks that the destination is a suitable one given that it could be a
+	 * group.
+	 * 
+	 * @exception CoreException
+	 *                if the path points to a group
+	 */
+	public void checkValidGroupContainer(IPath destination, boolean isLink, boolean isGroup) throws CoreException {
+		if (!isLink && !isGroup) {
+			String message = Messages.group_invalidParent;
+			ResourceInfo info = workspace.getResourceInfo(destination, false,
+					false);
+			if (info != null && info.isSet(M_GROUP))
+				throw new ResourceException(new ResourceStatus(
+						IResourceStatus.INVALID_VALUE, null, message));
+		}
+	}
+
+	/**
+	 * Checks that the destination is a suitable one given that it could be a
+	 * group.
+	 * 
+	 * @exception CoreException
+	 *                if the path points to a group
+	 */
+	public void checkValidGroupContainer(Container destination, boolean isLink, boolean isGroup) throws CoreException {
+		if (!isLink && !isGroup) {
+			String message = Messages.group_invalidParent;
+			if (destination.isGroup())
+				throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message));
+		}
+	}
+
+	public IStatus getValidGroupContainer(IPath destination, boolean isLink, boolean isGroup) throws CoreException {
+		if (!isLink && !isGroup) {
+			String message = Messages.group_invalidParent;
+			ResourceInfo info = workspace.getResourceInfo(destination, false, false);
+			if (info.isSet(M_GROUP))
+				return new ResourceStatus(IResourceStatus.INVALID_VALUE, null, message);
+		}
+		return Status.OK_STATUS;
 	}
 
 	/* (non-Javadoc)
@@ -601,7 +654,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				IFileInfo fileInfo = assertLinkRequirements(localLocation, updateFlags);
 				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CREATE, this));
 				workspace.beginOperation(true);
-				
 				//replace existing resource, if applicable
 				if ((updateFlags & REPLACE) != 0) {
 					IResource existing = workspace.getRoot().findMember(getFullPath());
@@ -613,12 +665,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 					info.set(M_HIDDEN);
 				info.set(M_LINK);
 				localLocation = FileUtil.canonicalURI(localLocation);
+				LinkDescription linkDescription = new LinkDescription(this, localLocation);
+				if (linkDescription.isGroup())
+					info.set(M_GROUP);
 				getLocalManager().link(this, localLocation, fileInfo);
 				monitor.worked(Policy.opWork * 5 / 100);
-				
 				//save the location in the project description
 				Project project = (Project) getProject();
-				boolean changed = project.internalGetDescription().setLinkLocation(getProjectRelativePath(), new LinkDescription(this, localLocation));
+				boolean changed = project.internalGetDescription().setLinkLocation(getProjectRelativePath(), linkDescription);
 				if (changed)
 					try {
 						project.writeDescription(IResource.NONE);
@@ -649,6 +703,121 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		} finally {
 			monitor.done();
 		}
+	}
+
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IContainer#addFilter(String, int, String, IProgressMonitor)
+	 */
+	public void addFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(filterID);
+		Assert.isNotNull(getProject());
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = NLS.bind(Messages.links_creating, getFullPath());
+			monitor.beginTask(message, Policy.totalWork);
+			Policy.checkCanceled(monitor);
+			checkValidPath(path, FOLDER | PROJECT, true);
+			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_FILTER_ADD, this));
+				workspace.beginOperation(true);
+				monitor.worked(Policy.opWork * 5 / 100);
+				//save the filter in the project description
+				FilterDescription filter = new FilterDescription(this, type, filterID, arguments);
+				Project project = (Project) getProject();
+				project.internalGetDescription().addFilter(getProjectRelativePath(), filter);
+				project.writeDescription(IResource.NONE);
+				monitor.worked(Policy.opWork * 5 / 100);
+
+				//refresh to discover any new resources below this folder
+				if (getType() != IResource.FILE) {
+					//refresh either in background or foreground
+					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+						workspace.refreshManager.refresh(this);
+						monitor.worked(Policy.opWork * 90 / 100);
+					} else {
+						refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
+					}
+				} else
+					monitor.worked(Policy.opWork * 90 / 100);
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IFolder#removeFilter(String, int, String, IProgressMonitor)
+	 */
+	public void removeFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		Assert.isNotNull(filterID);
+		monitor = Policy.monitorFor(monitor);
+		try {
+			String message = NLS.bind(Messages.links_creating, getFullPath());
+			monitor.beginTask(message, Policy.totalWork);
+			Policy.checkCanceled(monitor);
+			checkValidPath(path, FOLDER | PROJECT, true);
+			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
+			try {
+				workspace.prepareOperation(rule, monitor);
+				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_FILTER_REMOVE, this));
+				workspace.beginOperation(true);
+				monitor.worked(Policy.opWork * 5 / 100);
+				//save the filter in the project description
+				FilterDescription filter = new FilterDescription(this, type, filterID, arguments);
+				Project project = (Project) getProject();
+				project.internalGetDescription().removeFilter(getProjectRelativePath(), filter);
+				project.writeDescription(IResource.NONE);
+				monitor.worked(Policy.opWork * 5 / 100);
+
+				//refresh to discover any new resources below this linked location
+				if (getType() != IResource.FILE) {
+					//refresh either in background or foreground
+					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+						workspace.refreshManager.refresh(this);
+						monitor.worked(Policy.opWork * 90 / 100);
+					} else {
+						refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
+					}
+				} else
+					monitor.worked(Policy.opWork * 90 / 100);
+			} catch (OperationCanceledException e) {
+				workspace.getWorkManager().operationCanceled();
+				throw e;
+			} finally {
+				workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			}
+		} finally {
+			monitor.done();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.IContainer#getFilters()
+	 */
+	public IResourceFilter[] getFilters() throws CoreException {
+		IResourceFilter[] results = null;
+		checkValidPath(path, FOLDER | PROJECT, true);
+		Project project = (Project) getProject();
+		ProjectDescription desc = project.internalGetDescription();
+		if (desc != null) {
+			LinkedList/*<FilterDescription>*/ list = desc.getFilter(getProjectRelativePath());
+			if (list != null) {
+				results = new IResourceFilter[list.size()];
+				for (int i = 0; i < list.size(); i++) {
+					results[i] = new Filter(project, (FilterDescription) list.get(i));
+				}
+				return results;
+			}
+		}
+		return new IResourceFilter[0];
 	}
 
 	/* (non-Javadoc)
@@ -807,15 +976,30 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		if (getType() != IResource.PROJECT && links != null) {
 			Project project = (Project) getProject();
 			ProjectDescription description = project.internalGetDescription();
-			boolean wasChanged = false;
-			for (Iterator it = links.iterator(); it.hasNext();)
-				wasChanged |= description.setLinkLocation(((IResource) it.next()).getProjectRelativePath(), null);
-			if (wasChanged) {
+			if (description != null) {
+				boolean wasChanged = false;
+				for (Iterator it = links.iterator(); it.hasNext();)
+					wasChanged |= description.setLinkLocation(((IResource) it.next()).getProjectRelativePath(), null);
+				if (wasChanged) {
+					project.internalSetDescription(description, true);
+					project.writeDescription(IResource.FORCE);
+				}
+			}
+		}
+
+		List filters = findFilters();
+		if ((filters != null) && (filters.size() > 0)) {
+			// delete resource filters
+			Project project = (Project) getProject();
+			ProjectDescription description = project.internalGetDescription();
+			if (description != null) {
+				for (Iterator it = filters.iterator(); it.hasNext();)
+					description.setFilters(((IResource) it.next()).getProjectRelativePath(), null);
 				project.internalSetDescription(description, true);
 				project.writeDescription(IResource.FORCE);
 			}
 		}
-
+		
 		// Delete properties after the resource is deleted from the tree. See bug 84584.
 		CoreException err = null;
 		try {
@@ -852,6 +1036,31 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			}
 		}
 		return links;
+	}
+
+	/*
+	 * Returns a list of all filtered resources at or below this resource, or null if there
+	 * are no links.
+	 */
+	private List findFilters() {
+		Project project = (Project) getProject();
+		ProjectDescription description = project.internalGetDescription();
+		List filters = null;
+		if (description != null) {
+			HashMap filterMap = description.getFilters();
+			if (filterMap != null) {
+				IPath myPath = getProjectRelativePath();
+				for (Iterator it = filterMap.keySet().iterator(); it.hasNext();) {
+					IPath filterPath = (IPath) it.next();
+					if (myPath.isPrefixOf(filterPath)) {
+						if (filters == null)
+							filters = new ArrayList();
+						filters.add(workspace.newResource(project.getFullPath().append(filterPath), IResource.FOLDER));
+					}
+				}
+			}
+		}
+		return filters;
 	}
 
 	/* (non-Javadoc)
@@ -950,10 +1159,20 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	protected void fixupAfterMoveSource() throws CoreException {
 		ResourceInfo info = getResourceInfo(true, true);
 		//if a linked resource is moved, we need to remove the location info from the .project 
-		if (isLinked()) {
+		if (isLinked() || isGroup()) {
 			Project project = (Project) getProject();
 			if (project.internalGetDescription().setLinkLocation(getProjectRelativePath(), null))
 				project.writeDescription(IResource.NONE);
+		}
+
+		List filters = findFilters();
+		if ((filters != null) && (filters.size() > 0)) {
+			// delete resource filters
+			Project project = (Project) getProject();
+			ProjectDescription description = project.internalGetDescription();
+			for (Iterator it = filters.iterator(); it.hasNext();)
+				description.setFilters(((IResource) it.next()).getProjectRelativePath(), null);
+			project.writeDescription(IResource.NONE);
 		}
 
 		// check if we deleted a preferences file 
@@ -1308,6 +1527,31 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		//the no ancestor checking case
 		ResourceInfo info = getResourceInfo(false, false);
 		return info != null && info.isSet(M_LINK);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see IResource#isGroup()
+	 */
+	public boolean isGroup() {
+		ResourceInfo info = getResourceInfo(false, false);
+		return info != null && info.isSet(M_GROUP);
+	}
+
+	/* (non-Javadoc)
+	 * @see IResource#hasFilters()
+	 */
+	public boolean hasFilters() {
+		IProject project = getProject();
+		if (project == null)
+			return false;
+		ProjectDescription desc = ((Project) project).internalGetDescription();
+		if (desc == null)
+			return false;
+		LinkedList/*<FilterDescription>*/  filters = desc.getFilter(getProjectRelativePath());
+		if ((filters != null) && (filters.size() > 0))
+			return true;
+		return false;
 	}
 
 	/**
@@ -1881,6 +2125,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			case IResource.FOLDER :
 				if (isLinked())
 					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_MOVE, this, destination, updateFlags));
+				if (isGroup())
+					workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_GROUP_MOVE, this, destination, updateFlags));
 				break;
 			case IResource.PROJECT :
 				if (!getName().equals(destination.getName())) {
@@ -1889,5 +2135,182 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				}
 				break;
 		}
+	}
+
+	/**  Calculates whether the current resource is filtered out from the resource tree
+	 *  by resource filters.  This can happen because resource filters apply to the resource, 
+	 *  or because resource filters apply to one of its parent.  For example, if "/foo/bar"
+	 * is filtered out, then calling isFilteredFromParent() on "/foo/bar/sub/file.txt" will 
+	 * return true as well, even though there's no resource filters that apply to "file.txt" per se.
+	 * 
+	 * @return true is the resource is filtered out from the resource tree
+	 */
+	public boolean isFilteredFromParent() {
+		Resource currentResource = this;
+		while (currentResource != null && currentResource.getParent() != null) {
+			Resource parent = (Resource) currentResource.getParent();
+			IFileStore store = currentResource.getStore();
+			if (store != null) {
+				IFileInfo fileInfo = store.fetchInfo();
+				if (fileInfo != null) {
+					if (!fileInfo.exists()) {
+						// If the file/folder doesn't exist, it won't have the file/folder flag set,
+						// so we create another one and set that attribute directly.
+						FileInfo info = new FileInfo(fileInfo.getName());
+						info.setDirectory(currentResource.getType() == IResource.FOLDER);
+						fileInfo = info;
+					}
+					IFileInfo[] filtered = parent.filterChildren(new IFileInfo[] {fileInfo});
+					if (filtered.length == 0)
+						return true;
+				}
+			}
+			currentResource = parent;
+		}
+		return false;
+	}
+	
+	public IFileInfo[] filterChildren(IFileInfo[] list) {
+		IPath relativePath = getProjectRelativePath();
+		Project project = (Project) getProject();
+		if ((project != null) && (relativePath != null)) {
+			LinkedList/*<Filter>*/currentIncludeFilters = new LinkedList/*<FilterDescription>*/();
+			LinkedList/*<Filter>*/currentExcludeFilters = new LinkedList/*<FilterDescription>*/();
+			LinkedList/*<FilterDescription>*/filters = null;
+			if (project.internalGetDescription() != null) {
+				filters = project.internalGetDescription().getFilter(relativePath);
+				if (filters != null) {
+					Iterator/*FilterDescription*/it = filters.iterator();
+					while (it.hasNext()) {
+						FilterDescription desc = (FilterDescription) it.next();
+						Filter filter = new Filter(project, desc);
+						if (filter.isIncludeOnly()) {
+							if (filter.isFirst())
+								currentIncludeFilters.addFirst(filter);
+							else
+								currentIncludeFilters.addLast(filter);
+						} else {
+							if (filter.isFirst())
+								currentExcludeFilters.addFirst(filter);
+							else
+								currentExcludeFilters.addLast(filter);
+						}
+					}
+				}
+				// verify inherited filters
+				while (relativePath.segmentCount() > 0) {
+					relativePath = relativePath.removeLastSegments(1);
+					filters = project.internalGetDescription().getFilter(relativePath);
+					if (filters != null) {
+						Iterator/*FilterDescription*/it = filters.iterator();
+						while (it.hasNext()) {
+							FilterDescription desc = (FilterDescription) it.next();
+							if (desc.isInheritable()) {
+								Filter filter = new Filter(project, desc);
+								if (filter.isIncludeOnly()) {
+									if (filter.isFirst())
+										currentIncludeFilters.addFirst(filter);
+									else
+										currentIncludeFilters.addLast(filter);
+								} else {
+									if (filter.isFirst())
+										currentExcludeFilters.addFirst(filter);
+									else
+										currentExcludeFilters.addLast(filter);
+								}
+							}
+						}
+					}
+				}
+			}
+			if ((currentIncludeFilters.size() > 0) || (currentExcludeFilters.size() > 0)) {
+				try {
+					list = Filter.filter(project, currentIncludeFilters, currentExcludeFilters, list);
+				} catch (CoreException e) {
+					// no handling, error has already been logged
+				}
+			}
+		}
+		return list;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IResource#setLinkLocation(IPath)
+	 */
+	public void setLinkLocation(URI location, int updateFlags,
+			IProgressMonitor monitor) throws CoreException {
+		if (!isLinked()) {
+			String message = NLS.bind(Messages.links_resourceIsNotALink, getFullPath());
+			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
+		}
+
+		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
+		try {
+			String message = NLS.bind(Messages.links_setLocation, getFullPath());
+			monitor.beginTask(message, Policy.totalWork);
+
+			workspace.prepareOperation(rule, monitor);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_LINK_CHANGE, this));
+			workspace.beginOperation(true);
+
+			ResourceInfo info = workspace.getResourceInfo(getFullPath(), true, false);
+			getLocalManager().setLocation(this, info, location);
+
+			LinkDescription linkDescription;
+			linkDescription = new LinkDescription(this, location);
+			Project project = (Project) getProject();
+			project.internalGetDescription().setLinkLocation(getProjectRelativePath(), linkDescription);
+			project.writeDescription(updateFlags);
+		} finally {
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+		}
+
+		final ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(this);
+		try {
+			workspace.prepareOperation(rule2, monitor);
+			workspace.beginOperation(true);
+			// refresh either in background or foreground
+			if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+				workspace.refreshManager.refresh(this);
+				monitor.worked(Policy.opWork * 90 / 100);
+			} else {
+				refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
+			}
+		} finally {
+			workspace.endOperation(rule2, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
+			monitor.done();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see IResource#setLinkLocation(URI)
+	 */
+	public void setLinkLocation(IPath location, int updateFlags, IProgressMonitor monitor) throws CoreException {
+		if (location.isAbsolute())
+			setLinkLocation(URIUtil.toURI(location.toPortableString()), updateFlags, monitor);
+		else
+			try {
+				setLinkLocation(new URI(null, null, location.toPortableString(), null), updateFlags, monitor);
+			} catch (URISyntaxException e) {
+				setLinkLocation(URIUtil.toURI(location.toPortableString()), updateFlags, monitor);
+			}
+	}
+
+	/*
+	 * @return whether the current resource has a parent that is a group.
+	 * 
+	 */
+	public boolean isUnderGroup() {
+		IContainer parent = getParent();
+		while (parent != null) {
+			if (parent.isGroup())
+				return true;
+			parent = parent.getParent();
+		}
+		return false;
 	}
 }

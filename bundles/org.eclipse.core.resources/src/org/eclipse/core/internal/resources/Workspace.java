@@ -8,6 +8,8 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Red Hat Incorporated - loadProjectDescription(InputStream)
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group and Project Path Variable Support
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -100,6 +102,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	protected IMoveDeleteHook moveDeleteHook = null;
 	protected NatureManager natureManager;
+	protected FilterTypeManager filterManager;
 	protected long nextMarkerId = 0;
 	protected long nextNodeId = 1;
 
@@ -697,7 +700,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		}
 	}
 
-	protected void copyTree(IResource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
+	protected void copyTree(IResource source, IPath destination, int depth,
+			int updateFlags, boolean keepSyncInfo) throws CoreException {
+		copyTree(source, destination, depth, updateFlags, keepSyncInfo, false, source.getType() == IResource.PROJECT);
+	}
+
+	protected void copyTree(IResource source, IPath destination, int depth,
+			int updateFlags, boolean keepSyncInfo, boolean moveResources, boolean movingProject)
+			throws CoreException {
+				
 		// retrieve the resource at the destination if there is one (phantoms included).
 		// if there isn't one, then create a new handle based on the type that we are
 		// trying to copy
@@ -736,7 +747,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// update link locations in project descriptions
 		if (source.isLinked()) {
 			LinkDescription linkDescription;
-			if ((updateFlags & IResource.SHALLOW) != 0) {
+			if (((updateFlags & IResource.SHALLOW) != 0) || ((Resource) source).isUnderGroup()) {
 				//for shallow move the destination is a linked resource with the same location
 				newInfo.set(ICoreConstants.M_LINK);
 				linkDescription = new LinkDescription(destinationResource, source.getLocationURI());
@@ -745,8 +756,29 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				newInfo.clear(ICoreConstants.M_LINK);
 				linkDescription = null;
 			}
+			if (moveResources && !movingProject) {
+				if (((Project) source.getProject()).internalGetDescription().setLinkLocation(source.getProjectRelativePath(), null))
+					((Project) source.getProject()).writeDescription(updateFlags);
+			}
 			Project project = (Project) destinationResource.getProject();
 			project.internalGetDescription().setLinkLocation(destinationResource.getProjectRelativePath(), linkDescription);
+			project.writeDescription(updateFlags);
+			newInfo.setFileStoreRoot(null);
+		}
+
+		// update filters in project descriptions
+		if (source.hasFilters() && source.getProject().exists()) {
+			Project sourceProject = (Project) source.getProject();
+			LinkedList/*<FilterDescription>*/ originalDescriptions = sourceProject.internalGetDescription().getFilter(source.getProjectRelativePath());
+			LinkedList/*<FilterDescription>*/ filterDescriptions = FilterDescription.copy(originalDescriptions, destinationResource.getProjectRelativePath());
+			if (moveResources && !movingProject) {
+				if (((Project) source.getProject())
+						.internalGetDescription()
+						.setFilters(source.getProjectRelativePath(), null))
+					((Project) source.getProject()).writeDescription(updateFlags);
+			}
+			Project project = (Project) destinationResource.getProject();
+			project.internalGetDescription().setFilters(destinationResource.getProjectRelativePath(), filterDescriptions);
 			project.writeDescription(updateFlags);
 		}
 
@@ -761,7 +793,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (projectCopy) {
 			IResource dotProject = ((Project) source).findMember(IProjectDescription.DESCRIPTION_FILE_NAME);
 			if (dotProject != null)
-				copyTree(dotProject, destination.append(dotProject.getName()), depth, updateFlags, keepSyncInfo);
+				copyTree(dotProject, destination.append(dotProject.getName()), depth, updateFlags, keepSyncInfo, moveResources, movingProject);
 		}
 		IResource[] children = ((IContainer) source).members(IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS | IContainer.INCLUDE_HIDDEN);
 		for (int i = 0, imax = children.length; i < imax; i++) {
@@ -1178,6 +1210,14 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return moveDeleteHook;
 	}
 
+	public IFilterDescriptor getFilterDescriptor(String filterId) {
+		return filterManager.getFilterDescriptor(filterId);
+	}
+
+	public IFilterDescriptor[] getFilterDescriptors() {
+		return filterManager.getFilterDescriptors();
+	}
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#getNatureDescriptor(String)
 	 */
@@ -1583,7 +1623,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	void move(Resource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
 		// overlay the tree at the destination path, preserving any important info
 		// in any already existing resource information
-		copyTree(source, destination, depth, updateFlags, keepSyncInfo);
+		copyTree(source, destination, depth, updateFlags, keepSyncInfo, true, source.getType() == IResource.PROJECT);
 		source.fixupAfterMoveSource();
 	}
 
@@ -1812,7 +1852,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			monitor.done();
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see IWorkspace#save(boolean, IProgressMonitor)
 	 */
@@ -1886,7 +1926,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
-			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager};
+			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager, natureManager, filterManager};
 			monitor.beginTask("", managers.length); //$NON-NLS-1$
 			String message = Messages.resources_shutdownProblems;
 			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
@@ -1945,6 +1985,8 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			pathVariableManager.startup(null);
 			natureManager = new NatureManager();
 			natureManager.startup(null);
+			filterManager = new FilterTypeManager();
+			filterManager.startup(null);
 			buildManager = new BuildManager(this, getWorkManager().getLock());
 			buildManager.startup(null);
 			notificationManager = new NotificationManager(this);
@@ -2123,5 +2165,4 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		if (!status[0].isOK())
 			throw new ResourceException(status[0]);
 	}
-
 }

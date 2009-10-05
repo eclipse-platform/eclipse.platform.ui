@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] add addFilter/removeFilter/getFilters
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -465,4 +466,68 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @since 3.0
 	 */
 	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Adds a new filter matching the arguments to this folder's filter list  
+	 * 
+	 * @param filterID the id of the resource filter provider
+	 * @param type (IResourceFilter.INCLUDE_ONLY or IResourceFilter.EXCLUDE_ALL) and/or IResourceFilter.INHERITABLE
+	 * @param arguments the string argument for this filter id, or null
+	 * @param updateFlags bit-wise or of update flag constants
+	 *   ({@link IResource#BACKGROUND_REFRESH})
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this filter could not be added. Reasons include:
+	 * <ul>
+	 * <li> This resource is not a folder.</li>
+	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
+	 *
+	 * @see IContainer#removeFilter(String, int, String, int, IProgressMonitor)
+	 * @see IContainer#getFilters()
+	 * 
+	 * @since 3.6
+	 */
+	public void addFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Remove the filter matching the arguments from this folder's filter list  
+	 * 
+	 * @param filterID the id of the resource filter provider
+	 * @param type (IResourceFilter.INCLUDE_ONLY or IResourceFilter.EXCLUDE_ALL) and/or IResourceFilter.INHERITABLE
+	 * @param arguments the string argument for this filter id, or null
+	 * @param updateFlags bit-wise or of update flag constants
+	 *   ({@link IResource#BACKGROUND_REFRESH})
+	 * @param monitor a progress monitor, or <code>null</code> if progress
+	 *    reporting is not desired
+	 * @exception CoreException if this filter could not be removed. Reasons include:
+	 * <ul>
+	 * <li> This resource is not a folder.</li>
+	 * </ul>
+	 * @exception OperationCanceledException if the operation is canceled. 
+	 * Cancelation can occur even if no progress monitor is provided.
+	 *
+	 * @see IContainer#addFilter(String, int, String, int, IProgressMonitor)
+	 * @see IContainer#getFilters()
+	 * 
+	 * @since 3.6
+	 */
+	public void removeFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException;
+
+	/**
+	 * Retrieve the filters for this folder.
+	 * If no filters exist for this resource, an empty array is returned.
+	 * 
+	 * @return this folder resources, or IResourceFilter[0] if no filters exist
+	 * @exception CoreException if this resource's filters could not be retrieved. Reasons include:
+	 * <ul>
+	 * <li> This resource is not a folder.</li>
+	 *
+	 * @see IContainer#addFilter(String, int, String, int, IProgressMonitor)
+	 * @see IContainer#removeFilter(String, int, String, int, IProgressMonitor)
+	 * 
+	 * @since 3.6
+	 */
+	public IResourceFilter[] getFilters() throws CoreException;
 }
