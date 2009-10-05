@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -142,8 +142,9 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		attributes = map;
 	}
 
-	public void setAttribute(String attributeName, Object value) {
-		value = checkValidAttribute(value);
+	public void setAttribute(String attributeName, Object value, boolean validate) {
+		if (validate)
+			value = checkValidAttribute(value);
 		if (attributes == null) {
 			if (value == null)
 				return;
@@ -160,7 +161,7 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 		}
 	}
 
-	public void setAttributes(Map map) {
+	public void setAttributes(Map map, boolean validate) {
 		if (map == null)
 			attributes = null;
 		else {
@@ -169,15 +170,15 @@ public class MarkerInfo implements IMarkerSetElement, Cloneable, IStringPoolPart
 				Object key = i.next();
 				Assert.isTrue(key instanceof String);
 				Object value = map.get(key);
-				setAttribute((String) key, MarkerInfo.checkValidAttribute(value));
+				setAttribute((String) key, value, validate);
 			}
 		}
 	}
 
-	public void setAttributes(String[] attributeNames, Object[] values) {
+	public void setAttributes(String[] attributeNames, Object[] values, boolean validate) {
 		Assert.isTrue(attributeNames.length == values.length);
 		for (int i = 0; i < attributeNames.length; i++)
-			setAttribute(attributeNames[i], values[i]);
+			setAttribute(attributeNames[i], values[i], validate);
 	}
 
 	public void setCreationTime(long value) {

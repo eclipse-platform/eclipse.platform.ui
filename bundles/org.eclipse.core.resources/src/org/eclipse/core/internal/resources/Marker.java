@@ -238,7 +238,8 @@ public class Marker extends PlatformObject implements IMarker {
 			//only need to generate delta info if none already
 			boolean needDelta = !manager.hasDelta(resource.getFullPath(), id);
 			MarkerInfo oldInfo = needDelta ? (MarkerInfo) markerInfo.clone() : null;
-			markerInfo.setAttribute(attributeName, value);
+			boolean validate = manager.isPersistentType(markerInfo.getType());
+			markerInfo.setAttribute(attributeName, value, validate);
 			if (manager.isPersistent(markerInfo))
 				((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 			if (needDelta) {
@@ -274,7 +275,8 @@ public class Marker extends PlatformObject implements IMarker {
 			//only need to generate delta info if none already
 			boolean needDelta = !manager.hasDelta(resource.getFullPath(), id);
 			MarkerInfo oldInfo = needDelta ? (MarkerInfo) markerInfo.clone() : null;
-			markerInfo.setAttributes(attributeNames, values);
+			boolean validate = manager.isPersistentType(markerInfo.getType());
+			markerInfo.setAttributes(attributeNames, values, validate);
 			if (manager.isPersistent(markerInfo))
 				((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 			if (needDelta) {
@@ -301,7 +303,8 @@ public class Marker extends PlatformObject implements IMarker {
 			//only need to generate delta info if none already
 			boolean needDelta = !manager.hasDelta(resource.getFullPath(), id);
 			MarkerInfo oldInfo = needDelta ? (MarkerInfo) markerInfo.clone() : null;
-			markerInfo.setAttributes(values);
+			boolean validate = manager.isPersistentType(markerInfo.getType());
+			markerInfo.setAttributes(values, validate);
 			if (manager.isPersistent(markerInfo))
 				((Resource) resource).getResourceInfo(false, true).set(ICoreConstants.M_MARKERS_SNAP_DIRTY);
 			if (needDelta) {

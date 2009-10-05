@@ -468,7 +468,8 @@ public interface IMarker extends IAdaptable {
 	 * 
 	 * <p>
 	 * The attribute value cannot be <code>String</code> 
-	 * whose UTF encoding exceeds 65535 bytes.
+	 * whose UTF encoding exceeds 65535 bytes. On persistent
+	 * markers this limit is enforced by an assertion.
 	 * </p>
 	 * 
 	 * <p>
@@ -519,7 +520,8 @@ public interface IMarker extends IAdaptable {
 	 * 
 	 * <p>
 	 * The values of the attributes cannot be <code>String</code> 
-	 * whose UTF encoding exceeds 65535 bytes.
+	 * whose UTF encoding exceeds 65535 bytes. On persistent markers
+	 * this limit is enforced by an assertion. 
 	 * </p>
 	 * 
 	 * <p>
@@ -550,7 +552,8 @@ public interface IMarker extends IAdaptable {
 	 * 
 	 * <p>
 	 * The values of the attributes cannot be <code>String</code> 
-	 * whose UTF encoding exceeds 65535 bytes.
+	 * whose UTF encoding exceeds 65535 bytes. On persistent markers
+	 * this limit is enforced by an assertion. 
 	 * </p>
 	 * 
 	 * <p>

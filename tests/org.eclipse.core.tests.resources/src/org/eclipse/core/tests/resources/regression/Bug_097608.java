@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -36,7 +36,7 @@ public class Bug_097608 extends ResourceTest {
 		String value = new String(chars);
 		IMarker marker = null;
 		try {
-			marker = ResourcesPlugin.getWorkspace().getRoot().createMarker(IMarker.MARKER);
+			marker = ResourcesPlugin.getWorkspace().getRoot().createMarker(IMarker.PROBLEM);
 			//first try a long value under the limit
 			marker.setAttribute(IMarker.MESSAGE, value);
 		} catch (CoreException e) {
@@ -78,7 +78,7 @@ public class Bug_097608 extends ResourceTest {
 
 		IMarker marker = null;
 		try {
-			marker = ResourcesPlugin.getWorkspace().getRoot().createMarker(IMarker.MARKER);
+			marker = ResourcesPlugin.getWorkspace().getRoot().createMarker(IMarker.PROBLEM);
 			//first try a long value under the limit
 			marker.setAttributes(markerAttributes);
 		} catch (CoreException e) {
