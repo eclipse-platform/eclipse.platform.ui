@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -40,6 +40,7 @@ public class AutomatedTests extends TestCase {
 		suite.addTest(org.eclipse.core.tests.internal.localstore.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.mapping.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.properties.AllTests.suite());
+		suite.addTest(org.eclipse.core.tests.internal.propertytester.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.resources.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.utils.AllTests.suite());
 		suite.addTest(org.eclipse.core.tests.internal.watson.AllTests.suite());

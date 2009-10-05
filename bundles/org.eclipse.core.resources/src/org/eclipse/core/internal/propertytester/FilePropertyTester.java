@@ -16,6 +16,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
+import org.eclipse.core.runtime.content.IContentTypeMatcher;
 
 /**
  * A property tester for various properties of files.
@@ -40,6 +41,14 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	 */
 	private static final String IS_KIND_OF = "kindOf"; //$NON-NLS-1$
 
+	/**
+	 * An argument for <code>"contentTypeId"</code>.
+	 * Setting <code>"useFilenameOnly"</code> indicates that the file content type should be determined by the file name only.
+	 * If <code>"useFilenameOnly"</code> is not specified, the file content type is determined by both, the file name and content.
+	 * @see IContentTypeMatcher#findContentTypeFor(String)
+	 */
+	private static final String USE_FILENAME_ONLY = "useFilenameOnly"; //$NON-NLS-1$
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -48,12 +57,15 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	 */
 	public boolean test(Object receiver, String method, Object[] args, Object expectedValue) {
 		if ((receiver instanceof IFile) && method.equals(CONTENT_TYPE_ID))
-			return testContentType((IFile) receiver, toString(expectedValue), isKindOfUsed(args));
+			return testContentType((IFile) receiver, toString(expectedValue), isArgumentUsed(args, IS_KIND_OF), isArgumentUsed(args, USE_FILENAME_ONLY));
 		return false;
 	}
 
-	private boolean isKindOfUsed(Object[] args) {
-		return ((args.length > 0) && IS_KIND_OF.equals(args[0]));
+	private boolean isArgumentUsed(Object[] args, String value) {
+		for (int i = 0; i < args.length; i++)
+			if (value.equals(args[i]))
+				return true;
+		return false;
 	}
 
 	/**
@@ -74,6 +86,8 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	 * @param isKindOfUsed
 	 *            Indicates whether the file content type should match <code>contentTypeId</code> 
 	 *            or should be a kind of <code>contentTypeId</code>.
+	 * @param useFilenameOnly
+	 *            Indicates to determine the file content type based on the file name only.
 	 * @return <code>true</code>, if the best matching content type for <code>file</code>
 	 * 		<ul>
 	 *			<li>has an identifier that matches <code>contentTypeId</code> 
@@ -83,21 +97,26 @@ public class FilePropertyTester extends ResourcePropertyTester {
 	 * 		</ul>
 	 * Otherwise it returns <code>false</code>.
 	 */
-	private boolean testContentType(final IFile file, String contentTypeId, boolean isKindOfUsed) {
+	private boolean testContentType(final IFile file, String contentTypeId, boolean isKindOfUsed, boolean useFilenameOnly) {
 		final String expectedValue = contentTypeId.trim();
 		IContentType actualContentType = null;
-		try {
-			IContentDescription contentDescription = file.getContentDescription();
-			if (contentDescription != null) {
-				actualContentType = contentDescription.getContentType();
+		if (!useFilenameOnly) {
+			if (!file.exists())
+				return false;
+			IContentDescription contentDescription = null;
+			try {
+				contentDescription = file.getContentDescription();
+			} catch (CoreException e) {
+				Policy.log(IStatus.ERROR, "Core exception while retrieving the content description", e);//$NON-NLS-1$
 			}
-		} catch (CoreException e) {
-			Policy.log(IStatus.ERROR, "Core exception while retrieving the content description", e);//$NON-NLS-1$
+			if (contentDescription != null)
+				actualContentType = contentDescription.getContentType();
+		} else {
+			actualContentType = Platform.getContentTypeManager().findContentTypeFor(file.getName());
 		}
 		if (actualContentType != null) {
-			if (isKindOfUsed) {
+			if (isKindOfUsed)
 				return actualContentType.isKindOf(Platform.getContentTypeManager().getContentType(expectedValue));
-			}
 			return expectedValue.equals(actualContentType.getId());
 		}
 		return false;
