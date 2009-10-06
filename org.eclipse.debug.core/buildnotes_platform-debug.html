@@ -18,7 +18,6 @@
   <li>Method addition: <code>public boolean isValidLaunchConfigurationName(String configname) throws IllegalArgumentException</code> </li>
   <li>Constant addition: <code>public static final String ATTR_PRIVATE</code></li>
 </ul>
-</p>
 <p><strong>Description: </strong>The <code>generateLaunchConfigurationName(String namePrefix)</code> method is a replacement for the traditional <code>generateUniqueLaunchConfigurationNameFrom(configname)</code> method - which has been deprecated. 
 The new method behaves the same as its predecessor but also provides error checking on the new name to ensure it does not use any system reserved characters or names, like <code>com</code> on Windows for example. If an invalid name or character is found
 the method makes an effort to correct the name in one of two ways:
@@ -40,21 +39,26 @@ the validation forthe <code>generateLaunchConfigurationName(String namePrefix)</
 <ul>
   <li>Class addition: <code>org.eclipse.debug.ui.actions.DebugCommandAction</code> </li>
   <li>Class addition: <code>org.eclipse.debug.ui.actions.DebugCommandHandler</code> </li>
-  <li>Class addition: <code>org.eclipse.debug.core.commands.AbstractDebugCommand</code> </li>
+  <li>Class addition: <code>org.eclipse.debug.core.commands.AbstractDebugCommand</code></li>
 </ul>
-</p>
 <p><strong>Description:</strong>The <code>IDebugCommandHandler</code> interface allows debugger to implement debug action handlers which execute asynchronously.  Most of the debugger actions user this interface to communicate with the debug model.  However, debuggers which need to add their own asynchronous actions had to duplicate the debug framework actions which invoke the <code>IDebugCommandHandler</code> handlers.  <code>DebugCommandAction</code> and <code>DebugCommandHandler</code> are base classes which can be extended by debuggers to implement new types of actions with asynchronous execution handlers.  Also, this change includes a standard base class <code>AbstractDebugCommand</code> to help implement the <code>IDebugCommandHandler</code> interface.</p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
 
 <h3>IRestartHandler</h3>
 <p><strong>What is affected:</strong>
 <ul>
-  <li>Interface addition: <code>org.eclipse.debug.core.commands.IRestartHandler</code> </li>
+  <li>Interface addition: <code>org.eclipse.debug.core.commands.IRestartHandler</code></li>
 </ul>
-</p>
 <p><strong>Description:</strong>The <code>IRestartHandler</code> interface enables a new "Restart" command.  If a debugger supplies the <code>IRestartHandler</code> as an adapter to debug model elements, the new Restart command will be enabled.  The restart command appears in the Debug view context menu and can be configured as a short cut.</p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
 
+<h3>RefreshUtil</h3>
+<p><strong>What is affected:</strong>
+<ul>
+  <li>Class addition: <code>org.eclipse.debug.core.RefreshUtil</code></li>
+</ul>
+<p><strong>Description:</strong>The <code>RefreshUtil</code> class provides API to create and restore mementos for resource collections as well as a convenience API for refreshing resources. This support was moved to <code>org.eclipse.debug.core</code> from <code>org.eclispe.debug.ui</code> such that headless plug-ins can leverage these features. </p>
+<p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
 <p>&nbsp;</p>
 </body>
 </html>
