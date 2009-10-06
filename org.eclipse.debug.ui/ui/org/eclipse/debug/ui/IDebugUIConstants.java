@@ -14,6 +14,7 @@ package org.eclipse.debug.ui;
 
 
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchManager;
  
 /**
  * Constant definitions for debug UI plug-in.
@@ -861,7 +862,7 @@ public interface IDebugUIConstants {
 	 * 
 	 * @since 2.0
 	 */
-	public static final String ATTR_PRIVATE = PLUGIN_ID + ".private"; //$NON-NLS-1$
+	public static final String ATTR_PRIVATE = ILaunchManager.ATTR_PRIVATE;
 	
 	/**
 	 * Launch configuration attribute - a boolean value that indicates if the launch configuration

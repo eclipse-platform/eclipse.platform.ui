@@ -11,29 +11,18 @@
 package org.eclipse.debug.ui;
 
 
-import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import com.ibm.icu.text.MessageFormat;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.MultiStatus;
-import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.eclipse.debug.core.RefreshUtil;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog;
-import org.eclipse.debug.internal.ui.stringsubstitution.SelectedResourceManager;
 import org.eclipse.debug.internal.ui.stringsubstitution.StringSubstitutionMessages;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -49,8 +38,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 
 /**
@@ -67,20 +54,17 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 
 	/**
 	 * Boolean attribute indicating if a refresh scope is recursive. Default
-	 * value is <code>false</code>.
+	 * value is <code>true</code>.
 	 */
-	public static final String ATTR_REFRESH_RECURSIVE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_RECURSIVE"; //$NON-NLS-1$
+	public static final String ATTR_REFRESH_RECURSIVE = RefreshUtil.ATTR_REFRESH_RECURSIVE;
 
 	/**
 	 * String attribute identifying the scope of resources that should be
 	 * refreshed after an external tool is run. The value is either a refresh
 	 * variable or the default value, <code>null</code>, indicating no refresh.
 	 */
-	public static final String ATTR_REFRESH_SCOPE = DebugPlugin.getUniqueIdentifier() + ".ATTR_REFRESH_SCOPE"; //$NON-NLS-1$
-	
-	// indicates no working set has been selected
-	private static final String NO_WORKING_SET = "NONE"; //$NON-NLS-1$
-	
+	public static final String ATTR_REFRESH_SCOPE = RefreshUtil.ATTR_REFRESH_SCOPE;
+		
 	// Check Buttons
 	private Button fRefreshButton;
 	private Button fRecursiveButton;
@@ -100,17 +84,6 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	
 	// Working set
 	private IWorkingSet fWorkingSet;
-
-	/**
-	 * XML tag used to designate the root of the persisted IWorkingSet
-	 */
-	private static final String TAG_LAUNCH_CONFIGURATION_WORKING_SET= "launchConfigurationWorkingSet"; //$NON-NLS-1$
-
-	/**
-	 * XML tag used for setting / getting the factory ID of the persisted IWorkingSet
-	 * Bug 37143
-	 */	
-	private static final String TAG_FACTORY_ID = "factoryID"; //$NON-NLS-1$
 	
 	/**
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
@@ -269,13 +242,13 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 			// select the workspace by default
 			fWorkspaceButton.setSelection(true);
 		} else {
-			if (scope.equals("${workspace}")) { //$NON-NLS-1$
+			if (scope.equals(RefreshUtil.MEMENTO_WORKSPACE)) {
 				fWorkspaceButton.setSelection(true);
-			} else if (scope.equals("${resource}")) { //$NON-NLS-1$
+			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_RESOURCE)) { 
 				fResourceButton.setSelection(true);
-			} else if (scope.equals("${container}")) { //$NON-NLS-1$
+			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_CONTAINER)) { 
 				fContainerButton.setSelection(true);
-			} else if (scope.equals("${project}")) { //$NON-NLS-1$
+			} else if (scope.equals(RefreshUtil.MEMENTO_SELECTED_PROJECT)) { 
 				fProjectButton.setSelection(true);
 			} else if (scope.startsWith("${resource:")) { //$NON-NLS-1$
 				fWorkingSetButton.setSelection(true);
@@ -288,8 +261,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 				}
 			} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
 				fWorkingSetButton.setSelection(true);
-				String memento = scope.substring(14, scope.length() - 1);
-				fWorkingSet = restoreWorkingSet(memento);
+				fWorkingSet = getWorkingSet(scope);
 			}
 		}
 	}
@@ -343,16 +315,16 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 */
 	private String generateScopeMemento() {
 		if (fWorkspaceButton.getSelection()) {
-			return "${workspace}"; //$NON-NLS-1$
+			return RefreshUtil.MEMENTO_WORKSPACE;
 		}
 		if (fResourceButton.getSelection()) {
-			return "${resource}"; //$NON-NLS-1$
+			return RefreshUtil.MEMENTO_SELECTED_RESOURCE;
 		}
 		if (fContainerButton.getSelection()) {
-			return "${container}"; //$NON-NLS-1$
+			return RefreshUtil.MEMENTO_SELECTED_CONTAINER;
 		}
 		if (fProjectButton.getSelection()) {
-			return "${project}"; //$NON-NLS-1$
+			return RefreshUtil.MEMENTO_SELECTED_PROJECT;
 		}
 		if (fWorkingSetButton.getSelection()) {
 			return getRefreshAttribute(fWorkingSet);
@@ -410,46 +382,7 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * @throws CoreException if an exception occurs while refreshing resources
 	 */
 	public static void refreshResources(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
-		if (monitor == null) {
-			monitor = new NullProgressMonitor();
-		}
-		String scope = getRefreshScope(configuration);
-		IResource[] resources= null;
-		if (scope != null) {
-			resources = getRefreshResources(scope);
-		}
-		if (resources == null || resources.length == 0){
-			return;
-		}
-		int depth = IResource.DEPTH_ONE;
-		if (isRefreshRecursive(configuration))
-			depth = IResource.DEPTH_INFINITE;
-	
-		if (monitor.isCanceled()) {
-			return;
-		}
-	
-		monitor.beginTask(StringSubstitutionMessages.RefreshTab_7, 
-			resources.length);
-	
-		MultiStatus status = new MultiStatus(DebugUIPlugin.getUniqueIdentifier(), 0, StringSubstitutionMessages.RefreshTab_8, null); 
-		for (int i = 0; i < resources.length; i++) {
-			if (monitor.isCanceled())
-				break;
-			if (resources[i] != null && resources[i].isAccessible()) {
-				try {
-					resources[i].refreshLocal(depth, null);
-				} catch (CoreException e) {
-					status.merge(e.getStatus());
-				}
-			}
-			monitor.worked(1);
-		}
-	
-		monitor.done();
-		if (!status.isOK()) {
-			throw new CoreException(status);
-		}
+		RefreshUtil.refreshResources(configuration, monitor);
 	}
 
 	/**
@@ -460,74 +393,8 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * @throws CoreException if unable to resolve a set of resources
 	 */
 	public static IResource[] getRefreshResources(String scope) throws CoreException {
-		if (scope.startsWith("${resource:")) { //$NON-NLS-1$
-			// This is an old format that is replaced with 'working_set'
-			String pathString = scope.substring(11, scope.length() - 1);
-			Path path = new Path(pathString);
-			IResource resource = ResourcesPlugin.getWorkspace().getRoot().findMember(path);
-			if (resource == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, MessageFormat.format(StringSubstitutionMessages.RefreshTab_43, new String[]{pathString}), null)); 
-			} 
-			return new IResource[]{resource};
-		} else if (scope.startsWith("${working_set:")) { //$NON-NLS-1$
-			IWorkingSet workingSet =  getWorkingSet(scope);
-			if (workingSet == null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IStatus.ERROR, StringSubstitutionMessages.RefreshTab_44, null));  
-			} 
-			IAdaptable[] elements = workingSet.getElements();
-			IResource[] resources = new IResource[elements.length];
-			for (int i = 0; i < elements.length; i++) {
-				IAdaptable adaptable = elements[i];
-				if (adaptable instanceof IResource) {
-					resources[i] = (IResource) adaptable;
-				} else {
-					resources[i] = (IResource) adaptable.getAdapter(IResource.class);
-				}
-			}
-			return resources;				
-		} else if(scope.equals("${workspace}")) { //$NON-NLS-1$
-			return new IResource[]{ResourcesPlugin.getWorkspace().getRoot()};
-		} else {
-			IResource resource = SelectedResourceManager.getDefault().getSelectedResource();
-			if (resource == null) {
-				// empty selection
-				return new IResource[]{};
-			}
-			if (scope.equals("${resource}")) { //$NON-NLS-1$
-				// resource = resource
-			} else if (scope.equals("${container}")) { //$NON-NLS-1$
-				resource = resource.getParent();
-			} else if (scope.equals("${project}")) { //$NON-NLS-1$
-				resource = resource.getProject();
-			}
-			return new IResource[]{resource};
-		}
+		return RefreshUtil.toResources(scope);
 	}
-	
-	/**
-	 * Restores a working set based on the XMLMemento represented within
-	 * the mementoString.
-	 * 
-	 * @param mementoString The string memento of the working set
-	 * @return the restored working set or <code>null</code> if problems occurred restoring the
-	 * working set.
-	 */
-	private static IWorkingSet restoreWorkingSet(String mementoString) {
-		if (NO_WORKING_SET.equals(mementoString)) {
-			return null;
-		}
-		StringReader reader= new StringReader(mementoString);
-		XMLMemento memento= null;
-		try {
-			memento = XMLMemento.createReadRoot(reader);
-		} catch (WorkbenchException e) {
-			DebugUIPlugin.log(e);
-			return null;
-		}
-
-		IWorkingSetManager workingSetManager= PlatformUI.getWorkbench().getWorkingSetManager();
-		return workingSetManager.createWorkingSet(memento);
-	}	
 	
 	/**
 	 * Returns the refresh scope attribute specified by the given launch configuration
@@ -561,29 +428,16 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 * @return an equivalent refresh attribute
 	 */
 	public static String getRefreshAttribute(IWorkingSet workingSet) {
-		String set = null;
 		if (workingSet == null || workingSet.getElements().length == 0) {
-			set = NO_WORKING_SET;
+			return RefreshUtil.toMemento(new IResource[0]);
 		} else {
-			XMLMemento workingSetMemento = XMLMemento.createWriteRoot(TAG_LAUNCH_CONFIGURATION_WORKING_SET);
-			workingSetMemento.putString(RefreshTab.TAG_FACTORY_ID, workingSet.getFactoryId());
-			workingSet.saveState(workingSetMemento);
-			StringWriter writer= new StringWriter();
-			try {
-				workingSetMemento.save(writer);
-			} catch (IOException e) {
-				DebugUIPlugin.log(e);
+			IAdaptable[] elements = workingSet.getElements();
+			IResource[] resources = new IResource[elements.length];
+			for (int i = 0; i < resources.length; i++) {
+				resources[i]= (IResource) elements[i].getAdapter(IResource.class);
 			}
-			set = writer.toString();
+			return RefreshUtil.toMemento(resources);
 		}
-		if (set != null) {
-			StringBuffer memento = new StringBuffer();
-			memento.append("${working_set:"); //$NON-NLS-1$
-			memento.append(set);
-			memento.append("}"); //$NON-NLS-1$
-			return memento.toString();
-		}
-		return null;
 	}
 	
 	/**
@@ -596,8 +450,14 @@ public class RefreshTab extends AbstractLaunchConfigurationTab {
 	 */
 	public static IWorkingSet getWorkingSet(String refreshAttribute) {
 		if (refreshAttribute.startsWith("${working_set:")) { //$NON-NLS-1$
-			String memento = refreshAttribute.substring(14, refreshAttribute.length() - 1);
-			return  restoreWorkingSet(memento);
+			try {
+				IResource[] resources = RefreshUtil.toResources(refreshAttribute);
+				IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
+				IWorkingSet workingSet = workingSetManager.createWorkingSet(StringSubstitutionMessages.RefreshTab_1, resources);
+				return workingSet;
+			} catch (CoreException e) {
+				DebugUIPlugin.log(e);
+			}
 		}
 		return null;
 	}

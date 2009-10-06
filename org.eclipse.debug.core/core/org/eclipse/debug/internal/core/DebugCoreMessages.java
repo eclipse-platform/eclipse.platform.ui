@@ -113,6 +113,13 @@ public class DebugCoreMessages extends NLS {
 	public static String RuntimeProcess_Exit_value_not_available_until_process_terminates__1;
 	public static String WatchExpression_0;
 	public static String NullStreamsProxy_0;
+	
+	public static String RefreshingResources;
+	public static String RefreshingResourcesError;
+
+	public static String RefreshUtil_0;
+
+	public static String RefreshUtil_1;
 
 	static {
 		// load message values from bundle file

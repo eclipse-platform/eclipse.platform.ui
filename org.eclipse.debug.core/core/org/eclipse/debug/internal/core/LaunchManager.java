@@ -179,7 +179,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * Step filter manager
 	 */
 	private StepFilterManager fStepFilterManager = null;
-	
+		
 	/**
 	 * Notifies a launch config listener in a safe runnable to handle
 	 * exceptions.
@@ -2657,4 +2657,5 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		}
 		return true;
 	}	
+	
 }

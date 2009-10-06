@@ -20,7 +20,7 @@ public class StringSubstitutionMessages extends NLS {
 
 	public static String RefreshTab_0;
 
-	public static String RefreshTab_43;
+	public static String RefreshTab_1;
 
 	public static String RefreshTab_44;
 	public static String RefreshTab_6;
