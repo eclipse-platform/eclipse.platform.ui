@@ -422,6 +422,9 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 				updateLaunchConfigurationDialog();
 				return Status.OK_STATUS;
 			}
+			public boolean shouldRun() {
+				return !getControl().isDisposed();
+			}
 		};
 	}
 	
