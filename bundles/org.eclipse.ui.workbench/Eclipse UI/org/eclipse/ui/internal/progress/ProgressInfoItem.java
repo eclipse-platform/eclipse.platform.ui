@@ -525,9 +525,11 @@ public class ProgressInfoItem extends Composite {
 
 		for (int i = 0; i < infos.length; i++) {
 			JobInfo jobInfo = infos[i];
-			if (jobInfo.hasTaskInfo()) {
+			TaskInfo taskInfo = jobInfo.getTaskInfo();
 
-				String taskString = jobInfo.getTaskInfo().getTaskName();
+			if (taskInfo != null) {
+
+				String taskString = taskInfo.getTaskName();
 				String subTaskString = null;
 				Object[] jobChildren = jobInfo.getChildren();
 				if (jobChildren.length > 0) {
