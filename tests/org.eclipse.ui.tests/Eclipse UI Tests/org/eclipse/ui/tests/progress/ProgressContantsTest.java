@@ -11,11 +11,17 @@
 
 package org.eclipse.ui.tests.progress;
 
+import org.eclipse.core.commands.Command;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IPageLayout;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.ProgressInfoItem;
 import org.eclipse.ui.internal.progress.ProgressView;
@@ -34,6 +40,46 @@ public class ProgressContantsTest extends UITestCase {
 	 */
 	public ProgressContantsTest(String testName) {
 		super(testName);
+	}
+
+	public void testCommandProperty() throws Exception {
+
+		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
+		ProgressView progressView = (ProgressView) window.getActivePage().showView(IPageLayout.ID_PROGRESS_VIEW);
+		assertNotNull(progressView);
+		processEvents();
+
+		DummyJob okJob = new DummyJob("OK Job", Status.OK_STATUS);
+
+		IWorkbench workbench = PlatformUI.getWorkbench();
+		ICommandService commandService = (ICommandService) workbench.getService(ICommandService.class);
+		String commandId = "org.eclipse.ui.tests.progressViewCommand";
+		Command command = commandService.getCommand(commandId);
+		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command, null);
+		okJob.setProperty(IProgressConstants.COMMAND_PROPERTY, parameterizedCommand);
+		okJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
+		okJob.schedule();
+
+		IHandlerService service = (IHandlerService) workbench.getService(IHandlerService.class);
+		CommandHandler handler = new CommandHandler();
+		service.activateHandler(commandId, handler);
+
+		okJob.join();
+
+		processEvents();
+
+		ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
+		for (int i = 0; i < progressInfoItems.length; i++) {
+			JobInfo[] jobInfos = progressInfoItems[i].getJobInfos();
+			for (int j = 0; j < jobInfos.length; j++) {
+				Job job = jobInfos[j].getJob();
+				if (job.equals(okJob)) {
+					progressInfoItems[i].executeTrigger();
+				}
+			}
+		}
+
+		assertTrue(handler.executed);
 	}
 
 	public void testKeepProperty() throws Exception {

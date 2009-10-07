@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,24 +63,46 @@ public interface IProgressConstants {
     public static final QualifiedName KEEPONE_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "keepone"); //$NON-NLS-1$
 
-    /**
-     * This property is used to associate an <code>IAction</code> with a Job.
-     * If the Job is shown in the UI, the action might be represented as a button or
-     * hyper link to allow the user to trigger a job specific action, like showing
-     * the Job's results.
-     * <p>
-     * The progress UI will track the enabled state of the action and its tooltip text.
-     * </p>
-     * <p>
-     * If the action implements <code>ActionFactory.IWorkbenchAction</code>, its
-     * <code>dispose</code> method will be called as soon as the Job is finally
-     * removed from the set of kept jobs.
-     * </p>
-     * @see org.eclipse.jface.action.IAction
-     * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction
-     **/
+	/**
+	 * This property is used to associate an <code>IAction</code> with a Job. If
+	 * the Job is shown in the UI, the action might be represented as a button
+	 * or hyper link to allow the user to trigger a job specific action, like
+	 * showing the Job's results.
+	 * <p>
+	 * The progress UI will track the enabled state of the action and its
+	 * tooltip text.
+	 * </p>
+	 * <p>
+	 * If the action implements <code>ActionFactory.IWorkbenchAction</code>, its
+	 * <code>dispose</code> method will be called as soon as the Job is finally
+	 * removed from the set of kept jobs.
+	 * </p>
+	 * <p>
+	 * Note: Only one of <code>ACTION_PROPERTY</code> or
+	 * <code>COMMAND_PROPERTY</code> should be used
+	 * </p>
+	 * 
+	 * @see org.eclipse.jface.action.IAction
+	 * @see org.eclipse.ui.actions.ActionFactory.IWorkbenchAction
+	 **/
     public static final QualifiedName ACTION_PROPERTY = new QualifiedName(
             PROPERTY_PREFIX, "action"); //$NON-NLS-1$
+
+	/**
+	 * This property is used to associate a <code>ParameterizedCommand</code>
+	 * with a Job. If the Job is shown in the UI, the command might be
+	 * represented as a button or hyper link to allow the user to trigger a job
+	 * specific action, like showing the Job's results.
+	 * <p>
+	 * Note: Only one of <code>ACTION_PROPERTY</code> or
+	 * <code>COMMAND_PROPERTY</code> should be used
+	 * </p>
+	 * 
+	 * @see org.eclipse.core.commands.ParameterizedCommand
+	 * @since 3.6
+	 **/
+	public static final QualifiedName COMMAND_PROPERTY = new QualifiedName(
+			PROPERTY_PREFIX, "command"); //$NON-NLS-1$
 
     /**
      * This property is used to associate an <code>ImageDescriptor</code> with a Job.

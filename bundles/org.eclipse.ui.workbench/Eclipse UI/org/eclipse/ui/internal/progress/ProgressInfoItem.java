@@ -1,7 +1,7 @@
 package org.eclipse.ui.internal.progress;
 
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,8 +16,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.Dialog;
@@ -49,9 +55,12 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.progress.IProgressConstants;
+import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
  * ProgressInfoItem is the item used to show jobs.
@@ -93,7 +102,7 @@ public class ProgressInfoItem extends Composite {
 
 	private static final String TEXT_KEY = "Text"; //$NON-NLS-1$
 
-	private static final String ACTION_KEY = "Action";//$NON-NLS-1$
+	private static final String TRIGGER_KEY = "Trigger";//$NON-NLS-1$
 
 	interface IndexListener {
 		/**
@@ -123,6 +132,8 @@ public class ProgressInfoItem extends Composite {
 	private boolean isShowing = true;
 
 	private ResourceManager resourceManager;
+
+	private Link link;
 
 	static {
 		JFaceResources
@@ -231,7 +242,6 @@ public class ProgressInfoItem extends Composite {
 				actionButton.setEnabled(false);
 				cancelOrRemove();
 			}
-
 		});
 		actionBar.addListener(SWT.Traverse, new Listener() {
 			/*
@@ -730,7 +740,6 @@ public class ProgressInfoItem extends Composite {
 	 */
 	void setLinkText(Job linkJob, String taskString, int index) {
 
-		Link link;
 		if (index >= taskEntries.size()) {// Is it new?
 			link = new Link(this, SWT.NONE);
 
@@ -758,8 +767,6 @@ public class ProgressInfoItem extends Composite {
 
 			link.setLayoutData(linkData);
 
-			final Link finalLink = link;
-
 			link.addSelectionListener(new SelectionAdapter() {
 				/*
 				 * (non-Javadoc)
@@ -767,18 +774,7 @@ public class ProgressInfoItem extends Composite {
 				 * @see org.eclipse.swt.events.SelectionListener#widgetSelected(org.eclipse.swt.events.SelectionEvent)
 				 */
 				public void widgetSelected(SelectionEvent e) {
-
-					IAction action = (IAction) finalLink.getData(ACTION_KEY);
-					action.run();
-
-					updateAction(action, finalLink);
-
-					Object text = finalLink.getData(TEXT_KEY);
-					if (text == null)
-						return;
-
-					// Refresh the text as enablement might have changed
-					updateText((String) text, finalLink);
+					executeTrigger();
 				}
 			});
 
@@ -790,11 +786,11 @@ public class ProgressInfoItem extends Composite {
 				 */
 				public void handleEvent(Event event) {
 
-					Object text = finalLink.getData(TEXT_KEY);
+					Object text = link.getData(TEXT_KEY);
 					if (text == null)
 						return;
 
-					updateText((String) text, finalLink);
+					updateText((String) text, link);
 
 				}
 			});
@@ -807,28 +803,87 @@ public class ProgressInfoItem extends Composite {
 		link.setData(TEXT_KEY, taskString);
 
 		// check for action property
-		Object property = linkJob
+		Object actionProperty = linkJob
 				.getProperty(IProgressConstants.ACTION_PROPERTY);
-		updateAction(property, link);
+		Object commandProperty = linkJob
+				.getProperty(IProgressConstants.COMMAND_PROPERTY);
+
+		if (actionProperty != null && commandProperty != null) {
+			// if both are specified, then use neither
+			updateTrigger(null, link);
+		} else {
+			Object property = actionProperty != null ? actionProperty
+					: commandProperty;
+			updateTrigger(property, link);
+		}
 
 		updateText(taskString, link);
 
 	}
 
+	public void executeTrigger() {
+
+		Object data = link.getData(TRIGGER_KEY);
+		if (data instanceof IAction) {
+			IAction action = (IAction) data;
+			if (action.isEnabled())
+				action.run();
+			updateTrigger(action, link);
+		} else if (data instanceof ParameterizedCommand) {
+			IWorkbench workbench = PlatformUI
+					.getWorkbench();
+			IHandlerService handlerService = (IHandlerService) workbench
+					.getService(
+							IHandlerService.class);
+			IStatus status = Status.OK_STATUS;
+			try {
+				handlerService
+						.executeCommand((ParameterizedCommand) data, null);
+			} catch (ExecutionException e) {
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
+						.getMessage(), e);
+			} catch (NotDefinedException e) {
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
+						.getMessage(), e);
+			} catch (NotEnabledException e) {
+				status = new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, e
+						.getMessage(), e);
+			} catch (NotHandledException e) {
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
+						.getMessage(), e);
+			}
+
+			if (!status.isOK()) {
+				StatusManager.getManager().handle(status,
+						StatusManager.LOG | StatusManager.SHOW);
+			}
+		}
+
+		Object text = link.getData(TEXT_KEY);
+		if (text == null)
+			return;
+
+		// Refresh the text as enablement might have changed
+		updateText((String) text, link);
+	}
+
 	/**
-	 * Update the action key if action is enabled or remove it if not
+	 * Update the trigger key if either action is available and enabled or
+	 * command is available
 	 * 
-	 * @param action
+	 * @param trigger
 	 *            {@link Object} or <code>null</code>
 	 * @param link
 	 */
-	private void updateAction(Object action, Link link) {
+	private void updateTrigger(Object trigger, Link link) {
 
-		if (action != null && action instanceof IAction
-				&& ((IAction) action).isEnabled())
-			link.setData(ACTION_KEY, action);
-		else
-			link.setData(ACTION_KEY, null);
+		if (trigger instanceof IAction && ((IAction) trigger).isEnabled()) {
+			link.setData(TRIGGER_KEY, trigger);
+		} else if (trigger instanceof ParameterizedCommand) {
+			link.setData(TRIGGER_KEY, trigger);
+		} else {
+			link.setData(TRIGGER_KEY, null);
+		}
 
 	}
 
@@ -842,7 +897,7 @@ public class ProgressInfoItem extends Composite {
 		taskString = Dialog.shortenText(taskString, link);
 
 		// Put in a hyperlink if there is an action
-		link.setText(link.getData(ACTION_KEY) == null ? taskString : NLS.bind(
+		link.setText(link.getData(TRIGGER_KEY) == null ? taskString : NLS.bind(
 				"<a>{0}</a>", taskString));//$NON-NLS-1$
 	}
 

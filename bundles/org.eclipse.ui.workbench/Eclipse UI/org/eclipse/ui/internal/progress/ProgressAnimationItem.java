@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.NotEnabledException;
+import org.eclipse.core.commands.NotHandledException;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.Util;
@@ -35,7 +41,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
@@ -109,36 +117,70 @@ public class ProgressAnimationItem extends AnimationItem implements
 						StatusManager.getManager().handle(statusAdapter,
 								StatusManager.SHOW);
 
-						JobTreeElement topElement = (JobTreeElement) ji
-								.getParent();
-						if (topElement == null) {
-							topElement = ji;
-						}
-						FinishedJobs.getInstance().remove(topElement);
+						removeTopElement(ji);
 					}
 
-					IAction action = null;
-					Object property = job
-							.getProperty(IProgressConstants.ACTION_PROPERTY);
-					if (property instanceof IAction) {
-						action = (IAction) property;
-					}
-					if (action != null && action.isEnabled()) {
-						action.run();
-						JobTreeElement topElement = (JobTreeElement) ji
-								.getParent();
-						if (topElement == null) {
-							topElement = ji;
-						}
-						FinishedJobs.getInstance().remove(topElement);
-						return;
-					}
+					execute(ji, job);
 				}
 			}
 		}
 
 		progressRegion.processDoubleClick();
 		refresh();
+	}
+
+	/**
+	 * @param ji
+	 * @param job
+	 */
+	private void execute(JobInfo ji, Job job) {
+
+		Object prop = job.getProperty(IProgressConstants.ACTION_PROPERTY);
+		if (prop instanceof IAction && ((IAction) prop).isEnabled()) {
+			IAction action = (IAction) prop;
+			action.run();
+			removeTopElement(ji);
+		}
+
+		prop = job.getProperty(IProgressConstants.COMMAND_PROPERTY);
+		if (prop instanceof ParameterizedCommand) {
+			ParameterizedCommand command = (ParameterizedCommand) prop;
+			IWorkbenchWindow window = getWindow();
+			IHandlerService service = (IHandlerService) window
+					.getService(IHandlerService.class);
+			Exception exception = null;
+			try {
+				service.executeCommand(command, null);
+				removeTopElement(ji);
+			} catch (ExecutionException e) {
+				exception = e;
+			} catch (NotDefinedException e) {
+				exception = e;
+			} catch (NotEnabledException e) {
+				exception = e;
+			} catch (NotHandledException e) {
+				exception = e;
+			}
+
+			if (exception != null) {
+				Status status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID,
+						exception.getMessage(), exception);
+				StatusManager.getManager().handle(status,
+						StatusManager.LOG | StatusManager.SHOW);
+			}
+
+		}
+	}
+
+	/**
+	 * @param ji
+	 */
+	private void removeTopElement(JobInfo ji) {
+		JobTreeElement topElement = (JobTreeElement) ji.getParent();
+		if (topElement == null) {
+			topElement = ji;
+		}
+		FinishedJobs.getInstance().remove(topElement);
 	}
 
 	private IAction getAction(Job job) {

@@ -4215,6 +4215,10 @@
                   id="org.eclipse.ui.commands.radioState">
             </state>
          </command>
+         <command
+               id="org.eclipse.ui.tests.progressViewCommand"
+               name="Progress View Command">
+         </command>
       </extension>
    <extension id="rcpSessionApplication" point="org.eclipse.core.runtime.applications">
 	   <application cardinality="singleton-global" thread="main" visible="true">
