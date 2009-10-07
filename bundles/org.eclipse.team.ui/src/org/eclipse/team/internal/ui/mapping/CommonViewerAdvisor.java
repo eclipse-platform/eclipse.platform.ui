@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,6 +300,19 @@ public class CommonViewerAdvisor extends AbstractTreeViewerAdvisor implements IN
 						new DecoratingLabelProvider(lp, decorator),
 						PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator());
 				viewer.setLabelProvider(dlp);
+			}
+			DecorationContext decorationContext = new DecorationContext();
+			decorationContext.putProperty(SynchronizationStateTester.PROP_TESTER, new SynchronizationStateTester() {
+				public boolean isStateDecorationEnabled() {
+					return false;
+				}
+			});
+			dlp.setDecorationContext(decorationContext);
+		} else if (provider instanceof DecoratingStyledCellLabelProvider) {
+			DecoratingStyledCellLabelProvider dlp = (DecoratingStyledCellLabelProvider) provider;
+			ILabelDecorator decorator = ((SynchronizePageConfiguration)configuration).getLabelDecorator();
+			if (decorator != null) {
+				dlp.setLabelDecorator(decorator);
 			}
 			DecorationContext decorationContext = new DecorationContext();
 			decorationContext.putProperty(SynchronizationStateTester.PROP_TESTER, new SynchronizationStateTester() {
