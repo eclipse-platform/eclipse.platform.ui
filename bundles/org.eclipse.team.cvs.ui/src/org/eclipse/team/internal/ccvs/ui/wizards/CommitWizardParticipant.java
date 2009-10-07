@@ -16,24 +16,26 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceModelParticipant;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
-import org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant;
 import org.eclipse.team.internal.ui.Utils;
-import org.eclipse.team.internal.ui.synchronize.*;
+import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
+import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
 
 /**
  * A participant that uses our decorator instead of the standard one.
  */
-public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
+public class CommitWizardParticipant extends WorkspaceModelParticipant {
 	
     /**
      * The actions to be displayed in the context menu.
@@ -79,31 +81,27 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
     final CommitWizard fWizard;
 	protected Action showComparePaneAction;
     
-    public CommitWizardParticipant(ISynchronizeScope scope, CommitWizard wizard) {
-        super(scope);
+    public CommitWizardParticipant(SynchronizationContext context, CommitWizard wizard) {
+        super(context);
         fWizard= wizard;
     }
     
     protected ILabelDecorator getLabelDecorator(ISynchronizePageConfiguration configuration) {
         return new Decorator(configuration, fWizard);
     }
-    
-    public ChangeSetCapability getChangeSetCapability() {
-        return null; // we don't want that button
-    }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.team.internal.ccvs.ui.subscriber.WorkspaceSynchronizeParticipant#initializeConfiguration(org.eclipse.team.ui.synchronize.ISynchronizePageConfiguration)
      */
-    protected void initializeConfiguration( final ISynchronizePageConfiguration configuration) {
+    protected void initializeConfiguration(final ISynchronizePageConfiguration configuration) {
         super.initializeConfiguration(configuration);
-        configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ACTION_GROUP, ISynchronizePageConfiguration.LAYOUT_GROUP});
+        configuration.setProperty(ISynchronizePageConfiguration.P_TOOLBAR_MENU, new String[] {ACTION_GROUP, ISynchronizePageConfiguration.NAVIGATE_GROUP});
         configuration.setProperty(ISynchronizePageConfiguration.P_CONTEXT_MENU, ISynchronizePageConfiguration.DEFAULT_CONTEXT_MENU);
 		configuration.addMenuGroup(
 				ISynchronizePageConfiguration.P_CONTEXT_MENU, 
 				CONTEXT_MENU_CONTRIBUTION_GROUP_3);
         configuration.addActionContribution(new ActionContribution());
-        
+
         // Wrap the container so that we can update the enablements after the runnable
         // (i.e. the container resets the state to what it was at the beginning of the
         // run even if the state of the page changed. Remove from View changes the state)
@@ -137,7 +135,7 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
 				ISelection selection = configuration.getSite().getSelectionProvider().getSelection();
 				if(selection instanceof IStructuredSelection) {
 					final Object obj = ((IStructuredSelection) selection).getFirstElement();
-					if (obj instanceof SyncInfoModelElement) {
+					if (fWizard.getParticipant().hasCompareInputFor(obj)) {
 						fWizard.getCommitPage().showComparePane(true);
 						showComparePaneAction.setChecked(true);
 					}
@@ -157,4 +155,27 @@ public class CommitWizardParticipant extends WorkspaceSynchronizeParticipant {
     	IDialogSettings section = fWizard.getDialogSettings().getSection(CommitWizard.COMMIT_WIZARD_DIALOG_SETTINGS);
 		return section == null ? false : section.getBoolean(CommitWizardCommitPage.SHOW_COMPARE);
     }
+
+	protected ModelSynchronizeParticipantActionGroup createMergeActionGroup() {
+		return new WorkspaceMergeActionGroup() {
+			protected void addToContextMenu(String mergeActionId, Action action, IMenuManager manager) {
+				if (mergeActionId == SynchronizationActionProvider.MERGE_ACTION_ID
+						|| mergeActionId == SynchronizationActionProvider.OVERWRITE_ACTION_ID
+						|| mergeActionId == SynchronizationActionProvider.MARK_AS_MERGE_ACTION_ID) {
+					// skip merge actions
+					return;
+				}
+				super.addToContextMenu(mergeActionId, action, manager);
+			}
+
+			protected void appendToGroup(String menuId, String groupId,	IAction action) {
+				if (menuId == ISynchronizePageConfiguration.P_CONTEXT_MENU
+						&& groupId == WorkspaceModelParticipant.CONTEXT_MENU_COMMIT_GROUP_1) {
+					// skip commit action
+					return;
+				}
+				super.appendToGroup(menuId, groupId, action);
+			}
+		};
+	}
 }

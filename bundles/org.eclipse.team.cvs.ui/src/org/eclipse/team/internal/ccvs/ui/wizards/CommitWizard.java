@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,21 +15,13 @@
 package org.eclipse.team.internal.ccvs.ui.wizards;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.runtime.jobs.IJobChangeEvent;
-import org.eclipse.core.runtime.jobs.IJobChangeListener;
+import org.eclipse.core.runtime.jobs.*;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -38,15 +30,21 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.core.IFileContentManager;
 import org.eclipse.team.core.Team;
-import org.eclipse.team.core.synchronize.*;
+import org.eclipse.team.core.diff.*;
+import org.eclipse.team.core.mapping.*;
+import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.core.*;
 import org.eclipse.team.internal.ccvs.core.client.Command;
 import org.eclipse.team.internal.ccvs.core.resources.CVSWorkspaceRoot;
 import org.eclipse.team.internal.ccvs.ui.*;
+import org.eclipse.team.internal.ccvs.ui.actions.CommitAction;
+import org.eclipse.team.internal.ccvs.ui.mappings.AbstractCommitAction;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceSubscriberContext;
 import org.eclipse.team.internal.ccvs.ui.operations.*;
-import org.eclipse.team.internal.core.subscribers.SubscriberSyncInfoCollector;
+import org.eclipse.team.internal.core.subscribers.SubscriberDiffTreeEventHandler;
 import org.eclipse.team.internal.ui.Policy;
-import org.eclipse.team.ui.synchronize.ResourceScope;
+import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.ui.synchronize.ModelSynchronizeParticipant;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PlatformUI;
 
@@ -154,9 +152,8 @@ public class CommitWizard extends ResizableWizard {
     }
     
     private final IResource[] fResources;
-    private final SyncInfoSet fOutOfSyncInfos;
-    private final SyncInfoSet fUnaddedInfos;
-    private final CommitWizardParticipant fParticipant;
+    private IResource[] fUnaddedDiffs;
+    private final ModelSynchronizeParticipant fParticipant;
     
     private CommitWizardFileTypePage fFileTypePage;
     private CommitWizardCommitPage fCommitPage;
@@ -176,42 +173,71 @@ public class CommitWizard extends ResizableWizard {
         setDefaultPageImageDescriptor(CVSUIPlugin.getPlugin().getImageDescriptor(ICVSUIConstants.IMG_WIZBAN_NEW_LOCATION));
         
         fResources= resources;
-        fParticipant= new CommitWizardParticipant(new ResourceScope(fResources), this);
-        
-        SyncInfoSet infos = getAllOutOfSync();
-        fOutOfSyncInfos= new SyncInfoSet(infos.getNodes(new FastSyncInfoFilter.SyncInfoDirectionFilter(new int [] { SyncInfo.OUTGOING, SyncInfo.CONFLICTING })));
-        fUnaddedInfos= getUnaddedInfos(fOutOfSyncInfos);
+        ResourceMapping[] mappings = Utils.getResourceMappings(resources);
+        fParticipant = createWorkspaceParticipant(mappings, getShell());
+
+        getAllOutOfSync();
+        fUnaddedDiffs = getUnaddedResources(getDiffTree().getAffectedResources());
     }
+
+	private ModelSynchronizeParticipant createWorkspaceParticipant(ResourceMapping[] selectedMappings, Shell shell) {
+		ISynchronizationScopeManager manager = WorkspaceSubscriberContext.createWorkspaceScopeManager(selectedMappings, true, CommitAction.isIncludeChangeSets(shell, CVSUIMessages.SyncAction_1));
+		return new CommitWizardParticipant(WorkspaceSubscriberContext.createContext(manager, ISynchronizationContext.THREE_WAY), this);
+	}
 
 	public CommitWizard(SyncInfoSet infos, IJobChangeListener jobListener) throws CVSException {
 		this(infos);
 		this.jobListener = jobListener;
 	}
 
-	private SyncInfoSet getAllOutOfSync() throws CVSException {
-		final SubscriberSyncInfoCollector syncInfoCollector = fParticipant.getSubscriberSyncInfoCollector();
-            try {
-				PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-				    public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				    	monitor.beginTask(CVSUIMessages.CommitWizard_4, IProgressMonitor.UNKNOWN); 
-				    	syncInfoCollector.waitForCollector(monitor);
-				    	monitor.done();
-				    }
-				});
-			} catch (InvocationTargetException e) {
-				throw CVSException.wrapException(e);
-			} catch (InterruptedException e) {
-				throw new OperationCanceledException();
-			} 
-		return fParticipant.getSyncInfoSet();
+	private void getAllOutOfSync() throws CVSException {
+		try {
+			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
+				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+					monitor.beginTask(null, IProgressMonitor.UNKNOWN);
+
+					ISynchronizationContext context = getParticipant().getContext();
+					SubscriberDiffTreeEventHandler handler = (SubscriberDiffTreeEventHandler) Utils.getAdapter(context,	SubscriberDiffTreeEventHandler.class);
+					handler.initializeIfNeeded();
+					Job.getJobManager().join(context, monitor);
+
+					if (monitor.isCanceled()) {
+						throw new InterruptedException();
+					}
+					monitor.done();
+				}
+			});
+		} catch (InvocationTargetException e) {
+			throw CVSException.wrapException(e);
+		} catch(InterruptedException e) {
+			throw new OperationCanceledException();
+		}
 	}
     
     public boolean hasOutgoingChanges() {
-        return fOutOfSyncInfos.size() > 0;
+    	IResourceDiffTree tree = getDiffTree();
+		return tree != null && tree.hasMatchingDiffs(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new FastDiffFilter() {
+			public boolean select(IDiff diff) {
+				return AbstractCommitAction.hasLocalChange(diff);
+			}
+		});
     }
     
+    boolean hasConflicts() {
+    	IResourceDiffTree tree = getDiffTree();
+		return tree != null && tree.hasMatchingDiffs(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new FastDiffFilter() {
+			public boolean select(IDiff diff) {
+				if (diff instanceof IThreeWayDiff) {
+					IThreeWayDiff twd = (IThreeWayDiff) diff;
+					return twd.getDirection() == IThreeWayDiff.CONFLICTING;
+				}
+				return false;
+			}
+		});
+	}
+    
     public int getHighestProblemSeverity() {
-    	IResource[] resources = fOutOfSyncInfos.getResources();
+		IResource[] resources = getDiffTree().getAffectedResources();
     	int mostSeriousSeverity = -1;
     	
     	for (int i = 0; i < resources.length; i++) {
@@ -227,7 +253,11 @@ public class CommitWizard extends ResizableWizard {
     	
     	return mostSeriousSeverity;
     }
-    
+
+	IResourceDiffTree getDiffTree() {
+		return fParticipant.getContext().getDiffTree();
+	}
+
     public CommitWizardFileTypePage getFileTypePage() {
         return fFileTypePage;
     }
@@ -236,7 +266,7 @@ public class CommitWizard extends ResizableWizard {
         return fCommitPage;
     }
 
-    public CommitWizardParticipant getParticipant() {
+	public ModelSynchronizeParticipant getParticipant() {
         return fParticipant;
     }
 
@@ -253,25 +283,20 @@ public class CommitWizard extends ResizableWizard {
         if (comment == null)
             return false;
         
-        final SyncInfoSet infos= fCommitPage.getInfosToCommit();
-        if (infos.size() == 0)
-        	return true;
+        IResource[] resources = AbstractCommitAction.getOutgoingChanges(getDiffTree(), fCommitPage.getTraversalsToCommit(), null);
+        if (resources.length == 0)
+			return true;
         
-        final SyncInfoSet unadded;
+        final IResource[] unadded;
         try {
-            unadded = getUnaddedInfos(infos);
+            unadded = getUnaddedResources(resources);
         } catch (CVSException e1) {
             return false;
         }
         
-        final SyncInfoSet files;
-        try {
-            files = getFiles(infos);
-        } catch (CVSException e1) {
-            return false;
-        }
+        final IResource[] files = getFiles(resources);
         
-        final AddAndCommitOperation operation= new AddAndCommitOperation(getPart(), files.getResources(), unadded.getResources(), comment);
+        final AddAndCommitOperation operation= new AddAndCommitOperation(getPart(), files, unadded, comment);
         if (jobListener != null)
         	operation.setJobChangeListener(jobListener);
         
@@ -315,7 +340,7 @@ public class CommitWizard extends ResizableWizard {
         
         final Collection names= new HashSet();
         final Collection extensions= new HashSet();
-        getUnknownNamesAndExtension(fUnaddedInfos, names, extensions);
+        getUnknownNamesAndExtension(fUnaddedDiffs, names, extensions);
         
         if (names.size() + extensions.size() > 0) {
             fFileTypePage= new CommitWizardFileTypePage(extensions, names); 
@@ -419,50 +444,45 @@ public class CommitWizard extends ResizableWizard {
         return dialog.open();
     }
     
-    private static void getUnknownNamesAndExtension(SyncInfoSet infos, Collection names, Collection extensions) {
-        
-        final IFileContentManager manager= Team.getFileContentManager();
-        
-        for (final Iterator iter = infos.iterator(); iter.hasNext();) {
-            
-            final SyncInfo info = (SyncInfo)iter.next();
-            
-            IResource local = info.getLocal();
-            if (local instanceof IFile && manager.getType((IFile)local) == Team.UNKNOWN) {
-                final String extension= local.getFileExtension();
-                if (extension != null && !manager.isKnownExtension(extension)) {
-                    extensions.add(extension);
-                }
-                
-                final String name= local.getName();
-                if (extension == null && name != null && !manager.isKnownFilename(name))
-                    names.add(name);
-            }
-        }
+    private void getUnknownNamesAndExtension(IResource[] resources, Collection names, Collection extensions) {
+
+    	final IFileContentManager manager= Team.getFileContentManager();
+
+    	for (int i = 0; i < resources.length; i++) {
+
+    		IResource local = resources[i];
+    		if (local instanceof IFile && manager.getType((IFile)local) == Team.UNKNOWN) {
+    			final String extension= local.getFileExtension();
+    			if (extension != null && !manager.isKnownExtension(extension)) {
+    				extensions.add(extension);
+    			}
+
+    			final String name= local.getName();
+    			if (extension == null && name != null && !manager.isKnownFilename(name))
+    				names.add(name);
+    		}
+    	}
     }
     
-    private static SyncInfoSet getUnaddedInfos(SyncInfoSet infos) throws CVSException {
-        final SyncInfoSet unadded= new SyncInfoSet();        
-        for (final Iterator iter = infos.iterator(); iter.hasNext();) {
-            final SyncInfo info = (SyncInfo) iter.next();
-            final IResource resource= info.getLocal();
-            if (!isAdded(resource))
-                unadded.add(info);
-        }
-        return unadded;
-    }
-    
-    private static SyncInfoSet getFiles(SyncInfoSet infos) throws CVSException {
-        final SyncInfoSet files= new SyncInfoSet();        
-        for (final Iterator iter = infos.iterator(); iter.hasNext();) {
-            final SyncInfo info = (SyncInfo) iter.next();
-            final IResource resource= info.getLocal();
-            if (resource.getType() == IResource.FILE)
-            	files.add(info);
-        }
-        return files;
-    }
-    
+	private IResource[] getUnaddedResources(IResource[] resources) throws CVSException {
+		List/*<IResource>*/ unadded = new ArrayList/*<IResource>*/();
+		for (int i = 0; i < resources.length; i++) {
+			if (!isAdded(resources[i])) {
+				unadded.add(resources[i]);
+			}
+		}
+		return (IResource[]) unadded.toArray(new IResource[0]);
+	}
+
+	private IResource[] getFiles(IResource[] resources) {
+		final List files = new ArrayList();
+		for (int i = 0; i < resources.length; i++) {
+			if (resources[i].getType() == IResource.FILE)
+				files.add(resources[i]);
+		}
+		return (IResource[]) files.toArray(new IResource[0]);
+	}
+	
     private static boolean isAdded(IResource resource) throws CVSException {
         final ICVSResource cvsResource = CVSWorkspaceRoot.getCVSResourceFor(resource);
         if (cvsResource.isFolder()) {

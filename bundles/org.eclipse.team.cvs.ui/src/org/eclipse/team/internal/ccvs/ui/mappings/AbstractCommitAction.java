@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -78,7 +78,7 @@ public abstract class AbstractCommitAction extends CVSModelProviderAction {
 
 	protected abstract ResourceTraversal[] getCommitTraversals(IStructuredSelection selection, IProgressMonitor monitor) throws CoreException;
 	
-    protected IResource[] getOutgoingChanges(final IResourceDiffTree tree, ResourceTraversal[] traversals, IProgressMonitor monitor) {
+    public static IResource[] getOutgoingChanges(final IResourceDiffTree tree, ResourceTraversal[] traversals, IProgressMonitor monitor) {
     	final List resources = new ArrayList();
 		IDiff[] diffs = tree.getDiffs(traversals);
 		for (int i = 0; i < diffs.length; i++) {
@@ -92,7 +92,7 @@ public abstract class AbstractCommitAction extends CVSModelProviderAction {
 		return (IResource[]) resources.toArray(new IResource[resources.size()]);
     }
     
-	private boolean hasLocalChange(IDiff diff) {
+	public static boolean hasLocalChange(IDiff diff) {
 		if (diff instanceof IThreeWayDiff) {
 			IThreeWayDiff twd = (IThreeWayDiff) diff;
 			return twd.getDirection() == IThreeWayDiff.OUTGOING 

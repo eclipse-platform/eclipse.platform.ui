@@ -15,8 +15,10 @@ package org.eclipse.team.internal.ccvs.ui.wizards;
 import java.util.Arrays;
 
 import org.eclipse.compare.*;
-import org.eclipse.compare.structuremergeviewer.IDiffElement;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -33,16 +35,13 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.core.synchronize.SyncInfo;
-import org.eclipse.team.core.synchronize.SyncInfoSet;
+import org.eclipse.team.core.diff.*;
 import org.eclipse.team.internal.ccvs.ui.*;
 import org.eclipse.team.internal.ccvs.ui.IHelpContextIds;
 import org.eclipse.team.internal.ccvs.ui.mappings.ChangeSetComparator;
 import org.eclipse.team.internal.core.subscribers.ActiveChangeSet;
 import org.eclipse.team.internal.core.subscribers.ChangeSet;
 import org.eclipse.team.internal.ui.*;
-import org.eclipse.team.internal.ui.synchronize.SyncInfoModelElement;
-import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.PageBook;
@@ -88,6 +87,18 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         fCommentArea.setProposedComment(getProposedComment(resources));
         if (resources.length > 0)
             fCommentArea.setProject(resources[0].getProject());
+        fWizard.getDiffTree().addDiffChangeListener(new IDiffChangeListener() {
+			public void propertyChanged(IDiffTree tree, int property, IPath[] paths) {
+				// ignore property changes
+			}
+			public void diffsChanged(IDiffChangeEvent event, IProgressMonitor monitor) {
+				Utils.syncExec(new Runnable() {
+					public void run() {
+						updateEnablements();
+					}
+				}, CommitWizardCommitPage.this.getControl());
+			}
+		});
     }
     
     /* (non-Javadoc)
@@ -166,8 +177,8 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     
     private void createChangesArea(Composite parent, PixelConverter converter) {
         
-        CommitWizardParticipant participant= fWizard.getParticipant();
-        int size = participant.getSyncInfoSet().size();
+        ISynchronizeParticipant participant= fWizard.getParticipant();
+        int size = fWizard.getDiffTree().getAffectedResources().length;
         if (size > getFileDisplayThreshold()) {
             // Create a page book to allow eventual inclusion of changes
             bottomChild = new PageBook(parent, SWT.NONE);
@@ -203,7 +214,7 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         ((Composite)getControl()).layout();
     }
 
-    private Control createChangesPage(final Composite composite, CommitWizardParticipant participant) {
+    private Control createChangesPage(final Composite composite, ISynchronizeParticipant participant) {
         fConfiguration= participant.createPageConfiguration();
 		CompareConfiguration cc = new CompareConfiguration();
 		cc.setLeftEditable(false);
@@ -214,27 +225,26 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
 		return control;
     }
     
-    private class CommitWizardParticipantPageCompareEditorInput extends ParticipantPageCompareEditorInput {
+	private class CommitWizardParticipantPageCompareEditorInput extends
+			ParticipantPageCompareEditorInput {
 		public CommitWizardParticipantPageCompareEditorInput(
 				CompareConfiguration cc,
 				ISynchronizePageConfiguration configuration,
-				CommitWizardParticipant participant) {
+				ISynchronizeParticipant participant) {
 			super(cc, configuration, participant);
 		}
 
 		protected boolean isOfferToRememberParticipant() {
 			return false;
 		}
-		
+
 		protected CompareViewerSwitchingPane createContentViewerSwitchingPane(
 				Splitter parent, int style, CompareEditorInput cei) {
 			return super.createContentViewerSwitchingPane(horizontalSash, style, cei);
 		}
-		
-		protected CompareViewerPane createStructureInputPane(Composite parent) {
-			CompareViewerPane pane = super.createStructureInputPane(parent);
-			pane.setText(TeamUIMessages.ParticipantPageSaveablePart_0);
-			return pane;
+
+		protected void setPageDescription(String title) {
+			super.setPageDescription(TeamUIMessages.ParticipantPageSaveablePart_0);
 		}
     }
     
@@ -292,9 +302,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
             final Viewer viewer= fConfiguration.getPage().getViewer();
             viewer.refresh();
         }
-        fCommentArea.setFocus();
+        updateEnablements();
+        setFocus();
     }
-    
+
     protected void expand() {
         if (fConfiguration != null) {
             final Viewer viewer= fConfiguration.getPage().getViewer();
@@ -324,11 +335,10 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
         	fHasConflicts = false;
         	fIsEmpty = false;
         	
-    		SyncInfoSet set = fConfiguration.getSyncInfoSet();
-    		if (set.hasConflicts()) {
+			if (fWizard.hasConflicts()) {
     			fHasConflicts = true;
     		}
-    		if (set.isEmpty()) {
+			if (!fWizard.hasOutgoingChanges()) {
     			fIsEmpty = true;
     		}
         }
@@ -373,28 +383,11 @@ public class CommitWizardCommitPage extends WizardPage implements IPropertyChang
     protected IWizardContainer getContainer() {
         return super.getContainer();
     }
-    
-    public SyncInfoSet getInfosToCommit() {
 
-        final SyncInfoSet infos= new SyncInfoSet();
-        if (fConfiguration == null) {
-            return fWizard.getParticipant().getSyncInfoSet();
-        }
-        
-        final IDiffElement root = (ISynchronizeModelElement)fConfiguration.getProperty(SynchronizePageConfiguration.P_MODEL);
-        final IDiffElement [] elements= Utils.getDiffNodes(new IDiffElement [] { root });
-        
-        for (int i = 0; i < elements.length; i++) {
-            if (elements[i] instanceof SyncInfoModelElement) {
-                SyncInfo syncInfo = ((SyncInfoModelElement)elements[i]).getSyncInfo();
-                int direction = syncInfo.getKind() & SyncInfo.DIRECTION_MASK;
-				if (direction == SyncInfo.OUTGOING || direction == SyncInfo.CONFLICTING)
-                	infos.add(syncInfo);
-            }
-        }  
-        return infos;
+	ResourceTraversal[] getTraversalsToCommit() {
+		return fWizard.getParticipant().getContext().getScope().getTraversals();
     }
-    
+
     /* (non-Javadoc)
      * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
      */
