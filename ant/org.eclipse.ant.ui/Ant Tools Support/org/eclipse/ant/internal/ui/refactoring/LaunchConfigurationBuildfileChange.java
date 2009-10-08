@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2008 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,8 @@ import java.util.List;
 
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -39,7 +40,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -91,7 +91,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
     private static ILaunchConfiguration[] getAntLaunchConfigurations() throws CoreException {
         ILaunchManager manager= DebugPlugin.getDefault().getLaunchManager();
         // Ant launch configurations
-        ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+        ILaunchConfigurationType configurationType= manager.getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
         ILaunchConfiguration[] configs= manager.getLaunchConfigurations(configurationType);
         return configs;
     }

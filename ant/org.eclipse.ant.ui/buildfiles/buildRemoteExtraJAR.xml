@@ -30,11 +30,12 @@
 			<classpath>
 				<dirset dir="${basedir}/..">
 					<include name="org.eclipse.swt*/bin"/>
-					<include name="org.eclipse.ant.ui/common_ant_support_bin"/>
+					<include name="org.eclipse.ant.launching/common_bin"/>
 				</dirset>
 				<fileset dir="${eclipse.home}">
 					<include name="plugins/org.eclipse.swt*.jar"/>
 					<include name="plugins/org.eclipse.osgi*.jar"/>
+					<include name="plugins/org.eclipse.ant.launching*.jar"/>
 				</fileset>
 			</classpath>
 			<src path="Remote Ant Support/"/>
@@ -42,7 +43,6 @@
 		<!-- copy necessary resources -->
 		<copy todir="${destdir}">
 			<fileset dir="Remote Ant Support/" excludes="**/*.java"/>
-			<fileset dir="${basedir}/common_ant_support_bin"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar destfile="${build.result.folder}/lib/remoteAnt.jar" basedir="${destdir}"/>

@@ -24,7 +24,7 @@ import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.preferences.AntPropertiesBlock;
 import org.eclipse.ant.internal.ui.preferences.IAntBlockContainer;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
@@ -116,14 +116,14 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		setMessage(null);
 		Map properties= null;
 		try {
-			properties= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map)null);
+			properties= configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, (Map)null);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.AntPropertiesTab_Error_reading_configuration_9, ce);
 		}
 		
 		String propertyFiles= null;
 		try {
-			propertyFiles= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
+			propertyFiles= configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.AntPropertiesTab_Error_reading_configuration_9, ce);
 		}
@@ -160,8 +160,8 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	 */
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fUseDefaultButton.getSelection()) {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map)null);
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, (Map)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTY_FILES, (String)null);
 			return;
 		}
 				
@@ -175,7 +175,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			}
 		}
 		
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
+		configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 		
 		items= fAntPropertiesBlock.getPropertyFiles();
 		String files= null;
@@ -189,7 +189,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 			files= buff.toString();
 		}
 		
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, files);
+		configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTY_FILES, files);
 		
 		fAntPropertiesBlock.saveSettings();
 	}

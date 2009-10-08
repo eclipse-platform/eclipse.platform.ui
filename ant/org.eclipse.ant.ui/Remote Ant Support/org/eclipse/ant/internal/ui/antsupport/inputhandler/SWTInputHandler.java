@@ -18,7 +18,6 @@ import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
 import org.apache.tools.ant.input.MultipleChoiceInputRequest;
-import org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;

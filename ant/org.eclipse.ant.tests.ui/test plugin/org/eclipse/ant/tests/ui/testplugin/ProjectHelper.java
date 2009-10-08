@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2008 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -19,7 +19,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.IAntUIConstants;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
@@ -40,7 +41,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jdt.launching.IVMInstall;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
@@ -167,10 +167,10 @@ public class ProjectHelper {
 	 */
 	public static void createLaunchConfigurationForSeparateVM(String launchConfigName, String buildFileName) throws Exception {
 		String bf = buildFileName;
-		ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		ILaunchConfigurationWorkingCopy config = type.newInstance(AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
 		
-		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.ant.internal.ui.antsupport.InternalAntRunner"); //$NON-NLS-1$
+		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, "org.eclipse.ant.internal.launching.remote.InternalAntRunner"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, AbstractAntUITest.getJavaProject().getElementName());
 		if (bf == null) {
@@ -216,7 +216,7 @@ public class ProjectHelper {
 	 * @throws CoreException
 	 */
 	public static ILaunchConfiguration createLaunchConfiguration(String launchConfigName, String path) throws CoreException {
-	    ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+	    ILaunchConfigurationType type = AbstractAntUITest.getLaunchManager().getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		ILaunchConfigurationWorkingCopy config = type.newInstance(AbstractAntUITest.getJavaProject().getProject().getFolder("launchConfigurations"), launchConfigName);
 	
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, AbstractAntUITest.getJavaProject().getElementName());

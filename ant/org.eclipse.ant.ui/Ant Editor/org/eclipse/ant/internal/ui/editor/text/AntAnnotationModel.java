@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2005 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.internal.launching.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.internal.ui.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.ui.editor.outline.AntEditorMarkerUpdater;
 import org.eclipse.ant.internal.ui.model.IProblem;
 import org.eclipse.ant.internal.ui.model.IProblemRequestor;

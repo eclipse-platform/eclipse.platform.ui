@@ -24,48 +24,6 @@
       </editor>
    </extension>
    <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            category="org.eclipse.ui.externaltools"
-            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
-            delegateDescription="%AntLaunchDelegate.description"
-            delegateName="%AntLaunchDelegate.name"
-            id="org.eclipse.ant.AntLaunchConfigurationType"
-            migrationDelegate="org.eclipse.ant.internal.ui.launchConfigurations.AntMigrationDelegate"
-            modes="run, debug"
-            name="%AntBuild"
-            sourceLocatorId="org.eclipse.ant.ui.debug.sourceLookupDirector"
-            sourcePathComputerId="org.eclipse.ant.ui.debug.sourcePathComputer">
-      </launchConfigurationType>
-      <launchConfigurationType
-            category="org.eclipse.ui.externaltools.builder"
-            delegate="org.eclipse.ant.internal.ui.launchConfigurations.AntLaunchDelegate"
-            delegateDescription="%AntBuilderLaunchDelegate.description"
-            delegateName="%AntBuilderLaunchDelegate.name"
-            id="org.eclipse.ant.AntBuilderLaunchConfigurationType"
-            modes="run"
-            name="%AntBuilder.name">
-      </launchConfigurationType>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.launching.classpathProviders">
-      <classpathProvider
-            class="org.eclipse.ant.internal.ui.launchConfigurations.AntClasspathProvider"
-            id="org.eclipse.ant.ui.AntClasspathProvider">
-      </classpathProvider>
-   </extension>
-   <extension
-         point="org.eclipse.jdt.launching.runtimeClasspathEntries">
-      <runtimeClasspathEntry
-            class="org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry"
-            id="org.eclipse.ant.ui.classpathentry.antHome">
-      </runtimeClasspathEntry>
-      <runtimeClasspathEntry
-            class="org.eclipse.ant.internal.ui.launchConfigurations.ContributedClasspathEntriesEntry"
-            id="org.eclipse.ant.ui.classpathentry.extraClasspathEntries">
-      </runtimeClasspathEntry>
-   </extension>
-   <extension
          point="org.eclipse.ui.views">
       <category
             name="%CategoryView.antViews"
@@ -553,13 +511,6 @@ M4 = Platform-specific fourth key -->
             id="org.eclipse.ant.ui.statusHandler.runAntInit">
       </statusHandler>
    </extension>
-   <extension
-         point="org.eclipse.debug.core.processFactories">
-      <processFactory
-            class="org.eclipse.ant.internal.ui.launchConfigurations.RemoteAntProcessFactory"
-            id="org.eclipse.ant.ui.remoteAntProcessFactory">
-      </processFactory>
-   </extension>
    
    <extension
          point="org.eclipse.ui.editors.templates">
@@ -648,14 +599,14 @@ M4 = Platform-specific fourth key -->
          point="org.eclipse.debug.core.sourceLocators">
       <sourceLocator
             name="%antSourceLookupDirector.name"
-            class="org.eclipse.ant.internal.ui.debug.AntSourceLookupDirector"
+            class="org.eclipse.ant.internal.launching.debug.AntSourceLookupDirector"
             id="org.eclipse.ant.ui.debug.sourceLookupDirector">
       </sourceLocator>
    </extension>
    <extension
          point="org.eclipse.debug.core.sourcePathComputers">
       <sourcePathComputer
-            class="org.eclipse.ant.internal.ui.debug.AntSourcePathComputerDelegate"
+            class="org.eclipse.ant.internal.launching.debug.AntSourcePathComputerDelegate"
             id="org.eclipse.ant.ui.debug.sourcePathComputer">
       </sourcePathComputer>
    </extension>
@@ -665,23 +616,6 @@ M4 = Platform-specific fourth key -->
             class="org.eclipse.ant.internal.ui.debug.model.AntDebugModelPresentation"
             id="org.eclipse.ant.ui.debug">
       </debugModelPresentation>
-   </extension>
-   
-    <extension
-         point="org.eclipse.debug.core.breakpoints">
-      <breakpoint
-            markerType="org.eclipse.ant.ui.antLineBreakpointMarker"
-            class="org.eclipse.ant.internal.ui.debug.model.AntLineBreakpoint"
-            id="org.eclipse.ant.ui.lineBreakpoint"
-            name="%antBreakpointGroupName">
-      </breakpoint>
-   </extension>
-   <extension
-         id="antLineBreakpointMarker"
-         name="%AntLineBreakpoint.name"
-         point="org.eclipse.core.resources.markers">
-      <super type="org.eclipse.debug.core.lineBreakpointMarker"/>
-      <persistent value="true"/>
    </extension>
    
     <extension

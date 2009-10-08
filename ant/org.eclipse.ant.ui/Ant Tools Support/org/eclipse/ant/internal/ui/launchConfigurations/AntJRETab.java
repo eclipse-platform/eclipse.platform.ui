@@ -16,7 +16,8 @@ import java.util.regex.Pattern;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -35,11 +36,10 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 public class AntJRETab extends JavaJRETab {
 
-	private static final String MAIN_TYPE_NAME= "org.eclipse.ant.internal.ui.antsupport.InternalAntRunner"; //$NON-NLS-1$
+	private static final String MAIN_TYPE_NAME= "org.eclipse.ant.internal.launching.remote.InternalAntRunner"; //$NON-NLS-1$
 	
 	private VMArgumentsBlock fVMArgumentsBlock=  new VMArgumentsBlock();
 	private AntWorkingDirectoryBlock fWorkingDirectoryBlock= new AntWorkingDirectoryBlock();
@@ -102,14 +102,14 @@ public class AntJRETab extends JavaJRETab {
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_JRE_CONTAINER_PATH, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null);
 			configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, (String)null);
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, false);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
 		} else {
 			super.performApply(configuration);
 			
 			if (useDefaultSeparateJRE(configuration)) {
-				configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, true);
+				configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, true);
 			} else {
-				configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, false);
+				configuration.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
 			}
 			
 			applySeparateVMAttributes(configuration);
@@ -190,7 +190,7 @@ public class AntJRETab extends JavaJRETab {
 	 */
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		try {
-			 boolean isDefaultVMInstall= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, false);
+			 boolean isDefaultVMInstall= configuration.getAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, false);
 			 if (isDefaultVMInstall) {
 			 	ILaunchConfigurationWorkingCopy copy = null;
 			 	if (configuration instanceof ILaunchConfigurationWorkingCopy) {
@@ -275,7 +275,7 @@ public class AntJRETab extends JavaJRETab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_SOURCE_PATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
 		IVMInstall defaultVMInstall= getDefaultVMInstall(config);
 		if (defaultVMInstall != null) {
-			config.setAttribute(IAntLaunchConfigurationConstants.ATTR_DEFAULT_VM_INSTALL, true);
+			config.setAttribute(IAntLaunchConstants.ATTR_DEFAULT_VM_INSTALL, true);
 			setDefaultVMInstallAttributes(defaultVMInstall, config);
 			applySeparateVMAttributes(config);
 		}

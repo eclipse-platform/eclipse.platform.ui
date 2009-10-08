@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
-
-import com.ibm.icu.text.MessageFormat;
-
+import org.eclipse.ant.internal.launching.AntLaunching;
+import org.eclipse.ant.internal.launching.IAntLaunchingPreferenceConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -40,11 +42,14 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 
+import com.ibm.icu.text.MessageFormat;
+
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 	
 	private List fConsoleColorList;
 	private ColorEditor fConsoleColorEditor;
-	
+	private IntegerFieldEditor timeout;
+
 	private BooleanFieldEditor fToolsWarningEditor= null;
 	
 	// Array containing the message to display, the preference key, and the 
@@ -84,9 +89,12 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		
 		StringFieldEditor editor = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.AntPreferencePage__Names__3, getFieldEditorParent());
 		addField(editor);
-		
-		IntegerFieldEditor timeout = new IntegerFieldEditor(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, AntPreferencesMessages.AntPreferencePage_13, getFieldEditorParent());
-        int minValue= AntUIPlugin.getDefault().getPreferenceStore().getDefaultInt(IAntUIPreferenceConstants.ANT_COMMUNICATION_TIMEOUT);
+
+		timeout = new IntegerFieldEditor(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, AntPreferencesMessages.AntPreferencePage_13, getFieldEditorParent());
+        int minValue= Platform.getPreferencesService().getInt(
+				AntLaunching.getUniqueIdentifier(),
+				IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
+				20000, null);
         int maxValue = 1200000;
         timeout.setValidRange(minValue, maxValue);
         timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue), new Integer(maxValue)})); 
@@ -147,6 +155,16 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			String preference = fAppearanceColorListModel[i][1];
 			fAppearanceColorListModel[i][2]= store.getString(preference);
 		}
+
+		IEclipsePreferences node = new InstanceScope()
+				.getNode(AntLaunching.getUniqueIdentifier());
+		String t = node.get(
+				IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
+				"2000"); //$NON-NLS-1$
+		if (timeout != null) {
+			t = new Integer(timeout.getIntValue()).toString();
+		}
+		node.put(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, t);
 	}
 	
 	private void createColorComposite() {

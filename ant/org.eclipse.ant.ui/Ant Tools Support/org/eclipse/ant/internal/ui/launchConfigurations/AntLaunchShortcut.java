@@ -22,6 +22,8 @@ import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
+import org.eclipse.ant.launching.IAntLaunchConstants;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -55,7 +57,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -166,7 +167,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	 */
 	protected List collectConfigurations(IPath filepath) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 		if(type != null) {
 			try {
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
@@ -260,13 +261,13 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		// set the target to run, if applicable
 		if (configuration != null) {
 			try {
-				if (targetAttribute != null && !targetAttribute.equals(configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, DEFAULT_TARGET))) {
+				if (targetAttribute != null && !targetAttribute.equals(configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, DEFAULT_TARGET))) {
 					ILaunchConfigurationWorkingCopy copy = configuration.getWorkingCopy();
 					String attrValue = null;
 					if (!DEFAULT_TARGET.equals(targetAttribute)) {
 						attrValue = targetAttribute;
 					}
-					copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, attrValue);
+					copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, attrValue);
 					configuration = copy.doSave();
 				}
 			} catch (CoreException exception) {
@@ -367,7 +368,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	 */
 	public static ILaunchConfiguration createDefaultLaunchConfiguration(IPath filePath, IProject project) {
 		ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+		ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 				
 		String projectName= project != null ? project.getName() : null;
 		String name = getNewLaunchConfigurationName(filePath, projectName, null);
@@ -415,7 +416,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			IPath filePath = file.getLocation();
 			if(filePath != null) {
 				ILaunchManager manager = DebugPlugin.getDefault().getLaunchManager();
-				ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConfigurationConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
+				ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 				if (type != null) {
 					try {
 						ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);

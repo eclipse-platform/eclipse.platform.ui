@@ -11,7 +11,7 @@
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.jface.dialogs.Dialog;
@@ -64,7 +64,7 @@ public class SetTargetsDialog extends Dialog {
 			defaultValue= ""; //$NON-NLS-1$
 		}
         try {
-            return fConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, defaultValue);
+            return fConfiguration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, defaultValue);
         } catch (CoreException e) {
             return defaultValue;
         }

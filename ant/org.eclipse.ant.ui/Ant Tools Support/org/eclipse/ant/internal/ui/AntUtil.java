@@ -11,7 +11,6 @@
 package org.eclipse.ant.internal.ui;
 
 import java.io.File;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,31 +19,26 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.StringTokenizer;
 import java.util.regex.Pattern;
 
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.Target;
-import org.apache.tools.ant.util.FileUtils;
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.internal.core.AntCoreUtil;
+import org.eclipse.ant.internal.launching.AntLaunchingUtil;
 import org.eclipse.ant.internal.ui.editor.AntEditor;
-import org.eclipse.ant.internal.ui.launchConfigurations.AntHomeClasspathEntry;
-import org.eclipse.ant.internal.ui.launchConfigurations.TaskLinkManager;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.LocationProvider;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.filebuffers.FileBuffers;
 import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -54,17 +48,10 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
-import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
-import org.eclipse.jdt.launching.IRuntimeClasspathEntry2;
-import org.eclipse.jdt.launching.JavaRuntime;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.Region;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.program.Program;
 import org.eclipse.swt.widgets.Shell;
@@ -79,8 +66,6 @@ import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.console.IHyperlink;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.texteditor.IDocumentProvider;
@@ -114,19 +99,7 @@ public final class AntUtil {
 	 * <code>null</code> if the array is empty.
 	 */
 	public static String combineStrings(String[] strings) {
-		if (strings.length == 0)
-			return null;
-
-		if (strings.length == 1)
-			return strings[0];
-
-		StringBuffer buf = new StringBuffer();
-		for (int i = 0; i < strings.length - 1; i++) {
-			buf.append(strings[i]);
-			buf.append(ATTRIBUTE_SEPARATOR);
-		}
-		buf.append(strings[strings.length - 1]);
-		return buf.toString();
+		return AntLaunchingUtil.combineStrings(strings);
 	}
 
 	/**
@@ -138,35 +111,8 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getTargetNames(ILaunchConfiguration configuration) throws CoreException {
-        String attribute= null;
-        if (IAntLaunchConfigurationConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE.equals(configuration.getType().getIdentifier())) {
-            attribute= getTargetNamesForAntBuilder(configuration);
-        }
-        if (attribute == null) {
-            attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String) null);
-            if (attribute == null) {
-                return null;
-            } 
-        }
-		
-		return AntUtil.parseRunTargets(attribute);
+		return AntLaunchingUtil.getTargetNames(configuration);
 	}
-	
-	private static String getTargetNamesForAntBuilder(ILaunchConfiguration configuration) throws CoreException {
-        String buildType= ExternalToolBuilder.getBuildType();
-        String targets= null;
-        if (IExternalToolConstants.BUILD_TYPE_AUTO.equals(buildType)) {
-            targets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AUTO_TARGETS, (String)null);
-        } else if (IExternalToolConstants.BUILD_TYPE_CLEAN.equals(buildType)) {
-            targets = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_CLEAN_TARGETS, (String) null);
-        } else if (IExternalToolConstants.BUILD_TYPE_FULL.equals(buildType)) {
-            targets = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, (String) null);
-        } else if (IExternalToolConstants.BUILD_TYPE_INCREMENTAL.equals(buildType)) {
-            targets = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_MANUAL_TARGETS, (String) null);
-        }
-       
-        return targets;
-    }
 
     /**
 	 * Returns a map of properties to be defined for the build, or
@@ -177,9 +123,8 @@ public final class AntUtil {
 	 * @return map of properties (name --> value), or <code>null</code>
 	 * @throws CoreException if unable to access the associated attribute
 	 */
-	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {
-		Map map = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, (Map) null);
-		return map;
+	public static Map getProperties(ILaunchConfiguration configuration) throws CoreException {		
+		return AntLaunchingUtil.getProperties(configuration);
 	}
 	
 	/**
@@ -190,17 +135,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
-		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
-		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry entry = entries[i];
-			if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
-				IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2)entry;
-				if (entry2.getTypeId().equals(AntHomeClasspathEntry.TYPE_ID)) {
-					return ((AntHomeClasspathEntry)entry2).getAntHome();
-				}
-			}
-		}
-		return null;
+		return AntLaunchingUtil.getAntHome(configuration);
 	}
 
 	/**
@@ -213,7 +148,7 @@ public final class AntUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static String[] getPropertyFiles(ILaunchConfiguration configuration) throws CoreException {
-		String attribute = configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
+		String attribute = configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTY_FILES, (String) null);
 		if (attribute == null) {
 			return null;
 		}
@@ -412,30 +347,7 @@ public final class AntUtil {
 	 * @throws CoreException if file does not exist, IO problems, or invalid format.
 	 */
 	public static URL[] getCustomClasspath(ILaunchConfiguration config) throws CoreException {
-		boolean useDefault = config.getAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
-		if (useDefault) {
-			return null;
-		}
-		IRuntimeClasspathEntry[] unresolved = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
-		// don't consider bootpath entries
-		List userEntries = new ArrayList(unresolved.length);
-		for (int i = 0; i < unresolved.length; i++) {
-			IRuntimeClasspathEntry entry = unresolved[i];
-			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
-				userEntries.add(entry);
-			}
-		}
-		IRuntimeClasspathEntry[] entries = JavaRuntime.resolveRuntimeClasspath((IRuntimeClasspathEntry[])userEntries.toArray(new IRuntimeClasspathEntry[userEntries.size()]), config);
-		URL[] urls = new URL[entries.length];
-		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry entry = entries[i];
-			try {
-				urls[i] = new URL("file:"+entry.getLocation()); //$NON-NLS-1$
-			} catch (MalformedURLException e) {
-				throw new CoreException(new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), AntUIPlugin.INTERNAL_ERROR, AntUIModelMessages.AntUtil_7, e));
-			}
-		}
-		return urls;		
+		return AntLaunchingUtil.getCustomClasspath(config);
 	}
 
 	private static String expandVariableString(String variableString, String invalidMessage) throws CoreException {
@@ -456,7 +368,7 @@ public final class AntUtil {
 	 * @return a list of target names
 	 */
 	public static String[] parseRunTargets(String extraAttibuteValue) {
-		return parseString(extraAttibuteValue, ATTRIBUTE_SEPARATOR);
+		return AntLaunchingUtil.parseRunTargets(extraAttibuteValue);
 	}
 	
 	/**
@@ -466,19 +378,7 @@ public final class AntUtil {
 	 * @return a list of Strings
 	 */
 	public static String[] parseString(String delimString, String delim) {
-		if (delimString == null) {
-			return new String[0];
-		}
-		
-		// Need to handle case where separator character is
-		// actually part of the target name!
-		StringTokenizer tokenizer = new StringTokenizer(delimString, delim);
-		String[] results = new String[tokenizer.countTokens()];
-		for (int i = 0; i < results.length; i++) {
-			results[i] = tokenizer.nextToken();
-		}
-		
-		return results;
+		return AntLaunchingUtil.parseString(delimString, delim);
 	}
 	
 	/**
@@ -486,8 +386,7 @@ public final class AntUtil {
 	 * The returned IFile may or may not exist.
 	 */
 	public static IFile getFile(String fullPath) {
-		IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		return root.getFile(new Path(fullPath));
+		return AntLaunchingUtil.getFile(fullPath);
 	}
 
 	public static IHyperlink getLocationLink(String path, File buildFileParent) {
@@ -540,48 +439,7 @@ public final class AntUtil {
 	 * @see org.eclipse.core.resources.IWorkspaceRoot#findFilesForLocation(IPath)
 	 */
 	public static IFile getFileForLocation(String path, File buildFileParent) {
-		if (path == null) {
-			return null;
-		}
-		IPath filePath= new Path(path);
-		IFile file = null;
-		IFile[] files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
-		if (files.length > 0) {
-			file= files[0];
-		}
-		if (file == null) {
-			//relative path
-			File relativeFile= null;
-			try {
-				//this call is ok if buildFileParent is null
-				relativeFile= FileUtils.getFileUtils().resolveFile(buildFileParent, path);
-				filePath= new Path(relativeFile.getAbsolutePath());
-				files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(filePath);
-				if (files.length > 0) {
-					file= files[0];
-				} else {
-					return null;
-				}
-			} catch (BuildException be) {
-				return null;
-			}
-		}
-		
-		if (file.exists()) {
-			return file;
-		} 
-		File ioFile= file.getLocation().toFile();
-		if (ioFile.exists()) {//needs to handle case insensitivity on WINOS
-			try {
-				files= ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(ioFile.getCanonicalPath()));
-				if (files.length > 0) {
-					return files[0];
-				}
-			} catch (IOException e) {
-			}			
-		}
-			
-		return null;
+		return AntLaunchingUtil.getFileForLocation(path, buildFileParent);
 	}
 
 	/**
@@ -594,40 +452,7 @@ public final class AntUtil {
 	 * @since 3.0
 	 */
 	public static void migrateToNewClasspathFormat(ILaunchConfiguration configuration) throws CoreException {
-		String oldClasspath = configuration.getAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-		String oldAntHome = configuration.getAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
-		String provider = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, (String)null);
-		if (oldClasspath != null || oldAntHome != null || provider == null) {
-			ILaunchConfigurationWorkingCopy workingCopy = null;
-			if (configuration.isWorkingCopy()) {
-				workingCopy = (ILaunchConfigurationWorkingCopy) configuration;
-			} else {
-				workingCopy = configuration.getWorkingCopy();
-			}
-			workingCopy.setAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_CUSTOM_CLASSPATH, (String)null);
-			workingCopy.setAttribute(org.eclipse.ant.internal.ui.launchConfigurations.IAntLaunchConfigurationConstants.ATTR_ANT_HOME, (String)null);
-			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH_PROVIDER, "org.eclipse.ant.ui.AntClasspathProvider"); //$NON-NLS-1$
-			workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, true);
-			if (oldAntHome != null) {
-				IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(workingCopy);
-				List mementos = new ArrayList(entries.length);
-				for (int i = 0; i < entries.length; i++) {
-					IRuntimeClasspathEntry entry = entries[i];
-					if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
-						IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) entry;
-						if (entry2.getTypeId().equals(AntHomeClasspathEntry.TYPE_ID)) {
-							AntHomeClasspathEntry homeEntry = new AntHomeClasspathEntry(oldAntHome);
-							mementos.add(homeEntry.getMemento());
-							continue;
-						}
-					}
-					mementos.add(entry.getMemento());
-				}
-				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_DEFAULT_CLASSPATH, false);
-				workingCopy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_CLASSPATH, mementos);
-			}
-			workingCopy.doSave();
-		}
+		AntLaunchingUtil.migrateToNewClasspathFormat(configuration);
 	}
 
     private static int getOffset(int line, int column, ITextEditor editor) {
@@ -749,49 +574,6 @@ public final class AntUtil {
 	}
     
     public static boolean isSeparateJREAntBuild(ILaunchConfiguration configuration) {
-    	boolean separateJRE= true;
-		try {
-			//always null for same JRE
-			separateJRE = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_MAIN_TYPE_NAME, (String)null) != null;
-		} catch (CoreException e) {
-			AntUIPlugin.log(AntUIModelMessages.AntUtil_2, e);
-		}
-    	
-		return separateJRE;
-    }
-    
-    public static void linkBuildFailedMessage(String message, IProcess process) {
-        String fileName = null;
-        String lineNumber = ""; //$NON-NLS-1$
-        int fileStart = 0;
-        int index = message.indexOf("xml"); //$NON-NLS-1$
-        if (index > 0) {
-            int numberStart= index + 4;
-            int numberEnd= message.indexOf(':', numberStart);
-            int fileEnd = index + 3;
-            if (numberStart > 0 && fileEnd > 0) {
-                fileName = message.substring(fileStart, fileEnd).trim();
-                if (numberEnd > 0) {
-                    lineNumber = message.substring(numberStart, numberEnd).trim();
-                }
-            }
-        }
-        
-        if (fileName != null) {
-            int num = -1;
-            try {
-                num = Integer.parseInt(lineNumber);
-            } catch (NumberFormatException e) {
-            }
-            IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocation(new Path(fileName));
-            IFile file= null;
-            if (files.length > 0) {
-                file= files[0];
-            }
-            if (file != null && file.exists()) {
-                FileLink link = new FileLink(file, null, -1, -1, num);
-                TaskLinkManager.addTaskHyperlink(process, link, new Region(0, message.length()), message);
-            }
-        }
+    	return AntLaunchingUtil.isSeparateJREAntBuild(configuration);
     }
 }

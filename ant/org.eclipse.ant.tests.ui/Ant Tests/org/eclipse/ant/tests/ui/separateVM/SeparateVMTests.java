@@ -21,10 +21,10 @@ import junit.framework.TestSuite;
 
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.ant.tests.ui.AbstractAntUIBuildTest;
 import org.eclipse.ant.tests.ui.testplugin.ConsoleLineTracker;
 import org.eclipse.ant.tests.ui.testplugin.ProjectHelper;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -158,7 +158,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		assertNotNull("Could not locate launch configuration for " + "echoingSepVM", config);
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 		copy.setAttribute(IJavaLaunchConfigurationConstants.ATTR_WORKING_DIRECTORY, getJavaProject().getProject().getLocation().toOSString());
-		copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, "Bug42984");
+		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, "Bug42984");
 		launchAndTerminate(copy, 20000);
 		ConsoleLineTracker.waitForConsole();
 		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);
@@ -175,7 +175,7 @@ public class SeparateVMTests extends AbstractAntUIBuildTest {
 		ILaunchConfigurationWorkingCopy copy= config.getWorkingCopy();
 		Map properties= new HashMap(1);
 		properties.put("platform.location", "${workspace_loc}");
-		copy.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_PROPERTIES, properties);
+		copy.setAttribute(IAntLaunchConstants.ATTR_ANT_PROPERTIES, properties);
 		launchAndTerminate(copy, 20000);
 		ConsoleLineTracker.waitForConsole();
 		assertTrue("Incorrect number of messages logged for build. Should be 6. Was " + ConsoleLineTracker.getNumberOfMessages(), ConsoleLineTracker.getNumberOfMessages() == 6);

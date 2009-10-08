@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,10 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.console;
 
+import org.eclipse.ant.internal.launching.launchConfigurations.AntStreamsProxy;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
-import org.eclipse.ant.internal.ui.launchConfigurations.AntProcess;
-import org.eclipse.ant.internal.ui.launchConfigurations.AntStreamsProxy;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
@@ -58,9 +57,6 @@ public class AntConsoleColorProvider extends ConsoleColorProvider implements IPr
 		//an AntStreamsProxy. The remote Ant builds make use of the
 		// org.eclipse.debug.core.processFactories extension point
 		AntStreamsProxy proxy = (AntStreamsProxy)process.getStreamsProxy();
-		if (process instanceof AntProcess) {
-			((AntProcess)process).setConsole(console);
-		}
 		if (proxy != null) {
 			console.connect(proxy.getDebugStreamMonitor(), AntStreamsProxy.ANT_DEBUG_STREAM);
 			console.connect(proxy.getWarningStreamMonitor(), AntStreamsProxy.ANT_WARNING_STREAM);

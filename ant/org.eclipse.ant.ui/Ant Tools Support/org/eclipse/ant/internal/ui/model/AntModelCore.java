@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,13 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.model;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.ant.internal.launching.debug.model.AntLineBreakpoint;
+import org.eclipse.ant.internal.launching.debug.model.DebugModelMessages;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.ant.internal.ui.debug.model.AntLineBreakpoint;
-import org.eclipse.ant.internal.ui.debug.model.DebugModelMessages;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -27,6 +26,8 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
+
+import com.ibm.icu.text.MessageFormat;
 
 public class AntModelCore implements IBreakpointsListener {
 	

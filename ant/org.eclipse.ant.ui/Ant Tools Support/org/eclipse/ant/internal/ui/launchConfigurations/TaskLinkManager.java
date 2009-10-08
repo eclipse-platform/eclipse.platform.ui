@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,14 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
-
-import java.util.ArrayList;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.tools.ant.util.FileUtils;
+import org.eclipse.ant.internal.launching.AntLaunch;
+import org.eclipse.ant.internal.launching.AntLaunchingUtil;
+import org.eclipse.ant.internal.launching.LinkDescriptor;
 import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.ExternalHyperlink;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.ui.console.FileLink;
@@ -38,121 +42,59 @@ import org.eclipse.ui.console.IHyperlink;
  * may be stored to process future incoming tasks hyperlinks.
  */
 public class TaskLinkManager {
-	
-	/**
-	 * A map of processes to lists of queued task hyperlink entries
-	 */
-	private static Map fgProcessToLinks;
-	
-	/**
-	 * A map of processes to lists of queued new line regions
-	 */
-	private static Map fgProcessToNewLines;
-	
-	private static List fgAntBuilds;
-	
-	private static class HyperlinkEntry {
-		private IHyperlink fLink;
-		private IRegion fRegion;
-		private String fMessage;
-		
-		public HyperlinkEntry(IHyperlink link, IRegion region, String message) {
-			fLink = link;
-			fRegion = region;	
-			fMessage = message;
-		}
-		
-		public IRegion getRegion() {
-			return fRegion;
-		}
-		
-		public IHyperlink getLink() {
-			return fLink;
-		}
-		
-		public String getMessage() {
-			return fMessage;
-		}
-	}
-	
-	private static class LineEntry {
-		private IConsole fConsole;
-		private IRegion fRegion;
-	
-		public LineEntry(IConsole console, IRegion region) {
-			fConsole = console;
-			fRegion = region;	
-		}
-	
-		public IRegion getRegion() {
-			return fRegion;
-		}
-	
-		public IConsole getConsole() {
-			return fConsole;
-		}
-	}
 
+	private static Map fFileNameToIFile = new HashMap();
+	
 	/**
 	 * Not to be called.
 	 */
 	private TaskLinkManager() {
 		super();
 	}
-	
-	/**
-	 * Registers a hyperlink for the given process and task name. The given
-	 * region is relative to the beginning of the line (not the document).
-	 * 
-	 * @param process the process associated with the link
-	 * @param link the link for the process
-	 * @param region The region within the line
-	 * @param message The message related to the link
-	 */
-	public static synchronized void addTaskHyperlink(IProcess process, IHyperlink link, IRegion region, String message) {
-		if (fgProcessToNewLines != null) {
-			List newLines = (List)fgProcessToNewLines.get(process);
-			if (newLines != null) {
-				for (int index= 0; index < newLines.size(); index++) {
-					LineEntry newLine = (LineEntry) newLines.get(index);
-					if (addLink(newLine.getConsole(), link, newLine.getRegion(), region, message)) {
-						newLines.subList(0, index + 1).clear();
-						return;
+
+	private static IHyperlink createHyperlink(LinkDescriptor linkDescriptor) {
+		String fileName = linkDescriptor.getFileName();
+		int lineNumber = linkDescriptor.getLineNumber();
+
+		IHyperlink taskLink = null;
+		if (lineNumber == -1) {
+			// fileName will actually be the String representation of Location
+			taskLink = AntUtil.getLocationLink(fileName, null);
+		} else {
+			IFile file = (IFile) fFileNameToIFile.get(fileName);
+			if (file == null) {
+				file = AntLaunchingUtil.getFileForLocation(fileName, null);
+				if (file != null) {
+					fFileNameToIFile.put(fileName, file);
+					taskLink = new FileLink(file, null, -1, -1, lineNumber);
+				} else if(fileName!=null){
+					File javaIOFile = FileUtils.getFileUtils().resolveFile(null, fileName);
+					if (javaIOFile.exists()) {
+						taskLink = new ExternalHyperlink(javaIOFile, lineNumber);
 					}
 				}
+			} else {
+				taskLink = new FileLink(file, null, -1, -1, lineNumber);
 			}
 		}
-				
-		if (fgProcessToLinks == null) {
-			fgProcessToLinks = new HashMap();
-			
-		}
-		List links = (List)fgProcessToLinks.get(process);
-		if (links == null) {
-			links = new ArrayList(10);
-			fgProcessToLinks.put(process, links);
-		}
-		
-		links.add(new HyperlinkEntry(link, region, message));
+		return taskLink;
 	}
 	
-	private static boolean addLink(IConsole console, IHyperlink link, IRegion lineRegion, IRegion region, String message) {
-		
-		int length = region.getLength();
-		
-		String text;
+	private static boolean addLink(IConsole console, IRegion lineRegion, LinkDescriptor descriptor) {
 		try {
-			text = console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength());
+			String text = console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength());
+			if (text.trim().equals(descriptor.getLine())) {
+				int offset = lineRegion.getOffset() + descriptor.getOffset();
+				IHyperlink link = createHyperlink(descriptor);
+				if (link != null) {
+					console.addLink(link, offset, descriptor.getLength());
+				}
+				return true;
+			}
 		} catch (BadLocationException e) {
-			return false;
-		}
-		if (text.trim().equals(message)) {
-			int offset = lineRegion.getOffset() + region.getOffset();
-			console.addLink(link, offset, length);
-			return true;
 		}
 		return false;
-	}
+	}	
 
 	/**
 	 * A new line has been added to the given console. Adds any task hyperlink
@@ -163,44 +105,24 @@ public class TaskLinkManager {
 	 * @param newLine
 	 */
 	public static synchronized void processNewLine(IConsole console, IRegion newLine) {
-		IProcess process = console.getProcess();
-		if (fgAntBuilds != null && fgAntBuilds.contains(process)) {
-			if (linkBuildFileMessage(console, newLine)) {
-				fgAntBuilds.remove(process);
+		AntLaunch launch = (AntLaunch) console.getProcess().getLaunch();
+		List links = launch.getLinkDescriptors();
+
+		if (linkBuildFileMessage(console, newLine)) {
+			return;
+		}
+
+		if (links == null || links.isEmpty()) {
+			return;
+		}
+
+		for (Iterator i = links.iterator(); i.hasNext();) {
+			LinkDescriptor descriptor = (LinkDescriptor) i.next();
+			if (addLink(console, newLine, descriptor)) {
+				launch.removeLinkDescriptor(descriptor);
 				return;
 			}
 		}
-		if (fgProcessToLinks == null) {
-			addNewLine(console, newLine, process);
-			return;
-		}
-		
-		List links = (List)fgProcessToLinks.get(process);
-		if (links == null) {
-			addNewLine(console, newLine, process);
-			return;
-		}
-		
-		for (int index= 0; index < links.size(); index++) {
-			HyperlinkEntry link = (HyperlinkEntry) links.get(index);
-			if (addLink(console, link.getLink(), newLine, link.getRegion(), link.getMessage())) {
-				links.subList(0, index + 1).clear();
-				return;
-			}
-		}
-	}
-	
-	private static void addNewLine(IConsole console, IRegion newLine, IProcess process) {
-		if (fgProcessToNewLines == null) {
-			fgProcessToNewLines = new HashMap();
-		}
-		List newLines = (List)fgProcessToNewLines.get(process);
-		if (newLines == null) {
-			newLines= new ArrayList();
-		}
-	
-		newLines.add(new LineEntry(console, newLine));
-		fgProcessToNewLines.put(process, newLines);
 	}
 
 	/**
@@ -209,43 +131,10 @@ public class TaskLinkManager {
 	 * @param process
 	 */
 	public static void dispose(IProcess process) {
-		if (fgProcessToLinks != null) {
-			fgProcessToLinks.remove(process);
-		}
-		if (fgProcessToNewLines != null) {
-			fgProcessToNewLines.remove(process);
-		}
-		if (fgAntBuilds != null) {
-			fgAntBuilds.remove(process);
-		}
+		AntLaunch launch = (AntLaunch) process.getLaunch();
+		launch.clearLinkDescriptors();
 	}
-	
-	/**
-	 * Registers the specified process as an Ant build process.
-	 * Allows for the generation of the "Buildfile: somefile" link in the 
-	 * Ant output.
-	 * 
-	 * @param process
-	 */
-	public static synchronized void registerAntBuild(IProcess process) {
-		if (fgProcessToNewLines != null) {
-			List newLines = (List)fgProcessToNewLines.get(process);
-			if (newLines != null) {
-				for (Iterator iter = newLines.iterator(); iter.hasNext();) {
-					LineEntry newLine = (LineEntry) iter.next();
-					if (linkBuildFileMessage(newLine.getConsole(), newLine.getRegion())){
-						iter.remove();
-						return;
-					}
-				}
-			}
-		}
-		if (fgAntBuilds == null) {
-			fgAntBuilds= new ArrayList();
-		}
-		fgAntBuilds.add(process);
-	}
-	
+
 	private static boolean linkBuildFileMessage(IConsole console, IRegion region) {
 		
 		String message= ""; //$NON-NLS-1$

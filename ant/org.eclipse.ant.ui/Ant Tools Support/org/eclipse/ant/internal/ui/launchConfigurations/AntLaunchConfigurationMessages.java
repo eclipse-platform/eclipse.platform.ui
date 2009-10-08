@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -20,14 +20,6 @@ public class AntLaunchConfigurationMessages extends NLS {
 	public static String AddVariableStringAction_3;
 	public static String AddVariableStringAction_4;
 
-	public static String AntLaunchDelegate_Launching__0__1;
-	public static String AntLaunchDelegate_Running__0__2;
-	public static String AntLaunchDelegate_Build_In_Progress;
-	public static String AntLaunchDelegate_Failure;
-	public static String AntLaunchDelegate_22;
-	public static String AntLaunchDelegate_23;
-	public static String AntLaunchDelegate_28;
-
 	public static String AntLaunchShortcut_Unable;
 	public static String AntLaunchShortcut_2;
 	public static String AntLaunchShortcut_3;
@@ -45,9 +37,7 @@ public class AntLaunchConfigurationMessages extends NLS {
 
 	public static String AntJRETab_2;
 	public static String AntJRETab_3;
-
-	public static String AntHomeClasspathEntry_8;
-	public static String AntHomeClasspathEntry_9;
+	
 	public static String AntBuilderTargetsTab_0;
 	public static String AntBuilderTargetsTab_1;
 	public static String AntBuilderTargetsTab_2;
@@ -58,8 +48,6 @@ public class AntLaunchConfigurationMessages extends NLS {
 	public static String AntBuilderTargetsTab_7;
 	public static String AntBuilderTargetsTab_8;
 	public static String AntBuilderTargetsTab_10;
-	public static String AntHomeClasspathEntry_10;
-	public static String AntHomeClasspathEntry_11;
 
 	public static String AntMainTab__Select_a_build_file__1;
 	public static String AntMainTab_3;
@@ -85,8 +73,6 @@ public class AntLaunchConfigurationMessages extends NLS {
 	public static String AntTargetsTab_0;
 	public static String AntTargetsTab_1;
 	public static String AntClasspathTab_0;
-
-	public static String ContributedClasspathEntriesEntry_1;
 
 	public static String EditAntHomeEntryAction_1;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,8 @@ import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.InternalTargetFilter;
-import org.eclipse.ant.ui.launching.IAntLaunchConfigurationConstants;
+import org.eclipse.ant.launching.IAntLaunchConstants;
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -72,7 +73,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -613,7 +613,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		setDirty(true);
 		boolean hideInternal= false;
 		try {
-			hideInternal = fLaunchConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, false);
+			hideInternal = fLaunchConfiguration.getAttribute(IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS, false);
 		} catch (CoreException e) {
 			AntUIPlugin.log(e);
 		}
@@ -621,7 +621,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		handleFilterTargetsSelected();
 		int sort= SORT_NONE;
 		try {
-			sort = fLaunchConfiguration.getAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, sort);
+			sort = fLaunchConfiguration.getAttribute(IAntLaunchConstants.ATTR_SORT_TARGETS, sort);
 		} catch (CoreException e) {
 			AntUIPlugin.log(e);
 		}
@@ -631,7 +631,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		String newLocation= null;
 		
 		try {
-			configTargets= configuration.getAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
+			configTargets= configuration.getAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String)null);
 			newLocation= configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String)null);
 		} catch (CoreException ce) {
 			AntUIPlugin.log(AntLaunchConfigurationMessages.AntTargetsTab_Error_reading_configuration_12, ce);
@@ -697,25 +697,25 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		//	attribute added in 3.0, so null must be used instead of false for backwards compatibility
 		if (fFilterInternalTargets.getSelection()) {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, true);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS, true);
 		} else {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_HIDE_INTERNAL_TARGETS, (String)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_HIDE_INTERNAL_TARGETS, (String)null);
 		}
 		//attribute added in 3.0, so null must be used instead of 0 for backwards compatibility
 		if (fSortDirection != SORT_NONE) {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, fSortDirection);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_SORT_TARGETS, fSortDirection);
 		} else {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_SORT_TARGETS, (String)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_SORT_TARGETS, (String)null);
 		}
 		
 		if (fOrderedTargets.size() == 1) {
 			AntTargetNode item = (AntTargetNode)fOrderedTargets.get(0);
 			if (item.isDefaultTarget()) {
-				configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
+				configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String)null);
 				return;
 			}
 		} else if (fOrderedTargets.size() == 0) {
-			configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, (String)null);
+			configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String)null);
 			return;
 		}
 		
@@ -731,7 +731,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			targets= buff.toString();
 		}  
 
-		configuration.setAttribute(IAntLaunchConfigurationConstants.ATTR_ANT_TARGETS, targets);
+		configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, targets);
 	}
 
 	/* (non-Javadoc)

@@ -14,8 +14,6 @@ import org.eclipse.osgi.util.NLS;
 public class DebugModelMessages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.debug.model.DebugModelMessages";//$NON-NLS-1$
 
-	public static String AntDebugTarget_0;
-
 	public static String AntDebugModelPresentation_0;
 	public static String AntDebugModelPresentation_1;
 	public static String AntDebugModelPresentation_2;
@@ -23,14 +21,6 @@ public class DebugModelMessages extends NLS {
 	public static String AntDebugModelPresentation_4;
 	public static String AntDebugModelPresentation_5;
 
-	public static String AntLineBreakpoint_0;
-	public static String AntThread_0;
-	public static String AntThread_1;
-	public static String AntThread_2;
-    public static String AntThread_3;
-    public static String AntThread_4;
-    
-    public static String AntProperties_1;
     
 	static {
 		// load message values from bundle file

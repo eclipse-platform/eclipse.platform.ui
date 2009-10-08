@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ant.internal.ui.antsupport;
+package org.eclipse.ant.internal.ui.antsupport.inputhandler;
 
 
 import java.util.MissingResourceException;
@@ -16,7 +16,7 @@ import java.util.ResourceBundle;
 
 public class RemoteAntMessages {
 
-	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.antsupport.RemoteAntMessages"; //$NON-NLS-1$
+	private static final String BUNDLE_NAME = "org.eclipse.ant.internal.ui.antsupport.inputhandler.RemoteAntMessages"; //$NON-NLS-1$
 
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
