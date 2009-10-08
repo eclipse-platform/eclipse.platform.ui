@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -47,6 +47,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	private static final String ZIP_FILE_EXT = "zip";
 	private static final String TAR_FILE_EXT = "tar";
     private static final String[] directoryNames = { "dir1", "dir2" };
+    private static final String[] emptyDirectoryNames = { "dir3" };
     private static final String[] fileNames = { "file1.txt", "file2.txt" };
     
     private String localDirectory;
@@ -84,9 +85,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
         operation.setUseCompression(false);
         operation.setUseTarFormat(false);
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         
-        verifyFolders(directoryNames.length, ZIP_FILE_EXT);	
+        verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);	
         
 	}
 	
@@ -99,7 +100,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
         operation.setUseCompression(true);
         operation.setUseTarFormat(false);
-        openTestWindow().run(true, true, operation);		
+        operation.run(new NullProgressMonitor());	
 		verifyCompressed(ZIP_FILE_EXT);
 	}
 	
@@ -123,9 +124,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setCreateLeadupStructure(false);
         operation.setUseCompression(false);
         operation.setUseTarFormat(false);
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         flattenPaths = true;
-		verifyFolders(directoryNames.length, ZIP_FILE_EXT);		
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);		
 	}
 	
 	public void testExportZipCreateSelectedDirectoriesWithFolders() throws Exception {
@@ -142,9 +143,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setCreateLeadupStructure(false);
         operation.setUseCompression(false);
         operation.setUseTarFormat(false);
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         excludeProjectPath = true;
-		verifyFolders(directoryNames.length, ZIP_FILE_EXT);				
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);				
 	}
 	
 	public void testExportZipCreateSelectedDirectoriesCompressed() throws Exception {
@@ -167,10 +168,10 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setCreateLeadupStructure(false);
         operation.setUseCompression(true);
         operation.setUseTarFormat(false);
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         flattenPaths = true;
 		verifyCompressed(ZIP_FILE_EXT);	
-		verifyFolders(directoryNames.length, ZIP_FILE_EXT);
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
 	
 	public void testExportTar() throws Exception {
@@ -182,9 +183,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setUseTarFormat(true);
         operation.setUseCompression(false);
 
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         
-        verifyFolders(directoryNames.length, TAR_FILE_EXT);	
+        verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);	
 	}
 	
 	public void testExportTarCompressed() throws Exception {
@@ -196,7 +197,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
         operation.setUseTarFormat(true);
         operation.setUseCompression(true);
-        openTestWindow().run(true, true, operation);		
+        operation.run(new NullProgressMonitor());		
 		verifyCompressed(TAR_FILE_EXT);		
 	}
 	
@@ -220,9 +221,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setCreateLeadupStructure(false);
         operation.setUseCompression(false);
         operation.setUseTarFormat(true);
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         flattenPaths = true;
-		verifyFolders(directoryNames.length, TAR_FILE_EXT);			
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);			
 	}
 	
 	public void testExportTarCreateSelectedDirectoriesWithFolders() throws Exception {
@@ -239,9 +240,9 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setCreateLeadupStructure(false);
         operation.setUseCompression(false);
         operation.setUseTarFormat(true);
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         excludeProjectPath = true;
-		verifyFolders(directoryNames.length, TAR_FILE_EXT);				
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);				
 		
 	}
 	
@@ -265,10 +266,10 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
         operation.setCreateLeadupStructure(false);
         operation.setUseCompression(true);
         operation.setUseTarFormat(true);
-        openTestWindow().run(true, true, operation);
+        operation.run(new NullProgressMonitor());
         flattenPaths = true;
 		verifyCompressed(TAR_FILE_EXT);	
-		verifyFolders(directoryNames.length, TAR_FILE_EXT);
+		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
 		
 	}
 
@@ -323,6 +324,12 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	    			file.create(new ByteArrayInputStream(contents.getBytes()), 
 	    				true, new NullProgressMonitor());
 	    		}
+	    	}
+
+	    	// create empty folders to test bug 278402
+	    	for(int i = 0; i < emptyDirectoryNames.length; i++){
+	    		IFolder folder = project.getFolder(emptyDirectoryNames[i]);
+	    		folder.create(false, true, new NullProgressMonitor());
 	    	}
     	}
     	catch(Exception e){
@@ -405,7 +412,10 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 			int idx = entryName.lastIndexOf("/");
 			String folderPath = entryName.substring(0, idx);
 			String fileName = entryName.substring(idx+1, entryName.length());
-			files.add(fileName);
+			// we get empty strings for folder entries, don't add them as a file name
+			if (fileName.length() != 0) {
+				files.add(fileName);	
+			}
 			int idx2 = folderPath.lastIndexOf("/");
 			if (idx2 != -1){
     			String folderName = folderPath.substring(idx2 + 1, folderPath.length());
@@ -461,15 +471,15 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     		if (directoryNames[i].equals(name))
     			return true;
     	}
+    	for (int i = 0; i < emptyDirectoryNames.length; i++){
+    		if (emptyDirectoryNames[i].equals(name))
+    			return true;
+    	}
     	return false;
     }
     
 	private boolean isDirectory(IResource resource){
-		for (int i = 0; i < directoryNames.length; i++){
-			if (directoryNames[i].equals(resource.getName()))
-				return true;
-		}
-		return false;
+		return isDirectory(resource.getName());
 	}
 	
 	private boolean isFile(IResource resource){
