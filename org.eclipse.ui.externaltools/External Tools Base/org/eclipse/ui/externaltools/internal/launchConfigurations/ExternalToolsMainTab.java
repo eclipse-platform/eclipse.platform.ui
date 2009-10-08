@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@ package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
 import java.io.File;
+
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -46,7 +48,6 @@ import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ResourceSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * The external tools main tab allows the user to configure primary attributes

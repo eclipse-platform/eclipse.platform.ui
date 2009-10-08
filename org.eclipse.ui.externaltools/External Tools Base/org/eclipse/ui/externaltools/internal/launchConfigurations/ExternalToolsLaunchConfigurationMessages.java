@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others. All rights reserved. This
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved. This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -47,11 +47,6 @@ public class ExternalToolsLaunchConfigurationMessages extends NLS {
 	public static String ExternalToolsBuildTab_7;
 	public static String ExternalToolsBuildTab_8;
 	public static String ExternalToolsBuildTab_9;
-
-
-	public static String ExternalToolsUtil_Location_not_specified_by__0__1;
-	public static String ExternalToolsUtil_invalidLocation__0_;
-	public static String ExternalToolsUtil_invalidDirectory__0_;
 
 	public static String ExternalToolsBuilderTab_Run_this_builder_for__1;
 	public static String ExternalToolsBuilderTab__Full_builds_2;

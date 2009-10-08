@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,21 +13,14 @@
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
-import java.io.File;
-
+import org.eclipse.core.externaltools.internal.launchConfigurations.ExternalToolsCoreUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.variables.IStringVariableManager;
-import org.eclipse.core.variables.VariablesPlugin;
-import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.ui.RefreshTab;
-import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 /**
  * Utilities for external tool launch configurations.
@@ -47,7 +40,7 @@ public class ExternalToolsUtil {
 	 * @param code error code
 	 */
 	protected static void abort(String message, Throwable exception, int code) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, code, message, exception));
+		throw new CoreException(new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, code, message, exception));
 	}
 	
 	/**
@@ -63,26 +56,7 @@ public class ExternalToolsUtil {
 	 * system
 	 */
 	public static IPath getLocation(ILaunchConfiguration configuration) throws CoreException {
-		String location = configuration.getAttribute(IExternalToolConstants.ATTR_LOCATION, (String) null);
-		if (location == null) {
-			abort(NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_Location_not_specified_by__0__1, new String[] { configuration.getName()}), null, 0);
-		} else {
-			String expandedLocation = getStringVariableManager().performStringSubstitution(location);
-			if (expandedLocation == null || expandedLocation.length() == 0) {
-				String msg = NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidLocation__0_, new Object[] { configuration.getName()});
-				abort(msg, null, 0);
-			} else {
-				File file = new File(expandedLocation);
-				if (file.isFile()) {
-					return new Path(expandedLocation);
-				} 
-				
-				String msg = NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidLocation__0_, new Object[] { configuration.getName()});
-				abort(msg, null, 0);
-			}
-		}
-		// execution will not reach here
-		return null;
+		return ExternalToolsCoreUtil.getLocation(configuration);
 	}
 	
 	/**
@@ -95,7 +69,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean getCaptureOutput(ILaunchConfiguration configuration) throws CoreException {
-	    return configuration.getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
+	    return ExternalToolsCoreUtil.getCaptureOutput(configuration);
 	}
 
 	/**
@@ -113,19 +87,7 @@ public class ExternalToolsUtil {
 	 * file system
 	 */
 	public static IPath getWorkingDirectory(ILaunchConfiguration configuration) throws CoreException {
-		String location = configuration.getAttribute(IExternalToolConstants.ATTR_WORKING_DIRECTORY, (String) null);
-		if (location != null) {
-			String expandedLocation = getStringVariableManager().performStringSubstitution(location);
-			if (expandedLocation.length() > 0) {
-				File path = new File(expandedLocation);
-				if (path.isDirectory()) {
-					return new Path(expandedLocation);
-				} 
-				String msg = NLS.bind(ExternalToolsLaunchConfigurationMessages.ExternalToolsUtil_invalidDirectory__0_, new Object[] { expandedLocation, configuration.getName()});
-				abort(msg, null, 0);
-			}
-		}
-		return null;
+		return ExternalToolsCoreUtil.getWorkingDirectory(configuration);
 	}
 
 	/**
@@ -139,16 +101,7 @@ public class ExternalToolsUtil {
 	 * configuration attribute, or if unable to resolve any variables
 	 */
 	public static String[] getArguments(ILaunchConfiguration configuration) throws CoreException {
-		String args = configuration.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
-		if (args != null) {
-			String expanded = getStringVariableManager().performStringSubstitution(args);
-			return parseStringIntoList(expanded);
-		}
-		return null;
-	}
-
-	private static IStringVariableManager getStringVariableManager() {
-		return VariablesPlugin.getDefault().getStringVariableManager();
+		return ExternalToolsCoreUtil.getArguments(configuration);
 	}
 	
 	/**
@@ -163,7 +116,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean isBuilderEnabled(ILaunchConfiguration configuration) throws CoreException {
-		return configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_ENABLED, true);
+		return ExternalToolsCoreUtil.isBuilderEnabled(configuration);
 	}
 	
 	/**
@@ -173,12 +126,7 @@ public class ExternalToolsUtil {
 	 * @throws CoreException if an exception occurs while retrieving the resources
 	 */
 	public static IResource[] getResourcesForBuildScope(ILaunchConfiguration configuration) throws CoreException {
-		String scope = configuration.getAttribute(IExternalToolConstants.ATTR_BUILDER_SCOPE, (String) null);
-		if (scope == null) {
-			return null;
-		}
-	
-		return RefreshTab.getRefreshResources(scope);
+		return ExternalToolsCoreUtil.getResourcesForBuildScope(configuration);
 	}
 	
 	/**
@@ -193,11 +141,7 @@ public class ExternalToolsUtil {
 	 * @return the array of arguments
 	 */
 	public static String[] parseStringIntoList(String arguments) {
-		if (arguments == null || arguments.length() == 0) {
-			return new String[0];
-		}
-		String[] res= DebugPlugin.parseArguments(arguments);
-		return res;		
+		return ExternalToolsCoreUtil.parseStringIntoList(arguments);
 	}	
 	
 }

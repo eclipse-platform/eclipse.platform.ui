@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,13 +15,14 @@ import java.io.File;
 import java.util.Map;
 import java.util.StringTokenizer;
 
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 public class SystemPathResolver implements IDynamicVariableResolver {
     
@@ -30,7 +31,7 @@ public class SystemPathResolver implements IDynamicVariableResolver {
 	 */
 	public String resolveValue(IDynamicVariable variable, String argument) throws CoreException {
         if (argument == null) {
-            throw new CoreException(new Status(IStatus.ERROR,  IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, VariableMessages.SystemPathResolver_0, null));
+            throw new CoreException(new Status(IStatus.ERROR,  ExternalToolsPlugin.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, VariableMessages.SystemPathResolver_0, null));
         }
         Map map= DebugPlugin.getDefault().getLaunchManager().getNativeEnvironment();
         String path= (String) map.get("PATH"); //$NON-NLS-1$

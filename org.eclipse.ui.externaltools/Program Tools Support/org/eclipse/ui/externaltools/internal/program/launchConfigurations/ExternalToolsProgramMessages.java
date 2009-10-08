@@ -1,5 +1,5 @@
 /**********************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others. All rights reserved.   This
+ * Copyright (c) 2000, 2009 IBM Corporation and others. All rights reserved.   This
  * program and the accompanying materials are made available under the terms of
  * the Eclipse Public License v1.0 which accompanies this distribution, and is
  * available at http://www.eclipse.org/legal/epl-v10.html
@@ -18,8 +18,6 @@ public class ExternalToolsProgramMessages extends NLS {
 
 	public static String ProgramLaunchDelegate_Workbench_Closing_1;
 	public static String ProgramLaunchDelegate_The_workbench_is_exiting;
-	public static String ProgramLaunchDelegate_3;
-	public static String ProgramLaunchDelegate_4;
 
 	public static String ProgramMainTab_Select;
 

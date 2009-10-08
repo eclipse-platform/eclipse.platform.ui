@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 Matthew Conway and others.
+ * Copyright (c) 2007, 2009 Matthew Conway and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,13 +13,13 @@ package org.eclipse.ui.externaltools.internal.variables;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+import org.eclipse.core.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
 
 public class BuildFilesResolver implements IDynamicVariableResolver
 {

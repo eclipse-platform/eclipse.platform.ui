@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,6 +12,8 @@
 package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
+import org.eclipse.core.externaltools.internal.launchConfigurations.ExternalToolsCoreUtil;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -50,7 +52,6 @@ import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
 import org.eclipse.ui.dialogs.IWorkingSetEditWizard;
 import org.eclipse.ui.externaltools.internal.model.BuilderUtils;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.externaltools.internal.model.IExternalToolsHelpContextIds;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.WorkbenchContentProvider;
@@ -358,7 +359,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 	}
 	
 	protected void updateRunInBackground(ILaunchConfiguration configuration) { 
-		fLaunchInBackgroundButton.setSelection(isLaunchInBackground(configuration));
+		fLaunchInBackgroundButton.setSelection(ExternalToolsCoreUtil.isAsynchronousBuild(configuration));
 	}
     
     private void updateConsoleOutput(ILaunchConfiguration configuration) {
@@ -386,22 +387,6 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
         fVariables.setEnabled(haveOutputFile);
         fAppend.setEnabled(haveOutputFile);
     }
-	
-	/**
-	 * Returns whether the given configuration should be run in the background.
-	 * 
-	 * @param configuration the configuration
-	 * @return whether the configuration is configured to run in the background
-	 */
-	public static boolean isLaunchInBackground(ILaunchConfiguration configuration) {
-		boolean launchInBackground= false;
-		try {
-			launchInBackground= configuration.getAttribute(IDebugUIConstants.ATTR_LAUNCH_IN_BACKGROUND, false);
-		} catch (CoreException ce) {
-			ExternalToolsPlugin.getDefault().log(ce);
-		}
-		return launchInBackground;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)

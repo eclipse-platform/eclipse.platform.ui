@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.variables;
 
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
+import org.eclipse.core.externaltools.internal.model.ExternalToolBuilder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -19,8 +21,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.osgi.util.NLS;
-import org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
+import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
 
 
 public class BuildProjectResolver implements IDynamicVariableResolver {
@@ -48,7 +49,7 @@ public class BuildProjectResolver implements IDynamicVariableResolver {
 	 * @throws CoreException
 	 */
 	protected void abort(String message, Throwable exception) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, IExternalToolConstants.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, message, exception));
+		throw new CoreException(new Status(IStatus.ERROR, ExternalToolsPlugin.PLUGIN_ID, IExternalToolConstants.ERR_INTERNAL_ERROR, message, exception));
 	}
 	
 	/**

@@ -99,35 +99,7 @@
 		</enabledWhen>
       </page>
    </extension>
-   <extension
-         id="ExternalToolBuilder"
-         name="%Builder.externalTools"
-         point="org.eclipse.core.resources.builders">
-      <builder
-      	isConfigurable= "true">
-         <run
-               class="org.eclipse.ui.externaltools.internal.model.ExternalToolBuilder">
-         </run>
-      </builder>
-   </extension>
 <!-- Launch Configuration Extensions -->
-   <extension
-         point="org.eclipse.debug.core.launchConfigurationTypes">
-      <launchConfigurationType
-            name="%Program.externalTools"
-            delegate="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramLaunchDelegate"
-            category="org.eclipse.ui.externaltools"
-            modes="run"
-            id="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType">
-      </launchConfigurationType>
-      <launchConfigurationType
-            name="%Program.externalTools"
-            delegate="org.eclipse.ui.externaltools.internal.program.launchConfigurations.ProgramLaunchDelegate"
-            category="org.eclipse.ui.externaltools.builder"
-            modes="run"
-            id="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType">
-      </launchConfigurationType>
-   </extension>
    <extension
          point="org.eclipse.ui.externaltools.configurationDuplicationMaps">
       <configurationMap

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,16 +16,15 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.core.externaltools.internal.IExternalToolConstants;
+import org.eclipse.core.externaltools.internal.launchConfigurations.ExternalToolsCoreUtil;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.ui.AbstractLaunchConfigurationTab;
-import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -41,7 +40,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.dialogs.ListSelectionDialog;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsImages;
 import org.eclipse.ui.externaltools.internal.model.ExternalToolsPlugin;
-import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
@@ -330,37 +328,9 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	 * @return collection of projects referred to by configuration
 	 */
 	public static IProject[] getBuildProjects(ILaunchConfiguration configuration, String buildScopeId) {
-		String scope = null;
-		String id = buildScopeId ;
-		if (id == null) {
-			id = IExternalToolConstants.ATTR_BUILD_SCOPE ;
-		}
-		try {
-			scope = configuration.getAttribute(id, (String)null);
-		} catch (CoreException e) {
-			return null;
-		}
-		if (scope == null) {
-			return null;
-		}
-		if (scope.startsWith("${projects:")) { //$NON-NLS-1$
-			String pathString = scope.substring(11, scope.length() - 1);
-			if (pathString.length() > 1) {
-				String[] names = pathString.split(","); //$NON-NLS-1$
-				IProject[] projects = new IProject[names.length];
-				IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-				for (int i = 0; i < names.length; i++) {
-					projects[i] = root.getProject(names[i]);
-				}
-				return projects;
-			}
-		} else if (scope.equals("${project}")) { //$NON-NLS-1$
-			IResource resource = DebugUITools.getSelectedResource();
-			if (resource != null) {
-				return new IProject[]{resource.getProject()};
-			}
-		}
-		return new IProject[0];
+		return ExternalToolsCoreUtil.getBuildProjects(configuration,
+				buildScopeId);
+
 	}
 	
 	/**
@@ -372,11 +342,8 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 	 * @throws CoreException if unable to access the associated attribute
 	 */
 	public static boolean isIncludeReferencedProjects(ILaunchConfiguration configuration, String includeReferencedProjectsId) throws CoreException {
-		String id = includeReferencedProjectsId;
-		if (id == null) {
-			id = IExternalToolConstants.ATTR_INCLUDE_REFERENCED_PROJECTS ;
-		}
-		return configuration.getAttribute(id, true);
+		return ExternalToolsCoreUtil.isIncludeReferencedProjects(configuration,
+				includeReferencedProjectsId);
 	}
 	
 	/**
