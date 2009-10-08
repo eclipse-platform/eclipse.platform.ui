@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,8 @@ import org.eclipse.help.IContext;
 import org.eclipse.help.IInclude;
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IIndexSee;
+import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.ILink;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
@@ -30,6 +32,8 @@ import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.internal.extension.ContentExtension;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexEntry;
+import org.eclipse.help.internal.index.IndexSee;
+import org.eclipse.help.internal.index.IndexSubpath;
 import org.eclipse.help.internal.toc.Link;
 import org.eclipse.help.internal.toc.Toc;
 import org.w3c.dom.Element;
@@ -47,6 +51,8 @@ public class UAElementFactory {
 		{ IAnchor.class, Anchor.class },
 		{ IInclude.class, Include.class },
 		{ ILink.class, Link.class },
+		{ IIndexSee.class, IndexSee.class },
+		{ IIndexSubpath.class, IndexSubpath.class },
 		{ IToc.class, Toc.class },
 		{ ICommandLink.class, CommandLink.class },
 		{ IIndex.class, Index.class },
@@ -66,6 +72,8 @@ public class UAElementFactory {
 		classByElementName.put(Context.NAME, Context.class);
 		classByElementName.put(CommandLink.NAME, CommandLink.class);
 		classByElementName.put(Link.NAME, Link.class);
+		classByElementName.put(IndexSee.NAME, IndexSee.class);
+		classByElementName.put(IndexSubpath.NAME, IndexSubpath.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_CONTRIBUTION_LEGACY, ContentExtension.class);
 		classByElementName.put(ContentExtension.NAME_REPLACEMENT, ContentExtension.class);

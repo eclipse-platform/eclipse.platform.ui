@@ -43,7 +43,12 @@ function treeMouseClickHandler(e) {
 	} else if ( clickedNode.tagName == 'A' || clickedNode.tagName == 'IMG') {
 	    var treeItem = getTreeItem(clickedNode);
 	    if (treeItem !== null) {
-	        highlightItem(getTreeItem(clickedNode), true); 
+	        if (treeItem.see) {
+	           // A see element in the index view
+	           handleSee(treeItem.see);
+	        } else {
+	            highlightItem(getTreeItem(clickedNode), true); 
+	        }
 	    } 
 	} 	
 }

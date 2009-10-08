@@ -42,5 +42,6 @@ public class AllOtherHelpTests extends TestSuite {
 		addTestSuite(XHTMLEntityTest.class);
 		addTestSuite(PathResolutionTest.class);
 		addTestSuite(IndexEntryTest.class);
+		addTestSuite(IndexSeeTest.class);
 	}
 }

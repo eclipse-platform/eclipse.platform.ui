@@ -2,15 +2,20 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.help" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.help" id="index" name="Keyword Index"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          For registering a keyword index for contributed help content.
       </documentation>
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
             <element ref="index"/>
@@ -35,9 +40,9 @@
                <documentation>
                   
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -56,15 +61,27 @@
                   the name of the index file which contains the list of keywords and related topics of the help content.
 &lt;p&gt;
 &lt;i&gt;&lt;b&gt;Configuration Markup for index file:&lt;/b&gt;&lt;/i&gt;
+&lt;/p&gt;
 &lt;p&gt;
 &lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT index (entry)* &gt;&lt;/tt&gt;&lt;br&gt;
-&lt;br&gt;
-&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT entry (entry | topic)* &gt;&lt;/tt&gt;&lt;br&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT entry (entry | topic |see)* &gt;&lt;/tt&gt;&lt;br&gt;
 &lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST entry keyword CDATA #REQUIRED &gt;&lt;/tt&gt;&lt;br&gt;
-&lt;br&gt;
+&lt;/p&gt;
+&lt;p&gt;
 &lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT topic EMPTY &gt;&lt;/tt&gt;&lt;br&gt;
 &lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic href CDATA #REQUIRED &gt;&lt;/tt&gt;&lt;br&gt;
 &lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST topic title CDATA #IMPLIED &gt;&lt;/tt&gt;&lt;br&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT see (subpath)* &gt;&lt;/tt&gt;&lt;br&gt;
+&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST see keyword CDATA #REQUIRED &gt;&lt;/tt&gt;&lt;br&gt;
+&lt;/p&gt;
+&lt;p&gt;
+&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ELEMENT subpath EMPTY &gt;&lt;/tt&gt;&lt;br&gt;
+&lt;tt&gt;&amp;nbsp;&amp;nbsp;&amp;nbsp; &amp;lt;!ATTLIST subpath keyword CDATA #IMPLIED &gt;&lt;/tt&gt;&lt;br&gt;
+&lt;/p&gt;
 &lt;p&gt;&lt;b&gt;The index element&lt;/b&gt;
 &lt;p&gt;The index element represents an instance of index. Index consists of entries, each of them corresponds to a particular keyword. All contributed indexes are merged to one master index which the Help System provides to the user. When index is built, entries are appended in alphabetical order.
 &lt;p&gt;&lt;b&gt;The entry element&lt;/b&gt;
@@ -77,10 +94,12 @@ topics are associated with the single keyword. If the attribute is not
 specified, the title comes from the label attribute if present otherwise from a TOC which owns the link. If the link does not
 belong to any TOC, the title or label attribute must be specified, or else the title
 becomes undefined.
+&lt;p&gt;&lt;b&gt;The see element&lt;/b&gt;
+The see element represents a synonym to an entry in the index. Clicking on a see link will cause the index to navigate to the index entry for which this is a synonym. The keyword attribute represents the top level element for the synonym. The &lt;b&gt;subpath&lt;/b&gt; elements are used only if the synonym is not at the top level of the index and represent additional components of the synonym path.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -98,27 +117,27 @@ becomes undefined.
                <documentation>
                   the implementation class for the index provider.  This class must implement the &lt;samp&gt;org.eclipse.help.AbstractIndexProvider&lt;/samp&gt; interface.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.help.AbstractIndexProvider"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.2
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of using the index extension point.
 
@@ -172,28 +191,27 @@ becomes undefined.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          An implementation of &lt;samp&gt;org.eclipse.help.AbstractIndexProvider&lt;/samp&gt; must be supplied if a &lt;samp&gt;indexProvider&lt;/samp&gt; is used.
       </documentation>
    </annotation>
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The default implementation of the help system UI supplied with the Eclipse platform fully supports the &lt;samp&gt;index&lt;/samp&gt; extension point.
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2006 Intel Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 

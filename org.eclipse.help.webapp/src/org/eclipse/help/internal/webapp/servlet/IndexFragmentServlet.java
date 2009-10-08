@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,9 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IIndexEntry2;
+import org.eclipse.help.IIndexSee;
+import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
@@ -31,6 +34,7 @@ import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.ActivitiesData;
 import org.eclipse.help.internal.webapp.data.EnabledTopicUtils;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
+import org.eclipse.osgi.util.NLS;
 
 import com.ibm.icu.text.Collator;
 
@@ -38,7 +42,7 @@ import com.ibm.icu.text.Collator;
  * Creates xml representing selected parts of the index
  * Parameter "start" represents the part of the index to start reading from
  * Parameter "size" indicates the number of entries to read, no size parameter
- * or a negatove size parameter indicates that all entries which match the start 
+ * or a negative size parameter indicates that all entries which match the start 
  * letters should be displayed.
  * Parameter "offset" represents the starting point relative to the start
  */
@@ -268,7 +272,8 @@ public class IndexFragmentServlet extends HttpServlet {
 			int count = 1;
 		    ITopic[] topics = EnabledTopicUtils.getEnabled(entry.getTopics());
 			IIndexEntry[] subentries = EnabledTopicUtils.getEnabled(entry.getSubentries());
-			if (topics.length > 1) {
+			IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : new IIndexSee[0];
+			if (topics.length + subentries.length + sees.length > 1) {
 				count += topics.length;
 			}
 			for (int i=0;i<subentries.length;++i) {
@@ -292,6 +297,12 @@ public class IndexFragmentServlet extends HttpServlet {
 			if (entry.getKeyword() != null && entry.getKeyword().length() > 0) {
 				ITopic[] topics = EnabledTopicUtils.getEnabled(entry.getTopics());
 				IIndexEntry[] subentries = EnabledTopicUtils.getEnabled(entry.getSubentries());
+				IIndexSee[] sees; 
+				if (entry instanceof IIndexEntry2) {
+					sees = ((IIndexEntry2)entry).getSees();
+				} else {
+					sees = new IIndexSee[0];
+				}
 				boolean multipleTopics = topics.length > 1;
 				boolean singleTopic = topics.length == 1;
 				
@@ -310,9 +321,10 @@ public class IndexFragmentServlet extends HttpServlet {
 				}
 				buf.append(">\n"); //$NON-NLS-1$
 				
-				if (multipleTopics || subentries.length > 0) {
+				if (multipleTopics || subentries.length > 0 || sees.length > 0) {
 					if (multipleTopics) generateTopicList(entry);
 					generateSubentries(entry, level + 1);
+					generateSees(sees);
 				}
 				
 				buf.append("</node>\n"); //$NON-NLS-1$	
@@ -353,7 +365,38 @@ public class IndexFragmentServlet extends HttpServlet {
 				buf.append("</node>\n"); //$NON-NLS-1$	
 
 			}
-		}	
+		}
+		
+		private void generateSees(IIndexSee[] sees) {
+	        for (int i = 0; i < sees.length; i++) {
+	        	IIndexSee see = sees[i];
+				if (EnabledTopicUtils.isEnabled(see)) {
+					//
+					String key = see.isSeeAlso() ? "SeeAlso" : "See"; //$NON-NLS-1$ //$NON-NLS-2$
+					String seePrefix = WebappResources.getString(key, UrlUtil
+							.getLocale(locale));
+					String seeTarget = see.getKeyword();
+					IIndexSubpath[] subpathElements = see.getSubpathElements();
+					for (int pathIndex = 0; pathIndex < subpathElements.length; pathIndex++ ) {
+						seeTarget += ", "; //$NON-NLS-1$
+						seeTarget += subpathElements[pathIndex].getKeyword();
+					}
+					String label = NLS.bind(seePrefix, seeTarget);
+					String encodedLabel = UrlUtil.htmlEncode(label);
+					buf.append("<node"); //$NON-NLS-1$
+
+					buf.append('\n' + "      title=\"" + encodedLabel + '"'); //$NON-NLS-1$ 
+
+					count++;
+					buf.append('\n' + "      id=\"i" + count + '"'); //$NON-NLS-1$							
+					String href = "see:" + seeTarget; //$NON-NLS-1$ 
+					buf.append('\n' + "      href=\"" //$NON-NLS-1$
+							+ XMLGenerator.xmlEscape(href) + "\""); //$NON-NLS-1$
+					buf.append(">\n"); //$NON-NLS-1$
+					buf.append("</node>\n"); //$NON-NLS-1$	
+	        	}
+	        }	
+		}
 	}
 
 }

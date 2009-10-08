@@ -200,8 +200,9 @@ function addChild(treeItem, id, name, href, image, closedImage, imageAltText, is
       
     var anchor = document.createElement("a");
     if (href === null) {
-        // anchor.href = "about:blank";
         anchor.className = "nolink";
+    } else if (href.match(/^see:/)) {
+         childItem.see = href.substring(4);
     } else {
         anchor.href = href;
     }

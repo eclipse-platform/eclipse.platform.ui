@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 Intel Corporation and others.
+ * Copyright (c) 2006, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,21 +8,29 @@
  * Contributors:
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 163558 Dynamic content support for all UA
+ *     IBM Corporation - Support for see elements
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IIndexEntry2;
+import org.eclipse.help.IIndexSee;
 import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
+import org.eclipse.help.internal.base.util.IndexUtils;
+import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
+import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
@@ -65,12 +73,26 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 				return ((IIndexEntry) obj).getKeyword();
 			if (obj instanceof IHelpResource)
 				return ((IHelpResource) obj).getLabel();
+			if (obj instanceof IndexSee) {
+				IndexSee see = (IndexSee) obj;
+				return getSeeString(see);
+			} 
 			return super.getText(obj);
 		}
 
 		public Image getImage(Object obj) {
 			return super.getImage(obj);
 		}
+	}
+	
+	public String getSeeString(IIndexSee see) {
+		String seeText = see.isSeeAlso() ? Messages.SeeAlso : Messages.See;
+		String message = NLS.bind(seeText, see.getKeyword());
+		String[] path = IndexUtils.getPath(see);;
+		for (int i = 1; i < path.length; i++) {
+			message = NLS.bind(Messages.SeeList, message,path[i]);
+		}
+		return message;
 	}
 
 	class RoleFilter extends ViewerFilter {
@@ -80,6 +102,8 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 				return isEnabled((IIndexEntry) element);
 			} else if (element instanceof IHelpResource) {
 				return isEnabled((IHelpResource) element);
+			} else if (element instanceof IIndexSee) {
+				return isEnabled((IIndexSee) element);
 			}
 			return false;
 		}
@@ -95,6 +119,13 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 				for (int i = 0; i < subentries.length; i++) {
 					if (isEnabled(subentries[i]))
 						return true;
+				}
+				if (entry instanceof IIndexEntry2) {
+					IIndexSee[] sees = ((IIndexEntry2)entry).getSees();
+					for (int i = 0; i < sees.length; i++) {
+						if (isEnabled(sees[i]))
+							return true;
+					}
 				}
 			}
 			return false;
@@ -137,6 +168,13 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 			if (topics.length == 1) {
 				parent.showURL(topics[0].getHref());
 			}
+		} else if (obj instanceof IIndexSee) {
+			IIndexSee see = (IIndexSee)obj;
+			IIndexEntry[] entrys = IndexUtils.findSeeTargets(HelpSystem.getIndex(), see, 0);
+			for (int i = 0; i < entrys.length; i++) {
+				treeViewer.setExpandedState(entrys[i], true);
+				treeViewer.setSelection(new StructuredSelection(entrys[i]), true);
+			}
 		}
 	}
 
@@ -170,17 +208,22 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 		 */
 		IHelpResource[] topics = entry.getTopics();
 		IIndexEntry[] subentries = entry.getSubentries();
+		IIndexSee[] sees = entry instanceof IIndexEntry2 ? ((IIndexEntry2)entry).getSees() : 
+			               new IIndexSee[0];
 
-		if (topics.length <= 1) {
-			return subentries;
+		if (topics.length <= 1 && subentries.length == 0 && sees.length == 0) {
+			// Entries with only one topic do not show children
+			return new Object[0];
 		}
 
-		Object[] childrens = new Object[topics.length + subentries.length];
-		System.arraycopy(topics, 0, childrens, 0, topics.length);
-		System.arraycopy(subentries, 0, childrens, topics.length, subentries.length);
+		Object[] children = new Object[topics.length + subentries.length + sees.length];
+		System.arraycopy(topics, 0, children, 0, topics.length);
+		System.arraycopy(subentries, 0, children, topics.length, subentries.length);
+		System.arraycopy(sees, 0, children, topics.length + subentries.length, sees.length);
 
-		return childrens; 
+		return children; 
 	}
+	
 
 	protected Tree getTreeWidget() {
 		return treeViewer.getTree();

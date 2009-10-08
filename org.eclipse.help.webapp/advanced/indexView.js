@@ -284,7 +284,7 @@ function typeinChanged() {
     loadChildren(typeinPrevious);
 }
 
-/**
+/*
  * Handler for key down 
  */
 function keyDownHandler(e)
@@ -322,6 +322,14 @@ function typeinKeyDownHandler(e) {
 
 	return false;
 }
+
+function handleSee(target) {
+    var pathSegments = target.split(", ");
+    typeinPrevious = null;
+    typein.value = pathSegments[0];
+    typeinChanged();
+}
+
 
 /**
   * Select the corresponding item in the index list on typein value change.

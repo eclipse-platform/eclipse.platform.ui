@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.help.IIndex;
+import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.HelpPlugin;
@@ -51,7 +53,7 @@ public class IndexAssembler {
 		this.locale = locale;
 		process(contributions);
 		Index index = merge(contributions);
-		sort(index);
+		sortAndPrune(index);
 		return index;
 	}
 	
@@ -73,12 +75,14 @@ public class IndexAssembler {
 	 * Merges the children of nodes a and b, and stores them into a. If the two
 	 * contain the same keyword, only one is kept but its children are merged,
 	 * recursively. If multiple topics exist with the same href, only the
-	 * first one found is kept.
+	 * first one found is kept. If multiple see elements are found with the same target 
+	 * only one is retained
 	 */
 	private void mergeChildren(UAElement a, UAElement b) {
 		// create data structures for fast lookup
 		Map entriesByKeyword = new HashMap();
 		Set topicHrefs = new HashSet();
+		Set seeTargets = new HashSet();
 		IUAElement[] childrenA = a.getChildren();
 		for (int i=0;i<childrenA.length;++i) {
 			UAElement childA = (UAElement)childrenA[i];
@@ -87,6 +91,8 @@ public class IndexAssembler {
 			}
 			else if (childA instanceof Topic) {
 				topicHrefs.add(childA.getAttribute(Topic.ATTRIBUTE_HREF));
+			} else if (childA instanceof IndexSee) {
+				seeTargets.add(((IndexSee)childA));
 			}
 		}
 		
@@ -113,6 +119,12 @@ public class IndexAssembler {
 					a.appendChild(childB);
 					topicHrefs.add(href);
 				}
+			} else if (childB instanceof IndexSee) {
+				if (!seeTargets.contains(((IndexSee) childB))) {
+					// add see only if it doesn't exist yet
+					a.appendChild(childB);
+					seeTargets.add(childB);
+				}
 			}
 		}
 	}
@@ -136,18 +148,19 @@ public class IndexAssembler {
 	/*
 	 * Sort the given node's descendants recursively.
 	 */
-	private void sort(UAElement element) {
+	private void sortAndPrune(UAElement element) {
 		if (comparator == null) {
 			comparator = new IndexComparator();
 		}
-		sort(element, comparator);
+		sortAndPrune(element, comparator);
 	}
 	
 	/*
 	 * Sort the given node's descendants recursively using the given
-	 * Comparator.
+	 * Comparator. Prune out any empty entry elements. Return true if this node was
+	 * not pruned
 	 */
-	private void sort(UAElement element, Comparator comparator) {
+	private boolean sortAndPrune(UAElement element, Comparator comparator) {
 		// sort children
 		IUAElement[] children = element.getChildren();
 		if (children.length > 1) {
@@ -160,9 +173,30 @@ public class IndexAssembler {
 			}
 		}
 		// sort children's children
+		boolean hasChildren = false;
 		for (int i=0;i<children.length;++i) {
-			sort((UAElement)children[i], comparator);
+			hasChildren = hasChildren | sortAndPrune((UAElement)children[i], comparator);
 		}
+		if (element instanceof IIndexEntry && !hasChildren) {
+			element.getParentElement().removeChild(element);
+			return false;
+		}
+		if (element instanceof IndexSee && !isValidSeeReference((IndexSee) element)) {
+			element.getParentElement().removeChild(element);
+			return false;
+		}
+		return true;
+	}
+	
+	boolean isValidSeeReference(IndexSee see) {
+		UAElement ancestor = see.getParentElement();
+		while (!(ancestor instanceof Index)) {
+			if (ancestor == null) {
+				return true;
+			}
+			ancestor = ancestor.getParentElement();
+		}
+		return ((Index)ancestor).containsSeeTarget(see);
 	}
 	
 	/*
@@ -201,7 +235,9 @@ public class IndexAssembler {
 			int c1 = getCategory((UAElement)o1);
 			int c2 = getCategory((UAElement)o2);
 			if (c1 == c2) {
-
+                if (o1 instanceof IndexSee) {
+                	return ((IndexSee)o1).compareTo(o2);
+                }
 				// same type of object; compare alphabetically
 				String s1 = getLabel((UAElement)o1);
 				String s2 = getLabel((UAElement)o2);
@@ -239,9 +275,11 @@ public class IndexAssembler {
 					return 1;
 				}
 				return 4;
+			} else if (element instanceof IndexSee) {
+				return 5;
 			}
 			else {
-				return 5;
+				return 6;
 			}
 		}
 		

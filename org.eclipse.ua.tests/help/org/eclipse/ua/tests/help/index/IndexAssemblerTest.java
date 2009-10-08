@@ -20,14 +20,20 @@ import junit.framework.TestSuite;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IIndexEntry2;
+import org.eclipse.help.IIndexSee;
 import org.eclipse.help.ITopic;
+import org.eclipse.help.IUAElement;
+import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
 import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.index.Index;
 import org.eclipse.help.internal.index.IndexAssembler;
 import org.eclipse.help.internal.index.IndexContribution;
+import org.eclipse.help.internal.index.IndexEntry;
 import org.eclipse.help.internal.index.IndexFile;
 import org.eclipse.help.internal.index.IndexFileParser;
+import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
 public class IndexAssemblerTest extends TestCase {
@@ -53,6 +59,33 @@ public class IndexAssemblerTest extends TestCase {
 		String expected = serialize((UAElement)result_a_b_c.getIndex());
 		String actual = serialize(assembled);
 		assertEquals(trimWhiteSpace(expected), trimWhiteSpace(actual));
+	}
+	
+	public void testAssembleWithSeeAlso() throws Exception {
+		IndexFileParser parser = new IndexFileParser();
+		IndexContribution contrib = parser.parse(new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/d.xml", "en"));
+		IndexAssembler assembler = new IndexAssembler();
+		List contributions = new ArrayList(Arrays.asList(new Object[] { contrib }));
+		Index index = assembler.assemble(contributions, Platform.getNL());
+	    IIndexEntry[] children = (IIndexEntry[]) index.getEntries();
+	    assertEquals(2,children.length);
+	    IIndexEntry eclipseEntry = children[0];
+		assertEquals("eclipse", eclipseEntry.getKeyword());
+		IUAElement[] eclipseChildren = eclipseEntry.getChildren();
+		assertEquals(4, eclipseChildren.length);
+		assertTrue(eclipseChildren[0] instanceof Topic);
+		assertTrue(eclipseChildren[1] instanceof IndexEntry);
+		assertTrue(eclipseChildren[2] instanceof IndexSee);
+		assertTrue(eclipseChildren[3] instanceof IndexSee);
+		IndexSee seeHelios = (IndexSee) eclipseChildren[2];
+		IndexSee seeHeliosRelease = (IndexSee) eclipseChildren[3];
+		assertEquals(0, seeHelios.getSubpathElements().length);
+		assertEquals(1, seeHeliosRelease.getSubpathElements().length);
+	    IIndexEntry heliosEntry = children[1];
+		assertEquals("helios", heliosEntry.getKeyword());
+	    IIndexSee[] heliosSees = ((IIndexEntry2)heliosEntry).getSees();
+	    assertEquals(1, heliosSees.length);
+	    assertEquals("eclipse", heliosSees[0].getKeyword());
 	}
 	
 	public void testTitle() throws Exception{

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IIndexEntry2;
+import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.UAContentFilter;
@@ -93,7 +95,19 @@ public class EnabledTopicUtils {
 				return true;
 			}
 		}
+		if (entry instanceof IIndexEntry2) {
+			IIndexSee[] sees = ((IIndexEntry2)entry).getSees();
+			for (int i = 0; i < sees.length; i++) {
+				if (isEnabled(sees[i])) {
+					return true;
+				}
+			}
+		}
 		return false;
+	}
+
+	public static boolean isEnabled(IIndexSee see) {
+		return see.isEnabled(HelpEvaluationContext.getContext());
 	}
 
 	/**

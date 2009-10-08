@@ -15,10 +15,15 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.help.IIndexEntry;
+import org.eclipse.help.IIndexEntry2;
+import org.eclipse.help.IIndexSee;
+import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.index.IndexEntry;
+import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -43,6 +48,7 @@ public class IndexEntryTest extends TestCase {
 	private final String ENTRY_ECLIPSE = "<entry keyword=\"eclipse\"/>";
 	private final String ENTRY_BUGZILLA = "<entry keyword=\"bugzilla\"/>";
 	private final String TOPIC_BUGZILLA = "<topic href=\"https://bugs.eclipse.org/bugs/\" label=\"bugzilla\"/>";
+	private final String SEE_ALSO_SDK = "<see keyword=\"sdk\"/>";
 	
 	private final String ENTRY_WITH_ENABLEMENT = ENTRY_HEAD_ECLIPSE + ENABLEMENT_CHEATSHEETS + ENTRY_END;
 	private final String ENTRY_NOT_ENABLED = ENTRY_HEAD_ECLIPSE + ENABLEMENT_INVALID + ENTRY_END;
@@ -59,6 +65,7 @@ public class IndexEntryTest extends TestCase {
 	    + " keyword=\"Transformations and transformation configurations\"/>";
 	private final String ENTRY_WITH_CHILD = ENTRY_HEAD_ECLIPSE + ENTRY_BUGZILLA + ENTRY_END;
 	private final String ENTRY_WITH_TOPIC = ENTRY_HEAD_ECLIPSE + TOPIC_BUGZILLA + ENTRY_END;
+	private final String ENTRY_WITH_SEE = ENTRY_HEAD_ECLIPSE + SEE_ALSO_SDK + ENTRY_END;
 	
 	public static Test suite() {
 		return new TestSuite(IndexEntryTest.class);
@@ -87,7 +94,7 @@ public class IndexEntryTest extends TestCase {
 		assertEquals(ECLIPSE, entry.getKeyword());
 		assertEquals(0, entry.getTopics().length);
 		assertEquals(0, entry.getSubentries().length);
-		//assertEquals(0, entry.getSees().length);
+		assertEquals(0, entry.getSees().length);
 	}
 
 	public void testCopySimpleIndexEntry() {
@@ -112,7 +119,7 @@ public class IndexEntryTest extends TestCase {
 		assertEquals(BUGZILLA, child2.getKeyword());
 		assertEquals(1, entry2.getSubentries().length);
 	}
-	
+
 	public void testCopyIndexEntryWithTopic() {
 		IndexEntry entry1;
 		entry1 = createEntry(ENTRY_WITH_TOPIC);
@@ -129,6 +136,22 @@ public class IndexEntryTest extends TestCase {
 		Topic child2 = (Topic)entry2.getTopics()[0];
 		assertEquals(BUGZILLA, child2.getLabel());
 		assertEquals(BUGZILLA_HREF, child2.getHref());
+	}
+	
+	public void testCopyIndexEntryWithSee() {
+		IndexEntry entry1;
+		entry1 = createEntry(ENTRY_WITH_SEE);
+		IndexEntry entry2 = new IndexEntry(entry1);
+
+		assertEquals(0, entry1.getSubentries().length);
+		assertEquals(1, entry1.getSees().length);
+		IndexSee child1 = (IndexSee)entry1.getSees()[0];
+		assertEquals("sdk", child1.getKeyword());
+
+		assertEquals(0, entry2.getSubentries().length);
+		assertEquals(1, entry2.getSees().length);
+		IndexSee child2 = (IndexSee)entry2.getSees()[0];
+		assertEquals("sdk", child2.getKeyword());
 	}
 
 	public void testEnabledIndexEntry() {
@@ -232,49 +255,86 @@ public class IndexEntryTest extends TestCase {
 		assertFalse(entry2.isEnabled(HelpEvaluationContext.getContext()));
 		assertFalse(entry3.isEnabled(HelpEvaluationContext.getContext()));
 	}
-	
-	/*
-	 * Disabled, see Bug 210024 [Help] IndexEntry element problems constructing from an IIndexEntry
-	public void testUserTopicWithFilteredChildren() {
-		UserTopic u1 = new UserTopic(ECLIPSE, ECLIPSE_HREF, true);
-		UserTopic u2 = new UserTopic(BUGZILLA, BUGZILLA_HREF, false);
-		u1.addTopic(u2);
-		Topic t1 = new Topic(u1);
-		assertEquals(ECLIPSE, t1.getLabel());
-		assertEquals(ECLIPSE_HREF, t1.getHref());
-		assertTrue(t1.isEnabled(HelpEvaluationContext.getContext()));
-		assertEquals(1, t1.getChildren().length);
-		ITopic t2 = t1.getSubentrys()[0];
-		assertEquals(BUGZILLA, t2.getLabel());
-		assertEquals(BUGZILLA_HREF, t2.getHref());
-		assertFalse(t2.isEnabled(HelpEvaluationContext.getContext()));
-	}
-	*/
-	
-	/*
-	public void testCopyUserTopicWithChildren() {
-		UserTopic u1 = new UserTopic(ECLIPSE, ECLIPSE_HREF, true);
-		UserTopic u2 = new UserTopic(BUGZILLA, BUGZILLA_HREF, true);
-		u1.addTopic(u2);
-		Topic t1 = new Topic(u1);
-		Topic t2 = new Topic(t1);
 
-		assertEquals(ECLIPSE, t1.getLabel());
-		assertEquals(ECLIPSE_HREF, t1.getHref());
-		assertTrue(t1.isEnabled(HelpEvaluationContext.getContext()));
-		assertEquals(1, t1.getChildren().length);
-		ITopic t1s = t1.getSubentrys()[0];
-		assertEquals(BUGZILLA, t1s.getLabel());
-		assertEquals(BUGZILLA_HREF, t1s.getHref());
-		
-		assertEquals(ECLIPSE, t2.getLabel());
-		assertEquals(ECLIPSE_HREF, t2.getHref());
-		assertTrue(t2.isEnabled(HelpEvaluationContext.getContext()));
-		assertEquals(1, t2.getChildren().length);
-		ITopic t2s = t2.getSubentrys()[0];
-		assertEquals(BUGZILLA, t2s.getLabel());
-		assertEquals(BUGZILLA_HREF, t2s.getHref());
+	public void testUserEntry() {
+		UserIndexEntry u1 = createUserEntry();
+		checkEntryChildEnablement(u1);
+		IndexEntry entry = new IndexEntry(u1);
+		assertEquals("java", entry.getKeyword());
+		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
+		checkCreatedEntry(entry);
+	}
+	
+	/*
+	 * Disabled, see Bug 210024 [Help] Topic element problems constructing from an ITopic
+	public void testUserEntryChildEnablement() {
+		UserIndexEntry u1 = createUserEntry();
+		IndexEntry entry = new IndexEntry(u1);
+		assertEquals("java", entry.getKeyword());
+		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
+		checkEntryChildEnablement(entry);
 	}
 	*/
+	
+	public void testCopyUserEntry() {
+		UserIndexEntry u1 = createUserEntry();
+		IndexEntry entry1 = new IndexEntry(u1);
+		IndexEntry entry2 = new IndexEntry(entry1);
+		checkCreatedEntry(entry1);
+		checkCreatedEntry(entry2);
+	}
+
+	private void checkCreatedEntry(IIndexEntry2 entry) {
+		assertEquals("java", entry.getKeyword());
+		assertTrue(entry.isEnabled(HelpEvaluationContext.getContext()));
+		IIndexEntry[] subentries = entry.getSubentries();
+		ITopic[] topics = entry.getTopics();
+		IIndexSee[] sees = entry.getSees();
+		assertEquals(2, subentries.length);
+		assertEquals(1, sees.length);
+		assertEquals(3,topics.length);
+	    assertEquals("jdt", subentries[0].getKeyword());
+	    assertEquals("compiler", subentries[1].getKeyword());
+	    assertEquals("label1", topics[0].getLabel());
+	    assertEquals("label2", topics[1].getLabel());
+	    assertEquals("label3", topics[2].getLabel());
+	    assertEquals("href1", topics[0].getHref());
+	    assertEquals("href2", topics[1].getHref());
+	    assertEquals("href3", topics[2].getHref());
+	    assertEquals("beans", sees[0].getKeyword());
+	}
+	
+	private void checkEntryChildEnablement(IIndexEntry2 entry) {
+		IIndexEntry[] subentries = entry.getSubentries();
+		ITopic[] topics = entry.getTopics();
+		IIndexSee[] sees = entry.getSees();
+		assertEquals(2, subentries.length);
+		assertEquals(1, sees.length);
+		assertEquals(3,topics.length);
+	    assertTrue(subentries[0].isEnabled(HelpEvaluationContext.getContext()));
+	    assertFalse(subentries[1].isEnabled(HelpEvaluationContext.getContext()));
+	    assertTrue(topics[0].isEnabled(HelpEvaluationContext.getContext()));
+	    assertFalse(topics[1].isEnabled(HelpEvaluationContext.getContext()));
+	    assertTrue(topics[2].isEnabled(HelpEvaluationContext.getContext()));
+	    assertTrue(sees[0].isEnabled(HelpEvaluationContext.getContext()));
+	}
+
+	private UserIndexEntry createUserEntry() {
+		UserIndexEntry u1;
+		u1 = new UserIndexEntry("java", true);
+		UserIndexEntry u2 = new UserIndexEntry("jdt", true);
+		UserIndexEntry u3 = new UserIndexEntry("compiler", false);
+		UserTopic t1 = new UserTopic("label1", "href1", true);
+		UserTopic t2 = new UserTopic("label2", "href2", false);
+		UserTopic t3 = new UserTopic("label3", "href3", true);
+		UserIndexSee s1 = new UserIndexSee("beans", true);
+		u1.addEntry(u2);
+		u1.addEntry(u3);
+		u1.addTopic(t1);
+		u1.addTopic(t2);
+		u1.addTopic(t3);
+		u1.addSee(s1);
+		return u1;
+	}
 		
 }
