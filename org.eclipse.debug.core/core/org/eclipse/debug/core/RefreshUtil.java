@@ -178,7 +178,10 @@ public class RefreshUtil {
 			} catch (CoreException e) {
 				// unable to resolve a resource
 			}
-			if (resource != null) {
+			if (resource == null) {
+				// empty selection
+				return new IResource[]{};
+			} else {
 				if (memento.equals(MEMENTO_SELECTED_RESOURCE)) {
 					return new IResource[] { resource };
 				} else if (memento.equals(MEMENTO_SELECTED_CONTAINER)) {
