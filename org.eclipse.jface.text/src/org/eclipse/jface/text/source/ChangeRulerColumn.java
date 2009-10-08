@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,7 +24,6 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -54,7 +53,7 @@ import org.eclipse.jface.text.revisions.RevisionInformation;
  *
  * @since 3.0
  */
-public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalRulerInfo, IVerticalRulerInfoExtension, IChangeRulerColumn, IRevisionRulerColumn {
+public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRulerColumn {
 	/**
 	 * Handles all the mouse interaction in this line number ruler column.
 	 */
@@ -199,13 +198,13 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 		fCachedTextViewer= parentRuler.getTextViewer();
 		fCachedTextWidget= fCachedTextViewer.getTextWidget();
 
-		fCanvas= new Canvas(parentControl, SWT.NONE);
+		fCanvas= new Canvas(parentControl, SWT.DOUBLE_BUFFERED);
 		fCanvas.setBackground(getBackground());
 
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
-					doubleBufferPaint(event.gc);
+					doClearPaint(event.gc);
 			}
 		});
 
@@ -249,40 +248,19 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	}
 
 	/**
-	 * Double buffer drawing.
+	 * Clears the background and then paints.
 	 *
-	 * @param dest the GC to draw into
+	 * @param gc the GC to draw into
 	 */
-	private void doubleBufferPaint(GC dest) {
+	private void doClearPaint(GC gc) {
 
 		Point size= fCanvas.getSize();
 
-		if (size.x <= 0 || size.y <= 0)
-			return;
-
-		if (fBuffer != null) {
-			Rectangle r= fBuffer.getBounds();
-			if (r.width != size.x || r.height != size.y) {
-				fBuffer.dispose();
-				fBuffer= null;
-			}
-		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-
-		GC gc= new GC(fBuffer);
 		gc.setFont(fCanvas.getFont());
+		gc.setBackground(getBackground());
+		gc.fillRectangle(0, 0, size.x, size.y);
 
-		try {
-			gc.setBackground(getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
-
-			doPaint(gc);
-		} finally {
-			gc.dispose();
-		}
-
-		dest.drawImage(fBuffer, 0, 0);
+		doPaint(gc);
 	}
 
 	/**
@@ -333,9 +311,8 @@ public final class ChangeRulerColumn implements IVerticalRulerColumn, IVerticalR
 	public void redraw() {
 
 		if (fCachedTextViewer != null && fCanvas != null && !fCanvas.isDisposed()) {
-			GC gc= new GC(fCanvas);
-			doubleBufferPaint(gc);
-			gc.dispose();
+			fCanvas.redraw();
+			fCanvas.update();
 		}
 	}
 

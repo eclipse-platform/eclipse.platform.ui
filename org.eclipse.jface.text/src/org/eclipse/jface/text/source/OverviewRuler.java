@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -483,12 +483,12 @@ public class OverviewRuler implements IOverviewRuler {
 			});
 		}
 
-		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND);
+		fCanvas= new Canvas(parent, SWT.NO_BACKGROUND | SWT.DOUBLE_BUFFERED);
 
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fTextViewer != null)
-					doubleBufferPaint(event.gc);
+					doClearPaint(event.gc);
 			}
 		});
 
@@ -545,44 +545,23 @@ public class OverviewRuler implements IOverviewRuler {
 	}
 
 	/**
-	 * Double buffer drawing.
+	 * Clears the background and then paints.
 	 *
-	 * @param dest the GC to draw into
+	 * @param gc the GC to draw into
 	 */
-	private void doubleBufferPaint(GC dest) {
+	private void doClearPaint(GC gc) {
 
 		Point size= fCanvas.getSize();
 
-		if (size.x <= 0 || size.y <= 0)
-			return;
+		gc.setBackground(fCanvas.getBackground());
+		gc.fillRectangle(0, 0, size.x, size.y);
 
-		if (fBuffer != null) {
-			Rectangle r= fBuffer.getBounds();
-			if (r.width != size.x || r.height != size.y) {
-				fBuffer.dispose();
-				fBuffer= null;
-			}
-		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+		cacheAnnotations();
 
-		GC gc= new GC(fBuffer);
-		try {
-			gc.setBackground(fCanvas.getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
-
-			cacheAnnotations();
-
-			if (fTextViewer instanceof ITextViewerExtension5)
-				doPaint1(gc);
-			else
-				doPaint(gc);
-
-		} finally {
-			gc.dispose();
-		}
-
-		dest.drawImage(fBuffer, 0, 0);
+		if (fTextViewer instanceof ITextViewerExtension5)
+			doPaint1(gc);
+		else
+			doPaint(gc);
 	}
 
 	/**
@@ -815,9 +794,8 @@ public class OverviewRuler implements IOverviewRuler {
 			return;
 
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			GC gc= new GC(fCanvas);
-			doubleBufferPaint(gc);
-			gc.dispose();
+			fCanvas.redraw();
+			fCanvas.update();
 		}
 	}
 

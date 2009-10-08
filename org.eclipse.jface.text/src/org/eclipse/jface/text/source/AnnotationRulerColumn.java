@@ -277,7 +277,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		fCanvas.addPaintListener(new PaintListener() {
 			public void paintControl(PaintEvent event) {
 				if (fCachedTextViewer != null)
-					doubleBufferPaint(event.gc);
+					doClearPaint(event.gc);
 			}
 		});
 
@@ -353,7 +353,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 * @return the created canvas
 	 */
 	private Canvas createCanvas(Composite parent) {
-		return new Canvas(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS) {
+		return new Canvas(parent, SWT.NO_BACKGROUND | SWT.NO_FOCUS | SWT.DOUBLE_BUFFERED) {
 			/*
 			 * @see org.eclipse.swt.widgets.Control#addMouseListener(org.eclipse.swt.events.MouseListener)
 			 * @since 3.0
@@ -501,42 +501,22 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	}
 
 	/**
-	 * Double buffer drawing.
+	 * Clears the background and then paints.
 	 *
-	 * @param dest the GC to draw into
+	 * @param gc the GC to draw into
 	 */
-	private void doubleBufferPaint(GC dest) {
+	private void doClearPaint(GC gc) {
 
 		Point size= fCanvas.getSize();
 
-		if (size.x <= 0 || size.y <= 0)
-			return;
-
-		if (fBuffer != null) {
-			Rectangle r= fBuffer.getBounds();
-			if (r.width != size.x || r.height != size.y) {
-				fBuffer.dispose();
-				fBuffer= null;
-			}
-		}
-		if (fBuffer == null)
-			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-
-		GC gc= new GC(fBuffer);
 		gc.setFont(fCachedTextWidget.getFont());
-		try {
-			gc.setBackground(fCanvas.getBackground());
-			gc.fillRectangle(0, 0, size.x, size.y);
+		gc.setBackground(fCanvas.getBackground());
+		gc.fillRectangle(0, 0, size.x, size.y);
 
-			if (fCachedTextViewer instanceof ITextViewerExtension5)
-				doPaint1(gc);
-			else
-				doPaint(gc);
-		} finally {
-			gc.dispose();
-		}
-
-		dest.drawImage(fBuffer, 0, 0);
+		if (fCachedTextViewer instanceof ITextViewerExtension5)
+			doPaint1(gc);
+		else
+			doPaint(gc);
 	}
 
 	/**
@@ -807,9 +787,8 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	public void redraw() {
 		if (fCanvas != null && !fCanvas.isDisposed()) {
-			GC gc= new GC(fCanvas);
-			doubleBufferPaint(gc);
-			gc.dispose();
+			fCanvas.redraw();
+			fCanvas.update();
 		}
 	}
 
