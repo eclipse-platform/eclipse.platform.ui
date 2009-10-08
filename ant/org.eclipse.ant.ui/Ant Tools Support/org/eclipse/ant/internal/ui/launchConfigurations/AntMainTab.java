@@ -14,6 +14,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
+import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -83,8 +84,14 @@ public class AntMainTab extends ExternalToolsMainTab {
 	}
 
 	private void setMappedResources(ILaunchConfigurationWorkingCopy configuration) {
-		IFile file= getIFile(configuration);
-		configuration.setMappedResources(new IResource[] {file});
+		// Don't map resources for external tool builders - they don't show up in the launch history
+		try {
+			if (!IAntLaunchConstants.ID_ANT_BUILDER_LAUNCH_CONFIGURATION_TYPE.equals(configuration.getType().getIdentifier())) {
+				IFile file= getIFile(configuration);
+				configuration.setMappedResources(new IResource[] {file});
+			}
+		} catch (CoreException e) {
+		}
 	}
 
 	private void updateProjectName(ILaunchConfigurationWorkingCopy configuration) {
