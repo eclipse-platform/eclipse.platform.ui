@@ -17,6 +17,7 @@ import org.eclipse.ua.tests.help.dynamic.AllDynamicTests;
 import org.eclipse.ua.tests.help.index.AllIndexTests;
 import org.eclipse.ua.tests.help.other.AllOtherHelpTests;
 import org.eclipse.ua.tests.help.preferences.AllPreferencesTests;
+import org.eclipse.ua.tests.help.remote.AllRemoteTests;
 import org.eclipse.ua.tests.help.search.AllSearchTests;
 import org.eclipse.ua.tests.help.toc.AllTocTests;
 import org.eclipse.ua.tests.help.webapp.AllWebappTests;
@@ -44,5 +45,6 @@ public class AllHelpTests extends TestSuite {
 		addTest(AllIndexTests.suite());
 		addTest(AllWebappTests.suite());
 		addTest(AllOtherHelpTests.suite());
+		addTest(AllRemoteTests.suite());
 	}
 }
