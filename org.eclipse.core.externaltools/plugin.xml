@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+ <extension
+         point="org.eclipse.debug.core.launchConfigurationTypes">
+      <launchConfigurationType
+            name="%Program.externalTools"
+            delegate="org.eclipse.core.externaltools.internal.launchConfigurations.ProgramLaunchDelegate"
+            category="org.eclipse.ui.externaltools"
+            modes="run"
+            id="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType">
+      </launchConfigurationType>
+      <launchConfigurationType
+            name="%Program.externalTools"
+            delegate="org.eclipse.core.externaltools.internal.launchConfigurations.ProgramLaunchDelegate"
+            category="org.eclipse.ui.externaltools.builder"
+            modes="run"
+            id="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType">
+      </launchConfigurationType>
+   </extension>
+   <extension
+         id="org.eclipse.ui.externaltools.ExternalToolBuilder"
+         name="%Builder.externalTools"
+         point="org.eclipse.core.resources.builders">
+     <builder
+      	isConfigurable= "true">
+         <run
+               class="org.eclipse.core.externaltools.internal.model.ExternalToolBuilder">
+         </run>
+      </builder>
+   </extension>   
+</plugin>
