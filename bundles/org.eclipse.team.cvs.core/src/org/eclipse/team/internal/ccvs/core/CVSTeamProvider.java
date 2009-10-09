@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -492,12 +492,12 @@ public class CVSTeamProvider extends RepositoryProvider {
 	 * Checkout (cvs edit) the provided resources so they can be modified locally and committed.
 	 * This will make any read-only resources in the list writable and will notify the server
 	 * that the file is being edited. This notification may be done immediately or at some 
-	 * later point depending on whether contact with the server is possble at the time of 
+	 * later point depending on whether contact with the server is possible at the time of 
 	 * invocation or the value of the notify server parameter.
 	 * 
 	 * The recurse parameter is equivalent to the cvs local options -l (<code>true</code>) and 
 	 * -R (<code>false</code>). The notifyServer parameter can be used to defer server contact
-	 * until the next command. This may be approrpiate if no shell or progress monitor is available
+	 * until the next command. This may be appropriate if no shell or progress monitor is available
 	 * to the caller. The notification bit field indicates what temporary watches are to be used while
 	 * the file is being edited. The possible values that can be ORed together are ICVSFile.EDIT, 
 	 * ICVSFile.UNEDIT and ICVSFile.COMMIT. There pre-ORed convenience values ICVSFile.NO_NOTIFICATION
@@ -538,15 +538,15 @@ public class CVSTeamProvider extends RepositoryProvider {
 	}
 	
 	/**
-	 * Unedit the given resources. Any writtable resources will be reverted to their base contents
+	 * Unedit the given resources. Any writable resources will be reverted to their base contents
 	 * and made read-only and the server will be notified that the file is no longer being edited.
 	 * This notification may be done immediately or at some 
-	 * later point depending on whether contact with the server is possble at the time of 
+	 * later point depending on whether contact with the server is possible at the time of 
 	 * invocation or the value of the notify server parameter.
 	 * 
 	 * The recurse parameter is equivalent to the cvs local options -l (<code>true</code>) and 
 	 * -R (<code>false</code>). The notifyServer parameter can be used to defer server contact
-	 * until the next command. This may be approrpiate if no shell or progress monitor is available
+	 * until the next command. This may be appropriate if no shell or progress monitor is available
 	 * to the caller.
 	 * 
 	 * @param resources the resources to be unedited

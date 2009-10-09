@@ -61,7 +61,7 @@ public class ResourceSyncInfo {
 	private static final String LOCKEDBY_SUFFIX = "\tlocked by"; //$NON-NLS-1$
 
 	// a sync element with a revision of '0' is considered a new file that has
-	// not been comitted to the repo. Is visible so that clients can create sync infos
+	// not been committed to the repo. Is visible so that clients can create sync infos
 	// for new files.
 	public static final String ADDED_REVISION = "0"; //$NON-NLS-1$
 	
@@ -196,7 +196,7 @@ public class ResourceSyncInfo {
 	
 	/**
 	 * Answers if this sync information is for a file that is scheduled to be deleted
-	 * from the repository but the deletion has not yet been comitted.
+	 * from the repository but the deletion has not yet been committed.
 	 * 
 	 * @return <code>true</code> if the sync information is deleted or <code>false</code> if 
 	 * the sync is for an file that exists remotely.

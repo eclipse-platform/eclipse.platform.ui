@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -85,7 +85,7 @@ public abstract class CVSModelElement implements IWorkbenchAdapter, IAdaptable {
     }
     
     /**
-     * Helper methed error handler that displayes a generic dialog title and message when displaying an error to the user.
+     * Helper method error handler that displays a generic dialog title and message when displaying an error to the user.
      * @param t the exception that occurred.
      */
     protected void handle(Throwable t) {

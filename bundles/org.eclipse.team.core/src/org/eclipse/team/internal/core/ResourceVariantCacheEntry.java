@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -80,7 +80,7 @@ public class ResourceVariantCacheEntry {
 	 * the contents from the first write is used and the content from subsequent writes is ignored.
 	 * @param stream an InputStream that provides the contents to be cached
 	 * @param monitor a progress monitor
-	 * @throws TeamException if the entry is DISPOSED or an I/O error occurres
+	 * @throws TeamException if the entry is DISPOSED or an I/O error occurred
 	 */
 	public void setContents(InputStream stream, IProgressMonitor monitor) throws TeamException {
 		// Use a lock to only allow one write at a time
@@ -184,7 +184,7 @@ public class ResourceVariantCacheEntry {
 
 	/**
 	 * Registers a hit on this cache entry. This updates the last access timestamp.
-	 * Thsi method is intended to only be invokded from inside this class or the cahce itself.
+	 * This method is intended to only be invoked from inside this class or the cache itself.
 	 * Other clients should not use it.
 	 */
 	protected void registerHit() {
@@ -192,7 +192,7 @@ public class ResourceVariantCacheEntry {
 	}
 
 	public void dispose() {
-		// Use a lock to avoid changing state while another thread may be writting
+		// Use a lock to avoid changing state while another thread may be writing
 		beginOperation();
 		try {
 			state = DISPOSED;

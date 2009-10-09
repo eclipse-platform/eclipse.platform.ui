@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,7 @@
  *******************************************************************************/
 package org.eclipse.team.internal.ccvs.core.resources;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -25,7 +23,7 @@ import org.eclipse.team.internal.ccvs.core.util.Util;
 
 /**
  * Fetch the children for the given parent folder. When fetchMembers is invoked,
- * the children of the folder will be fecthced from the server and assigned to
+ * the children of the folder will be fetched from the server and assigned to
  * the children of the parent folder.
  */
 public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatusListener {
@@ -155,7 +153,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 			throw new CVSException(notExistStatus); 
 		}
 		
-		// Report any internal exceptions that occured fetching the members
+		// Report any internal exceptions that occurred fetching the members
 		if ( ! exceptions.isEmpty()) {
 			if (exceptions.size() == 1) {
 				throw (CVSException)exceptions.get(0);
@@ -237,7 +235,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	}
 	
 	/**
-	 * This method is invoked for each child folder as the reponses are being recieved from
+	 * This method is invoked for each child folder as the responses are being received from
 	 * the server. Default behavior is to record the folder for later retrieval using <code>getChilren()</code>. 
 	 * Subclasses may override but should invoke the inherited method to ensure the folder gets recorded.
 	 * @param name the name of the child folder
@@ -253,10 +251,10 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	}
 
 	/**
-	 * This method is invoked for each child file as the reponses are being recieved from
+	 * This method is invoked for each child file as the responses are being received from
 	 * the server. Default behavior is to record the file for later retrieval using <code>getChildren()</code>. 
 	 * Subclasses may override but should invoke the inherited method to ensure the file gets recorded.
-	 * This is important because the file revisions for any files are fetched subsequent to the fecthing
+	 * This is important because the file revisions for any files are fetched subsequent to the fetching
 	 * of the children.
 	 * @param name the name of the child folder
 	 */
@@ -273,7 +271,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	}
 	
 	/**
-	 * This method is invoked to indicate that the parent beig queried for children
+	 * This method is invoked to indicate that the parent being queried for children
 	 * does not exist. Subclasses may override to get early notification of this but 
 	 * should still invoke the inherited method.
 	 */
@@ -283,7 +281,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 
 	/**
 	 * Update the parent folder such that it's children are the
-	 * children that have been fecthed by the reciever.
+	 * children that have been fetched by the receiver.
 	 */
 	protected void updateParentFolderChildren() {
 		parentFolder.setChildren(getFetchedChildren());
@@ -298,7 +296,7 @@ public class RemoteFolderMemberFetcher implements IUpdateMessageListener, IStatu
 	}
 	
 	/**
-	 * Return an array of all fecthed children.
+	 * Return an array of all fetched children.
 	 * @return
 	 */
 	public ICVSRemoteResource[] getFetchedChildren() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -50,14 +50,14 @@ public class SyncFileWriter {
 	public static final String IGNORE_FILE = ".cvsignore"; //$NON-NLS-1$
 
 	// Some older CVS clients may of added a line to the entries file consisting
-	// of only a 'D'. It is safe to ingnore these entries.	
+	// of only a 'D'. It is safe to ignore these entries.	
 	private static final String FOLDER_TAG="D"; //$NON-NLS-1$
 	
 	// Command characters found in the Entries.log file
 	private static final String ADD_TAG="A "; //$NON-NLS-1$
 	private static final String REMOVE_TAG="R "; //$NON-NLS-1$	
 	
-	// key for saving the mod stamp for each writen meta file
+	// key for saving the mod stamp for each written meta file
 	public static final QualifiedName MODSTAMP_KEY = new QualifiedName("org.eclipse.team.cvs.core", "meta-file-modtime"); //$NON-NLS-1$ //$NON-NLS-2$
 	
 	/**
@@ -246,7 +246,7 @@ public class SyncFileWriter {
 			// write CVS/Entries.Static
 			IFile staticFile = cvsSubDir.getFile(STATIC);
 			if(info.getIsStatic()) {
-				// the existance of the file is all that matters
+				// the existence of the file is all that matters
 				if (Policy.DEBUG_METAFILE_CHANGES) {
 					System.out.println("Writing Static file for " + folder.getFullPath()); //$NON-NLS-1$
 				}
@@ -304,7 +304,7 @@ public class SyncFileWriter {
 	}	
 
 	/**
-	 * Delete folder sync is equilavent to removing the CVS subdir.
+	 * Delete folder sync is equivalent to removing the CVS subdir.
 	 */
 	public static void deleteFolderSync(IContainer folder) throws CVSException {		
 		try {
@@ -357,7 +357,7 @@ public class SyncFileWriter {
 	public static void writeAllNotifyInfo(IContainer parent, NotifyInfo[] infos) throws CVSException {
 		// get the CVS directory
 		IFolder cvsSubDir = getCVSSubdirectory(parent);
-		// write lines will throw an exception if the CVS directoru does not exist
+		// write lines will throw an exception if the CVS directory does not exist
 		
 		if (infos.length == 0) {
 			// if there are no notify entries, delete the notify file

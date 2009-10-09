@@ -12,14 +12,7 @@ package org.eclipse.team.internal.ccvs.ui.repo;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -47,7 +40,7 @@ public class RepositoryRoot extends PlatformObject {
 	// Map of String (module name) -> ICVSRemoteFolder (that is a defined module)
 	Map modulesCache;
 	Object modulesCacheLock = new Object();
-	// Lis of date tags
+	// List of date tags
 	List dateTags = new ArrayList();
 	
 	public static class TagCacheEntry {
