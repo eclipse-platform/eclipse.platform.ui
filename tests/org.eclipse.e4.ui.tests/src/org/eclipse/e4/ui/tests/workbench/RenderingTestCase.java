@@ -116,9 +116,9 @@ public class RenderingTestCase extends TestCase {
 		appContext = Workbench.createWorkbenchContext(serviceContext,
 				RegistryFactory.getRegistry(), null, null);
 		appContext.set(MApplication.class.getName(), app);
-
-		renderer = (PartRenderingEngine) contributionFactory.create(
-				PartRenderingEngine.engineURI, appContext);
+		appContext.set(IContributionFactory.class.getName(),
+				contributionFactory);
+		appContext.set(IEclipseContext.class.getName(), appContext);
 	}
 
 	/*

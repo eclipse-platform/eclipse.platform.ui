@@ -11,12 +11,15 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -49,41 +52,53 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class MSashTest extends RenderingTestCase {
 	public void testSashWeights() {
-		MWindow<MPart<?>> window = createSashWithNViews(2);
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 
-		topWidget = createModel(window);
-		((Shell) topWidget).layout(true);
-		MPart<?> sash = window.getChildren().get(0);
-		assertTrue("Should be an MSash", sash instanceof MSashForm);
+			public void run() {
+				renderer = (PartRenderingEngine) contributionFactory.create(
+						PartRenderingEngine.engineURI, appContext);
 
-		MSashForm sf = (MSashForm) sash;
-		EList wgts = sf.getWeights();
-		assertTrue("weight list muct not be null", wgts != null);
-		assertTrue("expected count 2, was " + wgts.size(), wgts.size() == 2);
+				MWindow<MPart<?>> window = createSashWithNViews(2);
 
-		Integer first = (Integer) wgts.get(0);
-		Integer second = (Integer) wgts.get(1);
-		assertTrue("Values should be equal", first.intValue() == second
-				.intValue());
+				topWidget = createModel(window);
+				((Shell) topWidget).layout(true);
+				MPart<?> sash = window.getChildren().get(0);
+				assertTrue("Should be an MSash", sash instanceof MSashForm);
 
-		MContributedPart v1 = (MContributedPart) sf.getChildren().get(0);
-		Composite c1 = (Composite) v1.getWidget();
-		Rectangle r1 = c1.getBounds();
-		MContributedPart v2 = (MContributedPart) sf.getChildren().get(1);
-		Composite c2 = (Composite) v2.getWidget();
-		Rectangle r2 = c2.getBounds();
-		assertTrue("SWT controls should be equal:", r1.width == r2.width);
+				MSashForm sf = (MSashForm) sash;
+				EList wgts = sf.getWeights();
+				assertTrue("weight list muct not be null", wgts != null);
+				assertTrue("expected count 2, was " + wgts.size(),
+						wgts.size() == 2);
 
-		SashForm sfw = (SashForm) sf.getWidget();
-		int[] w = { 75, 25 };
-		sfw.setWeights(w);
-		sfw.layout(true);
-		testWeights(sf, 75, 25);
+				Integer first = (Integer) wgts.get(0);
+				Integer second = (Integer) wgts.get(1);
+				assertTrue("Values should be equal", first.intValue() == second
+						.intValue());
 
-		sf.getWeights().clear();
-		sf.getWeights().add(new Integer(40));
-		sf.getWeights().add(new Integer(60));
-		testWeights(sf, 40, 60);
+				MContributedPart v1 = (MContributedPart) sf.getChildren()
+						.get(0);
+				Composite c1 = (Composite) v1.getWidget();
+				Rectangle r1 = c1.getBounds();
+				MContributedPart v2 = (MContributedPart) sf.getChildren()
+						.get(1);
+				Composite c2 = (Composite) v2.getWidget();
+				Rectangle r2 = c2.getBounds();
+				assertTrue("SWT controls should be equal:",
+						r1.width == r2.width);
+
+				SashForm sfw = (SashForm) sf.getWidget();
+				int[] w = { 75, 25 };
+				sfw.setWeights(w);
+				sfw.layout(true);
+				testWeights(sf, 75, 25);
+
+				sf.getWeights().clear();
+				sf.getWeights().add(new Integer(40));
+				sf.getWeights().add(new Integer(60));
+				testWeights(sf, 40, 60);
+			}
+		});
 	}
 
 	private void testWeights(MSashForm sf, double w1, double w2) {
