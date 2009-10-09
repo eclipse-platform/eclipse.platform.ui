@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Workbench SWT support (Incubation)
 Bundle-SymbolicName: org.eclipse.e4.ui.workbench.swt;singleton:=true
-Bundle-Version: 0.9.0.qualifier
+Bundle-Version: 0.9.1.qualifier
 Bundle-Activator: org.eclipse.e4.ui.workbench.swt.Activator
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.e4.ui.workbench,
