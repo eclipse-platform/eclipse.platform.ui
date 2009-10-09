@@ -11,8 +11,6 @@
 
 package org.eclipse.help.internal.index;
 
-import java.util.Arrays;
-
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.internal.UAElement;
@@ -94,7 +92,12 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable  {
 	}
 	
 	public int hashCode() {
-		return Arrays.hashCode(getPath());
+		int result = getKeyword().hashCode();
+		IIndexSubpath[] subpaths = getSubpathElements();
+		for (int i = 0; i < subpaths.length; i++) {
+			result += subpaths[i].getKeyword().hashCode();
+		}
+		return result;
     }
 
 	public boolean isSeeAlso() {
