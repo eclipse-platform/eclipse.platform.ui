@@ -770,6 +770,85 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue("Link to error log should be visible",
 				StatusDialogUtil.getErrorLogLink().isVisible());
 	}
+	
+	// two statuses, details, resize
+	public void testBug288770_1(){
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), false);
+		assertTrue("Details should be closed initially", StatusDialogUtil
+				.getDetailsButton().getText().equals(
+						IDialogConstants.SHOW_DETAILS_LABEL));
+		assertTrue("The list should be visible", StatusDialogUtil.getTable() != null);
+		selectWidget(StatusDialogUtil.getDetailsButton());
+		int height = StatusDialogUtil.getTable().getSize().y;
+		// resize the dialog
+		Shell statusShell = StatusDialogUtil.getStatusShell();
+		Point shellSize = statusShell.getSize();
+		statusShell.setSize(shellSize.x, shellSize.y + 100);
+		statusShell.layout(true);
+		int newHeight = StatusDialogUtil.getTable().getSize().y;
+		assertEquals("All height should be consumed by details", height,
+				newHeight);
+	}
+	
+	// status, details, status, resize
+	public void testBug288770_2(){
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		assertTrue("Details should be closed initially", StatusDialogUtil
+				.getDetailsButton().getText().equals(
+						IDialogConstants.SHOW_DETAILS_LABEL));
+		selectWidget(StatusDialogUtil.getDetailsButton());
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), false);
+		assertTrue("The list should be visible", StatusDialogUtil.getTable() != null);
+		int height = StatusDialogUtil.getTable().getSize().y;
+		// resize the dialog
+		Shell statusShell = StatusDialogUtil.getStatusShell();
+		Point shellSize = statusShell.getSize();
+		statusShell.setSize(shellSize.x, shellSize.y + 100);
+		statusShell.layout(true);
+		int newHeight = StatusDialogUtil.getTable().getSize().y;
+		assertEquals("All height should be consumed by details", height,
+				newHeight);
+	}
+	
+	public void testBug288770_3(){
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		assertTrue("Details should be closed initially", StatusDialogUtil
+				.getDetailsButton().getText().equals(
+						IDialogConstants.SHOW_DETAILS_LABEL));
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), false);
+		assertTrue("The list should be visible", StatusDialogUtil.getTable() != null);
+		int height = StatusDialogUtil.getTable().getSize().y;
+		// resize the dialog
+		Shell statusShell = StatusDialogUtil.getStatusShell();
+		Point shellSize = statusShell.getSize();
+		statusShell.setSize(shellSize.x, shellSize.y + 100);
+		statusShell.layout(true);
+		int newHeight = StatusDialogUtil.getTable().getSize().y;
+		assertTrue("List should resize when details are closed", height < newHeight);
+	}
+	
+	public void testBug288770_4(){
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		assertTrue("Details should be closed initially", StatusDialogUtil
+				.getDetailsButton().getText().equals(
+						IDialogConstants.SHOW_DETAILS_LABEL));
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), false);
+		selectWidget(StatusDialogUtil.getDetailsButton());
+		selectWidget(StatusDialogUtil.getDetailsButton());
+		assertTrue("Details should be closed", StatusDialogUtil
+				.getDetailsButton().getText().equals(
+						IDialogConstants.SHOW_DETAILS_LABEL));
+		assertTrue("The list should be visible", StatusDialogUtil.getTable() != null);
+		int height = StatusDialogUtil.getTable().getSize().y;
+		// resize the dialog
+		Shell statusShell = StatusDialogUtil.getStatusShell();
+		Point shellSize = statusShell.getSize();
+		statusShell.setSize(shellSize.x, shellSize.y + 100);
+		statusShell.layout(true);
+		int newHeight = StatusDialogUtil.getTable().getSize().y;
+		assertTrue("List should resize when details are closed", height < newHeight);
+	}
 
 	/**
 	 * Delivers custom support area.

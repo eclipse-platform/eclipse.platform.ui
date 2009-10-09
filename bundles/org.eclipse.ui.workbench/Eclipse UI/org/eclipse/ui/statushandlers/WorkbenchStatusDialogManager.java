@@ -1614,7 +1614,9 @@ public class WorkbenchStatusDialogManager {
 		// it is necessary to make list parent composite taller
 		GridData listAreaGD = (GridData) parent.getLayoutData();
 		listAreaGD.grabExcessHorizontalSpace = true;
-		listAreaGD.grabExcessVerticalSpace = true;
+		if (!detailsManager.isOpen()) {
+			listAreaGD.grabExcessVerticalSpace = true;
+		}
 		listAreaGD.heightHint = SWT.DEFAULT;
 
 		// create list viewer
@@ -2278,16 +2280,22 @@ public class WorkbenchStatusDialogManager {
 					IDialogConstants.HIDE_DETAILS_LABEL);
 			opened = true;
 		}
-		if(getStatusAdapters().size() == 1){
-			GridData gd = (GridData) listArea.getLayoutData();
-			if(opened){
-				gd.heightHint = 0;
-				gd.grabExcessVerticalSpace = false;
-			} else {
-				gd.grabExcessVerticalSpace = true;
-			}
-			listArea.setLayoutData(gd);
+
+		GridData listAreaGridData = (GridData) listArea.getLayoutData();
+		// if there is only one status to display,
+		// make sure that the list area is as small as possible
+		if (getStatusAdapters().size() == 1) {
+			listAreaGridData.heightHint = 0;
 		}
+		// allow listArea to grab space depending if details
+		// are opened or not
+		if (opened) {
+			listAreaGridData.grabExcessVerticalSpace = false;
+		} else {
+			listAreaGridData.grabExcessVerticalSpace = true;
+		}
+		listArea.setLayoutData(listAreaGridData);
+
 		Point newSize = getShell().computeSize(SWT.DEFAULT, SWT.DEFAULT);
 		int diffY = newSize.y - windowSize.y;
 		// increase the dialog height if details were opened and such increase is necessary
