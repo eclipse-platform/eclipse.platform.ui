@@ -405,6 +405,8 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>CONTENT</code> - The bytes contained by the resource have 
 	 * 		been altered, or <code>IResource.touch</code> has been called on 
 	 * 		the resource.</li>
+	 * <li><code>DERIVED_CHANGED</code> - The derived flag of the resource has
+	 * been altered.</li>
 	 * <li><code>ENCODING</code> - The encoding of the resource may have been altered.
 	 * This flag is not set when the encoding changes due to the file being modified, 
 	 * or being moved.</li>
@@ -434,6 +436,12 @@ public interface IResourceDelta extends IAdaptable {
 	 * <li><code>MOVED_FROM</code> - The resource has moved.
 	 * 	<code>getMovedFromPath</code> will return the path of where it was moved from.</li>
 	 * </ul>
+	 * The following code is only used when describing potential changes using an {@link IResourceChangeDescriptionFactory}:
+	 * <ul>
+	 * <li><code>COPIED_FROM</code> - Change constant (bit mask) indicating that the resource was copied from another location.
+	 * The location in the "before" state can be retrieved using <code>getMovedFromPath()</code>.</li>
+	 * </ul>
+	 * 
 	 * A simple move operation would result in the following delta information.
 	 * If a resource is moved from A to B (with no other changes to A or B), 
 	 * then A will have kind <code>REMOVED</code>, with flag <code>MOVED_TO</code>, 
@@ -459,11 +467,14 @@ public interface IResourceDelta extends IAdaptable {
 	 *
 	 * @return the flags
 	 * @see IResourceDelta#CONTENT
+	 * @see IResourceDelta#DERIVED_CHANGED
 	 * @see IResourceDelta#DESCRIPTION
 	 * @see IResourceDelta#ENCODING
+	 * @see IResourceDelta#LOCAL_CHANGED
 	 * @see IResourceDelta#OPEN
 	 * @see IResourceDelta#MOVED_TO
 	 * @see IResourceDelta#MOVED_FROM
+	 * @see IResourceDelta#COPIED_FROM
 	 * @see IResourceDelta#TYPE
 	 * @see IResourceDelta#SYNC
 	 * @see IResourceDelta#MARKERS

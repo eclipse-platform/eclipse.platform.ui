@@ -120,6 +120,14 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	}
 
 	/**
+	 * Obtains the scheduling rule from the appropriate factory for a derived flag change operation.
+	 */
+	public ISchedulingRule derivedRule(IResource resource) {
+		//team hook currently cannot change this rule	
+		return null;
+	}
+
+	/**
 	 * Obtains the scheduling rule from the appropriate factory for a marker change operation.
 	 */
 	public ISchedulingRule markerRule(IResource resource) {

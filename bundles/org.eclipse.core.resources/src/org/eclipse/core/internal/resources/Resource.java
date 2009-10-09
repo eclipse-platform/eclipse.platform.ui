@@ -1852,7 +1852,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		try {
 			String message = NLS.bind(Messages.resources_settingDerivedFlag, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
-			final ISchedulingRule rule = null;
+			final ISchedulingRule rule = workspace.getRuleFactory().derivedRule(this);
 			try {
 				workspace.prepareOperation(rule, monitor);
 				ResourceInfo info = getResourceInfo(false, false);

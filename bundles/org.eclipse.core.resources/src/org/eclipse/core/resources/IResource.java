@@ -2402,6 +2402,7 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 *       event notification. See <code>IResourceChangeEvent</code> for more details.</li>
 	 * </ul>
 	 * @see #isDerived()
+	 * @see IResourceRuleFactory#derivedRule(IResource)
 	 * @since 3.6
 	 */
 	public void setDerived(boolean isDerived, IProgressMonitor monitor) throws CoreException;

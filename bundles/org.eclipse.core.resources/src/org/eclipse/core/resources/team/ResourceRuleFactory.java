@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,20 @@ public class ResourceRuleFactory implements IResourceRuleFactory {
 		if (resource.getType() == IResource.ROOT)
 			return null;
 		return resource.getProject();
+	}
+
+	/**
+	 * Default implementation of <code>IResourceRuleFactory#derivedRule</code>.
+	 * This default implementation always returns <code>null</code>.
+	 * <p>
+	 * Subclasses may not currently override this method.
+	 * 
+	 * @see org.eclipse.core.runtime.jobs.ISchedulingRule#contains(org.eclipse.core.runtime.jobs.ISchedulingRule)
+	 * @see org.eclipse.core.resources.IResourceRuleFactory#derivedRule(IResource)
+	 * @since 3.6
+	 */
+	public final ISchedulingRule derivedRule(IResource resource) {
+		return null;
 	}
 
 	/**
