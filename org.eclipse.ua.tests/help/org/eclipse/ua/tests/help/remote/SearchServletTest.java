@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.remote;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -18,6 +19,8 @@ import java.util.List;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 
 import junit.framework.TestCase;
 
@@ -28,11 +31,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 public class SearchServletTest extends TestCase {
 	
+	private int mode;
+
 	protected void setUp() throws Exception {
 		BaseHelpSystem.ensureWebappRunning();
+		mode = BaseHelpSystem.getMode();
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+	}
+	
+	protected void tearDown() throws Exception {
+		BaseHelpSystem.setMode(mode);
 	}
 	
 	public void testRemoteSearchNotFound() throws Exception {
@@ -64,16 +76,40 @@ public class SearchServletTest extends TestCase {
 		Node[] hits = getSearchHitsFromServlet("\"jehcyqpfjs vkrhjewiwh\"");
 		assertEquals(1, hits.length);
 	}
-	
+
 	public void testRemoteSearchExactMatchNotFound() throws Exception {
 		Node[] hits = getSearchHitsFromServlet("\"vkrhjewiwh jehcyqpfjs\"");
 		assertEquals(0, hits.length);
+	}
+
+	public void testRemoteSearchWordNotInDefaultLocale() throws Exception {
+		Node[] hits = getSearchHitsFromServlet("deuejwuid");
+		assertEquals(0, hits.length);
+	}
+
+	public void testRemoteSearchUsingDeLocale() throws Exception {
+		Node[] hits = getSearchHitsUsingLocale("deuejwuid", "de");
+		assertEquals(1, hits.length);
 	}
 
 	private Node[] getSearchHitsFromServlet(String phrase)
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/search?phrase=" + URLEncoder.encode(phrase, "UTF-8"));
+		return makeServletCall(url);
+	}
+	
+	private Node[] getSearchHitsUsingLocale(String phrase, String locale)
+			throws Exception {
+		int port = WebappManager.getPort();
+		URL url = new URL("http", "localhost", port, "/help/search?phrase="
+				+ URLEncoder.encode(phrase, "UTF-8") + "&lang=" + locale);
+		return makeServletCall(url);
+	}
+
+	private Node[] makeServletCall(URL url) throws IOException,
+			ParserConfigurationException, FactoryConfigurationError,
+			SAXException {
 		InputStream is = url.openStream();
 		InputSource inputSource = new InputSource(is);
         DocumentBuilder documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
