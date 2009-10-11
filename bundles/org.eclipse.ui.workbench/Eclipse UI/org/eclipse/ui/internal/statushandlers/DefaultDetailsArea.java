@@ -11,9 +11,9 @@
 
 package org.eclipse.ui.internal.statushandlers;
 
+import com.ibm.icu.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -38,9 +38,9 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.progress.ProgressMessages;
@@ -49,8 +49,6 @@ import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * The default details area displaying a tree of statuses.
@@ -72,14 +70,14 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 			| IStatus.INFO | IStatus.WARNING;
 
 	/*
-	 * New child entry in the list will be shifted by two spaces.
+	 * New child entry in the list will be shifted by a tab
 	 */
-	private static final Object NESTING_INDENT = "  "; //$NON-NLS-1$
+	private static final Object NESTING_INDENT = "\t"; //$NON-NLS-1$
 
 	/*
 	 * Displays statuses.
 	 */
-	private List list;
+	private Text text;
 
 	/*
 	 * (non-Javadoc)
@@ -98,14 +96,15 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout());
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		list = new List(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
-				| SWT.BORDER);
+		text = new Text(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
+				| SWT.BORDER | SWT.READ_ONLY);
+		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		gd.widthHint = 250;
 		gd.heightHint = 100;
-		list.setLayoutData(gd);
+		text.setLayoutData(gd);
 		// There is no support for triggering commands in the dialogs. I am
 		// trying to emulate the workbench behavior as exactly as possible.
 		IBindingService binding = (IBindingService) PlatformUI.getWorkbench()
@@ -113,7 +112,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		//find bindings for copy action
 		final TriggerSequence ts[] = binding
 				.getActiveBindingsFor(ActionFactory.COPY.getCommandId());
-		list.addKeyListener(new KeyListener() {
+		text.addKeyListener(new KeyListener() {
 			
 			ArrayList keyList = new ArrayList();
 
@@ -167,8 +166,8 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	}
 
 	protected void setStatusAdapter(StatusAdapter adapter) {
-		list.removeAll();
-		populateList(list, adapter.getStatus(), 0);
+		StringBuffer resultText = new StringBuffer();
+		populateList(resultText, adapter.getStatus(), 0);
 		if (workbenchStatusDialog.getStatusAdapters().size() == 1) {
 			Long timestamp = (Long) adapter
 					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
@@ -177,17 +176,20 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
 						DateFormat.LONG)
 						.format(new Date(timestamp.longValue()));
-				list.add(NLS.bind(ProgressMessages.JobInfo_Error,
+				resultText.append(NLS.bind(ProgressMessages.JobInfo_Error,
 						(new Object[] { "", date }))); //$NON-NLS-1$
 			}
 		}
+		int delimiterLength = getLineSeparator().length();
+		text.setText(resultText.substring(0, resultText.length()
+				- delimiterLength));
 	}
 
 	/**
 	 * Creates DND source for the list
 	 */
 	private void createDNDSource() {
-		DragSource ds = new DragSource(list, DND.DROP_COPY);
+		DragSource ds = new DragSource(text, DND.DROP_COPY);
 		ds.setTransfer(new Transfer[] { TextTransfer.getInstance() });
 		ds.addDragListener(new DragSourceListener() {
 			public void dragFinished(DragSourceEvent event) {
@@ -200,7 +202,6 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 			}
 			
 			public void dragStart(DragSourceEvent event) {
-				list.selectAll();
 			}
 		});
 	}
@@ -222,43 +223,34 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 			}
 
 		});
-		list.setMenu(menu);
+		text.setMenu(menu);
 	}
 
 	private String prepareCopyString() {
-		if (list == null || list.isDisposed()) {
+		if (text == null || text.isDisposed()) {
 			return ""; //$NON-NLS-1$
 		}
-		StringBuffer sb = new StringBuffer();
-		String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
-		String selection[] = list.getSelection();
-		for (int i = 0; i < selection.length; i++) {
-			sb.append(selection[i]);
-			sb.append(newLine);
-		}
-		return sb.toString();
+		return text.getSelectionText();
 	}
 
-	private void populateList(List list, IStatus status, int nesting) {
+	private void populateList(StringBuffer buffer, IStatus status, int nesting) {
 		if (!status.matches(MASK)
 				&& !(isDialogHandlingOKStatuses() && status.isOK())) {
 			return;
 		}
-		StringBuffer buffer = new StringBuffer();
 		for (int i = 0; i < nesting; i++) {
 			buffer.append(NESTING_INDENT);
 		}
 		buffer.append(status.getMessage());
-		list.add(buffer.toString());
+		buffer.append(getLineSeparator());
 
 		// Look for a nested core exception
 		Throwable t = status.getException();
 		if (t instanceof CoreException) {
 			CoreException ce = (CoreException) t;
-			populateList(list, ce.getStatus(), nesting + 1);
+			populateList(buffer, ce.getStatus(), nesting + 1);
 		} else if (t != null) {
 			// Include low-level exception message
-			buffer = new StringBuffer();
 			for (int i = 0; i < nesting; i++) {
 				buffer.append(NESTING_INDENT);
 			}
@@ -267,26 +259,30 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				message = t.toString();
 			}
 			buffer.append(message);
-			list.add(buffer.toString());
+			buffer.append(getLineSeparator());
 		}
 
 		IStatus[] children = status.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			populateList(list, children[i], nesting + 1);
+			populateList(buffer, children[i], nesting + 1);
 		}
 	}
 
+	private String getLineSeparator() {
+		return System.getProperty("line.separator"); //$NON-NLS-1$
+	}
+
 	/**
-	 * @return Returns the list.
+	 * @return Returns the text.
 	 */
-	public List getList() {
-		return list;
+	public Text getText() {
+		return text;
 	}
 	
 	private void copyToClipboard() {
 		Clipboard clipboard = null;
 		try {
-			clipboard = new Clipboard(list.getDisplay());
+			clipboard = new Clipboard(text.getDisplay());
 			clipboard.setContents(new Object[] { prepareCopyString() },
 					new Transfer[] { TextTransfer.getInstance() });
 		} finally {
