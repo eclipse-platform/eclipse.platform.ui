@@ -239,6 +239,21 @@
                name="%commandParameter.openBrowser.tooltip.name"
                optional="true"/>
       </command>
+      <command
+           categoryId="org.eclipse.ui.category.window"
+           defaultHandler="org.eclipse.ui.internal.browser.OpenBundleResourceHandler"
+           description="%command.openBundleResource.description"
+           id="org.eclipse.ui.browser.openBundleResource"
+           name="%command.openBundleResource.name">
+        <commandParameter
+               id="plugin"
+               name="%commandParameter.openBundleResource.plugin.name"
+               optional="true"/>
+        <commandParameter
+               id="path"
+               name="%commandParameter.openBundleResource.path.name"
+               optional="true"/>
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.commandImages">
