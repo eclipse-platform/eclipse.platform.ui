@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1019,7 +1019,11 @@ public class CVSRepositoryLocation extends PlatformObject implements ICVSReposit
 		try {
 			node.put(USERNAME_KEY, username, false);
 			node.put(PASSWORD_KEY, password, true);
+			node.flush();
 		} catch (StorageException e) {
+			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
+			return false;
+		} catch (IOException e) {
 			CVSProviderPlugin.log(IStatus.ERROR, e.getMessage(), e);
 			return false;
 		}
