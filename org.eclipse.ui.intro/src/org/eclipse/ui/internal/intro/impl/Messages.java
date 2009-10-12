@@ -58,4 +58,12 @@ public class Messages extends NLS {
     //Always Welcome Checkbox
 	public static String AlwaysWelcomeCheckbox_Text;
 
+	//Eclipse RSS Viewer
+	public static String RSS_Subscribe;
+	public static String RSS_Loading;
+	public static String RSS_No_news_please_visit;
+	public static String RSS_Reading;
+	public static String RSS_No_news;
+	public static String RSS_Malformed_feed;
+
 }

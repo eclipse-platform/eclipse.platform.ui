@@ -67,7 +67,7 @@ div div#rss-news {
    margin-right : 30px;
 }
 
-div ul#eclipse-news {
+div ul.news-list {
 	list-style-image: url("../graphics/icons/ctool/arrow_rtl.gif");
 	margin-left: 0px;
 	padding-right: 10px;

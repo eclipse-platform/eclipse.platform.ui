@@ -149,3 +149,8 @@ body #migrate .importance-medium {
 	background-color: #eeeeee;
 	background-image: url("../graphics/contentpage/grey_callout.gif");
 }
+
+ul.news-list {
+	list-style-image: url("../graphics/icons/ctool/arrow.gif");
+}
+ 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
@@ -27,6 +29,12 @@ import org.osgi.framework.BundleContext;
 public class IntroPlugin extends AbstractUIPlugin {
 	public static final String PLUGIN_ID = "org.eclipse.ui.intro"; //$NON-NLS-1$
 
+	// Debug control variables
+	public static boolean LOG_WARN = 
+		"true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID+"/debug/warn")); //$NON-NLS-1$ //$NON-NLS-2$
+	public static boolean LOG_INFO = 
+		"true".equalsIgnoreCase(Platform.getDebugOption(PLUGIN_ID+"/debug/info")); //$NON-NLS-1$ //$NON-NLS-2$
+	
     // The static shared instance.
     private static IntroPlugin inst;
 
@@ -194,5 +202,69 @@ public class IntroPlugin extends AbstractUIPlugin {
         this.uiCreationStartTime = uiCreationStartTime;
     }
 
+    /**
+	 * Logs an Error message.  To print errors to console,
+	 * run eclipse with the -console -consolelog arguments
+	 */
+	public static synchronized void logError(String message) {
+		logError(message,null);
+	}		
+	
+	/**
+	 * Logs an Error message with an exception.  To print errors to console,
+	 * run eclipse with the -console -consolelog arguments
+	 */
+	public static synchronized void logError(String message, Throwable ex) {
+		if (message == null){
+			message = ""; //$NON-NLS-1$
+		}
+		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, message, ex);
+		IntroPlugin.getDefault().getLog().log(errorStatus);
+	}	
+	
+	
+	/**
+	 * Logs a Warning message with an exception.  To print warnings to console,
+	 * run eclipse with the -console -consolelog arguments
+	 * 
+	 * Only logs if the following conditions are true:
+	 * 	-debug switch is enabled at the command line
+	 *  .options file is placed at the eclipse work directory with the contents:
+	 *      com.ibm.ccl.welcome.bits/debug=true
+	 *      com.ibm.ccl.welcome.bits/debug/warn=true
+	 */
+	public static synchronized void logWarning(String message) {
+		logWarning(message,null);
+	}
+	
+
+	public static synchronized void logWarning(String message,Throwable ex) {
+		if (IntroPlugin.getDefault().isDebugging() && LOG_WARN) {
+			if (message == null)
+				message = ""; //$NON-NLS-1$
+			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
+					IStatus.OK, message, ex);
+			getDefault().getLog().log(warningStatus);
+		}
+	}
+	
+	/**
+	 * Logs a debug message.  To print messages to console,
+	 * run eclipse with the -console -consolelog arguments
+	 * 
+	 * Only logs if the following conditions are true:
+	 * 	-debug switch is enabled at the command line
+	 *  .options file is placed at the eclipse work directory with the contents:
+	 *      com.ibm.ccl.welcome.bits/debug=true
+	 *      com.ibm.ccl.welcome.bits/debug/info=true
+	 */
+	public static synchronized void logDebug(String message) {
+		if (IntroPlugin.getDefault().isDebugging() && LOG_INFO) {
+			if (message == null)
+				message = ""; //$NON-NLS-1$
+			Status status = new Status(IStatus.INFO, PLUGIN_ID,message);
+			getDefault().getLog().log(status);
+		}
+	}
 
 }
