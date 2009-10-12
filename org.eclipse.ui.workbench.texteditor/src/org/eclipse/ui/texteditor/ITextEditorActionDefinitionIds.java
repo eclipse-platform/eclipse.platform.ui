@@ -577,4 +577,12 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * @since 3.5
 	 */
 	String BLOCK_SELECTION_MODE= "org.eclipse.ui.edit.text.toggleBlockSelectionMode"; //$NON-NLS-1$
+
+	/**
+	 * Command ID of the command to display a sticky ruler hover for the current caret location.
+	 * Value <code>"org.eclipse.ui.edit.text.showChangeRulerInformation"</code>.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String SHOW_CHANGE_RULER_INFORMATION_ID= "org.eclipse.ui.edit.text.showChangeRulerInformation"; //$NON-NLS-1$
 }

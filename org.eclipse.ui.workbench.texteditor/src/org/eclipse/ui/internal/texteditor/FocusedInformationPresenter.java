@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.ui.texteditor;
+package org.eclipse.ui.internal.texteditor;
 
 import org.eclipse.swt.widgets.Shell;
 
@@ -37,7 +37,7 @@ import org.eclipse.jface.text.source.SourceViewerConfiguration;
  * 
  * @since 3.5
  */
-class FocusedInformationPresenter extends InformationPresenter {
+public class FocusedInformationPresenter extends InformationPresenter {
 
 	/**
 	 * Information provider used to present focused information shells.
@@ -91,20 +91,15 @@ class FocusedInformationPresenter extends InformationPresenter {
 		}
 	}
 	
-	/**
-	 * The source viewer.
-	 */
+	
 	private final ISourceViewer fSourceViewer;
-	/**
-	 * The source viewer configuration.
-	 */
 	private final SourceViewerConfiguration fSourceViewerConfiguration;
 
 	/**
-	 * Creates a new focused information presenter and installs it on the given source viewer
+	 * Creates a focused information presenter and installs it on the source viewer.
 	 * 
 	 * @param sourceViewer the source viewer
-	 * @param sourceViewerConfiguration the viewer configuration
+	 * @param sourceViewerConfiguration the configuration
 	 */
 	public FocusedInformationPresenter(ISourceViewer sourceViewer, SourceViewerConfiguration sourceViewerConfiguration) {
 		super(new DefaultInformationControlCreator());
@@ -118,7 +113,7 @@ class FocusedInformationPresenter extends InformationPresenter {
 	}
 
 	/**
-	 * Tries to show a focused ("sticky") annotation hover.
+	 * Tries show a focused ("sticky") annotation hover.
 	 *
 	 * @param annotationHover the annotation hover to show
 	 * @param line the line for which to show the hover

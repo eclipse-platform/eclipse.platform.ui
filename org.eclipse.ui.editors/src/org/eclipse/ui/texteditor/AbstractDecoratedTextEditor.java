@@ -126,6 +126,7 @@ import org.eclipse.ui.internal.editors.text.NLSUtility;
 import org.eclipse.ui.internal.editors.text.RefreshEditorAction;
 import org.eclipse.ui.internal.texteditor.AnnotationColumn;
 import org.eclipse.ui.internal.texteditor.BooleanPreferenceToggleAction;
+import org.eclipse.ui.internal.texteditor.FocusedInformationPresenter;
 import org.eclipse.ui.internal.texteditor.LineNumberColumn;
 import org.eclipse.ui.internal.texteditor.TextChangeHover;
 import org.eclipse.ui.keys.IBindingService;
@@ -156,24 +157,6 @@ import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
  */
 public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
-	/**
-	 * Command ID of the command to display a sticky ruler hover for the current caret location.
-	 * Value <code>"org.eclipse.ui.edit.text.showChangeRulerInformation"</code>).
-	 * 
-	 * @since 3.5
-	 */
-	//TODO: move to ITextEditorActionDefinitionIds and make API
-	private static final String SHOW_CHANGE_RULER_INFORMATION_ID= "org.eclipse.ui.edit.text.showChangeRulerInformation"; //$NON-NLS-1$
-	
-	/**
-	 * Name of the action displaying a sticky ruler hover for the current caret location.
-	 *
-	 * Value: <code>"ShowChangeRulerInformation"</code>
-	 * @since 3.5
-	 */
-	//TODO: move to ITextEditorActionConstants and make API
-	private static final String SHOW_CHANGE_RULER_INFORMATION= "ShowChangeRulerInformation"; //$NON-NLS-1$
-	
 	/**
 	 * Preference key for showing the line number ruler.
 	 */
@@ -1252,8 +1235,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				showChangeRulerInformation();
 			}
 		};
-		action.setActionDefinitionId(SHOW_CHANGE_RULER_INFORMATION_ID);
-		setAction(SHOW_CHANGE_RULER_INFORMATION, action);
+		action.setActionDefinitionId(ITextEditorActionDefinitionIds.SHOW_CHANGE_RULER_INFORMATION_ID);
+		setAction(ITextEditorActionConstants.SHOW_CHANGE_RULER_INFORMATION, action);
 	}
 
 	/**

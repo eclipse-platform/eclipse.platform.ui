@@ -9,7 +9,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: 
  org.eclipse.ui.contentassist,
- org.eclipse.ui.internal.texteditor;x-internal:=true; texteditor="split"; mandatory:="texteditor",
+ org.eclipse.ui.internal.texteditor; texteditor="split"; mandatory:="texteditor"; x-friends:="org.eclipse.ui.editors",
  org.eclipse.ui.internal.texteditor.quickdiff;x-internal:=true,
  org.eclipse.ui.internal.texteditor.quickdiff.compare.equivalence;x-internal:=true,
  org.eclipse.ui.internal.texteditor.rulers;x-internal:=true,

@@ -672,4 +672,12 @@ public interface ITextEditorActionConstants extends IWorkbenchActionConstants {
 	 * @since 3.5
 	 */
 	String BLOCK_SELECTION_MODE= "BlockSelectionMode"; //$NON-NLS-1$
+
+	/**
+	 * Name of the action displaying a sticky ruler hover for the current caret location.
+	 *
+	 * Value: <code>"ShowChangeRulerInformation"</code>
+	 * @since 3.6
+	 */
+	public static final String SHOW_CHANGE_RULER_INFORMATION= "ShowChangeRulerInformation"; //$NON-NLS-1$
 }
