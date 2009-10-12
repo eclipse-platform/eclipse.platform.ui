@@ -56,8 +56,9 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.handlers.ClosePerspectiveHandler;
-import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 
 /**
@@ -527,8 +528,9 @@ public class PerspectiveRegistry implements IPerspectiveRegistry,
 			StatusManager.getManager().handle(errStatus,
 					StatusManager.SHOW | StatusManager.LOG);
 		} else {
-			IStatus errStatus = StatusUtil.newStatus(status, msg);
-			StatusManager.getManager().handle(errStatus,
+			StatusAdapter adapter = new StatusAdapter(status);
+			adapter.setProperty(IStatusAdapterConstants.TITLE_PROPERTY, msg);
+			StatusManager.getManager().handle(adapter,
 					StatusManager.SHOW | StatusManager.LOG);
 		}
 	}
