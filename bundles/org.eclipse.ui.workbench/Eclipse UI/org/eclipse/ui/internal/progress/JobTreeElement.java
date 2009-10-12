@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.graphics.Image;
 
 /**
@@ -57,12 +58,12 @@ abstract class JobTreeElement implements Comparable {
 	}
 
 	/**
-	 * Get the image for the reciever. By default there is no image.
+	 * Get the image for the reciever.
 	 * 
 	 * @return Image or <code>null</code>.
 	 */
 	public Image getDisplayImage() {
-		return null;
+		return JFaceResources.getImage(ProgressInfoItem.DEFAULT_JOB_KEY);
 	}
 
 	/**
