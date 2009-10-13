@@ -36,7 +36,6 @@ public class AllOtherHelpTests extends TestSuite {
 		addTestSuite(TocObjectTest.class);
 		addTestSuite(DocumentReaderTest.class);
 		addTestSuite(EntityResolutionTest.class);
-		addTestSuite(RemotePreferenceTest.class);
 		addTestSuite(ResourceTest.class);
 		addTestSuite(ConcurrentTocAccess.class);
 		addTestSuite(XHTMLEntityTest.class);

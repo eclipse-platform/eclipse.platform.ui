@@ -8,29 +8,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
+
 package org.eclipse.ua.tests.help.remote;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.eclipse.help.internal.server.JettyHelpServer;
 
-/*
- * Tests help keyword index functionality.
- */
-public class AllRemoteTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllRemoteTests();
+public class JettyTestServer extends JettyHelpServer {
+	
+	protected String getOtherInfo() {
+		return //super.getOtherInfo();
+		    "org.eclipse.ua.tests";
 	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllRemoteTests() {
-		addTestSuite(SearchServletTest.class);
-		addTestSuite(RemotePreferenceTest.class);
-		addTestSuite(SearchUsingRemoteHelp.class);		
+	
+	protected int getPortParameter() {
+		return AUTO_SELECT_JETTY_PORT;
 	}
 }

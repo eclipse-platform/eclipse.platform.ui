@@ -62,7 +62,7 @@ public class JettyHelpServer extends HelpServer {
 
 				// set the base URL
 				d.put("context.path", "/help"); //$NON-NLS-1$ //$NON-NLS-2$
-				d.put("other.info", "org.eclipse.help"); //$NON-NLS-1$ //$NON-NLS-2$
+				d.put("other.info", getOtherInfo()); //$NON-NLS-1$ 
 
 				// suppress Jetty INFO/DEBUG messages to stderr
 				Logger.getLogger("org.mortbay").setLevel(Level.WARNING); //$NON-NLS-1$	
@@ -95,7 +95,7 @@ public class JettyHelpServer extends HelpServer {
 
 	private String host;
 	private int port = -1;
-	private static final int AUTO_SELECT_JETTY_PORT = 0;
+	protected static final int AUTO_SELECT_JETTY_PORT = 0;
 	
 	public void start(final String webappName) throws Exception {		
 		WorkerThread startRunnable = new StartServerThread(webappName); 
@@ -114,7 +114,7 @@ public class JettyHelpServer extends HelpServer {
 		}
 		if (port == -1) {
 			// Jetty selected a port number for us
-			ServiceReference[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=org.eclipse.help)"); //$NON-NLS-1$ //$NON-NLS-2$
+			ServiceReference[] reference = bundle.getBundleContext().getServiceReferences("org.osgi.service.http.HttpService", "(other.info=" + getOtherInfo() + ')'); //$NON-NLS-1$ //$NON-NLS-2$
 			Object assignedPort = reference[0].getProperty("http.port"); //$NON-NLS-1$
 			port = Integer.parseInt((String)assignedPort);
 		}
@@ -178,7 +178,7 @@ public class JettyHelpServer extends HelpServer {
 	/*
 	 * Get the port number which will be passed to Jetty
 	 */
-	private int getPortParameter() {
+	protected int getPortParameter() {
 		if (port == -1) { 
 			return AUTO_SELECT_JETTY_PORT;
 		}
@@ -197,6 +197,9 @@ public class JettyHelpServer extends HelpServer {
 		}
 		return host;
 	}
-	
+
+	protected String getOtherInfo() {
+		return "org.eclipse.help"; //$NON-NLS-1$
+	}	
 
 }

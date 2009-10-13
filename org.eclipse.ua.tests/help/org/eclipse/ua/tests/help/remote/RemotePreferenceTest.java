@@ -9,11 +9,10 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ua.tests.help.other;
+package org.eclipse.ua.tests.help.remote;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -22,57 +21,19 @@ import org.eclipse.help.internal.base.remote.PreferenceFileHandler;
 import org.eclipse.help.internal.base.remote.RemoteIC;
 
 public class RemotePreferenceTest extends TestCase {
-	
-	private String namePreference;
-	private String hostPreference;
-	private String pathPreference;
-	private String portPreference;
-	private String icEnabledPreference;
-	private String helpOn;
-	private String defaultPort;
 
-	private void setPreference(String name, String value) {
+	public static void setPreference(String name, String value) {
 		InstanceScope instanceScope = new InstanceScope();
 		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
 		prefs.put(name, value);
 	}
 
 	protected void setUp() throws Exception {
-		super.setUp();
-	    namePreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME,
-			      "", null);
-	     hostPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST,
-			      "", null);
-		pathPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH,
-			      "", null);
-		portPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT,
-			      "", null);
-		icEnabledPreference = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled,
-			      "", null);
-		defaultPort = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT,
-			      "", null);
-		helpOn = Platform.getPreferencesService().getString
-	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON,
-			      "", null); 
+        RemotePreferenceStore.savePreferences();
 	}
 	
 	protected void tearDown() throws Exception {
-		InstanceScope instanceScope = new InstanceScope();
-		IEclipsePreferences prefs = instanceScope.getNode(HelpBasePlugin.PLUGIN_ID);
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_NAME, namePreference);
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_HOST, hostPreference);
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PATH, pathPreference);
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, portPreference);
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT, defaultPort);
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, helpOn);		
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, icEnabledPreference);
-		super.tearDown();
+		RemotePreferenceStore.restorePreferences();
 	}
 	
 	private void setToDefault(String preference) {

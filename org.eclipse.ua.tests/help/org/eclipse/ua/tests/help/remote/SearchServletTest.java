@@ -91,6 +91,11 @@ public class SearchServletTest extends TestCase {
 		Node[] hits = getSearchHitsUsingLocale("deuejwuid", "de");
 		assertEquals(1, hits.length);
 	}
+	
+	public void testRemoteSearchUsingEnLocale() throws Exception {
+		Node[] hits = getSearchHitsUsingLocale("deuejwuid", "en");
+		assertEquals(0, hits.length);
+	}
 
 	private Node[] getSearchHitsFromServlet(String phrase)
 			throws Exception {
