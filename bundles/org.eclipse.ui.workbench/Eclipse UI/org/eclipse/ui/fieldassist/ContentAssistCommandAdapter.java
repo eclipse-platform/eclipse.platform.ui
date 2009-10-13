@@ -11,26 +11,22 @@
 
 package org.eclipse.ui.fieldassist;
 
-import org.eclipse.osgi.util.NLS;
-
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.FocusEvent;
-import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.widgets.Control;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.IHandler;
-
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.jface.fieldassist.IControlContentAdapter;
-
+import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.FocusListener;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -172,12 +168,17 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 		// Set a default autoactivation delay.
 		setAutoActivationDelay(DEFAULT_AUTO_ACTIVATION_DELAY);
 
-		// Add listeners to the control to manage activation of the handler
-		addListeners(control);
-
 		// Cache the handler service so we don't have to retrieve it each time
 		this.handlerService = (IHandlerService) PlatformUI.getWorkbench()
 				.getService(IHandlerService.class);
+
+		// Add listeners to the control to manage activation of the handler
+		addListeners(control);
+
+		if (control.isFocusControl()) {
+			activateHandler();
+		}
+
 		if (installDecoration) {
 			// Note top left is used for compatibility with 3.2, although
 			// this may change to center alignment in the future.
@@ -197,33 +198,20 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	private void addListeners(Control control) {
 		control.addFocusListener(new FocusListener() {
 			public void focusLost(FocusEvent e) {
-				if (activeHandler != null) {
-					handlerService.deactivateHandler(activeHandler);
-					activeHandler = null;
-				}
+				deactivateHandler();
 			}
 
 			public void focusGained(FocusEvent e) {
 				if (isEnabled()) {
-					if (activeHandler == null) {
-						activeHandler = handlerService.activateHandler(
-								commandId, proposalHandler);
-					}
+					activateHandler();
 				} else {
-					if (activeHandler != null) {
-						handlerService.deactivateHandler(activeHandler);
-					}
-					activeHandler = null;
+					deactivateHandler();
 				}
 			}
 		});
 		control.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if (activeHandler != null) {
-					handlerService.deactivateHandler(activeHandler);
-					activeHandler = null;
-				}
-
+				deactivateHandler();
 			}
 		});
 	}
@@ -288,13 +276,33 @@ public class ContentAssistCommandAdapter extends ContentProposalAdapter {
 	 */
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		if (decoration == null) {
-			return;
+		if (decoration != null) {
+			if (enabled) {
+				decoration.show();
+			} else {
+				decoration.hide();
+			}
 		}
-		if (enabled) {
-			decoration.show();
-		} else {
-			decoration.hide();
+		if (getControl().isFocusControl()) {
+			if (enabled) {
+				activateHandler();
+			} else {
+				deactivateHandler();
+			}
+		}
+	}
+
+	private void activateHandler() {
+		if (activeHandler == null) {
+			activeHandler = handlerService.activateHandler(commandId,
+					proposalHandler);
+		}
+	}
+
+	private void deactivateHandler() {
+		if (activeHandler != null) {
+			handlerService.deactivateHandler(activeHandler);
+			activeHandler = null;
 		}
 	}
 }
