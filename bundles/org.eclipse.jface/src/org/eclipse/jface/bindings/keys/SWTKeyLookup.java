@@ -157,6 +157,21 @@ public final class SWTKeyLookup implements IKeyLookup {
 		final Integer f15 = new Integer(SWT.F15);
 		naturalKeyTable.put(F15_NAME, new Integer(SWT.F15));
 		nameTable.put(f15, F15_NAME);
+		final Integer f16 = new Integer(SWT.F16);
+		naturalKeyTable.put(F16_NAME, new Integer(SWT.F16));
+		nameTable.put(f16, F16_NAME);
+		final Integer f17 = new Integer(SWT.F17);
+		naturalKeyTable.put(F17_NAME, new Integer(SWT.F17));
+		nameTable.put(f17, F17_NAME);
+		final Integer f18 = new Integer(SWT.F18);
+		naturalKeyTable.put(F18_NAME, new Integer(SWT.F18));
+		nameTable.put(f18, F18_NAME);
+		final Integer f19 = new Integer(SWT.F19);
+		naturalKeyTable.put(F19_NAME, new Integer(SWT.F19));
+		nameTable.put(f19, F19_NAME);
+		final Integer f20 = new Integer(SWT.F20);
+		naturalKeyTable.put(F20_NAME, new Integer(SWT.F20));
+		nameTable.put(f20, F20_NAME);
 		final Integer ff = new Integer(12); // ASCII 0x0C
 		naturalKeyTable.put(FF_NAME, ff);
 		nameTable.put(ff, FF_NAME);

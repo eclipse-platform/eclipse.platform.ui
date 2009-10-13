@@ -145,6 +145,41 @@ public interface IKeyLookup {
 	public static final String F15_NAME = "F15"; //$NON-NLS-1$
 
 	/**
+	 * The formal name of the 'F16' key.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String F16_NAME = "F16"; //$NON-NLS-1$
+
+	/**
+	 * The formal name of the 'F17' key.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String F17_NAME = "F17"; //$NON-NLS-1$
+
+	/**
+	 * The formal name of the 'F18' key.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String F18_NAME = "F18"; //$NON-NLS-1$
+
+	/**
+	 * The formal name of the 'F19' key.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String F19_NAME = "F19"; //$NON-NLS-1$
+
+	/**
+	 * The formal name of the 'F20' key.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String F20_NAME = "F20"; //$NON-NLS-1$
+
+	/**
 	 * The formal name of the 'F2' key.
 	 */
 	public static final String F2_NAME = "F2"; //$NON-NLS-1$
