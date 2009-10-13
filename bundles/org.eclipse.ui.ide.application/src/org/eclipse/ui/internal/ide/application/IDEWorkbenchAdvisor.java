@@ -51,6 +51,7 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
@@ -377,6 +378,79 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 		job.schedule();
 	}
 
+	private class CancelableProgressMonitorWrapper extends
+			ProgressMonitorWrapper {
+		private double total = 0;
+		private ProgressMonitorJobsDialog dialog;
+
+		CancelableProgressMonitorWrapper(IProgressMonitor monitor,
+				ProgressMonitorJobsDialog dialog) {
+			super(monitor);
+			this.dialog = dialog;
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#internalWorked(double)
+		 */
+		public void internalWorked(double work) {
+			super.internalWorked(work);
+			total += work;
+			updateProgressDetails();
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#worked(int)
+		 */
+		public void worked(int work) {
+			super.worked(work);
+			total += work;
+			updateProgressDetails();
+		}
+
+		public void beginTask(String name, int totalWork) {
+			super.beginTask(name, totalWork);
+			subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_preHistoryCompaction);
+		}
+
+		private void updateProgressDetails() {
+			if (!isCanceled() && Math.abs(total - 4.0) < 0.0001 /* right before history compacting */) {
+				subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
+				dialog.setCancelable(true);
+			}
+			if (Math.abs(total - 5.0) < 0.0001 /* history compacting finished */) {
+				subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_postHistoryCompaction);
+				dialog.setCancelable(false);
+			}
+		}
+	}
+
+	private class CancelableProgressMonitorJobsDialog extends
+			ProgressMonitorJobsDialog {
+
+		public CancelableProgressMonitorJobsDialog(Shell parent) {
+			super(parent);
+		}
+
+		/*
+		 * (non-Javadoc)
+		 * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#createDetailsButton(org.eclipse.swt.widgets.Composite)
+		 */
+		protected void createButtonsForButtonBar(Composite parent) {
+			super.createButtonsForButtonBar(parent);
+			registerCancelButtonListener();
+		}
+
+		public void registerCancelButtonListener() {
+			cancel.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					subTaskLabel.setText(""); //$NON-NLS-1$
+				}
+			});
+		}
+	}
+
 	/**
 	 * Disconnect from the core workspace.
 	 */
@@ -386,68 +460,18 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 				IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
 				IDEWorkbenchMessages.ProblemSavingWorkbench, null);
 		try {
-			final ProgressMonitorJobsDialog p = new ProgressMonitorJobsDialog(null) {
+			final ProgressMonitorJobsDialog p = new CancelableProgressMonitorJobsDialog(
+					null);
 
-				/*
-				 * (non-Javadoc)
-				 * @see org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog#createDetailsButton(org.eclipse.swt.widgets.Composite)
-				 */
-				protected void createButtonsForButtonBar(Composite parent) {
-					super.createButtonsForButtonBar(parent);
-					registerCancelButtonListener();
-				}
-
-				public void registerCancelButtonListener() {
-					cancel.addSelectionListener(new SelectionAdapter() {
-						public void widgetSelected(SelectionEvent e) {
-							subTaskLabel.setText(""); //$NON-NLS-1$
-						}
-					});
-				}
-			};
+			final boolean applyPolicy = ResourcesPlugin.getWorkspace()
+					.getDescription().isApplyFileStatePolicy();
 
 			IRunnableWithProgress runnable = new IRunnableWithProgress() {
 				public void run(IProgressMonitor monitor) {
 					try {
-						monitor = new ProgressMonitorWrapper(monitor) {
-							private double total = 0;
-
-							/*
-							 * (non-Javadoc)
-							 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#internalWorked(double)
-							 */
-							public void internalWorked(double work) {
-								super.internalWorked(work);
-								total += work;
-								updateProgressDetails();
-							}
-
-							/*
-							 * (non-Javadoc)
-							 * @see org.eclipse.core.runtime.ProgressMonitorWrapper#worked(int)
-							 */
-							public void worked(int work) {
-								super.worked(work);
-								total += work;
-								updateProgressDetails();
-							}
-
-							public void beginTask(String name, int totalWork) {
-								super.beginTask(name, totalWork);
-								subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_preHistoryCompaction);
-							}
-
-							private void updateProgressDetails() {
-								if (!isCanceled() && Math.abs(total - 4.0) < 0.0001 /* right before history compacting */){
-									subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_cancelHistoryPruning);
-									p.setCancelable(true);
-								}
-								if (Math.abs(total - 5.0) < 0.0001 /* history compacting finished */) {
-									subTask(IDEWorkbenchMessages.IDEWorkbenchAdvisor_postHistoryCompaction);
-									p.setCancelable(false);
-								}
-							}
-						};
+						if (applyPolicy)
+							monitor = new CancelableProgressMonitorWrapper(
+									monitor, p);
 
 						status.merge(((Workspace) ResourcesPlugin
 								.getWorkspace()).save(true, true, monitor));
