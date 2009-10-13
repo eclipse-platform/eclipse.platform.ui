@@ -16,7 +16,7 @@ import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.IAntUIHelpContextIds;
 import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
@@ -45,6 +45,50 @@ import org.eclipse.ui.PlatformUI;
 import com.ibm.icu.text.MessageFormat;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
+	
+	/**
+	 * Allows us to override the default behavior of the default {@link IntegerFieldEditor} to work
+	 * on a core preference context
+	 * 
+	 * @since 3.6
+	 */
+	class AntIntegerFieldEditor extends IntegerFieldEditor {
+		String node = null, key = null;
+		int defaultvalue = -1;
+		
+		/**
+		 * Constructor
+		 * @param node the identifier of the node we want to set the preference in, i.e. org.eclipse.ant.launching
+		 * @param key the preference key to map the value to
+		 * @param title the title of the field editor
+		 * @param parent the parent to add the field editor to
+		 * @param defaultvalue the default value to return when looking up stored values
+		 */
+		public AntIntegerFieldEditor(String node, String key, String title, Composite parent, int defaultvalue) {
+			super(key, title, parent);
+			this.node = node;
+			this.key = key;
+			this.defaultvalue = defaultvalue;
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.preference.IntegerFieldEditor#doStore()
+		 */
+		protected void doStore() {
+			new InstanceScope().getNode(node).putInt(key, Integer.parseInt(getStringValue()));
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.preference.FieldEditor#load()
+		 */
+		public void load() {
+			setStringValue(Integer.toString(Platform.getPreferencesService().getInt(node, key, defaultvalue, null)));
+		}
+		/* (non-Javadoc)
+		 * @see org.eclipse.jface.preference.FieldEditor#loadDefault()
+		 */
+		public void loadDefault() {
+			setStringValue(Integer.toString(new DefaultScope().getNode(AntLaunching.getUniqueIdentifier()).getInt(key, defaultvalue)));
+		}
+	}
 	
 	private List fConsoleColorList;
 	private ColorEditor fConsoleColorEditor;
@@ -90,14 +134,16 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		StringFieldEditor editor = new StringFieldEditor(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES, AntPreferencesMessages.AntPreferencePage__Names__3, getFieldEditorParent());
 		addField(editor);
 
-		timeout = new IntegerFieldEditor(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, AntPreferencesMessages.AntPreferencePage_13, getFieldEditorParent());
-        int minValue= Platform.getPreferencesService().getInt(
-				AntLaunching.getUniqueIdentifier(),
-				IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
-				20000, null);
+		timeout = new AntIntegerFieldEditor(AntLaunching.getUniqueIdentifier(), 
+				IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 
+				AntPreferencesMessages.AntPreferencePage_13, 
+				getFieldEditorParent(),
+				20000);
+        int minValue = new DefaultScope().getNode(AntLaunching.getUniqueIdentifier()).getInt(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, 20000);
         int maxValue = 1200000;
         timeout.setValidRange(minValue, maxValue);
-        timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue), new Integer(maxValue)})); 
+        timeout.setValidateStrategy(StringFieldEditor.VALIDATE_ON_KEY_STROKE);
+        timeout.setErrorMessage(MessageFormat.format(AntPreferencesMessages.AntPreferencePage_14, new Object[] {new Integer(minValue), new Integer(maxValue)}));
         addField(timeout);
         
         editor = new URLFieldEditor(IAntUIPreferenceConstants.DOCUMENTATION_URL, AntPreferencesMessages.AntPreferencePage_2, getFieldEditorParent());
@@ -155,16 +201,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			String preference = fAppearanceColorListModel[i][1];
 			fAppearanceColorListModel[i][2]= store.getString(preference);
 		}
-
-		IEclipsePreferences node = new InstanceScope()
-				.getNode(AntLaunching.getUniqueIdentifier());
-		String t = node.get(
-				IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
-				"2000"); //$NON-NLS-1$
-		if (timeout != null) {
-			t = new Integer(timeout.getIntValue()).toString();
-		}
-		node.put(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT, t);
 	}
 	
 	private void createColorComposite() {
@@ -303,7 +339,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			PreferenceConverter.setValue(getPreferenceStore(), key, PreferenceConverter.getDefaultColor(getPreferenceStore(), key));
 		}
 		handleAppearanceColorListSelection();
-		
 		super.performDefaults();
 	}
 	

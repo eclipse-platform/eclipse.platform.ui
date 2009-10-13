@@ -30,7 +30,7 @@ public class AntLaunchingPreferenceInitializer extends
 	public void initializeDefaultPreferences() {
 
 		IEclipsePreferences node = new DefaultScope()
-				.getNode("org.eclipse.ant.launching"); //$NON-NLS-1$
+				.getNode(AntLaunching.getUniqueIdentifier());
 		node.put(IAntLaunchingPreferenceConstants.ANT_COMMUNICATION_TIMEOUT,
 				"20000"); //$NON-NLS-1$
 	}
