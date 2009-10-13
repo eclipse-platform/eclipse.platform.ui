@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,8 +22,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.internal.core.DefaultFileModificationValidator;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 
@@ -100,9 +99,10 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
          * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
          */
         protected void createButtonsForButtonBar(Composite parent) {
-            createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
+        	super.createButtonsForButtonBar(parent);
+            Button yesButton= createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
+            yesButton.setFocus();
             createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
-            super.createButtonsForButtonBar(parent);
         }
         
         /* (non-Javadoc)

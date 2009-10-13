@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -186,9 +186,11 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
-		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
 		super.createButtonsForButtonBar(parent);
+		Button yesButton= createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
+		yesButton.setFocus();
+		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, false);
+		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
 	/* (non-Javadoc)
@@ -197,6 +199,14 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	protected boolean includeOkButton() {
 		return false;
 	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.team.internal.ui.DetailsDialog#includeCancelButton()
+	 */
+	protected boolean includeCancelButton() {
+		return false;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */

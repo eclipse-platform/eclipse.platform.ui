@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,8 +13,7 @@ package org.eclipse.team.internal.ccvs.ui.subscriber;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.*;
 import org.eclipse.team.core.synchronize.SyncInfoSet;
 import org.eclipse.team.internal.ccvs.ui.CVSUIMessages;
 
@@ -45,9 +44,11 @@ public class UpdateDialog extends SyncInfoSetDetailsDialog {
 	}
 
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, YES, IDialogConstants.YES_LABEL, false);
-		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
 		super.createButtonsForButtonBar(parent);
+		Button yesButton= createButton(parent, YES, IDialogConstants.YES_LABEL, true);
+		yesButton.setFocus();
+		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, false);
+		
 	}
 	
 	protected boolean includeOkButton() {
