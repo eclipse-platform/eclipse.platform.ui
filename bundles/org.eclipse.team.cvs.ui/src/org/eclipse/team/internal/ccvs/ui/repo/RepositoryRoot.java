@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -187,7 +187,7 @@ public class RepositoryRoot extends PlatformObject {
 	 * the given version tags are added to the list of known tags for the 
 	 * remote ancestor of the resource that is a direct child of the remote root.
 	 * 
-	 * It is the reponsibility of the caller to ensure that the given remote path is valid.
+	 * It is the responsibility of the caller to ensure that the given remote path is valid.
 	 */
 	public void addTags(String remotePath, CVSTag[] tags) {	
 		addDateTags(tags);
@@ -237,7 +237,7 @@ public class RepositoryRoot extends PlatformObject {
 		}
 	}
 	/**
-	 * Return the list of date tags assocaiated with the repository.
+	 * Return the list of date tags associated with the repository.
 	 * @return the list of date tags
 	 */
 	public CVSTag[] getDateTags() {
@@ -608,7 +608,7 @@ public class RepositoryRoot extends PlatformObject {
 
     /*
      * Set the last access time of the cache entry for the given path
-     * as it was read from the persitent store.
+     * as it was read from the persistent store.
      */
     /* package */ void setLastAccessedTime(String remotePath, long lastAccessTime) {
 	    TagCacheEntry entry = (TagCacheEntry)versionAndBranchTags.get(getCachePathFor(remotePath));
