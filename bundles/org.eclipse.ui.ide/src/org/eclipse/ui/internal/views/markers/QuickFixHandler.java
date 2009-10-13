@@ -20,7 +20,8 @@ import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -33,7 +34,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
+import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
+import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerViewHandler;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -136,12 +141,17 @@ public class QuickFixHandler extends MarkerViewHandler {
 		String markerDescription = selected.getAttribute(IMarker.MESSAGE,
 				MarkerSupportInternalUtilities.EMPTY_STRING);
 		if (resolutions.isEmpty()) {
-			MessageDialog
-					.openInformation(
-							view.getSite().getShell(),
-							MarkerMessages.resolveMarkerAction_dialogTitle,
-							NLS	.bind(MarkerMessages.MarkerResolutionDialog_NoResolutionsFound,
-									  new Object[] { markerDescription }));
+			Status newStatus = new Status(
+					IStatus.INFO,
+					IDEWorkbenchPlugin.IDE_WORKBENCH,
+					NLS
+							.bind(
+									MarkerMessages.MarkerResolutionDialog_NoResolutionsFound,
+									new Object[] { markerDescription }));
+			StatusAdapter adapter = new StatusAdapter(newStatus);
+			adapter.setProperty(IStatusAdapterConstants.TITLE_PROPERTY,
+					MarkerMessages.MarkerResolutionDialog_CannotFixTitle);
+			StatusManager.getManager().handle(adapter, StatusManager.SHOW);
 		} else {
 
 			String description = NLS.bind(
