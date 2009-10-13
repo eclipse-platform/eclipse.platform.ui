@@ -468,6 +468,10 @@
       <tocProvider
             class="org.eclipse.ua.tests.help.toc.UaTestTocProvider">
       </tocProvider>
+      <toc
+            file="data/help/toc/filteredToc/nonPrimaryToc.xml"
+            primary="false">
+      </toc>
    </extension>
 
    <extension point= "org.eclipse.help.contentExtension"> 
