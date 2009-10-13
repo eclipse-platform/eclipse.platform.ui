@@ -646,6 +646,8 @@ public class OverviewRuler implements IOverviewRuler {
 							gc.setForeground(stroke);
 							r.x= INSET;
 							r.y= yy;
+							if (yy + hh == size.y)
+								r.y--;
 							r.width= size.x - (2 * INSET);
 							r.height= hh;
 							gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
@@ -757,6 +759,8 @@ public class OverviewRuler implements IOverviewRuler {
 							gc.setForeground(stroke);
 							r.x= INSET;
 							r.y= yy;
+							if (yy + hh == size.y)
+								r.y--;
 							r.width= size.x - (2 * INSET);
 							r.height= hh;
 							gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
