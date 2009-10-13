@@ -98,7 +98,7 @@ public class Workbench implements IWorkbench {
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
 			PackageAdmin packageAdmin, IEclipseContext applicationContext,
 			IWorkbenchWindowHandler windowHandler, String renderingEngineURI) {
-		System.err.println("NEw Workbenc"); //$NON-NLS-1$
+		//		System.err.println("NEw Workbenc"); //$NON-NLS-1$
 		this.windowHandler = windowHandler;
 		this.renderingEngineURI = renderingEngineURI;
 		exceptionHandler = new ExceptionHandler();
