@@ -12,12 +12,12 @@
 package org.eclipse.ui.internal.keys.model;
 
 import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.Map;
 import java.util.ResourceBundle;
-
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
@@ -516,7 +516,8 @@ public class KeyController {
 			public final void run() throws IOException {
 				Writer fileWriter = null;
 				try {
-					fileWriter = new BufferedWriter(new FileWriter(filePath));
+					fileWriter = new BufferedWriter(new OutputStreamWriter(
+							new FileOutputStream(filePath), "UTF-8")); //$NON-NLS-1$
 					final Object[] bindingElements = bindingModel.getBindings()
 							.toArray();
 					for (int i = 0; i < bindingElements.length; i++) {
