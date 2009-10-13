@@ -14,16 +14,17 @@ package org.eclipse.ui.internal;
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.jface.internal.InternalPolicy;
 import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.jface.util.ILogger;
 import org.eclipse.jface.util.ISafeRunnableRunner;
 import org.eclipse.jface.util.Policy;
 import org.eclipse.jface.util.SafeRunnable;
+import org.eclipse.jface.util.StatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 
@@ -42,10 +43,10 @@ final class JFaceUtil {
 	 * Initializes JFace for use by Eclipse.
 	 */
 	public static void initializeJFace() {
-		// Set the Platform to run all SafeRunnables
+		// Set the SafeRunner to run all SafeRunnables
 		SafeRunnable.setRunner(new ISafeRunnableRunner() {
 			public void run(ISafeRunnable code) {
-				Platform.run(code);
+				SafeRunner.run(code);
 			}
 		});
 
