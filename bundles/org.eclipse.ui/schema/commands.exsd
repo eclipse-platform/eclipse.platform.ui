@@ -403,10 +403,10 @@ State information shared between all handlers, and potentially persisted between
          <attribute name="class" type="string">
             <annotation>
                <documentation>
-                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must implement &lt;code&gt;org.eclipse.core.commands.State&lt;/code&gt;.  Please see API Information.
+                  The class that can be loaded to store the state of this command.  State is shared amongst handlers, and can be persisted between sessions.  This class must subclass &lt;code&gt;org.eclipse.core.commands.State&lt;/code&gt;.  Please see API Information.
                </documentation>
                <appinfo>
-                  <meta.attribute kind="java"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.core.commands.State"/>
                </appinfo>
             </annotation>
          </attribute>
