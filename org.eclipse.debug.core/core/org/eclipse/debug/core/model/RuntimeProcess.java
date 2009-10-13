@@ -144,7 +144,7 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	/**
 	 * @see ITerminate#canTerminate()
 	 */
-	public boolean canTerminate() {
+	public synchronized boolean canTerminate() {
 		return !fTerminated;
 	}
 
