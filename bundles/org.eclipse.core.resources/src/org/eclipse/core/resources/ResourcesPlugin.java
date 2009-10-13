@@ -223,6 +223,15 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PREF_MAX_BUILD_ITERATIONS = PREF_DESCRIPTION_PREFIX + "maxbuilditerations"; //$NON-NLS-1$
 
 	/**
+	 * Name of a preference for configuring whether to apply the specified history size policy.
+	 * 
+	 * @see IWorkspaceDescription#isApplyFileStatePolicy()
+	 * @see IWorkspaceDescription#setApplyFileStatePolicy(boolean)
+	 * @since 3.6
+	 */
+	public static final String PREF_APPLY_FILE_STATE_POLICY = PREF_DESCRIPTION_PREFIX + "applyfilestatepolicy"; //$NON-NLS-1$
+
+	/**
 	 * Name of a preference for configuring the maximum number of milliseconds a
 	 * file state should be kept in the local history
 	 * 

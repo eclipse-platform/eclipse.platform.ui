@@ -438,10 +438,11 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			//assertion "1.1" removed because workspace name can't be invalid
 			assertEquals("1.2", prefs.getDefaultBoolean(ResourcesPlugin.PREF_AUTO_BUILDING), desc2.isAutoBuilding());
 			assertEquals("1.3", prefs.getDefaultLong(PreferenceInitializer.PREF_DELTA_EXPIRATION), desc2.getDeltaExpiration());
-			assertEquals("1.4", prefs.getDefaultLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY), desc2.getFileStateLongevity());
-			assertEquals("1.5", prefs.getDefaultInt(ResourcesPlugin.PREF_MAX_FILE_STATES), desc2.getMaxFileStates());
-			assertEquals("1.6", prefs.getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE), desc2.getMaxFileStateSize());
-			assertEquals("1.7", prefs.getDefaultInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT), desc2.getOperationsPerSnapshot());
+			assertEquals("1.4", prefs.getDefaultBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY), desc2.isApplyFileStatePolicy());
+			assertEquals("1.5", prefs.getDefaultLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY), desc2.getFileStateLongevity());
+			assertEquals("1.6", prefs.getDefaultInt(ResourcesPlugin.PREF_MAX_FILE_STATES), desc2.getMaxFileStates());
+			assertEquals("1.7", prefs.getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE), desc2.getMaxFileStateSize());
+			assertEquals("1.8", prefs.getDefaultInt(PreferenceInitializer.PREF_OPERATIONS_PER_SNAPSHOT), desc2.getOperationsPerSnapshot());
 		} finally {
 			/* remove trash */
 			Workspace.clear(location.toFile());
@@ -706,6 +707,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		WorkspaceDescription desc = new WorkspaceDescription("MyWorkspace");
 		desc.setName("aName");
 		desc.setAutoBuilding(false);
+		desc.setApplyFileStatePolicy(false);
 		desc.setFileStateLongevity(654321l);
 		desc.setMaxFileStates(1000);
 		desc.setMaxFileStateSize(123456789l);
@@ -721,10 +723,11 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 			assertTrue("1.1", desc.getName().equals(desc2.getName()));
 			assertTrue("1.2", desc.isAutoBuilding() == desc2.isAutoBuilding());
 			assertTrue("1.3", desc.getDeltaExpiration() == desc2.getDeltaExpiration());
-			assertTrue("1.4", desc.getFileStateLongevity() == desc2.getFileStateLongevity());
-			assertTrue("1.5", desc.getMaxFileStates() == desc2.getMaxFileStates());
-			assertTrue("1.6", desc.getMaxFileStateSize() == desc2.getMaxFileStateSize());
-			assertTrue("1.7", desc.getOperationsPerSnapshot() == desc2.getOperationsPerSnapshot());
+			assertTrue("1.4", desc.isApplyFileStatePolicy() == desc2.isApplyFileStatePolicy());
+			assertTrue("1.5", desc.getFileStateLongevity() == desc2.getFileStateLongevity());
+			assertTrue("1.6", desc.getMaxFileStates() == desc2.getMaxFileStates());
+			assertTrue("1.7", desc.getMaxFileStateSize() == desc2.getMaxFileStateSize());
+			assertTrue("1.8", desc.getOperationsPerSnapshot() == desc2.getOperationsPerSnapshot());
 		} finally {
 			/* remove trash */
 			Workspace.clear(location.toFile());

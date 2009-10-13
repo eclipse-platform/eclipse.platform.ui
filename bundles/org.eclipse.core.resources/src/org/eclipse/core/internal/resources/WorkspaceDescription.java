@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,6 +27,7 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	protected int maxFileStates;
 	// thread safety: (Concurrency004)
 	protected volatile long maxFileStateSize;
+	protected boolean applyFileStatePolicy;
 	// thread safety: (Concurrency004)
 	private volatile long snapshotInterval;
 	protected int operationsPerSnapshot;
@@ -37,8 +38,9 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 		// initialize based on the values in the default preferences
 		IEclipsePreferences node = new DefaultScope().getNode(ResourcesPlugin.PI_RESOURCES);
 		autoBuilding = node.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING, PreferenceInitializer.PREF_AUTO_BUILDING_DEFAULT);
-		fileStateLongevity = node.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, PreferenceInitializer.PREF_FILE_STATE_LONGEVITY_DEFAULT);
 		maxBuildIterations = node.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS, PreferenceInitializer.PREF_MAX_BUILD_ITERATIONS_DEFAULT);
+		applyFileStatePolicy = node.getBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY, PreferenceInitializer.PREF_APPLY_FILE_STATE_POLICY_DEFAULT);
+		fileStateLongevity = node.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY, PreferenceInitializer.PREF_FILE_STATE_LONGEVITY_DEFAULT);
 		maxFileStates = node.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES, PreferenceInitializer.PREF_MAX_FILE_STATES_DEFAULT);
 		maxFileStateSize = node.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE, PreferenceInitializer.PREF_MAX_FILE_STATE_SIZE_DEFAULT);
 		snapshotInterval = node.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL, PreferenceInitializer.PREF_SNAPSHOT_INTERVAL_DEFAULT);
@@ -93,6 +95,13 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	 */
 	public long getMaxFileStateSize() {
 		return maxFileStateSize;
+	}
+
+	/**
+	 * @see IWorkspaceDescription#isApplyFileStatePolicy()
+	 */
+	public boolean isApplyFileStatePolicy() {
+		return applyFileStatePolicy;
 	}
 
 	public int getOperationsPerSnapshot() {
@@ -161,6 +170,13 @@ public class WorkspaceDescription extends ModelObject implements IWorkspaceDescr
 	 */
 	public void setMaxFileStateSize(long size) {
 		maxFileStateSize = size;
+	}
+
+	/**
+	 * @see IWorkspaceDescription#setApplyFileStatePolicy(boolean)
+	 */
+	public void setApplyFileStatePolicy(boolean apply) {
+		applyFileStatePolicy = apply;
 	}
 
 	/**

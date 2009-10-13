@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -117,6 +117,8 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		modified.setAutoBuilding(!original.isAutoBuilding());
 		// 2 - PREF_DEFAULT_BUILD_ORDER and 3 - PREF_BUILD_ORDER
 		modified.setBuildOrder(new String[] {"a", "b", "c"});
+		// 3 - PREF_APPLY_FILE_STATE_POLICY
+		modified.setApplyFileStatePolicy(!original.isApplyFileStatePolicy());
 		// 4 - PREF_FILE_STATE_LONGEVITY
 		modified.setFileStateLongevity((original.getFileStateLongevity() + 1) * 2);
 		// 5 - PREF_MAX_BUILD_ITERATIONS
@@ -149,7 +151,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 				fail("2.0", e);
 			}
 			// the right number of events should have been fired			
-			assertEquals("2.1 - wrong number of properties changed ", 8, changedProperties.size());
+			assertEquals("2.1 - wrong number of properties changed ", 9, changedProperties.size());
 		} finally {
 			preferences.removePropertyChangeListener(listener);
 		}
@@ -180,6 +182,7 @@ public class WorkspacePreferencesTest extends ResourceTest {
 			IWorkspaceDescription modified = workspace.getDescription();
 			modified.setAutoBuilding(!original.isAutoBuilding());
 			modified.setBuildOrder(new String[] {"a", "b", "c"});
+			modified.setApplyFileStatePolicy(!original.isApplyFileStatePolicy());
 			modified.setFileStateLongevity((original.getFileStateLongevity() + 1) * 2);
 			modified.setMaxBuildIterations((original.getMaxBuildIterations() + 1) * 2);
 			modified.setMaxFileStates((original.getMaxFileStates() + 1) * 2);
@@ -294,11 +297,12 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertEquals(message + " - 1", description.isAutoBuilding(), preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
 		assertEquals(message + " - 2", description.getBuildOrder() == null, preferences.getBoolean(ResourcesPlugin.PREF_DEFAULT_BUILD_ORDER));
 		assertEquals(message + " - 3", WorkspacePreferences.convertStringArraytoString(description.getBuildOrder()), preferences.getString(ResourcesPlugin.PREF_BUILD_ORDER));
-		assertEquals(message + " - 4", description.getFileStateLongevity(), preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY));
-		assertEquals(message + " - 5", description.getMaxFileStates(), preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
-		assertEquals(message + " - 6", description.getMaxFileStateSize(), preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
-		assertEquals(message + " - 7", description.getSnapshotInterval(), preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
-		assertEquals(message + " - 8", description.getMaxBuildIterations(), preferences.getLong(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
+		assertEquals(message + " - 4", description.isApplyFileStatePolicy(), preferences.getBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY));
+		assertEquals(message + " - 5", description.getFileStateLongevity(), preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY));
+		assertEquals(message + " - 6", description.getMaxFileStates(), preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
+		assertEquals(message + " - 7", description.getMaxFileStateSize(), preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
+		assertEquals(message + " - 8", description.getSnapshotInterval(), preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
+		assertEquals(message + " - 9", description.getMaxBuildIterations(), preferences.getLong(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
 	}
 
 	/**
@@ -308,11 +312,12 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertEquals(message + " - 1", description1.isAutoBuilding(), description2.isAutoBuilding());
 		assertEquals(message + " - 2", description1.getBuildOrder(), description2.getBuildOrder());
 		assertEquals(message + " - 3", WorkspacePreferences.convertStringArraytoString(description1.getBuildOrder()), WorkspacePreferences.convertStringArraytoString(description2.getBuildOrder()));
-		assertEquals(message + " - 4", description1.getFileStateLongevity(), description2.getFileStateLongevity());
-		assertEquals(message + " - 5", description1.getMaxFileStates(), description2.getMaxFileStates());
-		assertEquals(message + " - 6", description1.getMaxFileStateSize(), description2.getMaxFileStateSize());
-		assertEquals(message + " - 7", description1.getSnapshotInterval(), description2.getSnapshotInterval());
-		assertEquals(message + " - 8", description1.getMaxBuildIterations(), description2.getMaxBuildIterations());
+		assertEquals(message + " - 4", description1.isApplyFileStatePolicy(), description2.isApplyFileStatePolicy());
+		assertEquals(message + " - 5", description1.getFileStateLongevity(), description2.getFileStateLongevity());
+		assertEquals(message + " - 6", description1.getMaxFileStates(), description2.getMaxFileStates());
+		assertEquals(message + " - 7", description1.getMaxFileStateSize(), description2.getMaxFileStateSize());
+		assertEquals(message + " - 8", description1.getSnapshotInterval(), description2.getSnapshotInterval());
+		assertEquals(message + " - 9", description1.getMaxBuildIterations(), description2.getMaxBuildIterations());
 	}
 
 	public static Test suite() {

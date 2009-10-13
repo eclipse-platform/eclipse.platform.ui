@@ -153,17 +153,19 @@ public class HistoryStore2 implements IHistoryStore {
 			final long minimumTimestamp = System.currentTimeMillis() - description.getFileStateLongevity();
 			final int maxStates = description.getMaxFileStates();
 			final int[] entryCount = new int[1];
-			tree.accept(new Bucket.Visitor() {
-				public int visit(Entry fileEntry) {
-					if (monitor.isCanceled())
-						return STOP;
-					entryCount[0] += fileEntry.getOccurrences();
-					applyPolicy((HistoryEntry) fileEntry, maxStates, minimumTimestamp);
-					// remove unreferenced blobs, when blobsToRemove size is greater than 100
-					removeUnreferencedBlobs(100);
-					return monitor.isCanceled() ? STOP : CONTINUE;
-				}
-			}, Path.ROOT, BucketTree.DEPTH_INFINITE);
+			if (description.isApplyFileStatePolicy()) {
+				tree.accept(new Bucket.Visitor() {
+					public int visit(Entry fileEntry) {
+						if (monitor.isCanceled())
+							return STOP;
+						entryCount[0] += fileEntry.getOccurrences();
+						applyPolicy((HistoryEntry) fileEntry, maxStates, minimumTimestamp);
+						// remove unreferenced blobs, when blobsToRemove size is greater than 100
+						removeUnreferencedBlobs(100);
+						return monitor.isCanceled() ? STOP : CONTINUE;
+					}
+				}, Path.ROOT, BucketTree.DEPTH_INFINITE);
+			}
 			if (Policy.DEBUG_HISTORY) {
 				Policy.debug("Time to apply history store policies: " + (System.currentTimeMillis() - start) + "ms."); //$NON-NLS-1$ //$NON-NLS-2$
 				Policy.debug("Total number of history store entries: " + entryCount[0]); //$NON-NLS-1$
@@ -296,6 +298,8 @@ public class HistoryStore2 implements IHistoryStore {
 	 */
 	private boolean isValid(IFileStore localFile, IFileInfo info) {
 		WorkspaceDescription description = workspace.internalGetDescription();
+		if (!description.isApplyFileStatePolicy())
+			return true;
 		long length = info.getLength();
 		boolean result = length <= description.getMaxFileStateSize();
 		if (Policy.DEBUG_HISTORY && !result)

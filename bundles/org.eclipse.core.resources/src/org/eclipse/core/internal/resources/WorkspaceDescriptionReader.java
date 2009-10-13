@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -112,6 +112,7 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 		String name = getString(node, NAME);
 		String autobuild = getString(node, AUTOBUILD);
 		String snapshotInterval = getString(node, SNAPSHOT_INTERVAL);
+		String applyFileStatePolicy = getString(node, APPLY_FILE_STATE_POLICY);
 		String fileStateLongevity = getString(node, FILE_STATE_LONGEVITY);
 		String maxFileStateSize = getString(node, MAX_FILE_STATE_SIZE);
 		String maxFileStates = getString(node, MAX_FILE_STATES);
@@ -123,6 +124,9 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 		if (autobuild != null)
 			//if in doubt (value is corrupt) we want autobuild on
 			description.setAutoBuilding(!autobuild.equals(Integer.toString(0)));
+		if (applyFileStatePolicy != null)
+			//if in doubt (value is corrupt) we want applyFileLimits on
+			description.setApplyFileStatePolicy(!applyFileStatePolicy.equals(Integer.toString(0)));
 		try {
 			if (fileStateLongevity != null)
 				description.setFileStateLongevity(Long.parseLong(fileStateLongevity));

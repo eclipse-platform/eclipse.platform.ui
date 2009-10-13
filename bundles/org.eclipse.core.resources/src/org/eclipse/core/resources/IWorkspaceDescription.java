@@ -38,11 +38,13 @@ public interface IWorkspaceDescription {
 
 	/**
 	 * Returns the maximum length of time, in milliseconds, a file state should be 
-	 * kept in the local history.  
-	 *
+	 * kept in the local history. This setting is ignored by the workspace when
+	 * <code>isApplyFileStatePolicy()</code> returns <code>false</code>.
+	 * 
 	 * @return the maximum time a file state should be kept in the local history
 	 *   represented in milliseconds
 	 * @see #setFileStateLongevity(long)
+	 * @see #isApplyFileStatePolicy()
 	 * @see ResourcesPlugin#PREF_FILE_STATE_LONGEVITY
 	 */
 	public long getFileStateLongevity();
@@ -61,22 +63,43 @@ public interface IWorkspaceDescription {
 
 	/**
 	 * Returns the maximum number of states per file that can be stored in the local history.
+	 * This setting is ignored by the workspace when <code>isApplyFileStatePolicy()</code>
+	 * returns <code>false</code>.
 	 *
 	 * @return the maximum number of states per file that can be stored in the local history
 	 * @see #setMaxFileStates(int)
+	 * @see #isApplyFileStatePolicy()
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATES
 	 */
 	public int getMaxFileStates();
 
 	/**
 	 * Returns the maximum permitted size of a file, in bytes, to be stored in the
-	 * local history.
+	 * local history. This setting is ignored by the workspace when 
+	 * <code>isApplyFileStatePolicy()</code> returns <code>false</code>.
 	 *
 	 * @return the maximum permitted size of a file to be stored in the local history
 	 * @see #setMaxFileStateSize(long)
+	 * @see #isApplyFileStatePolicy()
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
 	public long getMaxFileStateSize();
+
+	/**
+	 * Returns whether file states are discarded according to the policy specified by
+	 * <code>setFileStateLongevity(long)</code>, <code>setMaxFileStates(int)</code>
+	 * and <code>setMaxFileStateSize(long)</code> methods. 
+	 * 
+	 * @return <code>true</code> if file states are removed due to the policy, 
+	 * 		<code>false</code> otherwise
+	 * @see #setApplyFileStatePolicy(boolean)
+	 * @see #setFileStateLongevity(long)
+	 * @see #setMaxFileStates(int)
+	 * @see #setMaxFileStateSize(long)
+	 * @see ResourcesPlugin#PREF_APPLY_FILE_STATE_POLICY
+	 * @since 3.6
+	 */
+	public boolean isApplyFileStatePolicy();
 
 	/**
 	 * Returns the interval between automatic workspace snapshots.
@@ -138,7 +161,8 @@ public interface IWorkspaceDescription {
 
 	/**
 	 * Sets the maximum time, in milliseconds, a file state should be kept in the
-	 * local history.
+	 * local history. This setting is ignored by the workspace when <code>setApplyFileStatePolicy(boolean)
+	 * </code> is set to false.
 	 * <p>
 	 * Users must call <code>IWorkspace.setDescription</code> before changes 
 	 * made to this description take effect.
@@ -148,6 +172,7 @@ public interface IWorkspaceDescription {
 	 * 		kept in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getFileStateLongevity()
+	 * @see #setApplyFileStatePolicy(boolean)
 	 * @see ResourcesPlugin#PREF_FILE_STATE_LONGEVITY
 	 */
 	public void setFileStateLongevity(long time);
@@ -172,7 +197,8 @@ public interface IWorkspaceDescription {
 	/**
 	 * Sets the maximum number of states per file that can be stored in the local history.
 	 * If the maximum number is reached, older states are removed in favor of
-	 * new ones.
+	 * new ones. This setting is ignored by the workspace when <code>setApplyFileStatePolicy(boolean)
+	 * </code> is set to <code>false</code>.
 	 * <p>
 	 * Users must call <code>IWorkspace.setDescription</code> before changes 
 	 * made to this description take effect.
@@ -181,13 +207,15 @@ public interface IWorkspaceDescription {
 	 * @param number the maximum number of states per file that can be stored in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getMaxFileStates()
+	 * @see #setApplyFileStatePolicy(boolean)
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATES
 	 */
 	public void setMaxFileStates(int number);
 
 	/**
-	 * Sets the maximum permitted size of a file, in bytes,  to be stored in the
-	 * local history.
+	 * Sets the maximum permitted size of a file, in bytes, to be stored in the
+	 * local history. This setting is ignored by the workspace when <code>setApplyFileStatePolicy(boolean)
+	 * </code> is set to <code>false</code>.
 	 * <p>
 	 * Users must call <code>IWorkspace.setDescription</code> before changes 
 	 * made to this description take effect.
@@ -196,9 +224,31 @@ public interface IWorkspaceDescription {
 	 * @param size the maximum permitted size of a file to be stored in the local history
 	 * @see IWorkspace#setDescription(IWorkspaceDescription)
 	 * @see #getMaxFileStateSize()
+	 * @see #setApplyFileStatePolicy(boolean)
 	 * @see ResourcesPlugin#PREF_MAX_FILE_STATE_SIZE
 	 */
 	public void setMaxFileStateSize(long size);
+
+	/**
+	 * Sets whether file states are discarded according to the policy specified by
+	 * <code>setFileStateLongevity(long)</code>, <code>setMaxFileStates(int)</code>
+	 * and <code>setMaxFileStateSize(long)</code> methods.
+	 * <p>
+	 * Users must call <code>IWorkspace.setDescription</code> before changes 
+	 * made to this description take effect.
+	 * </p>
+	 *
+	 * @param apply <code>true</code> if file states are removed due to the policy, 
+	 * 		<code>false</code> otherwise
+	 * @see IWorkspace#setDescription(IWorkspaceDescription)
+	 * @see #setFileStateLongevity(long)
+	 * @see #setMaxFileStates(int)
+	 * @see #setMaxFileStateSize(long)
+	 * @see #isApplyFileStatePolicy()
+	 * @see ResourcesPlugin#PREF_APPLY_FILE_STATE_POLICY
+	 * @since 3.6
+	 */
+	public void setApplyFileStatePolicy(boolean apply);
 
 	/**
 	 * Sets the interval between automatic workspace snapshots.  The new interval

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  */
 public class WorkspaceDescriptionTest extends WorkspaceSessionTest {
 	private static final String[] BUILD_ORDER = new String[] {"Foo"};
+	private static final boolean APPLY_POLICY = false;
 	private static final int STATE_LONGEVITY = 123456;
 	private static final int MAX_STATES = 244;
 	private static final long MAX_FILE_SIZE = 1024 * 53;
@@ -41,6 +42,7 @@ public class WorkspaceDescriptionTest extends WorkspaceSessionTest {
 		IWorkspaceDescription desc = workspace.getDescription();
 		desc.setAutoBuilding(false);
 		desc.setBuildOrder(BUILD_ORDER);
+		desc.setApplyFileStatePolicy(APPLY_POLICY);
 		desc.setFileStateLongevity(STATE_LONGEVITY);
 		desc.setMaxFileStates(MAX_STATES);
 		desc.setMaxFileStateSize(MAX_FILE_SIZE);
@@ -58,10 +60,11 @@ public class WorkspaceDescriptionTest extends WorkspaceSessionTest {
 		IWorkspaceDescription desc = workspace.getDescription();
 		assertTrue("2.0", !desc.isAutoBuilding());
 		assertEquals("2.1", BUILD_ORDER, desc.getBuildOrder());
-		assertEquals("2.2", STATE_LONGEVITY, desc.getFileStateLongevity());
-		assertEquals("2.3", MAX_STATES, desc.getMaxFileStates());
-		assertEquals("2.4", MAX_FILE_SIZE, desc.getMaxFileStateSize());
-		assertEquals("2.5", SNAPSHOT_INTERVAL, desc.getSnapshotInterval());
+		assertEquals("2.2", APPLY_POLICY, desc.isApplyFileStatePolicy());
+		assertEquals("2.3", STATE_LONGEVITY, desc.getFileStateLongevity());
+		assertEquals("2.4", MAX_STATES, desc.getMaxFileStates());
+		assertEquals("2.5", MAX_FILE_SIZE, desc.getMaxFileStateSize());
+		assertEquals("2.6", SNAPSHOT_INTERVAL, desc.getSnapshotInterval());
 	}
 
 	public static Test suite() {

@@ -67,8 +67,9 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	private static void copyFromTo(WorkspaceDescription source, WorkspaceDescription target) {
 		target.setAutoBuilding(source.isAutoBuilding());
 		target.setBuildOrder(source.getBuildOrder());
-		target.setFileStateLongevity(source.getFileStateLongevity());
 		target.setMaxBuildIterations(source.getMaxBuildIterations());
+		target.setApplyFileStatePolicy(source.isApplyFileStatePolicy());
+		target.setFileStateLongevity(source.getFileStateLongevity());
 		target.setMaxFileStates(source.getMaxFileStates());
 		target.setMaxFileStateSize(source.getMaxFileStateSize());
 		target.setSnapshotInterval(source.getSnapshotInterval());
@@ -88,6 +89,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 		super.setAutoBuilding(preferences.getBoolean(ResourcesPlugin.PREF_AUTO_BUILDING));
 		super.setSnapshotInterval(preferences.getInt(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 		super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
+		super.setApplyFileStatePolicy(preferences.getBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY));
 		super.setMaxFileStates(preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
 		super.setMaxFileStateSize(preferences.getLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE));
 		super.setFileStateLongevity(preferences.getLong(ResourcesPlugin.PREF_FILE_STATE_LONGEVITY));
@@ -158,6 +160,13 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	}
 
 	/**
+	 * @see org.eclipse.core.resources.IWorkspaceDescription#setApplyFileStatePolicy(boolean)
+	 */
+	public void setApplyFileStatePolicy(boolean apply) {
+		preferences.setValue(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY, apply);
+	}
+
+	/**
 	 * @see org.eclipse.core.resources.IWorkspaceDescription#setFileStateLongevity(long)
 	 */
 	public void setFileStateLongevity(long time) {
@@ -206,6 +215,8 @@ public class WorkspacePreferences extends WorkspaceDescription {
 			super.setSnapshotInterval(preferences.getLong(ResourcesPlugin.PREF_SNAPSHOT_INTERVAL));
 		else if (property.equals(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS))
 			super.setMaxBuildIterations(preferences.getInt(ResourcesPlugin.PREF_MAX_BUILD_ITERATIONS));
+		else if (property.equals(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY))
+			super.setApplyFileStatePolicy(preferences.getBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY));
 		else if (property.equals(ResourcesPlugin.PREF_MAX_FILE_STATES))
 			super.setMaxFileStates(preferences.getInt(ResourcesPlugin.PREF_MAX_FILE_STATES));
 		else if (property.equals(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE))

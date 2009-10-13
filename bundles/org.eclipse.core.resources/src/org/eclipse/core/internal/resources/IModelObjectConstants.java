@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,10 +26,11 @@ public interface IModelObjectConstants {
 	public static final String TRIGGER_INCREMENTAL = "incremental"; //$NON-NLS-1$
 	public static final String COMMENT = "comment"; //$NON-NLS-1$
 	public static final String DICTIONARY = "dictionary"; //$NON-NLS-1$
-	public static final String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$
 	public static final String KEY = "key"; //$NON-NLS-1$
 	public static final String LOCATION = "location"; //$NON-NLS-1$
 	public static final String LOCATION_URI = "locationURI"; //$NON-NLS-1$
+	public static final String APPLY_FILE_STATE_POLICY = "applyFileStatePolicy"; //$NON-NLS-1$
+	public static final String FILE_STATE_LONGEVITY = "fileStateLongevity"; //$NON-NLS-1$
 	public static final String MAX_FILE_STATE_SIZE = "maxFileStateSize"; //$NON-NLS-1$
 	public static final String MAX_FILE_STATES = "maxFileStates"; //$NON-NLS-1$
 	/**
