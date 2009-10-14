@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.eclipse.help.IIndex;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
