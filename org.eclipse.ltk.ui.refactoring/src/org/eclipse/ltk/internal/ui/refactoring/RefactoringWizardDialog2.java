@@ -199,7 +199,7 @@ public class RefactoringWizardDialog2 extends Dialog implements IWizardContainer
 
 	private void saveSize() {
 		if (fCurrentPage instanceof PreviewWizardPage) {
-			Control control= fCurrentPage.getControl().getParent();
+			Control control= fPageContainer.getTopPage();
 			Point size = control.getSize();
 			fSettings.put(WIDTH, size.x);
 			fSettings.put(HEIGHT, size.y);
