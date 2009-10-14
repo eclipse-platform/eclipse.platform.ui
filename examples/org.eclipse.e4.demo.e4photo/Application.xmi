@@ -1,60 +1,44 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:MApplication xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/Application" xsi:schemaLocation="http://www.eclipse.org/ui/2008/Application ../org.eclipse.e4.ui.model.workbench/model/Application.ecore">
-  <windows iconURI="platform:/plugin/org.eclipse.e4.demo.e4photo/images/icon.gif" name="e4 Photo Demo" x="100" y="100" width="800" height="600">
-    <menu>
-      <items xsi:type="application:MMenuItem" name="File">
-        <menu>
-          <items xsi:type="application:MMenuItem" name="Create Album" command="//@command.0"/>
-          <items xsi:type="application:MMenuItem" name="Image Dialog" command="//@command.2"/>
-          <items xsi:type="application:MMenuItem" iconURI="" name="---" separator="true"/>
-          <items xsi:type="application:MMenuItem" iconURI="" name="Exit" command="//@command.1"/>
-        </menu>
-      </items>
-      <items xsi:type="application:MMenuItem" name="Edit">
-        <menu>
-          <items xsi:type="application:MMenuItem" iconURI="" name="Exit" command="//@command.1"/>
-        </menu>
-      </items>
-      <items xsi:type="application:MMenuItem" name="Help">
-        <menu>
-          <items xsi:type="application:MMenuItem" iconURI="" name="Exit" command="//@command.1"/>
-        </menu>
-      </items>
-    </menu>
-    <children policy="VerticalComposite">
-      <children xsi:type="application:MSashForm" policy="HorizontalSash">
-        <children xsi:type="application:MSashForm" policy="VerticalSash">
-          <children xsi:type="application:MStack">
-            <children xsi:type="application:MContributedPart" name="Library" tooltip="Library" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library">
-              <toolBar>
-                <items xsi:type="application:MToolBarItem" name="Create Album" command="//@command.0"/>
-              </toolBar>
-            </children>
-          </children>
-          <children xsi:type="application:MStack">
-            <children xsi:type="application:MContributedPart" name="Location" tooltip="Location" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location"/>
-          </children>
+<org.eclipse.e4.ui.model.application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:org.eclipse.e4.ui.model.application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel  ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
+  <children xsi:type="org.eclipse.e4.ui.model.application:Window">
+    <children xsi:type="org.eclipse.e4.ui.model.application:PartSashContainer" horizontal="true">
+      <children xsi:type="org.eclipse.e4.ui.model.application:PartSashContainer">
+        <children xsi:type="org.eclipse.e4.ui.model.application:PartStack">
+          <children xsi:type="org.eclipse.e4.ui.model.application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" name="Library"/>
         </children>
-        <children xsi:type="application:MSashForm" policy="VerticalSash">
-          <children xsi:type="application:MContributedPart" name="Preview" tooltip="Preview" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview"/>
-          <children xsi:type="application:MStack">
-            <children xsi:type="application:MContributedPart" name="Thumbnails" tooltip="Thumbnails" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails"/>
-            <children xsi:type="application:MContributedPart" name="Exif" tooltip="Exif" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable"/>
-          </children>
-          <weights>70</weights>
-          <weights>30</weights>
+        <children xsi:type="org.eclipse.e4.ui.model.application:PartStack">
+          <children xsi:type="org.eclipse.e4.ui.model.application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" name="Location"/>
         </children>
-        <weights>30</weights>
-        <weights>70</weights>
+        <weights>60</weights>
+        <weights>40</weights>
       </children>
-      <variables>selection</variables>
-      <variables>exif</variables>
+      <children xsi:type="org.eclipse.e4.ui.model.application:PartSashContainer">
+        <children xsi:type="org.eclipse.e4.ui.model.application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" name="Preview" iconURI=""/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:PartStack">
+          <children xsi:type="org.eclipse.e4.ui.model.application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" name="Thumbnails"/>
+          <children xsi:type="org.eclipse.e4.ui.model.application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" name="Exif"/>
+        </children>
+        <weights>70</weights>
+        <weights>30</weights>
+      </children>
+      <weights>30</weights>
+      <weights>70</weights>
     </children>
-    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="//@command.1"/>
-    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="//@command.0"/>
-    <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="//@command.2"/>
-  </windows>
-  <command id="e4photo.newProject" name="New Project"/>
-  <command id="e4photo.exit" name="Exit"/>
-  <command id="e4photo.showDlg" name="Image Dialog"/>
-</application:MApplication>
+    <variables>selection</variables>
+    <variables>exif</variables>
+    <mainMenu>
+      <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="File">
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Create Album" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Image Dialog" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Create Album" URI="" separator="true"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
+      </children>
+      <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Edit">
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
+      </children>
+      <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit">
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
+      </children>
+    </mainMenu>
+  </children>
+</org.eclipse.e4.ui.model.application:Application>

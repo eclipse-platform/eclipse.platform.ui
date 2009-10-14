@@ -10,20 +10,19 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.workbench.swt.Activator;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
@@ -32,26 +31,24 @@ public class PartRenderingEngine implements IPresentationEngine {
 	public static final String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"
 			+ "org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine";
 
-	private final List partFactories = new ArrayList();
-
-	// SWT property ids containing the currently rendered part (and factory) for
-	// a given widget
-	public static final String FACTORY = "partFactory"; //$NON-NLS-1$
+	private String defaultRenderingFactoryId = "org.eclipse.e4.ui.workbench.renderers.default";
+	private String curFactoryId = defaultRenderingFactoryId;
+	IRendererFactory curFactory = null;
 
 	// Life Cycle listeners
 	private AdapterImpl visibilityListener = new AdapterImpl() {
 		@Override
 		public void notifyChanged(Notification msg) {
-			if (ApplicationPackage.Literals.MPART__VISIBLE.equals(msg
+			if (MApplicationPackage.Literals.UI_ELEMENT__VISIBLE.equals(msg
 					.getFeature())) {
 				// skip no-ops
 				if (msg.getOldBooleanValue() == msg.getNewBooleanValue())
 					return;
 
-				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
+				MUIElement changedPart = (MUIElement) msg.getNotifier();
 
 				// If the parent isn't displayed who cares?
-				MPart<?> parent = changedPart.getParent();
+				MElementContainer<?> parent = changedPart.getParent();
 				AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent)
 						: null;
 				if (parentFactory == null)
@@ -77,10 +74,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private AdapterImpl childrenListener = new AdapterImpl() {
 		@Override
 		public void notifyChanged(Notification msg) {
-			if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg
-					.getFeature())) {
-				MPart<?> changedPart = (MPart<?>) msg.getNotifier();
-				AbstractPartRenderer factory = getFactoryFor(changedPart);
+			if (MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN
+					.equals(msg.getFeature())) {
+				MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) msg
+						.getNotifier();
+				AbstractPartRenderer factory = getFactoryFor(changedElement);
 
 				// If the parent isn't in the UI then who cares?
 				if (factory == null)
@@ -102,7 +100,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						// NOTE: createGui will call 'childAdded' if successful
 						createGui(added);
 					else {
-						factory.childAdded(changedPart, added);
+						factory.childRendered(changedElement, added);
 					}
 				} else if (msg.getEventType() == Notification.REMOVE) {
 					Activator.trace(Policy.DEBUG_RENDERER,
@@ -113,7 +111,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 					if (!removed.isVisible())
 						return;
 
-					factory.childRemoved(changedPart, removed);
+					factory.hideChild(changedElement, removed);
 				}
 			}
 		}
@@ -148,33 +146,23 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// * Need to make the EP more declarative to avoid aggressive
 		// loading
 		IConfigurationElement[] factories = registry
-				.getConfigurationElementsFor("org.eclipse.e4.workbench.partfactory"); //$NON-NLS-1$
-
-		// Sort the factories based on their dependence
-		// This is a hack, should be based on plug-in dependencies
-		int offset = 0;
+				.getConfigurationElementsFor("org.eclipse.e4.workbench.rendererfactory"); //$NON-NLS-1$
 		for (int i = 0; i < factories.length; i++) {
-			String clsSpec = factories[i].getAttribute("class"); //$NON-NLS-1$
-			if (clsSpec.indexOf("Legacy") >= 0 //$NON-NLS-1$
-					|| clsSpec.indexOf("PartSash") >= 0) { //$NON-NLS-1$
-				IConfigurationElement tmp = factories[offset];
-				factories[offset++] = factories[i];
-				factories[i] = tmp;
-			}
-		}
+			String id = factories[i].getAttribute("id");
+			if (!curFactoryId.equals(id))
+				continue;
 
-		for (int i = 0; i < factories.length; i++) {
-			AbstractPartRenderer factory = null;
+			IRendererFactory factory = null;
 			try {
-				factory = (AbstractPartRenderer) factories[i]
+				factory = (IRendererFactory) factories[i]
 						.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				e.printStackTrace();
 			}
+
 			if (factory != null) {
 				factory.init(this, context, contributionFactory);
-				ContextInjectionFactory.inject(factory, context);
-				addPartFactory(factory);
+				curFactory = factory;
 			}
 		}
 
@@ -182,11 +170,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		context.set(PartRenderingEngine.SERVICE_NAME, this);
 	}
 
-	public void addPartFactory(AbstractPartRenderer factory) {
-		partFactories.add(factory);
-	}
-
-	public Object createGui(MPart element, Object parent) {
+	public Object createGui(MUIElement element, Object parent) {
 		// Life-cycle hooks
 		installLifeCycleHooks(element);
 
@@ -198,34 +182,41 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// Remember that we've created the control
 		if (newWidget != null) {
-			// Bind the widget to its model element
-			element.setWidget(newWidget);
-
 			// Process its internal structure through the factory that created
 			// it
 			AbstractPartRenderer factory = getFactoryFor(element);
-			factory.bindWidget(element, newWidget);
-			hookControllerLogic(element);
-			factory.processContents(element);
+
+			factory.hookControllerLogic(element);
+
+			if (element instanceof MElementContainer) {
+				factory
+						.processContents((MElementContainer<MUIElement>) element);
+			}
+
 			factory.postProcess(element);
 
-			// Now that we have a widget let the parent know
-			if (element.getParent() instanceof MPart) {
-				MPart parentElement = (MPart) element.getParent();
+			// Now that we have a widget let the parent (if any) know
+			if (element.getParent() instanceof MUIElement) {
+				MElementContainer<MUIElement> parentElement = element
+						.getParent();
 				AbstractPartRenderer parentFactory = getFactoryFor(parentElement);
-				parentFactory.childAdded(parentElement, element);
+				if (parentFactory != null)
+					parentFactory.childRendered(parentElement, element);
 			}
 		}
 
 		return newWidget;
 	}
 
-	public Object createGui(MPart element) {
+	public Object createGui(MUIElement element) {
 		// Obtain the necessary parent and context
 		Object parent = null;
-		MPart parentME = element.getParent();
+		MUIElement parentME = element.getParent();
 		if (parentME != null) {
-			parent = parentME.getWidget();
+			AbstractPartRenderer factory = getFactoryFor(parentME);
+			if (factory != null) {
+				parent = factory.getUIContainer(element);
+			}
 		}
 
 		return createGui(element, parent);
@@ -234,11 +225,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	/**
 	 * @param element
 	 */
-	public void removeGui(MPart<?> element) {
+	public void removeGui(MUIElement element) {
 		AbstractPartRenderer factory = getFactoryFor(element);
 		assert (factory != null);
 
-		MPart<?> parent = element.getParent();
+		MUIElement parent = element.getParent();
 		AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent)
 				: null;
 		if (parentFactory == null)
@@ -246,7 +237,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// Remove the child from its current parent's -Composite- this does NOT
 		// mean removing the model element from its parent's model
-		parentFactory.childRemoved(element.getParent(), element);
+		parentFactory.hideChild(element.getParent(), element);
 
 		factory.disposeWidget(element);
 	}
@@ -255,7 +246,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * @param element
 	 *            an element that's been seen by createGui
 	 */
-	private void installLifeCycleHooks(MPart<?> element) {
+	private void installLifeCycleHooks(MUIElement element) {
 		// Handle visibility changes
 		if (!((EObject) element).eAdapters().contains(visibilityListener))
 			((EObject) element).eAdapters().add(visibilityListener);
@@ -265,23 +256,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 			((EObject) element).eAdapters().add(childrenListener);
 	}
 
-	protected Object createWidget(MPart<?> element, Object parent) {
-		// Iterate through the factories until one actually creates the widget
-		for (Iterator iterator = partFactories.iterator(); iterator.hasNext();) {
-			AbstractPartRenderer factory = (AbstractPartRenderer) iterator
-					.next();
-
-			// *** Put any declarative tests here to prevent aggressive loading
-			// For example, test whether this factory handles a particular model
-			// type ('StackModel'...)
-
-			Object newWidget = factory.createWidget(element, parent);
+	protected Object createWidget(MUIElement element, Object parent) {
+		AbstractPartRenderer renderer = getRenderer(element, parent);
+		if (renderer != null) {
+			Object newWidget = renderer.createWidget(element, parent);
 			if (newWidget != null) {
-				// Remember which factory created the widget
-				setFactoryFor(element, factory);
-
+				renderer.bindWidget(element, newWidget);
 				processHandlers(element);
-
 				return newWidget;
 			}
 		}
@@ -289,45 +270,26 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return null;
 	}
 
-	protected void processHandlers(MPart<?> element) {
-		for (MHandler contributedHandler : element.getHandlers()) {
-			if (contributedHandler.getURI() != null
-					&& contributedHandler.getObject() == null) {
-				contributedHandler.setObject(contributionFactory.create(
-						contributedHandler.getURI(), context));
-			}
-		}
+	private AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
+		return curFactory.getRenderer(uiElement, parent);
 	}
 
-	/**
-	 * Manages the relationship between a MPart<?> and its rendered Widget.
-	 * 
-	 * MPart<?>.getWidget().getData(OWNING_ME) == MPart<?>
-	 * 
-	 * @param element
-	 *            The UI element
-	 * @param widget
-	 *            The widget
-	 */
-	// public void bindWidget(MPart<?> me, Widget widget) {
-	// me.setWidget(widget);
-	// widget.setData(OWNING_ME, me);
-	//		
-	// hookControllerLogic(me, widget);
-	// }
-
-	private void hookControllerLogic(final MPart<?> element) {
-		// Delegate widget specific hook-up to the creating factory
-		AbstractPartRenderer factory = (AbstractPartRenderer) getFactoryFor(element);
-		if (factory != null)
-			factory.hookControllerLogic(element);
+	protected void processHandlers(MUIElement element) {
+		// for (MHandler contributedHandler : element.getHandlers()) {
+		// if (contributedHandler.getURI() != null &&
+		// contributedHandler.getObject() == null) {
+		// contributedHandler.setObject(contributionFactory.create(
+		// contributedHandler.getURI(), context));
+		// }
+		// }
 	}
 
-	protected void setFactoryFor(MPart element, AbstractPartRenderer factory) {
-		element.setOwner(factory);
+	protected void setFactoryFor(MUIElement element,
+			AbstractPartRenderer factory) {
+		element.setFactory(factory);
 	}
 
-	protected AbstractPartRenderer getFactoryFor(MPart element) {
-		return (AbstractPartRenderer) element.getOwner();
+	protected AbstractPartRenderer getFactoryFor(MUIElement element) {
+		return (AbstractPartRenderer) element.getFactory();
 	}
 }

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ecore:EPackage xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="application"
+    nsURI="http://www.eclipse.org/ui/2008/UIModel" nsPrefix="application">
+  <eClassifiers xsi:type="ecore:EClass" name="V____________Abstract_____________V"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Contribution" abstract="true" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="URI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="object" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="persistedState" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Command" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="commandURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="impl" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="args" upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="commandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Input">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Parameter" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UIItem" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="widget" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="factory" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EJavaObject"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eOpposite="#//ElementContainer/children">
+      <eGenericType eClassifier="#//ElementContainer">
+        <eTypeArguments eClassifier="#//UIElement"/>
+      </eGenericType>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EDataType" name="IEclipseContext" instanceClassName="org.eclipse.e4.core.services.context.IEclipseContext"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EDataType" name="ParameterizedCommand" instanceClassName="org.eclipse.core.commands.ParameterizedCommand"
+      serializable="false"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Context">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="variables" ordered="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="V_________AbstractContainers__________V"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true" eSuperTypes="#//UIElement">
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//UIElement"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        containment="true" eOpposite="#//UIElement/parent">
+      <eGenericType eTypeParameter="#//ElementContainer/T"/>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="activeChild">
+      <eGenericType eTypeParameter="#//ElementContainer/T"/>
+    </eStructuralFeatures>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GenericTile" abstract="true">
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//UIElement"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weights" unique="false"
+        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eTypeParameter="#//GenericTile/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="TrimStructure">
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//UIElement"/>
+    </eTypeParameters>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="top">
+      <eGenericType eClassifier="#//ElementContainer">
+        <eTypeArguments eClassifier="#//UIElement"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bottom">
+      <eGenericType eClassifier="#//ElementContainer">
+        <eTypeArguments eClassifier="#//UIElement"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="left">
+      <eGenericType eClassifier="#//ElementContainer">
+        <eTypeArguments eClassifier="#//UIElement"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="right">
+      <eGenericType eClassifier="#//ElementContainer">
+        <eTypeArguments eClassifier="#//UIElement"/>
+      </eGenericType>
+    </eStructuralFeatures>
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eTypeParameter="#//TrimStructure/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="V______________RCP_______________V"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Application">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
+        eType="#//Command" containment="true"/>
+    <eGenericSuperTypes eClassifier="#//Context"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//Window"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//Contribution"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//UIElement #//UIItem #//Contribution">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="separator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="HandledItem" eSuperTypes="#//Item">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="command" eType="#//Command"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="menu" eType="#//Menu"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="wbCommand" eType="#//ParameterizedCommand"
+        transient="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
+        eType="#//Parameter"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//Item #//Menu"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Menu">
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//MenuItem"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ToolItem">
+    <eGenericSuperTypes eClassifier="#//Item"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//MenuItem"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//ToolItem"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PSCElement" abstract="true" interface="true"
+      eSuperTypes="#//UIElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UIItem">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
+        eType="#//Menu"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PartStack">
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//Part"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PartSashContainer">
+    <eGenericSuperTypes eClassifier="#//GenericTile">
+      <eTypeArguments eClassifier="#//PSCElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Window">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//Menu"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="x" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eGenericSuperTypes eClassifier="#//UIItem"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//PSCElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//Context"/>
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="V______________IDE_______________V"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="VSCElement" abstract="true" interface="true"
+      eSuperTypes="#//UIElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="View" eSuperTypes="#//Part"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ViewStack">
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//View"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//VSCElement"/>
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ViewSashContainer">
+    <eGenericSuperTypes eClassifier="#//GenericTile">
+      <eTypeArguments eClassifier="#//VSCElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//VSCElement"/>
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Editor" eSuperTypes="#//Part #//Input #//ESCElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MultiEditor">
+    <eGenericSuperTypes eClassifier="#//Editor"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//Editor"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="ESCElement" abstract="true" interface="true"
+      eSuperTypes="#//UIElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="EditorStack">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//Editor"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//ESCElement"/>
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="EditorSashContainer">
+    <eGenericSuperTypes eClassifier="#//GenericTile">
+      <eTypeArguments eClassifier="#//ESCElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//ESCElement"/>
+    <eGenericSuperTypes eClassifier="#//VSCElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Perspective">
+    <eGenericSuperTypes eClassifier="#//UIItem"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//VSCElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//Context"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
+    <eGenericSuperTypes eClassifier="#//UIElement"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//Perspective"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//VSCElement"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="IDEWindow">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//Menu"/>
+    <eGenericSuperTypes eClassifier="#//TrimStructure">
+      <eTypeArguments eClassifier="#//VSCElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//UIItem"/>
+    <eGenericSuperTypes eClassifier="#//Context"/>
+  </eClassifiers>
+</ecore:EPackage>

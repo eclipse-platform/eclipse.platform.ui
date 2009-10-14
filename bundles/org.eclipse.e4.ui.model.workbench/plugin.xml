@@ -11,7 +11,7 @@
  Contributors:
       IBM Corporation - initial API and implementation
 
- $Id: plugin.xml,v 1.1 2008/11/02 16:52:04 bbokowski Exp $
+ $Id: plugin.xml,v 1.1 2008/11/11 18:19:11 bbokowski Exp $
 -->
 
 <plugin>
@@ -31,7 +31,7 @@
    <extension point="org.eclipse.core.contenttype.contentTypes">
       <content-type
             base-type="org.eclipse.emf.ecore.xmi"
-            file-extensions="application,xmi"
+            file-extensions="org.eclipse.e4.ui.model.application,xmi"
             id="org.eclipse.e4.ui.model.application"
             name="%_UI_Application_content_type"
             priority="normal">

@@ -7,21 +7,19 @@
  * 
  * Contributors:
  *      IBM Corporation - initial API and implementation
- *
- * $Id$
  */
 package org.eclipse.e4.ui.model.application;
 
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>MTool Bar</b></em>'.
+ * A representation of the model object '<em><b>Tool Bar</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMToolBar()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getToolBar()
  * @model
  * @generated
  */
-public interface MToolBar extends MItemContainer<MToolBarItem> {
+public interface MToolBar extends MUIElement, MElementContainer<MToolItem> {
 } // MToolBar

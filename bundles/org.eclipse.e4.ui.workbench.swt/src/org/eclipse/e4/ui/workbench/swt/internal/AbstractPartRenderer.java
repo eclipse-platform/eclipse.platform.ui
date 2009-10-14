@@ -12,18 +12,17 @@ package org.eclipse.e4.ui.workbench.swt.internal;
 
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
 
 public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
-	protected IPresentationEngine renderer;
+	protected PartRenderingEngine renderer;
 	protected IContributionFactory contributionFactory;
 	protected IEclipseContext context;
 	protected EMFDataBindingContext dbc;
@@ -32,41 +31,57 @@ public abstract class AbstractPartRenderer {
 		dbc = new EMFDataBindingContext();
 	}
 
-	public void init(IPresentationEngine renderer, IEclipseContext context,
+	public void init(PartRenderingEngine renderer, IEclipseContext context,
 			IContributionFactory contributionFactory) {
 		this.renderer = renderer;
 		this.contributionFactory = contributionFactory;
 		this.context = context;
 	}
 
-	public abstract Object createWidget(MPart<?> element, Object parent);
+	public abstract Object createWidget(MUIElement element, Object parent);
 
-	public abstract <P extends MPart<?>> void processContents(MPart<P> me);
+	public abstract void processContents(MElementContainer<MUIElement> container);
 
-	public void postProcess(MPart<?> childME) {
+	public void postProcess(MUIElement childElement) {
 	}
 
-	public abstract void bindWidget(MPart<?> me, Object widget);
+	public abstract void bindWidget(MUIElement me, Object widget);
 
-	protected abstract Object getParentWidget(MPart<?> element);
+	protected abstract Object getParentWidget(MUIElement element);
 
-	public abstract void disposeWidget(MPart<?> part);
+	public abstract void disposeWidget(MUIElement part);
 
-	public abstract void hookControllerLogic(final MPart<?> me);
+	public abstract void hookControllerLogic(final MUIElement me);
 
-	public abstract void childAdded(MPart<?> parentElement, MPart<?> element);
+	public abstract void childRendered(
+			MElementContainer<MUIElement> parentElement, MUIElement element);
 
-	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
+	public void hideChild(MElementContainer<MUIElement> parentElement,
+			MUIElement child) {
 	}
 
-	protected abstract Object getImage(MApplicationElement element);
+	protected abstract Object getImage(MUIItem element);
 
-	public Object createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
-		return null;
-	}
+	//
+	// public Object createMenu(Object widgetObject, MMenu menu) {
+	// return null;
+	// }
+	//
+	// public Object createToolBar(Object widgetObject, MToolBar toolBar) {
+	// return null;
+	// }
 
-	public Object createToolBar(MPart<?> part, Object widgetObject, MToolBar toolBar) {
-		return null;
+	/**
+	 * Return a parent context for this part.
+	 * 
+	 * @param part
+	 *            the part to start searching from
+	 * @return the parent's closest context, or global context if none in the
+	 *         hierarchy
+	 */
+	protected IEclipseContext getContextForParent(MUIElement part) {
+		MContext pwc = getParentWithContext(part);
+		return pwc != null ? pwc.getContext() : context;
 	}
 
 	/**
@@ -74,17 +89,19 @@ public abstract class AbstractPartRenderer {
 	 * 
 	 * @param part
 	 *            the part to start searching from
-	 * @return the parent's closest context, or global context if none in the hierarchy
+	 * @return the parent's closest context, or global context if none in the
+	 *         hierarchy
 	 */
-	protected IEclipseContext getContextForParent(MPart<?> part) {
-		MPart<?> parent = part.getParent();
+	protected MContext getParentWithContext(MUIElement part) {
+		MElementContainer<MUIElement> parent = part.getParent();
 		while (parent != null) {
-			if (parent.getContext() != null) {
-				return parent.getContext();
+			if (parent instanceof MContext) {
+				if (((MContext) parent).getContext() != null)
+					return (MContext) parent;
 			}
 			parent = parent.getParent();
 		}
-		return context;
+		return null;
 	}
 
 	/**
@@ -94,49 +111,62 @@ public abstract class AbstractPartRenderer {
 	 *            the part to start searching from
 	 * @return the closest context, or global context if none in the hierarchy
 	 */
-	protected IEclipseContext getContext(MPart<?> part) {
-		if (part.getContext() != null) {
-			return part.getContext();
+	protected IEclipseContext getContext(MUIElement part) {
+		if (part instanceof MContext) {
+			IEclipseContext theContext = ((MContext) part).getContext();
+			if (theContext != null)
+				return theContext;
 		}
 		return getContextForParent(part);
 	}
 
-	protected IEclipseContext getToplevelContext(MPart<?> part) {
+	protected IEclipseContext getToplevelContext(MUIElement part) {
 		IEclipseContext result = null;
 		if (part.getParent() != null) {
 			result = getToplevelContext(part.getParent());
 		}
-		if (result == null) {
-			result = part.getContext();
+		if (result == null && part instanceof MContext) {
+			result = ((MContext) part).getContext();
 		}
 		return result;
 	}
 
 	/**
-	 * Activate the part in the hierarchy. This should either still be internal or be a public
-	 * method somewhere else.
+	 * Activate the part in the hierarchy. This should either still be internal
+	 * or be a public method somewhere else.
 	 * 
-	 * @param part
+	 * @param element
 	 */
-	public void activate(MPart<?> part) {
-		MPart<MPart<?>> parent = (MPart<MPart<?>>) part.getParent();
-		IEclipseContext partContext = part.getContext();
-		while (parent != null) {
-			IEclipseContext parentContext = parent.getContext();
-			// The context has to be changed first as the events created by #setActiveChild()
-			// will use context information.
+	public void activate(MUIElement element) {
+		IEclipseContext curContext = getContext(element);
+		MUIElement curElement = element;
+		MContext pwc = getParentWithContext(element);
+		while (pwc != null) {
+			IEclipseContext parentContext = pwc.getContext();
 			if (parentContext != null) {
-				parentContext.set(IServiceConstants.ACTIVE_CHILD, partContext);
-				partContext = parentContext;
+				parentContext.set(IServiceConstants.ACTIVE_CHILD, curContext);
+				curContext = parentContext;
 			}
-			if (parent.getActiveChild() != part)
-				parent.setActiveChild(part);
-			part = parent;
-			parent = (MPart<MPart<?>>) parent.getParent();
+
+			// Ensure that the UI model has the part 'on top'
+			while (curElement != pwc) {
+				MElementContainer<MUIElement> parent = curElement.getParent();
+				if (parent.getActiveChild() != element)
+					parent.setActiveChild(curElement);
+				curElement = parent;
+			}
+
+			pwc = getParentWithContext((MUIElement) pwc);
 		}
 	}
 
-	public void removeGui(MPart element, Object widget) {
+	public void removeGui(MUIElement element, Object widget) {
 	}
 
+	protected Object getUIContainer(MUIElement element) {
+		if (element.getParent() != null)
+			return element.getParent().getWidget();
+
+		return null;
+	}
 }

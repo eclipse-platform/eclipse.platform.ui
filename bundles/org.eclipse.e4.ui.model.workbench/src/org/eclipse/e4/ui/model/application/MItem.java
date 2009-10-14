@@ -7,107 +7,106 @@
  * 
  * Contributors:
  *      IBM Corporation - initial API and implementation
- *
- * $Id$
  */
 package org.eclipse.e4.ui.model.application;
 
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>MItem</b></em>'.
+ * A representation of the model object '<em><b>Item</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MItem#getIconURI <em>Icon URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MItem#getName <em>Name</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MItem#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MItem#isEnabled <em>Enabled</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MItem#isSelected <em>Selected</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MItem#isSeparator <em>Separator</em>}</li>
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMItem()
- * @model abstract="true"
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItem()
+ * @model
  * @generated
  */
-public interface MItem extends MApplicationElement {
+public interface MItem extends MUIElement, MUIItem, MContribution {
 	/**
-	 * Returns the value of the '<em><b>Icon URI</b></em>' attribute.
+	 * Returns the value of the '<em><b>Enabled</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Icon URI</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Enabled</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Icon URI</em>' attribute.
-	 * @see #setIconURI(String)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMItem_IconURI()
-	 * @model
+	 * @return the value of the '<em>Enabled</em>' attribute.
+	 * @see #setEnabled(boolean)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItem_Enabled()
+	 * @model default="true"
 	 * @generated
 	 */
-	String getIconURI();
+	boolean isEnabled();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#getIconURI <em>Icon URI</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#isEnabled <em>Enabled</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Icon URI</em>' attribute.
-	 * @see #getIconURI()
+	 * @param value the new value of the '<em>Enabled</em>' attribute.
+	 * @see #isEnabled()
 	 * @generated
 	 */
-	void setIconURI(String value);
+	void setEnabled(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
+	 * Returns the value of the '<em><b>Selected</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Selected</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMItem_Name()
+	 * @return the value of the '<em>Selected</em>' attribute.
+	 * @see #setSelected(boolean)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItem_Selected()
 	 * @model
 	 * @generated
 	 */
-	String getName();
+	boolean isSelected();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#getName <em>Name</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#isSelected <em>Selected</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
+	 * @param value the new value of the '<em>Selected</em>' attribute.
+	 * @see #isSelected()
 	 * @generated
 	 */
-	void setName(String value);
+	void setSelected(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Tooltip</b></em>' attribute.
+	 * Returns the value of the '<em><b>Separator</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Tooltip</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Separator</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Tooltip</em>' attribute.
-	 * @see #setTooltip(String)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMItem_Tooltip()
+	 * @return the value of the '<em>Separator</em>' attribute.
+	 * @see #setSeparator(boolean)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItem_Separator()
 	 * @model
 	 * @generated
 	 */
-	String getTooltip();
+	boolean isSeparator();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#getTooltip <em>Tooltip</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#isSeparator <em>Separator</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Tooltip</em>' attribute.
-	 * @see #getTooltip()
+	 * @param value the new value of the '<em>Separator</em>' attribute.
+	 * @see #isSeparator()
 	 * @generated
 	 */
-	void setTooltip(String value);
+	void setSeparator(boolean value);
 
 } // MItem

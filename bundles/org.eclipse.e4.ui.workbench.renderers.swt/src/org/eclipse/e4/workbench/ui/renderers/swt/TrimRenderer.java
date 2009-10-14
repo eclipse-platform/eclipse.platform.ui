@@ -11,10 +11,10 @@
 
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolBarContainer;
-import org.eclipse.e4.ui.model.application.MTrimmedPart;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MTrimStructure;
+import org.eclipse.e4.ui.model.application.MUIElement;
+
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
@@ -33,8 +33,8 @@ public class TrimRenderer extends SWTPartRenderer {
 	 * .e4.ui.model.application.MPart)
 	 */
 	@Override
-	public Object createWidget(MPart<?> element, Object parent) {
-		if (!(element instanceof MTrimmedPart<?>)
+	public Object createWidget(MUIElement element, Object parent) {
+		if (!(element instanceof MTrimStructure)
 				|| !(parent instanceof Composite))
 			return null;
 
@@ -55,10 +55,10 @@ public class TrimRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	public <P extends MPart<?>> void processContents(MPart<P> me) {
-		if (!(me instanceof MTrimmedPart<?>))
+	public void processContents(MElementContainer<MUIElement> me) {
+		if (!(me instanceof MTrimStructure))
 			return;
-		MTrimmedPart<?> trimModel = (MTrimmedPart<?>) me;
+		MTrimStructure trimModel = (MTrimStructure) me;
 
 		// The trim's 'widget' is actually the client area of its layout
 		// NOTE: the casts below expect this arrangement
@@ -67,21 +67,21 @@ public class TrimRenderer extends SWTPartRenderer {
 		TrimmedPartLayout layout = (TrimmedPartLayout) trimmedComp.getLayout();
 
 		// construct the trim
-		if (hasVisibleChildren(trimModel.getTopTrim())) {
+		if (hasVisibleChildren(trimModel.getTop())) {
 			layout.top = createTrim(trimmedComp, SWT.HORIZONTAL, trimModel,
-					trimModel.getTopTrim());
+					trimModel.getTop());
 		}
-		if (hasVisibleChildren(trimModel.getBottomTrim())) {
+		if (hasVisibleChildren(trimModel.getBottom())) {
 			layout.bottom = createTrim(trimmedComp, SWT.HORIZONTAL, trimModel,
-					trimModel.getBottomTrim());
+					trimModel.getBottom());
 		}
-		if (hasVisibleChildren(trimModel.getLeftTrim())) {
+		if (hasVisibleChildren(trimModel.getLeft())) {
 			layout.left = createTrim(trimmedComp, SWT.VERTICAL, trimModel,
-					trimModel.getLeftTrim());
+					trimModel.getLeft());
 		}
-		if (hasVisibleChildren(trimModel.getRightTrim())) {
+		if (hasVisibleChildren(trimModel.getRight())) {
 			layout.right = createTrim(trimmedComp, SWT.VERTICAL, trimModel,
-					trimModel.getRightTrim());
+					trimModel.getRight());
 		}
 
 		// TODO Auto-generated method stub
@@ -95,16 +95,17 @@ public class TrimRenderer extends SWTPartRenderer {
 	 * @return
 	 */
 	private Composite createTrim(Composite trimmedComp, int orientation,
-			MTrimmedPart<?> trimModel, MToolBarContainer trimContainer) {
+			MTrimStructure<MUIElement> trimModel,
+			MElementContainer<MUIElement> trimContainer) {
 		Composite trimComposite = new Composite(trimmedComp, SWT.NONE);
 		RowLayout trl = new RowLayout(orientation);
 		trl.marginBottom = trl.marginTop = 1;
 		trimComposite.setLayout(trl);
 
 		// Now we can create the controls in the trim...
-		for (MToolBar tb : trimContainer.getToolbars()) {
-			createToolBar(trimModel, trimComposite, tb);
-		}
+		// for (MUIElement tb : trimContainer.getChildren()) {
+		// renderer.createGui((trimModel, trimComposite, tb);
+		// }
 
 		return trimComposite;
 	}
@@ -113,11 +114,11 @@ public class TrimRenderer extends SWTPartRenderer {
 	 * @param trimSide
 	 * @return
 	 */
-	private boolean hasVisibleChildren(MToolBarContainer trimSide) {
+	private boolean hasVisibleChildren(MElementContainer<MUIElement> trimSide) {
 		if (trimSide == null)
 			return false;
 
-		EList<?> kids = trimSide.getToolbars();
+		EList<MUIElement> kids = trimSide.getChildren();
 		return kids != null && kids.size() > 0;
 	}
 }

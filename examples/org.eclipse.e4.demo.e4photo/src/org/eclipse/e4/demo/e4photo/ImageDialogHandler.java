@@ -14,15 +14,14 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
-import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
@@ -32,13 +31,14 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 
+
 public class ImageDialogHandler {
 
 	private class ImageDialog extends Dialog {
 		private IPresentationEngine theRenderer;
 		private IEclipseContext dlgContext;
 
-		public ImageDialog(Shell shell, MApplication<?> app, IPresentationEngine renderer) {
+		public ImageDialog(Shell shell, MApplication app, IPresentationEngine renderer) {
 			super(shell);
 
 			theRenderer = renderer;
@@ -80,12 +80,12 @@ public class ImageDialogHandler {
 			comp.setLayoutData(new GridData(GridData.FILL_BOTH));
 			
 			// Create the model and use it to fill in the composite
-			MPart<MPart<?>> dlgModel = createDlgModel();
-			Workbench.initializeContext(dlgContext, dlgModel);
+			MUIElement dlgModel = createDlgModel();
+			//Workbench.initializeContext(dlgContext, dlgModel);
 			theRenderer.createGui(dlgModel, comp);
 
 			// Declare the source for selection listeners
-			dlgContext.set(IServiceConstants.ACTIVE_CHILD, dlgModel.getContext());
+			//dlgContext.set(IServiceConstants.ACTIVE_CHILD, dlgModel.getContext());
 			
 			// Can't link to the app because doing so causes the actual app to
 			// see the selection events from the dialog
@@ -94,18 +94,18 @@ public class ImageDialogHandler {
 			return comp;
 		}
 		
-		private MPart<MPart<?>> createDlgModel() {
+		private MUIElement createDlgModel() {
 			// Create a side-by-side sash
-			MSashForm<MPart<?>> sash = ApplicationFactory.eINSTANCE.createMSashForm();
-			sash.setPolicy("Horizontal");
+			MPartSashContainer sash = MApplicationFactory.eINSTANCE.createPartSashContainer();
+			sash.setHorizontal(true);
 			
 			// Create the 'Library' part
-			MContributedPart<?> library = ApplicationFactory.eINSTANCE.createMContributedPart();
+			MPart library = MApplicationFactory.eINSTANCE.createPart();
 			library.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library");
 			library.setName("Library");
 			
 			// Create the 'Preview' part
-			MContributedPart<?> preview = ApplicationFactory.eINSTANCE.createMContributedPart();
+			MPart preview = MApplicationFactory.eINSTANCE.createPart();
 			preview.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview");
 			preview.setName("Preview");
 			
@@ -131,7 +131,7 @@ public class ImageDialogHandler {
 		}
 	}
 	
-	public void execute(Shell shell, MApplication<?> app, IPresentationEngine renderer) {
+	public void execute(Shell shell, MApplication app, IPresentationEngine renderer) {
 		ImageDialog dlg = new ImageDialog(shell, app, renderer);
 		dlg.open();
 	}

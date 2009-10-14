@@ -10,14 +10,19 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MContributedPart;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MUIElement;
+
+import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
@@ -28,35 +33,46 @@ import org.eclipse.swt.widgets.Widget;
  */
 public class ContributedPartRenderer extends SWTPartRenderer {
 
-	public Object createWidget(final MPart<?> part, Object parent) {
-		if (!(parent instanceof Composite))
+	public Object createWidget(final MUIElement element, Object parent) {
+		if (!(element instanceof MPart) || !(parent instanceof Composite))
 			return null;
 
 		Widget parentWidget = (Widget) parent;
-		IEclipseContext parentContext = getContextForParent(part);
+		IEclipseContext parentContext = getContextForParent(element);
 		Widget newWidget = null;
 
-		if (part instanceof MContributedPart<?>) {
-			final Composite newComposite = new Composite(
-					(Composite) parentWidget, SWT.NONE);
-			newWidget = newComposite;
-			// bindWidget(part, newWidget);
-			final MContributedPart<?> contributedPart = (MContributedPart<?>) part;
-			final IEclipseContext localContext = part.getContext();
-			localContext.set(Composite.class.getName(), newComposite);
-			localContext.set(MContributedPart.class.getName(), part);
-			parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
-			Object newPart = contributionFactory.create(contributedPart
-					.getURI(), localContext);
-			contributedPart.setObject(newPart);
-			newWidget.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					if (localContext instanceof IDisposable)
-						((IDisposable) localContext).dispose();
-				}
-			});
-		}
+		final Composite newComposite = new Composite((Composite) parentWidget,
+				SWT.NONE);
+		newComposite.setLayout(new FillLayout());
 
+		newWidget = newComposite;
+		bindWidget(element, newWidget);
+		final MPart part = (MPart) element;
+
+		// Create a context for this part
+		IEclipseContext localContext = EclipseContextFactory.create(
+				parentContext, UISchedulerStrategy.getInstance());
+		localContext.set(IContextConstants.DEBUG_STRING,
+				"PartContext(" + element + ')'); //$NON-NLS-1$
+		part.setContext(localContext);
+
+		localContext.set(Composite.class.getName(), newComposite);
+		localContext.set(MPart.class.getName(), part);
+
+		parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
+
+		Object newPart = contributionFactory
+				.create(part.getURI(), localContext);
+		part.setObject(newPart);
+		final IEclipseContext eventLclContext = localContext;
+		newWidget.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				if (eventLclContext instanceof IDisposable)
+					((IDisposable) eventLclContext).dispose();
+			}
+		});
+
+		activate(element);
 		return newWidget;
 	}
 
@@ -68,8 +84,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	public void hookControllerLogic(final MPart<?> me) {
-		// TODO Auto-generated method stub
+	public void hookControllerLogic(final MUIElement me) {
 		super.hookControllerLogic(me);
 		Widget widget = (Widget) me.getWidget();
 		if (widget instanceof Composite) {

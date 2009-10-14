@@ -18,14 +18,13 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
-import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
@@ -61,8 +60,8 @@ public class MWindowTest extends TestCase {
 							.getBundleContext());
 			appContext = Workbench.createWorkbenchContext(serviceContext,
 					RegistryFactory.getRegistry(), null, null);
-			MApplication<MWindow<?>> app = ApplicationFactory.eINSTANCE
-					.createMApplication();
+			MApplication app = MApplicationFactory.eINSTANCE
+					.createApplication();
 			appContext.set(MApplication.class.getName(), app);
 			appContext.set(IContributionFactory.class.getName(), getCFactory());
 			appContext.set(IEclipseContext.class.getName(), appContext);
@@ -111,8 +110,7 @@ public class MWindowTest extends TestCase {
 
 	public void testCreateWindow() {
 
-		final MWindow<MPart<?>> window = ApplicationFactory.eINSTANCE
-				.createMWindow();
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
 		window.setName("MyWindow");
@@ -138,7 +136,7 @@ public class MWindowTest extends TestCase {
 	}
 
 	public void testCreateView() {
-		final MWindow<MPart<?>> window = createWindowWithOneView();
+		final MWindow window = createWindowWithOneView();
 		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
 				new Runnable() {
 					public void run() {
@@ -178,7 +176,7 @@ public class MWindowTest extends TestCase {
 	}
 
 	public void testContextChildren() {
-		final MWindow<MPart<?>> window = createWindowWithOneView();
+		final MWindow window = createWindowWithOneView();
 		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
 				new Runnable() {
 					public void run() {
@@ -201,7 +199,7 @@ public class MWindowTest extends TestCase {
 						assertNotNull(child);
 						assertEquals(window.getContext(), child);
 
-						MContributedPart<MPart<?>> modelPart = getContributedPart(window);
+						MPart modelPart = getContributedPart(window);
 						assertNotNull(modelPart);
 						assertEquals(window, modelPart.getParent().getParent()
 								.getParent());
@@ -209,7 +207,7 @@ public class MWindowTest extends TestCase {
 						// "activate" the part, same as (in theory) an
 						// SWT.Activate event.
 						AbstractPartRenderer factory = (AbstractPartRenderer) modelPart
-								.getOwner();
+								.getFactory();
 						factory.activate(modelPart);
 
 						IEclipseContext next = (IEclipseContext) child
@@ -218,11 +216,15 @@ public class MWindowTest extends TestCase {
 							child = next;
 							next = (IEclipseContext) child
 									.getLocal(IServiceConstants.ACTIVE_CHILD);
+							if (next == child) {
+								fail("Cycle detected in part context");
+								break;
+							}
 						}
 						assertFalse(window.getContext() == child);
 
-						MContributedPart<?> contextPart = (MContributedPart<?>) child
-								.get(MContributedPart.class.getName());
+						MPart contextPart = (MPart) child.get(MPart.class
+								.getName());
 
 						assertNotNull(contextPart);
 						assertEquals(window, contextPart.getParent()
@@ -232,7 +234,7 @@ public class MWindowTest extends TestCase {
 	}
 
 	public void testCreateMenu() {
-		final MWindow<MPart<?>> window = createWindowWithOneViewAndMenu();
+		final MWindow window = createWindowWithOneViewAndMenu();
 		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
 				new Runnable() {
 					public void run() {
@@ -256,9 +258,10 @@ public class MWindowTest extends TestCase {
 						fileMenu.notifyListeners(SWT.Show, null);
 						assertEquals(2, fileMenu.getItemCount());
 						fileMenu.notifyListeners(SWT.Hide, null);
-						final MMenuItem item2Model = window.getMenu()
 
-						.getItems().get(0).getMenu().getItems().get(1);
+						MMenu mainMenu = window.getMainMenu();
+						final MMenuItem item2Model = mainMenu.getChildren()
+								.get(0).getChildren().get(0);
 						item2Model.setVisible(false);
 						fileMenu.notifyListeners(SWT.Show, null);
 						assertEquals(1, fileMenu.getItemCount());
@@ -272,28 +275,26 @@ public class MWindowTest extends TestCase {
 				});
 	}
 
-	private MContributedPart<MPart<?>> getContributedPart(
-			MWindow<MPart<?>> window) {
-		MPart<?> part = window.getChildren().get(0).getChildren().get(0)
-				.getChildren().get(0);
-		assertTrue("part is incorrect type " + part,
-				part instanceof MContributedPart<?>);
-		return (MContributedPart<MPart<?>>) part;
+	private MPart getContributedPart(MWindow window) {
+		MPartSashContainer psc = (MPartSashContainer) window.getChildren().get(
+				0);
+		MPartStack stack = (MPartStack) psc.getChildren().get(0);
+		MPart part = stack.getChildren().get(0);
+		assertTrue("part is incorrect type " + part, part instanceof MPart);
+		return part;
 	}
 
-	private MWindow<MPart<?>> createWindowWithOneView() {
-		final MWindow<MPart<?>> window = ApplicationFactory.eINSTANCE
-				.createMWindow();
+	private MWindow createWindowWithOneView() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
 		window.setName("MyWindow");
-		MSashForm<MPart<?>> sash = ApplicationFactory.eINSTANCE
-				.createMSashForm();
+		MPartSashContainer sash = MApplicationFactory.eINSTANCE
+				.createPartSashContainer();
 		window.getChildren().add(sash);
-		MStack stack = ApplicationFactory.eINSTANCE.createMStack();
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
 		sash.getChildren().add(stack);
-		MContributedPart<MPart<?>> contributedPart = ApplicationFactory.eINSTANCE
-				.createMContributedPart();
+		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
 		contributedPart.setName("Sample View");
 		contributedPart
@@ -301,26 +302,24 @@ public class MWindowTest extends TestCase {
 		return window;
 	}
 
-	private MWindow<MPart<?>> createWindowWithOneViewAndMenu() {
-		final MWindow<MPart<?>> window = createWindowWithOneView();
-		final MMenu menuBar = ApplicationFactory.eINSTANCE.createMMenu();
-		window.setMenu(menuBar);
-		final MMenuItem fileItem = ApplicationFactory.eINSTANCE
-				.createMMenuItem();
+	private MWindow createWindowWithOneViewAndMenu() {
+		final MWindow window = createWindowWithOneView();
+		final MMenu menuBar = MApplicationFactory.eINSTANCE.createMenu();
+		window.setMainMenu(menuBar);
+		final MMenuItem fileItem = MApplicationFactory.eINSTANCE
+				.createMenuItem();
 		fileItem.setName("File");
 		fileItem.setId("file");
-		menuBar.getItems().add(fileItem);
-		final MMenu fileMenu = ApplicationFactory.eINSTANCE.createMMenu();
-		fileItem.setMenu(fileMenu);
+		menuBar.getChildren().add(fileItem);
 
-		final MMenuItem item1 = ApplicationFactory.eINSTANCE.createMMenuItem();
+		final MMenuItem item1 = MApplicationFactory.eINSTANCE.createMenuItem();
 		item1.setId("item1");
 		item1.setName("item1");
-		fileMenu.getItems().add(item1);
-		final MMenuItem item2 = ApplicationFactory.eINSTANCE.createMMenuItem();
+		fileItem.getChildren().add(item1);
+		final MMenuItem item2 = MApplicationFactory.eINSTANCE.createMenuItem();
 		item2.setId("item2");
 		item2.setName("item2");
-		fileMenu.getItems().add(item2);
+		fileItem.getChildren().add(item2);
 
 		return window;
 	}

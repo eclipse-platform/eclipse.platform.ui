@@ -7,18 +7,16 @@
  * 
  * Contributors:
  *      IBM Corporation - initial API and implementation
- *
- * $Id: MHandledItem.java,v 1.2 2009/07/07 18:38:58 pwebster Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.emf.common.util.EList;
 
+import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>MHandled Item</b></em>'.
+ * A representation of the model object '<em><b>Handled Item</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -28,11 +26,10 @@ import org.eclipse.emf.common.util.EList;
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getWbCommand <em>Wb Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getParameters <em>Parameters</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#isVisible <em>Visible</em>}</li>
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMHandledItem()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledItem()
  * @model
  * @generated
  */
@@ -47,7 +44,7 @@ public interface MHandledItem extends MItem {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Command</em>' reference.
 	 * @see #setCommand(MCommand)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMHandledItem_Command()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledItem_Command()
 	 * @model
 	 * @generated
 	 */
@@ -64,26 +61,26 @@ public interface MHandledItem extends MItem {
 	void setCommand(MCommand value);
 
 	/**
-	 * Returns the value of the '<em><b>Menu</b></em>' containment reference.
+	 * Returns the value of the '<em><b>Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Menu</em>' containment reference isn't clear,
+	 * If the meaning of the '<em>Menu</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Menu</em>' containment reference.
+	 * @return the value of the '<em>Menu</em>' reference.
 	 * @see #setMenu(MMenu)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMHandledItem_Menu()
-	 * @model containment="true"
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledItem_Menu()
+	 * @model
 	 * @generated
 	 */
 	MMenu getMenu();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}' containment reference.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Menu</em>' containment reference.
+	 * @param value the new value of the '<em>Menu</em>' reference.
 	 * @see #getMenu()
 	 * @generated
 	 */
@@ -99,7 +96,7 @@ public interface MHandledItem extends MItem {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Wb Command</em>' attribute.
 	 * @see #setWbCommand(ParameterizedCommand)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMHandledItem_WbCommand()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledItem_WbCommand()
 	 * @model dataType="org.eclipse.e4.ui.model.application.ParameterizedCommand" transient="true"
 	 * @generated
 	 */
@@ -116,46 +113,19 @@ public interface MHandledItem extends MItem {
 	void setWbCommand(ParameterizedCommand value);
 
 	/**
-	 * Returns the value of the '<em><b>Parameters</b></em>' containment reference list.
+	 * Returns the value of the '<em><b>Parameters</b></em>' reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MParameter}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Parameters</em>' containment reference list isn't clear,
+	 * If the meaning of the '<em>Parameters</em>' reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parameters</em>' containment reference list.
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMHandledItem_Parameters()
-	 * @model containment="true"
+	 * @return the value of the '<em>Parameters</em>' reference list.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledItem_Parameters()
+	 * @model
 	 * @generated
 	 */
 	EList<MParameter> getParameters();
-
-	/**
-	 * Returns the value of the '<em><b>Visible</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Visible</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Visible</em>' attribute.
-	 * @see #setVisible(boolean)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMHandledItem_Visible()
-	 * @model default="true"
-	 * @generated
-	 */
-	boolean isVisible();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MHandledItem#isVisible <em>Visible</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Visible</em>' attribute.
-	 * @see #isVisible()
-	 * @generated
-	 */
-	void setVisible(boolean value);
 
 } // MHandledItem

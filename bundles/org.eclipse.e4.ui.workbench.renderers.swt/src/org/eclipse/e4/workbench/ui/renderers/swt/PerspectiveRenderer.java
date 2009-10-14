@@ -10,28 +10,32 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.workbench.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MUIElement;
+
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Widget;
 
+/**
+ *
+ */
 public class PerspectiveRenderer extends SWTPartRenderer {
 
 	public PerspectiveRenderer() {
 		super();
 	}
 
-	public Widget createWidget(MPart<?> part, Object parent) {
-		if (!(part instanceof MPerspective<?>)
+	public Widget createWidget(MUIElement element, Object parent) {
+		if (!(element instanceof MPerspective)
 				|| !(parent instanceof Composite))
 			return null;
 
 		Composite perspArea = new Composite((Composite) parent, SWT.NONE);
-		IStylingEngine stylingEngine = (IStylingEngine) part.getContext().get(
-				IStylingEngine.SERVICE_NAME);
+		IStylingEngine stylingEngine = (IStylingEngine) getContext(element)
+				.get(IStylingEngine.SERVICE_NAME);
 		stylingEngine.setClassname(perspArea, "perspectiveLayout"); //$NON-NLS-1$
 		perspArea.setLayout(new FillLayout());
 

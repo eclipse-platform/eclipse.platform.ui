@@ -10,6 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MWindow;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -17,10 +23,6 @@ import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.notify.Notification;
@@ -38,6 +40,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Item;
+import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -53,51 +57,51 @@ public class WBWRenderer extends SWTPartRenderer {
 		super();
 	}
 
-	public Object createWidget(MPart<?> part, Object parent) {
+	public Object createWidget(MUIElement element, Object parent) {
 		final Widget newWidget;
 
-		if (!(part instanceof MWindow<?>)
+		if (!(element instanceof MWindow)
 				|| (parent != null && !(parent instanceof Shell)))
 			return null;
 
-		MWindow<?> window = (MWindow<?>) part;
+		MWindow wbwModel = (MWindow) element;
 
 		Shell parentShell = (Shell) parent;
 
-		IEclipseContext parentContext = getContextForParent(part);
+		IEclipseContext parentContext = getContextForParent(element);
 		Shell wbwShell;
 		if (parentShell == null) {
 			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
 		} else {
 			wbwShell = new Shell(parentShell, SWT.SHELL_TRIM);
-			wbwShell.setLocation(window.getX(), window.getY());
-			wbwShell.setSize(window.getWidth(), window.getHeight());
+			wbwShell.setLocation(wbwModel.getX(), wbwModel.getY());
+			wbwShell.setSize(wbwModel.getWidth(), wbwModel.getHeight());
 			wbwShell.setVisible(true);
 		}
 
 		wbwShell.setLayout(new FillLayout());
 		newWidget = wbwShell;
-		bindWidget(part, newWidget);
+		bindWidget(element, newWidget);
 
 		// set up context
-		IEclipseContext localContext = part.getContext();
-		localContext.set(IContextConstants.DEBUG_STRING, "MWorkbenchWindow"); //$NON-NLS-1$
+		IEclipseContext localContext = getContext(wbwModel);
+		localContext.set(IContextConstants.DEBUG_STRING, "MWindow"); //$NON-NLS-1$
 		parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
 		// Add the shell into the WBW's context
 		localContext.set(Shell.class.getName(), wbwShell);
 		localContext.set(Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
 
-		if (part instanceof MWorkbenchWindow) {
+		if (element instanceof MWindow) {
 			// TrimmedLayout tl = new TrimmedLayout(wbwShell);
 			// wbwShell.setLayout(tl);
-			// localContext.set(MWorkbenchWindow.class.getName(), part);
+			// localContext.set(MWindow.class.getName(), part);
 		} else {
 			wbwShell.setLayout(new FillLayout());
 		}
-		if (((MWindow<?>) part).getName() != null)
-			wbwShell.setText(((MWindow<?>) part).getName());
-		String uri = ((MWindow<?>) part).getIconURI();
+		if (wbwModel.getName() != null)
+			wbwShell.setText(wbwModel.getName());
+		String uri = wbwModel.getIconURI();
 		if (uri != null) {
 			try {
 				Image image = ImageDescriptor.createFromURL(new URL(uri))
@@ -114,7 +118,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	@Override
-	public void hookControllerLogic(MPart<?> me) {
+	public void hookControllerLogic(MUIElement me) {
 		super.hookControllerLogic(me);
 
 		Widget widget = (Widget) me.getWidget();
@@ -136,8 +140,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 
 		// Set up the text binding...perhaps should catch exceptions?
-		IObservableValue emfTextObs = EMFObservables.observeValue(me,
-				ApplicationPackage.Literals.MITEM__NAME);
+		IObservableValue emfTextObs = EMFObservables.observeValue((EObject) me,
+				MApplicationPackage.Literals.UI_ITEM__NAME);
 		if (widget instanceof Control && !(widget instanceof Composite)) {
 			ISWTObservableValue uiTextObs = SWTObservables
 					.observeText((Control) widget);
@@ -148,8 +152,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		}
 
 		// Set up the tool tip binding...perhaps should catch exceptions?
-		IObservableValue emfTTipObs = EMFObservables.observeValue(me,
-				ApplicationPackage.Literals.MITEM__TOOLTIP);
+		IObservableValue emfTTipObs = EMFObservables.observeValue((EObject) me,
+				MApplicationPackage.Literals.UI_ITEM__TOOLTIP);
 		if (widget instanceof Control) {
 			ISWTObservableValue uiTTipObs = SWTObservables
 					.observeTooltipText((Control) widget);
@@ -165,13 +169,13 @@ public class WBWRenderer extends SWTPartRenderer {
 		((EObject) me).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				MPart<?> sm = (MPart<?>) msg.getNotifier();
-				if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
+				MUIElement wbwModel = (MUIElement) msg.getNotifier();
+				if (MApplicationPackage.Literals.UI_ITEM__ICON_URI.equals(msg
 						.getFeature())) {
-					Widget widget = (Widget) sm.getWidget();
-					if (widget instanceof org.eclipse.swt.widgets.Item) {
+					Widget widget = (Widget) wbwModel.getWidget();
+					if (widget instanceof Item) {
 						org.eclipse.swt.widgets.Item item = (org.eclipse.swt.widgets.Item) widget;
-						Image image = getImage(sm);
+						Image image = getImage((MUIItem) wbwModel);
 						if (image != null)
 							item.setImage(image);
 					}
@@ -188,12 +192,19 @@ public class WBWRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	public <P extends MPart<?>> void processContents(MPart<P> me) {
+	public void processContents(MElementContainer<MUIElement> me) {
 		super.processContents(me);
 
+		if (!(((MUIElement) me) instanceof MWindow))
+			return;
+
+		MWindow wbwModel = (MWindow) ((MUIElement) me);
 		// Populate the main menu
-		if (me.getMenu() != null) {
-			createMenu(me, me.getWidget(), me.getMenu());
+		if (wbwModel.getMainMenu() != null) {
+			renderer.createGui(wbwModel.getMainMenu(), me.getWidget());
+			Shell shell = (Shell) me.getWidget();
+			shell.setMenuBar((Menu) wbwModel.getMainMenu().getWidget());
+			// createMenu(me, me.getWidget(), wbwModel.getMainMenu());
 		}
 	}
 
@@ -205,7 +216,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	 * .e4.ui.model.application.MPart)
 	 */
 	@Override
-	public void postProcess(MPart<?> childME) {
+	public void postProcess(MUIElement childME) {
 		super.postProcess(childME);
 
 		Shell shell = (Shell) childME.getWidget();

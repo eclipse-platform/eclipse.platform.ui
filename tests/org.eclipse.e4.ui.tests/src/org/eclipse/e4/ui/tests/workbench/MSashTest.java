@@ -11,15 +11,11 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.MContributedPart;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.emf.common.util.EList;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
@@ -52,56 +48,46 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class MSashTest extends RenderingTestCase {
 	public void testSashWeights() {
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+		MWindow window = createSashWithNViews(2);
 
-			public void run() {
-				renderer = (PartRenderingEngine) contributionFactory.create(
-						PartRenderingEngine.engineURI, appContext);
+		topWidget = createModel(window);
+		((Shell) topWidget).layout(true);
+		MPartSashContainer sash = (MPartSashContainer) window.getChildren()
+				.get(0);
+		assertTrue("Should be an MPartSashContainer",
+				sash instanceof MPartSashContainer);
 
-				MWindow<MPart<?>> window = createSashWithNViews(2);
+		MPartSashContainer sf = (MPartSashContainer) sash;
+		EList wgts = sf.getWeights();
+		assertTrue("weight list muct not be null", wgts != null);
+		assertTrue("expected count 2, was " + wgts.size(), wgts.size() == 2);
 
-				topWidget = createModel(window);
-				((Shell) topWidget).layout(true);
-				MPart<?> sash = window.getChildren().get(0);
-				assertTrue("Should be an MSash", sash instanceof MSashForm);
+		Integer first = (Integer) wgts.get(0);
+		Integer second = (Integer) wgts.get(1);
+		assertTrue("Values should be equal", first.intValue() == second
+				.intValue());
 
-				MSashForm sf = (MSashForm) sash;
-				EList wgts = sf.getWeights();
-				assertTrue("weight list muct not be null", wgts != null);
-				assertTrue("expected count 2, was " + wgts.size(),
-						wgts.size() == 2);
+		MPart v1 = (MPart) sf.getChildren().get(0);
+		Composite c1 = (Composite) v1.getWidget();
+		Rectangle r1 = c1.getBounds();
+		MPart v2 = (MPart) sf.getChildren().get(1);
+		Composite c2 = (Composite) v2.getWidget();
+		Rectangle r2 = c2.getBounds();
+		assertTrue("SWT controls should be equal:", r1.width == r2.width);
 
-				Integer first = (Integer) wgts.get(0);
-				Integer second = (Integer) wgts.get(1);
-				assertTrue("Values should be equal", first.intValue() == second
-						.intValue());
+		SashForm sfw = (SashForm) sf.getWidget();
+		int[] w = { 75, 25 };
+		sfw.setWeights(w);
+		sfw.layout(true);
+		testWeights(sf, 75, 25);
 
-				MContributedPart v1 = (MContributedPart) sf.getChildren()
-						.get(0);
-				Composite c1 = (Composite) v1.getWidget();
-				Rectangle r1 = c1.getBounds();
-				MContributedPart v2 = (MContributedPart) sf.getChildren()
-						.get(1);
-				Composite c2 = (Composite) v2.getWidget();
-				Rectangle r2 = c2.getBounds();
-				assertTrue("SWT controls should be equal:",
-						r1.width == r2.width);
-
-				SashForm sfw = (SashForm) sf.getWidget();
-				int[] w = { 75, 25 };
-				sfw.setWeights(w);
-				sfw.layout(true);
-				testWeights(sf, 75, 25);
-
-				sf.getWeights().clear();
-				sf.getWeights().add(new Integer(40));
-				sf.getWeights().add(new Integer(60));
-				testWeights(sf, 40, 60);
-			}
-		});
+		sf.getWeights().clear();
+		sf.getWeights().add(new Integer(40));
+		sf.getWeights().add(new Integer(60));
+		testWeights(sf, 40, 60);
 	}
 
-	private void testWeights(MSashForm sf, double w1, double w2) {
+	private void testWeights(MPartSashContainer sf, double w1, double w2) {
 		double baseRatio = w1 / w2;
 
 		// test the model
@@ -128,19 +114,17 @@ public class MSashTest extends RenderingTestCase {
 		assertTrue("Ratio mismatch on" + label + "weights", withinTolerance);
 	}
 
-	private MWindow<MPart<?>> createSashWithNViews(int n) {
-		final MWindow<MPart<?>> window = ApplicationFactory.eINSTANCE
-				.createMWindow();
+	private MWindow createSashWithNViews(int n) {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(401);
 		window.setName("MyWindow");
-		MSashForm<MPart<?>> sash = ApplicationFactory.eINSTANCE
-				.createMSashForm();
+		MPartSashContainer sash = MApplicationFactory.eINSTANCE
+				.createPartSashContainer();
 		window.getChildren().add(sash);
 
 		for (int i = 0; i < n; i++) {
-			MContributedPart<MPart<?>> contributedPart = ApplicationFactory.eINSTANCE
-					.createMContributedPart();
+			MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
 			contributedPart.setName("Sample View" + i);
 			contributedPart
 					.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");

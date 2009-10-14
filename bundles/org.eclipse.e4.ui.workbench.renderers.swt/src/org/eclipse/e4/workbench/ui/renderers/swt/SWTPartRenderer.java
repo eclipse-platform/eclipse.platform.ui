@@ -11,30 +11,17 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.Iterator;
-import java.util.List;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MItem;
-import org.eclipse.e4.ui.model.application.MItemPart;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MToolBar;
-import org.eclipse.e4.ui.model.application.MToolBarItem;
-import org.eclipse.e4.ui.model.workbench.MMenuItemRenderer;
-import org.eclipse.e4.ui.model.workbench.MToolItemRenderer;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IContributionItem;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
@@ -44,161 +31,40 @@ import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Decorations;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
-	// This shell acts as a place holder for Controls that
-	// still exist but should not be shown in the UI. It's
-	// necessary because SWT Layout's handle invisible controls correctly
-	private static Shell limbo = null;
-
-	public Object createMenu(MPart<?> part, Object widgetObject, MMenu menu) {
-		Widget widget = (Widget) widgetObject;
-		Menu swtMenu;
-
-		MenuManager manager = new MenuManager();
-
-		if (widget instanceof ToolItem) {
-			swtMenu = manager.createContextMenu(((ToolItem) widget).getParent()
-					.getShell());
-		} else if (widget instanceof Decorations) {
-			swtMenu = manager.createMenuBar((Decorations) widgetObject);
-			swtMenu.setData(manager);
-			((Decorations) widget).setMenuBar(swtMenu);
-		} else if (widget instanceof Control) {
-			swtMenu = manager.createContextMenu((Control) widget);
-			// ((Control) widget).setMenu(swtMenu);
-		} else {
-			throw new IllegalArgumentException(
-					"The widget must be MenuItem, Decorations, or Control but is: " //$NON-NLS-1$
-							+ widgetObject);
-		}
-		swtMenu.setData(AbstractPartRenderer.OWNING_ME, menu);
-		for (MMenuItem menuItem : menu.getItems()) {
-			createMenuItem(part, manager, menuItem);
-		}
-
-		manager.update(true);
-		return swtMenu;
-	}
-
-	public Object createToolBar(MPart<?> part, Object widgetObject,
-			MToolBar toolbar) {
-
-		int orientation = SWT.HORIZONTAL;
-		Composite composite = null;
-		while (!(widgetObject instanceof Composite)
-				&& widgetObject instanceof Control) {
-			widgetObject = ((Control) widgetObject).getParent();
-		}
-		if (!(widgetObject instanceof Composite)) {
-			return null;
-		}
-		composite = (Composite) widgetObject;
-		if (composite.getLayout() instanceof RowLayout) {
-			RowLayout rl = (RowLayout) composite.getLayout();
-			orientation = rl.type;
-		}
-
-		ToolBarManager manager = new ToolBarManager(SWT.FLAT | orientation);
-		ToolBar swtToolBar = manager.createControl(composite);
-		swtToolBar.setData(AbstractPartRenderer.OWNING_ME, toolbar);
-
-		EList<MToolBarItem> items = toolbar.getItems();
-		if (items != null && items.size() > 0) {
-			for (MToolBarItem toolBarItem : toolbar.getItems()) {
-				createToolBarItem(part, manager, toolBarItem);
-			}
-		}
-
-		manager.update(true);
-		return swtToolBar;
-	}
-
-	private void createToolBarItem(MPart<?> part, ToolBarManager manager,
-			final MToolBarItem toolBarItem) {
-		if (toolBarItem instanceof MToolItemRenderer) {
-			final IContributionItem renderer = (IContributionItem) ((MToolItemRenderer) toolBarItem)
-					.getRenderer();
-			manager.add(renderer);
-			return;
-		}
-		manager
-				.add(new HandledContributionItem(toolBarItem, part.getContext()));
-	}
-
-	private void createMenuItem(MPart<?> part, final MenuManager manager,
-			final MHandledItem handledItem) {
-		if (handledItem instanceof MMenuItemRenderer) {
-			final IContributionItem renderer = (IContributionItem) ((MMenuItemRenderer) handledItem)
-					.getRenderer();
-			manager.add(renderer);
-			return;
-		}
-
-		if (handledItem instanceof MMenuItem) {
-			final MMenuItem mItem = (MMenuItem) handledItem;
-			final String id = mItem.getId();
-			if (mItem.isSeparator()) {
-				if (!mItem.isVisible()) {
-					if (id != null) {
-						manager.add(new GroupMarker(id));
-					}
-				} else {
-					if (id == null) {
-						manager.add(new Separator());
-					} else {
-						manager.add(new Separator(id));
-					}
-				}
-				return;
-			} else if (mItem.getMenu() != null) {
-				MenuManager item = new MenuManager(mItem.getName(), id);
-				manager.add(item);
-				for (MMenuItem menuItem : mItem.getMenu().getItems()) {
-					createMenuItem(part, item, menuItem);
-				}
-				return;
-			}
-		}
-
-		manager
-				.add(new HandledContributionItem(handledItem, part.getContext()));
-	}
-
-	public <P extends MPart<?>> void processContents(MPart<P> me) {
-		Widget parentWidget = (Widget) me.getWidget();
+	public void processContents(MElementContainer<MUIElement> container) {
+		Widget parentWidget = (Widget) container.getWidget();
 		if (parentWidget == null)
 			return;
 
 		// Process any contents of the newly created ME
-		List<P> parts = me.getChildren();
+		EList<MUIElement> parts = container.getChildren();
 		if (parts != null) {
-			for (Iterator<P> childIter = parts.iterator(); childIter.hasNext();) {
-				MPart<?> childME = childIter.next();
+			for (Iterator<MUIElement> childIter = parts.iterator(); childIter
+					.hasNext();) {
+				MUIElement childME = childIter.next();
 				renderer.createGui(childME);
 			}
 		}
 	}
 
-	public void bindWidget(MPart<?> me, Object widget) {
+	public void bindWidget(MUIElement me, Object widget) {
 		me.setWidget(widget);
 		((Widget) widget).setData(OWNING_ME, me);
-		final IStylingEngine engine = (IStylingEngine) me.getContext().get(
+		me.setFactory(this);
+
+		final IStylingEngine engine = (IStylingEngine) getContext(me).get(
 				IStylingEngine.SERVICE_NAME);
 		engine.setId(widget, me.getId()); // also triggers style()
 	}
 
-	public Object unbindWidget(MPart<?> me) {
+	public Object unbindWidget(MUIElement me) {
 		Widget widget = (Widget) me.getWidget();
 		if (widget != null) {
 			me.setWidget(null);
@@ -206,38 +72,36 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 
 		// Clear the factory reference
-		me.setOwner(null);
+		me.setFactory(null);
 
 		return widget;
 	}
 
-	protected Widget getParentWidget(MPart<?> element) {
-		return (element.getParent() instanceof MPart) ? (Widget) ((MPart<?>) (element
-				.getParent())).getWidget()
-				: null;
+	protected Widget getParentWidget(MUIElement element) {
+		return (Widget) element.getParent().getWidget();
 	}
 
-	public void disposeWidget(MPart<?> part) {
-		Widget curWidget = (Widget) part.getWidget();
+	public void disposeWidget(MUIElement element) {
+		Widget curWidget = (Widget) element.getWidget();
 
 		// If we're disposing a control find its 'outermost'
 		if (curWidget instanceof Control)
 			curWidget = getOutermost((Control) curWidget);
 
 		if (curWidget != null && !curWidget.isDisposed()) {
-			unbindWidget(part);
+			unbindWidget(element);
 			curWidget.dispose();
 		}
-		part.setWidget(null);
+		element.setWidget(null);
 	}
 
-	public void hookControllerLogic(final MPart<?> me) {
+	public void hookControllerLogic(final MUIElement me) {
 		Widget widget = (Widget) me.getWidget();
 
 		// Clean up if the widget is disposed
 		widget.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				MPart<?> model = (MPart<?>) e.widget.getData(OWNING_ME);
+				MUIElement model = (MUIElement) e.widget.getData(OWNING_ME);
 				if (model != null)
 					model.setWidget(null);
 			}
@@ -245,22 +109,19 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 		// add an accessibility listener (not sure if this is in the wrong place
 		// (factory?)
-		if (widget instanceof Control && me instanceof MItemPart<?>) {
+		if (widget instanceof Control && me instanceof MUIItem) {
 			((Control) widget).getAccessible().addAccessibleListener(
 					new AccessibleAdapter() {
 						public void getName(AccessibleEvent e) {
-							e.result = ((MItemPart<?>) me).getName();
+							e.result = ((MUIItem) me).getName();
 						}
 					});
 		}
 	}
 
-	protected Image getImage(MApplicationElement element) {
+	protected Image getImage(MUIItem element) {
 		if (element instanceof MItem) {
 			IEclipseContext localContext = context;
-			if (element instanceof MPart<?>) {
-				localContext = getContext((MPart<?>) element);
-			}
 			String iconURI = ((MItem) element).getIconURI();
 			if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$
 				ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
@@ -272,49 +133,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 			}
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.workbench.ui.renderers.PartFactory#childAdded(org.eclipse
-	 * .e4.ui.model.application.MPart,
-	 * org.eclipse.e4.ui.model.application.MPart)
-	 */
-	@Override
-	public void childAdded(MPart<?> parentElement, MPart<?> element) {
-		if (parentElement != null && element != null)
-			return;
-		// if the new part already has a Control then re-parent it under the
-		// element
-		if (element.getWidget() instanceof Control
-				&& parentElement.getWidget() instanceof Composite) {
-			Composite parentComp = (Composite) parentElement.getWidget();
-			Control ctrl = (Control) element.getWidget();
-			locallyShow(parentComp, ctrl);
-		} else if (element.isVisible()) {
-			// Ensure the widget for the element exists
-			renderer.createGui(element);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.e4.workbench.ui.renderers.PartFactory#childRemoved(org.eclipse
-	 * .e4.ui.model.application.MPart,
-	 * org.eclipse.e4.ui.model.application.MPart)
-	 */
-	@Override
-	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
-		super.childRemoved(parentElement, child);
-
-		if (child.isVisible() && child.getWidget() instanceof Control) {
-			Control ctrl = (Control) child.getWidget();
-			locallyHide(ctrl);
-		}
 	}
 
 	protected Control getOutermost(Control ctrl) {
@@ -330,49 +148,6 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 
 		return outerMost;
-	}
-
-	/**
-	 * Restore an existing control to the UI by reparenting it (from 'limbo')
-	 * under its new owner
-	 * 
-	 * @param parent
-	 *            The composite to place the control under
-	 * @param ctrl
-	 *            The control to be restored
-	 */
-	private void locallyShow(Composite parent, Control ctrl) {
-		// Find the 'outermost' Composite that is *not* bound
-		// to a model element
-		Control toReparent = getOutermost(ctrl);
-
-		// Prevent No-ops
-		if (toReparent.getParent() != parent) {
-			toReparent.setParent(parent);
-			parent.layout(true);
-		}
-	}
-
-	/**
-	 * If a model element containing a widget is removed from its parent we have
-	 * to remove the control immediately from its parent's structure (to get the
-	 * layout correct) so we'll place it in 'limbo' (an invisible shell).
-	 * 
-	 * @param ctrl
-	 */
-	private void locallyHide(Control ctrl) {
-		if (limbo == null) {
-			limbo = new Shell(ctrl.getDisplay(), SWT.NONE);
-			limbo.setVisible(false);
-		}
-
-		// Find the 'outermost' Composite that is *not* bound
-		// to a model element
-		Control toReparent = getOutermost(ctrl);
-
-		Composite curParent = toReparent.getParent();
-		toReparent.setParent(limbo);
-		curParent.layout(true);
 	}
 
 	/*
@@ -409,5 +184,18 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	 */
 	protected void configureForStyling(Control control) {
 		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.AbstractPartRenderer#childRendered
+	 * (org.eclipse.e4.ui.model.application.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
 	}
 }

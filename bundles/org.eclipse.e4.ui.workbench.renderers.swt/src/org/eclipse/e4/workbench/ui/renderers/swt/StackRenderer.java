@@ -10,18 +10,19 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import java.util.Iterator;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MItemPart;
-import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MEditor;
+import org.eclipse.e4.ui.model.application.MEditorStack;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MStack;
-import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabFolder2Adapter;
@@ -34,7 +35,6 @@ import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.databinding.EMFObservables;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
@@ -44,21 +44,13 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 
 public class StackRenderer extends LazyStackRenderer {
@@ -74,121 +66,101 @@ public class StackRenderer extends LazyStackRenderer {
 		super();
 	}
 
-	public Object createWidget(MPart<?> part, Object parent) {
+	public Object createWidget(MUIElement element, Object parent) {
 		Widget newWidget = null;
 
-		if (!(part instanceof MStack) || !(parent instanceof Composite))
+		if (!(element instanceof MPartStack) || !(parent instanceof Composite))
 			return null;
 
 		Widget parentWidget = (Widget) parent;
-		if (parentWidget instanceof Composite) {
+		boolean showCloseAlways = element instanceof MEditorStack;
+		int styleModifier = (element instanceof MEditorStack)
+				|| (element instanceof MViewStack) ? SWT.CLOSE : 0;
 
-			// HACK!! Set up the close button style based on the 'Policy'
-			// Perhaps this should be CSS-based ?
-			// TODO: Yes, see bug #279854
+		Composite stylingWrapper = createWrapperForStyling(
+				(Composite) parentWidget, getContext(element));
 
-			boolean showCloseAlways = false;
-			int styleModifier = 0;
-			if (part.getPolicy() != null && part.getPolicy().length() > 0) {
-				String policy = part.getPolicy();
-				if (policy.indexOf("ViewStack") >= 0) { //$NON-NLS-1$
-					styleModifier = SWT.CLOSE;
+		// TODO see bug #267434, SWT.BORDER should be determined from CSS
+		// TODO see bug #282901 - [UI] Need better support for switching
+		// renderer to use
+
+		final CTabFolder ctf = new ETabFolder(stylingWrapper, SWT.BORDER
+				| styleModifier);
+
+		configureForStyling(ctf);
+
+		ctf.setUnselectedCloseVisible(showCloseAlways);
+
+		newWidget = ctf;
+
+		final IEclipseContext folderContext = getContext(element);
+		folderContext.set("canCloseFunc", new IValueFunction() { //$NON-NLS-1$
+					public Object getValue() {
+						return true;
+					}
+				});
+
+		folderContext.set(FOLDER_DISPOSED, Boolean.FALSE);
+		final IEclipseContext toplevelContext = getToplevelContext(element);
+		final Trackable updateActiveTab = new Trackable(folderContext) {
+			public void run() {
+				if (!participating) {
+					return;
 				}
-				if (policy.indexOf("EditorStack") >= 0) { //$NON-NLS-1$
-					styleModifier = SWT.CLOSE;
-					showCloseAlways = true;
+				trackingContext.get(FOLDER_DISPOSED);
+				IEclipseContext currentActive = toplevelContext;
+				IEclipseContext child;
+				while (currentActive != trackingContext
+						&& (child = (IEclipseContext) currentActive
+								.get("activeChild")) != null && child != currentActive) { //$NON-NLS-1$
+					currentActive = child;
+				}
+				// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
+
+				String cssClassName = (currentActive == trackingContext) ? "active" //$NON-NLS-1$
+						: "inactive"; //$NON-NLS-1$
+				stylingEngine.setClassname(ctf, cssClassName);
+
+				// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
+				// should get same background color
+				if (ctf.getTopRight() != null)
+					stylingEngine.setClassname(ctf.getTopRight(), cssClassName);
+
+				// TODO HACK: see Bug 283585 [CSS] Specificity fails with
+				// descendents
+				CTabItem[] items = ctf.getItems();
+				for (int i = 0; i < items.length; i++) {
+					stylingEngine.setClassname(items[i], cssClassName);
 				}
 			}
-
-			Composite stylingWrapper = createWrapperForStyling(
-					(Composite) parentWidget, part.getContext());
-
-			// TODO see bug #267434, SWT.BORDER should be determined from CSS
-			// TODO see bug #282901 - [UI] Need better support for switching
-			// renderer to use
-
-			final CTabFolder ctf = new ETabFolder(stylingWrapper, SWT.BORDER
-					| styleModifier);
-
-			configureForStyling(ctf);
-
-			ctf.setUnselectedCloseVisible(showCloseAlways);
-
-			bindWidget(part, ctf);
-			ctf.setVisible(true);
-
-			newWidget = ctf;
-
-			final IEclipseContext folderContext = part.getContext();
-			folderContext.set(IContextConstants.DEBUG_STRING, "TabFolder"); //$NON-NLS-1$
-
-			folderContext.set("canCloseFunc", new IValueFunction() { //$NON-NLS-1$
-						public Object getValue() {
-							return true;
-						}
-					});
-			folderContext.set(FOLDER_DISPOSED, Boolean.FALSE);
-			final IEclipseContext toplevelContext = getToplevelContext(part);
-			final Trackable updateActiveTab = new Trackable(folderContext) {
-				public void run() {
-					if (!participating) {
-						return;
-					}
-					trackingContext.get(FOLDER_DISPOSED);
-					IEclipseContext currentActive = toplevelContext;
-					IEclipseContext child;
-					while (currentActive != trackingContext
-							&& (child = (IEclipseContext) currentActive
-									.get("activeChild")) != null && child != currentActive) { //$NON-NLS-1$
-						currentActive = child;
-					}
-					// System.out.println(cti.getText() + " is now " + ((currentActive == tabItemContext) ? "active" : "inactive"));   //$NON-NLS-1$//$NON-NLS-2$//$NON-NLS-3$
-
-					String cssClassName = (currentActive == trackingContext) ? "active" //$NON-NLS-1$
-							: "inactive"; //$NON-NLS-1$
-					stylingEngine.setClassname(ctf, cssClassName);
-
-					// TODO HACK Bug 283073 [CSS] CTabFolder.getTopRight()
-					// should get same background color
-					if (ctf.getTopRight() != null)
-						stylingEngine.setClassname(ctf.getTopRight(),
-								cssClassName);
-
-					// TODO HACK: see Bug 283585 [CSS] Specificity fails with
-					// descendents
-					CTabItem[] items = ctf.getItems();
-					for (int i = 0; i < items.length; i++) {
-						stylingEngine.setClassname(items[i], cssClassName);
-					}
-				}
-			};
-			ctf.addDisposeListener(new DisposeListener() {
-				public void widgetDisposed(DisposeEvent e) {
-					updateActiveTab.participating = false;
-					folderContext.set(FOLDER_DISPOSED, Boolean.TRUE);
-				}
-			});
-			folderContext.runAndTrack(updateActiveTab);
-		}
+		};
+		ctf.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				updateActiveTab.participating = false;
+				folderContext.set(FOLDER_DISPOSED, Boolean.TRUE);
+			}
+		});
+		folderContext.runAndTrack(updateActiveTab);
 
 		return newWidget;
 	}
 
-	public void postProcess(MPart<?> part) {
-		super.postProcess(part);
+	public void postProcess(MUIElement element) {
+		super.postProcess(element);
 
-		if (!(part instanceof MStack))
+		if (!(element instanceof MPartStack))
 			return;
 
-		CTabFolder ctf = (CTabFolder) part.getWidget();
-		MPart<?> selPart = ((MStack) part).getActiveChild();
+		CTabFolder ctf = (CTabFolder) element.getWidget();
+		MPart selPart = ((MPartStack) element).getActiveChild();
 		if (selPart == null)
 			return;
 
 		// Find the tab associated with the part and set it as the selection
-		CTabItem selItem = findItemForPart(part, selPart);
+		CTabItem selItem = findItemForPart((MPartStack) element, selPart);
 		if (selItem != null) {
 			ctf.setSelection(selItem);
+			activate(selPart);
 		}
 	}
 
@@ -201,23 +173,27 @@ public class StackRenderer extends LazyStackRenderer {
 	 * org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	protected void internalChildAdded(MPart parentElement, MPart element) {
+	protected void showChild(MPartStack stack, MPart part) {
 		// TODO Auto-generated method stub
-		super.internalChildAdded(parentElement, element);
+		super.showChild(stack, part);
 
-		MItemPart<?> itemPart = (MItemPart<?>) element;
-		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
+		MUIItem itemPart = part;
+		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		int createFlags = 0;
 
-		// if(element instanceof View && ((View)element).isCloseable())
-		// createFlags = createFlags | SWT.CLOSE;
-
-		CTabItem cti = findItemForPart(parentElement, element);
+		CTabItem cti = findItemForPart(stack, part);
 		if (cti == null) {
-			int index = calcIndexFor(element);
+			int index = calcIndexFor(stack, part);
 			// TODO see bug 282901 - [UI] Need better support for switching
 			// renderer to use
 			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
+
+			cti.setData(OWNING_ME, part);
+			cti.setText(itemPart.getName());
+			cti.setImage(getImage(part));
+			Control widget = (Control) part.getWidget();
+			if (widget != null)
+				cti.setControl(widget);
 
 			// TODO HACK: see Bug 283585 [CSS] Specificity fails with
 			// descendents
@@ -226,27 +202,16 @@ public class StackRenderer extends LazyStackRenderer {
 			stylingEngine.setClassname(cti, cssClassName);
 		}
 
-		cti.setData(OWNING_ME, element);
-		cti.setText(itemPart.getName());
-		cti.setImage(getImage(element));
-		Control widget = (Control) element.getWidget();
-		if (widget != null && widget.getParent() != cti.getParent()) {
-			widget.setParent(cti.getParent());
-		}
-		cti.setControl(widget);
-
 		// Hook up special logic to synch up the Tab Items
-		hookTabControllerLogic(parentElement, element, cti);
+		hookTabControllerLogic(stack, part, cti);
 	}
 
-	private int calcIndexFor(final MPart element) {
+	private int calcIndexFor(MPartStack stack, final MPart part) {
 		int index = 0;
 
 		// Find the -visible- part before this element
-		EList<MPart> kids = element.getParent().getChildren();
-		for (Iterator iterator = kids.iterator(); iterator.hasNext();) {
-			MPart mPart = (MPart) iterator.next();
-			if (mPart == element)
+		for (MPart mPart : stack.getChildren()) {
+			if (mPart == part)
 				return index;
 			if (mPart.isVisible())
 				index++;
@@ -255,23 +220,29 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	@Override
-	public void childAdded(final MPart<?> parentElement, MPart<?> element) {
-		super.childAdded(parentElement, element);
+	public void childRendered(
+			final MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		super.childRendered(parentElement, element);
 
-		if (element instanceof MItemPart<?>) {
-			internalChildAdded(parentElement, element);
+		if (!(((MUIElement) parentElement) instanceof MPartStack)
+				|| !(element instanceof MPart))
+			return;
 
-			// Lazy Loading: On the first pass through this method the
-			// part's control will be null (we're just creating the tabs
-			Control ctrl = (Control) element.getWidget();
-			if (ctrl != null) {
-				showTab((MItemPart<?>) element);
-				stylingEngine.style(ctrl);
-			}
+		MPartStack stack = (MPartStack) ((MUIElement) parentElement);
+		MPart part = (MPart) element;
+		showChild(stack, part);
+
+		// Lazy Loading: On the first pass through this method the
+		// part's control will be null (we're just creating the tabs
+		Control ctrl = (Control) element.getWidget();
+		if (ctrl != null) {
+			showTab(stack, part);
+			stylingEngine.style(ctrl);
 		}
 	}
 
-	private CTabItem findItemForPart(MPart<?> folder, MPart<?> part) {
+	private CTabItem findItemForPart(MPartStack folder, MPart part) {
 		CTabFolder ctf = (CTabFolder) folder.getWidget();
 		if (ctf == null)
 			return null;
@@ -284,19 +255,17 @@ public class StackRenderer extends LazyStackRenderer {
 		return null;
 	}
 
-	private void hookTabControllerLogic(final MPart<?> parentElement,
-			final MPart<?> childElement, final CTabItem cti) {
+	private void hookTabControllerLogic(final MPartStack stack,
+			final MPart part, final CTabItem cti) {
 		// Handle label changes
-		IObservableValue textObs = EMFObservables
-				.observeValue((EObject) childElement,
-						ApplicationPackage.Literals.MITEM__NAME);
+		IObservableValue textObs = EMFObservables.observeValue((EObject) part,
+				MApplicationPackage.Literals.UI_ITEM__NAME);
 		ISWTObservableValue uiObs = SWTObservables.observeText(cti);
 		dbc.bindValue(uiObs, textObs, null, null);
 
 		// Observe tooltip changes
 		IObservableValue emfTTipObs = EMFObservables.observeValue(
-				(EObject) childElement,
-				ApplicationPackage.Literals.MITEM__TOOLTIP);
+				(EObject) part, MApplicationPackage.Literals.UI_ITEM__TOOLTIP);
 		IObservableValue uiTTipObs = new AbstractObservableValue() {
 
 			public Object getValueType() {
@@ -314,11 +283,11 @@ public class StackRenderer extends LazyStackRenderer {
 		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
 
 		// Handle tab item image changes
-		((EObject) childElement).eAdapters().add(new AdapterImpl() {
+		((EObject) part).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				MPart<?> sm = (MPart<?>) msg.getNotifier();
-				if (ApplicationPackage.Literals.MITEM__ICON_URI.equals(msg
+				MPart sm = (MPart) msg.getNotifier();
+				if (MApplicationPackage.Literals.UI_ITEM__ICON_URI.equals(msg
 						.getFeature())
 						&& !cti.isDisposed()) {
 					Image image = getImage(sm);
@@ -329,10 +298,18 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	@Override
-	public void childRemoved(MPart<?> parentElement, MPart<?> child) {
-		super.childRemoved(parentElement, child);
+	public void hideChild(MElementContainer<MUIElement> parentElement,
+			MUIElement child) {
+		super.hideChild(parentElement, child);
 
-		CTabItem oldItem = findItemForPart(parentElement, child);
+		if (!(((MUIElement) parentElement) instanceof MPartStack)
+				|| !(child instanceof MPart))
+			return;
+
+		MPartStack stack = (MPartStack) ((MUIElement) parentElement);
+		MPart part = (MPart) child;
+
+		CTabItem oldItem = findItemForPart(stack, part);
 		if (oldItem != null) {
 			oldItem.setControl(null); // prevent the widget from being disposed
 			oldItem.dispose();
@@ -340,9 +317,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// 'auto-hide' empty stacks
 		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
-		String policy = parentElement.getPolicy();
-		boolean isEditorStack = policy != null
-				&& policy.indexOf("EditorStack") >= 0; //$NON-NLS-1$
+		boolean isEditorStack = part instanceof MEditor;
 		if (ctf.getItemCount() == 0 && !isEditorStack) {
 			final Shell sh = ctf.getShell();
 			parentElement.setVisible(false);
@@ -360,10 +335,11 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	@Override
-	public void hookControllerLogic(final MPart<?> me) {
+	public void hookControllerLogic(final MUIElement me) {
 		super.hookControllerLogic(me);
 
-		final MStack sm = (MStack) me;
+		final MPartStack stack = (MPartStack) me;
+
 		// Match the selected TabItem to its Part
 		CTabFolder ctf = (CTabFolder) me.getWidget();
 		ctf.addSelectionListener(new SelectionListener() {
@@ -371,12 +347,12 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 
 			public void widgetSelected(SelectionEvent e) {
-				MItemPart<?> newPart = (MItemPart<?>) e.item.getData(OWNING_ME);
-				if (sm.getActiveChild() != newPart) {
+				MPart newPart = (MPart) e.item.getData(OWNING_ME);
+				if (stack.getActiveChild() != newPart) {
 					activate(newPart);
 				}
 
-				showTab(newPart);
+				showTab(stack, newPart);
 			}
 		});
 
@@ -405,8 +381,8 @@ public class StackRenderer extends LazyStackRenderer {
 		ctf.addListener(SWT.Activate, new Listener() {
 			public void handleEvent(Event event) {
 				CTabFolder ctf = (CTabFolder) event.widget;
-				MStack stack = (MStack) ctf.getData(OWNING_ME);
-				MItemPart<?> part = stack.getActiveChild();
+				MPartStack stack = (MPartStack) ctf.getData(OWNING_ME);
+				MPart part = stack.getActiveChild();
 				if (part != null)
 					activate(part);
 			}
@@ -415,13 +391,13 @@ public class StackRenderer extends LazyStackRenderer {
 		((EObject) me).eAdapters().add(0, new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MPART__ACTIVE_CHILD.equals(msg
-						.getFeature())) {
-					MStack sm = (MStack) msg.getNotifier();
-					MPart<?> selPart = sm.getActiveChild();
-					CTabFolder ctf = (CTabFolder) ((MStack) msg.getNotifier())
-							.getWidget();
-					CTabItem item = findItemForPart(sm, selPart);
+				if (MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD
+						.equals(msg.getFeature())) {
+					MPartStack stack = (MPartStack) msg.getNotifier();
+					MPart selPart = stack.getActiveChild();
+					CTabFolder ctf = (CTabFolder) ((MPartStack) msg
+							.getNotifier()).getWidget();
+					CTabItem item = findItemForPart(stack, selPart);
 					if (item != null) {
 						if (ctf.getSelection() != item)
 							ctf.setSelection(item);
@@ -431,10 +407,10 @@ public class StackRenderer extends LazyStackRenderer {
 		});
 	}
 
-	private void showTab(MItemPart<?> part) {
+	private void showTab(MPartStack stack, MPart part) {
 		CTabFolder ctf = (CTabFolder) getParentWidget(part);
 		Control ctrl = (Control) part.getWidget();
-		CTabItem cti = findItemForPart(part.getParent(), part);
+		CTabItem cti = findItemForPart(stack, part);
 		cti.setControl(ctrl);
 
 		ToolBar tb = getToolbar(part);
@@ -469,117 +445,118 @@ public class StackRenderer extends LazyStackRenderer {
 
 	}
 
-	private ToolBar getToolbar(MItemPart<?> part) {
-		if (part.getToolBar() == null && part.getMenu() == null)
-			return null;
-		CTabFolder ctf = (CTabFolder) getParentWidget(part);
-
-		ToolBar tb;
-		MToolBar tbModel = part.getToolBar();
-		if (tbModel != null) {
-			tb = (ToolBar) createToolBar(part.getParent(), ctf, tbModel);
-		} else {
-			tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
-		}
-
-		// View menu (if any)
-		if (part.getMenu() != null) {
-			addMenuButton(part, tb, part.getMenu());
-		}
-
-		tb.pack();
-		return tb;
+	private ToolBar getToolbar(MPart part) {
+		// if (part.getToolBar() == null && part.getMenu() == null)
+		// return null;
+		// CTabFolder ctf = (CTabFolder) getParentWidget(part);
+		//
+		// ToolBar tb;
+		// MToolBar tbModel = part.getToolBar();
+		// if (tbModel != null) {
+		// tb = (ToolBar) createToolBar(part.getParent(), ctf, tbModel);
+		// } else {
+		// tb = new ToolBar(ctf, SWT.FLAT | SWT.HORIZONTAL);
+		// }
+		//
+		// // View menu (if any)
+		// if (part.getMenu() != null) {
+		// addMenuButton(part, tb, part.getMenu());
+		// }
+		//
+		// tb.pack();
+		// return tb;
+		return null; // later
 	}
 
 	/**
 	 * @param tb
 	 */
-	private void addMenuButton(MItemPart<?> part, ToolBar tb, MMenu menu) {
-		ToolItem ti = new ToolItem(tb, SWT.PUSH);
-		ti.setImage(getViewMenuImage());
-		ti.setHotImage(null);
-		ti.setToolTipText("View Menu"); //$NON-NLS-1$
-		ti.setData("theMenu", menu); //$NON-NLS-1$
-		ti.setData("thePart", part); //$NON-NLS-1$
-
-		ti.addSelectionListener(new SelectionListener() {
-			public void widgetSelected(SelectionEvent e) {
-				showMenu((ToolItem) e.widget);
-			}
-
-			public void widgetDefaultSelected(SelectionEvent e) {
-				showMenu((ToolItem) e.widget);
-			}
-		});
-	}
+	// private void addMenuButton(MPart part, ToolBar tb, MMenu menu) {
+	// ToolItem ti = new ToolItem(tb, SWT.PUSH);
+	// ti.setImage(getViewMenuImage());
+	// ti.setHotImage(null);
+	//		ti.setToolTipText("View Menu"); //$NON-NLS-1$
+	//		ti.setData("theMenu", menu); //$NON-NLS-1$
+	//		ti.setData("thePart", part); //$NON-NLS-1$
+	//
+	// ti.addSelectionListener(new SelectionListener() {
+	// public void widgetSelected(SelectionEvent e) {
+	// showMenu((ToolItem) e.widget);
+	// }
+	//
+	// public void widgetDefaultSelected(SelectionEvent e) {
+	// showMenu((ToolItem) e.widget);
+	// }
+	// });
+	// }
 
 	/**
 	 * @param item
 	 */
-	protected void showMenu(ToolItem item) {
-		MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
-		MItemPart<?> part = (MItemPart<?>) item.getData("thePart"); //$NON-NLS-1$
-		Menu menu = (Menu) createMenu(part, item, menuModel);
-
-		// EList<MMenuItem> items = menuModel.getItems();
-		// for (Iterator iterator = items.iterator(); iterator.hasNext();) {
-		// MMenuItem mToolBarItem = (MMenuItem) iterator.next();
-		// MenuItem mi = new MenuItem(menu, SWT.PUSH);
-		// mi.setText(mToolBarItem.getName());
-		// mi.setImage(getImage(mToolBarItem));
-		// }
-		Rectangle ib = item.getBounds();
-		Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
-		menu.setLocation(displayAt);
-		menu.setVisible(true);
-
-		Display display = Display.getCurrent();
-		while (!menu.isDisposed() && menu.isVisible()) {
-			if (!display.readAndDispatch())
-				display.sleep();
-		}
-		menu.dispose();
-	}
-
-	private Image getViewMenuImage() {
-		if (viewMenuImage == null) {
-			Display d = Display.getCurrent();
-
-			Image viewMenu = new Image(d, 16, 16);
-			Image viewMenuMask = new Image(d, 16, 16);
-
-			Display display = Display.getCurrent();
-			GC gc = new GC(viewMenu);
-			GC maskgc = new GC(viewMenuMask);
-			gc.setForeground(display
-					.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-			gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-			int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
-			gc.fillPolygon(shapeArray);
-			gc.drawPolygon(shapeArray);
-
-			Color black = display.getSystemColor(SWT.COLOR_BLACK);
-			Color white = display.getSystemColor(SWT.COLOR_WHITE);
-
-			maskgc.setBackground(black);
-			maskgc.fillRectangle(0, 0, 16, 16);
-
-			maskgc.setBackground(white);
-			maskgc.setForeground(white);
-			maskgc.fillPolygon(shapeArray);
-			maskgc.drawPolygon(shapeArray);
-			gc.dispose();
-			maskgc.dispose();
-
-			ImageData data = viewMenu.getImageData();
-			data.transparentPixel = data.getPixel(0, 0);
-
-			viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
-					.getImageData());
-			viewMenu.dispose();
-			viewMenuMask.dispose();
-		}
-		return viewMenuImage;
-	}
+	// protected void showMenu(ToolItem item) {
+	//		MMenu menuModel = (MMenu) item.getData("theMenu"); //$NON-NLS-1$
+	//		MItemPart<?> part = (MItemPart<?>) item.getData("thePart"); //$NON-NLS-1$
+	// Menu menu = (Menu) createMenu(part, item, menuModel);
+	//
+	// // EList<MMenuItem> items = menuModel.getItems();
+	// // for (Iterator iterator = items.iterator(); iterator.hasNext();) {
+	// // MMenuItem mToolBarItem = (MMenuItem) iterator.next();
+	// // MenuItem mi = new MenuItem(menu, SWT.PUSH);
+	// // mi.setText(mToolBarItem.getName());
+	// // mi.setImage(getImage(mToolBarItem));
+	// // }
+	// Rectangle ib = item.getBounds();
+	// Point displayAt = item.getParent().toDisplay(ib.x, ib.y + ib.height);
+	// menu.setLocation(displayAt);
+	// menu.setVisible(true);
+	//
+	// Display display = Display.getCurrent();
+	// while (!menu.isDisposed() && menu.isVisible()) {
+	// if (!display.readAndDispatch())
+	// display.sleep();
+	// }
+	// menu.dispose();
+	// }
+	//
+	// private Image getViewMenuImage() {
+	// if (viewMenuImage == null) {
+	// Display d = Display.getCurrent();
+	//
+	// Image viewMenu = new Image(d, 16, 16);
+	// Image viewMenuMask = new Image(d, 16, 16);
+	//
+	// Display display = Display.getCurrent();
+	// GC gc = new GC(viewMenu);
+	// GC maskgc = new GC(viewMenuMask);
+	// gc.setForeground(display
+	// .getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
+	// gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
+	//
+	// int[] shapeArray = new int[] { 6, 1, 15, 1, 11, 5, 10, 5 };
+	// gc.fillPolygon(shapeArray);
+	// gc.drawPolygon(shapeArray);
+	//
+	// Color black = display.getSystemColor(SWT.COLOR_BLACK);
+	// Color white = display.getSystemColor(SWT.COLOR_WHITE);
+	//
+	// maskgc.setBackground(black);
+	// maskgc.fillRectangle(0, 0, 16, 16);
+	//
+	// maskgc.setBackground(white);
+	// maskgc.setForeground(white);
+	// maskgc.fillPolygon(shapeArray);
+	// maskgc.drawPolygon(shapeArray);
+	// gc.dispose();
+	// maskgc.dispose();
+	//
+	// ImageData data = viewMenu.getImageData();
+	// data.transparentPixel = data.getPixel(0, 0);
+	//
+	// viewMenuImage = new Image(d, viewMenu.getImageData(), viewMenuMask
+	// .getImageData());
+	// viewMenu.dispose();
+	// viewMenuMask.dispose();
+	// }
+	// return viewMenuImage;
+	// }
 }

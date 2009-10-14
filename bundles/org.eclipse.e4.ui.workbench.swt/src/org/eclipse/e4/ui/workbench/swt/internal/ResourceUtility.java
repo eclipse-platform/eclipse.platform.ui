@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
@@ -31,8 +30,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
 
-public class ResourceUtility implements
-		ISWTResourceUtiltities {
+public class ResourceUtility implements ISWTResourceUtiltities {
 	public static final String PROTOCOL = "bundle-resource://"; //$NON-NLS-1$
 
 	private ImageRegistry IMAGE_REGISTRY = new ImageRegistry();

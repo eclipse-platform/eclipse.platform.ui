@@ -36,27 +36,24 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.internal.services.ContextCommandService;
-import org.eclipse.e4.ui.model.application.ApplicationFactory;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MContributedPart;
-import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.model.workbench.MWorkbenchWindow;
-import org.eclipse.e4.ui.model.workbench.WorkbenchPackage;
 import org.eclipse.e4.ui.services.ECommandService;
-import org.eclipse.e4.ui.services.EHandlerService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -73,14 +70,12 @@ import org.osgi.service.packageadmin.PackageAdmin;
 public class Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
-	private MApplication<? extends MWindow> workbench;
+	private MApplication workbench;
 	private static final boolean saveAndRestore = true;
 	private File workbenchData;
 	private IWorkbenchWindowHandler windowHandler;
 	// private final IExtensionRegistry registry;
 	private ResourceSetImpl resourceSet;
-
-	// private PresentationEngineFactory presentationEngineFactory;
 
 	public IEclipseContext getContext() {
 		return workbenchContext;
@@ -124,7 +119,8 @@ public class Workbench implements IWorkbench {
 
 		// Register the package to ensure it is available during loading.
 		//
-		resourceSet.getPackageRegistry().put(WorkbenchPackage.eNS_URI, WorkbenchPackage.eINSTANCE);
+		resourceSet.getPackageRegistry().put(MApplicationPackage.eNS_URI,
+				MApplicationPackage.eINSTANCE);
 
 		workbenchContext = createWorkbenchContext(applicationContext, registry, exceptionHandler,
 				contributionFactory);
@@ -135,7 +131,7 @@ public class Workbench implements IWorkbench {
 		workbenchContext.set(IEclipseContext.class.getName(), workbenchContext);
 	}
 
-	public void setWorkbenchModel(MApplication<? extends MWindow> model) {
+	public void setWorkbenchModel(MApplication model) {
 		workbench = model;
 		init();
 	}
@@ -172,9 +168,8 @@ public class Workbench implements IWorkbench {
 		mainContext.runAndTrack(new Runnable() {
 			public void run() {
 				Object o = mainContext.get(IServiceConstants.ACTIVE_PART);
-				if (o instanceof MContributedPart<?>) {
-					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MContributedPart<?>) o)
-							.getId());
+				if (o instanceof MPart) {
+					mainContext.set(IServiceConstants.ACTIVE_PART_ID, ((MPart) o).getId());
 				}
 			}
 
@@ -199,7 +194,7 @@ public class Workbench implements IWorkbench {
 					adapterType = (Class) arguments[0];
 				}
 				Object newInput = null;
-				Object newValue = mainContext.get(IServiceConstants.SELECTION);
+				Object newValue = context.get(IServiceConstants.SELECTION);
 				if (adapterType == null || adapterType.isInstance(newValue)) {
 					newInput = newValue;
 				} else if (newValue != null && adapterType != null) {
@@ -223,7 +218,7 @@ public class Workbench implements IWorkbench {
 		return mainContext;
 	}
 
-	private MApplication<? extends MWindow> createWorkbenchModel(URI applicationDefinitionInstance) {
+	private MApplication createWorkbenchModel(URI applicationDefinitionInstance) {
 		URI restoreLocation = null;
 		if (workbenchData != null && saveAndRestore) {
 			restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
@@ -259,7 +254,7 @@ public class Workbench implements IWorkbench {
 		if (restore) {
 			Activator
 					.trace(Policy.DEBUG_WORKBENCH, "Restoring workbench: " + restoreLocation, null); //$NON-NLS-1$
-			workbench = (MApplication<MWindow>) resourceSetImpl.getResource(restoreLocation, true)
+			workbench = (MApplication) resourceSetImpl.getResource(restoreLocation, true)
 					.getContents().get(0);
 		} else {
 			Activator.trace(Policy.DEBUG_WORKBENCH,
@@ -275,11 +270,11 @@ public class Workbench implements IWorkbench {
 		return workbench;
 	}
 
-	private MApplication<? extends MWindow> loadDefaultModel(URI defaultModelPath) {
+	private MApplication loadDefaultModel(URI defaultModelPath) {
 		Resource resource = new ResourceSetImpl().getResource(defaultModelPath, true);
-		MApplication<MWindow> app = (MApplication<MWindow>) resource.getContents().get(0);
+		MApplication app = (MApplication) resource.getContents().get(0);
 
-		final EList<MWindow> windows = app.getWindows();
+		final EList<MWindow> windows = app.getChildren();
 		for (MWindow window : windows) {
 			processPartContributions(resource, window);
 		}
@@ -293,7 +288,7 @@ public class Workbench implements IWorkbench {
 		IConfigurationElement[] parts = registry.getConfigurationElementsFor(extId);
 
 		for (int i = 0; i < parts.length; i++) {
-			MContributedPart<?> part = ApplicationFactory.eINSTANCE.createMContributedPart();
+			MPart part = MApplicationFactory.eINSTANCE.createPart();
 			part.setName(parts[i].getAttribute("label")); //$NON-NLS-1$
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
@@ -303,9 +298,9 @@ public class Workbench implements IWorkbench {
 					+ parts[i].getAttribute("class")); //$NON-NLS-1$
 			String parentId = parts[i].getAttribute("parentId"); //$NON-NLS-1$
 
-			MPart parent = (MPart) findObject(resource.getAllContents(), parentId);
-			if (parent != null) {
-				parent.getChildren().add(part);
+			Object parent = findObject(resource.getAllContents(), parentId);
+			if (parent instanceof MElementContainer<?>) {
+				((MElementContainer<MPSCElement>) parent).getChildren().add(part);
 			}
 		}
 
@@ -336,28 +331,31 @@ public class Workbench implements IWorkbench {
 				.get(ECommandService.class.getName());
 		Category cat = cs.getCategory(MApplication.class.getName());
 		cat.define("Application Category", null); //$NON-NLS-1$
-		EList<MCommand> commands = workbench.getCommand();
+		EList<MCommand> commands = workbench.getCommands();
 		for (MCommand cmd : commands) {
 			String id = cmd.getId();
-			String name = cmd.getName();
+			String name = cmd.getCommandName();
 			Command command = cs.getCommand(id);
 			command.define(name, null, cat);
 		}
 
 		// take care of generating the contexts.
-		for (MWindow window : (EList<? extends MWindow>) workbench.getWindows()) {
+		EList<MWindow> windows = workbench.getChildren();
+		for (MWindow window : windows) {
 			initializeContext(workbenchContext, window);
 		}
-		workbench.eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MAPPLICATION__WINDOWS.equals(msg.getFeature())
-						&& msg.getEventType() == Notification.ADD) {
-					MPart<?> added = (MPart<?>) msg.getNewValue();
-					initializeContext(workbenchContext, added);
-				}
-			}
-		});
+
+		// NMH: how do we do this now?
+		// workbench.eAdapters().add(new AdapterImpl() {
+		// @Override
+		// public void notifyChanged(Notification msg) {
+		// if (ApplicationPackage.Literals.MAPPLICATION__WINDOWS.equals(msg.getFeature())
+		// && msg.getEventType() == Notification.ADD) {
+		// MPart<?> added = (MPart<?>) msg.getNewValue();
+		// initializeContext(workbenchContext, added);
+		// }
+		// }
+		// });
 	}
 
 	/**
@@ -366,59 +364,60 @@ public class Workbench implements IWorkbench {
 	 * 
 	 * @param parentContext
 	 *            The parent context
-	 * @param part
+	 * @param contextModel
 	 *            needs a context created
 	 */
-	public static void initializeContext(IEclipseContext parentContext, MPart<?> part) {
+	public static void initializeContext(IEclipseContext parentContext, MContext contextModel) {
 		final IEclipseContext context;
-		if (part.getContext() != null) {
-			context = part.getContext();
+		if (contextModel.getContext() != null) {
+			context = contextModel.getContext();
 		} else {
 			context = EclipseContextFactory
 					.create(parentContext, UISchedulerStrategy.getInstance());
-			context.set(IContextConstants.DEBUG_STRING, "PartContext(" + part + ')'); //$NON-NLS-1$
+			context.set(IContextConstants.DEBUG_STRING, "PartContext(" + contextModel + ')'); //$NON-NLS-1$
 		}
 
 		Activator.trace(Policy.DEBUG_CONTEXTS, "initializeContext(" //$NON-NLS-1$
-				+ parentContext.toString() + ", " + part + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+				+ parentContext.toString() + ", " + contextModel + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
 		// fill in the interfaces, so MContributedPart.class.getName() will
 		// return the model element, for example.
-		final Class[] interfaces = part.getClass().getInterfaces();
+		final Class[] interfaces = contextModel.getClass().getInterfaces();
 		for (Class intf : interfaces) {
 			Activator.trace(Policy.DEBUG_CONTEXTS, "Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
-					+ part.getClass().getName(), null);
-			context.set(intf.getName(), part);
+					+ contextModel.getClass().getName(), null);
+			context.set(intf.getName(), contextModel);
 		}
 
 		// declares modifiable variables from the model
-		EList<String> containedProperties = part.getVariables();
+		EList<String> containedProperties = contextModel.getVariables();
 		for (String name : containedProperties) {
 			context.declareModifiable(name);
 		}
 
-		part.setContext(context);
+		contextModel.setContext(context);
 
+		// NMH: how do we do this now?
 		// take care of generating the contexts.
-		for (MPart<?> child : (EList<MPart<?>>) part.getChildren()) {
-			initializeContext(context, child);
-		}
-		part.eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())
-						&& msg.getEventType() == Notification.ADD) {
-					MPart<?> added = (MPart<?>) msg.getNewValue();
-					initializeContext(context, added);
-				}
-			}
-		});
+		// for (MPart child : (EList<MPart>) contextModel.getChildren()) {
+		// initializeContext(context, child);
+		// }
+		// contextModel.eAdapters().add(new AdapterImpl() {
+		// @Override
+		// public void notifyChanged(Notification msg) {
+		// if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())
+		// && msg.getEventType() == Notification.ADD) {
+		// MPart added = (MPart) msg.getNewValue();
+		// initializeContext(context, added);
+		// }
+		// }
+		// });
 	}
 
 	/**
 	 * Should be called prior to running the e4 workench.
 	 */
 	public void createUIFromModel() {
-		final EList<? extends MWindow> windows = workbench.getWindows();
+		EList<MWindow> windows = workbench.getChildren();
 		for (MWindow wbw : windows) {
 			createGUI(wbw);
 		}
@@ -426,7 +425,7 @@ public class Workbench implements IWorkbench {
 
 	public int run() {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "running event loop", null); //$NON-NLS-1$
-		windowHandler.runEvenLoop(workbench.getWindows().get(0).getWidget());
+		windowHandler.runEvenLoop(workbench.getChildren().get(0).getWidget());
 
 		if (workbenchData != null && saveAndRestore && workbench != null) {
 			try {
@@ -447,26 +446,27 @@ public class Workbench implements IWorkbench {
 		return rv;
 	}
 
-	private void processHandlers(MPart<MPart<?>> part) {
-		IEclipseContext context = part.getContext();
-		if (context != null) {
-			EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
-			EList<MHandler> handlers = part.getHandlers();
-			for (MHandler handler : handlers) {
-				String commandId = handler.getCommand().getId();
-				if (handler.getObject() == null) {
-					handler.setObject(contributionFactory.create(handler.getURI(), context));
-				}
-				hs.activateHandler(commandId, handler.getObject());
-			}
-		}
-		EList<MPart<?>> children = part.getChildren();
-		for (MPart<?> child : children) {
-			processHandlers((MPart<MPart<?>>) child);
-		}
-	}
+	// NMH: how do we do this now?
+	// private void processHandlers(MPart part) {
+	// IEclipseContext context = part.getContext();
+	// if (context != null) {
+	// EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
+	// EList<MHandler> handlers = part.getHandlers();
+	// for (MHandler handler : handlers) {
+	// String commandId = handler.getCommand().getId();
+	// if (handler.getObject() == null) {
+	// handler.setObject(contributionFactory.create(handler.getURI(), context));
+	// }
+	// hs.activateHandler(commandId, handler.getObject());
+	// }
+	// }
+	// EList<MPart> children = part.getChildren();
+	// for (MPart child : children) {
+	// processHandlers((MPart) child);
+	// }
+	// }
 
-	public void createGUI(MPart part) {
+	public void createGUI(MUIElement uiRoot) {
 		if (renderer == null) {
 			Object newEngine = contributionFactory.create(renderingEngineURI, workbenchContext);
 			if (newEngine != null) {
@@ -474,9 +474,9 @@ public class Workbench implements IWorkbench {
 			}
 		}
 
-		renderer.createGui(part);
-		if (part instanceof MWindow) {
-			MWindow wbw = (MWindow) part;
+		renderer.createGui(uiRoot);
+		if (uiRoot instanceof MWindow) {
+			MWindow wbw = (MWindow) uiRoot;
 			Object appWindow = wbw.getWidget();
 			rv = 0;
 
@@ -493,12 +493,14 @@ public class Workbench implements IWorkbench {
 			windowHandler.layout(appWindow);
 
 			windowHandler.open(appWindow);
-			processHandlers(wbw);
+
+			// NMH: how do we do this now ?
+			// processHandlers(wbw);
 		}
 	}
 
 	public void close() {
-		final EList<? extends MWindow> windows = workbench.getWindows();
+		EList<MWindow> windows = workbench.getChildren();
 		for (MWindow window : windows) {
 			windowHandler.dispose(window.getWidget());
 		}
@@ -508,12 +510,12 @@ public class Workbench implements IWorkbench {
 	// return appWindow.getDisplay();
 	// }
 
-	public void closeWindow(MWorkbenchWindow workbenchWindow) {
+	public void closeWindow(MWindow workbenchWindow) {
 		windowHandler.close(workbenchWindow.getWidget());
 	}
 
 	public Object getWindow() {
-		return workbench.getWindows().get(0).getWidget();
+		return workbench.getChildren().get(0).getWidget();
 	}
 
 	/*

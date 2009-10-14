@@ -12,7 +12,7 @@
 package org.eclipse.e4.workbench.ui;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MUIElement;
 
 /**
  * Engine the workbench delegates the rendering of the ui to a service
@@ -32,7 +32,7 @@ public interface IPresentationEngine {
 	 *            the parent
 	 * @return the created UI element
 	 */
-	public Object createGui(MPart<?> element, Object parent);
+	public Object createGui(MUIElement element, Object parent);
 
 	/**
 	 * Create UI element which is at the top of the widget hierarchy
@@ -41,7 +41,7 @@ public interface IPresentationEngine {
 	 *            the model element
 	 * @return the create UI element
 	 */
-	public Object createGui(MPart<?> element);
+	public Object createGui(MUIElement element);
 
 	/**
 	 * Remove the UI element create for this model element
@@ -49,5 +49,5 @@ public interface IPresentationEngine {
 	 * @param element
 	 *            the model element whose UI element should removed
 	 */
-	public void removeGui(MPart<?> element);
+	public void removeGui(MUIElement element);
 }

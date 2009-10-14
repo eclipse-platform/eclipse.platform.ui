@@ -7,15 +7,13 @@
  * 
  * Contributors:
  *      IBM Corporation - initial API and implementation
- *
- * $Id: MContribution.java,v 1.1 2009/02/03 14:25:34 emoffatt Exp $
  */
 package org.eclipse.e4.ui.model.application;
 
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>MContribution</b></em>'.
+ * A representation of the model object '<em><b>Contribution</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -27,7 +25,7 @@ package org.eclipse.e4.ui.model.application;
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMContribution()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution()
  * @model abstract="true"
  * @generated
  */
@@ -42,7 +40,7 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>URI</em>' attribute.
 	 * @see #setURI(String)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMContribution_URI()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution_URI()
 	 * @model
 	 * @generated
 	 */
@@ -68,7 +66,7 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Object</em>' attribute.
 	 * @see #setObject(Object)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMContribution_Object()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution_Object()
 	 * @model transient="true"
 	 * @generated
 	 */
@@ -94,7 +92,7 @@ public interface MContribution extends MApplicationElement {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Persisted State</em>' attribute.
 	 * @see #setPersistedState(String)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMContribution_PersistedState()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContribution_PersistedState()
 	 * @model
 	 * @generated
 	 */

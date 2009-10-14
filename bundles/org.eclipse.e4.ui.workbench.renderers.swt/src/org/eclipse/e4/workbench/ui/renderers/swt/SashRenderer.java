@@ -10,14 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPartSashContainer;
+import org.eclipse.e4.ui.model.application.MUIElement;
+
 import java.util.Iterator;
-import java.util.List;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MSashForm;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlEvent;
@@ -32,18 +34,18 @@ public class SashRenderer extends SWTPartRenderer {
 		super();
 	}
 
-	public Widget createWidget(MPart<?> part, Object parent) {
-		if (!(part instanceof MSashForm<?>) || !(parent instanceof Composite))
+	public Widget createWidget(MUIElement element, Object parent) {
+		if (!(element instanceof MPartSashContainer)
+				|| !(parent instanceof Composite))
 			return null;
 
 		Widget parentWidget = (Widget) parent;
 
-		int orientation = (part.getPolicy() != null && part.getPolicy()
-				.startsWith("Horizontal")) ? SWT.HORIZONTAL //$NON-NLS-1$
-				: SWT.VERTICAL;
+		MPartSashContainer psc = (MPartSashContainer) element;
+		int orientation = psc.isHorizontal() ? SWT.HORIZONTAL : SWT.VERTICAL;
 		SashForm newSash = new SashForm((Composite) parentWidget, SWT.SMOOTH
 				| orientation);
-		bindWidget(part, newSash);
+		bindWidget(element, newSash);
 		newSash.setVisible(true);
 
 		return newSash;
@@ -58,8 +60,9 @@ public class SashRenderer extends SWTPartRenderer {
 	 * org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	public void childAdded(MPart<?> parentElement, MPart<?> element) {
-		super.childAdded(parentElement, element);
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		super.childRendered(parentElement, element);
 
 		if (!(parentElement.getWidget() instanceof SashForm))
 			return;
@@ -67,7 +70,7 @@ public class SashRenderer extends SWTPartRenderer {
 		// Ensure the Z-order of the contained controls matches the model order
 		for (Iterator kidIter = (parentElement.getChildren()).iterator(); kidIter
 				.hasNext();) {
-			MPart part = (MPart) kidIter.next();
+			MUIElement part = (MUIElement) kidIter.next();
 			Control partCtrl = (Control) part.getWidget();
 			if (partCtrl != null) {
 				Control outerMost = getOutermost(partCtrl);
@@ -76,74 +79,63 @@ public class SashRenderer extends SWTPartRenderer {
 		}
 	}
 
-	public void postProcess(MPart<?> part) {
-		if (part instanceof org.eclipse.e4.ui.model.application.MSashForm<?>) {
-			// do we have any children ?
-			EList<MPart<?>> kids = (EList<MPart<?>>) part.getChildren();
-			if (kids.size() == 0)
-				return;
+	public void postProcess(MUIElement element) {
+		if (!(element instanceof MPartSashContainer))
+			return;
 
-			// Cound the -visible- children
-			int visCount = 0;
-			for (Iterator iterator = kids.iterator(); iterator.hasNext();) {
-				MPart<?> mPart = (MPart<?>) iterator.next();
-				if (mPart.getWidget() != null)
-					visCount++;
+		MPartSashContainer psc = (MPartSashContainer) element;
+		final SashForm sashForm = (SashForm) psc.getWidget();
+
+		// Ensure that the model has *at least* enough weights
+		int[] sfWeights = sashForm.getWeights();
+		int sfCount = sfWeights.length;
+
+		EList<Integer> modelWeights = psc.getWeights();
+		int mwCount = modelWeights.size();
+		if (mwCount < sfCount) {
+			for (int i = mwCount; i < sfCount; i++) {
+				int newVal = i < sfCount ? sfWeights[i] : 100;
+				modelWeights.add(newVal);
 			}
+		}
 
-			// set the weights of the sashes
-			final SashForm sashForm = (SashForm) part.getWidget();
-			org.eclipse.e4.ui.model.application.MSashForm<?> sashPart = (org.eclipse.e4.ui.model.application.MSashForm<?>) part;
-			List<Integer> weightList = sashPart.getWeights();
+		// Set the model's weights into the sash form
+		int[] newWeights = new int[sfCount];
+		for (int i = 0; i < sfCount; i++)
+			newWeights[i] = modelWeights.get(i);
+		sashForm.setWeights(newWeights);
 
-			// If it's not already initialized the set them all ==
-			if (weightList.size() != visCount) {
-				weightList.clear();
-				for (int i = weightList.size(); i < visCount; i++) {
-					weightList.add(new Integer(100));
+		// add an adapter to the model sash form so we can respond to model
+		// changes and apply the weight changes to the widget
+		// IEclipseContext lclContext = getContext(psc);
+		// IEventBroker eb = (IEventBroker)
+		// lclContext.get(IEventBroker.class.getName());
+		// eb.subscribe(topic, filter, eventReceiver);
+		((EObject) psc).eAdapters().add(new AdapterImpl() {
+			@Override
+			public void notifyChanged(Notification msg) {
+				if (MApplicationPackage.Literals.GENERIC_TILE__WEIGHTS
+						.equals(msg.getFeature())
+						&& msg.getNewValue() != null) {
+					synchWeightsToModel(sashForm);
 				}
 			}
+		});
 
-			// Set the weights in the control
-			if (weightList.size() > 0) {
-				int count = 0;
-				int[] weights = new int[weightList.size()];
-				for (Iterator iterator = weightList.iterator(); iterator
-						.hasNext();) {
-					Integer integer = (Integer) iterator.next();
-					weights[count++] = integer;
+		// add a size change listener to each child so we can recalculate
+		// the
+		// weights on a change...
+		Control[] childCtrls = sashForm.getChildren();
+		for (int i = 0; i < childCtrls.length; i++) {
+			childCtrls[i].addControlListener(new ControlListener() {
+				public void controlMoved(ControlEvent e) {
 				}
-				sashForm.setWeights(weights);
-			}
 
-			// add an adapter to the model sash form so we can respond to model
-			// changes and apply the weight changes to the widget
-			sashPart.eAdapters().add(new AdapterImpl() {
-				@Override
-				public void notifyChanged(Notification msg) {
-					if (ApplicationPackage.Literals.MSASH_FORM__WEIGHTS
-							.equals(msg.getFeature())
-							&& msg.getNewValue() != null) {
-						synchWeightsToModel(sashForm);
-					}
+				public void controlResized(ControlEvent e) {
+					// See if we need to re do the weights
+					synchWeights((Control) e.widget);
 				}
 			});
-
-			// add a size change listener to each child so we can recalculate
-			// the
-			// weights on a change...
-			Control[] childCtrls = sashForm.getChildren();
-			for (int i = 0; i < childCtrls.length; i++) {
-				childCtrls[i].addControlListener(new ControlListener() {
-					public void controlMoved(ControlEvent e) {
-					}
-
-					public void controlResized(ControlEvent e) {
-						// See if we need to re do the weights
-						synchWeights((Control) e.widget);
-					}
-				});
-			}
 		}
 	}
 
@@ -159,10 +151,11 @@ public class SashRenderer extends SWTPartRenderer {
 			return;
 
 		// retrieve the model
-		MSashForm<?> sfm = (MSashForm<?>) sf.getData(OWNING_ME);
+		MPartSashContainer psc = (MPartSashContainer) sf.getData(OWNING_ME);
+
 		// get the weights of the widget and the model model
 		int[] ctrlWeights = sf.getWeights();
-		EList<Integer> modelWeights = sfm.getWeights();
+		EList<Integer> modelWeights = psc.getWeights();
 
 		// check that the size is in the same, when the model is modified,
 		// values may be added individually, in this case, we want to change
@@ -199,10 +192,9 @@ public class SashRenderer extends SWTPartRenderer {
 			return;
 
 		SashForm sf = (SashForm) ctrl.getParent();
-		org.eclipse.e4.ui.model.application.MSashForm<?> sfm = (org.eclipse.e4.ui.model.application.MSashForm<?>) sf
-				.getData(OWNING_ME);
+		MPartSashContainer psc = (MPartSashContainer) sf.getData(OWNING_ME);
 		int[] ctrlWeights = sf.getWeights();
-		EList<Integer> modelWeights = sfm.getWeights();
+		EList<Integer> modelWeights = psc.getWeights();
 
 		boolean overWrite = false;
 		if (ctrlWeights.length != modelWeights.size())

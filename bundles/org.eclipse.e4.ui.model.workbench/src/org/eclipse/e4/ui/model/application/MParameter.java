@@ -7,16 +7,13 @@
  * 
  * Contributors:
  *      IBM Corporation - initial API and implementation
- *
- * $Id$
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.emf.ecore.EObject;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>MParameter</b></em>'.
+ * A representation of the model object '<em><b>Parameter</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -27,11 +24,11 @@ import org.eclipse.emf.ecore.EObject;
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMParameter()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getParameter()
  * @model
  * @generated
  */
-public interface MParameter extends EObject {
+public interface MParameter extends MApplicationElement {
 	/**
 	 * Returns the value of the '<em><b>Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -42,8 +39,8 @@ public interface MParameter extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Name</em>' attribute.
 	 * @see #setName(String)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMParameter_Name()
-	 * @model required="true"
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getParameter_Name()
+	 * @model
 	 * @generated
 	 */
 	String getName();
@@ -68,8 +65,8 @@ public interface MParameter extends EObject {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Value</em>' attribute.
 	 * @see #setValue(String)
-	 * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMParameter_Value()
-	 * @model unique="false" required="true"
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getParameter_Value()
+	 * @model
 	 * @generated
 	 */
 	String getValue();

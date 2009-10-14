@@ -7,21 +7,19 @@
  * 
  * Contributors:
  *      IBM Corporation - initial API and implementation
- *
- * $Id$
  */
 package org.eclipse.e4.ui.model.application;
 
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>MMenu</b></em>'.
+ * A representation of the model object '<em><b>Menu</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.ApplicationPackage#getMMenu()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getMenu()
  * @model
  * @generated
  */
-public interface MMenu extends MItemContainer<MMenuItem> {
+public interface MMenu extends MUIElement, MElementContainer<MMenuItem> {
 } // MMenu

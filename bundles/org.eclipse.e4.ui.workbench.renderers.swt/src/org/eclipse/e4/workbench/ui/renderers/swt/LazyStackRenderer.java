@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import java.util.List;
-import org.eclipse.e4.ui.model.application.ApplicationPackage;
-import org.eclipse.e4.ui.model.application.MItemPart;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MStack;
+import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -40,62 +40,61 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		super();
 	}
 
-	public void postProcess(MPart<?> part) {
-		if (!(part instanceof MStack))
+	public void postProcess(MUIElement element) {
+		if (!(element instanceof MPartStack))
 			return;
 
-		MStack stack = (MStack) part;
-		MPart<?> selPart = stack.getActiveChild();
+		MPartStack stack = (MPartStack) element;
+		MPart selPart = stack.getActiveChild();
 
 		// If there's no 'active' part defined then pick the first
 		if (selPart == null && stack.getChildren().size() > 0) {
 			// NOTE: no need to render first because the listener for
 			// the active child changing will do it
-			stack.setActiveChild((MItemPart<?>) part.getChildren().get(0));
+			stack.setActiveChild(stack.getChildren().get(0));
 		} else if (selPart != null && selPart.getWidget() == null) {
 			renderer.createGui(selPart);
 		}
 	}
 
 	@Override
-	public <P extends MPart<?>> void processContents(MPart<P> me) {
+	public void processContents(MElementContainer<MUIElement> me) {
+		if (!(((MUIElement) me) instanceof MPartStack))
+			return;
+
+		MPartStack stack = (MPartStack) ((MUIElement) me);
 		Widget parentWidget = getParentWidget(me);
 		if (parentWidget == null)
 			return;
 
 		// Lazy Loading: here we only process the contents through childAdded,
 		// we specifically do not render them
-		List<P> parts = me.getChildren();
-		if (parts != null) {
-			for (MPart<?> childME : parts) {
-				if (childME.isVisible())
-					internalChildAdded(me, childME);
-			}
+		for (MPart part : stack.getChildren()) {
+			if (part.isVisible())
+				showChild(stack, part);
 		}
 	}
 
 	/**
-	 * This method is necessary to allow the parent container to show
-	 * affordances (i.e. tabs) for child elements -without- creating them (as
-	 * simply calling 'createChild' would)
+	 * This method is necessary to allow the parent container to show affordance
+	 * (i.e. tabs) for child elements -without- creating the actual part
 	 * 
-	 * @param parentME
+	 * @param stack
 	 *            The parent model element
 	 * @param childME
 	 *            The child to show the affordance for
 	 */
-	protected void internalChildAdded(MPart parentME, MPart childME) {
-		// NO-OP
+	protected void showChild(MPartStack stack, MPart childME) {
 	}
 
 	@Override
-	public void hookControllerLogic(final MPart<?> me) {
+	public void hookControllerLogic(final MUIElement me) {
 		super.hookControllerLogic(me);
 
-		if (!(me instanceof MStack))
+		if (!(me instanceof MPartStack))
 			return;
 
-		final MStack sm = (MStack) me;
+		final MPartStack sm = (MPartStack) me;
 
 		// Detect activation...picks up cases where the user clicks on the
 		// (already active) part
@@ -104,8 +103,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			ctrl.addListener(SWT.Activate, new Listener() {
 				public void handleEvent(Event event) {
 					CTabFolder ctf = (CTabFolder) event.widget;
-					MStack stack = (MStack) ctf.getData(OWNING_ME);
-					MItemPart<?> selPart = stack.getActiveChild();
+					MPartStack stack = (MPartStack) ctf.getData(OWNING_ME);
+					MPart selPart = stack.getActiveChild();
 					if (selPart != null)
 						activate(selPart);
 				}
@@ -117,10 +116,10 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		((EObject) me).eAdapters().add(new AdapterImpl() {
 			@Override
 			public void notifyChanged(Notification msg) {
-				if (ApplicationPackage.Literals.MPART__ACTIVE_CHILD.equals(msg
-						.getFeature())) {
-					MStack stack = (MStack) msg.getNotifier();
-					MPart<?> selPart = stack.getActiveChild();
+				if (MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD
+						.equals(msg.getFeature())) {
+					MPartStack stack = (MPartStack) msg.getNotifier();
+					MPart selPart = stack.getActiveChild();
 					if (selPart != null && selPart.getWidget() == null)
 						renderer.createGui(selPart);
 					// activate(selPart);

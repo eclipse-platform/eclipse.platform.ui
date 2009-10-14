@@ -32,6 +32,12 @@ public class DetailsView {
 		return Contact.class;
 	}
 
+	public void setSelection(Object selection) {
+		if (selection instanceof Contact) {
+			detailComposite.update((Contact) selection);
+		}
+	}
+
 	public void setInput(Object input) {
 		if (input instanceof Contact) {
 			detailComposite.update((Contact) input);
