@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 
-package org.eclipse.ui.tests.fieldassist;
+package org.eclipse.jface.tests.fieldassist;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -29,8 +29,7 @@ public class FieldAssistTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public FieldAssistTestSuite() {
-		addTest(new TestSuite(FieldAssistAPITest.class));
-		addTest(new TestSuite(ComboContentAssistCommandAdapterTest.class));
-		addTest(new TestSuite(TextContentAssistCommandAdapterTest.class));
+		addTest(new TestSuite(TextFieldAssistTests.class));
+		addTest(new TestSuite(ComboFieldAssistTests.class));
 	}
 }
