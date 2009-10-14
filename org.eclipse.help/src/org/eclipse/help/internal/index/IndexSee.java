@@ -101,7 +101,8 @@ public class IndexSee extends UAElement implements IIndexSee, Comparable  {
     }
 
 	public boolean isSeeAlso() {
-		return !this.equals(getParentElement().getChildren()[0]);
+		UAElement parentElement = getParentElement();
+		return ! (parentElement.getChildren()[0] instanceof IIndexSee);
 	}
 
 	public IIndexSubpath[] getSubpathElements() {

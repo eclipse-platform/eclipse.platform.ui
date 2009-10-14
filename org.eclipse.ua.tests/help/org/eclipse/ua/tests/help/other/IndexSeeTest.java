@@ -15,8 +15,10 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.index.IndexEntry;
 import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.help.util.DocumentCreator;
 import org.w3c.dom.Document;
@@ -234,6 +236,42 @@ public class IndexSeeTest extends TestCase {
 	     IndexSee see2 = new IndexSee(u1);
 	     checkCreatedSee(see);
 	     checkCreatedSee(see2);
+	}
+
+	public void testSeeAlsoWithSiblingTopic() {
+		UserIndexEntry entry = new UserIndexEntry("test", true);
+		UserTopic topic = new UserTopic("label", "href.html", true);
+		entry.addTopic(topic);
+		UserIndexSee see = new UserIndexSee("check", true);
+		entry.addSee(see);
+		IndexEntry indexEntry = new IndexEntry(entry);
+		IIndexSee[] sees = indexEntry.getSees();
+		assertTrue(((IndexSee)sees[0]).isSeeAlso());
+	}
+
+	public void testSeeAlsoWithSiblingEntry() {
+		UserIndexEntry entry = new UserIndexEntry("test", true);
+		UserIndexEntry subEntry = new UserIndexEntry("case", true);
+		UserTopic topic = new UserTopic("label", "href.html", true);
+		entry.addEntry(subEntry);
+		subEntry.addTopic(topic);
+		UserIndexSee see = new UserIndexSee("check", true);
+		entry.addSee(see);
+		IndexEntry indexEntry = new IndexEntry(entry);
+		IIndexSee[] sees = indexEntry.getSees();
+		assertTrue(((IndexSee)sees[0]).isSeeAlso());
+	}
+	
+	public void testSiblingSeesNotSeeAlso() {
+		UserIndexEntry entry = new UserIndexEntry("test", true);
+		UserIndexSee see1 = new UserIndexSee("check", true);
+		entry.addSee(see1);
+		UserIndexSee see2 = new UserIndexSee("verify", true);
+		entry.addSee(see2);
+		IndexEntry indexEntry = new IndexEntry(entry);
+		IIndexSee[] sees = indexEntry.getSees();
+		assertFalse(((IndexSee)sees[0]).isSeeAlso());
+		assertFalse(((IndexSee)sees[1]).isSeeAlso());
 	}
 
 	private UserIndexSee createUserSee() {
