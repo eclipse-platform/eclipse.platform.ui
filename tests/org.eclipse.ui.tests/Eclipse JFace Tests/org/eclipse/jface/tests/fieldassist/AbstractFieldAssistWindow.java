@@ -35,6 +35,7 @@ public abstract class AbstractFieldAssistWindow extends Window {
 	private boolean propagateKeys = true;
 	private int acceptance = ContentProposalAdapter.PROPOSAL_INSERT;
 	private int autoActivationDelay = 0;
+	private ContentProposalAdapter adapter;
 
 	public AbstractFieldAssistWindow() {
 		super((Shell) null);
@@ -51,7 +52,7 @@ public abstract class AbstractFieldAssistWindow extends Window {
 		fieldAssistControl = createFieldAssistControl(parent);
 		Assert.isNotNull(fieldAssistControl);
 
-		ContentProposalAdapter adapter = createContentProposalAdapter(fieldAssistControl);
+		adapter = createContentProposalAdapter(fieldAssistControl);
 		adapter.setAutoActivationDelay(autoActivationDelay);
 		adapter.setFilterStyle(filterStyle);
 		adapter.setPropagateKeys(propagateKeys);
@@ -119,6 +120,10 @@ public abstract class AbstractFieldAssistWindow extends Window {
 			proposalProvider = createContentProposalProvider();
 		}
 		return proposalProvider;
+	}
+	
+	protected ContentProposalAdapter getContentProposalAdapter() {
+		return adapter;
 	}
 
 	public void setContentProposalProvider(

@@ -177,4 +177,28 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		decoration.show();
 		assertTrue("1.8", decoration.isVisible());
 	}
+	
+	public void testPopupFocus() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.setPropagateKeys(false);
+		KeyStroke stroke = KeyStroke.getInstance(SWT.F4);
+		window.setKeyStroke(stroke);
+		window.open();
+		sendKeyDownToControl(stroke);
+		assertTwoShellsUp();
+		
+		// Send focus to the control (not the popup)
+		window.getFieldAssistControl().setFocus();
+		spinEventLoop();
+		assertFalse("1.0", window.getContentProposalAdapter().hasProposalPopupFocus());
+		window.getContentProposalAdapter().setProposalPopupFocus();
+		spinEventLoop();
+		assertTrue("1.1", window.getContentProposalAdapter().hasProposalPopupFocus());
+		
+		// Setting focus to another shell deactivates the popup
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
+		spinEventLoop();
+		assertOneShellUp();
+		assertFalse("1.2", window.getContentProposalAdapter().hasProposalPopupFocus());
+	}
 }

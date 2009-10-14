@@ -2169,4 +2169,17 @@ public class ContentProposalAdapter {
 		return (autoActivateString != null && autoActivateString.length() > 0) // there are specific autoactivation chars supplied
 		  || (autoActivateString == null && triggerKeyStroke == null);    // we autoactivate on everything
 	}
+	
+	/**
+	 * Sets focus to the proposal popup.  If the proposal popup is not opened,
+	 * this method is ignored.  If the secondary popup has focus, focus is returned
+	 * to the main proposalpopup.
+	 * 
+	 * @since 3.6
+	 */
+	public void setProposalPopupFocus() {
+		if (isValid() && popup != null)
+			popup.getShell().setFocus();
+	}
+
 }
