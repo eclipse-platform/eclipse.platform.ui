@@ -71,7 +71,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 				if (proposals[i].length() >= contents.length()
 						&& proposals[i].substring(0, contents.length())
 								.equalsIgnoreCase(contents)) {
-					list.add(makeContentProposal(proposals[i]));
+					list.add(new SimpleContentProposal(proposals[i]));
 				}
 			}
 			return (IContentProposal[]) list.toArray(new IContentProposal[list
@@ -80,7 +80,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 		if (contentProposals == null) {
 			contentProposals = new IContentProposal[proposals.length];
 			for (int i = 0; i < proposals.length; i++) {
-				contentProposals[i] = makeContentProposal(proposals[i]);
+				contentProposals[i] = new SimpleContentProposal(proposals[i]);
 			}
 		}
 		return contentProposals;
@@ -112,28 +112,5 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 		this.filterProposals = filterProposals;
 		// Clear any cached proposals.
 		contentProposals = null;
-	}
-
-	/*
-	 * Make an IContentProposal for showing the specified String.
-	 */
-	private IContentProposal makeContentProposal(final String proposal) {
-		return new IContentProposal() {
-			public String getContent() {
-				return proposal;
-			}
-
-			public String getDescription() {
-				return null;
-			}
-
-			public String getLabel() {
-				return null;
-			}
-
-			public int getCursorPosition() {
-				return proposal.length();
-			}
-		};
 	}
 }
