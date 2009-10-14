@@ -640,6 +640,11 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return region.getOffset() >= fOffset;
 	}
 
+    /**
+     * Returns the complete live list of offsets for the given identifier
+     * @param identifier
+     * @return the list of offsets for the given identifier
+     */
     public List computeIdentifierOffsets(String identifier) {
         return null;
     }
