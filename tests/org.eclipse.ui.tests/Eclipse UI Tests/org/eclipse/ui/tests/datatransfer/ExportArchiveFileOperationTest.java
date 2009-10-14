@@ -371,35 +371,30 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     	assertTrue(fileName + " does not appear to be compressed.", compressed);
     }
     
-    private void verifyFolders(int folderCount, String type){
-    	try{
-    		List allEntries = new ArrayList();
-	    	if (ZIP_FILE_EXT.equals(type)){
-	    		ZipFile zipFile = new ZipFile(filePath);
-	    		Enumeration entries = zipFile.entries();
-	    		while (entries.hasMoreElements()){
-	    			ZipEntry entry = (ZipEntry)entries.nextElement();
-	    			allEntries.add(entry.getName());
-	    		}
-	    		zipFile.close();
-	    	}
-	    	else{
-	    		TarFile tarFile = new TarFile(filePath);
-	    		Enumeration entries = tarFile.entries();
-	    		while (entries.hasMoreElements()){
-	    			TarEntry entry = (TarEntry)entries.nextElement();
-	    			allEntries.add(entry.getName());
-	    		}
-	    		tarFile.close();
-	    	}
-	    	if (flattenPaths)
-	    		verifyFiles(allEntries);
-	    	else
-	    		verifyArchive(folderCount, allEntries);
+    private void verifyFolders(int folderCount, String type) throws Exception {
+		List allEntries = new ArrayList();
+    	if (ZIP_FILE_EXT.equals(type)){
+    		ZipFile zipFile = new ZipFile(filePath);
+    		Enumeration entries = zipFile.entries();
+    		while (entries.hasMoreElements()){
+    			ZipEntry entry = (ZipEntry)entries.nextElement();
+    			allEntries.add(entry.getName());
+    		}
+    		zipFile.close();
     	}
-    	catch (Exception e){
-    		fail(e.getMessage());
+    	else{
+    		TarFile tarFile = new TarFile(filePath);
+    		Enumeration entries = tarFile.entries();
+    		while (entries.hasMoreElements()){
+    			TarEntry entry = (TarEntry)entries.nextElement();
+    			allEntries.add(entry.getName());
+    		}
+    		tarFile.close();
     	}
+    	if (flattenPaths)
+    		verifyFiles(allEntries);
+    	else
+    		verifyArchive(folderCount, allEntries);
     }
     
     private void verifyArchive(int folderCount, List entries){
@@ -409,9 +404,17 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
     	Iterator archiveEntries = entries.iterator();
     	while (archiveEntries.hasNext()){
     		String entryName = (String)archiveEntries.next();
-			int idx = entryName.lastIndexOf("/");
-			String folderPath = entryName.substring(0, idx);
-			String fileName = entryName.substring(idx+1, entryName.length());
+    		// find the path separator at the end of this string
+			int backIdx = entryName.lastIndexOf("/");
+			int forwardIdx = entryName.lastIndexOf("\\");
+			int index = backIdx;
+			if (backIdx == -1) {
+				index = forwardIdx;
+			} else if (forwardIdx != -1) {
+				index = backIdx > forwardIdx ? backIdx : forwardIdx;
+			}
+			String folderPath = entryName.substring(0, index);
+			String fileName = entryName.substring(index+1, entryName.length());
 			// we get empty strings for folder entries, don't add them as a file name
 			if (fileName.length() != 0) {
 				files.add(fileName);	
