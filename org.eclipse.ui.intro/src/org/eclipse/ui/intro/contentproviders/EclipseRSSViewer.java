@@ -57,7 +57,36 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * Content provider which allows a news reader to be included in intro
+ * A content provider which allows a news reader to be included in dynamic intro content.
+ * <p>
+ * The id for the contentProvider tag must consist of the following attributes. Each of these attributes must be separated by '##'.
+ * <ul>
+ * <TABLE CELLPADDING=6 FRAME=BOX>
+ * 
+ * <THEAD>
+ * <TR> <TH>Attribute</TH>     <TH>Description</TH>                         </TR>
+ * </THEAD>
+ * 
+ * <TBODY>
+ * <TR> <TD>url</TD>           <TD>RSS news feed url</TD>                   </TR>
+ * <TR> <TD>welcome_items</TD> <TD>Number of news feed to be displayed</TD> </TR>
+ * <TR> <TD>no_news_url</TD>   <TD>Alternative url for news feed</TD>       </TR>
+ * <TR> <TD>no_news_text</TD>  <TD>Text for the alternative url</TD>        </TR>
+ * </TBODY>
+ * 
+ * </TABLE>
+ * </ul>
+ * For example:
+ * <p>
+ * &lt;contentProvider <br>
+ * <ul>
+ * id=&quot;url=http://www.eclipse.org/home/eclipsenews.rss##welcome_items=5##no_news_url=http://www.eclipse.org/community/##no_news_text=Welcome to the Eclipse Community Page&quot; <br>
+ * pluginId=&quot;org.eclipse.ui.intro&quot; <br>
+ * class=&quot;org.eclipse.ui.intro.contentproviders.EclipseRSSViewer&quot;&gt; <br>
+ * </ul>
+ * &lt;/contentProvider&gt;
+ * </p>
+ * 
  * @since 3.4
  */
 
