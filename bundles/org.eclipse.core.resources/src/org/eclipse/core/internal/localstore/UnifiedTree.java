@@ -4,7 +4,7 @@
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Martin Oberhuber (Wind River) - [105554] handle cyclic symbolic links
@@ -58,7 +58,7 @@ public class UnifiedTree {
 	protected int level;
 	/** our queue */
 	protected Queue queue;
-	
+
 	/** path prefixes for checking symbolic link cycles */
 	protected PrefixPool pathPrefixHistory, rootPathHistory;
 
@@ -73,7 +73,7 @@ public class UnifiedTree {
 	}
 
 	/**
-	 * Pass in a a root for the tree, a file tree containing all of the entries for this 
+	 * Pass in a a root for the tree, a file tree containing all of the entries for this
 	 * tree and a flag indicating whether the UnifiedTree should consult the fileTree where
 	 * possible for entries
 	 * @param root
@@ -111,17 +111,19 @@ public class UnifiedTree {
 				removeNodeChildrenFromQueue(node);
 			//allow reuse of the node, but don't let the freeNodes list grow infinitely
 			if (freeNodes.size() < 32767) {
-				freeNodes.add(node);
 				//free memory-consuming elements of the node for garbage collection
 				node.releaseForGc();
+				freeNodes.add(node);
 			}
+			//else, the whole node will be garbage collected since there is no
+			//reference to it any more.
 		}
 	}
 
 	protected void addChildren(UnifiedTreeNode node) {
 		Resource parent = (Resource) node.getResource();
 
-		// is there a possibility to have children? 
+		// is there a possibility to have children?
 		int parentType = parent.getType();
 		if (parentType == IResource.FILE && !node.isFolder())
 			return;
@@ -130,17 +132,17 @@ public class UnifiedTree {
 		if (!parent.getProject().isAccessible())
 			return;
 
-		// get the list of resources in the file system 
+		// get the list of resources in the file system
 		// don't ask for local children if we know it doesn't exist locally
 		IFileInfo[] list = node.existsInFileSystem() ? getLocalList(node) : NO_CHILDREN;
 		int localIndex = 0;
 
-		// See if the children of this resource have been computed before 
+		// See if the children of this resource have been computed before
 		ResourceInfo resourceInfo = parent.getResourceInfo(false, false);
 		int flags = parent.getFlags(resourceInfo);
 		boolean unknown = ResourceInfo.isSet(flags, ICoreConstants.M_CHILDREN_UNKNOWN);
 
-		// get the list of resources in the workspace 
+		// get the list of resources in the workspace
 		if (!unknown && (parentType == IResource.FOLDER || parentType == IResource.PROJECT) && parent.exists(flags, true)) {
 			IResource target = null;
 			UnifiedTreeNode child = null;
@@ -269,7 +271,7 @@ public class UnifiedTree {
 	}
 
 	/**
-	 * Creates a child node for a location in the file system. Does nothing and returns null if the location does not correspond to a valid file/folder. 
+	 * Creates a child node for a location in the file system. Does nothing and returns null if the location does not correspond to a valid file/folder.
 	 */
 	protected UnifiedTreeNode createChildNodeFromFileSystem(UnifiedTreeNode parent, IFileInfo info) {
 		IPath childPath = parent.getResource().getFullPath().append(info.getName());
@@ -377,7 +379,7 @@ public class UnifiedTree {
 
 	private static class PatternHolder {
 		//Initialize-on-demand Holder class to avoid compiling Pattern if never needed
-		//Pattern: A UNIX relative path that just points backward 
+		//Pattern: A UNIX relative path that just points backward
 		public static Pattern trivialSymlinkPattern = Pattern.compile("\\.[./]*"); //$NON-NLS-1$
 	}
 
