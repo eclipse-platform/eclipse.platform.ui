@@ -1226,4 +1226,30 @@ public class ControlDecoration {
 					.println("Removed listener>>>" + listenerType + " from>>>" + widget); //$NON-NLS-1$//$NON-NLS-2$
 		}
 	}
+	
+
+	/**
+	 * Return a boolean indicating whether the decoration is visible. This
+	 * method considers the visibility state of the decoration (
+	 * {@link #hide()} and {@link #show()}), the visibility state of the 
+	 * associated control ({@link Control#isVisible()}), and the focus state 
+	 * of the control if applicable ({@link #setShowOnlyOnFocus(boolean)}. 
+	 * When this method returns <code>true</code>, it means that the decoration 
+	 * should be visible. However, this method does not consider the case where 
+	 * the decoration should be visible, but is obscured by another window or
+	 * control, or positioned off the screen. In these cases, the decoration
+	 * will still be considered visible.
+	 * 
+	 * @return <code>true</code> if the decoration is visible, and
+	 *         <code>false</code> if it is not.
+	 * 
+	 * @see #setShowOnlyOnFocus(boolean)
+	 * @see #hide()
+	 * @see #show()
+     *
+	 * @since 3.6
+	 */
+	public boolean isVisible() {
+		return shouldShowDecoration();
+	}
 }

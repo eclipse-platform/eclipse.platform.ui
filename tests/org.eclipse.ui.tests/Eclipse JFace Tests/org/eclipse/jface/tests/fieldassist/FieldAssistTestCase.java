@@ -143,5 +143,38 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertOneShellUp();
 	}
 	
-	
+	public void testDecorationIsVisible() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.setPropagateKeys(false);
+		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
+		window.open();
+		assertOneShellUp();
+		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
+		decoration.setImage(FieldDecorationRegistry.getDefault()             
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
+		decoration.setDescriptionText("foo");   
+		spinEventLoop();
+		assertTrue("1.0", decoration.isVisible());
+		decoration.hide();
+		assertFalse("1.1", decoration.isVisible());
+		decoration.setShowOnlyOnFocus(true);
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
+		window.getFieldAssistControl().setFocus();
+		spinEventLoop();
+		assertFalse("1.2", decoration.isVisible());
+		decoration.show();
+		assertTrue("1.3", decoration.isVisible());
+		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
+		spinEventLoop();
+		assertFalse("1.4", decoration.isVisible());
+		decoration.setShowOnlyOnFocus(false);
+		assertTrue("1.5", decoration.isVisible());
+		window.getFieldAssistControl().setVisible(false);
+		assertFalse("1.6", decoration.isVisible());
+		decoration.hide();
+		window.getFieldAssistControl().setVisible(true);
+		assertFalse("1.7", decoration.isVisible());
+		decoration.show();
+		assertTrue("1.8", decoration.isVisible());
+	}
 }
