@@ -15,7 +15,7 @@ package org.eclipse.jface.tests.fieldassist;
  * @since 3.6
  *
  */
-public class TextFieldAssistTests extends AbstractFieldAssistTestCase {
+public class TextFieldAssistTests extends FieldAssistTestCase {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.tests.fieldassist.AbstractFieldAssistTestCase#createFieldAssistWindow()

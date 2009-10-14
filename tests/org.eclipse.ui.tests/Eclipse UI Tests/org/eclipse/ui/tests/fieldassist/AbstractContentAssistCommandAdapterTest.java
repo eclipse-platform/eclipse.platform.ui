@@ -60,8 +60,6 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 		assertTwoShellsUp();
 
 		sendKeyDownToControl('o');
-		setControlContent("o"); //$NON-NLS-1$
-
 		assertTwoShellsUp();
 	}
 
@@ -80,10 +78,8 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 		getFieldAssistWindow().open();
 
 		sendFocusInToControl();
-
 		sendKeyDownToControl('o');
-		setControlContent("o"); //$NON-NLS-1$
-
+		
 		assertOneShellUp();
 	}
 
@@ -110,13 +106,9 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 		assertTwoShellsUp();
 
 		sendKeyDownToControl('o');
-		setControlContent("o"); //$NON-NLS-1$
-
 		assertTwoShellsUp();
 
 		sendKeyDownToControl(SWT.BS);
-		setControlContent("");
-
 		assertTwoShellsUp();
 	}
 	
@@ -125,19 +117,15 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 		getFieldAssistWindow().open();
 
 		sendFocusInToControl();
-
-		sendKeyDownToControl('o');
-		setControlContent("o"); //$NON-NLS-1$
-
+		sendKeyDownToControl('z'); // must be something not in the proposals or it will autoactivate
+	
 		assertOneShellUp();
 		
 		executeContentAssistHandler();
-
 		assertTwoShellsUp();
 
 		sendKeyDownToControl(SWT.BS);
-		setControlContent("");
-
+		// because it was explicitly activated
 		assertTwoShellsUp();
 	}
 }

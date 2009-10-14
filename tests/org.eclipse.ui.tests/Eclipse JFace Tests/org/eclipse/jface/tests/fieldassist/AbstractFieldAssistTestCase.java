@@ -17,12 +17,9 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.PlatformUI;
 
 public abstract class AbstractFieldAssistTestCase extends TestCase {
-	static final char ACTIVATE_CHAR = 'i';
-	static final String SAMPLE_CONTENT = "s";
-	
+
 	/**
 	 * The window that is being tested.
 	 */
@@ -106,9 +103,8 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 * Sends an SWT FocisIn event to the field assist control.
 	 */
 	protected void sendFocusInToControl() {
-		Event event = new Event();
-		event.type = SWT.FocusIn;
-		window.getFieldAssistControl().notifyListeners(SWT.FocusIn, event);
+		window.getFieldAssistControl().setFocus();
+		spinEventLoop();
 	}
 
 	/**
@@ -123,7 +119,8 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.character = character;
-		window.getFieldAssistControl().notifyListeners(SWT.KeyDown, event);
+		window.getDisplay().post(event);
+		spinEventLoop();
 	}
 	
 	/**
@@ -137,7 +134,8 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.keyCode = keystroke.getNaturalKey();
-		window.getFieldAssistControl().notifyListeners(SWT.KeyDown, event);
+		window.getDisplay().post(event);
+		spinEventLoop();
 	}
 
 	/**
@@ -168,67 +166,4 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 
 	}
 
-	public void testAutoactivateNoDelay() {
-		AbstractFieldAssistWindow window = getFieldAssistWindow();
-		window.setPropagateKeys(false);
-		window.setAutoActivationDelay(0);
-		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
-		window.open();
-		sendKeyDownToControl(ACTIVATE_CHAR);
-		ensurePopupIsUp();
-		assertTwoShellsUp();
-	}	
-	
-	public void testAutoactivateWithDelay() {
-		AbstractFieldAssistWindow window = getFieldAssistWindow();
-		window.setPropagateKeys(false);
-		window.setAutoActivationDelay(600);
-		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
-		window.open();
-		sendKeyDownToControl(ACTIVATE_CHAR);
-		ensurePopupIsUp();
-		assertTwoShellsUp();
-	}	
-	
-	public void testExplicitActivate() {
-		AbstractFieldAssistWindow window = getFieldAssistWindow();
-		window.setPropagateKeys(false);
-		KeyStroke stroke = KeyStroke.getInstance(SWT.F4);
-		window.setKeyStroke(stroke);
-		window.open();
-		sendKeyDownToControl(stroke);
-		assertTwoShellsUp();
-	}
-	
-	public void testPopupDeactivates() {
-		AbstractFieldAssistWindow window = getFieldAssistWindow();
-		window.setPropagateKeys(false);
-		window.setAutoActivationDelay(0);
-		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
-		window.open();
-		sendKeyDownToControl(ACTIVATE_CHAR);
-		ensurePopupIsUp();
-		assertTwoShellsUp();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
-		spinEventLoop();
-		assertOneShellUp();
-	}	
-	
-	/*
-	 * This test doesn't prove much.  The propagate keys behavior relies on doit flags set in the event to
-	 * cause or prevent propagation.  However we are faking the keydown event so the control won't be involved
-	 * at all since the event was not native.
-	 */
-	public void testPropagateKeysOff() {
-		AbstractFieldAssistWindow window = getFieldAssistWindow();
-		window.setPropagateKeys(false);
-		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
-		window.open();
-		setControlContent(SAMPLE_CONTENT);
-		sendKeyDownToControl(ACTIVATE_CHAR);
-		ensurePopupIsUp();
-		assertTwoShellsUp();
-		sendKeyDownToControl('B');
-		assertEquals("1.0", SAMPLE_CONTENT, getControlContent());
-	}	
 }

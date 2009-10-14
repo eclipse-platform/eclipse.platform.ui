@@ -12,10 +12,10 @@
 package org.eclipse.jface.tests.fieldassist;
 
 /**
- * @since 3.5
+ * @since 3.6
  *
  */
-public class ComboFieldAssistTests extends AbstractFieldAssistTestCase {
+public class ComboFieldAssistTests extends FieldAssistTestCase {
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.tests.fieldassist.AbstractFieldAssistTestCase#createFieldAssistWindow()
