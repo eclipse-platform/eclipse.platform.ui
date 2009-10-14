@@ -54,7 +54,25 @@ public class LoadTocUsingRemoteHelp extends TestCase {
 		assertEquals(1, deTocs);
 	    RemotePreferenceStore.disableRemoteHelp();
 	}
+	
+	/*
+	 * Fails, see  Bug 292176
+	public void testTocContributionFromTwoServers() throws Exception {
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		RemotePreferenceStore.setTwoMockRemoteServers();
+		HelpPlugin.getTocManager().clearCache();
+		Toc[] tocs = HelpPlugin.getTocManager().getTocs("en");
+		int enTocs = matchingTocs(tocs, "Mock Toc en");
+		assertEquals(1, enTocs);
+		int deTocs = matchingTocs(tocs, "Mock Toc de");
+		assertEquals(0, deTocs);
+	    RemotePreferenceStore.disableRemoteHelp();
+	}
+	*/
 
+	/*
+	 * Return the number of tocs with this label
+	 */
 	private int matchingTocs(Toc[] tocs, String label) {
 		int result = 0;
 		for (int i = 0; i < tocs.length; i++) {

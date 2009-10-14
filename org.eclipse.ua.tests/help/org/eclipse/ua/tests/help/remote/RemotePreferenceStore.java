@@ -62,7 +62,7 @@ public class RemotePreferenceStore {
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, helpOn);		
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, icEnabledPreference);
 	}
-	
+
 	public static void setMockRemoteServer() throws Exception {
         TestServerManager.start("ua.test", 0);
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
@@ -74,6 +74,20 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference("remoteHelpICEnabled", "true");
 		RemotePreferenceTest.setPreference("remoteHelpICContributed", "false");
 	}	
+	
+	public static void setTwoMockRemoteServers() throws Exception {
+        TestServerManager.start("ua.test", 0);
+        TestServerManager.start("ua.test2", 1);
+		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
+		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost,localhost");
+		RemotePreferenceTest.setPreference("remoteHelpPath", "/help,/help");
+		RemotePreferenceTest.setPreference("remoteHelpUseDefaultPort", ",");
+		RemotePreferenceTest.setPreference("remoteHelpPort", "" 
+				+ TestServerManager.getPort(0) + ',' + TestServerManager.getPort(1));
+		RemotePreferenceTest.setPreference("remoteHelpName", "uatest,uatest2");
+		RemotePreferenceTest.setPreference("remoteHelpICEnabled", "true,true");
+		RemotePreferenceTest.setPreference("remoteHelpICContributed", "false,false");
+	}
 	
 	public static void disableRemoteHelp() throws Exception {
 		RemotePreferenceTest.setPreference("remoteHelpOn", "false");
