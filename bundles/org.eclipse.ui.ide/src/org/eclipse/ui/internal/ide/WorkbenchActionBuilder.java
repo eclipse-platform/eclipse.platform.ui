@@ -203,7 +203,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
     // contribution items
     // @issue should obtain from ContributionItemFactory
     private NewWizardMenu newWizardMenu;
-
+    
     // @issue class is workbench internal
     private StatusLineContributionItem statusLineItem;
 

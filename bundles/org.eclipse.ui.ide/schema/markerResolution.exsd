@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui.ide" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui.ide" id="markerResolution" name="Marker Resolutions"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point is used to associate a marker resolution generator with a specific &quot;kind&quot; of marker.
 (a marker of a certain type or having certain attribute values).
@@ -12,6 +12,11 @@
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="markerResolutionGenerator" minOccurs="0" maxOccurs="unbounded"/>
@@ -50,9 +55,9 @@
                <documentation>
                   the name of the class implementing &lt;code&gt;IMarkerResolutionGenerator&lt;/code&gt;. For better performance it should also implement &lt;code&gt;IMarkerResolutionGenerator2&lt;/code&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.ui.IMarkerResolutionGenerator"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="markerType" type="string">
@@ -60,9 +65,9 @@
                <documentation>
                   the marker type for which this marker resolution generator applies. It does not apply to marker subtypes.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.core.resources.markers/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -70,9 +75,9 @@
 
    <element name="attribute">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <attribute name="name" type="string" use="required">
@@ -93,18 +98,18 @@
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="since"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          3.0 (originally added in release 2.0 as org.eclipse.ui.markerResolution)
       </documentation>
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of a marker resolution generator extension (note the sub-element and the way attributes are used):
 
@@ -126,22 +131,22 @@ whose org.eclipse.ui.examples.redmetool.id attribute has a value of 1234.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         More than one marker resolution generator may be supplied for a given marker.
+         More than one marker resolution generator may be supplied for a given marker as long as the target attributes are different by name or value.
+
       </documentation>
    </annotation>
 
 
-
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
-         Copyright (c) 2002, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2002, 2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
 available under the terms of the Eclipse Public License v1.0 which accompanies
 this distribution, and is available at &lt;a 
