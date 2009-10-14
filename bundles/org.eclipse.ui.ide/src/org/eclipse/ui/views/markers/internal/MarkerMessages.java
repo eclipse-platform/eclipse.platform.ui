@@ -199,6 +199,7 @@ public class MarkerMessages extends NLS {
 	public static String MarkerFilter_addFilterName;
 	public static String MarkerFilter_cloneFilterName;
 	public static String MarkerFilter_deleteSelectedName;
+	public static String MarkerFilter_renameName;
 	public static String MarkerFilter_showAllCommand_title;
 	public static String MarkerFilter_ConfigureContentsCommand_title;
 
@@ -217,6 +218,7 @@ public class MarkerMessages extends NLS {
 	public static String MarkerPreferences_ColumnGroupTitle;
 	public static String MarkerPreferences_VisibleColumnsTitle;
 	public static String MarkerPreferences_HiddenColumnsTitle;
+	public static String MarkerPreferences_AtLeastOneVisibleColumn;
 
 	public static String ProblemFilterDialog_System_Filters_Title;
 	public static String ProblemFilterDialog_All_Problems;
@@ -282,6 +284,7 @@ public class MarkerMessages extends NLS {
 
 	public static String PasteHandler_title;
 
+	public static String AND_OR_Label;
 	public static String AND_Title;
 	public static String OR_Title;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide;
@@ -42,6 +43,11 @@ public interface IDEInternalPreferences {
      * (String) Whether to open required projects when opening a project.
      */ 
     public static final String OPEN_REQUIRED_PROJECTS = "OPEN_REQUIRED_PROJECTS"; //$NON-NLS-1$
+    
+    /**
+     * (String) Whether to confirm closing unrelated projects.
+     */ 
+    public static final String CLOSE_UNRELATED_PROJECTS = "CLOSE_UNRELATED_PROJECTS"; //$NON-NLS-1$
 
     public static final String PSPM_PROMPT = MessageDialogWithToggle.PROMPT;
 

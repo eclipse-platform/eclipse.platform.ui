@@ -146,6 +146,18 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		 *            set filter should be used
 		 */
 		void setSelection(boolean selected) {
+			if (selected || (button.getSelection() && !selected)) {
+				for (int i = 0; i < buttons.length; i++) {
+					buttons[i].setSelection(false);
+				}
+				if (selected) {
+					setScope(MarkerFieldFilterGroup.ON_WORKING_SET);
+				}
+			}
+			if ((button.getSelection() && !selected)) {
+				buttons[MarkerFieldFilterGroup.ON_ANY].setSelection(true);
+				setScope(MarkerFieldFilterGroup.ON_ANY);
+			}
 			button.setSelection(selected);
 		}
 
@@ -247,6 +259,13 @@ class ScopeArea extends GroupFilterConfigurationArea {
 		return button;
 	}
 
+	/**
+	 * Set the scope
+	 * @param value
+	 */
+	private void setScope(int value){
+		scope = value;
+	}
 	/*
 	 * (non-Javadoc)
 	 * 

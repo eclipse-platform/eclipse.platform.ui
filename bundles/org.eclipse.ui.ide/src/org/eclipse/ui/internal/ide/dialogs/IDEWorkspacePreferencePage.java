@@ -1,5 +1,5 @@
  /****************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -64,6 +65,8 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 
     private Button autoRefreshButton;
     
+    private Button closeUnrelatedProjectButton;
+    
     private ResourceEncodingFieldEditor encodingEditor;
 
 	private LineDelimiterEditor lineSeparatorEditor;
@@ -98,6 +101,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage
         createAutoBuildPref(composite);
         createAutoRefreshControls(composite);
         createSaveAllBeforeBuildPref(composite);
+        createCloseUnrelatedProjPrefControls(composite);
         
         createSpace(composite);
         createSaveIntervalGroup(composite);
@@ -138,6 +142,16 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 		openReferencesEditor.setPreferenceStore(getIDEPreferenceStore());
 		openReferencesEditor.setPage(this);
 		openReferencesEditor.load();
+	}
+	/**
+     * Creates controls for the preference to close unrelated projects.
+	 * @param parent The parent control
+	 */
+	private void createCloseUnrelatedProjPrefControls(Composite parent) {
+		closeUnrelatedProjectButton = new Button(parent, SWT.CHECK);
+		closeUnrelatedProjectButton.setText(IDEWorkbenchMessages.CloseUnrelatedProjectsAction_AlwaysCloseWithoutPrompt);
+		closeUnrelatedProjectButton.setToolTipText(IDEWorkbenchMessages.IDEWorkspacePreference_closeUnrelatedProjectsToolTip);
+		closeUnrelatedProjectButton.setSelection(getIDEPreferenceStore().getBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS));
 	}
 
 	protected void createSaveAllBeforeBuildPref(Composite composite) {
@@ -331,6 +345,9 @@ public class IDEWorkspacePreferencePage extends PreferencePage
                 .setSelection(store
                         .getDefaultBoolean(IDEInternalPreferences.SAVE_ALL_BEFORE_BUILD));
         saveInterval.loadDefault();
+        
+        boolean closeUnrelatedProj = store.getDefaultBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS);
+        closeUnrelatedProjectButton.setSelection(closeUnrelatedProj);
 
 		
         boolean autoRefresh = ResourcesPlugin.getPlugin()
@@ -401,6 +418,10 @@ public class IDEWorkspacePreferencePage extends PreferencePage
 
         boolean autoRefresh = autoRefreshButton.getSelection();
         preferences.setValue(ResourcesPlugin.PREF_AUTO_REFRESH, autoRefresh);
+        
+        boolean closeUnrelatedProj = closeUnrelatedProjectButton.getSelection();
+        getIDEPreferenceStore().setValue(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, closeUnrelatedProj);
+        
         
         if (clearUserSettings) {
 			IDEEncoding.clearUserEncodings();

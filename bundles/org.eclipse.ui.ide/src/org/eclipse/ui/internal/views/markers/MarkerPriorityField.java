@@ -142,7 +142,7 @@ public class MarkerPriorityField extends MarkerField {
 	 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnTooltipText()
 	 */
 	public String getColumnTooltipText() {
-		return MarkerMessages.priority_description;
+		return getName();
 	}
 
 	/*

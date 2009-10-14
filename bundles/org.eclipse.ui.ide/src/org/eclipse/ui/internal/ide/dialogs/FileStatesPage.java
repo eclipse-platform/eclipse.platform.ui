@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Event;
@@ -51,6 +52,8 @@ public class FileStatesPage extends PreferencePage implements
     private Text maxStatesText;
 
     private Text maxStateSizeText;
+
+    private Button applyPolicyButton;
 
     //Choose a maximum to prevent OutOfMemoryErrors
     private int FILE_STATES_MAXIMUM = 10000;
@@ -82,17 +85,32 @@ public class FileStatesPage extends PreferencePage implements
         return text;
     }
 
+    private Button addCheckBox(String label, boolean selected, Composite parent) {
+    	Button button = new Button(parent, SWT.CHECK | SWT.LEFT);
+        button.addListener(SWT.Selection, this);
+        GridData data = new GridData();
+        data.horizontalSpan = 2;
+        button.setLayoutData(data);
+        button.setText(label);
+        button.setSelection(selected);
+        return button;
+    }
+
     /**
      * Recomputes the page's error state by validating all
      * the fields.
      */
     private void checkState() {
         // Assume invalid if the controls not created yet
-        if (longevityText == null || maxStatesText == null
-                || maxStateSizeText == null) {
+        if (longevityText == null || maxStatesText == null || maxStateSizeText == null
+        		|| applyPolicyButton == null) {
             setValid(false);
             return;
         }
+
+        longevityText.setEnabled(applyPolicyButton.getSelection());
+        maxStatesText.setEnabled(applyPolicyButton.getSelection());
+        maxStateSizeText.setEnabled(applyPolicyButton.getSelection());
 
         if (validateLongTextEntry(longevityText) == FAILED_VALUE) {
             setValid(false);
@@ -142,6 +160,8 @@ public class FileStatesPage extends PreferencePage implements
 			megabytes = 1;
 		}
 
+		this.applyPolicyButton = addCheckBox(IDEWorkbenchMessages.FileHistory_applyPolicy, description
+						.isApplyFileStatePolicy(), composite);
         this.longevityText = addLabelAndText(IDEWorkbenchMessages.FileHistory_longevity, String
                 .valueOf(days), composite);
         this.maxStatesText = addLabelAndText(IDEWorkbenchMessages.FileHistory_entries, String
@@ -213,10 +233,12 @@ public class FileStatesPage extends PreferencePage implements
                 .getDefaultLong(ResourcesPlugin.PREF_MAX_FILE_STATE_SIZE)
                 / MEGABYTES;
         this.longevityText.setText(String.valueOf(days));
-        this.maxStatesText.setText(prefs
-                .getDefaultString(ResourcesPlugin.PREF_MAX_FILE_STATES));
-        this.maxStateSizeText.setText(String.valueOf(megabytes));
-        checkState();
+		this.maxStatesText.setText(prefs
+				.getDefaultString(ResourcesPlugin.PREF_MAX_FILE_STATES));
+		this.maxStateSizeText.setText(String.valueOf(megabytes));
+		this.applyPolicyButton.setSelection(prefs
+				.getDefaultBoolean(ResourcesPlugin.PREF_APPLY_FILE_STATE_POLICY));
+		checkState();
     }
 
     /** 
@@ -227,6 +249,7 @@ public class FileStatesPage extends PreferencePage implements
         long longevityValue = validateLongTextEntry(longevityText);
         int maxFileStates = validateMaxFileStates();
         long maxStateSize = validateMaxFileStateSize();
+        boolean applyPolicy = applyPolicyButton.getSelection();
         if (longevityValue == FAILED_VALUE || maxFileStates == FAILED_VALUE
                 || maxStateSize == FAILED_VALUE) {
 			return false;
@@ -236,6 +259,7 @@ public class FileStatesPage extends PreferencePage implements
         description.setFileStateLongevity(longevityValue * DAY_LENGTH);
         description.setMaxFileStates(maxFileStates);
         description.setMaxFileStateSize(maxStateSize * MEGABYTES);
+        description.setApplyFileStatePolicy(applyPolicy);
 
         try {
             //As it is only a copy save it back in

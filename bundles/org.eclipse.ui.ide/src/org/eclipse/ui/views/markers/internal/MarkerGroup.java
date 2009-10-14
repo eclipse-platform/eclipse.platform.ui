@@ -324,9 +324,9 @@ public class MarkerGroup {
 		/*
 		 * (non-Javadoc)
 		 * 
-		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getColumnHeaderText()
+		 * @see org.eclipse.ui.internal.provisional.views.markers.api.MarkerField#getName()
 		 */
-		public String getColumnHeaderText() {
+		public String getName() {
 			return MarkerGroup.this.getTitle();
 		}
 

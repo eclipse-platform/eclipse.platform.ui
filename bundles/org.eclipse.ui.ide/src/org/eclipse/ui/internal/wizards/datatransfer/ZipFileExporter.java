@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,7 +17,9 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 
 
@@ -84,6 +86,11 @@ public class ZipFileExporter implements IFileExporter {
             entry.setCrc(checksumCalculator.getValue());
         }
 
+        // set the timestamp
+        long localTimeStamp = contents.getLocalTimeStamp();
+        if(localTimeStamp != IResource.NULL_STAMP)
+        	entry.setTime(localTimeStamp);
+        
         outputStream.putNextEntry(entry);
     	InputStream contentStream = contents.getContents(false);
         try {
@@ -97,6 +104,12 @@ public class ZipFileExporter implements IFileExporter {
 			}
         }
         outputStream.closeEntry();
+    }
+
+    public void write(IContainer container, String destinationPath)
+            throws IOException {
+        ZipEntry newEntry = new ZipEntry(destinationPath);
+        outputStream.putNextEntry(newEntry);
     }
 
     /**

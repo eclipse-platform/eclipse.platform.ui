@@ -39,16 +39,17 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.EditingSupport;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.ITreeViewerListener;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -614,19 +615,12 @@ public class ExtendedMarkersView extends ViewPart {
 
 		});
 
-		viewer.getTree().addSelectionListener(new SelectionAdapter() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
-			 * .swt.events.SelectionEvent)
-			 */
-			public void widgetSelected(SelectionEvent e) {
-				ISelection selection = viewer.getSelection();
-				if (selection instanceof IStructuredSelection)
-					updateStatusLine((IStructuredSelection) viewer
-							.getSelection());
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection = event.getSelection();
+				if (selection instanceof IStructuredSelection){
+					updateStatusLine((IStructuredSelection)selection);
+				}
 			}
 		});
 
@@ -1542,8 +1536,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void openFiltersDialog() {
 		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
-				new SameShellProvider(getSite().getWorkbenchWindow().getShell()),
-				builder);
+				getSite().getWorkbenchWindow().getShell(), builder);
 		if (dialog.open() == Window.OK) {
 			builder.updateFrom(dialog);
 		}
@@ -1721,7 +1714,7 @@ public class ExtendedMarkersView extends ViewPart {
 		StatusManager.getManager().handle(
 				StatusUtil.newStatus(IStatus.WARNING,
 						"Sorting by non visible field " //$NON-NLS-1$
-								+ field.getColumnHeaderText(), null));
+								+ field.getName(), null));
 	}
 
 	/**

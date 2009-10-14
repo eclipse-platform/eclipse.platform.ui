@@ -20,8 +20,8 @@ import java.util.TreeSet;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfile;
 import org.eclipse.equinox.internal.provisional.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.internal.provisional.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
-import org.eclipse.equinox.internal.provisional.p2.query.Collector;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
@@ -56,6 +56,8 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			if (registry == null)
 				return;
 			IProfile profile = registry.getProfile(IProfileRegistry.SELF);
+			if (profile == null)
+				return;
 
 			writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_installConfiguration);
 			writer.println(" " + NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_lastChangedOn, DateFormat.getDateInstance().format(new Date(profile.getTimestamp())))); //$NON-NLS-1$

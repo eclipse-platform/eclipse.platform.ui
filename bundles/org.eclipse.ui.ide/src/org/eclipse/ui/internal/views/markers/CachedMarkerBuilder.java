@@ -21,6 +21,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.core.resources.IMarker;
@@ -352,26 +353,33 @@ public class CachedMarkerBuilder {
 	 */
 	Collection getAllFilters() {
 		if (filters == null) {
-			filters = new ArrayList();
-			IConfigurationElement[] filterReferences = generator
-					.getFilterReferences();
-			for (int i = 0; i < filterReferences.length; i++) {
-				filters.add(new MarkerFieldFilterGroup(filterReferences[i],
-						this));
-			}
-
-			// Honour the deprecated problemFilters
-			if (viewId.equals(IPageLayout.ID_PROBLEM_VIEW)) {
-				Iterator problemFilters = MarkerSupportRegistry.getInstance()
-						.getRegisteredFilters().iterator();
-				while (problemFilters.hasNext())
-					filters.add(new CompatibilityMarkerFieldFilterGroup(
-							(ProblemFilter) problemFilters.next(), this));
-			}
-
+			filters = getDeclaredFilters();
 			// Apply the last settings
 			loadFiltersPreference();
 
+		}
+		return filters;
+	}
+
+	/**
+	 * @return Collection of declared MarkerFieldFilterGroup(s)
+	 */
+	Collection getDeclaredFilters() {
+		List filters = new ArrayList();
+		IConfigurationElement[] filterReferences = generator
+				.getFilterReferences();
+		for (int i = 0; i < filterReferences.length; i++) {
+			filters.add(new MarkerFieldFilterGroup(filterReferences[i],
+					this));
+		}
+
+		// Honour the deprecated problemFilters
+		if (viewId.equals(IPageLayout.ID_PROBLEM_VIEW)) {
+			Iterator problemFilters = MarkerSupportRegistry.getInstance()
+					.getRegisteredFilters().iterator();
+			while (problemFilters.hasNext())
+				filters.add(new CompatibilityMarkerFieldFilterGroup(
+						(ProblemFilter) problemFilters.next(), this));
 		}
 		return filters;
 	}

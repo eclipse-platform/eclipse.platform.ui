@@ -17,12 +17,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
@@ -31,7 +33,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -45,12 +46,14 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.forms.events.ExpansionEvent;
 import org.eclipse.ui.forms.events.IExpansionListener;
 import org.eclipse.ui.forms.widgets.ExpandableComposite;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.ScrolledForm;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.preferences.ViewSettingsDialog;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
@@ -60,7 +63,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * @since 3.3
  * 
  */
-public class FiltersConfigurationDialog extends Dialog {
+public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private static final String SELECTED_FILTER_GROUP = "SELECTED_FILTER_GROUP"; //$NON-NLS-1$
 
@@ -82,7 +85,15 @@ public class FiltersConfigurationDialog extends Dialog {
 
 	private Button removeButton;
 
+	private Button renameButton;
+	
 	private Button cloneButton;
+
+	private Button andButton;
+
+	private Button orButton;
+
+	private Label andOrLabel;
 
 	/**
 	 * Create a new instance of the receiver on builder.
@@ -91,7 +102,7 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param builder
 	 *            The {@link CachedMarkerBuilder} to apply this to
 	 */
-	public FiltersConfigurationDialog(IShellProvider parentShell,
+	public FiltersConfigurationDialog(Shell parentShell,
 			CachedMarkerBuilder builder) {
 		super(parentShell);
 		filterGroups = makeWorkingCopy(builder.getAllFilters());
@@ -132,12 +143,15 @@ public class FiltersConfigurationDialog extends Dialog {
 		initializeDialogUnits(top);
 
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.makeColumnsEqualWidth = false;
 		top.setLayout(layout);
 
 		createFilterSelectionArea(top);
-
+		
+		Label seprator=new Label(top, SWT.SEPARATOR|SWT.VERTICAL);
+		seprator.setLayoutData(new GridData(SWT.NONE, SWT.FILL, false, true));
+		
 		final FormToolkit toolkit = new FormToolkit(top.getDisplay());
 		parent.addDisposeListener(new DisposeListener() {
 
@@ -242,6 +256,7 @@ public class FiltersConfigurationDialog extends Dialog {
 
 		filtersList = CheckboxTableViewer.newCheckList(filtersComposite,
 				SWT.BORDER);
+		
 		filtersList.setContentProvider(new IStructuredContentProvider() {
 			/*
 			 * (non-Javadoc)
@@ -299,7 +314,6 @@ public class FiltersConfigurationDialog extends Dialog {
 					public void selectionChanged(SelectionChangedEvent event) {
 						setSelectedFilter((MarkerFieldFilterGroup) ((IStructuredSelection) event
 								.getSelection()).getFirstElement());
-
 					}
 				});
 
@@ -350,11 +364,29 @@ public class FiltersConfigurationDialog extends Dialog {
 			}
 		});
 		setButtonLayoutData(removeButton);
-
-		Button andButton = new Button(filtersComposite, SWT.RADIO);
+		
+		renameButton = new Button(buttons, SWT.PUSH);
+		renameButton.setText(MarkerMessages.MarkerFilter_renameName);
+		renameButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				MarkerFieldFilterGroup filterGroup = (MarkerFieldFilterGroup) ((IStructuredSelection) filtersList
+						.getSelection()).getFirstElement();
+				renameFilter(filterGroup);
+			}
+		});
+		setButtonLayoutData(renameButton);
+		
+		andOrLabel = new Label(filtersComposite, SWT.NONE);
+		GridData labelData = new GridData();
+		labelData.horizontalSpan = 2;
+		andOrLabel.setLayoutData(labelData);
+		andOrLabel.setText(MarkerMessages.AND_OR_Label);
+		
+		andButton = new Button(filtersComposite, SWT.RADIO);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true,
 				false);
 		data.horizontalSpan = 2;
+		data.horizontalIndent = IDialogConstants.INDENT;
 		andButton.setLayoutData(data);
 		andButton.setText(MarkerMessages.AND_Title);
 		andButton.setSelection(andFilters);
@@ -370,9 +402,10 @@ public class FiltersConfigurationDialog extends Dialog {
 			}
 		});
 
-		Button orButton = new Button(filtersComposite, SWT.RADIO);
+		orButton = new Button(filtersComposite, SWT.RADIO);
 		data = new GridData(GridData.FILL_HORIZONTAL, SWT.NONE, true, false);
 		data.horizontalSpan = 2;
+		data.horizontalIndent = IDialogConstants.INDENT;
 		orButton.setLayoutData(data);
 		orButton.setText(MarkerMessages.OR_Title);
 		orButton.setSelection(!andFilters);
@@ -387,6 +420,11 @@ public class FiltersConfigurationDialog extends Dialog {
 				andFilters = false;
 			}
 		});
+		filtersList.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				updateAndOrEnblement();				
+			}
+		});
 	}
 
 	/**
@@ -396,34 +434,62 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * 				
 	 */
 	private void addNewFilter(boolean cloneSelected) {
+		String newName =getNewFilterName(getCurrentFilterNames(),null);
+		if (newName != null) {
+			createNewFilter(newName,cloneSelected);
+		}
+	}
+	/**
+	 * Opens Input Dialog for a new filter name
+	 * @param avoidNames filter names to avoid
+	 * @param initialName initial name of the filter
+	 * @return new filter name or null if canceled
+	 * 				
+	 */
+	private String getNewFilterName(final Collection avoidNames,String initialName){
 		InputDialog newDialog = new InputDialog(getShell(),
 				MarkerMessages.MarkerFilterDialog_title,
 				MarkerMessages.MarkerFilterDialog_message,
-				MarkerMessages.MarkerFilter_newFilterName,
-				new IInputValidator() {
-					public String isValid(String newText) {
-						if (newText.length() == 0)
-							return MarkerMessages.MarkerFilterDialog_emptyMessage;
-						Iterator filterIterator = filterGroups
-								.iterator();
-						while (filterIterator.hasNext()) {
-							if (((MarkerFieldFilterGroup) filterIterator
-									.next()).getName().equals(newText))
-								return NLS
-										.bind(
-												MarkerMessages.filtersDialog_conflictingName,
-												newText);
-						}
-
-						return null;
-					}
-				});
+				initialName != null ? initialName
+						: MarkerMessages.MarkerFilter_newFilterName,
+				getNameValidator(avoidNames));
 		if (Window.OK == newDialog.open()) {
-			String newName = newDialog.getValue();
-			if (newName != null) {
-				createNewFilter(newName,cloneSelected);
-			}
+			return newDialog.getValue();
 		}
+		return null;
+	}
+
+	/**
+	 * Get IInputValidator for checking if the new name is valid
+	 * @param avoidNames
+	 * @return IInputValidator
+	 */
+	private IInputValidator getNameValidator(final Collection avoidNames) {
+		return new IInputValidator() {
+			public String isValid(String value) {
+				String newText=value.trim();
+				if (newText.length() == 0)
+					return MarkerMessages.MarkerFilterDialog_emptyMessage;
+				if (avoidNames.contains(newText))
+					return NLS.bind(
+							MarkerMessages.filtersDialog_conflictingName,
+							newText);
+				return null;
+			}
+		};
+	}
+	
+	/**
+	 * Get a collection of names of the filters currently in the list
+	 * @return Collection
+	 */
+	private Collection getCurrentFilterNames() {
+		Collection names = new ArrayList();
+		Iterator filterIterator = filterGroups.iterator();
+		while (filterIterator.hasNext()) {
+			names.add(((MarkerFieldFilterGroup) filterIterator.next()).getName());
+		}
+		return names;
 	}
 	/**
 	 * Create a new filterGroup, and adds it to the filterGroups 
@@ -440,8 +506,40 @@ public class FiltersConfigurationDialog extends Dialog {
 		filtersList.refresh();
 		filtersList.setSelection(new StructuredSelection(group));
 		filtersList.setChecked(group, true);
+		updateAndOrEnblement();
 	}
 
+	/**
+	 * Renames the supplied MarkerFieldFilterGroup
+	 * @param filterGroup
+	 */
+	private void renameFilter(MarkerFieldFilterGroup filterGroup) {
+		if (filterGroup != null) {
+			Collection names = getCurrentFilterNames();
+			String initial = null;
+			initial = filterGroup.getName();
+			names.remove(initial);
+			String newName=getNewFilterName(names, initial);
+			if(newName!=null){
+				filterGroup.setName(newName);
+				filtersList.update(filterGroup, null);
+			}
+		}
+	}
+	/**
+	 * Enable/disable 'and', 'or' buttons
+	 */
+	private void updateAndOrEnblement() {
+		if(filtersList.getCheckedElements().length==0){
+			andOrLabel.setEnabled(false);
+			andButton.setEnabled(false);
+			orButton.setEnabled(false);
+		}else{
+			andOrLabel.setEnabled(true);
+			andButton.setEnabled(true);
+			orButton.setEnabled(true);
+		}
+	}
 	/**
 	 * Return the dialog settings for the receiver.
 	 * 
@@ -566,6 +664,22 @@ public class FiltersConfigurationDialog extends Dialog {
 			}
 		}
 	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.preferences.ViewSettingsDialog#performDefaults()
+	 */
+	protected void performDefaults() {
+		filterGroups.clear();
+		filterGroups.addAll(builder.getDeclaredFilters());
+		filtersList.refresh();
+		filtersList.setSelection(new StructuredSelection(
+				filterGroups.size() > 1 ? filterGroups.iterator().next()
+						: new Object[0]));
+		andFilters=false;
+		andButton.setSelection(andFilters);
+		orButton.setSelection(!andFilters);
+	}
 
 	/**
 	 * Return whether or not deselected elements should have been selected.
@@ -591,6 +705,7 @@ public class FiltersConfigurationDialog extends Dialog {
 		filterGroups.remove(((IStructuredSelection) selection)
 				.getFirstElement());
 		filtersList.refresh();
+		updateAndOrEnblement();
 	}
 
 	/**
@@ -633,8 +748,13 @@ public class FiltersConfigurationDialog extends Dialog {
 	 * @param markerFieldFilterGroup
 	 */
 	private void setSelectedFilter(MarkerFieldFilterGroup markerFieldFilterGroup) {
-
+		if(selectedFilterGroup==markerFieldFilterGroup){
+			return;
+		}
 		removeButton
+				.setEnabled(!(markerFieldFilterGroup == null || markerFieldFilterGroup
+						.isSystem()));
+		renameButton
 				.setEnabled(!(markerFieldFilterGroup == null || markerFieldFilterGroup
 						.isSystem()));
 		cloneButton.setEnabled(markerFieldFilterGroup != null);

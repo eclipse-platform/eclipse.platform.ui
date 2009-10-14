@@ -3,7 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide; singleton:=true
 Bundle-Version: 3.6.0.qualifier
-Bundle-ClassPath: .
+Bundle-ClassPath: e4-ide.jar,
+ .
 Bundle-Activator: org.eclipse.ui.internal.ide.IDEWorkbenchPlugin
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Plugin.providerName

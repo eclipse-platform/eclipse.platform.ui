@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -56,6 +57,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 				IDEInternalPreferences.PSPM_PROMPT);
 		node.put(IDEInternalPreferences.OPEN_REQUIRED_PROJECTS,
 				IDEInternalPreferences.PSPM_PROMPT);
+		node.putBoolean(IDEInternalPreferences.CLOSE_UNRELATED_PROJECTS, false);
 
 		// Turning some Help Menu separators on
 		node.putBoolean(getHelpSeparatorKey("group.main"), true); //$NON-NLS-1$

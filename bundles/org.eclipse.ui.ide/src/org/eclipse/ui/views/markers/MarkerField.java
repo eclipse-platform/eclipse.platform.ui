@@ -81,7 +81,7 @@ public abstract class MarkerField {
 			
 					}else{
 						descriptors[IDecoration.BOTTOM_RIGHT] =
-							getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);;
+							getIDEImageDescriptor(MarkerSupportInternalUtilities.IMG_MARKERS_QUICK_FIX_DECORATION_PATH);
 					}
 				}
 
@@ -153,6 +153,16 @@ public abstract class MarkerField {
 	 * @see #getColumnTooltipText() this is the default column tooltip text
 	 */
 	public String getColumnHeaderText() {
+		return getName();
+	}
+	
+	/**
+	 * Return the name of this field.
+	 * 
+	 * @return String
+	 * @since 3.6
+	 */
+	public String getName() {
 		return configurationElement
 				.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_NAME);
 	}
