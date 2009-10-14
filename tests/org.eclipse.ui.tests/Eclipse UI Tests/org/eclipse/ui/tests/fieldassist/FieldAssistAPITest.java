@@ -26,6 +26,8 @@ package org.eclipse.ui.tests.fieldassist;
 import junit.framework.TestCase;
 
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.SimpleContentProposal;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 
@@ -100,5 +102,23 @@ public class FieldAssistAPITest extends TestCase {
 				.getMaximumDecorationHeight() == originalMaxHeight);
 		assertTrue(FieldDecorationRegistry.getDefault()
 				.getMaximumDecorationWidth() == originalMaxWidth);
+	}
+	
+	public void testSimpleContentProposal() {
+		String content = "Name";
+		String label = "LabelForName";
+		String description = "Description";
+		IContentProposal proposal = new SimpleContentProposal(content);
+		assertEquals("1.0", content, proposal.getContent());
+		assertEquals("1.1", content, proposal.getLabel());
+		assertNull("1.2", proposal.getDescription());
+		proposal = new SimpleContentProposal(content, description);
+		assertEquals("2.0", content, proposal.getContent());
+		assertEquals("2.1", content, proposal.getLabel());
+		assertEquals("2.2", description, proposal.getDescription());
+		proposal = new SimpleContentProposal(content, label, description);
+		assertEquals("3.0", content, proposal.getContent());
+		assertEquals("3.1", label, proposal.getLabel());
+		assertEquals("3.2", description, proposal.getDescription());
 	}
 }

@@ -111,21 +111,4 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 		sendKeyDownToControl(SWT.BS);
 		assertTwoShellsUp();
 	}
-	
-	public void testBug271339WithAutoActivationCharacters() throws Exception {
-		getFieldAssistWindow().setAutoActivationCharacters(new char[] { 'o', 't' });
-		getFieldAssistWindow().open();
-
-		sendFocusInToControl();
-		sendKeyDownToControl('z'); // must be something not in the proposals or it will autoactivate
-	
-		assertOneShellUp();
-		
-		executeContentAssistHandler();
-		assertTwoShellsUp();
-
-		sendKeyDownToControl(SWT.BS);
-		// because it was explicitly activated
-		assertTwoShellsUp();
-	}
 }
