@@ -987,6 +987,8 @@ public class ContentProposalAdapter {
 		 */
 		private void recomputeProposals(String filterText) {
 			IContentProposal[] allProposals = getProposals();
+			if (allProposals == null)
+				 allProposals = getEmptyProposalArray();
 			// If the non-filtered proposal list is empty, we should
 			// close the popup.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=147377

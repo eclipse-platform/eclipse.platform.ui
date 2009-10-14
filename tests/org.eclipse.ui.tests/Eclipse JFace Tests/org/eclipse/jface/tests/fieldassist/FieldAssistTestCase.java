@@ -14,6 +14,7 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
 
 /**
@@ -113,8 +114,13 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		sendKeyDownToControl(ACTIVATE_CHAR);
 		ensurePopupIsUp();
 		assertTwoShellsUp();
-		// key down will cause an asyncExec
-		sendKeyDownToControl(KeyStroke.getInstance(SWT.LEFT));
+		// cursor key down will cause an asyncExec that recomputes proposals.  Before we process the event, let's
+		// kill the window in an async.  That should cause the event to be processed and then the window killed before
+		// the subsequent async.
+		Event event = new Event();
+		event.type = SWT.KeyDown;
+		event.keyCode = SWT.ARROW_LEFT;
+		window.getDisplay().post(event);
 		window.getDisplay().asyncExec(new Runnable() {
 			public void run() {
 				closeFieldAssistWindow();
