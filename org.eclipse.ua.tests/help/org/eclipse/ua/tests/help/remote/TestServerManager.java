@@ -13,38 +13,42 @@ package org.eclipse.ua.tests.help.remote;
 
 import org.eclipse.core.runtime.CoreException;
 
+/**
+ * Class which allows two servers to be started independently
+ */
+
 public class TestServerManager {
 	
-	private static JettyTestServer server;
-	private static boolean serverRunning = false;
+	private static JettyTestServer[] server = new JettyTestServer[2];
+	private static boolean serverRunning[] = new boolean[] { false, false };
 	
-	private static JettyTestServer getHelpServer() {
-		if (server == null) {
-			server = new JettyTestServer();
+	private static JettyTestServer getHelpServer(int index) {
+		if (server[index] == null) {
+			server[index] = new JettyTestServer();
 		}
-		return server;
+		return server[index];
 	}
 	
-	public static void start(String webappName) throws Exception {
-		if (!serverRunning) {
-			getHelpServer().start(webappName);
-			serverRunning = true;
+	public static void start(String webappName, int index) throws Exception {
+		if (!serverRunning[index]) {
+			getHelpServer(index).start(webappName);
+			serverRunning[index] = true;
 		}
 	}
 
-	public static void stop(String webappName) throws CoreException {
-		if (serverRunning) {
-		    getHelpServer().stop(webappName);
-		    serverRunning = false;
+	public static void stop(String webappName, int index) throws CoreException {
+		if (serverRunning[index]) {
+		    getHelpServer(index).stop(webappName);
+		    serverRunning[index] = false;
 		}
 	}
 	
-	public static int getPort() {
-		return getHelpServer().getPort();
+	public static int getPort(int index) {
+		return getHelpServer(index).getPort();
 	}
 
-	public static String getHost() {
-        return getHelpServer().getHost();
+	public static String getHost(int index) {
+        return getHelpServer(index).getHost();
 	}
 
 }

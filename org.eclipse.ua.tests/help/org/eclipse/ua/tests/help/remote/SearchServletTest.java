@@ -121,6 +121,7 @@ public class SearchServletTest extends TestCase {
 		documentBuilder.setEntityResolver(new LocalEntityResolver());
 		Document document = documentBuilder.parse(inputSource);
 		Node root = document.getFirstChild();
+		is.close();
 		assertEquals("searchHits", root.getNodeName());
 		NodeList children = root.getChildNodes();
 		List hits = new ArrayList();

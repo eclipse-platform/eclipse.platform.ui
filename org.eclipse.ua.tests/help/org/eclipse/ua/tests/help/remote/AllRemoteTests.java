@@ -29,9 +29,10 @@ public class AllRemoteTests extends TestSuite {
 	 * Constructs a new test suite.
 	 */
 	public AllRemoteTests() {
-		addTestSuite(RemotePreferenceTest.class);
+		addTestSuite(RemotePreferenceTest.class);	
 		addTestSuite(TocServletTest.class);
 		addTestSuite(SearchServletTest.class);
-		addTestSuite(SearchUsingRemoteHelp.class);		
+		addTestSuite(SearchUsingRemoteHelp.class);	
+		addTestSuite(LoadTocUsingRemoteHelp.class);
 	}
 }

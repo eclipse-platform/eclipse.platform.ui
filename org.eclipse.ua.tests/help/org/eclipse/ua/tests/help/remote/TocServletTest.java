@@ -120,6 +120,7 @@ public class TocServletTest extends TestCase {
 		documentBuilder.setEntityResolver(new LocalEntityResolver());
 		Document document = documentBuilder.parse(inputSource);
 		Node root = document.getFirstChild();
+		is.close();
 		assertEquals("tocContributions", root.getNodeName());
 		return root;
 	}

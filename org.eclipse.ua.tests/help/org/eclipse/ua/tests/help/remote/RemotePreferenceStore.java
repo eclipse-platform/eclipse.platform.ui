@@ -64,12 +64,12 @@ public class RemotePreferenceStore {
 	}
 	
 	public static void setMockRemoteServer() throws Exception {
-        TestServerManager.start("help");
+        TestServerManager.start("ua.test", 0);
 		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
 		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost");
 		RemotePreferenceTest.setPreference("remoteHelpPath", "/help");
 		RemotePreferenceTest.setPreference("remoteHelpUseDefaultPort", "");
-		RemotePreferenceTest.setPreference("remoteHelpPort", "" + TestServerManager.getPort());
+		RemotePreferenceTest.setPreference("remoteHelpPort", "" + TestServerManager.getPort(0));
 		RemotePreferenceTest.setPreference("remoteHelpName", "uatest");
 		RemotePreferenceTest.setPreference("remoteHelpICEnabled", "true");
 		RemotePreferenceTest.setPreference("remoteHelpICContributed", "false");
