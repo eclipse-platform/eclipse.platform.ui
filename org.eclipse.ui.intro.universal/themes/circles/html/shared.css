@@ -622,6 +622,11 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 	color: #69c;
 }
 
+.rss-feed-link a {
+	font-family: Verdana, Arial, Helvetica; 
+	color: #00507C;
+}
+
 /*
  * This part is for hosting embedded document inside
  * the content area.

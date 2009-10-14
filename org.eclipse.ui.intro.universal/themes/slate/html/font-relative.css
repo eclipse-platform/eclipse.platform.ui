@@ -72,7 +72,7 @@ p .group-description {
 	font-size: 8pt; 
 }
 
-.topicList {
+.topicList, .rss-feed-link {
 	font-size:90%; 
 }
 
