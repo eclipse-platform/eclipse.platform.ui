@@ -10,6 +10,7 @@
  *     Martin Oberhuber (Wind River) - [105554] handle cyclic symbolic links
  *     Martin Oberhuber (Wind River) - [232426] shared prefix histories for symlinks
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] add resource filtering
+ *     Martin Oberhuber (Wind River) - [292267] OutOfMemoryError due to leak in UnifiedTree
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -108,8 +109,12 @@ public class UnifiedTree {
 				addNodeChildrenToQueue(node);
 			else
 				removeNodeChildrenFromQueue(node);
-			//allow reuse of the node
-			freeNodes.add(node);
+			//allow reuse of the node, but don't let the freeNodes list grow infinitely
+			if (freeNodes.size() < 32767) {
+				freeNodes.add(node);
+				//free memory-consuming elements of the node for garbage collection
+				node.releaseForGc();
+			}
 		}
 	}
 

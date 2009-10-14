@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Martin Oberhuber (Wind River) - [292267] OutOfMemoryError due to leak in UnifiedTree
  *******************************************************************************/
 package org.eclipse.core.internal.localstore;
 
@@ -107,6 +108,17 @@ public class UnifiedTreeNode implements ILocalStoreConstants {
 		this.store = aStore;
 		this.fileInfo = info;
 		this.existsWorkspace = existsInWorkspace;
+	}
+	
+	/**
+	 * Releases elements that won't be needed any more for garbage collection.
+	 * Should be called before adding a node to the free list.
+	 */
+	public void releaseForGc() {
+		this.child = null;
+		this.resource = null;
+		this.store = null;
+		this.fileInfo = null;
 	}
 
 	public void setExistsWorkspace(boolean exists) {
