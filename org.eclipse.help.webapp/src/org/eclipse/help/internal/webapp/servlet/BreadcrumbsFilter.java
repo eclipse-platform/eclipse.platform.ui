@@ -43,7 +43,7 @@ public class BreadcrumbsFilter implements IFilter {
 		if (uri == null || !uri.endsWith("html") && !uri.endsWith("htm") && !UrlUtil.isNavPath(uri)) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
-		if ("/rtopic".equals(req.getServletPath())) { //$NON-NLS-1$
+		if ("/rtopic".equals(req.getServletPath()) || "/nftopic".equals(req.getServletPath())) { //$NON-NLS-1$ //$NON-NLS-2$
 			return out;
 		}
 		if (UrlUtil.isBot(req)) {
