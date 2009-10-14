@@ -109,6 +109,22 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$	
 	
 	/**
+	 * Launch configuration attribute storing a boolean indicating whether this 
+	 * configuration is a template. Default value is <code>false</code>.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String ATTR_IS_TEMPLATE = DebugPlugin.getUniqueIdentifier() + ".ATTR_IS_TEMPLATE"; //$NON-NLS-1$
+	
+	/**
+	 * Launch configuration attribute storing a memento identifying the template
+	 * this configuration was made from, possibly <code>null</code>.
+	 * 
+	 *  @since 3.6
+	 */
+	public static final String ATTR_TEMPLATE = DebugPlugin.getUniqueIdentifier() + ".ATTR_TEMPLATE"; //$NON-NLS-1$
+	
+	/**
 	 * Status handler to prompt in the UI thread
 	 * 
 	 * @since 3.3
@@ -949,6 +965,39 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public String toString() {
 		return getName();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getTemplate()
+	 */
+	public ILaunchConfiguration getTemplate() throws CoreException {
+		String memento = getAttribute(ATTR_TEMPLATE, (String)null);
+		if (memento != null) {
+			return new LaunchConfiguration(memento);
+		}
+		return null;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getTemplateChildren()
+	 */
+	public ILaunchConfiguration[] getTemplateChildren() throws CoreException {
+		ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getType());
+		List proteges = new ArrayList();
+		for (int i = 0; i < configurations.length; i++) {
+			ILaunchConfiguration config = configurations[i];
+			if (this.equals(config.getTemplate())) {
+				proteges.add(config);
+			}
+		}
+		return (ILaunchConfiguration[]) proteges.toArray(new ILaunchConfiguration[proteges.size()]);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#isTemplate()
+	 */
+	public boolean isTemplate() throws CoreException {
+		return getAttribute(ATTR_IS_TEMPLATE, false);
 	}
 	
 }

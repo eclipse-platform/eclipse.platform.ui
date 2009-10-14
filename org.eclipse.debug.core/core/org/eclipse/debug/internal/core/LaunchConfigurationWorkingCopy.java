@@ -17,9 +17,11 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -714,6 +716,42 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	public Object removeAttribute(String attributeName) {
 		return getInfo().removeAttribute(attributeName);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#copyAttributes(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void copyAttributes(ILaunchConfiguration template) throws CoreException {
+		Map map = template.getAttributes();
+		Iterator iterator = map.entrySet().iterator();
+		LaunchConfigurationInfo info = getInfo();
+		while (iterator.hasNext()) {
+			Entry entry = (Entry) iterator.next();
+			String attr = (String) entry.getKey();
+			info.setAttribute(attr, entry.getValue());
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(boolean)
+	 */
+	public void setTemplate(boolean isTemplate) {
+		if (!isTemplate) {
+			removeAttribute(ATTR_IS_TEMPLATE);
+		} else {
+			setAttribute(ATTR_IS_TEMPLATE, isTemplate);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(org.eclipse.debug.core.ILaunchConfiguration)
+	 */
+	public void setTemplate(ILaunchConfiguration template) throws CoreException {
+		if (template == null) {
+			removeAttribute(ATTR_TEMPLATE);
+		} else {
+			setAttribute(ATTR_TEMPLATE, template.getMemento());
+		}
 	}
 }
 

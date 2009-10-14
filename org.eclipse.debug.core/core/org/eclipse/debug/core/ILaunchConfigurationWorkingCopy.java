@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -263,4 +263,34 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @since 3.3
 	 */
 	public ILaunchConfigurationWorkingCopy getParent();
+	
+	/**
+	 * Copies all attributes from the given template to this working.
+	 * Overwrites any existing attributes with the same key.
+	 * 
+	 * @param template configuration template
+	 * @exception CoreException if unable to retrieve attributes from the template
+	 * @since 3.6
+	 */
+	public void copyAttributes(ILaunchConfiguration template) throws CoreException;
+	
+	/**
+	 * Sets whether this configuration is to be considered as a template.
+	 * 
+	 * @param isTemplate whether this configuration is to be considered as a template
+	 * @since 3.6
+	 */
+	public void setTemplate(boolean isTemplate);
+	
+	/**
+	 * Sets the template that this configuration is associated with, possibly <code>null</code>.
+	 * <p>
+	 * When the specified template is <code>null</code>, this working copy is no longer
+	 * associated with any template.
+	 * </p>
+	 * @param template template or <code>null</code>
+	 * @exception CoreException if unable to generate a memento for the given configuration
+	 * @since 3.6
+	 */
+	public void setTemplate(ILaunchConfiguration template) throws CoreException;
 }

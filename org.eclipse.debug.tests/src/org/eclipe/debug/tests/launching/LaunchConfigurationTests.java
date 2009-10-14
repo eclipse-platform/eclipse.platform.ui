@@ -30,10 +30,13 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.preferences.IScopeContext;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -140,6 +143,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 assertTrue("Should need saving", wc.isDirty()); //$NON-NLS-1$
 		 return wc;
 	}
+	
+	/** 
+	 * Creates and returns a new launch configuration with the given name, local
+	 * or shared, with no attributes
+	 */
+	protected ILaunchConfigurationWorkingCopy newEmptyConfiguration(IContainer container, String name) throws CoreException {
+		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
+		 ILaunchConfigurationWorkingCopy wc = type.newInstance(container, name);
+		 assertEquals("Should have no attributes", 0, wc.getAttributes().size());
+		 return wc;
+	}	
 		
 	/**
 	 * Returns whether the given handle is contained in the specified
@@ -1033,6 +1047,166 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "test-get-location");
 		IPath location = workingCopy.getLocation();
 		assertEquals("Wrong path for local working copy", LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append("test-get-location.launch"), location);
+	}
+	
+	/**
+	 * Test copying attributes from one configuration to another.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testCopyAttributes() throws CoreException {
+		ILaunchConfigurationWorkingCopy source = newConfiguration(null, "test-copy-attributes-source");
+		ILaunchConfigurationWorkingCopy dest = newEmptyConfiguration(null, "test-copy-attributes-dest");
+		dest.copyAttributes(source);
+		assertTrue("String1 should be String1", dest.getAttribute("String1", "Missing").equals("String1")); 
+		assertTrue("Int1 should be 1", dest.getAttribute("Int1", 0) == 1);
+		assertTrue("Boolean1 should be true", dest.getAttribute("Boolean1", false));
+		assertTrue("Boolean2 should be false", !dest.getAttribute("Boolean2", true));
+	}
+	
+	/**
+	 * Tests setting a default template in the project scope.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testProjectScopeTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-project-scope");
+		ILaunchConfiguration template = wc.doSave();
+		ILaunchConfigurationType type = template.getType();
+		IScopeContext scope = new ProjectScope(getProject());
+		type.setTemplate(template, scope);
+		ILaunchConfiguration configuration = type.getTemplate(scope);
+		assertNotNull("No template found", configuration);
+		assertEquals("Wrong template", template, configuration);
+		// test removing scope
+		type.setTemplate(null, scope);
+		configuration = type.getTemplate(scope);
+		assertNull("Should no longer be a template", configuration);
+	}
+	
+	/**
+	 * Tests setting a default template in the project scope.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testInstanceScopeTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-instance-scope");
+		ILaunchConfiguration template = wc.doSave();
+		ILaunchConfigurationType type = template.getType();
+		IScopeContext scope = new InstanceScope();
+		type.setTemplate(template, scope);
+		ILaunchConfiguration configuration = type.getTemplate(scope);
+		assertNotNull("No template found", configuration);
+		assertEquals("Wrong template", template, configuration);
+		// test removing scope
+		type.setTemplate(null, scope);
+		configuration = type.getTemplate(scope);
+		assertNull("Should no longer be a template", configuration);
+	}	
+	
+	/**
+	 * Tests that a default template in the project scope is used to initialize
+	 * values.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testCreationFromProjectScopeTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy pc = newConfiguration(null, "test-project-scope-creation");
+		pc.setAttribute("PROJECT", "PROJECT");
+		ILaunchConfiguration ptemplate = pc.doSave();
+		ILaunchConfigurationWorkingCopy ic = newConfiguration(null, "test-workspace-scope-creation");
+		ic.setAttribute("WORKSPACE", "WORKSPACE");
+		ILaunchConfiguration itemplate = ic.doSave();
+		ILaunchConfigurationType type = ptemplate.getType();
+		IScopeContext pscope = new ProjectScope(getProject());
+		IScopeContext wscope = new InstanceScope();
+		type.setTemplate(ptemplate, pscope);
+		type.setTemplate(itemplate, wscope);
+		
+		// create a new configuration in project scope priority
+		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes", new IScopeContext[]{pscope, wscope});
+		assertNotNull("Made from wrong template", config.getAttribute("PROJECT", (String)null));
+		assertEquals("Should refer to creation template", ptemplate, config.getTemplate());
+		
+		// Removing defaults
+		type.setTemplate(null, pscope);
+		type.setTemplate(null, wscope);
+		ILaunchConfiguration configuration = type.getTemplate(pscope);
+		assertNull("Should no longer be a project template", configuration);
+		configuration = type.getTemplate(wscope);
+		assertNull("Should no longer be a workspace template", configuration);
+	}	
+	
+	/**
+	 * Tests that a default template in the instance scope is used to initialize
+	 * values.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testCreationFromInsatnceScopeTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy ic = newConfiguration(null, "test-workspace-scope-creation");
+		ic.setAttribute("WORKSPACE", "WORKSPACE");
+		ILaunchConfiguration itemplate = ic.doSave();
+		ILaunchConfigurationType type = itemplate.getType();
+		IScopeContext pscope = new ProjectScope(getProject());
+		IScopeContext wscope = new InstanceScope();
+		type.setTemplate(itemplate, wscope);
+		
+		// create a new configuration in project scope priority, but picks up workspace scope
+		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes", new IScopeContext[]{pscope, wscope});
+		assertNotNull("Made from wrong template", config.getAttribute("WORKSPACE", (String)null));
+		assertEquals("Should refer to creation template", itemplate, config.getTemplate());
+		
+		// Removing defaults
+		type.setTemplate(null, wscope);
+		ILaunchConfiguration configuration = type.getTemplate(wscope);
+		assertNull("Should no longer be a workspace template", configuration);
+	}		
+	
+	/**
+	 * Tests setting the 'isTemplate' attribute.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testIsTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-is-template");
+		wc.setTemplate(true);
+		ILaunchConfiguration template = wc.doSave();
+		assertTrue("Should be a template", template.isTemplate());
+		ILaunchConfiguration[] templates = wc.getType().getTemplates();
+		assertEquals("Expecting one template", 1, templates.length);
+		wc = template.getWorkingCopy();
+		wc.setTemplate(false);
+		template = wc.doSave();
+		assertFalse("Should not be a template", template.isTemplate());
+	}
+	
+	/**
+	 * Tests finding references to a template.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testTemplateChildren() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-references");
+		ILaunchConfiguration template = wc.doSave();
+		
+		ILaunchConfigurationWorkingCopy r1 = newConfiguration(null, "referee-1");
+		ILaunchConfigurationWorkingCopy r2 = newConfiguration(null, "referee-2");
+		
+		r1.setTemplate(template);
+		r2.setTemplate(template);
+		
+		ILaunchConfiguration s1 = r1.doSave();
+		ILaunchConfiguration s2 = r2.doSave();
+		
+		ILaunchConfiguration[] children = template.getTemplateChildren();
+		assertEquals("Wrong number of template children", 2, children.length);
+		List list = new ArrayList();
+		for (int i = 0; i < children.length; i++) {
+			list.add(children[i]);		
+		}
+		assertTrue("Missing reference", list.contains(s1));
+		assertTrue("Missing reference", list.contains(s2));
 	}
 }
 

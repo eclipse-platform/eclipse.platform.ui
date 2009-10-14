@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -596,4 +596,35 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 3.3
 	 */
 	public boolean isReadOnly();	
+	
+	/**
+	 * Returns the template this launch configuration was created from
+	 * or <code>null</code> if none.
+	 * 
+	 * @return the template this launch configuration was created from
+	 *  or <code>null</code> if none
+	 * @throws CoreException if the template could not be retrieved
+	 *  or no longer exists
+	 * @since 3.6
+	 */
+	public ILaunchConfiguration getTemplate() throws CoreException;
+	
+	/**
+	 * Returns whether this configuration is a template.
+	 * 
+	 * @return whether this configuration is a template
+	 * @throws CoreException if unable to determine if this configuration is a template
+	 * @since 3.6
+	 */
+	public boolean isTemplate() throws CoreException;
+	
+	/**
+	 * Returns all configurations made from this template, possibly an
+	 * empty collection.
+	 * 
+	 * @return all configurations made from this template
+	 * @throws CoreException
+	 * @since 3.6
+	 */
+	public ILaunchConfiguration[] getTemplateChildren() throws CoreException;
 }
