@@ -11,6 +11,8 @@
 package org.eclipse.jface.tests.fieldassist;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.fieldassist.ControlDecoration;
+import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.PlatformUI;
 
@@ -101,4 +103,39 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		sendKeyDownToControl(EXTRA_CHAR);
 		assertEquals("1.0", SAMPLE_CONTENT + new String(new char [] {ACTIVATE_CHAR, EXTRA_CHAR}), getControlContent());
 	}	
+	
+	public void testBug262022() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.setPropagateKeys(false);
+		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
+		window.open();
+		setControlContent(SAMPLE_CONTENT);
+		sendKeyDownToControl(ACTIVATE_CHAR);
+		ensurePopupIsUp();
+		assertTwoShellsUp();
+		// key down will cause an asyncExec
+		sendKeyDownToControl(KeyStroke.getInstance(SWT.LEFT));
+		window.getDisplay().asyncExec(new Runnable() {
+			public void run() {
+				closeFieldAssistWindow();
+			}
+		});
+		spinEventLoop();
+	}
+	
+	public void testBug279953() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.setPropagateKeys(false);
+		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
+		window.open();
+		assertOneShellUp();
+		ControlDecoration decoration = new ControlDecoration(getFieldAssistWindow().getFieldAssistControl(), SWT.RIGHT);
+		decoration.setImage(FieldDecorationRegistry.getDefault()             
+		    .getFieldDecoration(FieldDecorationRegistry.DEC_INFORMATION).getImage());   
+		decoration.setDescriptionText("");   
+		decoration.showHoverText("");
+		assertOneShellUp();
+	}
+	
+	
 }

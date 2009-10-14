@@ -1066,7 +1066,7 @@ public class ControlDecoration {
 			return;
 		}
 		// If there is no text, don't do anything.
-		if (text == null) {
+		if (text == null || text.length() == 0) {
 			hideHover();
 			return;
 		}

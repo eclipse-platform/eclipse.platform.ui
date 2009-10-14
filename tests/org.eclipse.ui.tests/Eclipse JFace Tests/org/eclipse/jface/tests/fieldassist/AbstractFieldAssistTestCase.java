@@ -48,13 +48,17 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	protected void tearDown() throws Exception {
 		if (window != null) {
 			spinEventLoop();
+		}
+		closeFieldAssistWindow();
 
-			// clean-up
+		super.tearDown();
+	}
+
+	protected void closeFieldAssistWindow() {
+		if (window != null) {
 			window.close();
 			window = null;
 		}
-
-		super.tearDown();
 	}
 
 	/**
@@ -74,8 +78,12 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	protected void spinEventLoop() {
 		// spin the event loop again because we have some asyncExec calls in the
 		// ContentProposalAdapter class
-		while (window.getDisplay().readAndDispatch())
-			;
+
+		Display disp = window == null ? Display.getDefault() : window
+				.getDisplay();
+		while (disp.readAndDispatch()) {
+			disp = window == null ? Display.getDefault() : window.getDisplay();
+		}
 	}
 
 	protected void ensurePopupIsUp() {
@@ -87,7 +95,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 			long time = System.currentTimeMillis();
 			long target = time + window.getAutoActivationDelay();
 			while (target > time) {
-				spinEventLoop();  // remain responsive
+				spinEventLoop(); // remain responsive
 				time = System.currentTimeMillis();
 			}
 			try {
@@ -122,7 +130,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		window.getDisplay().post(event);
 		spinEventLoop();
 	}
-	
+
 	/**
 	 * Sends an SWT KeyDown event for the specified keystroke
 	 * 
@@ -155,14 +163,16 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 				"There should two shells up, the dialog and the proposals dialog",
 				originalShellCount + 2, window.getDisplay().getShells().length);
 	}
-	
+
 	protected void setControlContent(String text) {
-		window.getControlContentAdapter().setControlContents(window.getFieldAssistControl(), text, text.length());
+		window.getControlContentAdapter().setControlContents(
+				window.getFieldAssistControl(), text, text.length());
 
 	}
-	
+
 	protected String getControlContent() {
-		return window.getControlContentAdapter().getControlContents(window.getFieldAssistControl());
+		return window.getControlContentAdapter().getControlContents(
+				window.getFieldAssistControl());
 
 	}
 
