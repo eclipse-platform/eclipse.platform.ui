@@ -47,6 +47,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		anotherShell = new Shell(display);
 		new Text(anotherShell, SWT.SINGLE);
 		anotherShell.open();
+		spinEventLoop();
 		originalShellCount = display.getShells().length;
 		window = createFieldAssistWindow();
 		assertNotNull(window);
