@@ -62,11 +62,11 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 		return ITerminateHandler.class;
 	}
 
-    protected void requestDone(Object[] elements, IRequest request) {
+    protected void postExecute(IRequest request, Object[] targets) {
         IStatus status = request.getStatus();
         if(status == null || status.isOK()) {
-            for (int i = 0; i < elements.length; i++) {
-                Object element = elements[i];
+            for (int i = 0; i < targets.length; i++) {
+                Object element = targets[i];
                 ILaunch launch= null;
                 if (element instanceof ILaunch) {
                     launch= (ILaunch) element;
