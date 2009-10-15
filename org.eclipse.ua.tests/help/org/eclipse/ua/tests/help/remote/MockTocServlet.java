@@ -34,25 +34,35 @@ public class MockTocServlet extends TocServlet {
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
-		UserToc toc = new UserToc("Mock Toc " + locale, null, true);
-		UserTopic topic = new UserTopic("Topic_" + locale, "http://www.eclipse.org", true);
-		toc.addTopic(topic);
-		TocContribution contribution = new TocContribution();
-		contribution.setCategoryId(null);
-		contribution.setContributorId("org.eclipse.ua.tests");
-		contribution.setExtraDocuments(new String[0]);
-		contribution.setId("mockToc");
-		contribution.setLocale(locale);
-	    contribution.setPrimary(true);
-	    contribution.setSubToc(false);
-	    contribution.setToc(new Toc(toc));
+		UserToc toc1 = new UserToc("Mock Toc " + locale, null, true);
+		UserTopic topic1 = new UserTopic("Topic_" + locale, "http://www.eclipse.org", true);
+		toc1.addTopic(topic1);
+		TocContribution contribution1 = createToc(toc1, "mockToc", locale);
+		UserToc toc2 = new UserToc("Mock Toc 2 " + locale, null, true);
+		UserTopic topic2 = new UserTopic("Topic_" + locale, "http://www.eclipse.org", true);
+		toc2.addTopic(topic2);
+		TocContribution contribution2 = createToc(toc2, "mockToc2", locale);
 	    String response;
 		try {
-			response = serialize(new TocContribution[] { contribution }, locale);
+			response = serialize(new TocContribution[] { contribution1, contribution2 }, locale);
 		    resp.getWriter().write(response);
 		} catch (TransformerException e) {
 			resp.sendError(400);
 		}
+	}
+
+	protected TocContribution createToc(UserToc toc, String id, String locale) {
+		TocContribution contribution;
+		contribution = new TocContribution();
+		contribution.setCategoryId(null);
+		contribution.setContributorId("org.eclipse.ua.tests");
+		contribution.setExtraDocuments(new String[0]);
+		contribution.setLocale(locale);
+	    contribution.setPrimary(true);
+	    contribution.setSubToc(false);
+		contribution.setId(id);
+	    contribution.setToc(new Toc(toc));
+		return contribution;
 	}
 
 }

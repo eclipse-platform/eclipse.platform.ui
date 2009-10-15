@@ -38,7 +38,11 @@ public class LoadTocUsingRemoteHelp extends TestCase {
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs("en");
 		int enTocs = matchingTocs(tocs, "Mock Toc en");
 		assertEquals(1, enTocs);
+		enTocs = matchingTocs(tocs, "Mock Toc 2 en");
+		assertEquals(1, enTocs);
 		int deTocs = matchingTocs(tocs, "Mock Toc de");
+		assertEquals(0, deTocs);
+		deTocs = matchingTocs(tocs, "Mock Toc 2 de");
 		assertEquals(0, deTocs);
 	    RemotePreferenceStore.disableRemoteHelp();
 	}
@@ -50,7 +54,11 @@ public class LoadTocUsingRemoteHelp extends TestCase {
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs("de");
 		int enTocs = matchingTocs(tocs, "Mock Toc en");
 		assertEquals(0, enTocs);
+		enTocs = matchingTocs(tocs, "Mock Toc 2 en");
+		assertEquals(0, enTocs);
 		int deTocs = matchingTocs(tocs, "Mock Toc de");
+		assertEquals(1, deTocs);
+		deTocs = matchingTocs(tocs, "Mock Toc 2 de");
 		assertEquals(1, deTocs);
 	    RemotePreferenceStore.disableRemoteHelp();
 	}
