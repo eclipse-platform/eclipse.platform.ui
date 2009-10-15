@@ -10,7 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import com.ibm.icu.text.MessageFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
 
 import org.eclipse.core.resources.IWorkspaceDescription;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -34,6 +36,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.
  */
@@ -55,6 +59,8 @@ public class FileStatesPage extends PreferencePage implements
 
     private Button applyPolicyButton;
 
+	private ArrayList dependentControls= new ArrayList();
+
     //Choose a maximum to prevent OutOfMemoryErrors
     private int FILE_STATES_MAXIMUM = 10000;
 
@@ -66,12 +72,13 @@ public class FileStatesPage extends PreferencePage implements
      * @return org.eclipse.swt.widgets.Text
      * @param labelString java.lang.String
      * @param textValue java.lang.String
-     * @param parent Composite 
+     * @param parent Composite
      */
-    private Text addLabelAndText(String labelString, String textValue,
+	private Text addDependentLabelAndText(String labelString, String textValue,
             Composite parent) {
         Label label = new Label(parent, SWT.LEFT);
         label.setText(labelString);
+		dependentControls.add(label);
 
         Text text = new Text(parent, SWT.LEFT | SWT.BORDER);
         GridData data = new GridData();
@@ -82,6 +89,8 @@ public class FileStatesPage extends PreferencePage implements
         data.grabExcessVerticalSpace = false;
         text.setLayoutData(data);
         text.setText(textValue);
+		dependentControls.add(text);
+
         return text;
     }
 
@@ -108,9 +117,10 @@ public class FileStatesPage extends PreferencePage implements
             return;
         }
 
-        longevityText.setEnabled(applyPolicyButton.getSelection());
-        maxStatesText.setEnabled(applyPolicyButton.getSelection());
-        maxStateSizeText.setEnabled(applyPolicyButton.getSelection());
+        boolean newState= applyPolicyButton.getSelection();
+        Iterator iter= dependentControls.iterator();
+        while (iter.hasNext())
+			((Control)iter.next()).setEnabled(newState);
 
         if (validateLongTextEntry(longevityText) == FAILED_VALUE) {
             setValid(false);
@@ -131,7 +141,7 @@ public class FileStatesPage extends PreferencePage implements
         setErrorMessage(null);
     }
 
-    /* 
+    /*
      * Create the contents control for the workspace file states.
      * @returns Control
      * @param parent Composite
@@ -140,12 +150,6 @@ public class FileStatesPage extends PreferencePage implements
 
     	PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
                 IIDEHelpContextIds.FILE_STATES_PREFERENCE_PAGE);
-
-        // button group
-        Composite composite = new Composite(parent, SWT.NONE);
-        GridLayout layout = new GridLayout();
-        layout.numColumns = 2;
-        composite.setLayout(layout);
 
         IWorkspaceDescription description = getWorkspaceDescription();
 
@@ -161,12 +165,25 @@ public class FileStatesPage extends PreferencePage implements
 		}
 
 		this.applyPolicyButton = addCheckBox(IDEWorkbenchMessages.FileHistory_applyPolicy, description
-						.isApplyFileStatePolicy(), composite);
-        this.longevityText = addLabelAndText(IDEWorkbenchMessages.FileHistory_longevity, String
+						.isApplyFileStatePolicy(), parent);
+
+		// button group
+		Composite composite= new Composite(parent, SWT.NONE);
+		GridLayout layout= new GridLayout();
+		layout.numColumns= 2;
+		layout.marginLeft= 10;
+		layout.marginWidth= 0;
+		composite.setLayout(layout);
+		GridData gd= new GridData();
+		gd.horizontalIndent= 200;
+		composite.setLayoutData(gd);
+
+
+		this.longevityText= addDependentLabelAndText(IDEWorkbenchMessages.FileHistory_longevity, String
                 .valueOf(days), composite);
-        this.maxStatesText = addLabelAndText(IDEWorkbenchMessages.FileHistory_entries, String
+		this.maxStatesText= addDependentLabelAndText(IDEWorkbenchMessages.FileHistory_entries, String
                 .valueOf(description.getMaxFileStates()), composite);
-        this.maxStateSizeText = addLabelAndText(IDEWorkbenchMessages.FileHistory_diskSpace,
+		this.maxStateSizeText= addDependentLabelAndText(IDEWorkbenchMessages.FileHistory_diskSpace,
                 String.valueOf(megabytes), composite);
 
         checkState();
@@ -182,6 +199,7 @@ public class FileStatesPage extends PreferencePage implements
         GridData noteData = new GridData();
         noteData.horizontalSpan = 2;
         noteComposite.setLayoutData(noteData);
+		dependentControls.addAll(Arrays.asList(noteComposite.getChildren()));
 
         applyDialogFont(composite);
 
@@ -241,7 +259,7 @@ public class FileStatesPage extends PreferencePage implements
 		checkState();
     }
 
-    /** 
+    /**
      * Perform the result of the OK from the receiver.
      */
     public boolean performOk() {
@@ -276,7 +294,7 @@ public class FileStatesPage extends PreferencePage implements
 
     /**
      * Validate a text entry for an integer field. Return the result if there are
-     * no errors, otherwise return -1 and set the entry field error. 
+     * no errors, otherwise return -1 and set the entry field error.
      * @return int
      */
     private int validateIntegerTextEntry(Text text) {
@@ -303,7 +321,7 @@ public class FileStatesPage extends PreferencePage implements
 
     /**
      * Validate a text entry for a long field. Return the result if there are
-     * no errors, otherwise return -1 and set the entry field error. 
+     * no errors, otherwise return -1 and set the entry field error.
      * @return long
      */
     private long validateLongTextEntry(Text text) {
