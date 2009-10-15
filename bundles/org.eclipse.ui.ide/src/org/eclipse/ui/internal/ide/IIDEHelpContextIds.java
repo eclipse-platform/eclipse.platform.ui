@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,8 +7,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [252996] Resource filters
  *******************************************************************************/
-
 package org.eclipse.ui.internal.ide;
 
 /**
@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.ide;
  * This interface contains constants only; it is not intended to be implemented
  * or extended.
  * </p>
- * 
  */
 public interface IIDEHelpContextIds {
     public static final String PREFIX = IDEWorkbenchPlugin.IDE_WORKBENCH + "."; //$NON-NLS-1$
@@ -170,6 +169,12 @@ public interface IIDEHelpContextIds {
     // Property pages
     public static final String PROJECT_REFERENCE_PROPERTY_PAGE = PREFIX
             + "project_reference_property_page_context"; //$NON-NLS-1$
+
+    public static final String RESOURCE_FILTER_PROPERTY_PAGE = PREFIX
+    + "resource_filter_property_page_context"; //$NON-NLS-1$
+
+    public static final String EDIT_RESOURCE_FILTER_PROPERTY_PAGE = PREFIX
+    + "edit_resource_filter_property_page_context"; //$NON-NLS-1$
 
     public static final String RESOURCE_INFO_PROPERTY_PAGE = PREFIX
             + "resource_info_property_page_context"; //$NON-NLS-1$

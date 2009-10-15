@@ -11,6 +11,7 @@
  * Oakland Software Incorporated (Francis Upton) <francisu@ieee.org>
  *		- Bug 224997 [Workbench] Impossible to copy project
  * Dina Sayed, dsayed@eg.ibm.com, IBM -  bug 269844
+ * Serge Beauchamp (Freescale Semiconductor) - [252996] Resource filters
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
@@ -24,7 +25,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String IDEWorkbenchAdvisor_cancelHistoryPruning;
 	public static String IDEWorkbenchAdvisor_preHistoryCompaction;
 	public static String IDEWorkbenchAdvisor_postHistoryCompaction;
-	
+
 	public static String IDE_noFileEditorFound;
 	public static String IDE_coreExceptionFileStore;
 
@@ -48,14 +49,35 @@ public class IDEWorkbenchMessages extends NLS {
 
 	public static String ResourceInfoPage_noResource;
 
-
+	public static String ResourceFilterPage_title;
+	public static String ResourceFilterPage_noResource;
+	public static String ResourceFilterPage_addButtonLabel;
+	public static String ResourceFilterPage_editButtonLabel;
+	public static String ResourceFilterPage_removeButtonLabel;
+	public static String ResourceFilterPage_upButtonLabel;
+	public static String ResourceFilterPage_downButtonLabel;
+	public static String ResourceFilterPage_addNewFilterTitle;
+	public static String ResourceFilterPage_columnFilterID;
+	public static String ResourceFilterPage_columnFilterMode;
+	public static String ResourceFilterPage_columnFilterTargets;
+	public static String ResourceFilterPage_columnFilterInheritable;
+	public static String ResourceFilterPage_columnFilterArguments;
+	public static String ResourceFilterPage_includeOnly;
+	public static String ResourceFilterPage_excludeAll;
+	public static String ResourceFilterPage_filesAndFolders;
+	public static String ResourceFilterPage_files;
+	public static String ResourceFilterPage_folders;
+	public static String ResourceFilterPage_editFilterDialogTitle;
+	public static String ResourceFilterPage_description;
+	public static String ResourceFilterPage_addSubFilterActionLabel;
 	//
 	//
 	// Copies from org.eclipse.ui.workbench
 	//
 	public static String showAdvanced;
 	public static String hideAdvanced;
-
+	public static String editfilters;
+	
 	// ==============================================================================
 	// Workbench Actions
 	// ==============================================================================

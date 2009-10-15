@@ -365,6 +365,23 @@
             </objectClass>
          </enablement>
       </decorator>
+      <decorator
+            adaptable="true"
+            class="org.eclipse.ui.internal.ide.ResourceFilterDecorator"
+            id="org.eclipse.ui.ResourceFilterDecorator"
+            label="%DecoratorSpecificResourceFilterType.label"
+            lightweight="true"
+            location="BOTTOM_LEFT"
+            state="true">
+         <description>
+            %DecoratorSpecificResourceFilterType.description
+         </description>
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IContainer">
+            </objectClass>
+         </enablement>
+      </decorator>
    </extension>
    <extension
    		point="org.eclipse.ui.keywords">
@@ -618,6 +635,18 @@
             >
          <enabledWhen>
             <adapt type="org.eclipse.core.resources.IProject"/>
+         </enabledWhen>
+      </page>
+      <page
+            class="org.eclipse.ui.internal.ide.dialogs.ResourceFilterPage"
+            id="org.eclipse.ui.propertypages.resource.filters"
+            name="%PropertyPages.resource.filters"
+            >
+         <enabledWhen>
+            <or>
+            	<adapt type="org.eclipse.core.resources.IProject"/>
+           		<adapt type="org.eclipse.core.resources.IFolder"/>
+           	</or>
          </enabledWhen>
       </page>
       <page
@@ -2188,6 +2217,50 @@
             properties="severity,type,superType,priority,done,message,resourceType"
             type="org.eclipse.core.resources.IMarker">
       </propertyTester>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filters"
+         id="stringMatcherFilter">
+      <filter
+            argumentType="string"
+            class="org.eclipse.ui.internal.ide.misc.StringMatcherFilter"
+            description="%filterProvider.description"
+            name="%filterProvider.name"
+            ordering="first">
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filters"
+         id="orFilter">
+      <filter
+            argumentType="filters"
+            class="org.eclipse.ui.internal.ide.misc.OrResourceFilter"
+            description="%orFilterProvider.description"
+            name="%orFilterProvider.name"
+            ordering="first">
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filters"
+         id="andFilter">
+      <filter
+            argumentType="filters"
+            class="org.eclipse.ui.internal.ide.misc.AndResourceFilter"
+            description="%andFilterProvider.description"
+            name="%andFilterProvider.name"
+            ordering="first">
+      </filter>
+   </extension>
+   <extension
+         point="org.eclipse.core.resources.filters"
+         id="notFilter">
+      <filter
+            argumentType="filter"
+            class="org.eclipse.ui.internal.ide.misc.NotResourceFilter"
+            description="%notFilterProvider.description"
+            name="%notFilterProvider.name"
+            ordering="first">
+      </filter>
    </extension>
    <extension
          point="org.eclipse.ui.installationPages">
