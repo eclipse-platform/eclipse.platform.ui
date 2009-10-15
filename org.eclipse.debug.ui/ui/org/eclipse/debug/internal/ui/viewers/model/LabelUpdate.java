@@ -71,7 +71,7 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate#getElement()
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate#getElementPath()
 	 */
 	public TreePath getElementPath() {
 		return fElementPath;
@@ -144,7 +144,7 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.runtime.IProgressMonitor#done()
+	 * @see org.eclipse.debug.internal.core.commands.Request#done()
 	 */
 	public void done() {
 		fProvider.complete(this);
@@ -182,9 +182,8 @@ class LabelUpdate extends Request implements ILabelUpdate, ICheckUpdate {
 		return fViewerInput;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckable#setChecked(boolean, boolean)
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate#setChecked(boolean, boolean)
 	 */
 	public void setChecked(boolean checked, boolean grayed) {
 		fChecked = checked;
