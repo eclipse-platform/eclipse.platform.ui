@@ -503,7 +503,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getTemplate(org.eclipse.core.runtime.preferences.IScopeContext)
 	 */
-	public ILaunchConfiguration getTemplate(IScopeContext scope) throws CoreException {
+	public ILaunchConfiguration getDefaultTemplate(IScopeContext scope) throws CoreException {
 		IEclipsePreferences node = scope.getNode(DebugPlugin.getUniqueIdentifier());
 		try {
 			if (node.nodeExists(TEMPLATES_NODE)) {
@@ -538,7 +538,10 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String, org.eclipse.core.runtime.preferences.IScopeContext[])
 	 */
 	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, IScopeContext[] scopes) throws CoreException {
-		ILaunchConfiguration template = findTemplate(scopes);
+		ILaunchConfiguration template = null;
+		if (scopes != null) {
+			template = resolveDefaultTemplate(scopes);
+		}
 		ILaunchConfigurationWorkingCopy wc = new LaunchConfigurationWorkingCopy(container, name, this);
 		if (template != null) {
 			wc.copyAttributes(template);
@@ -546,30 +549,11 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		}
 		return wc;
 	}
-	
-	/**
-	 * Returns the first template found in the given scopes or <code>null</code> if none.
-	 * 
-	 * @param contexts scopes to search in or <code>null</code>
-	 * @return template or <code>null</code>
-	 * @throws CoreException if unable to retrieve template
-	 */
-	private ILaunchConfiguration findTemplate(IScopeContext[] contexts) throws CoreException {
-		if (contexts != null) {
-			for (int i = 0; i < contexts.length; i++) {
-				ILaunchConfiguration template = getTemplate(contexts[i]);
-				if (template != null) {
-					return template;
-				}
-			}
-		}
-		return null;
-	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.preferences.IScopeContext)
 	 */
-	public void setTemplate(ILaunchConfiguration configuration, IScopeContext scope) throws CoreException {
+	public void setDefaultTemplate(ILaunchConfiguration configuration, IScopeContext scope) throws CoreException {
 		IEclipsePreferences node = scope.getNode(DebugPlugin.getUniqueIdentifier());
 		Preferences templates = node.node(TEMPLATES_NODE);
 		if (configuration == null) {
@@ -589,6 +573,19 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		} catch (BackingStoreException e) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationType_1, e));
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#resolveDefaultTemplate(org.eclipse.core.runtime.preferences.IScopeContext[])
+	 */
+	public ILaunchConfiguration resolveDefaultTemplate(IScopeContext[] scopes) throws CoreException {
+		for (int i = 0; i < scopes.length; i++) {
+			ILaunchConfiguration template = getDefaultTemplate(scopes[i]);
+			if (template != null) {
+				return template;
+			}
+		}
+		return null;
 	}
 
 }

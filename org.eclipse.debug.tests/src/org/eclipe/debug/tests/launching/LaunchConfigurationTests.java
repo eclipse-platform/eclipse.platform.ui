@@ -1074,13 +1074,13 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfiguration template = wc.doSave();
 		ILaunchConfigurationType type = template.getType();
 		IScopeContext scope = new ProjectScope(getProject());
-		type.setTemplate(template, scope);
-		ILaunchConfiguration configuration = type.getTemplate(scope);
+		type.setDefaultTemplate(template, scope);
+		ILaunchConfiguration configuration = type.getDefaultTemplate(scope);
 		assertNotNull("No template found", configuration);
 		assertEquals("Wrong template", template, configuration);
 		// test removing scope
-		type.setTemplate(null, scope);
-		configuration = type.getTemplate(scope);
+		type.setDefaultTemplate(null, scope);
+		configuration = type.getDefaultTemplate(scope);
 		assertNull("Should no longer be a template", configuration);
 	}
 	
@@ -1094,13 +1094,13 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfiguration template = wc.doSave();
 		ILaunchConfigurationType type = template.getType();
 		IScopeContext scope = new InstanceScope();
-		type.setTemplate(template, scope);
-		ILaunchConfiguration configuration = type.getTemplate(scope);
+		type.setDefaultTemplate(template, scope);
+		ILaunchConfiguration configuration = type.getDefaultTemplate(scope);
 		assertNotNull("No template found", configuration);
 		assertEquals("Wrong template", template, configuration);
 		// test removing scope
-		type.setTemplate(null, scope);
-		configuration = type.getTemplate(scope);
+		type.setDefaultTemplate(null, scope);
+		configuration = type.getDefaultTemplate(scope);
 		assertNull("Should no longer be a template", configuration);
 	}	
 	
@@ -1120,8 +1120,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfigurationType type = ptemplate.getType();
 		IScopeContext pscope = new ProjectScope(getProject());
 		IScopeContext wscope = new InstanceScope();
-		type.setTemplate(ptemplate, pscope);
-		type.setTemplate(itemplate, wscope);
+		type.setDefaultTemplate(ptemplate, pscope);
+		type.setDefaultTemplate(itemplate, wscope);
 		
 		// create a new configuration in project scope priority
 		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes", new IScopeContext[]{pscope, wscope});
@@ -1129,11 +1129,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertEquals("Should refer to creation template", ptemplate, config.getTemplate());
 		
 		// Removing defaults
-		type.setTemplate(null, pscope);
-		type.setTemplate(null, wscope);
-		ILaunchConfiguration configuration = type.getTemplate(pscope);
+		type.setDefaultTemplate(null, pscope);
+		type.setDefaultTemplate(null, wscope);
+		ILaunchConfiguration configuration = type.getDefaultTemplate(pscope);
 		assertNull("Should no longer be a project template", configuration);
-		configuration = type.getTemplate(wscope);
+		configuration = type.getDefaultTemplate(wscope);
 		assertNull("Should no longer be a workspace template", configuration);
 	}	
 	
@@ -1150,7 +1150,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfigurationType type = itemplate.getType();
 		IScopeContext pscope = new ProjectScope(getProject());
 		IScopeContext wscope = new InstanceScope();
-		type.setTemplate(itemplate, wscope);
+		type.setDefaultTemplate(itemplate, wscope);
 		
 		// create a new configuration in project scope priority, but picks up workspace scope
 		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes", new IScopeContext[]{pscope, wscope});
@@ -1158,8 +1158,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertEquals("Should refer to creation template", itemplate, config.getTemplate());
 		
 		// Removing defaults
-		type.setTemplate(null, wscope);
-		ILaunchConfiguration configuration = type.getTemplate(wscope);
+		type.setDefaultTemplate(null, wscope);
+		ILaunchConfiguration configuration = type.getDefaultTemplate(wscope);
 		assertNull("Should no longer be a workspace template", configuration);
 	}		
 	
