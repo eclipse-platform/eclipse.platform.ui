@@ -174,6 +174,24 @@
             icon="icons/etool16/index_co.gif">
       </image>
    </extension>
+   <extension
+         point="org.eclipse.ui.commands">
+      <command
+           categoryId="org.eclipse.ui.category.window"
+           defaultHandler="org.eclipse.help.ui.internal.handlers.OpenBundleResourceHandler"
+           description="%command.openBundleResource.description"
+           id="org.eclipse.ui.browser.openBundleResource"
+           name="%command.openBundleResource.name">
+        <commandParameter
+               id="plugin"
+               name="%commandParameter.openBundleResource.plugin.name"
+               optional="true"/>
+        <commandParameter
+               id="path"
+               name="%commandParameter.openBundleResource.path.name"
+               optional="true"/>
+      </command>
+</extension>
     
 <!--
    <extension
