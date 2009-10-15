@@ -10,13 +10,13 @@
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.bindings.keys.IKeyLookup"/>
-                <message_argument value="F20_NAME"/>
+                <message_argument value="F19_NAME"/>
             </message_arguments>
         </filter>
         <filter id="403767336">
             <message_arguments>
                 <message_argument value="org.eclipse.jface.bindings.keys.IKeyLookup"/>
-                <message_argument value="F19_NAME"/>
+                <message_argument value="F20_NAME"/>
             </message_arguments>
         </filter>
         <filter id="403767336">
@@ -45,6 +45,13 @@
                 <message_argument value="org.eclipse.jface.dialogs.PopupDialog"/>
                 <message_argument value="INFOPOPUP_SHELLSTYLE"/>
                 <message_argument value="8"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/fieldassist/ControlDecoration.java" type="org.eclipse.jface.fieldassist.ControlDecoration">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.fieldassist.ControlDecoration"/>
             </message_arguments>
         </filter>
     </resource>
