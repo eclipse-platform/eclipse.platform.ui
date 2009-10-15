@@ -38,6 +38,15 @@ public class SearchUsingRemoteHelp extends TestCase {
 	    RemotePreferenceStore.disableRemoteHelp();
 	    SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "en"); 
 	}
+	
+	public void testSearchDefaultLocaleTwoServers() throws Exception {
+		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
+		RemotePreferenceStore.setTwoMockRemoteServers();
+		SearchTestUtils.searchOneLocale("endfdsadsads", new String[] { "http://www.eclipse.org" }, 
+				"en"); 
+	    RemotePreferenceStore.disableRemoteHelp();
+	    SearchTestUtils.searchOneLocale("endfdsadsads", new String[0], "en"); 
+	}
 
 	public void testSearchDeWordInDeLocale() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
