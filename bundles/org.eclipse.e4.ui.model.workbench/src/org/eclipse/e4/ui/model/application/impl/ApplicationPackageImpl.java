@@ -1464,6 +1464,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowEClass.getEGenericSuperTypes().add(g1);
 		vscElementEClass.getESuperTypes().add(this.getUIElement());
 		viewEClass.getESuperTypes().add(this.getPart());
+		viewEClass.getESuperTypes().add(this.getVSCElement());
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getView());
 		g1.getETypeArguments().add(g2);

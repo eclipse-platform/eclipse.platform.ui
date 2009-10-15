@@ -119,7 +119,6 @@
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//Window"/>
     </eGenericSuperTypes>
-    <eGenericSuperTypes eClassifier="#//Contribution"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//UIElement #//UIItem #//Contribution">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
@@ -192,7 +191,7 @@
       abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="VSCElement" abstract="true" interface="true"
       eSuperTypes="#//UIElement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="View" eSuperTypes="#//Part"/>
+  <eClassifiers xsi:type="ecore:EClass" name="View" eSuperTypes="#//Part #//VSCElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="ViewStack">
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//View"/>

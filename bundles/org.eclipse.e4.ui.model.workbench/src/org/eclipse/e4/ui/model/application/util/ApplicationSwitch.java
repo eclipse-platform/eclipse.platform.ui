@@ -331,6 +331,7 @@ public class ApplicationSwitch<T1> {
 				MView view = (MView)theEObject;
 				T1 result = caseView(view);
 				if (result == null) result = casePart(view);
+				if (result == null) result = caseVSCElement(view);
 				if (result == null) result = caseContribution(view);
 				if (result == null) result = caseContext(view);
 				if (result == null) result = casePSCElement(view);

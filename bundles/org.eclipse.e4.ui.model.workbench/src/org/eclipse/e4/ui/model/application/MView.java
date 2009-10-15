@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MView extends MPart {
+public interface MView extends MPart, MVSCElement {
 } // MView
