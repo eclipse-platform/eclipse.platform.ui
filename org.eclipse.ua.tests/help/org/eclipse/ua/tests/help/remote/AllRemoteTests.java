@@ -33,6 +33,7 @@ public class AllRemoteTests extends TestSuite {
 		addTestSuite(TocServletTest.class);
 		addTestSuite(SearchServletTest.class);
 		addTestSuite(IndexServletTest.class);
+		addTestSuite(ContentServletTest.class);
 		addTestSuite(SearchUsingRemoteHelp.class);	
 		addTestSuite(LoadTocUsingRemoteHelp.class);
 	}
