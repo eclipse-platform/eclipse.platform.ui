@@ -179,7 +179,9 @@ public class UnifiedTree {
 				} else if (comp > 0) {
 					// resource exists only in file system
 					//don't create a node for symbolic links that create a cycle
-					if (!localInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK) || !localInfo.isDirectory() || !isRecursiveLink(node.getStore(), localInfo))
+					if (localInfo.getAttribute(EFS.ATTRIBUTE_SYMLINK) && localInfo.isDirectory() && isRecursiveLink(node.getStore(), localInfo))
+						child = null;
+					else
 						child = createChildNodeFromFileSystem(node, localInfo);
 					localIndex++;
 				} else {
