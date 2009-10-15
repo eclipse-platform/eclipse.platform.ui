@@ -13,9 +13,10 @@ package org.eclipse.jface.tests.fieldassist;
 import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
+import org.eclipse.jface.fieldassist.IContentProposal;
+import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
-import org.eclipse.ui.PlatformUI;
 
 /**
  * This class contains test cases appropriate for generic field assist
@@ -74,7 +75,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		sendKeyDownToControl(ACTIVATE_CHAR);
 		ensurePopupIsUp();
 		assertTwoShellsUp();
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
+		sendFocusElsewhere();
 		spinEventLoop();
 		assertOneShellUp();
 	}	
@@ -158,13 +159,13 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		decoration.hide();
 		assertFalse("1.1", decoration.isVisible());
 		decoration.setShowOnlyOnFocus(true);
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
-		window.getFieldAssistControl().setFocus();
+		sendFocusElsewhere();
+		sendFocusInToControl();
 		spinEventLoop();
 		assertFalse("1.2", decoration.isVisible());
 		decoration.show();
 		assertTrue("1.3", decoration.isVisible());
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
+		sendFocusElsewhere();
 		spinEventLoop();
 		assertFalse("1.4", decoration.isVisible());
 		decoration.setShowOnlyOnFocus(false);
@@ -196,9 +197,54 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertTrue("1.1", window.getContentProposalAdapter().hasProposalPopupFocus());
 		
 		// Setting focus to another shell deactivates the popup
-		PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell().setFocus();
+		sendFocusElsewhere();
 		spinEventLoop();
 		assertOneShellUp();
 		assertFalse("1.2", window.getContentProposalAdapter().hasProposalPopupFocus());
+	}
+	// in progress
+	public void testBug275525() {
+			final boolean [] closeWindow = new boolean[1];
+			closeWindow[0] = false;
+			AbstractFieldAssistWindow window = getFieldAssistWindow();
+			window.setPropagateKeys(false);
+			window.setAutoActivationDelay(600);
+			window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
+			window.setContentProposalProvider(new IContentProposalProvider() {
+				public IContentProposal[] getProposals(String contents,
+						int position) {
+					IContentProposal[] proposals = new IContentProposal[1];
+					proposals[0] = new IContentProposal() {
+						public String getContent() {
+							return "Foo";
+						}
+
+						public int getCursorPosition() {
+							return 0;
+						}
+
+						public String getDescription() {
+							if (closeWindow[0]) {
+								closeFieldAssistWindow();
+								return "Description";
+							}
+							return null;
+						}
+
+						public String getLabel() {
+							return "Foo";
+						}
+						
+					};
+					return proposals;
+				}
+				
+			});
+			window.open();
+			setControlContent(SAMPLE_CONTENT);
+			sendKeyDownToControl(ACTIVATE_CHAR);
+			// autoactivate is started but nothing is up yet.  Set the flag
+			// that will destroy the window during description access.
+			closeWindow[0] = true;
 	}
 }

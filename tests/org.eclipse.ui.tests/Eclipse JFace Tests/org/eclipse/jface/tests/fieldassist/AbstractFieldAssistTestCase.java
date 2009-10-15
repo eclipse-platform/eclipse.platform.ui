@@ -17,6 +17,8 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 public abstract class AbstractFieldAssistTestCase extends TestCase {
 
@@ -24,6 +26,11 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 * The window that is being tested.
 	 */
 	private AbstractFieldAssistWindow window;
+	
+	/**
+	 * A shell used to take focus away from the field assist window
+	 */
+	private Shell anotherShell;
 
 	/**
 	 * The original number of shells at the beginning of the test.
@@ -36,7 +43,11 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 */
 	protected void setUp() throws Exception {
 		super.setUp();
-		originalShellCount = Display.getDefault().getShells().length;
+		Display display = getDisplay();
+		anotherShell = new Shell(display);
+		new Text(anotherShell, SWT.SINGLE);
+		anotherShell.open();
+		originalShellCount = display.getShells().length;
 		window = createFieldAssistWindow();
 		assertNotNull(window);
 	}
@@ -50,8 +61,16 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 			spinEventLoop();
 		}
 		closeFieldAssistWindow();
+		anotherShell.close();
 
 		super.tearDown();
+	}
+	
+	protected Display getDisplay() {
+		Display display = Display.getCurrent();
+		if (display == null)
+			display = Display.getDefault();
+		return display;
 	}
 
 	protected void closeFieldAssistWindow() {
@@ -79,10 +98,9 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		// spin the event loop again because we have some asyncExec calls in the
 		// ContentProposalAdapter class
 
-		Display disp = window == null ? Display.getDefault() : window
-				.getDisplay();
+		Display disp = getDisplay();
 		while (disp.readAndDispatch()) {
-			disp = window == null ? Display.getDefault() : window.getDisplay();
+			;
 		}
 	}
 
@@ -108,11 +126,27 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	}
 
 	/**
-	 * Sends an SWT FocisIn event to the field assist control.
+	 * Gives focus to the field assist control.
 	 */
 	protected void sendFocusInToControl() {
 		window.getFieldAssistControl().setFocus();
 		spinEventLoop();
+	}
+	
+	/**
+	 * Send focus somewhere besides the field assist shell.
+	 * This involves optionally creating another shell.  If we 
+	 * create another shell, we need to adjust the originalShellCount
+	 */
+	protected void sendFocusElsewhere() {
+		anotherShell.setFocus();
+	}
+	
+	/**
+	 * Sends focus to the field assist popup.
+	 */
+	protected void sendFocusToPopup() {
+		getFieldAssistWindow().getContentProposalAdapter().setProposalPopupFocus();
 	}
 
 	/**
@@ -150,6 +184,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 * Checks that there is only one shell up, the original field assist window.
 	 */
 	protected void assertOneShellUp() {
+		spinEventLoop();
 		assertEquals("There should only be one shell up, the dialog",
 				originalShellCount + 1, window.getDisplay().getShells().length);
 	}
@@ -159,6 +194,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 * the proposals popup.
 	 */
 	protected void assertTwoShellsUp() {
+		spinEventLoop();
 		assertEquals(
 				"There should two shells up, the dialog and the proposals dialog",
 				originalShellCount + 2, window.getDisplay().getShells().length);
