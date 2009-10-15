@@ -42,15 +42,31 @@ public class ContentServletTest extends TestCase {
 	public void testSimpleContent() throws Exception {
 		final String path = "/data/help/index/topic1.html";
 		String remoteContent = getRemoteContent(UA_TESTS, path, "en");
-		String localContent = getLocalContent(UA_TESTS, path, "en");	   
+		String localContent = getLocalContent(UA_TESTS, path);	   
 	    assertEquals(remoteContent, localContent);
 	}
 
 	public void testFilteredContent() throws Exception {
 		final String path = "/data/help/manual/filter.xhtml";
 		String remoteContent = getRemoteContent(UA_TESTS, path, "en");
-		String localContent = getLocalContent(UA_TESTS, path, "en");	   
+		String localContent = getLocalContent(UA_TESTS, path);	   
 	    assertEquals(remoteContent, localContent);
+	}
+
+	public void testContentInEnLocale() throws Exception {
+		final String path = "/data/help/search/testnl1.xhtml";
+		String remoteContent = getRemoteContent(UA_TESTS, path, "en");
+		String localContent = getLocalContent(UA_TESTS, path);	   
+	    assertEquals(remoteContent, localContent);
+	}
+	
+	public void testContentInDeLocale() throws Exception {
+		final String path = "/data/help/search/testnl1.xhtml";
+		String remoteContent = getRemoteContent(UA_TESTS, path, "de");
+		String enLocalContent = getLocalContent(UA_TESTS, path);	   
+		String deLocalContent = getLocalContent(UA_TESTS, "/nl/de" + path);	   
+	    assertEquals(remoteContent, deLocalContent);
+	    assertFalse(remoteContent.equals(enLocalContent));
 	}
 	
 	public void testRemoteContentNotFound() throws Exception {
@@ -69,7 +85,7 @@ public class ContentServletTest extends TestCase {
 		return readFromURL(url);
 	}
 	
-	private String getLocalContent(String plugin, String path, String locale) throws Exception {
+	private String getLocalContent(String plugin, String path) throws Exception {
         Bundle bundle = Platform.getBundle(plugin);
         URL url;
 		if (bundle != null) {
