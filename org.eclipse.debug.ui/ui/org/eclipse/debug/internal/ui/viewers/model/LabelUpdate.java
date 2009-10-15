@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech (Wind River) - added support for a virtual tree model viewer (Bug 242489)
  *     Patrick Chuong (Texas Instruments) - added support for checkbox (Bug 286310)
+ *     John Cortell (Freescale) - updated javadoc tags (Bug 292301)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 

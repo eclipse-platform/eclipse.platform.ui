@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John Cortell (Freescale) - update javadoc tags (Bug 292301)
  *******************************************************************************/
 package org.eclipse.debug.internal.core.commands;
 
@@ -22,34 +23,34 @@ public class Request implements IRequest {
 	private boolean fCanceled = false;
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IStatusCollector#done()
+	 * @see org.eclipse.debug.core.IRequest#done()
 	 */
 	public void done() {
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IStatusCollector#getStatus()
+	 * @see org.eclipse.debug.core.IRequest#getStatus()
 	 */
 	public IStatus getStatus() {
 		return fStatus;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IStatusCollector#setStatus(org.eclipse.core.runtime.IStatus)
+	 * @see org.eclipse.debug.core.IRequest#setStatus(org.eclipse.core.runtime.IStatus)
 	 */
 	public void setStatus(IStatus status) {
 		fStatus = status;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IRequest#cancel()
+	 * @see org.eclipse.debug.core.IRequest#cancel()
 	 */
 	public synchronized void cancel() {
 		fCanceled = true;
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.commands.IRequest#isCanceled()
+	 * @see org.eclipse.debug.core.IRequest#isCanceled()
 	 */
 	public synchronized boolean isCanceled() {
 		return fCanceled;
