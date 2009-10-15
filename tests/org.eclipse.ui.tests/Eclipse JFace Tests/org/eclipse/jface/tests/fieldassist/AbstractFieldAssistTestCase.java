@@ -162,7 +162,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.character = character;
-		window.getDisplay().post(event);
+		assertTrue("unable to post event to display queue for test case", window.getDisplay().post(event));
 		spinEventLoop();
 	}
 
@@ -177,7 +177,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.keyCode = keystroke.getNaturalKey();
-		window.getDisplay().post(event);
+		assertTrue("unable to post event to display queue for test case", window.getDisplay().post(event));
 		spinEventLoop();
 	}
 
