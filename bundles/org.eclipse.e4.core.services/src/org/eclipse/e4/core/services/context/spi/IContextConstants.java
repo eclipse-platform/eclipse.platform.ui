@@ -10,9 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.context.spi;
 
-import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.IEclipseContextAware;
-
 /**
  * This class contains various constants used by the context API.
  * 
@@ -89,4 +86,16 @@ public interface IContextConstants {
 	 */
 	public static final String PARENT = "parentContext"; //$NON-NLS-1$
 
+	/**
+	 * A context key (value "activeChildContext") that identifies another {@link IEclipseContext}
+	 * that is a child of the context. The meaning of active is up to the application.
+	 */
+	public static final String ACTIVE_CHILD = "activeChildContext"; //$NON-NLS-1$
+
+	/**
+	 * A context key (value "rootContext") that identifies the root of this context chain. It does
+	 * not have to be the global root, but signifies the topmost context for the purposes of
+	 * function management and active context chains.
+	 */
+	public static final String ROOT_CONTEXT = "rootContext"; //$NON-NLS-1$
 }
