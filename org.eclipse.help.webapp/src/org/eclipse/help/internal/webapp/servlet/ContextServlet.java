@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IContext;
+import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
@@ -43,7 +44,7 @@ public class ContextServlet extends HttpServlet {
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$
 		String id = req.getParameter(PARAMETER_ID);
 		if (id != null) {
-			IContext context = HelpPlugin.getContextManager().getContext(id, locale);
+			IContext context = getContext(locale, id);
 			if (context != null) {
 				serialize(context, resp.getWriter());
 			}
@@ -55,11 +56,24 @@ public class ContextServlet extends HttpServlet {
 			resp.sendError(400); // bad request; missing parameter
 		}
 	}
+
+	protected IContext getContext(String locale, String id) {
+		IContext context = HelpPlugin.getContextManager().getContext(id, locale);
+		return context;
+	}
 	
 	private void serialize(IContext context, Writer out) throws IOException {
 		out.write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
-		out.write('<' + Context.NAME + ">\n"); //$NON-NLS-1$
+		out.write('<' + Context.NAME );
+		if (context instanceof IContext2) {
+			String title = ((IContext2)context).getTitle();
+			if (title != null && title.length() > 0) {
+				out.write(" title=\"" + title + "\""); //$NON-NLS-1$ //$NON-NLS-2$			
+			}
+		}
+		out.write(">\n"); //$NON-NLS-1$
 		out.write("   <description>" + context.getText() + "</description>\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		
 		IHelpResource[] topics = context.getRelatedTopics();
 		for (int i=0;i<topics.length;++i) {
 			out.write("   <" + Topic.NAME); //$NON-NLS-1$
