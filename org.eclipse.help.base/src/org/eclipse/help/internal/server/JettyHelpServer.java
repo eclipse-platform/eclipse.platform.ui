@@ -94,7 +94,7 @@ public class JettyHelpServer extends HelpServer {
 
 
 	private String host;
-	private int port = -1;
+	protected int port = -1;
 	protected static final int AUTO_SELECT_JETTY_PORT = 0;
 	
 	public void start(final String webappName) throws Exception {		
@@ -107,7 +107,7 @@ public class JettyHelpServer extends HelpServer {
 	 * Ensures that the bundle with the specified name and the highest available
 	 * version is started and reads the port number
 	 */
-	private void checkBundle() throws InvalidSyntaxException, BundleException {
+	protected void checkBundle() throws InvalidSyntaxException, BundleException {
 		Bundle bundle = Platform.getBundle("org.eclipse.equinox.http.registry"); //$NON-NLS-1$if (bundle != null) {
 		if (bundle.getState() == Bundle.RESOLVED) {
 			bundle.start(Bundle.START_TRANSIENT);

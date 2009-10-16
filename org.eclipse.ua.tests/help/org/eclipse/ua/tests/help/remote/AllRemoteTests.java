@@ -34,10 +34,11 @@ public class AllRemoteTests extends TestSuite {
 		addTestSuite(SearchServletTest.class);
 		addTestSuite(IndexServletTest.class);
 		addTestSuite(ContentServletTest.class);
-		addTestSuite(ContextServletTest.class);
-		addTestSuite(SearchUsingRemoteHelp.class);	
+		addTestSuite(ContextServletTest.class);	
 		addTestSuite(LoadTocUsingRemoteHelp.class);
-		addTestSuite(GetContextUsingRemoteHelp.class);
+		addTestSuite(SearchUsingRemoteHelp.class);
+		addTestSuite(LoadIndexUsingRemoteHelp.class);
 		addTestSuite(GetContentUsingRemoteHelp.class);
+		addTestSuite(GetContextUsingRemoteHelp.class);
 	}
 }
