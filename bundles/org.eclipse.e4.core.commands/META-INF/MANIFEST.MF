@@ -1,0 +1,18 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: E4 Core Commands (Incubation)
+Bundle-SymbolicName: org.eclipse.e4.core.commands;singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-Activator: org.eclipse.e4.core.commands.Activator
+Bundle-Vendor: Eclipse Foundation
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Import-Package: org.eclipse.core.commands,
+ org.eclipse.core.commands.common,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.core.services.annotations,
+ org.eclipse.e4.core.services.context,
+ org.eclipse.e4.core.services.context.spi,
+ org.osgi.framework;version="1.5.0"
+Export-Package: org.eclipse.e4.core.commands,
+ org.eclipse.e4.core.commands.internal
