@@ -212,8 +212,6 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 			closeWindow[0] = false;
 			AbstractFieldAssistWindow window = getFieldAssistWindow();
 			window.setPropagateKeys(false);
-			window.setAutoActivationDelay(600);
-			window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
 			window.setContentProposalProvider(new IContentProposalProvider() {
 				public IContentProposal[] getProposals(String contents,
 						int position) {

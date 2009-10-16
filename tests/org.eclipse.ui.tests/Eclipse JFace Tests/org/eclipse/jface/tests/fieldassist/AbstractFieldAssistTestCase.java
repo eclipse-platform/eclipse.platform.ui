@@ -161,6 +161,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 */
 	protected void sendKeyDownToControl(char character) {
 		// fake a KeyDown event
+		sendFocusInToControl();
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.character = character;
@@ -176,6 +177,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 */
 	protected void sendKeyDownToControl(KeyStroke keystroke) {
 		// fake a KeyDown event
+		sendFocusInToControl();
 		Event event = new Event();
 		event.type = SWT.KeyDown;
 		event.keyCode = keystroke.getNaturalKey();
