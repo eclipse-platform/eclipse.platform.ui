@@ -70,6 +70,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.INPUT: return (EObject)createInput();
 			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
 			case MApplicationPackage.CONTEXT: return (EObject)createContext();
+			case MApplicationPackage.TEST_HARNESS: return (EObject)createTestHarness();
 			case MApplicationPackage.TRIM_STRUCTURE: return (EObject)createTrimStructure();
 			case MApplicationPackage.APPLICATION: return (EObject)createApplication();
 			case MApplicationPackage.ITEM: return (EObject)createItem();
@@ -171,6 +172,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MContext createContext() {
 		ContextImpl context = new ContextImpl();
 		return context;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MTestHarness createTestHarness() {
+		TestHarnessImpl testHarness = new TestHarnessImpl();
+		return testHarness;
 	}
 
 	/**

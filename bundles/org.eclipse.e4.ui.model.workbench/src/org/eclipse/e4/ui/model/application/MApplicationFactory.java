@@ -75,6 +75,15 @@ public interface MApplicationFactory extends EFactory {
 	MContext createContext();
 
 	/**
+	 * Returns a new object of class '<em>Test Harness</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Test Harness</em>'.
+	 * @generated
+	 */
+	MTestHarness createTestHarness();
+
+	/**
 	 * Returns a new object of class '<em>Trim Structure</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

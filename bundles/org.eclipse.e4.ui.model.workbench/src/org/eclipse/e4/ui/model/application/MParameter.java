@@ -19,7 +19,7 @@ package org.eclipse.e4.ui.model.application;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MParameter#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MParameter#getTag <em>Tag</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MParameter#getValue <em>Value</em>}</li>
  * </ul>
  * </p>
@@ -30,30 +30,30 @@ package org.eclipse.e4.ui.model.application;
  */
 public interface MParameter extends MApplicationElement {
 	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
+	 * Returns the value of the '<em><b>Tag</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Tag</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getParameter_Name()
+	 * @return the value of the '<em>Tag</em>' attribute.
+	 * @see #setTag(String)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getParameter_Tag()
 	 * @model
 	 * @generated
 	 */
-	String getName();
+	String getTag();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MParameter#getName <em>Name</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MParameter#getTag <em>Tag</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
+	 * @param value the new value of the '<em>Tag</em>' attribute.
+	 * @see #getTag()
 	 * @generated
 	 */
-	void setName(String value);
+	void setTag(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Value</b></em>' attribute.

@@ -112,6 +112,14 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createContextAdapter();
 			}
 			@Override
+			public Adapter caseV_________Testing__________V(MV_________Testing__________V object) {
+				return createV_________Testing__________VAdapter();
+			}
+			@Override
+			public Adapter caseTestHarness(MTestHarness object) {
+				return createTestHarnessAdapter();
+			}
+			@Override
 			public Adapter caseV_________AbstractContainers__________V(MV_________AbstractContainers__________V object) {
 				return createV_________AbstractContainers__________VAdapter();
 			}
@@ -374,6 +382,34 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MV_________Testing__________V
+	 * @generated
+	 */
+	public Adapter createV_________Testing__________VAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTestHarness <em>Test Harness</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MTestHarness
+	 * @generated
+	 */
+	public Adapter createTestHarnessAdapter() {
 		return null;
 	}
 

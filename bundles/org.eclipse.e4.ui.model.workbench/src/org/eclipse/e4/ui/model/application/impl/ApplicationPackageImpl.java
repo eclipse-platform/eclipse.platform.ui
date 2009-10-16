@@ -41,6 +41,7 @@ import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MTrimStructure;
@@ -48,6 +49,7 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.model.application.MVSCElement;
 import org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V;
+import org.eclipse.e4.ui.model.application.MV_________Testing__________V;
 import org.eclipse.e4.ui.model.application.MV____________Abstract_____________V;
 import org.eclipse.e4.ui.model.application.MV______________IDE_______________V;
 import org.eclipse.e4.ui.model.application.MV______________RCP_______________V;
@@ -135,6 +137,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass contextEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass v_________Testing__________VEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass testHarnessEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -552,6 +568,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getInput_Dirty() {
+		return (EAttribute)inputEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getParameter() {
 		return parameterEClass;
 	}
@@ -561,7 +586,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getParameter_Name() {
+	public EAttribute getParameter_Tag() {
 		return (EAttribute)parameterEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -680,6 +705,24 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EAttribute getContext_Variables() {
 		return (EAttribute)contextEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getV_________Testing__________V() {
+		return v_________Testing__________VEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getTestHarness() {
+		return testHarnessEClass;
 	}
 
 	/**
@@ -1241,9 +1284,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		inputEClass = createEClass(INPUT);
 		createEAttribute(inputEClass, INPUT__INPUT_URI);
+		createEAttribute(inputEClass, INPUT__DIRTY);
 
 		parameterEClass = createEClass(PARAMETER);
-		createEAttribute(parameterEClass, PARAMETER__NAME);
+		createEAttribute(parameterEClass, PARAMETER__TAG);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
 
 		uiItemEClass = createEClass(UI_ITEM);
@@ -1260,6 +1304,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		contextEClass = createEClass(CONTEXT);
 		createEAttribute(contextEClass, CONTEXT__CONTEXT);
 		createEAttribute(contextEClass, CONTEXT__VARIABLES);
+
+		v_________Testing__________VEClass = createEClass(VTESTING_V);
+
+		testHarnessEClass = createEClass(TEST_HARNESS);
 
 		v_________AbstractContainers__________VEClass = createEClass(VABSTRACT_CONTAINERS_V);
 
@@ -1392,6 +1440,14 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		commandEClass.getESuperTypes().add(this.getApplicationElement());
 		parameterEClass.getESuperTypes().add(this.getApplicationElement());
 		uiElementEClass.getESuperTypes().add(this.getApplicationElement());
+		testHarnessEClass.getESuperTypes().add(this.getApplicationElement());
+		testHarnessEClass.getESuperTypes().add(this.getCommand());
+		testHarnessEClass.getESuperTypes().add(this.getContext());
+		testHarnessEClass.getESuperTypes().add(this.getContribution());
+		testHarnessEClass.getESuperTypes().add(this.getInput());
+		testHarnessEClass.getESuperTypes().add(this.getItem());
+		testHarnessEClass.getESuperTypes().add(this.getUIItem());
+		testHarnessEClass.getESuperTypes().add(this.getParameter());
 		elementContainerEClass.getESuperTypes().add(this.getUIElement());
 		g1 = createEGenericType(this.getElementContainer());
 		EGenericType g2 = createEGenericType(genericTileEClass_T);
@@ -1551,9 +1607,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(inputEClass, MInput.class, "Input", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getInput_InputURI(), ecorePackage.getEString(), "inputURI", null, 0, 1, MInput.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getInput_Dirty(), ecorePackage.getEBoolean(), "dirty", null, 0, 1, MInput.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(parameterEClass, MParameter.class, "Parameter", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getParameter_Name(), ecorePackage.getEString(), "name", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getParameter_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getParameter_Value(), ecorePackage.getEString(), "value", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(uiItemEClass, MUIItem.class, "UIItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1573,6 +1630,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(contextEClass, MContext.class, "Context", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContext_Context(), this.getIEclipseContext(), "context", null, 0, 1, MContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getContext_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(v_________Testing__________VEClass, MV_________Testing__________V.class, "V_________Testing__________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(testHarnessEClass, MTestHarness.class, "TestHarness", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(v_________AbstractContainers__________VEClass, MV_________AbstractContainers__________V.class, "V_________AbstractContainers__________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

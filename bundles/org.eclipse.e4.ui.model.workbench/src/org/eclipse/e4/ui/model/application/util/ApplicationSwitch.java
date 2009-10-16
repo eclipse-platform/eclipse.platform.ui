@@ -149,6 +149,27 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.VTESTING_V: {
+				MV_________Testing__________V v_________Testing__________V = (MV_________Testing__________V)theEObject;
+				T1 result = caseV_________Testing__________V(v_________Testing__________V);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.TEST_HARNESS: {
+				MTestHarness testHarness = (MTestHarness)theEObject;
+				T1 result = caseTestHarness(testHarness);
+				if (result == null) result = caseCommand(testHarness);
+				if (result == null) result = caseContext(testHarness);
+				if (result == null) result = caseInput(testHarness);
+				if (result == null) result = caseItem(testHarness);
+				if (result == null) result = caseParameter(testHarness);
+				if (result == null) result = caseContribution(testHarness);
+				if (result == null) result = caseUIElement(testHarness);
+				if (result == null) result = caseUIItem(testHarness);
+				if (result == null) result = caseApplicationElement(testHarness);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.VABSTRACT_CONTAINERS_V: {
 				MV_________AbstractContainers__________V v_________AbstractContainers__________V = (MV_________AbstractContainers__________V)theEObject;
 				T1 result = caseV_________AbstractContainers__________V(v_________AbstractContainers__________V);
@@ -594,6 +615,36 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseContext(MContext object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>VTesting V</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>VTesting V</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseV_________Testing__________V(MV_________Testing__________V object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Test Harness</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Test Harness</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseTestHarness(MTestHarness object) {
 		return null;
 	}
 

@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.InputImpl#getInputURI <em>Input URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.InputImpl#isDirty <em>Dirty</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,6 +54,26 @@ public class InputImpl extends EObjectImpl implements MInput {
 	 * @ordered
 	 */
 	protected String inputURI = INPUT_URI_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DIRTY_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean dirty = DIRTY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -99,11 +120,34 @@ public class InputImpl extends EObjectImpl implements MInput {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDirty(boolean newDirty) {
+		boolean oldDirty = dirty;
+		dirty = newDirty;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.INPUT__DIRTY, oldDirty, dirty));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case MApplicationPackage.INPUT__INPUT_URI:
 				return getInputURI();
+			case MApplicationPackage.INPUT__DIRTY:
+				return isDirty();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -118,6 +162,9 @@ public class InputImpl extends EObjectImpl implements MInput {
 		switch (featureID) {
 			case MApplicationPackage.INPUT__INPUT_URI:
 				setInputURI((String)newValue);
+				return;
+			case MApplicationPackage.INPUT__DIRTY:
+				setDirty((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -134,6 +181,9 @@ public class InputImpl extends EObjectImpl implements MInput {
 			case MApplicationPackage.INPUT__INPUT_URI:
 				setInputURI(INPUT_URI_EDEFAULT);
 				return;
+			case MApplicationPackage.INPUT__DIRTY:
+				setDirty(DIRTY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -148,6 +198,8 @@ public class InputImpl extends EObjectImpl implements MInput {
 		switch (featureID) {
 			case MApplicationPackage.INPUT__INPUT_URI:
 				return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
+			case MApplicationPackage.INPUT__DIRTY:
+				return dirty != DIRTY_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -164,6 +216,8 @@ public class InputImpl extends EObjectImpl implements MInput {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (inputURI: "); //$NON-NLS-1$
 		result.append(inputURI);
+		result.append(", dirty: "); //$NON-NLS-1$
+		result.append(dirty);
 		result.append(')');
 		return result.toString();
 	}

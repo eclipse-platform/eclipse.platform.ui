@@ -19,13 +19,17 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.eclipse.e4.workbench.ui.internal.UIModelEventPublisher;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public class PartRenderingEngine implements IPresentationEngine {
 	public static final String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"
@@ -142,9 +146,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 		this.contributionFactory = factoryIn;
 		this.context = context;
 
-		// add the factories from the extension point, sort by dependency
-		// * Need to make the EP more declarative to avoid aggressive
-		// loading
 		IConfigurationElement[] factories = registry
 				.getConfigurationElementsFor("org.eclipse.e4.workbench.rendererfactory"); //$NON-NLS-1$
 		for (int i = 0; i < factories.length; i++) {
@@ -168,6 +169,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// Add the renderer to the context
 		context.set(PartRenderingEngine.SERVICE_NAME, this);
+
+		IEventBroker eventPublisher = (IEventBroker) context
+				.get(IEventBroker.class.getName());
+		eventPublisher.subscribe(UIModelEventPublisher.UIElementTopic,
+				new EventHandler() {
+					public void handleEvent(Event event) {
+						System.out.println("PRE: " + event);
+					}
+				});
 	}
 
 	public Object createGui(MUIElement element, Object parent) {

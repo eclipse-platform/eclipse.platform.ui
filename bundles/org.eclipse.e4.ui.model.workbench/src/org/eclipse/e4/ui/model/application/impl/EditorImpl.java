@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getInputURI <em>Input URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#isDirty <em>Dirty</em>}</li>
  * </ul>
  * </p>
  *
@@ -54,6 +55,26 @@ public class EditorImpl extends PartImpl implements MEditor {
 	 * @ordered
 	 */
 	protected String inputURI = INPUT_URI_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DIRTY_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean dirty = DIRTY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -100,11 +121,34 @@ public class EditorImpl extends PartImpl implements MEditor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDirty(boolean newDirty) {
+		boolean oldDirty = dirty;
+		dirty = newDirty;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__DIRTY, oldDirty, dirty));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__INPUT_URI:
 				return getInputURI();
+			case MApplicationPackage.EDITOR__DIRTY:
+				return isDirty();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -119,6 +163,9 @@ public class EditorImpl extends PartImpl implements MEditor {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__INPUT_URI:
 				setInputURI((String)newValue);
+				return;
+			case MApplicationPackage.EDITOR__DIRTY:
+				setDirty((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -135,6 +182,9 @@ public class EditorImpl extends PartImpl implements MEditor {
 			case MApplicationPackage.EDITOR__INPUT_URI:
 				setInputURI(INPUT_URI_EDEFAULT);
 				return;
+			case MApplicationPackage.EDITOR__DIRTY:
+				setDirty(DIRTY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -149,6 +199,8 @@ public class EditorImpl extends PartImpl implements MEditor {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__INPUT_URI:
 				return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
+			case MApplicationPackage.EDITOR__DIRTY:
+				return dirty != DIRTY_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -163,6 +215,7 @@ public class EditorImpl extends PartImpl implements MEditor {
 		if (baseClass == MInput.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.EDITOR__INPUT_URI: return MApplicationPackage.INPUT__INPUT_URI;
+				case MApplicationPackage.EDITOR__DIRTY: return MApplicationPackage.INPUT__DIRTY;
 				default: return -1;
 			}
 		}
@@ -184,6 +237,7 @@ public class EditorImpl extends PartImpl implements MEditor {
 		if (baseClass == MInput.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.INPUT__INPUT_URI: return MApplicationPackage.EDITOR__INPUT_URI;
+				case MApplicationPackage.INPUT__DIRTY: return MApplicationPackage.EDITOR__DIRTY;
 				default: return -1;
 			}
 		}
@@ -207,6 +261,8 @@ public class EditorImpl extends PartImpl implements MEditor {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (inputURI: "); //$NON-NLS-1$
 		result.append(inputURI);
+		result.append(", dirty: "); //$NON-NLS-1$
+		result.append(dirty);
 		result.append(')');
 		return result.toString();
 	}

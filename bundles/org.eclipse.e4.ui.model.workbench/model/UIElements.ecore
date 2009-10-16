@@ -23,9 +23,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Input">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parameter" eSuperTypes="#//ApplicationElement">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="tag" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="UIItem" abstract="true">
@@ -56,6 +57,9 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="variables" ordered="false"
         upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="V_________Testing__________V" abstract="true"
+      interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TestHarness" eSuperTypes="#//ApplicationElement #//Command #//Context #//Contribution #//Input #//Item #//UIItem #//Parameter"/>
   <eClassifiers xsi:type="ecore:EClass" name="V_________AbstractContainers__________V"
       abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true" eSuperTypes="#//UIElement">

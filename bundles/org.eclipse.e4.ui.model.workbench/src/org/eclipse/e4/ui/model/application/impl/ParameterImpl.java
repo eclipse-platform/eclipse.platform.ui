@@ -26,7 +26,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl#getTag <em>Tag</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl#getValue <em>Value</em>}</li>
  * </ul>
  * </p>
@@ -35,24 +35,24 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  */
 public class ParameterImpl extends ApplicationElementImpl implements MParameter {
 	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The default value of the '{@link #getTag() <em>Tag</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getTag()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String NAME_EDEFAULT = null;
+	protected static final String TAG_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The cached value of the '{@link #getTag() <em>Tag</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getTag()
 	 * @generated
 	 * @ordered
 	 */
-	protected String name = NAME_EDEFAULT;
+	protected String tag = TAG_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
@@ -98,8 +98,8 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getName() {
-		return name;
+	public String getTag() {
+		return tag;
 	}
 
 	/**
@@ -107,11 +107,11 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
+	public void setTag(String newTag) {
+		String oldTag = tag;
+		tag = newTag;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PARAMETER__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PARAMETER__TAG, oldTag, tag));
 	}
 
 	/**
@@ -143,8 +143,8 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.PARAMETER__NAME:
-				return getName();
+			case MApplicationPackage.PARAMETER__TAG:
+				return getTag();
 			case MApplicationPackage.PARAMETER__VALUE:
 				return getValue();
 		}
@@ -159,8 +159,8 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.PARAMETER__NAME:
-				setName((String)newValue);
+			case MApplicationPackage.PARAMETER__TAG:
+				setTag((String)newValue);
 				return;
 			case MApplicationPackage.PARAMETER__VALUE:
 				setValue((String)newValue);
@@ -177,8 +177,8 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.PARAMETER__NAME:
-				setName(NAME_EDEFAULT);
+			case MApplicationPackage.PARAMETER__TAG:
+				setTag(TAG_EDEFAULT);
 				return;
 			case MApplicationPackage.PARAMETER__VALUE:
 				setValue(VALUE_EDEFAULT);
@@ -195,8 +195,8 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.PARAMETER__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case MApplicationPackage.PARAMETER__TAG:
+				return TAG_EDEFAULT == null ? tag != null : !TAG_EDEFAULT.equals(tag);
 			case MApplicationPackage.PARAMETER__VALUE:
 				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 		}
@@ -213,8 +213,8 @@ public class ParameterImpl extends ApplicationElementImpl implements MParameter 
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: "); //$NON-NLS-1$
-		result.append(name);
+		result.append(" (tag: "); //$NON-NLS-1$
+		result.append(tag);
 		result.append(", value: "); //$NON-NLS-1$
 		result.append(value);
 		result.append(')');
