@@ -26,7 +26,11 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.TeamException;
+import org.eclipse.team.core.history.IFileRevision;
+import org.eclipse.team.core.variants.IResourceVariant;
+import org.eclipse.team.internal.core.mapping.ResourceVariantFileRevision;
 import org.eclipse.team.internal.ui.*;
+import org.eclipse.team.internal.ui.history.FileRevisionEditorInput;
 import org.eclipse.team.internal.ui.synchronize.actions.*;
 import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
@@ -415,6 +419,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			partActivated(part);
 			fPageDropDown.update();
 			createOpenAndLinkWithEditorHelper(getViewer());
+			getViewer().setComparer(COMPARER);
             rememberCurrentParticipant();
             PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), participant.getHelpContextId());
 		}
@@ -758,6 +763,49 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		return fLinkingEnabled;
 	}
 
+	IElementComparer COMPARER = new IElementComparer() {
+
+		public int hashCode(Object element) {
+			if (element instanceof SyncInfoModelElement) {
+				SyncInfoModelElement sime = (SyncInfoModelElement) element;
+				IResource local = sime.getResource();
+				if (local != null && local.exists())
+					return local.hashCode();
+				IResourceVariant remote = sime.getSyncInfo().getRemote();
+				if (remote != null)
+					return remote.hashCode();
+			}
+			return element.hashCode();
+		}
+
+		public boolean equals(Object a, Object b) {
+			// no need to check null, CustomeHashtable cannot contain null keys
+			if (a instanceof SyncInfoModelElement) {
+				if (b instanceof IResource) {
+					IResource r1 = ((SyncInfoModelElement) a).getResource();
+					IResource r2 = (IResource) b;
+					return r2.equals(r1); // r1 may be null
+				} else if (b instanceof IResourceVariant) {
+					IResourceVariant r1 = ((SyncInfoModelElement) a).getSyncInfo().getRemote();
+					IResourceVariant r2 = (IResourceVariant) b;
+					return r2.equals(r1); // r1 may be null
+				}
+			}
+			if (b instanceof SyncInfoModelElement) {
+				if (a instanceof IResource) {
+					IResource r1 = (IResource) a;
+					IResource r2 = ((SyncInfoModelElement) b).getResource();
+					return r1.equals(r2);
+				} else if (a instanceof IResourceVariant) {
+					IResourceVariant r1 = (IResourceVariant) a;
+					IResourceVariant r2 = ((SyncInfoModelElement) b).getSyncInfo().getRemote();
+					return r1.equals(r2);
+				}
+			}
+			return a.equals(b);
+		}
+	};
+	
 	public void setLinkingEnabled(boolean enabled) {
 		fLinkingEnabled= enabled;
 		IDialogSettings dialogSettings = getDialogSettings();
@@ -883,6 +931,11 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 
 	private Object getInputFromEditor(IEditorInput editorInput) {
 		Object input= editorInput.getAdapter(IFile.class);
+		if (input == null && editorInput instanceof FileRevisionEditorInput) {
+			IFileRevision fileRevision = ((FileRevisionEditorInput)editorInput).getFileRevision();
+			if (fileRevision instanceof ResourceVariantFileRevision)
+				return ((ResourceVariantFileRevision) fileRevision).getVariant();
+		}
 		if (input == null && editorInput instanceof IStorageEditorInput) {
 			try {
 				input= ((IStorageEditorInput) editorInput).getStorage();
