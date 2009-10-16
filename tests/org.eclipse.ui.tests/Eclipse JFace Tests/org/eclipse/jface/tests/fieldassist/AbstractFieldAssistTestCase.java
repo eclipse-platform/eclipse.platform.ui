@@ -141,6 +141,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 */
 	protected void sendFocusElsewhere() {
 		anotherShell.setFocus();
+		spinEventLoop();
 	}
 	
 	/**
@@ -148,6 +149,7 @@ public abstract class AbstractFieldAssistTestCase extends TestCase {
 	 */
 	protected void sendFocusToPopup() {
 		getFieldAssistWindow().getContentProposalAdapter().setProposalPopupFocus();
+		spinEventLoop();
 	}
 
 	/**

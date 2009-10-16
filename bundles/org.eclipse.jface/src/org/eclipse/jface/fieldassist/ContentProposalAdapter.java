@@ -677,8 +677,7 @@ public class ContentProposalAdapter {
 		 */
 		protected void adjustBounds() {
 			// Get our control's location in display coordinates.
-			Point location = control.getDisplay().map(control.getParent(),
-					null, control.getLocation());
+			Point location = control.toDisplay(control.getLocation());
 			int initialX = location.x + POPUP_OFFSET;
 			int initialY = location.y + control.getSize().y + POPUP_OFFSET;
 			// If we are inserting content, use the cursor position to
@@ -703,7 +702,16 @@ public class ContentProposalAdapter {
 				getShell().pack();
 				popupSize = getShell().getSize();
 			}
-			getShell().setBounds(initialX, initialY, popupSize.x, popupSize.y);
+			
+			// Constrain to the display
+			Rectangle constrainedBounds = getConstrainedShellBounds(new Rectangle(initialX, initialY, popupSize.x, popupSize.y));
+			
+			// If there has been an adjustment causing the popup to overlap 
+			// with the control, then put the popup above the control.
+			if (constrainedBounds.y < initialY)
+				getShell().setBounds(initialX, location.y - popupSize.y, popupSize.x, popupSize.y);
+			else
+				getShell().setBounds(initialX, initialY, popupSize.x, popupSize.y);
 
 			// Now set up a listener to monitor any changes in size.
 			getShell().addListener(SWT.Resize, new Listener() {

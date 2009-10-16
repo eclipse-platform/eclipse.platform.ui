@@ -11,12 +11,16 @@
 package org.eclipse.jface.tests.fieldassist;
 
 import org.eclipse.jface.bindings.keys.KeyStroke;
+import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Shell;
 
 /**
  * This class contains test cases appropriate for generic field assist
@@ -246,5 +250,60 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 			// autoactivate is started but nothing is up yet.  Set the flag
 			// that will destroy the window during description access.
 			closeWindow[0] = true;
+	}
+	
+	/**
+	 * Replace mode is easier to test because we can check that the bounds
+	 * does not intersect the control.  In insertion mode, the popup is 
+	 * supposed to overlap the control (using the insertion cursor to track
+	 * position).
+	 */
+	public void testBug256651ReplaceMode() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.setPropagateKeys(false);
+		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
+		window.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		window.open();
+		Display display = getDisplay();
+		Rectangle displayBounds = display.getBounds();
+		window.getShell().setLocation(0, displayBounds.height - window.getShell().getBounds().height);
+		assertOneShellUp();
+		setControlContent(SAMPLE_CONTENT);
+		sendKeyDownToControl(ACTIVATE_CHAR);
+		ensurePopupIsUp();
+		assertTwoShellsUp();
+		sendFocusToPopup();
+		Shell popupShell = display.getActiveShell();
+		Rectangle popupBounds = popupShell.getBounds();
+		Rectangle controlBounds = getFieldAssistWindow().getFieldAssistControl().getBounds();
+		controlBounds = getDisplay().map(getFieldAssistWindow().getFieldAssistControl().getParent(), null, controlBounds);
+		assertFalse("Popup is blocking the control", popupBounds.intersects(controlBounds));
+	}
+	
+	/**
+	 * Replace mode is easier to test because we can check that the bounds
+	 * does not intersect the control.  In insertion mode, the popup is 
+	 * supposed to overlap the control (using the insertion cursor to track
+	 * position).
+	 */
+	public void testDefaultPopupPositioningReplaceMode() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.setPropagateKeys(false);
+		window.setAutoActivationCharacters(new char [] {ACTIVATE_CHAR});
+		window.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
+		window.open();
+		Display display = getDisplay();
+		window.getShell().setLocation(0, 0);
+		assertOneShellUp();
+		setControlContent(SAMPLE_CONTENT);
+		sendKeyDownToControl(ACTIVATE_CHAR);
+		ensurePopupIsUp();
+		assertTwoShellsUp();
+		sendFocusToPopup();
+		Shell popupShell = display.getActiveShell();
+		Rectangle popupBounds = popupShell.getBounds();
+		Rectangle controlBounds = getFieldAssistWindow().getFieldAssistControl().getBounds();
+		controlBounds = getDisplay().map(getFieldAssistWindow().getFieldAssistControl().getParent(), null, controlBounds);
+		assertFalse("Popup is blocking the control", popupBounds.intersects(controlBounds));
 	}
 }
