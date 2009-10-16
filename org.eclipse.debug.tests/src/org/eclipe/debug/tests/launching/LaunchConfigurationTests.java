@@ -30,13 +30,10 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ProjectScope;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -1065,103 +1062,21 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	}
 	
 	/**
-	 * Tests setting a default template in the project scope.
+	 * Tests that creation from a template works.
 	 * 
 	 * @throws CoreException
 	 */
-	public void testProjectScopeTemplate() throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-project-scope");
-		ILaunchConfiguration template = wc.doSave();
-		ILaunchConfigurationType type = template.getType();
-		IScopeContext scope = new ProjectScope(getProject());
-		type.setDefaultTemplate(template, scope);
-		ILaunchConfiguration configuration = type.getDefaultTemplate(scope);
-		assertNotNull("No template found", configuration);
-		assertEquals("Wrong template", template, configuration);
-		// test removing scope
-		type.setDefaultTemplate(null, scope);
-		configuration = type.getDefaultTemplate(scope);
-		assertNull("Should no longer be a template", configuration);
-	}
-	
-	/**
-	 * Tests setting a default template in the project scope.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testInstanceScopeTemplate() throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-instance-scope");
-		ILaunchConfiguration template = wc.doSave();
-		ILaunchConfigurationType type = template.getType();
-		IScopeContext scope = new InstanceScope();
-		type.setDefaultTemplate(template, scope);
-		ILaunchConfiguration configuration = type.getDefaultTemplate(scope);
-		assertNotNull("No template found", configuration);
-		assertEquals("Wrong template", template, configuration);
-		// test removing scope
-		type.setDefaultTemplate(null, scope);
-		configuration = type.getDefaultTemplate(scope);
-		assertNull("Should no longer be a template", configuration);
-	}	
-	
-	/**
-	 * Tests that a default template in the project scope is used to initialize
-	 * values.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testCreationFromProjectScopeTemplate() throws CoreException {
-		ILaunchConfigurationWorkingCopy pc = newConfiguration(null, "test-project-scope-creation");
-		pc.setAttribute("PROJECT", "PROJECT");
-		ILaunchConfiguration ptemplate = pc.doSave();
-		ILaunchConfigurationWorkingCopy ic = newConfiguration(null, "test-workspace-scope-creation");
-		ic.setAttribute("WORKSPACE", "WORKSPACE");
-		ILaunchConfiguration itemplate = ic.doSave();
-		ILaunchConfigurationType type = ptemplate.getType();
-		IScopeContext pscope = new ProjectScope(getProject());
-		IScopeContext wscope = new InstanceScope();
-		type.setDefaultTemplate(ptemplate, pscope);
-		type.setDefaultTemplate(itemplate, wscope);
+	public void testCreationFromTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy temp = newConfiguration(null, "test-creation-from-template");
+		temp.setAttribute("TEMPLATE", "TEMPLATE");
+		ILaunchConfiguration template = temp.doSave();
+		ILaunchConfigurationType type = temp.getType();
 		
 		// create a new configuration in project scope priority
-		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes", new IScopeContext[]{pscope, wscope});
-		assertNotNull("Made from wrong template", config.getAttribute("PROJECT", (String)null));
-		assertEquals("Should refer to creation template", ptemplate, config.getTemplate());
-		
-		// Removing defaults
-		type.setDefaultTemplate(null, pscope);
-		type.setDefaultTemplate(null, wscope);
-		ILaunchConfiguration configuration = type.getDefaultTemplate(pscope);
-		assertNull("Should no longer be a project template", configuration);
-		configuration = type.getDefaultTemplate(wscope);
-		assertNull("Should no longer be a workspace template", configuration);
+		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes", template);
+		assertNotNull("Made from wrong template", config.getAttribute("TEMPLATE", (String)null));
+		assertEquals("Should refer to creation template", template, config.getTemplate());
 	}	
-	
-	/**
-	 * Tests that a default template in the instance scope is used to initialize
-	 * values.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testCreationFromInsatnceScopeTemplate() throws CoreException {
-		ILaunchConfigurationWorkingCopy ic = newConfiguration(null, "test-workspace-scope-creation");
-		ic.setAttribute("WORKSPACE", "WORKSPACE");
-		ILaunchConfiguration itemplate = ic.doSave();
-		ILaunchConfigurationType type = itemplate.getType();
-		IScopeContext pscope = new ProjectScope(getProject());
-		IScopeContext wscope = new InstanceScope();
-		type.setDefaultTemplate(itemplate, wscope);
-		
-		// create a new configuration in project scope priority, but picks up workspace scope
-		ILaunchConfigurationWorkingCopy config = type.newInstance(null, "test-scopes", new IScopeContext[]{pscope, wscope});
-		assertNotNull("Made from wrong template", config.getAttribute("WORKSPACE", (String)null));
-		assertEquals("Should refer to creation template", itemplate, config.getTemplate());
-		
-		// Removing defaults
-		type.setDefaultTemplate(null, wscope);
-		ILaunchConfiguration configuration = type.getDefaultTemplate(wscope);
-		assertNull("Should no longer be a workspace template", configuration);
-	}		
 	
 	/**
 	 * Tests setting the 'isTemplate' attribute.
@@ -1193,8 +1108,8 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfigurationWorkingCopy r1 = newConfiguration(null, "referee-1");
 		ILaunchConfigurationWorkingCopy r2 = newConfiguration(null, "referee-2");
 		
-		r1.setTemplate(template);
-		r2.setTemplate(template);
+		r1.setTemplate(template, false);
+		r2.setTemplate(template, false);
 		
 		ILaunchConfiguration s1 = r1.doSave();
 		ILaunchConfiguration s2 = r2.doSave();
@@ -1208,6 +1123,30 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertTrue("Missing reference", list.contains(s1));
 		assertTrue("Missing reference", list.contains(s2));
 	}
+	
+	/**
+	 * Tests that when an attribute is removed from a working copy, it does not
+	 * get inherited from its template.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testTemplateRemoveBehavior() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-remove");
+		ILaunchConfigurationWorkingCopy t1 = newEmptyConfiguration(null, "template-1");
+		t1.setAttribute("COMMON", "TEMPLATE-1");
+		t1.setAttribute("T1", "T1");
+		t1.setAttribute("String1", "String2");
+		ILaunchConfiguration template = t1.doSave();
+		
+		assertEquals("String1", wc.getAttribute("String1", "wrong"));
+		
+		wc.setTemplate(template, true);
+		wc.removeAttribute("String1");
+		assertEquals("TEMPLATE-1", wc.getAttribute("COMMON", (String)null));
+		assertEquals("T1", wc.getAttribute("T1", (String)null));
+		assertNull(wc.getAttribute("String1", (String)null));
+		
+	}	
 }
 
 

@@ -16,7 +16,6 @@ import java.util.Set;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
 
@@ -277,12 +276,13 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * When <code>container</code> is </code>null</code>, the configuration
 	 * will reside locally in the metadata area.
 	 * Note: a launch configuration is not actually created until the working copy is saved.
-	 * 
+	 *
 	 * @param container the container in which the new configuration will
 	 *  reside, or <code>null</code> if the configuration should reside
 	 *  locally with the metadata.
 	 * @param name name for the launch configuration
-	 * @return a new launch configuration working copy instance of this type
+	 * @return a new launch configuration working copy instance of this type initialized
+	 *  from the instance scope
 	 * @exception CoreException if an instance of this type
 	 *  of launch configuration could not be created for any
 	 *  reason
@@ -307,43 +307,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return name of contributing plug-in
 	 * @since 3.3
 	 */
-	public String getContributorName();
-	
-	/**
-	 * Sets the default template for this launch configuration type in the specified scope,
-	 * or removes the default template for the scope when the specified configuration is
-	 * <code>null</code>.
-	 * 
-	 * @param configuration default template for the specified scope, or <code>null</code> if none
-	 * @param scope scope
-	 * @throws CoreException if unable to to set/remove the default template for the given scope 
-	 * @since 3.6
-	 */
-	public void setDefaultTemplate(ILaunchConfiguration configuration, IScopeContext scope) throws CoreException;
-
-	/**
-	 * Returns the default template for this launch configuration type in the specified scope
-	 * or <code>null</code> if no default template has been set for the scope.
-	 * 
-	 * @param scope scope
-	 * @return default template for the scope or <code>null</code>
-	 * @throws CoreException if unable to retrieve the default template for the scope
-	 * @since 3.6
-	 */
-	public ILaunchConfiguration getDefaultTemplate(IScopeContext scope) throws CoreException;
-	
-	/**
-	 * Resolves and returns the first default template found in the given canonical scope order
-	 * or <code>null</code> if none.
-	 * 
-	 * @param scopes context objects to determine which scopes are searched
-	 *  for a default launch configuration template
-	 * @return default template found in the given canonical scope order
-	 *  or <code>null</code> if none
-	 * @exception CoreException if an exception occurs retrieving a default template
-	 * @since 3.6
-	 */
-	public ILaunchConfiguration resolveDefaultTemplate(IScopeContext[] scopes) throws CoreException;	
+	public String getContributorName();	
 	
 	/**
 	 * Returns all launch configuration templates of the this type, possibly
@@ -358,7 +322,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	/**
 	 * Returns a new launch configuration working copy of this type,
 	 * that resides in the specified container, with the given name, initialized
-	 * with values from the first default template found in the given canonical scope order.
+	 * with values from the given template.
 	 * When <code>container</code> is </code>null</code>, the configuration
 	 * will reside locally in the metadata area.
 	 * Note: a launch configuration is not actually created until the working copy is saved.
@@ -367,14 +331,12 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  reside, or <code>null</code> if the configuration should reside
 	 *  locally with the metadata.
 	 * @param name name for the launch configuration
-	 * @param scopes optional context objects to determine which scopes are search
-	 *  for a default launch configuration template, or <code>null</code> if template scopes
-	 *  should not be considered
+	 * @param template launch configuration template, or <code>null</code>
 	 * @return a new launch configuration working copy instance of this type
 	 * @exception CoreException if an instance of this type
 	 *  of launch configuration could not be created for any
 	 *  reason
 	 * @since 3.6
 	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, IScopeContext[] scopes) throws CoreException;	
+	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, ILaunchConfiguration template) throws CoreException;	
 }

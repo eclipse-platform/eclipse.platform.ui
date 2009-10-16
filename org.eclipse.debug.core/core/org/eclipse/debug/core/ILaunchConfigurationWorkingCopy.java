@@ -283,14 +283,18 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	public void setTemplate(boolean isTemplate);
 	
 	/**
-	 * Sets the template that this configuration is associated with, possibly <code>null</code>.
+	 * Sets the template that this configuration is based on, possibly <code>null</code>,
+	 * and optionally copies attributes from the template to this working copy.
 	 * <p>
 	 * When the specified template is <code>null</code>, this working copy is no longer
 	 * associated with any template.
 	 * </p>
 	 * @param template template or <code>null</code>
+	 * @param copy whether to copy attributes from the template to this working copy. Has
+	 *  no effect when template is <code>null</code>
 	 * @exception CoreException if unable to generate a memento for the given configuration
+	 * 	or copy its attributes
 	 * @since 3.6
 	 */
-	public void setTemplate(ILaunchConfiguration template) throws CoreException;
+	public void setTemplate(ILaunchConfiguration template, boolean copy) throws CoreException;
 }

@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationMigrationDelegate;
@@ -39,8 +37,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
-import org.osgi.service.prefs.BackingStoreException;
-import org.osgi.service.prefs.Preferences;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -108,14 +104,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 *  @since 3.3
 	 */
 	private Map fPreferredDelegates = null;
-	
-	/**
-	 * A preference node that maps launch configuration type identifiers to
-	 * default templates in that scope.
-	 * 
-	 * @since 3.6
-	 */
-	private static final String TEMPLATES_NODE = "TEMPLATES_NODE"; //$NON-NLS-1$
 	
 	/**
 	 * Constructs a new launch configuration type on the
@@ -501,25 +489,6 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getTemplate(org.eclipse.core.runtime.preferences.IScopeContext)
-	 */
-	public ILaunchConfiguration getDefaultTemplate(IScopeContext scope) throws CoreException {
-		IEclipsePreferences node = scope.getNode(DebugPlugin.getUniqueIdentifier());
-		try {
-			if (node.nodeExists(TEMPLATES_NODE)) {
-				Preferences templates = node.node(TEMPLATES_NODE);
-				String memento = templates.get(getIdentifier(), null);
-				if (memento != null) {
-					return DebugPlugin.getDefault().getLaunchManager().getLaunchConfiguration(memento);
-				}
-			}
-		} catch (BackingStoreException e) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationType_0, e));
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getTemplates()
 	 */
 	public ILaunchConfiguration[] getTemplates() throws CoreException {
@@ -535,58 +504,16 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String, org.eclipse.core.runtime.preferences.IScopeContext[])
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, IScopeContext[] scopes) throws CoreException {
-		ILaunchConfiguration template = null;
-		if (scopes != null) {
-			template = resolveDefaultTemplate(scopes);
-		}
-		ILaunchConfigurationWorkingCopy wc = new LaunchConfigurationWorkingCopy(container, name, this);
+	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, ILaunchConfiguration template) throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newInstance(container, name);
 		if (template != null) {
-			wc.copyAttributes(template);
-			wc.setTemplate(template);
+			wc.setTemplate(template, true);
 		}
 		return wc;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.runtime.preferences.IScopeContext)
-	 */
-	public void setDefaultTemplate(ILaunchConfiguration configuration, IScopeContext scope) throws CoreException {
-		IEclipsePreferences node = scope.getNode(DebugPlugin.getUniqueIdentifier());
-		Preferences templates = node.node(TEMPLATES_NODE);
-		if (configuration == null) {
-			templates.remove(getIdentifier());
-			try {
-				if (templates.keys().length == 0) {
-					templates.removeNode();
-				}
-			} catch (BackingStoreException e) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationType_1, e));
-			}
-		} else {
-			templates.put(getIdentifier(), configuration.getMemento());
-		}
-		try {
-			node.flush();
-		} catch (BackingStoreException e) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationType_1, e));
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#resolveDefaultTemplate(org.eclipse.core.runtime.preferences.IScopeContext[])
-	 */
-	public ILaunchConfiguration resolveDefaultTemplate(IScopeContext[] scopes) throws CoreException {
-		for (int i = 0; i < scopes.length; i++) {
-			ILaunchConfiguration template = getDefaultTemplate(scopes[i]);
-			if (template != null) {
-				return template;
-			}
-		}
-		return null;
-	}
 
 }
 
