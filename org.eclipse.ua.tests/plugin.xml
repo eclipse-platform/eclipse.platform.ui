@@ -585,6 +585,14 @@
              alias="/context"
              class="org.eclipse.ua.tests.help.remote.MockContextServlet">
        </servlet>
+       <servlet
+             alias="/rtopic"
+             class="org.eclipse.ua.tests.help.remote.MockContentServlet">
+       </servlet>
+       <servlet
+             alias="/index"
+             class="org.eclipse.ua.tests.help.remote.MockIndexServlet">
+       </servlet>
       
       <serviceSelector
             filter="(other.info=org.eclipse.ua.tests)">

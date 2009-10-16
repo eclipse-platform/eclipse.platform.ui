@@ -11,18 +11,10 @@
 package org.eclipse.ua.tests.help.remote;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.URL;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.server.WebappManager;
-import org.osgi.framework.Bundle;
 
 public class ContentServletTest extends TestCase {
 	
@@ -41,75 +33,43 @@ public class ContentServletTest extends TestCase {
 
 	public void testSimpleContent() throws Exception {
 		final String path = "/data/help/index/topic1.html";
-		String remoteContent = getRemoteContent(UA_TESTS, path, "en");
-		String localContent = getLocalContent(UA_TESTS, path);	   
+		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
+		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
 	    assertEquals(remoteContent, localContent);
 	}
 
 	public void testFilteredContent() throws Exception {
 		final String path = "/data/help/manual/filter.xhtml";
-		String remoteContent = getRemoteContent(UA_TESTS, path, "en");
-		String localContent = getLocalContent(UA_TESTS, path);	   
+		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
+		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
 	    assertEquals(remoteContent, localContent);
 	}
 
 	public void testContentInEnLocale() throws Exception {
 		final String path = "/data/help/search/testnl1.xhtml";
-		String remoteContent = getRemoteContent(UA_TESTS, path, "en");
-		String localContent = getLocalContent(UA_TESTS, path);	   
+		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "en");
+		String localContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
 	    assertEquals(remoteContent, localContent);
 	}
 	
 	public void testContentInDeLocale() throws Exception {
 		final String path = "/data/help/search/testnl1.xhtml";
-		String remoteContent = getRemoteContent(UA_TESTS, path, "de");
-		String enLocalContent = getLocalContent(UA_TESTS, path);	   
-		String deLocalContent = getLocalContent(UA_TESTS, "/nl/de" + path);	   
+		String remoteContent = RemoteTestUtils.getRemoteContent(UA_TESTS, path, "de");
+		String enLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, path);	   
+		String deLocalContent = RemoteTestUtils.getLocalContent(UA_TESTS, "/nl/de" + path);	   
 	    assertEquals(remoteContent, deLocalContent);
 	    assertFalse(remoteContent.equals(enLocalContent));
 	}
 	
 	public void testRemoteContentNotFound() throws Exception {
 		try {
-			getRemoteContent(UA_TESTS, "/no/such/path.html", "en");
+			RemoteTestUtils.getRemoteContent(UA_TESTS, "/no/such/path.html", "en");
 			fail("No exception thrown");
 		} catch (IOException e) {
 			// Exception caught as expected
 		}	
 	}
 
-	private String getRemoteContent(String plugin, String path, String locale)
-			throws Exception {
-		int port = WebappManager.getPort();
-		URL url = new URL("http", "localhost", port, "/help/rtopic/" + plugin + path + "?lang=" + locale);
-		return readFromURL(url);
-	}
 	
-	private String getLocalContent(String plugin, String path) throws Exception {
-        Bundle bundle = Platform.getBundle(plugin);
-        URL url;
-		if (bundle != null) {
-			 url=FileLocator.toFileURL(new URL(bundle.getEntry("/"), path)); //$NON-NLS-1$
-		} else {
-			return null;
-		}
-		return readFromURL(url);
-	}
-
-	protected String readFromURL(URL url) throws IOException,
-			UnsupportedEncodingException {
-		InputStream is = url.openStream();
-		InputStreamReader inputStreamReader = new InputStreamReader(is, "UTF-8");
-		StringBuffer buffer = new StringBuffer();
-		char[] cbuf = new char[256];
-		int len;
-		do {
-			len = inputStreamReader.read(cbuf);
-			if (len > 0) {
-				buffer.append(cbuf, 0, len);
-			}
-		} while (len >= 0);
-		return buffer.toString();
-	}
 	
 }

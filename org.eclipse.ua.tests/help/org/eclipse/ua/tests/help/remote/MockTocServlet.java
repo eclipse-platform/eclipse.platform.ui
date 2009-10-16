@@ -37,11 +37,11 @@ public class MockTocServlet extends TocServlet {
 		UserToc toc1 = new UserToc("Mock Toc " + locale, null, true);
 		UserTopic topic1 = new UserTopic("Topic_" + locale, "http://www.eclipse.org", true);
 		toc1.addTopic(topic1);
-		TocContribution contribution1 = createToc(toc1, "mockToc", locale);
+		TocContribution contribution1 = createToc(toc1, "org.eclipse.help.base", locale);
 		UserToc toc2 = new UserToc("Mock Toc 2 " + locale, null, true);
 		UserTopic topic2 = new UserTopic("Topic_" + locale, "http://www.eclipse.org", true);
 		toc2.addTopic(topic2);
-		TocContribution contribution2 = createToc(toc2, "mockToc2", locale);
+		TocContribution contribution2 = createToc(toc2, "mock.toc", locale);
 	    String response;
 		try {
 			response = serialize(new TocContribution[] { contribution1, contribution2 }, locale);
@@ -55,7 +55,7 @@ public class MockTocServlet extends TocServlet {
 		TocContribution contribution;
 		contribution = new TocContribution();
 		contribution.setCategoryId(null);
-		contribution.setContributorId("org.eclipse.ua.tests");
+		contribution.setContributorId(id);
 		contribution.setExtraDocuments(new String[0]);
 		contribution.setLocale(locale);
 	    contribution.setPrimary(true);

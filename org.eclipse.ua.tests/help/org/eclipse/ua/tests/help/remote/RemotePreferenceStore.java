@@ -26,6 +26,7 @@ public class RemotePreferenceStore {
 	private static String icEnabledPreference;
 	private static String helpOn;
 	private static String defaultPort;
+	private static String pageNotFound;
 	
 	public static void savePreferences() throws Exception {
 	    namePreference = Platform.getPreferencesService().getString
@@ -49,6 +50,9 @@ public class RemotePreferenceStore {
 		helpOn = Platform.getPreferencesService().getString
 	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON,
 			      "", null); 
+		pageNotFound = Platform.getPreferencesService().getString
+				     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_PAGE_NOT_FOUND,
+						      "", null); 
 	}
 	
 	public static void restorePreferences() throws Exception {
@@ -60,7 +64,8 @@ public class RemotePreferenceStore {
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, portPreference);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT, defaultPort);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, helpOn);		
-		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, icEnabledPreference);
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, icEnabledPreference);	
+		prefs.put(IHelpBaseConstants.P_PAGE_NOT_FOUND, pageNotFound);
 	}
 
 	public static void setMockRemoteServer() throws Exception {
@@ -91,6 +96,10 @@ public class RemotePreferenceStore {
 	
 	public static void disableRemoteHelp() throws Exception {
 		RemotePreferenceTest.setPreference("remoteHelpOn", "false");
+	}
+	
+	public static void disableErrorPage() throws Exception {
+		RemotePreferenceTest.setPreference(IHelpBaseConstants.P_PAGE_NOT_FOUND, "");
 	}
 
 }
