@@ -23,7 +23,7 @@
 	<target name="suite">
 		<property name="sniff-folder" value="${eclipse-home}/databinding_sniff_folder" />
 		<delete dir="${sniff-folder}" quiet="true" />
-		<ant target="ui-test" antfile="${library-file}" dir="${eclipse-home}">
+		<ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
 			<property name="data-dir" value="${sniff-folder}" />
 			<property name="plugin-name" value="${plugin-name}" />
 			<property name="classname" value="org.eclipse.e4.ui.tests.css.swt.CssSwtTestSuite" />
