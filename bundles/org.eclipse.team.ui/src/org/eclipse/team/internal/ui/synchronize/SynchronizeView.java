@@ -763,44 +763,33 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		return fLinkingEnabled;
 	}
 
-	IElementComparer COMPARER = new IElementComparer() {
-
-		public int hashCode(Object element) {
-			if (element instanceof SyncInfoModelElement) {
-				SyncInfoModelElement sime = (SyncInfoModelElement) element;
-				IResource local = sime.getResource();
-				if (local != null && local.exists())
-					return local.hashCode();
-				IResourceVariant remote = sime.getSyncInfo().getRemote();
-				if (remote != null)
-					return remote.hashCode();
+	private static IElementComparer COMPARER = new IElementComparer() {
+		
+		private Object getContributedResourceOrResourceVariant(Object o) {
+			IResource[] resources = Utils.getContributedResources(new Object[] {o});
+			if (resources.length>0 && resources[0].exists())
+				return resources[0];
+			if (o instanceof SyncInfoModelElement) {
+				SyncInfoModelElement sime = (SyncInfoModelElement) o;
+				return sime.getSyncInfo().getRemote();
 			}
+			return null;
+		}
+		
+		public int hashCode(Object element) {
+			Object r = getContributedResourceOrResourceVariant(element);
+			if (r != null)
+				return r.hashCode();
 			return element.hashCode();
 		}
 
 		public boolean equals(Object a, Object b) {
-			// no need to check null, CustomeHashtable cannot contain null keys
-			if (a instanceof SyncInfoModelElement) {
-				if (b instanceof IResource) {
-					IResource r1 = ((SyncInfoModelElement) a).getResource();
-					IResource r2 = (IResource) b;
-					return r2.equals(r1); // r1 may be null
-				} else if (b instanceof IResourceVariant) {
-					IResourceVariant r1 = ((SyncInfoModelElement) a).getSyncInfo().getRemote();
-					IResourceVariant r2 = (IResourceVariant) b;
-					return r2.equals(r1); // r1 may be null
-				}
-			}
-			if (b instanceof SyncInfoModelElement) {
-				if (a instanceof IResource) {
-					IResource r1 = (IResource) a;
-					IResource r2 = ((SyncInfoModelElement) b).getResource();
-					return r1.equals(r2);
-				} else if (a instanceof IResourceVariant) {
-					IResourceVariant r1 = (IResourceVariant) a;
-					IResourceVariant r2 = ((SyncInfoModelElement) b).getSyncInfo().getRemote();
-					return r1.equals(r2);
-				}
+			// no need to check for null, CustomeHashtable cannot contain null keys
+			if (a instanceof IResource || a instanceof IResourceVariant) {
+				b = getContributedResourceOrResourceVariant(b);
+			} else if (b instanceof IResource || b instanceof IResourceVariant) {
+				a = getContributedResourceOrResourceVariant(a);
+				return b.equals(a); // a may be null
 			}
 			return a.equals(b);
 		}
