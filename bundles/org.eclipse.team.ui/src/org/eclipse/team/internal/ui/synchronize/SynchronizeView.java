@@ -12,13 +12,16 @@ package org.eclipse.team.internal.ui.synchronize;
 
 import java.util.*;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.dialogs.*;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
@@ -29,13 +32,15 @@ import org.eclipse.team.ui.TeamUI;
 import org.eclipse.team.ui.synchronize.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
+import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.*;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 
 /**
  * Implements a Synchronize View that contains multiple synchronize participants. 
  */
-public class SynchronizeView extends PageBookView implements ISynchronizeView, ISynchronizeParticipantListener, IPropertyChangeListener, ISaveablesSource, ISaveablePart {
+public class SynchronizeView extends PageBookView implements ISynchronizeView, ISynchronizeParticipantListener, IPropertyChangeListener, ISaveablesSource, ISaveablePart, IShowInTarget {
 	
 	/**
 	 * Suggested maximum length of participant names when shown in certain menus and dialog.
@@ -77,11 +82,16 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	private RemoveSynchronizeParticipantAction fRemoveAllAction;
 	
+	private ToggleLinkingAction fToggleLinkingAction;
+	private boolean fLinkingEnabled;
+	private OpenAndLinkWithEditorHelper fOpenAndLinkWithEditorHelper;
+
 	/**
 	 * Preference key to save
 	 */
 	private static final String KEY_LAST_ACTIVE_PARTICIPANT_ID = "lastactiveparticipant_id"; //$NON-NLS-1$
     private static final String KEY_LAST_ACTIVE_PARTICIPANT_SECONDARY_ID = "lastactiveparticipant_sec_id"; //$NON-NLS-1$
+    private static final String KEY_LINK_WITH_EDITOR = "linkWithEditor"; //$NON-NLS-1$
 	private static final String KEY_SETTINGS_SECTION= "SynchronizeViewSettings"; //$NON-NLS-1$
 
 
@@ -356,6 +366,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	protected void createActions() {
 		fPageDropDown = new SynchronizePageDropDownAction(this);
 		fPinAction = new PinParticipantAction();
+		fToggleLinkingAction = new ToggleLinkingAction(this);
 		fRemoveCurrentAction = new RemoveSynchronizeParticipantAction(this, false);
 		fRemoveAllAction = new RemoveSynchronizeParticipantAction(this, true);
 		updateActionEnablements();
@@ -364,6 +375,9 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	private void updateActionEnablements() {
 		if (fPinAction != null) {
 			fPinAction.setParticipant(activeParticipantRef);
+		}
+		if (fToggleLinkingAction != null) {
+			fToggleLinkingAction.setEnabled(getParticipant() != null);
 		}
 		if (fRemoveAllAction != null) {
 			fRemoveAllAction.setEnabled(getParticipant() != null);
@@ -384,8 +398,12 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		mgr.add(fPinAction);
 		IMenuManager menu = bars.getMenuManager();
 		menu.add(fPinAction);
+		menu.add(fToggleLinkingAction);
 		menu.add(fRemoveCurrentAction);
 		menu.add(fRemoveAllAction);
+
+		IHandlerService handlerService= (IHandlerService) this.getViewSite().getService(IHandlerService.class);
+		handlerService.activateHandler(IWorkbenchCommandConstants.NAVIGATE_TOGGLE_LINK_WITH_EDITOR, new ActionHandler(fToggleLinkingAction));
 	}
 
 	/* (non-Javadoc)
@@ -396,11 +414,39 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		if (part != null) {
 			partActivated(part);
 			fPageDropDown.update();
+			createOpenAndLinkWithEditorHelper(getViewer());
             rememberCurrentParticipant();
             PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), participant.getHelpContextId());
 		}
 	}
 	
+	private void createOpenAndLinkWithEditorHelper(StructuredViewer viewer) {
+		if (fOpenAndLinkWithEditorHelper != null)
+			fOpenAndLinkWithEditorHelper.dispose();
+		fOpenAndLinkWithEditorHelper= new OpenAndLinkWithEditorHelper(viewer) {
+			protected void activate(ISelection selection) {
+				try {
+					final Object selectedElement = getSingleElement(selection);
+					if (isOpenInEditor(selectedElement) != null)
+						if (selectedElement instanceof IFile)
+							openInEditor((IFile) selectedElement, true);
+				} catch (PartInitException ex) {
+					// ignore if no editor input can be found
+				}
+			}
+
+			protected void linkToEditor(ISelection selection) {
+				SynchronizeView.this.linkToEditor(selection);
+			}
+
+			protected void open(ISelection selection, boolean activate) {
+				// TODO: implement, bug 291211
+			}
+		};
+		fOpenAndLinkWithEditorHelper.setLinkWithEditor(isLinkingEnabled());
+		setLinkingEnabled(isLinkingEnabled());
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.part.PageBookView#getBootstrapPart()
 	 */
@@ -437,6 +483,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	 */
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
+		restoreLinkingEnabled();
 		createActions();
 		configureToolBar(getViewSite().getActionBars());
 		updateForExistingParticipants();
@@ -682,5 +729,238 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 					NLS.bind(TeamUIMessages.SynchronizeView_statusLine,
 							new String[] { description, syncMode }));
 		}
+	}
+
+	// copy-pasted from org.eclipse.jdt.internal.ui.packageview.PackageExplorerPart and modified
+
+	private IPartListener2 fLinkWithEditorListener= new IPartListener2() {
+		public void partVisible(IWorkbenchPartReference partRef) {}
+		public void partBroughtToTop(IWorkbenchPartReference partRef) {}
+		public void partClosed(IWorkbenchPartReference partRef) {}
+		public void partDeactivated(IWorkbenchPartReference partRef) {}
+		public void partHidden(IWorkbenchPartReference partRef) {}
+		public void partOpened(IWorkbenchPartReference partRef) {}
+		public void partInputChanged(IWorkbenchPartReference partRef) {
+			if (partRef instanceof IEditorReference) {
+				editorActivated(((IEditorReference) partRef).getEditor(true));
+			}
+		}
+
+		public void partActivated(IWorkbenchPartReference partRef) {
+			if (partRef instanceof IEditorReference) {
+				editorActivated(((IEditorReference) partRef).getEditor(true));
+			}
+		}
+
+	};
+
+	public boolean isLinkingEnabled() {
+		return fLinkingEnabled;
+	}
+
+	public void setLinkingEnabled(boolean enabled) {
+		fLinkingEnabled= enabled;
+		IDialogSettings dialogSettings = getDialogSettings();
+		dialogSettings.put(KEY_LINK_WITH_EDITOR, fLinkingEnabled);
+
+		IWorkbenchPage page= getSite().getPage();
+		if (enabled) {
+			page.addPartListener(fLinkWithEditorListener);
+
+			IEditorPart editor = page.getActiveEditor();
+			if (editor != null)
+				editorActivated(editor);
+		} else {
+			page.removePartListener(fLinkWithEditorListener);
+		}
+		fOpenAndLinkWithEditorHelper.setLinkWithEditor(enabled);
+		
+	}
+
+	private void restoreLinkingEnabled() {
+		fLinkingEnabled = getDialogSettings().getBoolean(KEY_LINK_WITH_EDITOR);
+	}
+
+	/**
+	 * Links to editor (if option enabled)
+	 * @param selection the selection
+	 */
+	private void linkToEditor(ISelection selection) {
+		Object obj = getSingleElement(selection);
+		if (obj != null) {
+			IEditorPart part = isOpenInEditor(obj);
+			if (part != null) {
+				IWorkbenchPage page= getSite().getPage();
+				page.bringToTop(part);
+			}
+		}
+	}
+
+	/**
+	 * An editor has been activated.  Set the selection in this Packages Viewer
+	 * to be the editor's input, if linking is enabled.
+	 * @param editor the activated editor
+	 */
+	private void editorActivated(IEditorPart editor) {
+        if (!isLinkingEnabled())
+            return;
+		
+		IEditorInput editorInput= editor.getEditorInput();
+		if (editorInput == null)
+			return;
+		Object input= getInputFromEditor(editorInput);
+		if (input == null)
+			return;
+		if (!inputIsSelected(editorInput))
+			showInput(input);
+		else
+			getViewer().getTree().showSelection();
+	}
+
+	boolean showInput(Object input) {
+		Object element = input;
+		if (element != null) {
+			ISelection newSelection = new StructuredSelection(element);
+			if (getViewer().getSelection().equals(newSelection)) {
+				getViewer().reveal(element);
+			} else {
+				getViewer().setSelection(newSelection, true);
+
+				while (element != null && getViewer().getSelection().isEmpty()) {
+					// Try to select parent in case element is filtered
+					element = getParent(element);
+					if (element != null) {
+						newSelection = new StructuredSelection(element);
+						getViewer().setSelection(newSelection, true);
+					} else {
+						// Failed to find parent to select
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Returns the element's parent.
+	 * @param element the element
+	 *
+	 * @return the parent or <code>null</code> if there's no parent
+	 */
+	private Object getParent(Object element) {
+		if (element instanceof IResource)
+			return ((IResource)element).getParent();
+		return null;
+	}
+
+	private TreeViewer getViewer() {
+		IPage currentPage = getCurrentPage();
+		if (currentPage instanceof ISynchronizePage) {
+			return (TreeViewer) ((ISynchronizePage)currentPage).getViewer();
+		}
+		// TODO: nobody is expecting null!
+		return null;
+	}
+
+	private boolean inputIsSelected(IEditorInput input) {
+		IStructuredSelection selection= (IStructuredSelection) getViewer().getSelection();
+		if (selection.size() != 1)
+			return false;
+		IEditorInput selectionAsInput= getEditorInput(selection.getFirstElement());
+		return input.equals(selectionAsInput);
+	}
+
+	private static IEditorInput getEditorInput(Object input) {
+		IResource[] resources = Utils.getContributedResources(new Object[] { input });
+		if (resources.length > 0)
+			input = resources[0];
+		if (input instanceof IFile)
+			return new FileEditorInput((IFile) input);
+		return null;
+	}
+
+	private Object getInputFromEditor(IEditorInput editorInput) {
+		Object input= editorInput.getAdapter(IFile.class);
+		if (input == null && editorInput instanceof IStorageEditorInput) {
+			try {
+				input= ((IStorageEditorInput) editorInput).getStorage();
+			} catch (CoreException e) {
+				// ignore
+			}
+		}
+		return input;
+	}
+
+	// copy-pasted from org.eclipse.jdt.internal.ui.javaeditor.EditorUtility and modified
+
+	private static IEditorPart isOpenInEditor(Object inputElement) {
+		IEditorInput input= getEditorInput(inputElement);
+
+		if (input != null) {
+			IWorkbenchPage p= TeamUIPlugin.getActivePage();
+			if (p != null) {
+				return p.findEditor(input);
+			}
+		}
+		return null;
+	}
+
+	private static IEditorPart openInEditor(IFile file, boolean activate) throws PartInitException {
+		if (file == null)
+			throwPartInitException(TeamUIMessages.SynchronizeView_fileMustNotBeNull);
+
+		IWorkbenchPage p = TeamUIPlugin.getActivePage();
+		if (p == null)
+			throwPartInitException(TeamUIMessages.SynchronizeView_noActiveWorkbenchPage);
+
+		IEditorPart editorPart = IDE.openEditor(p, file, activate);
+		return editorPart;
+	}
+
+	private static void throwPartInitException(String message) throws PartInitException {
+		IStatus status = new Status(IStatus.ERROR, TeamUIPlugin.ID, IStatus.OK, message, null);
+		throw new PartInitException(status);
+	}
+
+	// copy-pasted from org.eclipse.jdt.internal.ui.util.SelectionUtil and modified
+
+	/**
+	 * Returns the selected element if the selection consists of a single
+	 * element only.
+	 *
+	 * @param s the selection
+	 * @return the selected first element or null
+	 */
+	private static Object getSingleElement(ISelection s) {
+		if (!(s instanceof IStructuredSelection))
+			return null;
+		IStructuredSelection selection = (IStructuredSelection) s;
+		if (selection.size() != 1)
+			return null;
+
+		return selection.getFirstElement();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.part.IShowInTarget#show(org.eclipse.ui.part.ShowInContext)
+	 */
+	public boolean show(ShowInContext context) {
+		Object selection = getSingleElement(context.getSelection());
+		if (selection != null) {
+			// If can show the selection, do it.
+			// Otherwise, fall through and attempt to show the input
+			if (showInput(selection))
+				return true;
+		}
+		Object input = context.getInput();
+		if (input != null) {
+			if (input instanceof IEditorInput) {
+				return showInput(getInputFromEditor((IEditorInput) input));
+			}
+			 return showInput(input);
+		}
+		return false;
 	}
 }

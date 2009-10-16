@@ -293,6 +293,9 @@
          <showInPart
                id="org.eclipse.team.ui.GenericHistoryView">
          </showInPart>
+         <showInPart
+               id="org.eclipse.team.sync.views.SynchronizeView">
+         </showInPart>
       </perspectiveExtension>
    </extension>
 <!-- ***************** Actions ********************** -->
