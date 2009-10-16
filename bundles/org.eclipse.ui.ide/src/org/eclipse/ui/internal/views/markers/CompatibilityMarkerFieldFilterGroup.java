@@ -31,8 +31,8 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	 * @param cachedMarkerBuilder
 	 */
 	public CompatibilityMarkerFieldFilterGroup(ProblemFilter filter,
-			CachedMarkerBuilder cachedMarkerBuilder) {
-		super(null, cachedMarkerBuilder);
+			MarkerContentGenerator generator) {
+		super(null, generator);
 		problemFilter = filter;
 		setEnabled(filter.isEnabled());
 		setScope(filter.getOnResource());
@@ -73,7 +73,7 @@ public class CompatibilityMarkerFieldFilterGroup extends MarkerFieldFilterGroup 
 	MarkerFieldFilterGroup makeWorkingCopy() {
 
 		CompatibilityMarkerFieldFilterGroup clone = new CompatibilityMarkerFieldFilterGroup(
-				this.problemFilter, this.builder);
+				this.problemFilter, this.generator);
 		if (populateClone(clone))
 			return clone;
 		return null;

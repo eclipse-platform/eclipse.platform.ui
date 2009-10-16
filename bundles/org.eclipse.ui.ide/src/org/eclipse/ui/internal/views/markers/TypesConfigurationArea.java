@@ -277,7 +277,7 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 				.getInput();
 
 		((MarkerTypeFieldFilter) filter).setSelectedTypes(selectedTypes,
-				group.builder.getGenerator());
+				group.generator);
 
 	}
 

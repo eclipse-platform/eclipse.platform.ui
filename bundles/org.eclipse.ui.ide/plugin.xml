@@ -1708,12 +1708,16 @@
                
              </visibleWhen>
          </command>
+         <separator 
+               name="additions"
+               visible="true" >
+         </separator>
       </menuContribution>
   
     
       <menuContribution
             locationURI="menu:org.eclipse.ui.views.ProblemView">
-         <menu
+         <menu 
                id="org.eclipse.ui.ide.problems.filtersMenu"
                label="%MarkerFiltersMenu.Show">
             <dynamic

@@ -17,7 +17,9 @@ import java.util.Map;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
@@ -35,7 +37,33 @@ import com.ibm.icu.text.Collator;
  * 
  */
 class MarkerEntry extends MarkerSupportItem implements IAdaptable {
+	static {
+		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang
+			 * .Object, java.lang.Class)
+			 */
+			public Object getAdapter(Object adaptableObject, Class adapterType) {
+				if (adapterType == IMarker.class
+						&& adaptableObject instanceof MarkerEntry)
+					return ((MarkerEntry) adaptableObject).getMarker();
 
+				return null;
+			}
+
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
+			 */
+			public Class[] getAdapterList() {
+				return new Class[] { IMarker.class };
+			}
+		}, MarkerEntry.class);
+	}
 	// The key for the string we built for display
 	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
 	private MarkerCategory category;
@@ -97,7 +125,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @param attribute
 	 * @return Object or <code>null</code>
 	 */
-	private Object getAttributeValue(String attribute) {
+	Object getAttributeValue(String attribute) {
 		Object value = getCache().get(attribute);
 		if(value == null) {
 			try {
@@ -199,7 +227,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	String getDescription() {
 		return getAttributeValue(IMarker.MESSAGE,
-				MarkerSupportInternalUtilities.EMPTY_STRING);
+				MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
 	}
 
 	/*
@@ -217,6 +245,9 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getLocation()
 	 */
 	public String getLocation() {
+		if(!marker.exists()){
+			return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
+		}
 		if (getCache().containsKey(LOCATION_STRING)) {
 			Object value = getCache().get(LOCATION_STRING);
 			if (value instanceof CollationKey)
@@ -271,6 +302,15 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 					.toString());
 		}
 	}
+	String getMarkerTypeId() {
+		try {
+			return marker.getType();
+		} catch (CoreException e) {
+			Policy.handle(e);
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
+					.toString());
+		}
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -292,7 +332,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 			return folder;
 		}
 		if (!marker.exists()) {
-			return super.getPath();
+			return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
 		}
 		IPath path = marker.getResource().getFullPath();
 		int n = path.segmentCount() - 1; // n is the number of segments
@@ -341,7 +381,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * 
 	 * @return {@link HashMap}
 	 */
-	private Map getCache() {
+	Map getCache() {
 		if (cache == null)
 			cache = new HashMap(2);
 		return cache;
@@ -353,5 +393,40 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	void clearCache() {
 		cache = null;		
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((marker == null) ? 0 : marker.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof MarkerEntry)) {
+			return false;
+		}
+		MarkerEntry other = (MarkerEntry) obj;
+		if (marker == null) {
+			if (other.marker != null) {
+				return false;
+			}
+		} else if (!marker.equals(other.marker)) {
+			return false;
+		}
+		return true;
+	}
+	
 	
 }

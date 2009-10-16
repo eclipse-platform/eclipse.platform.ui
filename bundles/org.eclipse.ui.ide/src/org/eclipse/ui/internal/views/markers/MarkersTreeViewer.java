@@ -15,8 +15,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
-import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.swt.widgets.Widget;
 
 /**
  * The MarkersTreeViewer is a viewer that optimizes the expandToLevel method.
@@ -25,8 +23,6 @@ import org.eclipse.swt.widgets.Widget;
  * 
  */
 
-// TODO Delete this class if Bug 201135 is fixed.
-// https://bugs.eclipse.org/bugs/show_bug.cgi?id=201135
 public class MarkersTreeViewer extends TreeViewer {
 
 	/**
@@ -58,29 +54,12 @@ public class MarkersTreeViewer extends TreeViewer {
 		super(tree);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#expandToLevel(java.lang.Object,
-	 *      int)
-	 */
-	public void expandToLevel(Object elementOrTreePath, int level) {
-		if (level == 1) {
-			Widget widget = findItem(elementOrTreePath);
-			if (widget != null && widget instanceof TreeItem) {
-				((TreeItem) widget).setExpanded(true);
-				return;
-			}
-		}
-		super.expandToLevel(elementOrTreePath, level);
-	}
-
 	/**
 	 * Remove all of the entries and unmap all of the elements.
 	 */
 	public void removeAndClearAll() {
 		removeAll(getControl());
-		unmapAllElements();		
+		unmapAllElements();
 	}
 
 	/*
@@ -95,8 +74,9 @@ public class MarkersTreeViewer extends TreeViewer {
 		/*
 		 * For performance reasons clear cache of the item used in updating UI.
 		 */
-		MarkerSupportItem cellItem=(MarkerSupportItem) element;
-		if(cellItem.isConcrete())cellItem.clearCache();
+		MarkerSupportItem cellItem = (MarkerSupportItem) element;
+		if (cellItem.isConcrete())
+			cellItem.clearCache();
 	}
 
 }

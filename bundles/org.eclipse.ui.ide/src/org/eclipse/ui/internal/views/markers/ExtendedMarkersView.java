@@ -23,33 +23,27 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.ContributionManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ColumnPixelData;
 import org.eclipse.jface.viewers.EditingSupport;
+import org.eclipse.jface.viewers.IContentProvider;
+import org.eclipse.jface.viewers.ILazyTreeContentProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ITreeViewerListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
-import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -72,9 +66,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.ScrollBar;
-import org.eclipse.swt.widgets.Scrollable;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.IEditorInput;
@@ -92,9 +85,9 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
-import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
+import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
@@ -103,11 +96,11 @@ import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
+import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
-import org.osgi.framework.Bundle;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -129,50 +122,14 @@ import com.ibm.icu.text.MessageFormat;
 public class ExtendedMarkersView extends ViewPart {
 
 	/**
-	 * MarkerSelectionEntry is a cache of the values for a marker entry.
-	 * 
-	 * @since 3.4
-	 * 
+	 * The Markers View Update Job Family
+	 * @since 3.6
 	 */
-	final class MarkerSelectionEntry {
-
-		Object[] cachedValues;
-
-		MarkerSelectionEntry(MarkerItem item) {
-			MarkerField[] fields = builder.getVisibleFields();
-			cachedValues = new Object[fields.length];
-			for (int i = 0; i < fields.length; i++) {
-				cachedValues[i] = fields[i].getValue(item);
-			}
-		}
-
-		/**
-		 * Return whether or not the entry is equivalent to the cached state.
-		 * 
-		 * @param item
-		 * @return boolean <code>true</code> if they are equivalent
-		 */
-		boolean isEquivalentTo(MarkerItem item) {
-			MarkerField[] fields = builder.getVisibleFields();
-
-			if (cachedValues.length != fields.length)
-				return false;
-
-			for (int i = 0; i < fields.length; i++) {
-				if (cachedValues[i] == fields[i].getValue(item))
-					continue;
-				return false;
-			}
-			return true;
-		}
-
-	}
+	public final Object MARKERSVIEW_UPDATE_JOB_FAMILY = new Object();
 
 	private static int instanceCount = 1;
-
 	private static final String TAG_GENERATOR = "markerContentGenerator"; //$NON-NLS-1$
-	private static final String TAG_HORIZONTAL_POSITION = "horizontalPosition"; //$NON-NLS-1$
-	private static final String TAG_VERTICAL_POSITION = "verticalPosition"; //$NON-NLS-1$
+
 	private static final String MARKER_FIELD = "MARKER_FIELD"; //$NON-NLS-1$
 
 	private static final String TAG_EXPANDED = "expanded"; //$NON-NLS-1$
@@ -182,118 +139,20 @@ public class ExtendedMarkersView extends ViewPart {
 	private static final String TAG_PART_NAME = "partName"; //$NON-NLS-1$
 
 	private static final String TAG_COLUMN_WIDTHS = "columnWidths"; //$NON-NLS-1$
-	static {
-		Platform.getAdapterManager().registerAdapters(new IAdapterFactory() {
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang
-			 * .Object, java.lang.Class)
-			 */
-			public Object getAdapter(Object adaptableObject, Class adapterType) {
-				if (adapterType == IMarker.class
-						&& adaptableObject instanceof MarkerEntry)
-					return ((MarkerEntry) adaptableObject).getMarker();
-
-				return null;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-			 */
-			public Class[] getAdapterList() {
-				return new Class[] { IMarker.class };
-			}
-		}, MarkerEntry.class);
-	}
-
-	/**
-	 * Return the next secondary id that has not been opened for a primary id of
-	 * a part.
-	 * 
-	 * @return part
-	 */
-	static String newSecondaryID(IViewPart part) {
-		while (part.getSite().getPage().findViewReference(
-				part.getSite().getId(), String.valueOf(instanceCount)) != null) {
-			instanceCount++;
-		}
-
-		return String.valueOf(instanceCount);
-	}
-
-	/**
-	 * Open the supplied marker in an editor in page
-	 * 
-	 * @param marker
-	 * @param page
-	 */
-	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
-		// optimization: if the active editor has the same input as
-		// the
-		// selected marker then
-		// RevealMarkerAction would have been run and we only need
-		// to
-		// activate the editor
-		IEditorPart editor = page.getActiveEditor();
-		if (editor != null) {
-			IEditorInput input = editor.getEditorInput();
-			IFile file = ResourceUtil.getFile(input);
-			if (file != null) {
-				if (marker.getResource().equals(file) && OpenStrategy.activateOnOpen()) {
-					page.activate(editor);
-				}
-			}
-		}
-
-		if (marker != null && marker.getResource() instanceof IFile) {
-			try {
-				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
-			} catch (PartInitException e) {
-
-				// Check for a nested CoreException
-				IStatus status = e.getStatus();
-				if (status != null
-						&& status.getException() instanceof CoreException) {
-					status = ((CoreException) status.getException())
-							.getStatus();
-				}
-
-				if (status == null)
-					StatusManager.getManager().handle(
-							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
-									e), StatusManager.SHOW);
-
-				else
-					StatusManager.getManager().handle(status,
-							StatusManager.SHOW);
-
-			}
-		}
-	}
-
+	private MarkerContentGenerator generator;
 	private CachedMarkerBuilder builder;
-	Collection categoriesToExpand;
-
-	private Clipboard clipboard;
-
-	Collection preservedSelection = new ArrayList();
-
-	private Job updateJob;
+	private Collection categoriesToExpand;
 
 	private MarkersTreeViewer viewer;
-	private IPropertyChangeListener preferenceListener;
 	private ISelectionListener pageSelectionListener;
 	private IPartListener2 partListener;
+	private Clipboard clipboard;
+
+	// private IPropertyChangeListener preferenceListener;
+
 	private IMemento memento;
-
 	private String[] defaultGeneratorIds = new String[0];
-
-	private IPropertyChangeListener workingSetListener;
 
 	/**
 	 * Return a new instance of the receiver.
@@ -304,28 +163,29 @@ public class ExtendedMarkersView extends ViewPart {
 	public ExtendedMarkersView(String contentGeneratorId) {
 		super();
 		defaultGeneratorIds = new String[] { contentGeneratorId };
-		preferenceListener = new IPropertyChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange
-			 * (org.eclipse.jface.util.PropertyChangeEvent)
-			 */
-			public void propertyChange(PropertyChangeEvent event) {
-				String propertyName = event.getProperty();
-				if (propertyName
-						.equals(IDEInternalPreferences.USE_MARKER_LIMITS)
-						|| propertyName
-								.equals(IDEInternalPreferences.MARKER_LIMITS_VALUE)) {
-					viewer.refresh();
-					updateTitle();
-				}
-			}
-		};
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.addPropertyChangeListener(preferenceListener);
 	}
+
+	/**
+	 * Create a preference listener for any preference updates.
+	 */ 
+	// TODO: this is not needed as the preference dialog will refresh anyway
+//	private void initializePreferenceListener() {
+//		preferenceListener = new IPropertyChangeListener() {
+//			public void propertyChange(PropertyChangeEvent event) {
+//				String propertyName = event.getProperty();
+//				if (propertyName
+//						.equals(IDEInternalPreferences.USE_MARKER_LIMITS)
+//						|| propertyName
+//								.equals(IDEInternalPreferences.MARKER_LIMITS_VALUE)) {
+//					viewer.refresh();
+//					updateTitle();
+//				}
+//			}
+//		};
+//		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+//				.addPropertyChangeListener(preferenceListener);
+//	}
+	
 
 	/**
 	 * Add all concrete {@link MarkerSupportItem} elements associated with the
@@ -379,6 +239,22 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Create the columns for the receiver.
 	 * 
+	 * @param parent
+	 */
+	private void createViewer(Composite parent) {
+		parent.setLayout(new FillLayout());
+
+		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
+				/*| SWT.VIRTUAL */| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
+		viewer.getTree().setLinesVisible(true);
+		viewer.setUseHashlookup(true);
+		createColumns(new TreeColumn[0]);
+		viewer.setContentProvider(getContentProvider());
+	}
+
+	/**
+	 * Create the columns for the receiver.
+	 * 
 	 * @param currentColumns
 	 *            the columns to refresh
 	 */
@@ -387,7 +263,7 @@ public class ExtendedMarkersView extends ViewPart {
 		Tree tree = viewer.getTree();
 		TableLayout layout = new TableLayout();
 
-		MarkerField[] fields = builder.getVisibleFields();
+		MarkerField[] fields = generator.getVisibleFields();
 
 		IMemento columnWidths = null;
 		if (memento != null)
@@ -475,51 +351,38 @@ public class ExtendedMarkersView extends ViewPart {
 	 * .Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		parent.setLayout(new FillLayout());
+		setContentDescription(MarkerMessages.MarkerView_queueing_updates);
 
-		viewer = new MarkersTreeViewer(new Tree(parent, SWT.H_SCROLL
-				| SWT.V_SCROLL | SWT.MULTI | SWT.FULL_SELECTION));
-		viewer.getTree().setLinesVisible(true);
-		viewer.setUseHashlookup(true);
+		createViewer(parent);
 
-		//clear the caches for performance reasons.
-		viewer.addTreeListener(new ITreeViewerListener(){
-			public void treeCollapsed(TreeExpansionEvent event) {
-				
-			}
-			public void treeExpanded(TreeExpansionEvent event) {
-				/*
-				 * This is a good opportunity to clear caches 
-				 * that might have been created in updating UI.
-				 */
-				MarkerSupportItem item=(MarkerSupportItem) event.getElement();
-				item.clearCache();
-		}});
-		
-		createColumns(new TreeColumn[0]);
+		addPageAndPartSelectionListener();
 
-		viewer.setContentProvider(getContentProvider());
+		addLinkWithEditorSupport();
+
+		addExpansionListener();
+
+		addHelpListener();
+
+		addSelectionListener();
+
+		registerContextMenu();
+
+		initDragAndDrop();
+
 		getSite().setSelectionProvider(viewer);
 
-		viewer.setInput(builder);
-		if (memento != null) {
-			Scrollable scrollable = (Scrollable) viewer.getControl();
-			ScrollBar bar = scrollable.getVerticalBar();
-			if (bar != null) {
-				Integer position = memento.getInteger(TAG_VERTICAL_POSITION);
-				if (position != null)
-					bar.setSelection(position.intValue());
-			}
-			bar = scrollable.getHorizontalBar();
-			if (bar != null) {
-				Integer position = memento.getInteger(TAG_HORIZONTAL_POSITION);
-				if (position != null)
-					bar.setSelection(position.intValue());
-			}
-		}
+		viewer.setInput(builder.getMarkers());
 
+		builder.start();
+
+	}
+
+	/**
+	 * 
+	 */
+	private void addPageAndPartSelectionListener() {
 		// Initialise any selection based filtering
-		pageSelectionListener = getPageSelectionListener();
+		pageSelectionListener = new ViewerPageSelectionListener(this);
 		getSite().getPage().addPostSelectionListener(pageSelectionListener);
 
 		partListener = getPartListener();
@@ -527,49 +390,52 @@ public class ExtendedMarkersView extends ViewPart {
 
 		pageSelectionListener.selectionChanged(getSite().getPage()
 				.getActivePart(), getSite().getPage().getSelection());
+	}
 
-
-		new OpenAndLinkWithEditorHelper(viewer) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#activate(org.eclipse.jface.viewers.ISelection
-			 * )
-			 */
-			protected void activate(ISelection selection) {
-				final int currentMode = OpenStrategy.getOpenMethod();
-				try {
-					OpenStrategy.setOpenMethod(OpenStrategy.DOUBLE_CLICK);
-					openSelectedMarkers();
-				} finally {
-					OpenStrategy.setOpenMethod(currentMode);
+	/**
+	 * 
+	 */
+	private void addSelectionListener() {
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				ISelection selection = event.getSelection();
+				if (selection instanceof IStructuredSelection){
+					updateStatusLine((IStructuredSelection)selection);
 				}
 			}
+		});
+	}
 
+	/**
+	 * 
+	 */
+	private void addHelpListener() {
+		// Set help on the view itself
+		viewer.getControl().addHelpListener(new HelpListener() {
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see
-			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#linkToEditor(org.eclipse.jface.viewers
-			 * .ISelection)
+			 * org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse
+			 * .swt.events.HelpEvent)
 			 */
-			protected void linkToEditor(ISelection selection) {
-				// Not supported by this part
+			public void helpRequested(HelpEvent e) {
+				Object provider = getAdapter(IContextProvider.class);
+				if (provider == null)
+					return;
+
+				IContext context = ((IContextProvider) provider)
+						.getContext(viewer.getControl());
+				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#open(org.eclipse.jface.viewers.ISelection,
-			 * boolean)
-			 */
-			protected void open(ISelection selection, boolean activate) {
-				openSelectedMarkers();
-			}
-		};
+		});
+	}
 
+	/**
+	 * 
+	 */
+	private void addExpansionListener() {
 		viewer.getTree().addTreeListener(new TreeAdapter() {
 			/*
 			 * (non-Javadoc)
@@ -593,51 +459,59 @@ public class ExtendedMarkersView extends ViewPart {
 				addExpandedCategory((MarkerCategory) e.item.getData());
 			}
 		});
+	}
 
-		// Set help on the view itself
-		viewer.getControl().addHelpListener(new HelpListener() {
+	/**
+	 * 
+	 */
+	private void addLinkWithEditorSupport() {
+		new OpenAndLinkWithEditorHelper(viewer) {
 			/*
 			 * (non-Javadoc)
 			 * 
 			 * @see
-			 * org.eclipse.swt.events.HelpListener#helpRequested(org.eclipse
-			 * .swt.events.HelpEvent)
+			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#activate(org.eclipse
+			 * .jface.viewers.ISelection )
 			 */
-			public void helpRequested(HelpEvent e) {
-				Object provider = getAdapter(IContextProvider.class);
-				if (provider == null)
-					return;
-
-				IContext context = ((IContextProvider) provider)
-						.getContext(viewer.getControl());
-				PlatformUI.getWorkbench().getHelpSystem().displayHelp(context);
-			}
-
-		});
-
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection = event.getSelection();
-				if (selection instanceof IStructuredSelection){
-					updateStatusLine((IStructuredSelection)selection);
+			protected void activate(ISelection selection) {
+				final int currentMode = OpenStrategy.getOpenMethod();
+				try {
+					OpenStrategy.setOpenMethod(OpenStrategy.DOUBLE_CLICK);
+					openSelectedMarkers();
+				} finally {
+					OpenStrategy.setOpenMethod(currentMode);
 				}
 			}
-		});
 
-		PlatformUI.getWorkbench().getWorkingSetManager()
-				.addPropertyChangeListener(getWorkingSetListener());
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#linkToEditor(org.eclipse
+			 * .jface.viewers .ISelection)
+			 */
+			protected void linkToEditor(ISelection selection) {
+				// Not supported by this part
+			}
 
-		registerContextMenu();
-		initDragAndDrop();
-
+			/*
+			 * (non-Javadoc)
+			 * 
+			 * @see
+			 * org.eclipse.ui.OpenAndLinkWithEditorHelper#open(org.eclipse.jface
+			 * .viewers.ISelection, boolean)
+			 */
+			protected void open(ISelection selection, boolean activate) {
+				openSelectedMarkers();
+			}
+		};
 	}
 
 	/**
 	 * Turn off all filters in the builder.
 	 */
 	void disableAllFilters() {
-		builder.disableAllFilters();
-
+		generator.disableAllFilters();
 	}
 
 	/*
@@ -646,18 +520,23 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		super.dispose();
+		builder.cancelUpdate(false);
+		cancelQueuedUpdates(false);
+		
 		builder.dispose();
-		updateJob.cancel();
+		generator.dispose();
 		instanceCount--;
 		if (clipboard != null)
 			clipboard.dispose();
-		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
-				.removePropertyChangeListener(preferenceListener);
+
+		/*
+		 * IDEWorkbenchPlugin.getDefault().getPreferenceStore()
+		 * .removePropertyChangeListener(preferenceListener);
+		 */
+
 		getSite().getPage().removePostSelectionListener(pageSelectionListener);
 		getSite().getPage().removePartListener(partListener);
-		PlatformUI.getWorkbench().getWorkingSetManager()
-				.removePropertyChangeListener(workingSetListener);
+		super.dispose();
 	}
 
 	/**
@@ -684,7 +563,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return Collection of {@link MarkerFieldFilterGroup}
 	 */
 	Collection getAllFilters() {
-		return builder.getAllFilters();
+		return generator.getAllFilters();
 	}
 
 	/**
@@ -720,7 +599,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @return Collection of MarkerCategory.
 	 */
-	private Collection getCategoriesToExpand() {
+	Collection getCategoriesToExpand() {
 		if (categoriesToExpand == null) {
 			categoriesToExpand = new HashSet();
 			if (this.memento != null) {
@@ -771,150 +650,8 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return ITreeContentProvider
 	 * 
 	 */
-	private ITreeContentProvider getContentProvider() {
-		return new ITreeContentProvider() {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-			 */
-			public void dispose() {
-
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ILazyTreeContentProvider#updateChildCount
-			 * (java.lang.Object, int)
-			 */
-			// public void updateChildCount(Object element, int
-			// currentChildCount) {
-			//
-			// int length;
-			// if (element instanceof MarkerItem)
-			// length = ((MarkerItem) element).getChildren().length;
-			// else
-			// // If it is not a MarkerItem it is the root
-			// length = ((CachedMarkerBuilder) element).getElements().length;
-			//
-			// int markerLimit = MarkerSupportInternalUtilities
-			// .getMarkerLimit();
-			// length = markerLimit > 0 ? Math.min(length, markerLimit)
-			// : length;
-			// if (currentChildCount == length)
-			// return;
-			// viewer.setChildCount(element, length);
-			//
-			// }
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ILazyTreeContentProvider#updateElement
-			 * (java.lang.Object, int)
-			 */
-			// public void updateElement(Object parent, int index) {
-			// MarkerItem newItem;
-			//
-			// if (parent instanceof MarkerItem)
-			// newItem = ((MarkerItem) parent).getChildren()[index];
-			// else
-			// newItem = ((CachedMarkerBuilder) parent).getElements()[index];
-			//
-			// viewer.replace(parent, index, newItem);
-			// updateChildCount(newItem, -1);
-			//
-			// if (!newItem.isConcrete()
-			// && categoriesToExpand
-			// .contains(((MarkerCategory) newItem).getName())) {
-			// viewer.expandToLevel(newItem, 1);
-			// categoriesToExpand.remove(newItem);
-			// }
-			//
-			// }
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java
-			 * .lang.Object)
-			 */
-			public Object[] getChildren(Object parentElement) {
-				MarkerSupportItem[] children = ((MarkerSupportItem) parentElement)
-						.getChildren();
-
-				return getLimitedChildren(children);
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.IStructuredContentProvider#getElements
-			 * (java.lang.Object)
-			 */
-			public Object[] getElements(Object inputElement) {
-
-				return getLimitedChildren(((CachedMarkerBuilder) inputElement)
-						.getElements());
-			}
-
-			/**
-			 * Get the children limited by the marker limits.
-			 * 
-			 * @param children
-			 * @return Object[]
-			 */
-			private Object[] getLimitedChildren(Object[] children) {
-				int newLength = MarkerSupportInternalUtilities.getMarkerLimit();
-				if (newLength > 0 && newLength < children.length) {
-					Object[] newChildren = new Object[newLength];
-					System.arraycopy(children, 0, newChildren, 0, newLength);
-					return newChildren;
-				}
-				return children;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ILazyTreeContentProvider#getParent(
-			 * java.lang.Object)
-			 */
-			public Object getParent(Object element) {
-				Object parent = ((MarkerSupportItem) element).getParent();
-				if (parent == null)
-					return builder;
-				return parent;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java
-			 * .lang.Object)
-			 */
-			public boolean hasChildren(Object element) {
-				return ((MarkerSupportItem) element).getChildren().length > 0;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse
-			 * .jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
-
-			}
-		};
+	private IContentProvider getContentProvider() {
+		return new MarkerViewerContentProvider();
 	}
 
 	/**
@@ -962,110 +699,6 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Return the selection listener for the page selection change.
-	 * 
-	 * @return ISelectionListener
-	 */
-	private ISelectionListener getPageSelectionListener() {
-		return new ISelectionListener() {
-			/**
-			 * Get an ITaskListResourceAdapter for use by the default/
-			 * 
-			 * @return ITaskListResourceAdapter
-			 */
-			private ITaskListResourceAdapter getDefaultTaskListAdapter() {
-				return new ITaskListResourceAdapter() {
-
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see
-					 * org.eclipse.ui.views.tasklist.ITaskListResourceAdapter
-					 * #getAffectedResource(org.eclipse.core.runtime.IAdaptable)
-					 */
-					public IResource getAffectedResource(IAdaptable adaptable) {
-						Object resource = adaptable.getAdapter(IResource.class);
-						if (resource == null)
-							resource = adaptable.getAdapter(IFile.class);
-						if (resource == null)
-							return null;
-						return (IResource) resource;
-
-					}
-
-				};
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse
-			 * .ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-			 */
-			public void selectionChanged(IWorkbenchPart part,
-					ISelection selection) {
-
-				// Do not respond to our own selections or if we are not
-				// visible
-				if (part == ExtendedMarkersView.this
-						|| !(getSite().getPage().isPartVisible(part)))
-					return;
-
-				List selectedElements = new ArrayList();
-				if (part instanceof IEditorPart) {
-					IEditorPart editor = (IEditorPart) part;
-					IFile file = ResourceUtil.getFile(editor.getEditorInput());
-					if (file == null) {
-						IEditorInput editorInput = editor.getEditorInput();
-						if (editorInput != null) {
-							Object mapping = editorInput
-									.getAdapter(ResourceMapping.class);
-							if (mapping != null) {
-								selectedElements.add(mapping);
-							}
-						}
-					} else {
-						selectedElements.add(file);
-					}
-				} else {
-					if (selection instanceof IStructuredSelection) {
-						for (Iterator iterator = ((IStructuredSelection) selection)
-								.iterator(); iterator.hasNext();) {
-							Object object = iterator.next();
-							if (object instanceof IAdaptable) {
-								ITaskListResourceAdapter taskListResourceAdapter;
-								Object adapter = ((IAdaptable) object)
-										.getAdapter(ITaskListResourceAdapter.class);
-								if (adapter != null
-										&& adapter instanceof ITaskListResourceAdapter) {
-									taskListResourceAdapter = (ITaskListResourceAdapter) adapter;
-								} else {
-									taskListResourceAdapter = getDefaultTaskListAdapter();
-								}
-
-								IResource resource = taskListResourceAdapter
-										.getAffectedResource((IAdaptable) object);
-								if (resource == null) {
-									Object mapping = ((IAdaptable) object)
-											.getAdapter(ResourceMapping.class);
-									if (mapping != null) {
-										selectedElements.add(mapping);
-									}
-								} else {
-									selectedElements.add(resource);
-								}
-							}
-						}
-					}
-				}
-				builder.updateForNewSelection(selectedElements.toArray());
-			}
-
-		};
-	}
-
-	/**
 	 * Return a part listener for the receiver.
 	 * 
 	 * @return IPartListener2
@@ -1081,7 +714,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partActivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-
 			}
 
 			/*
@@ -1093,7 +725,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partBroughtToTop(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-
 			}
 
 			/*
@@ -1104,7 +735,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partClosed(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-
 			}
 
 			/*
@@ -1116,7 +746,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partDeactivated(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-
 			}
 
 			/*
@@ -1127,7 +756,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partHidden(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-
 			}
 
 			/*
@@ -1139,7 +767,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partInputChanged(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-
 			}
 
 			/*
@@ -1150,7 +777,6 @@ public class ExtendedMarkersView extends ViewPart {
 			 */
 			public void partOpened(IWorkbenchPartReference partRef) {
 				// Do nothing by default
-
 			}
 
 			/*
@@ -1213,7 +839,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return String
 	 */
 	private String getStatusMessage() {
-
 		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
 		int totalCount = builder.getTotalMarkerCount();
 		int filteredCount = 0;
@@ -1245,7 +870,7 @@ public class ExtendedMarkersView extends ViewPart {
 			return status;
 		}
 		// combine counts for infos and others
-		counts = new Integer[] { counts[0], counts[1], 
+		counts = new Integer[] { counts[0], counts[1],
 				new Integer(counts[2].intValue() + counts[3].intValue()) };
 		if (filteredCount < 0 || filteredCount >= totalCount)
 			return MessageFormat.format(
@@ -1263,126 +888,6 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Return a job for updating the receiver.
-	 * 
-	 * @return Job
-	 */
-	private Job getUpdateJob(final CachedMarkerBuilder builder) {
-		updateJob = new WorkbenchJob(MarkerMessages.MarkerView_queueing_updates) {
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.core.runtime.jobs.Job#belongsTo(java.lang.Object)
-			 */
-			public boolean belongsTo(Object family) {
-				return family == MarkerContentGenerator.CACHE_UPDATE_FAMILY;
-			}
-
-			/**
-			 * Return the viewer that is being updated.
-			 * 
-			 * @return TreeViewer
-			 */
-			private TreeViewer getViewer() {
-
-				return viewer;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.ui.progress.UIJob#runInUIThread(org.eclipse.core.
-			 * runtime.IProgressMonitor)
-			 */
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-
-				if (viewer.getControl().isDisposed()) {
-					return Status.CANCEL_STATUS;
-				}
-
-				if (monitor.isCanceled())
-					return Status.CANCEL_STATUS;
-
-				// If there is only one category and the user has no saved state
-				// show it
-				if (builder.isShowingHierarchy()
-						&& getCategoriesToExpand().isEmpty()) {
-					MarkerCategory[] categories = builder.getCategories();
-					if (categories != null && categories.length == 1)
-						getCategoriesToExpand().add(
-								categories[0].getDescription());
-				}
-				// See Bug#252309 and Bug#222973
-				Tree tree = getViewer().getTree();
-				try {
-					tree.setRedraw(false);
-					getViewer().refresh(true);
-					updateTitle();
-
-					if (preservedSelection.size() > 0) {
-
-						Collection newSelection = new ArrayList();
-						MarkerItem[] markerEntries = builder.getMarkerEntries();
-
-						for (int i = 0; i < markerEntries.length; i++) {
-							Iterator preserved = preservedSelection.iterator();
-							while (preserved.hasNext()) {
-								MarkerSelectionEntry next = (MarkerSelectionEntry) preserved
-										.next();
-								if (next.isEquivalentTo(markerEntries[i])) {
-									newSelection.add(markerEntries[i]);
-									continue;
-								}
-							}
-						}
-
-						getViewer()
-								.setSelection(
-										new StructuredSelection(newSelection
-												.toArray()), true);
-						preservedSelection.clear();
-					}
-					if (getViewer().getTree().getItemCount() > 0)
-						getViewer().getTree().setTopItem(
-								getViewer().getTree().getItem(0));
-
-					reexpandCategories(builder);
-				} finally {
-					tree.setRedraw(true);
-				}
-				/*
-				 * For performance reasons clear caches that might have been
-				 * created in updating UI.
-				 */
-				MarkerEntry[] entries=builder.getMarkerEntries();
-				for (int i = 0; i < entries.length; i++) {
-					entries[i].clearCache();
-				}
-				
-				return Status.OK_STATUS;
-			}
-
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ui.progress.WorkbenchJob#shouldRun()
-			 */
-			public boolean shouldRun() {
-				return !builder.isBuilding()
-						&& IDEWorkbenchPlugin.getDefault().getBundle()
-								.getState() == Bundle.ACTIVE;
-			}
-
-		};
-
-		updateJob.setSystem(true);
-		return updateJob;
-	}
-
-	/**
 	 * Return the object that is the input to the viewer.
 	 * 
 	 * @return Object
@@ -1397,30 +902,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return MarkerField[]
 	 */
 	MarkerField[] getVisibleFields() {
-		return builder.getVisibleFields();
-	}
-
-	/**
-	 * Create a listener for working set changes.
-	 * 
-	 * @return IPropertyChangeListener
-	 */
-	private IPropertyChangeListener getWorkingSetListener() {
-		workingSetListener = new IPropertyChangeListener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see
-			 * org.eclipse.jface.util.IPropertyChangeListener#propertyChange
-			 * (org.eclipse.jface.util.PropertyChangeEvent)
-			 */
-			public void propertyChange(PropertyChangeEvent event) {
-				builder.scheduleMarkerUpdate();
-
-			}
-
-		};
-		return workingSetListener;
+		return generator.getVisibleFields();
 	}
 
 	/*
@@ -1431,23 +913,27 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		MarkerContentGenerator generator = null;
-
+		ContentGeneratorDescriptor generatorDescriptor = null;
 		if (memento != null) {
-			generator = MarkerSupportRegistry.getInstance().getGenerator(
-					memento.getString(TAG_GENERATOR));
+			generatorDescriptor = MarkerSupportRegistry.getInstance()
+					.getContentGenDescriptor(memento.getString(TAG_GENERATOR));
 		}
 
-		if (generator == null && defaultGeneratorIds.length > 0) {
-			generator = MarkerSupportRegistry.getInstance().getGenerator(
-					defaultGeneratorIds[0]);
-			if (generator == null)
+		if (generatorDescriptor == null && defaultGeneratorIds.length > 0) {
+			generatorDescriptor = MarkerSupportRegistry.getInstance()
+					.getContentGenDescriptor(defaultGeneratorIds[0]);
+			if (generatorDescriptor == null)
 				logInvalidGenerator(defaultGeneratorIds[0]);
 		}
 
-		if (generator == null)
-			generator = MarkerSupportRegistry.getInstance()
-					.getDefaultGenerator();
+		if (generatorDescriptor == null)
+			generatorDescriptor = MarkerSupportRegistry.getInstance()
+					.getDefaultContentGenDescriptor();
+
+		builder = new CachedMarkerBuilder(this);
+		generator = new MarkerContentGenerator(generatorDescriptor, builder,
+				getViewsEffectiveId());
+		generator.restoreState(memento);
 
 		// Add in the entries common to all markers views
 		IMenuService menuService = (IMenuService) site
@@ -1462,13 +948,8 @@ public class ExtendedMarkersView extends ViewPart {
 				.getActionBars().getToolBarManager(),
 				"toolbar:" + MarkerSupportRegistry.MARKERS_ID); //$NON-NLS-1$
 
-		String viewId = site.getId();
-		if (site.getSecondaryId() != null) {
-			viewId = viewId + site.getSecondaryId();
-		}
-		builder = new CachedMarkerBuilder(generator, viewId, memento);
+		builder.restoreState(memento);
 
-		builder.setUpdateJob(getUpdateJob(builder));
 		Object service = site.getAdapter(IWorkbenchSiteProgressService.class);
 		if (service != null)
 			builder.setProgressService((IWorkbenchSiteProgressService) service);
@@ -1478,6 +959,37 @@ public class ExtendedMarkersView extends ViewPart {
 			return;
 
 		setPartName(memento.getString(TAG_PART_NAME));
+	}
+
+	/**
+	 * @return viewId
+	 * 
+	 */
+	String getViewsEffectiveId() {
+		IViewSite site = (IViewSite) getSite();
+		String viewId = site.getId();
+		if (site.getSecondaryId() != null) {
+			viewId = viewId + site.getSecondaryId();
+		}
+		return viewId;
+	}
+
+	/**
+	 * @return viewsPrimaryId
+	 * 
+	 */
+	String getViewsPrimaryId() {
+		IViewSite site = (IViewSite) getSite();
+		return site.getId();
+	}
+	
+	/**
+	 * @return viewsSecondaryId
+	 * 
+	 */
+	String getViewsSecondaryId() {
+		IViewSite site = (IViewSite) getSite();
+		return site.getSecondaryId();
 	}
 
 	/**
@@ -1497,7 +1009,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return boolean
 	 */
 	boolean isEnabled(MarkerFieldFilterGroup group) {
-		return builder.getEnabledFilters().contains(group);
+		return generator.getEnabledFilters().contains(group);
 	}
 
 	/**
@@ -1516,7 +1028,23 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return boolean
 	 */
 	boolean isShowing(MarkerContentGenerator generator) {
-		return this.builder.getGenerator().equals(generator);
+		return generator != null ? generator.equals(generator) : false;
+	}
+
+	/**
+	 * Set the generator and update the contents.
+	 * 
+	 * @param generator
+	 */
+	void setGenerator(MarkerContentGenerator generator) {
+		builder.setGenerator(generator);
+	}
+
+	/**
+	 * @return Returns the generator.
+	 */
+	MarkerContentGenerator getGenerator() {
+		return generator;
 	}
 
 	/**
@@ -1536,9 +1064,9 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void openFiltersDialog() {
 		FiltersConfigurationDialog dialog = new FiltersConfigurationDialog(
-				getSite().getWorkbenchWindow().getShell(), builder);
+				getSite().getWorkbenchWindow().getShell(), generator);
 		if (dialog.open() == Window.OK) {
-			builder.updateFrom(dialog);
+			generator.updateFilters(dialog.getFilters(), dialog.andFilters());
 		}
 
 	}
@@ -1559,16 +1087,22 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * Restore the expanded categories.
 	 * 
-	 * @param builder
 	 */
-	void reexpandCategories(final CachedMarkerBuilder builder) {
+	void reexpandCategories() {
 		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
 			MarkerItem[] items = builder.getElements();
+			IContentProvider provider = viewer.getContentProvider();
 			for (int i = 0; i < items.length; i++) {
 				String name = ((MarkerCategory) items[i]).getName();
-				if (getCategoriesToExpand().contains(name))
-					viewer.expandToLevel(items[i], 2);
-
+				if (getCategoriesToExpand().contains(name)) {
+					if (provider instanceof ILazyTreeContentProvider) {
+						((ILazyTreeContentProvider) provider).updateElement(
+								builder.getMarkers(), i);
+						viewer.setExpandedState(items[i], true);
+					} else {
+						viewer.expandToLevel(items[i], 2);
+					}
+				}
 			}
 		}
 	}
@@ -1582,12 +1116,12 @@ public class ExtendedMarkersView extends ViewPart {
 		contextMenu.setRemoveAllWhenShown(true);
 		getSite().registerContextMenu(contextMenu, viewer);
 		// Add in the entries for all markers views if this has a different if
-		if (!getSite().getId().equals(MarkerSupportRegistry.MARKERS_ID))
+		if (!getSite().getId().equals(MarkerSupportRegistry.MARKERS_ID)) {
 			getSite().registerContextMenu(MarkerSupportRegistry.MARKERS_ID,
 					contextMenu, viewer);
+		}
 		Control control = viewer.getControl();
 		Menu menu = contextMenu.createContextMenu(control);
-
 		control.setMenu(menu);
 	}
 
@@ -1601,28 +1135,6 @@ public class ExtendedMarkersView extends ViewPart {
 
 	}
 
-	/**
-	 * Preserve the selection for re-selection after the next update.
-	 * 
-	 * @param selection
-	 */
-	void saveSelection(ISelection selection) {
-		preservedSelection.clear();
-		if (selection instanceof IStructuredSelection) {
-			IStructuredSelection structured = (IStructuredSelection) selection;
-			Iterator iterator = structured.iterator();
-			while (iterator.hasNext()) {
-				MarkerSupportItem next = (MarkerSupportItem) iterator.next();
-				if (next.isConcrete()) {
-					preservedSelection.add(new MarkerSelectionEntry(next));
-					getCategoriesToExpand().add(next.getParent());
-				} else
-					getCategoriesToExpand().add(next);
-			}
-		}
-
-	}
-
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -1630,8 +1142,10 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void saveState(IMemento memento) {
 		super.saveState(memento);
-		memento.putString(TAG_GENERATOR, builder.getGenerator().getId());
 		memento.putString(TAG_PART_NAME, getPartName());
+		if (generator != null) {
+			memento.putString(TAG_GENERATOR, builder.getGenerator().getId());
+		}
 
 		if (!getCategoriesToExpand().isEmpty()) {
 			IMemento expanded = memento.createChild(TAG_EXPANDED);
@@ -1640,20 +1154,19 @@ public class ExtendedMarkersView extends ViewPart {
 				expanded.createChild(TAG_CATEGORY, (String) categories.next());
 			}
 		}
-
 		IMemento columnEntry = memento.createChild(TAG_COLUMN_WIDTHS);
-
 		MarkerField[] fields = new MarkerField[viewer.getTree()
 				.getColumnCount()];
 		int[] positions = viewer.getTree().getColumnOrder();
-
 		for (int i = 0; i < fields.length; i++) {
 			TreeColumn column = viewer.getTree().getColumn(i);
 			columnEntry.putInteger(getFieldId(column), column.getWidth());
 			fields[positions[i]] = (MarkerField) column.getData(MARKER_FIELD);
 		}
-
-		builder.saveState(memento, fields);
+		if (generator != null) {
+			generator.saveSate(memento, fields);
+		}
+		builder.saveState(memento);
 	}
 
 	/**
@@ -1661,7 +1174,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void selectAll() {
 		viewer.getTree().selectAll();
-
 	}
 
 	/**
@@ -1684,7 +1196,6 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.removeAndClearAll();
 		builder.setGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
-
 	}
 
 	/*
@@ -1730,16 +1241,6 @@ public class ExtendedMarkersView extends ViewPart {
 				.getAdapter(IWorkbenchSiteProgressService.class);
 		builder.refreshContents(service);
 		updateDirectionIndicator(column, field);
-		viewer.refresh();
-		reexpandCategories(builder);
-		/*
-		 * For performance reasons clear caches that might have been created in
-		 * updating UI.
-		 */
-		MarkerEntry[] entries=builder.getMarkerEntries();
-		for (int i = 0; i < entries.length; i++) {
-			entries[i].clearCache();
-		}
 	}
 
 	/**
@@ -1749,24 +1250,20 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param reveal
 	 */
 	void setSelection(StructuredSelection structuredSelection, boolean reveal) {
-
 		List newSelection = new ArrayList(structuredSelection.size());
-
 		for (Iterator i = structuredSelection.iterator(); i.hasNext();) {
 			Object next = i.next();
 			if (next instanceof IMarker) {
-				MarkerItem marker = builder.getMarkerItem((IMarker) next);
+				MarkerItem marker = builder.getMarkers().getMarkerItem(
+						(IMarker) next);
 				if (marker != null) {
 					newSelection.add(marker);
 				}
 			}
 		}
-
 		IStructuredSelection structured = new StructuredSelection(newSelection);
-
 		viewer.setSelection(structured, reveal);
 		updateStatusLine(structured);
-
 	}
 
 	/**
@@ -1775,8 +1272,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @param group
 	 */
 	void toggleFilter(MarkerFieldFilterGroup group) {
-		builder.toggleFilter(group);
-
+		generator.toggleFilter(group);
 	}
 
 	/**
@@ -1806,7 +1302,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * 
 	 * @param newSelection
 	 */
-	private void updateStatusLine(IStructuredSelection newSelection) {
+	void updateStatusLine(IStructuredSelection newSelection) {
 		String message;
 
 		if (newSelection == null || newSelection.size() == 0) {
@@ -1826,9 +1322,8 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 			MarkerEntry[] entries = new MarkerEntry[result.size()];
 			result.toArray(entries);
-			MarkerMap markers=new MarkerMap(entries);
 			// Show stats on only those items in the selection
-			message =getStatusSummary(markers) ;
+			message = getStatusSummary(entries);
 		}
 		getViewSite().getActionBars().getStatusLineManager()
 				.setMessage(message);
@@ -1836,10 +1331,11 @@ public class ExtendedMarkersView extends ViewPart {
 
 	/**
 	 * Get the status line summary of markers.
-	 * @param markers 
+	 * 
+	 * @param entries
 	 */
-	private String getStatusSummary(MarkerMap markers) {
-		Integer[] counts = markers.getMarkerCounts();
+	private String getStatusSummary(MarkerEntry[] entries) {
+		Integer[] counts = Markers.getMarkerCounts(entries);
 		// combine counts for infos and others
 		counts = new Integer[] { counts[0], counts[1],
 				new Integer(counts[2].intValue() + counts[3].intValue()) };
@@ -1848,16 +1344,19 @@ public class ExtendedMarkersView extends ViewPart {
 			// count
 			return MessageFormat.format(
 					MarkerMessages.marker_statusSelectedCount,
-					new Object[] { new Integer(markers.getSize()) });
+					new Object[] { new Integer(entries.length) });
 		}
-		return MessageFormat.format(
+		return MessageFormat
+				.format(
 						MarkerMessages.marker_statusSummarySelected,
 						new Object[] {
-								new Integer(markers.getSize()),
-								MessageFormat.format(
+								new Integer(entries.length),
+								MessageFormat
+										.format(
 												MarkerMessages.errorsAndWarningsSummaryBreakdown,
 												counts) });
 	}
+
 	/**
 	 * Update the title of the view.
 	 */
@@ -1922,18 +1421,67 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return Object[]
 	 */
 	Object[] getHiddenFields() {
-		return builder.getHiddenFields();
+		return generator.getHiddenFields();
 	}
 
 	/**
 	 * @param visible
 	 */
 	void setVisibleFields(Collection visible) {
-		builder.setVisibleFields(visible);
+		generator.setVisibleFields(visible);
 		viewer.setSelection(new StructuredSelection());
 		viewer.removeAndClearAll();
 		createColumns(viewer.getTree().getColumns());
 		viewer.refresh();
+	}
+
+	void indicateUpdating(final String message, final boolean updateLabels,
+			boolean block) {
+		Display display = getSite().getShell().getDisplay();
+		if (Display.getCurrent() == display) {
+			setContentDescription(message != null ? message
+					: getStatusMessage());
+			if (updateLabels) {
+				updateCategoryLabels();
+			}
+			return;
+		}
+		WorkbenchJob job = new WorkbenchJob(display,
+				MarkerMessages.MarkerView_queueing_updates) {
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+					setContentDescription(message != null ? message
+							: getStatusMessage());
+					if (updateLabels) {
+						updateCategoryLabels();
+					}
+					return Status.OK_STATUS;
+			}
+		};
+		job.setPriority(Job.INTERACTIVE);
+		job.schedule();
+		if (block) {
+			try {
+				if (display.getSyncThread() != Thread.currentThread()) {
+					job.join();// the join locks while running tests
+				}
+			} catch (InterruptedException e) {
+			}
+		}
+	}
+
+	void updateCategoryLabels() {
+		if (builder.isShowingHierarchy()) {
+			MarkerCategory[] categories = builder.getCategories();
+			boolean refreshing = builder.isBuilding()
+					|| builder.getMarkerListener().isUpdating() 
+					|| builder.getMarkerListener().workspaceBuilding();
+			for (int i = 0; i < categories.length; i++) {
+				categories[i].refreshing = refreshing;
+			}
+			if (categories != null && categories.length > 1) {
+				viewer.update(categories, null);
+			}
+		}
 	}
 
 	/**
@@ -1943,4 +1491,203 @@ public class ExtendedMarkersView extends ViewPart {
 		return viewer;
 	}
 
+	private UIUpdateJob uiUpdateJob;
+
+	/**
+	 * @param block
+	 */
+	synchronized void cancelQueuedUpdates(boolean block) {
+		if (uiUpdateJob != null) {
+			uiUpdateJob.cancel();
+			if (block) {
+				try {
+					if (uiUpdateJob.getDisplay() != Display.getCurrent()) {
+						if (uiUpdateJob.getDisplay().getSyncThread() != Thread
+								.currentThread()) {
+							uiUpdateJob.join();
+						}
+					}
+				} catch (InterruptedException e) {
+				}
+			}
+		}
+	}
+
+	/**
+	 * @param delay
+	 * @return UIUpdateJob
+	 * 
+	 */
+	synchronized UIUpdateJob scheduleUpdate(long delay) {
+		if (uiUpdateJob != null) {
+			//ensure cancellation before calling the method
+			//uiUpdateJob.cancel();
+		} else {
+			uiUpdateJob = new UIUpdateJob(this);
+			// uiUpdateJob.setPriority(Job.SHORT);
+			uiUpdateJob.setSystem(true);
+		}
+		IWorkbenchSiteProgressService progressService = builder
+				.getProgressService();
+		if (progressService != null) {
+			progressService.schedule(uiUpdateJob, delay);
+		} else {
+			uiUpdateJob.schedule(delay);
+		}
+		return uiUpdateJob;
+	}
+
+	/**
+	 * @return lastUiRefreshTime
+	 * 
+	 */
+	long getLastUIRefreshTime() {
+		if (uiUpdateJob != null) {
+			return uiUpdateJob.getLastUpdateTime();
+		}
+		return -1;
+	}
+
+	/**
+	 * Return the next secondary id that has not been opened for a primary id of
+	 * a part.
+	 * 
+	 * @return part
+	 */
+	static String newSecondaryID(IViewPart part) {
+		while (part.getSite().getPage().findViewReference(
+				part.getSite().getId(), String.valueOf(instanceCount)) != null) {
+			instanceCount++;
+		}
+
+		return String.valueOf(instanceCount);
+	}
+
+	/**
+	 * Open the supplied marker in an editor in page
+	 * 
+	 * @param marker
+	 * @param page
+	 */
+	public static void openMarkerInEditor(IMarker marker, IWorkbenchPage page) {
+		// optimization: if the active editor has the same input as
+		// the
+		// selected marker then
+		// RevealMarkerAction would have been run and we only need
+		// to
+		// activate the editor
+		IEditorPart editor = page.getActiveEditor();
+		if (editor != null) {
+			IEditorInput input = editor.getEditorInput();
+			IFile file = ResourceUtil.getFile(input);
+			if (file != null) {
+				if (marker.getResource().equals(file)
+						&& OpenStrategy.activateOnOpen()) {
+					page.activate(editor);
+				}
+			}
+		}
+
+		if (marker != null && marker.getResource() instanceof IFile) {
+			try {
+				IDE.openEditor(page, marker, OpenStrategy.activateOnOpen());
+			} catch (PartInitException e) {
+
+				// Check for a nested CoreException
+				IStatus status = e.getStatus();
+				if (status != null
+						&& status.getException() instanceof CoreException) {
+					status = ((CoreException) status.getException())
+							.getStatus();
+				}
+
+				if (status == null)
+					StatusManager.getManager().handle(
+							StatusUtil.newStatus(IStatus.ERROR, e.getMessage(),
+									e), StatusManager.SHOW);
+
+				else
+					StatusManager.getManager().handle(status,
+							StatusManager.SHOW);
+
+			}
+		}
+	}
+
+	/**
+	 * Return The selection listener for the page selection change.
+	 * 
+	 */
+	private class ViewerPageSelectionListener implements ISelectionListener {
+		private ExtendedMarkersView view;
+
+		ViewerPageSelectionListener(ExtendedMarkersView view) {
+			this.view = view;
+		}
+
+		public void selectionChanged(IWorkbenchPart part, ISelection selection) {
+
+			// Do not respond to our own selections or if we are not
+			// visible
+			if (part == ExtendedMarkersView.this
+					|| !(getSite().getPage().isPartVisible(part)))
+				return;
+
+			// get Objects to adapt
+			List objectsToAdapt = new ArrayList();
+			if (part instanceof IEditorPart) {
+				IEditorPart editor = (IEditorPart) part;
+				objectsToAdapt.add(editor.getEditorInput());
+			} else {
+				if (selection instanceof IStructuredSelection) {
+					for (Iterator iterator = ((IStructuredSelection) selection)
+							.iterator(); iterator.hasNext();) {
+						Object object = iterator.next();
+						objectsToAdapt.add(object);
+					}
+				}
+			}
+			// try to adapt them in resources and add it to the
+			// selectedElements
+			List selectedElements = new ArrayList();
+			for (Iterator iterator = objectsToAdapt.iterator(); iterator
+					.hasNext();) {
+				Object object = iterator.next();
+				Object resElement = adapt2ResourceElement(object);
+				if (resElement != null) {
+					selectedElements.add(resElement);
+				}
+			}
+			MarkerContentGenerator generator = view.getGenerator();
+			generator.updateSelectedResource(selectedElements.toArray());
+		}
+
+		private Object adapt2ResourceElement(Object object) {
+			IResource resource = null;
+			if (object instanceof IAdaptable) {
+				Object adapter = Util.getAdapter(object,
+						ITaskListResourceAdapter.class);
+				if (adapter != null) {
+					resource = ((ITaskListResourceAdapter) adapter)
+							.getAffectedResource((IAdaptable) object);
+				}
+			}
+			if (resource == null) {
+				resource = (IResource) Util.getAdapter(object, IResource.class);
+			}
+			if (resource == null) {
+				resource = (IResource) Util.getAdapter(object, IFile.class);
+			}
+			if (resource == null) {
+				Object mapping = Util.getAdapter(object, ResourceMapping.class);
+				if (mapping != null) {
+					return mapping;
+				}
+			} else {
+				return resource;
+			}
+			return null;
+		}
+
+	}
 }

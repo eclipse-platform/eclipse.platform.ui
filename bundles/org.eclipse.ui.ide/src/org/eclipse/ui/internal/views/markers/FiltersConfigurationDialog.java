@@ -77,7 +77,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 
 	private ScrolledForm form;
 
-	private CachedMarkerBuilder builder;
+	private MarkerContentGenerator generator;
 
 	private Collection filterAreas;
 
@@ -99,15 +99,14 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 * Create a new instance of the receiver on builder.
 	 * 
 	 * @param parentShell
-	 * @param builder
-	 *            The {@link CachedMarkerBuilder} to apply this to
+	 * @param generator 
 	 */
 	public FiltersConfigurationDialog(Shell parentShell,
-			CachedMarkerBuilder builder) {
+			MarkerContentGenerator generator) {
 		super(parentShell);
-		filterGroups = makeWorkingCopy(builder.getAllFilters());
-		this.builder = builder;
-		andFilters = builder.andFilters();
+		filterGroups = makeWorkingCopy(generator.getAllFilters());
+		this.generator = generator;
+		andFilters = generator.andFilters();
 	}
 
 	/**
@@ -167,7 +166,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		form.setLayoutData(data);
 		form.getBody().setLayout(new GridLayout());
 
-		filterAreas = builder.createFilterConfigurationFields();
+		filterAreas = generator.createFilterConfigurationFields();
 
 		createFieldArea(toolkit, form, scopeArea, true);
 		Iterator areas = filterAreas.iterator();
@@ -497,7 +496,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 * @param newName name of new filterGroup
 	 */
 	private void createNewFilter(String newName,boolean cloneSelected) {
-		MarkerFieldFilterGroup group = new MarkerFieldFilterGroup(null, builder);
+		MarkerFieldFilterGroup group = new MarkerFieldFilterGroup(null, generator);
 		if(cloneSelected&&selectedFilterGroup!=null){
 			captureStateInto(group); //copy current values from UI
 		}
@@ -671,7 +670,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	 */
 	protected void performDefaults() {
 		filterGroups.clear();
-		filterGroups.addAll(builder.getDeclaredFilters());
+		filterGroups.addAll(generator.getDeclaredFilters());
 		filtersList.refresh();
 		filtersList.setSelection(new StructuredSelection(
 				filterGroups.size() > 1 ? filterGroups.iterator().next()

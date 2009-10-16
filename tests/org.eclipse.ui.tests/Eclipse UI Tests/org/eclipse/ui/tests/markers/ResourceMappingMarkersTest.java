@@ -18,7 +18,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 
 public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
@@ -69,7 +68,7 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 		assertNotNull("Marker creation failed", marker);
 		try {
 			Job.getJobManager().join(
-					MarkerContentGenerator.CACHE_UPDATE_FAMILY,
+					problemView.MARKERSVIEW_UPDATE_JOB_FAMILY,
 					new NullProgressMonitor());
 		} catch (OperationCanceledException e) {
 		} catch (InterruptedException e) {

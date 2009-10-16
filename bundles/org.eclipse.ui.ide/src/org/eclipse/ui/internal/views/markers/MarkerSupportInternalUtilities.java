@@ -40,6 +40,7 @@ import org.eclipse.ui.views.markers.MarkerFieldFilter;
 import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
+import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
@@ -89,6 +90,8 @@ public class MarkerSupportInternalUtilities {
 	 * A reusable empty {@link String}
 	 */
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
+	
+	public static final String UNKNOWN_ATRRIBTE_VALUE_STRING = MarkerMessages.Unknown;
 
 	/**
 	 * The configuration element constant for false

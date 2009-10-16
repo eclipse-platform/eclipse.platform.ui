@@ -142,7 +142,7 @@ public class MarkerDescriptionField extends MarkerField {
 	private CollationKey getDescriptionKey(Object element) {
 		if (element instanceof MarkerEntry)
 			return ((MarkerEntry) element).getCollationKey(IMarker.MESSAGE,
-					MarkerSupportInternalUtilities.EMPTY_STRING);
+					MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
 		return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 	}
 
@@ -153,7 +153,7 @@ public class MarkerDescriptionField extends MarkerField {
 	 */
 	public String getValue(MarkerItem item) {
 		return item.getAttributeValue(IMarker.MESSAGE,
-				MarkerSupportInternalUtilities.EMPTY_STRING);
+				MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING);
 	}
 
 	/*

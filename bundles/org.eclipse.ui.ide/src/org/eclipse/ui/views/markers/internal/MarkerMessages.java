@@ -242,6 +242,7 @@ public class MarkerMessages extends NLS {
 	public static String Category_Label;
 	public static String Category_Limit_Label;
 	public static String Category_One_Item_Label;
+	public static String Category_building;
 
 	public static String MarkerResolutionDialog_Fixing;
 	public static String MarkerResolutionDialog_Description;

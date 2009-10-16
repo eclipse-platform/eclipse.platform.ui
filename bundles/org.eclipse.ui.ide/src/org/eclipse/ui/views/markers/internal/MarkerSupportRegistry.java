@@ -34,7 +34,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
-import org.eclipse.ui.internal.views.markers.MarkerContentGenerator;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 import org.eclipse.ui.views.markers.MarkerField;
 
@@ -339,12 +338,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 
 			if (element.getName().equals(MARKER_CONTENT_GENERATOR)) {
 
-				MarkerContentGenerator generator = new MarkerContentGenerator(
+				ContentGeneratorDescriptor generatorDesc = new ContentGeneratorDescriptor(
 						element);
 
-				generators.put(generator.getId(), generator);
+				generators.put(generatorDesc.getId(), generatorDesc);
 
-				tracker.registerObject(extension, generator,
+				tracker.registerObject(extension, generatorDesc,
 						IExtensionTracker.REF_STRONG);
 				continue;
 			}
@@ -392,7 +391,7 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	 * @param attributeMappings
 	 *            the markerAttributeGroupings found
 	 * @param generatorExtensions
-	 *            map of generator id to generator
+	 *            map of generator id to generator descriptors
 	 */
 	private void postProcessExtensions(Map groupIDsToEntries,
 			Map entryIDsToEntries, Collection attributeMappings,
@@ -411,12 +410,12 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	private void postProcessContentGenerators(Map generatorExtensions) {
 		Iterator generatorIterator = generators.values().iterator();
 		while (generatorIterator.hasNext()) {
-			MarkerContentGenerator generator = (MarkerContentGenerator) generatorIterator
+			ContentGeneratorDescriptor generatorDesc = (ContentGeneratorDescriptor) generatorIterator
 					.next();
-			generator.initializeFromConfigurationElement(this);
-			if (generatorExtensions.containsKey(generator.getId()))
-				generator.addExtensions((Collection) generatorExtensions
-						.get(generator.getId()));
+			generatorDesc.initializeFromConfigurationElement(this);
+			if (generatorExtensions.containsKey(generatorDesc.getId()))
+				generatorDesc.addExtensions((Collection) generatorExtensions
+						.get(generatorDesc.getId()));
 		}
 
 	}
@@ -722,17 +721,17 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 				continue;
 			}
 
-			if (objects[i] instanceof MarkerContentGenerator) {
+			if (objects[i] instanceof ContentGeneratorDescriptor) {
 				generators
-						.remove(((MarkerContentGenerator) objects[i]).getId());
+						.remove(((ContentGeneratorDescriptor) objects[i]).getId());
 				continue;
 			}
 
 			if (objects[i] instanceof IConfigurationElement) {
 				IConfigurationElement element = (IConfigurationElement) objects[i];
-				MarkerContentGenerator generator = (MarkerContentGenerator) generators
+				ContentGeneratorDescriptor generatorDesc = (ContentGeneratorDescriptor) generators
 						.get(element.getAttribute(ATTRIBUTE_GENERATOR_ID));
-				generator.removeExtension(element);
+				generatorDesc.removeExtension(element);
 				continue;
 			}
 
@@ -886,24 +885,24 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Get the generator for id
+	 * Get the generator descriptor for id
 	 * 
 	 * @param id
-	 * @return MarkerContentGenerator or <code>null</code>.
+	 * @return ContentGeneratorDescriptor or <code>null</code>.
 	 */
-	public MarkerContentGenerator getGenerator(String id) {
+	public ContentGeneratorDescriptor getContentGenDescriptor (String id) {
 		if (id != null && generators.containsKey(id))
-			return (MarkerContentGenerator) generators.get(id);
+			return (ContentGeneratorDescriptor) generators.get(id);
 		return null;
 	}
 
 	/**
-	 * Return the default content generator.
+	 * Return the default content generator descriptor.
 	 * 
-	 * @return MarkerContentGenerator
+	 * @return ContentGeneratorDescriptor
 	 */
-	public MarkerContentGenerator getDefaultGenerator() {
-		return (MarkerContentGenerator) generators.get(PROBLEMS_GENERATOR);
+	public ContentGeneratorDescriptor getDefaultContentGenDescriptor () {
+		return (ContentGeneratorDescriptor) generators.get(PROBLEMS_GENERATOR);
 	}
 
 	/**
@@ -928,18 +927,6 @@ public class MarkerSupportRegistry implements IExtensionChangeHandler {
 		if (fields.containsKey(id))
 			return (MarkerField) fields.get(id);
 		return null;
-	}
-
-	/**
-	 * Return an array of MarkerContentGenerator for the receiver.
-	 * 
-	 * @return MarkerContentGenerator[]
-	 */
-	public MarkerContentGenerator[] getGenerators() {
-		MarkerContentGenerator[] generatorArray = new MarkerContentGenerator[generators
-				.size()];
-		generators.values().toArray(generatorArray);
-		return generatorArray;
 	}
 
 }

@@ -17,89 +17,89 @@ import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 class MarkerCategory extends MarkerSupportItem {
-
+	
+	boolean refreshing;
+	
 	int start;
 
 	int end;
 
-	private MarkerEntry[] children;
+	MarkerEntry[] children;
 
 	private String name;
 
-	private CachedMarkerBuilder cachedMarkerBuilder;
-
 	private int severity = -1;
+
+	private Markers markers;
 
 	/**
 	 * Create a new instance of the receiver that has the markers between
 	 * startIndex and endIndex showing.
 	 * 
-	 * @param cachedMarkerBuilder
+	 * @param markers
 	 * @param startIndex
 	 * @param endIndex
 	 *            the builder used to generate the children lazily.
 	 */
-	MarkerCategory(CachedMarkerBuilder cachedMarkerBuilder, int startIndex,
+	MarkerCategory(Markers markers, int startIndex,
 			int endIndex, String categoryName) {
-		this.cachedMarkerBuilder = cachedMarkerBuilder;
+		this.markers = markers;
 		start = startIndex;
 		end = endIndex;
+		refreshing=false;
 		name = categoryName;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildren()
 	 */
 	MarkerSupportItem[] getChildren() {
-
 		if (children == null) {
-
-			// Return nothing while a build is going on as this could be
-			// stale
-			if (this.cachedMarkerBuilder.isBuilding()) {
-				return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
-			}
-
-			MarkerItem[] allMarkers = cachedMarkerBuilder.getMarkerEntries();
-
+			MarkerItem[] allMarkers = markers.getMarkerEntryArray();
 			int totalSize = getChildrenCount();
 			children = new MarkerEntry[totalSize];
-
 			System.arraycopy(allMarkers, start, children, 0, totalSize);
-
 			for (int i = 0; i < children.length; i++) {
 				children[i].setCategory(this);
 			}
 		}
 		return children;
-
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildrenCount()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getChildrenCount
+	 * ()
 	 */
 	int getChildrenCount() {
 		return end - start + 1;
 	}
 
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
 	String getDescription() {
-
+		if(refreshing){
+			return NLS.bind(MarkerMessages.Category_building,
+					new Object[] { getName() });
+		}
 		int size = getChildrenCount();
 		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
 
 		if (limit > 0 && size > limit) {
-			return NLS.bind(MarkerMessages.Category_Limit_Label,
-					new Object[] {
-							name,
-							String.valueOf(MarkerSupportInternalUtilities
-									.getMarkerLimit()),
-							String.valueOf(getChildrenCount()) });
-
+			return NLS.bind(MarkerMessages.Category_Limit_Label, new Object[] {
+					name,
+					String.valueOf(MarkerSupportInternalUtilities
+							.getMarkerLimit()),
+					String.valueOf(getChildrenCount()) });
 		}
 		if (size == 1)
 			return NLS.bind(MarkerMessages.Category_One_Item_Label,
@@ -110,23 +110,25 @@ class MarkerCategory extends MarkerSupportItem {
 
 	}
 
-	 /**
+	/**
 	 * Get the highest severity in the receiver.
+	 * 
 	 * @return int
 	 */
 	int getHighestSeverity() {
-		if(severity  >= 0)
+		if (severity >= 0)
 			return severity;
-		severity = 0;//Reset to info
+		severity = 0;// Reset to info
 		MarkerSupportItem[] contents = getChildren();
 		for (int i = 0; i < contents.length; i++) {
-			if(contents[i].isConcrete()){
-				int elementSeverity = contents[i].getAttributeValue(IMarker.SEVERITY, -1);
-				if(elementSeverity > severity)
+			if (contents[i].isConcrete()) {
+				int elementSeverity = contents[i].getAttributeValue(
+						IMarker.SEVERITY, -1);
+				if (elementSeverity > severity)
 					severity = elementSeverity;
-				if(severity == IMarker.SEVERITY_ERROR)//As bad as it gets
+				if (severity == IMarker.SEVERITY_ERROR)// As bad as it gets
 					return severity;
-			}			
+			}
 		}
 		return severity;
 	}
@@ -140,26 +142,68 @@ class MarkerCategory extends MarkerSupportItem {
 		return name;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getParent()
 	 */
 	MarkerSupportItem getParent() {
 		return null;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#isConcrete()
 	 */
 	boolean isConcrete() {
 		return false;
 	}
+
 	/**
 	 * Clear the cached values for performance reasons.
 	 */
 	void clearCache() {
-		MarkerSupportItem[] entries=getChildren();
+		MarkerSupportItem[] entries = getChildren();
 		for (int i = 0; i < entries.length; i++) {
 			entries[i].clearCache();
 		}
 	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result
+				+ ((markers == null) ? 0 : markers.hashCode());
+		result = prime * result + ((name == null) ? 0 : name.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		MarkerCategory other = (MarkerCategory) obj;
+		if (markers == null) {
+			if (other.markers != null)
+				return false;
+		} else if (!markers.equals(other.markers))
+			return false;
+		if (name == null) {
+			if (other.name != null)
+				return false;
+		} else if (!name.equals(other.name))
+			return false;
+		return true;
+	}
+
 }

@@ -31,6 +31,9 @@ package org.eclipse.ui.internal.views.markers;
 import java.util.Arrays;
 import java.util.Comparator;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
+
 /**
  * @since 3.5
  * 
@@ -302,9 +305,10 @@ public class MarkerSortUtil {
 	 * @param from
 	 * @param to
 	 * @param k
+	 * @param monitor 
 	 */
 	public static void sortStartingKElement(MarkerEntry[] entries,
-			Comparator comparator, int from, int to, int k) {
+			Comparator comparator, int from, int to, int k,IProgressMonitor monitor) {
 		// check range valid
 		int last = from + k-1;
 		if (entries.length == 0 || from < 0 || from >= to || last < from
@@ -312,7 +316,7 @@ public class MarkerSortUtil {
 			return;
 		int n=to-from+1;
 		if (n <= BATCH_SIZE && (((float) n / k) <= MERGE_OR_HEAP_SWITCH)
-				|| ((float) n / k) <= MERGE_OR_HEAP_SWITCH) {
+				/*|| ((float) n / k) <= MERGE_OR_HEAP_SWITCH*/) { 
 			// use arrays sort
 			Arrays.sort(entries, from, to + 1, comparator);
 			// clear cache for first to middle since we are done with sort
@@ -325,23 +329,46 @@ public class MarkerSortUtil {
 		// do it in blocks of BATCH_SIZE so we get a chance
 		// of clearing caches to keep memory usage to a minimum
 
-		int totalBatches = k / BATCH_SIZE;
+		//we choose k-1 so that last batch includes last element 
+		//in case k is a multiple of  BATCH_SIZE
+		int totalBatches = (k-1) / BATCH_SIZE; 
 		int batchCount = 0;
 		while (totalBatches > 0) {
+			if(monitor.isCanceled()){
+				return;
+			}
 			int fromTemp = from + batchCount * BATCH_SIZE;
 			int toTemp = from + (batchCount + 1) * BATCH_SIZE;
 			partiallySort(entries, fromTemp, toTemp, to, comparator);
 			batchCount++;
 			totalBatches--;
 		}
-
-		if (last > from + batchCount * BATCH_SIZE) {
-			//the last remaining enteries
-			partiallySort(entries, from + batchCount * BATCH_SIZE, last+1, to,
-					comparator);
+		if(monitor.isCanceled()){
+			return;
+		}
+		if (last >= from + batchCount * BATCH_SIZE) {
+			// the last remaining enteries
+			if (last == to) {
+				partiallySort(entries, from + batchCount * BATCH_SIZE, last,
+						to, comparator);
+			} else {
+				partiallySort(entries, from + batchCount * BATCH_SIZE, last+1,
+						to, comparator);
+			}
 		}
 	}
 
+	/**
+	 * @param fArray1
+	 * @param comparator
+	 * @param from
+	 * @param k
+	 * @param limit
+	 */
+	public static void sortStartingKElement(MockMarkerEntry[] fArray1,
+			Comparator comparator, int from, int k, int limit) {
+		sortStartingKElement(fArray1, comparator, from, k, limit,new NullProgressMonitor());		
+	}
 	/**
 	 * Sorts [0,k-1] in the array of [0,entries.length-1] using a variant of
 	 * modified heapsort, such that
@@ -354,10 +381,11 @@ public class MarkerSortUtil {
 	 * @param entries
 	 * @param comparator
 	 * @param k
+	 * @param monitor 
 	 */
 	public static void sortStartingKElement(MarkerEntry[] entries,
-			Comparator comparator, int k) {
-		sortStartingKElement(entries, comparator, 0, entries.length - 1, k);
+			Comparator comparator, int k,IProgressMonitor monitor) {
+		sortStartingKElement(entries, comparator, 0, entries.length - 1, k,monitor);
 	}
 
 	/**
@@ -374,9 +402,11 @@ public class MarkerSortUtil {
 	 * @param comparator
 	 * @param from
 	 * @param k
+	 * @param monitor 
 	 */
 	public static void sortStartingKElement(MarkerEntry[] entries,
-			Comparator comparator, int from, int k) {
-		sortStartingKElement(entries, comparator, from, entries.length - 1, k);
+			Comparator comparator, int from, int k, IProgressMonitor monitor) {
+		sortStartingKElement(entries, comparator, from, entries.length - 1, k,monitor);
 	}
+	
 }

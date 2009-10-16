@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.views.markers;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
@@ -22,10 +21,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchPage;
@@ -66,7 +65,6 @@ class MarkerFieldFilterGroup {
 
 	private static final String ATTRIBUTE_VALUES = "values"; //$NON-NLS-1$
 
-	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 
 	/**
 	 * Constant for any element.
@@ -90,6 +88,7 @@ class MarkerFieldFilterGroup {
 	 * Constant for on working set.
 	 */
 	static final int ON_WORKING_SET = 4;
+	
 	static final String TAG_ENABLED = "enabled"; //$NON-NLS-1$
 	private static final String TAG_SCOPE = "scope"; //$NON-NLS-1$
 	private static final String TAG_FIELD_FILTER_ENTRY = "fieldFilter"; //$NON-NLS-1$
@@ -97,48 +96,7 @@ class MarkerFieldFilterGroup {
 	// The identifier for user filters
 	private static String USER = "USER"; //$NON-NLS-1$
 
-	/**
-	 * Returns the set of projects that contain the given set of resources.
-	 * 
-	 * @param resources
-	 * @return IProject[]
-	 */
-	static IProject[] getProjects(IResource[] resources) {
-		if (resources == null)
-			return EMPTY_PROJECT_ARRAY;
-
-		Collection projects = getProjectsAsCollection(resources);
-
-		return (IProject[]) projects.toArray(new IProject[projects.size()]);
-	}
-
-	/**
-	 * Return the projects for the elements.
-	 * 
-	 * @param elements
-	 *            collection of IResource or IResourceMapping
-	 * @return Collection of IProject
-	 */
-	static Collection getProjectsAsCollection(Object[] elements) {
-		HashSet projects = new HashSet();
-
-		for (int idx = 0; idx < elements.length; idx++) {
-			if (elements[idx] instanceof IResource) {
-				projects.add(((IResource) elements[idx]).getProject());
-			} else {
-				IProject[] mappingProjects = (((ResourceMapping) elements[idx])
-						.getProjects());
-				for (int i = 0; i < mappingProjects.length; i++) {
-					projects.add(mappingProjects[i]);
-				}
-			}
-
-		}
-
-		return projects;
-	}
-
-	protected CachedMarkerBuilder builder;
+	protected MarkerContentGenerator generator;
 
 	private IConfigurationElement element;
 
@@ -163,9 +121,9 @@ class MarkerFieldFilterGroup {
 	 * @param markerBuilder
 	 */
 	public MarkerFieldFilterGroup(IConfigurationElement configurationElement,
-			CachedMarkerBuilder markerBuilder) {
+			MarkerContentGenerator markerBuilder) {
 		element = configurationElement;
-		builder = markerBuilder;
+		generator = markerBuilder;
 		initializeWorkingSet();
 		scope = processScope();
 
@@ -184,7 +142,7 @@ class MarkerFieldFilterGroup {
 	 * @return Collection of {@link MarkerType}
 	 */
 	Collection getAllTypes() {
-		return builder.getGenerator().getMarkerTypes();
+		return generator.getMarkerTypes();
 	}
 
 	/**
@@ -205,7 +163,7 @@ class MarkerFieldFilterGroup {
 	protected void calculateFilters() {
 		Map values = getValues();
 		Collection filters = new ArrayList();
-		MarkerField[] fields = builder.getVisibleFields();
+		MarkerField[] fields = generator.getVisibleFields();
 		for (int i = 0; i < fields.length; i++) {
 			MarkerFieldFilter fieldFilter = MarkerSupportInternalUtilities
 					.generateFilter(fields[i]);
@@ -216,7 +174,7 @@ class MarkerFieldFilterGroup {
 				if (fieldFilter instanceof MarkerTypeFieldFilter)
 					// Show everything by default
 					((MarkerTypeFieldFilter) fieldFilter)
-							.setContentGenerator(builder.getGenerator());
+							.setContentGenerator(generator);
 				if (values != null)
 					fieldFilter.initialize(values);
 			}
@@ -363,6 +321,9 @@ class MarkerFieldFilterGroup {
 			 * Or we may do this once before the markers are filtered.		 
 			 */
 			wSetResources=getResourcesInWorkingSet();
+		}else{			
+			wSetResources = new IResource[] { ResourcesPlugin.getWorkspace()
+					.getRoot() };
 		}
 	}
 
@@ -456,7 +417,7 @@ class MarkerFieldFilterGroup {
 		for (int i = 0; i < filters.length; i++) {
 			if (filters[i] instanceof CompatibilityFieldFilter)
 				((CompatibilityFieldFilter) filters[i]).loadLegacySettings(
-						memento, builder.getGenerator());
+						memento, generator);
 		}
 
 	}
@@ -497,7 +458,7 @@ class MarkerFieldFilterGroup {
 						.get(id);
 				if (filter instanceof MarkerTypeFieldFilter) {
 					((MarkerTypeFieldFilter) filter)
-							.setContentGenerator(builder.getGenerator());
+							.setContentGenerator(generator);
 				}
 				filter.loadSettings(childMemento);
 			}
@@ -524,7 +485,7 @@ class MarkerFieldFilterGroup {
 	 */
 	MarkerFieldFilterGroup makeWorkingCopy() {
 		MarkerFieldFilterGroup clone = new MarkerFieldFilterGroup(this.element,
-				this.builder);
+				this.generator);
 		if (populateClone(clone))
 			return clone;
 		return null;
@@ -626,19 +587,27 @@ class MarkerFieldFilterGroup {
 	 * @return <code>true</code> if it is being shown
 	 */	
 	public boolean select(IMarker marker) {
-		MarkerFieldFilter[] filters = getFieldFilters();
 		testEntry.setMarker(marker);
-		
-		
+		return select(testEntry);
+	}
+
+	/**
+	 * Return whether or not this MarkerEntry can be shown.
+	 * @param testEntry 
+	 * 
+	 * @return <code>true</code> if it can be shown
+	 */	
+	public boolean select(MarkerEntry testEntry) {
+		MarkerFieldFilter[] filters = getFieldFilters();
 		if (scope == ON_WORKING_SET && workingSet != null) {
 			if (!workingSet.isAggregateWorkingSet()){
-					if(!isInWorkingSet(marker.getResource())){
+					if(!isInWorkingSet(testEntry.getMarker().getResource())){
 						return false;
 					}
 			}
 			//skip this for aggregates with no containing workingsets, ex. window working set
 			else if(((AggregateWorkingSet) workingSet).getComponents().length!=0){
-					if(!isInWorkingSet(marker.getResource())){
+					if(!isInWorkingSet(testEntry.getMarker().getResource())){
 						return false;
 					}
 			}
@@ -694,6 +663,53 @@ class MarkerFieldFilterGroup {
 	 * Refresh the MarkerFieldFilterGroup .
 	 */	
 	void refresh() {
-		 computeWorkingSetResources();
+		if (getScope() == ON_WORKING_SET) {
+			computeWorkingSetResources();
+		}
+	}
+	
+	public boolean selectByFilters(MarkerEntry entry) {
+		return select(entry);
+	}
+	
+	public boolean selectByScope(MarkerEntry entry, IResource[] resources) {
+		int scopeVal = getScope();
+		switch (scopeVal) {
+		case MarkerFieldFilterGroup.ON_ANY: {
+			return true;
+		}
+		case MarkerFieldFilterGroup.ON_SELECTED_ONLY: {
+			IPath  markerPath=entry.getMarker().getResource().getFullPath();
+			for (int i = 0; i < resources.length; i++) {
+				if(markerPath.equals(resources[i].getFullPath())){
+					return true;
+				}
+			}
+			return false;
+		}
+		case MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN: {
+			IPath  markerPath=entry.getMarker().getResource().getFullPath();
+			for (int i = 0; i < resources.length; i++) {
+				if(resources[i].getFullPath().isPrefixOf(markerPath)){
+					return true;
+				}
+			}
+			return false;
+		}
+		case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
+			IPath  markerProjectPath=entry.getMarker().getResource().getFullPath();
+			IProject[] projects=MarkerContentGenerator.getProjects(resources);
+			for (int i = 0; i < projects.length; i++) {
+				if(projects[i].getFullPath().isPrefixOf(markerProjectPath)){
+					return true;
+				}
+			}
+			return false;
+		}
+		case MarkerFieldFilterGroup.ON_WORKING_SET: {
+			return isInWorkingSet(entry.getMarker().getResource());
+		}
+		}
+		return true;
 	}
 }
