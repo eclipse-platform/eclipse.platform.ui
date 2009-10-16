@@ -45,16 +45,16 @@ public class UIModelEventPublisher extends EContentAdapter {
 	// Event 'buckets'
 	public static final String UITopicBase = "org/eclipse/e4/ui/model"; //$NON-NLS-1$
 
-	public static final String AppElementTopic = "/ApplicationElement"; //$NON-NLS-1$
-	public static final String CommandTopic = "/Command"; //$NON-NLS-1$
-	public static final String ContextTopic = "/Context"; //$NON-NLS-1$
-	public static final String ContributionTopic = "/Contribution"; //$NON-NLS-1$
-	public static final String InputTopic = "/Input"; //$NON-NLS-1$
-	public static final String ParameterTopic = "/Parameeter"; //$NON-NLS-1$
-	public static final String UIItemTopic = "/UIItem"; //$NON-NLS-1$
-	public static final String UIElementTopic = "/UIElement"; //$NON-NLS-1$
-	public static final String ElementContainerTopic = "/ElementContainer"; //$NON-NLS-1$
-	public static final String WindowTopic = "/Window"; //$NON-NLS-1$
+	public static final String AppElementTopic = UITopicBase + "/ApplicationElement"; //$NON-NLS-1$
+	public static final String CommandTopic = UITopicBase + "/Command"; //$NON-NLS-1$
+	public static final String ContextTopic = UITopicBase + "/Context"; //$NON-NLS-1$
+	public static final String ContributionTopic = UITopicBase + "/Contribution"; //$NON-NLS-1$
+	public static final String InputTopic = UITopicBase + "/Input"; //$NON-NLS-1$
+	public static final String ParameterTopic = UITopicBase + "/Parameeter"; //$NON-NLS-1$
+	public static final String UIItemTopic = UITopicBase + "/UIItem"; //$NON-NLS-1$
+	public static final String UIElementTopic = UITopicBase + "/UIElement"; //$NON-NLS-1$
+	public static final String ElementContainerTopic = UITopicBase + "/ElementContainer"; //$NON-NLS-1$
+	public static final String WindowTopic = UITopicBase + "/Window"; //$NON-NLS-1$
 
 	private Map<String, String> topicMap = new HashMap<String, String>();
 
@@ -137,11 +137,11 @@ public class UIModelEventPublisher extends EContentAdapter {
 		String topic = formatData(notification, argMap);
 
 		if (topic != null) {
-			System.out.println("UI Model Event: " + topic + " args: " + argMap); //$NON-NLS-1$ //$NON-NLS-2$
+			//System.out.println("UI Model Event: " + topic + " args: " + argMap); //$NON-NLS-1$ //$NON-NLS-2$
 			IEventBroker eventManager = (IEventBroker) context.get(IEventBroker.class.getName());
 			eventManager.send(topic, argMap);
 		} else {
-			System.out.println("Event of unknown type received from the model"); //$NON-NLS-1$
+			//System.out.println("Event of unknown type received from the model"); //$NON-NLS-1$
 		}
 	}
 
