@@ -54,6 +54,7 @@ import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
+import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -266,6 +267,9 @@ public class Workbench implements IWorkbench {
 		}
 
 		init();
+
+		// Hook the global notifications
+		((Notifier) workbench).eAdapters().add(new UIModelEventPublisher(workbench.getContext()));
 
 		return workbench;
 	}
