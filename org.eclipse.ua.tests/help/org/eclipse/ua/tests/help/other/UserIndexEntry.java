@@ -22,7 +22,7 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
 
 /**
- * This class is used to test topics created using the ITopic API
+ * This class is used to test topics created using the IIndexEntry2 API
  */
 
 public class UserIndexEntry implements IIndexEntry2 {
