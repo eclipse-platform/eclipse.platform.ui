@@ -581,6 +581,10 @@
             class="org.eclipse.ua.tests.help.remote.MockTocServlet"
             httpcontextId="uaTest">
       </servlet>
+       <servlet
+             alias="/context"
+             class="org.eclipse.ua.tests.help.remote.MockContextServlet">
+       </servlet>
       
       <serviceSelector
             filter="(other.info=org.eclipse.ua.tests)">
