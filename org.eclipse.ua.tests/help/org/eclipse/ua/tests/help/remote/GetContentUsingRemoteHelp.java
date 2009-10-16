@@ -69,7 +69,6 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		assertEquals(localContent, remoteContent);
 	}
 
-	/*
 	public void testRemoteUsedIfLocalUnavaliable() throws Exception  {
         final String path = "/data/help/nonlocal.html";
         String plugin = "org.eclipse.help.base";
@@ -77,7 +76,6 @@ public class GetContentUsingRemoteHelp extends TestCase {
 		String expectedContent = RemoteTestUtils.createMockContent(plugin, path, "en");
 		assertEquals(expectedContent, remoteContent);
 	}
-	*/
 	
 	public static String getHelpContent(String plugin, String path, String locale)
 			throws Exception {
