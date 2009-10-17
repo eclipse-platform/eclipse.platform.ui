@@ -30,7 +30,8 @@ public class FieldAssistTestSuite extends TestSuite {
 	 */
 	public FieldAssistTestSuite() {
 		addTest(new TestSuite(FieldAssistAPITest.class));
-		addTest(new TestSuite(ComboContentAssistCommandAdapterTest.class));
-		addTest(new TestSuite(TextContentAssistCommandAdapterTest.class));
+		// temporarily disabling tests, see bug 275393
+		// addTest(new TestSuite(ComboContentAssistCommandAdapterTest.class));
+		// addTest(new TestSuite(TextContentAssistCommandAdapterTest.class));
 	}
 }

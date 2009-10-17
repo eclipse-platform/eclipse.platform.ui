@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests;
 
-import org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite;
-
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
@@ -34,6 +32,6 @@ public class AllTests extends TestSuite {
         addTest(new org.eclipse.jface.tests.preferences.AllTests());
         addTest(new org.eclipse.jface.tests.wizards.WizardTestSuite());
         addTest(new org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests());
-        addTest(new FieldAssistTestSuite());
+        // disabled, see bug 275393...addTest(new FieldAssistTestSuite());
     }
 }
