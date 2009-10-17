@@ -347,4 +347,49 @@ class Markers {
 	CachedMarkerBuilder getBuilder() {
 		return builder;
 	}
+	
+	/**
+	 * Use clone where thread safety is concerned.
+	 */
+	Markers getClone(){
+		Markers markers =new Markers(builder);
+		markers.markerEntryArray=markerEntryArray;
+		markers.categories=categories;
+		return markers;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((builder == null) ? 0 : builder.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (!(obj instanceof Markers)) {
+			return false;
+		}
+		Markers other = (Markers) obj;
+		if (builder == null) {
+			if (other.builder != null) {
+				return false;
+			}
+		} else if (!builder.equals(other.builder)) {
+			return false;
+		}
+		return true;
+	}
+	
 }

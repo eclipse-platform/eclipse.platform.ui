@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.views.markers;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.ui.PlatformUI;
@@ -60,6 +61,13 @@ class UIUpdateJob extends WorkbenchJob {
 		try {
 			updating = true;
 			viewer.getTree().setRedraw(false);
+			
+			//always use a clone for Thread safety.
+			//We avoid setting the clone as new input as we would offset
+			//the benefits of optimization in TreeViewer.
+			IContentProvider contentProvider = viewer.getContentProvider();
+			contentProvider.inputChanged(viewer, viewer.getInput(),
+					((Markers) viewer.getInput()).getClone());
 			
 			view.indicateUpdating(MarkerMessages.MarkerView_19,
 					true, true);

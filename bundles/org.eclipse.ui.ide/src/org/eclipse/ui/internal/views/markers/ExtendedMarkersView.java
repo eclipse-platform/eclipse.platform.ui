@@ -371,10 +371,22 @@ public class ExtendedMarkersView extends ViewPart {
 
 		getSite().setSelectionProvider(viewer);
 
+		startView();
+
+	}
+
+	/**
+	 * 
+	 */
+	private void startView() {
 		viewer.setInput(builder.getMarkers());
+		
+		//always use a clone for Thread safety
+		IContentProvider contentProvider = viewer.getContentProvider();
+		contentProvider.inputChanged(viewer, viewer.getInput(),
+				((Markers) viewer.getInput()).getClone());
 
 		builder.start();
-
 	}
 
 	/**
@@ -1100,7 +1112,9 @@ public class ExtendedMarkersView extends ViewPart {
 								builder.getMarkers(), i);
 						viewer.setExpandedState(items[i], true);
 					} else {
-						viewer.expandToLevel(items[i], 2);
+						if (!viewer.getExpandedState(items[i])) {
+							viewer.expandToLevel(items[i], 2);
+						}
 					}
 				}
 			}
