@@ -65,7 +65,8 @@ class MarkerViewerContentProvider implements ITreeContentProvider {
 	 * (java.lang.Object)
 	 */
 	public Object[] getElements(Object inputElement) {
-		return getLimitedChildren(((Markers) inputElement).getElements());
+		//use clone 
+		return getLimitedChildren(((Markers) input).getElements());
 	}
 
 	/**
