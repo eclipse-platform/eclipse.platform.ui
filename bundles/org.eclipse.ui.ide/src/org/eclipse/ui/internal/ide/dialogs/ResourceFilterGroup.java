@@ -1555,6 +1555,7 @@ class FilterEditDialog extends TrayDialog {
 	protected Combo idCombo;
 	protected Button inherited;
 	protected Text arguments;
+	protected Label argumentsLabel;
 	protected Label description;
 	protected FilterTypeUtil util;
 
@@ -1578,6 +1579,9 @@ class FilterEditDialog extends TrayDialog {
 	 * .Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
+		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+		parent.setLayoutData(data);
+
 		Font font = parent.getFont();
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
@@ -1587,7 +1591,7 @@ class FilterEditDialog extends TrayDialog {
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		composite.setLayout(layout);
-		GridData data = new GridData(SWT.CENTER, SWT.CENTER, true, false);
+		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		composite.setLayoutData(data);
 		composite.setFont(font);
 
@@ -1599,11 +1603,11 @@ class FilterEditDialog extends TrayDialog {
 		layout = new GridLayout();
 		layout.numColumns = 2;
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_MARGIN);
+		layout.marginWidth = 0;
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		topComposite.setLayout(layout);
-		data = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+		data = new GridData(SWT.FILL, SWT.FILL, true, false);
 		topComposite.setLayoutData(data);
 		topComposite.setFont(font);
 
@@ -1651,7 +1655,7 @@ class FilterEditDialog extends TrayDialog {
 	 */
 	private void createArgumentsArea(Font font, Composite composite) {
 		GridData data;
-		addLabel(composite, NLS.bind(
+		argumentsLabel = addLabel(composite, NLS.bind(
 				IDEWorkbenchMessages.ResourceFilterPage_columnFilterArguments,
 				null));
 		arguments = new Text(composite, SWT.SINGLE | SWT.BORDER);
@@ -1668,6 +1672,7 @@ class FilterEditDialog extends TrayDialog {
 			arguments.setText((String) FilterTypeUtil.getValue(filter,
 					FilterTypeUtil.ARGUMENTS));
 		arguments.setEnabled(filter.hasStringArguments());
+		argumentsLabel.setEnabled(filter.hasStringArguments());
 	}
 
 	/**
@@ -1679,7 +1684,7 @@ class FilterEditDialog extends TrayDialog {
 		description = new Label(composite, SWT.LEFT | SWT.WRAP);
 		description.setText(FilterTypeUtil.getDescriptor(filter.getId())
 				.getDescription());
-		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data = new GridData(SWT.FILL, SWT.BEGINNING, true, true);
 		data.widthHint = 300;
 		data.heightHint = 40;
 		description.setLayoutData(data);
@@ -1693,11 +1698,11 @@ class FilterEditDialog extends TrayDialog {
 	private void createIdArea(Font font, Composite composite) {
 		GridData data;
 		Group idComposite = createGroup(font, composite, NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_columnFilterID, null));
+				IDEWorkbenchMessages.ResourceFilterPage_columnFilterID, null), true);
 		idCombo = new Combo(idComposite, SWT.READ_ONLY);
 		idCombo.setItems(FilterTypeUtil.getFilterNames(filter
 				.getChildrenLimit() > 0));
-		data = new GridData(SWT.FILL, SWT.CENTER, true, true);
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		idCombo.setLayoutData(data);
 		idCombo.setFont(font);
 		idCombo.addSelectionListener(new SelectionListener() {
@@ -1708,6 +1713,7 @@ class FilterEditDialog extends TrayDialog {
 				FilterTypeUtil.setValue(filter, FilterTypeUtil.ID, idCombo
 						.getItem(idCombo.getSelectionIndex()));
 				arguments.setEnabled(filter.hasStringArguments());
+				argumentsLabel.setEnabled(filter.hasStringArguments());
 				description.setText(FilterTypeUtil
 						.getDescriptor(filter.getId()).getDescription());
 			}
@@ -1717,9 +1723,7 @@ class FilterEditDialog extends TrayDialog {
 		Composite argumentComposite = new Composite(idComposite, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+		layout.marginWidth = 0;
 		argumentComposite.setLayout(layout);
 		data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		argumentComposite.setLayoutData(data);
@@ -1738,7 +1742,7 @@ class FilterEditDialog extends TrayDialog {
 		if (!filter.isUnderAGroupFilter()) {
 			Group modeComposite = createGroup(font, composite, NLS.bind(
 					IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
-					null));
+					null), false);
 			String[] modes = FilterTypeUtil.getModes();
 			includeButton = new Button(modeComposite, SWT.RADIO);
 			includeButton.setText(modes[0]);
@@ -1784,7 +1788,7 @@ class FilterEditDialog extends TrayDialog {
 	 * @param composite
 	 * @return the group
 	 */
-	private Group createGroup(Font font, Composite composite, String text) {
+	private Group createGroup(Font font, Composite composite, String text, boolean grabExcessVerticalSpace) {
 		GridLayout layout;
 		GridData data;
 		Group modeComposite = new Group(composite, SWT.NONE);
@@ -1796,7 +1800,7 @@ class FilterEditDialog extends TrayDialog {
 		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
 		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
 		modeComposite.setLayout(layout);
-		data = new GridData(SWT.LEFT, SWT.CENTER, true, false);
+		data = new GridData(SWT.FILL, SWT.FILL, true, grabExcessVerticalSpace);
 		modeComposite.setLayoutData(data);
 		modeComposite.setFont(font);
 		return modeComposite;
@@ -1810,7 +1814,7 @@ class FilterEditDialog extends TrayDialog {
 		GridData data;
 		Group targetComposite = createGroup(font, composite, NLS.bind(
 				IDEWorkbenchMessages.ResourceFilterPage_columnFilterTargets,
-				null));
+				null), false);
 
 		String[] targets = FilterTypeUtil.getTargets();
 		filesButton = new Button(targetComposite, SWT.RADIO);
@@ -1869,7 +1873,7 @@ class FilterEditDialog extends TrayDialog {
 				filter, FilterTypeUtil.TARGET)).intValue() == 2);
 	}
 
-	void addLabel(Composite composite, String text) {
+	Label addLabel(Composite composite, String text) {
 		String delimiter = ":"; //$NON-NLS-1$
 
 		Font font = composite.getFont();
@@ -1878,6 +1882,7 @@ class FilterEditDialog extends TrayDialog {
 		GridData data = new GridData(SWT.LEFT, SWT.CENTER, false, false);
 		label.setLayoutData(data);
 		label.setFont(font);
+		return label;
 	}
 
 	protected Control createContents(Composite parent) {
