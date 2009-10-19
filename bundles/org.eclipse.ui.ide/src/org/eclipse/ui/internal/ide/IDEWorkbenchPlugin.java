@@ -33,7 +33,6 @@ import org.eclipse.ui.internal.ide.registry.ProjectImageRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.BundleException;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -330,27 +329,5 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		super.stop(context);
 		if (resourceManager != null)
 			resourceManager.dispose();
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.plugin.AbstractUIPlugin#start(org.osgi.framework.BundleContext)
-	 */
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		
-		// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=235179
-		// Code that depends on Platform.getBundleGroupProviders() during
-		// workbench startup must have org.eclipse.update.configurator available.
-		Bundle bundleGroupBundle = Platform
-				.getBundle("org.eclipse.update.configurator"); //$NON-NLS-1$
-		if (bundleGroupBundle != null) {
-			try {
-				bundleGroupBundle.start(Bundle.START_TRANSIENT);
-			} catch (BundleException e) {
-				// we can't start the org.eclipse.update.configurator
-				// this is not something we want to force, so we'll call this a
-				// NO-OP
-			}
-		}
 	}
 }
