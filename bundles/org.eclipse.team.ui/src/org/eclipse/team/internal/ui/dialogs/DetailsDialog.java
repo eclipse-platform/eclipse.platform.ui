@@ -112,15 +112,14 @@ abstract public class DetailsDialog extends TrayDialog {
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
 		// create OK and Details buttons
-		if(includeDetailsButton()) {
-			detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, getDetailsButtonLabelShow(), false);
-		}
 		if(includeOkButton()) {
 			okButton = createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
-			okButton.setFocus();
 		}
 		if (includeCancelButton()) {
 			createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
+		}
+		if(includeDetailsButton()) {
+			detailsButton = createButton(parent, IDialogConstants.DETAILS_ID, getDetailsButtonLabelShow(), false);
 		}
 		updateEnablements();
 	}

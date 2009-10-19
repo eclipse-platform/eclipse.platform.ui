@@ -186,11 +186,9 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
+		createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
+		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
 		super.createButtonsForButtonBar(parent);
-		Button yesButton= createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
-		yesButton.setFocus();
-		createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, false);
-		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 	
 	/* (non-Javadoc)
@@ -199,14 +197,6 @@ public class AddToVersionControlDialog extends DetailsDialog {
 	protected boolean includeOkButton() {
 		return false;
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.team.internal.ui.DetailsDialog#includeCancelButton()
-	 */
-	protected boolean includeCancelButton() {
-		return false;
-	}
-	
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */

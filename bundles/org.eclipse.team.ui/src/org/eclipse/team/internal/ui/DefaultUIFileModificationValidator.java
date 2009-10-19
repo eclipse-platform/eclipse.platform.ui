@@ -22,7 +22,8 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.core.DefaultFileModificationValidator;
 import org.eclipse.team.internal.ui.dialogs.DetailsDialog;
 
@@ -99,10 +100,9 @@ public class DefaultUIFileModificationValidator extends DefaultFileModificationV
          * @see org.eclipse.team.internal.ui.dialogs.DetailsDialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
          */
         protected void createButtonsForButtonBar(Composite parent) {
-        	super.createButtonsForButtonBar(parent);
-            Button yesButton= createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
-            yesButton.setFocus();
+            createButton(parent, IDialogConstants.YES_ID, IDialogConstants.YES_LABEL, true);
             createButton(parent, IDialogConstants.NO_ID, IDialogConstants.NO_LABEL, true);
+            super.createButtonsForButtonBar(parent);
         }
         
         /* (non-Javadoc)
