@@ -201,9 +201,11 @@ class MarkersChangeListener implements IResourceChangeListener {
 		// Hold off while everything is active
 		if (preBuildTime > 0
 				&& System.currentTimeMillis() - preBuildTime < TIME_OUT){
+			//We are in a pre build state. Do not update until the post build happens
 			return false;
 		}
 		if (preBuildTime > 0) {
+			//let it update once in TIME_OUT
 			preBuildTime = System.currentTimeMillis();
 		}
 		return true;
@@ -212,7 +214,6 @@ class MarkersChangeListener implements IResourceChangeListener {
 	/**
 	 * Checks if the workspace is building
 	 * 
-	 * We are in a pre build state. Do not update until the post build happens.
 	 */
 	boolean workspaceBuilding() {
 			return preBuildTime > 0;
@@ -528,7 +529,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 		}
 		boolean[] changeFlags = new boolean[] { added.size() > 0,
 				removed.size() > 0, changed.size() > 0 };
-		scheduleUpdate(getScheduleDelay(), !workspaceBuilding(), changeFlags);
+		scheduleUpdate(getScheduleDelay(), shouldCancelUpdates(), changeFlags);
 	}
 	
 	/**
@@ -540,14 +541,25 @@ class MarkersChangeListener implements IResourceChangeListener {
 			lastUpdateTime=System.currentTimeMillis();
 			return SHORT_DELAY;
 		}
-		lastUpdateTime = view.getLastUIRefreshTime();
-		lastUpdateTime = lastUpdateTime > builder.getLastUpdateTime() ? builder
-				.getLastUpdateTime() : lastUpdateTime;
+		lastUpdateTime =  builder.getLastUpdateTime();
 		if (lastUpdateTime == -1
 				|| System.currentTimeMillis() - lastUpdateTime > TIME_OUT) {
 			return NO_DELAY;
 		}
 		return LONG_DELAY;
+	}
+
+	/**
+	 * @return true if previously scheduled update needs canceling
+	 */
+	private boolean shouldCancelUpdates() {
+		if(workspaceBuilding()){
+			return false;
+		}
+		if(lastUpdateTime==-1){
+			return true;
+		}
+		return !(System.currentTimeMillis() - lastUpdateTime > TIME_OUT);
 	}
 
 	/**

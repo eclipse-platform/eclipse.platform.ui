@@ -380,12 +380,10 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	private void startView() {
 		viewer.setInput(builder.getMarkers());
-		
 		//always use a clone for Thread safety
 		IContentProvider contentProvider = viewer.getContentProvider();
-		contentProvider.inputChanged(viewer, viewer.getInput(),
-				((Markers) viewer.getInput()).getClone());
-
+		contentProvider.inputChanged(viewer, getViewerInput(),
+				createViewerInputClone());
 		builder.start();
 	}
 
@@ -558,7 +556,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	MarkerSupportItem[] getAllConcreteItems() {
 
-		MarkerSupportItem[] elements = builder.getElements();
+		MarkerSupportItem[] elements = builder.getClonedMarkers().getElements();
 		Collection allMarkers = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			addAllConcreteItems(elements[i], allMarkers);
@@ -585,7 +583,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	IMarker[] getAllMarkers() {
 
-		MarkerSupportItem[] elements = builder.getElements();
+		MarkerSupportItem[] elements = builder.getClonedMarkers().getElements();
 		Collection allMarkers = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			addMarkers(elements[i], allMarkers);
@@ -619,7 +617,7 @@ public class ExtendedMarkersView extends ViewPart {
 				if (expanded != null) {
 					IMemento[] mementoCategories = expanded
 							.getChildren(TAG_CATEGORY);
-					MarkerCategory[] markerCategories = builder.getCategories();
+					MarkerCategory[] markerCategories = builder.getClonedMarkers().getCategories();
 					if (markerCategories != null) {
 						for (int i = 0; i < markerCategories.length; i++) {
 							for (int j = 0; j < mementoCategories.length; j++) {
@@ -851,10 +849,11 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return String
 	 */
 	private String getStatusMessage() {
+		Markers markers=builder.getClonedMarkers();
 		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
-		int totalCount = builder.getTotalMarkerCount();
+		int totalCount = builder.getTotalMarkerCount(markers);
 		int filteredCount = 0;
-		MarkerSupportItem[] categories = builder.getCategories();
+		MarkerSupportItem[] categories = markers.getCategories();
 		// Categories might be null if building is still happening
 		if (categories != null && builder.isShowingHierarchy()) {
 			int markerLimit = MarkerSupportInternalUtilities.getMarkerLimit();
@@ -868,7 +867,7 @@ public class ExtendedMarkersView extends ViewPart {
 			filteredCount = MarkerSupportInternalUtilities.getMarkerLimit();
 		}
 
-		Integer[] counts = builder.getMarkerCounts();
+		Integer[] counts = markers.getMarkerCounts();
 
 		// Any errors or warnings? If not then send the filtering message
 		if (counts[0].intValue() == 0 && counts[1].intValue() == 0) {
@@ -900,12 +899,29 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Return the object that is the input to the viewer.
+	 * Return the Markers that is the input to the viewer.
 	 * 
 	 * @return Object
 	 */
-	Object getViewerInput() {
-		return viewer.getInput();
+	Markers getViewerInput() {
+		return (Markers) viewer.getInput();
+	}
+	/**
+	 * Return the active clone currently in use by UI.
+	 * 
+	 * @return Object
+	 */
+	Markers getActiveViewerInputClone() {
+		return builder.getClonedMarkers();
+	}
+
+	/**
+	 * Return a new clone to use in UI.
+	 * 
+	 * @return Object
+	 */
+	Markers createViewerInputClone() {
+		return builder.createMarkersClone();
 	}
 
 	/**
@@ -1044,12 +1060,12 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Set the generator and update the contents.
+	 * Set the generator for the view.
 	 * 
 	 * @param generator
 	 */
-	void setGenerator(MarkerContentGenerator generator) {
-		builder.setGenerator(generator);
+	void internalSetGenerator(MarkerContentGenerator generator) {
+		this.generator=generator;
 	}
 
 	/**
@@ -1102,7 +1118,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void reexpandCategories() {
 		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
-			MarkerItem[] items = builder.getElements();
+			MarkerItem[] items = builder.getClonedMarkers().getElements();
 			IContentProvider provider = viewer.getContentProvider();
 			for (int i = 0; i < items.length; i++) {
 				String name = ((MarkerCategory) items[i]).getName();
@@ -1201,15 +1217,16 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Set the content generator for the receiver.
+	 * Set the content generator for the receiver and update.
 	 * 
 	 * @param generator
 	 */
 	void setContentGenerator(MarkerContentGenerator generator) {
 		viewer.setSelection(new StructuredSelection());
 		viewer.removeAndClearAll();
-		builder.setGenerator(generator);
+		internalSetGenerator(generator);
 		createColumns(viewer.getTree().getColumns());
+		builder.setGenerator(generator);
 	}
 
 	/*
@@ -1219,7 +1236,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void setFocus() {
 		viewer.getControl().setFocus();
-
 	}
 
 	/**
@@ -1443,10 +1459,10 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void setVisibleFields(Collection visible) {
 		generator.setVisibleFields(visible);
-		viewer.setSelection(new StructuredSelection());
-		viewer.removeAndClearAll();
+		//viewer.setSelection(new StructuredSelection());
+		//viewer.removeAndClearAll();
 		createColumns(viewer.getTree().getColumns());
-		viewer.refresh();
+		scheduleUpdate(0L);
 	}
 
 	void indicateUpdating(final String message, final boolean updateLabels,
@@ -1485,7 +1501,7 @@ public class ExtendedMarkersView extends ViewPart {
 
 	void updateCategoryLabels() {
 		if (builder.isShowingHierarchy()) {
-			MarkerCategory[] categories = builder.getCategories();
+			MarkerCategory[] categories = builder.getClonedMarkers().getCategories();
 			boolean refreshing = builder.isBuilding()
 					|| builder.getMarkerListener().isUpdating() 
 					|| builder.getMarkerListener().workspaceBuilding();

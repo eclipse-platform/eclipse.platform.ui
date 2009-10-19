@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.views.markers;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 
-import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -30,7 +29,6 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerField;
-import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 
 /**
@@ -51,6 +49,7 @@ public class CachedMarkerBuilder {
 	private MarkerUpdateJob updateJob;
 	private MarkersChangeListener markerListener;
 	private Markers markers;
+	private Markers markersClone;
 	
 	final Object CACHE_UPDATE_FAMILY = new Object();
 	final Object MARKERSVIEW_UPDATE_JOB_FAMILY;
@@ -155,63 +154,6 @@ public class CachedMarkerBuilder {
 	}
 
 	/**
-	 * Return the elements in the adapter.
-	 * 
-	 * @return MarkerSupportItem[]
-	 */
-	MarkerSupportItem[] getElements() {
-
-		if (isBuilding()) {
-			return MarkerSupportInternalUtilities.EMPTY_MARKER_ITEM_ARRAY;
-		}
-		return markers.getElements();
-	}
-
-	/**
-	 * Get the raw list of marker entries.
-	 * 
-	 * @return list of MarkerEntry
-	 */
-	MarkerEntry[] getMarkerEntries() {
-		/*if (isBuilding()){
-			return Markers.EMPTY_ENTRY_ARRAY;
-		}*/
-		return markers.getMarkerEntryArray();
-	}
-
-	/**
-	 * Return the categories for the receiver.
-	 * 
-	 * @return MarkerCategory[] 
-	 */
-	public MarkerCategory[] getCategories() {
-		/*if (isBuilding()) {
-			return Markers.EMPTY_CATEGORY_ARRAY;
-		}*/
-		return markers.getCategories();
-	}
-	
-	/**
-	 * Get the counts of errors,warnings,infos and others in that order.
-	 * 
-	 * @return Integer[]
-	 */
-	Integer[] getMarkerCounts() {
-		return markers.getMarkerCounts();
-	}
-	/**
-	 * Get the MarkerItem that matches marker.
-	 * 
-	 * @param marker
-	 * @return MarkerItem or <code>null<code> if it cannot be found
-	 */
-	MarkerItem getMarkerItem(IMarker marker) {
-		if (isBuilding())
-			return null;
-		return markers.getMarkerItem(marker);
-	}
-
-	/**
 	 * Return the generator for the receiver.
 	 * 
 	 * @return MarkerContentGenerator
@@ -248,7 +190,16 @@ public class CachedMarkerBuilder {
 	 * @return int
 	 */
 	int getTotalMarkerCount() {
-		MarkerSupportItem[] elements = getElements();
+		return getTotalMarkerCount(getMarkers());
+	}
+
+	/**
+	 * Return the total number of markers.
+	 * 
+	 * @return int
+	 */
+	int getTotalMarkerCount(Markers markers) {
+		MarkerSupportItem[] elements = markers.getElements();
 		if (elements.length == 0 || elements[0].isConcrete())
 			return elements.length;
 		int length = 0;
@@ -622,5 +573,26 @@ public class CachedMarkerBuilder {
 			return updateJob.getLastUpdateTime();
 		}
 		return -1;
+	}
+
+	/**
+	 * Always work with a clone where thread safety is concerned
+	 * @return the active clone of markers
+	 */
+	public Markers getClonedMarkers() {
+		if(markersClone==null){
+			//this should not happen ideally,
+			//lets ensure safety anyways
+			markersClone=markers.getClone();
+		}
+		return markersClone;
+	}
+
+	/**
+	 * Create a new clone of Markers
+	 */
+	 Markers createMarkersClone() {
+		markersClone =markers.getClone();
+		return markersClone;
 	}
 }

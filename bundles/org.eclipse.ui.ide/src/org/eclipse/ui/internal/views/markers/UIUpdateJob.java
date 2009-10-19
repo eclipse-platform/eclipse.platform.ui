@@ -56,7 +56,7 @@ class UIUpdateJob extends WorkbenchJob {
 	public IStatus runInUIThread(IProgressMonitor monitor) {
 		monitor.beginTask(MarkerMessages.MarkerView_19,
 				IProgressMonitor.UNKNOWN);
-		
+		Markers clone=view.getActiveViewerInputClone();
 		TreeViewer viewer = view.getViewer();
 		try {
 			updating = true;
@@ -65,9 +65,9 @@ class UIUpdateJob extends WorkbenchJob {
 			//always use a clone for Thread safety.
 			//We avoid setting the clone as new input as we would offset
 			//the benefits of optimization in TreeViewer.
+			clone=view.createViewerInputClone();
 			IContentProvider contentProvider = viewer.getContentProvider();
-			contentProvider.inputChanged(viewer, viewer.getInput(),
-					((Markers) viewer.getInput()).getClone());
+			contentProvider.inputChanged(viewer, view.getViewerInput(),clone);
 			
 			view.indicateUpdating(MarkerMessages.MarkerView_19,
 					true, true);
@@ -82,7 +82,7 @@ class UIUpdateJob extends WorkbenchJob {
 			// show it
 			if (view.getBuilder().isShowingHierarchy()
 					&& view.getCategoriesToExpand().isEmpty()) {
-				MarkerCategory[] categories = view.getBuilder().getCategories();
+				MarkerCategory[] categories = clone.getCategories();
 				if (categories != null && categories.length == 1)
 					view.getCategoriesToExpand().add(
 							categories[0].getDescription());
@@ -128,10 +128,7 @@ class UIUpdateJob extends WorkbenchJob {
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return false;
 		}
-		MarkersChangeListener markersListener = view.getBuilder()
-				.getMarkerListener();
-		return markersListener != null ? markersListener.canUpdateNow()
-				: false;
+		return true;
 	}
 
 	/*
