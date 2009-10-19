@@ -344,10 +344,10 @@ public class ResourceFilterGroup {
 					if ((filter.getType() & IResourceFilter.INCLUDE_ONLY) != 0)
 						return NLS
 								.bind(
-										IDEWorkbenchMessages.ResourceFilterPage_includeOnly,
+										IDEWorkbenchMessages.ResourceFilterPage_includeOnlyColumn,
 										null);
 					return NLS.bind(
-							IDEWorkbenchMessages.ResourceFilterPage_excludeAll,
+							IDEWorkbenchMessages.ResourceFilterPage_excludeAllColumn,
 							null);
 				}
 				return getFilterTypeName(filter);
@@ -358,16 +358,16 @@ public class ResourceFilterGroup {
 				if (includeFiles && includeFolders)
 					return NLS
 							.bind(
-									IDEWorkbenchMessages.ResourceFilterPage_filesAndFolders,
+									IDEWorkbenchMessages.ResourceFilterPage_filesAndFoldersColumn,
 									null);
 				if (includeFiles)
 					return NLS
 							.bind(
-									IDEWorkbenchMessages.ResourceFilterPage_files,
+									IDEWorkbenchMessages.ResourceFilterPage_filesColumn,
 									null);
 				if (includeFolders)
 					return NLS.bind(
-							IDEWorkbenchMessages.ResourceFilterPage_folders,
+							IDEWorkbenchMessages.ResourceFilterPage_foldersColumn,
 							null);
 			}
 			if (column.equals(FilterTypeUtil.ARGUMENTS)) {
