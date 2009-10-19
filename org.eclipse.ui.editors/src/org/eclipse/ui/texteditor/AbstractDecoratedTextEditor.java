@@ -11,6 +11,10 @@
 package org.eclipse.ui.texteditor;
 
 import java.io.File;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetEncoder;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,6 +64,7 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -146,7 +151,9 @@ import org.eclipse.ui.editors.text.DefaultEncodingSupport;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.editors.text.ForwardingDocumentProvider;
 import org.eclipse.ui.editors.text.IEncodingSupport;
+import org.eclipse.ui.editors.text.IStorageDocumentProvider;
 import org.eclipse.ui.editors.text.ITextEditorHelpContextIds;
+
 
 /**
  * An intermediate editor comprising functionality not present in the leaner <code>AbstractTextEditor</code>,
@@ -1530,6 +1537,98 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 
 		if (progressMonitor != null)
 			progressMonitor.setCanceled(!success);
+	}
+
+	/**
+	 * Presents an error dialog to the user when a problem happens during save.
+	 * <p>
+	 * Overrides the default behavior by showing a more advanced error dialog in case of encoding
+	 * problems.
+	 * </p>
+	 * 
+	 * @param title the dialog title
+	 * @param message the message to display
+	 * @param exception the exception to handle
+	 * @since 3.6
+	 */
+	protected void openSaveErrorDialog(String title, String message, CoreException exception) {
+		IStatus status= exception.getStatus();
+		final IDocumentProvider documentProvider= getDocumentProvider();
+		if (!(status.getCode() == IFileBufferStatusCodes.CHARSET_MAPPING_FAILED && documentProvider instanceof IStorageDocumentProvider)) {
+			super.openSaveErrorDialog(title, message, exception);
+			return;
+		}
+
+		final int saveAsUTF8ButtonId= IDialogConstants.OK_ID + IDialogConstants.CANCEL_ID + 1;
+		final int selectUnmappableCharButtonId= saveAsUTF8ButtonId + 1;
+		final Charset charset= getCharset();
+		
+		ErrorDialog errorDialog= new ErrorDialog(getSite().getShell(), title, message, status, IStatus.ERROR) {
+
+			protected void createButtonsForButtonBar(Composite parent) {
+				super.createButtonsForButtonBar(parent);
+				createButton(parent, saveAsUTF8ButtonId, TextEditorMessages.AbstractDecoratedTextEditor_save_error_Dialog_button_saveAsUTF8, false);
+				if (charset != null)
+					createButton(parent, selectUnmappableCharButtonId, TextEditorMessages.AbstractDecoratedTextEditor_save_error_Dialog_button_selectUnmappable, false);
+			}
+
+			protected void buttonPressed(int id) {
+				if (id == saveAsUTF8ButtonId || id == selectUnmappableCharButtonId) {
+					setReturnCode(id);
+					close();
+				} else
+					super.buttonPressed(id);
+			}
+
+			protected boolean shouldShowDetailsButton() {
+				return false;
+			}
+
+		};
+
+		int returnCode= errorDialog.open();
+
+		if (returnCode == saveAsUTF8ButtonId) {
+			((IStorageDocumentProvider)documentProvider).setEncoding(getEditorInput(), "UTF-8"); //$NON-NLS-1$
+			doSave(getProgressMonitor());
+		} else if (returnCode == selectUnmappableCharButtonId) {
+			CharsetEncoder encoder= charset.newEncoder();
+			IDocument document= getDocumentProvider().getDocument(getEditorInput());
+			int documentLength= document.getLength();
+			int offset= 0;
+			while (offset < documentLength) {
+				try {
+					char ch= document.getChar(offset);
+					if (!encoder.canEncode(ch)) {
+						selectAndReveal(offset, 1);
+						return;
+					}
+				} catch (BadLocationException ex) {
+					EditorsPlugin.log(ex);
+					// Skip this character. Showing yet another dialog here is overkill
+				}
+				offset++;
+			}
+		}
+	}
+
+	/**
+	 * Returns the charset of the current editor input.
+	 * 
+	 * @return the charset of the current editor input or <code>null</code> if it fails
+	 * @since 3.6
+	 */
+	private Charset getCharset() {
+		IEncodingSupport encodingSupport= (IEncodingSupport)getAdapter(IEncodingSupport.class);
+		if (encodingSupport == null)
+			return null;
+		try {
+			return Charset.forName(encodingSupport.getEncoding());
+		} catch (UnsupportedCharsetException ex) {
+			return null;
+		} catch (IllegalCharsetNameException ex) {
+			return null;
+		}
 	}
 
 	/**
