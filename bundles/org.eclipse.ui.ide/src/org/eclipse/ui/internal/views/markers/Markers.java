@@ -36,7 +36,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 class Markers {
 
 	static final MarkerCategory[] EMPTY_CATEGORY_ARRAY = new MarkerCategory[0];
-	 static final MarkerEntry[] EMPTY_ENTRY_ARRAY = new MarkerEntry[0];
+	static final MarkerEntry[] EMPTY_ENTRY_ARRAY = new MarkerEntry[0];
 
 	 //the marker entries
 	private MarkerEntry[] markerEntryArray = EMPTY_ENTRY_ARRAY;
@@ -45,6 +45,8 @@ class Markers {
 
 	
 	private CachedMarkerBuilder builder;
+	
+	private boolean inChange=false;
 
 	// markerToEntryMap is a lazily created map from the markers to thier
 	// corresponding entry
@@ -54,6 +56,7 @@ class Markers {
 
 	Markers(CachedMarkerBuilder builder) {
 		this.builder = builder;
+		inChange=false;
 	}
 
 	/**
@@ -65,36 +68,42 @@ class Markers {
 	 * 			true 	sort and group them
 	 * @param monitor
 	 */
-	boolean updateWithNewMarkers(List markerEntries, boolean sortAndGroup,
+	synchronized boolean updateWithNewMarkers(List markerEntries, boolean sortAndGroup,
 			IProgressMonitor monitor) {
-		if(markerToEntryMap!=null){
-			markerToEntryMap.clear();
-			markerToEntryMap=null;
-		}
-		markerCounts=null;
-		if (markerEntries.size() == 0) {
-			categories = EMPTY_CATEGORY_ARRAY;
-			markerEntryArray = EMPTY_ENTRY_ARRAY;
-			return true;
-		}
-		if (monitor.isCanceled()) {
-			return false;
-		}
-		markerEntryArray = new MarkerEntry[markerEntries.size()];
-		markerEntries.toArray(markerEntryArray);
-		if (sortAndGroup) {
+		boolean initialVal=inChange;
+		try {
+			inChange=true;
+			if (markerToEntryMap != null) {
+				markerToEntryMap.clear();
+				markerToEntryMap = null;
+			}
+			markerCounts = null;
+			if (markerEntries.size() == 0) {
+				categories = EMPTY_CATEGORY_ARRAY;
+				markerEntryArray = EMPTY_ENTRY_ARRAY;
+				return true;
+			}
 			if (monitor.isCanceled()) {
 				return false;
 			}
-			sortAndMakeCategories(monitor);
+			markerEntryArray = new MarkerEntry[markerEntries.size()];
+			markerEntries.toArray(markerEntryArray);
+			if (sortAndGroup) {
+				if (monitor.isCanceled()) {
+					return false;
+				}
+				sortAndMakeCategories(monitor);
 
-			if (monitor.isCanceled()) {
-				return false;
+				if (monitor.isCanceled()) {
+					return false;
+				}
+			} else {
+				categories = EMPTY_CATEGORY_ARRAY;
 			}
-		} else {
-			categories = EMPTY_CATEGORY_ARRAY;
+			return true;
+		} finally {
+			inChange=initialVal;
 		}
-		return true;
 	}
 
 	/**
@@ -102,60 +111,73 @@ class Markers {
 	 * 
 	 * @param monitor
 	 */
-	boolean sortAndMakeCategories(IProgressMonitor monitor) {
-		// Sort by Category first
-		if (builder.isShowingHierarchy()) {
-			MarkerCategory[] markerCategories = groupIntoCategories(monitor,
-					markerEntryArray);
-			categories = markerCategories;
-		}else{
-			categories=EMPTY_CATEGORY_ARRAY;
-		}
+	synchronized boolean sortAndMakeCategories(IProgressMonitor monitor) {
+		boolean initialVal=inChange;
+		try {
+			inChange=true;
+			// Sort by Category first
+			if (builder.isShowingHierarchy()) {
+				MarkerCategory[] markerCategories = groupIntoCategories(
+						monitor, markerEntryArray);
+				categories = markerCategories;
+			} else {
+				categories = EMPTY_CATEGORY_ARRAY;
+			}
 
-		if(monitor.isCanceled()){
-			return false;
-		}
-		monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
+			if (monitor.isCanceled()) {
+				return false;
+			}
+			monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
 
-		return sortMarkerEntries(monitor);
+			return sortMarkerEntries(monitor);
+		} finally {
+			inChange=initialVal;
+		}
 	}
 
 	/**
 	 * @param monitor
 	 */
-	boolean sortMarkerEntries(IProgressMonitor monitor) {
-		if(monitor.isCanceled()){
+	synchronized boolean sortMarkerEntries(IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
 			return false;
 		}
-
-		if (builder.isShowingHierarchy()) {
-			Comparator comparator = builder.getComparator().getFieldsComparator();
-			for (int i = 0; i < categories.length; i++) {
-				if(monitor.isCanceled()){
+		boolean initialVal=inChange;
+		try {
+			inChange=true;
+			if (builder.isShowingHierarchy()) {
+				Comparator comparator = builder.getComparator()
+						.getFieldsComparator();
+				for (int i = 0; i < categories.length; i++) {
+					if (monitor.isCanceled()) {
+						return false;
+					}
+					// sort various categories
+					MarkerCategory category = categories[i];
+					category.children = null; // reset cached children
+					int avaliable = category.end - category.start + 1;
+					int effLimit = getShowingLimit(avaliable);
+					MarkerSortUtil.sortStartingKElement(markerEntryArray,
+							comparator, category.start, category.end, effLimit,
+							monitor);
+				}
+			} else {
+				if (monitor.isCanceled()) {
 					return false;
 				}
-				// sort various categories
-				MarkerCategory category = categories[i];
-				category.children=null; //reset cached children
-				int avaliable = category.end - category.start + 1;
-				int effLimit = getShowingLimit(avaliable);
-				MarkerSortUtil.sortStartingKElement(markerEntryArray,
-						comparator, category.start, category.end, effLimit,monitor);
+				int avaialble = markerEntryArray.length - 1;
+				int effLimit = getShowingLimit(avaialble);
+				MarkerSortUtil.sortStartingKElement(markerEntryArray, builder
+						.getComparator(), effLimit, monitor);
 			}
-		} else {
-			if(monitor.isCanceled()){
+			if (monitor.isCanceled()) {
 				return false;
 			}
-			int avaialble = markerEntryArray.length - 1;
-			int effLimit = getShowingLimit(avaialble);
-			MarkerSortUtil.sortStartingKElement(markerEntryArray, builder
-					.getComparator(), effLimit,monitor);
+			monitor.worked(50);
+			return true;
+		} finally {
+			inChange=initialVal;
 		}
-		if(monitor.isCanceled()){
-			return false;
-		}
-		monitor.worked(50);
-		return true;
 	}
 
 	/**
@@ -350,11 +372,14 @@ class Markers {
 	
 	/**
 	 * Use clone where thread safety is concerned.
+	 * The method is non-blocking.
 	 */
-	Markers getClone(){
-		Markers markers =new Markers(builder);
-		markers.markerEntryArray=markerEntryArray;
-		markers.categories=categories;
+	Markers getClone() {
+		Markers markers = new Markers(builder);
+		if (!inChange) {
+			markers.markerEntryArray = markerEntryArray;
+			markers.categories = categories;
+		}
 		return markers;
 	}
 
