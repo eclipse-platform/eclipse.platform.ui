@@ -70,6 +70,7 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontMetrics;
 import org.eclipse.swt.graphics.GC;
@@ -1672,7 +1673,15 @@ class FilterEditDialog extends TrayDialog {
 			arguments.setText((String) FilterTypeUtil.getValue(filter,
 					FilterTypeUtil.ARGUMENTS));
 		arguments.setEnabled(filter.hasStringArguments());
-		argumentsLabel.setEnabled(filter.hasStringArguments());
+		setArgumentLabelEnabled();
+	}
+
+	/**
+	 * 
+	 */
+	private void setArgumentLabelEnabled() {
+		Color color = argumentsLabel.getDisplay().getSystemColor(filter.hasStringArguments() ? SWT.COLOR_BLACK : SWT.COLOR_GRAY); 
+		argumentsLabel.setForeground(color);
 	}
 
 	/**
@@ -1713,7 +1722,7 @@ class FilterEditDialog extends TrayDialog {
 				FilterTypeUtil.setValue(filter, FilterTypeUtil.ID, idCombo
 						.getItem(idCombo.getSelectionIndex()));
 				arguments.setEnabled(filter.hasStringArguments());
-				argumentsLabel.setEnabled(filter.hasStringArguments());
+				setArgumentLabelEnabled();
 				description.setText(FilterTypeUtil
 						.getDescriptor(filter.getId()).getDescription());
 			}
