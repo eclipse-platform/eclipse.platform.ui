@@ -11,9 +11,7 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 import java.net.URLConnection;
 import java.util.Collections;
 import java.util.Map;
@@ -26,7 +24,6 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -39,7 +36,6 @@ import org.eclipse.e4.ui.internal.services.ContextCommandService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -54,7 +50,6 @@ import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
-import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -62,8 +57,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -73,10 +66,7 @@ public class Workbench implements IWorkbench {
 	public static final String ID = "org.eclipse.e4.workbench.fakedWBWindow"; //$NON-NLS-1$
 	private MApplication workbench;
 	private static final boolean saveAndRestore = true;
-	private File workbenchData;
 	private IWorkbenchWindowHandler windowHandler;
-	// private final IExtensionRegistry registry;
-	private ResourceSetImpl resourceSet;
 
 	public IEclipseContext getContext() {
 		return workbenchContext;
@@ -90,6 +80,8 @@ public class Workbench implements IWorkbench {
 	private IEclipseContext workbenchContext;
 	private ReflectionContributionFactory contributionFactory;
 	private String renderingEngineURI;
+	private ResourceHandler handler;
+	private Location instanceLocation;
 
 	public Workbench(Location instanceLocation, IExtensionRegistry registry,
 			PackageAdmin packageAdmin, IEclipseContext applicationContext,
@@ -97,31 +89,10 @@ public class Workbench implements IWorkbench {
 		//		System.err.println("NEw Workbenc"); //$NON-NLS-1$
 		this.windowHandler = windowHandler;
 		this.renderingEngineURI = renderingEngineURI;
+		this.instanceLocation = instanceLocation;
+
 		exceptionHandler = new ExceptionHandler();
-		// this.registry = registry;
-		try {
-			workbenchData = new File(URIUtil.toURI(instanceLocation.getURL()));
-		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
-		}
-		workbenchData = new File(workbenchData, ".metadata"); //$NON-NLS-1$
-		workbenchData = new File(workbenchData, ".plugins"); //$NON-NLS-1$
-		workbenchData = new File(workbenchData, "org.eclipse.e4.workbench"); //$NON-NLS-1$
-		workbenchData = new File(workbenchData, "workbench.xmi"); //$NON-NLS-1$
-
 		contributionFactory = new ReflectionContributionFactory(registry);
-		resourceSet = new ResourceSetImpl();
-
-		// Register the appropriate resource factory to handle all file
-		// extensions.
-		//
-		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-				Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
-
-		// Register the package to ensure it is available during loading.
-		//
-		resourceSet.getPackageRegistry().put(MApplicationPackage.eNS_URI,
-				MApplicationPackage.eINSTANCE);
 
 		workbenchContext = createWorkbenchContext(applicationContext, registry, exceptionHandler,
 				contributionFactory);
@@ -220,20 +191,44 @@ public class Workbench implements IWorkbench {
 	}
 
 	private MApplication createWorkbenchModel(URI applicationDefinitionInstance) {
-		URI restoreLocation = null;
-		if (workbenchData != null && saveAndRestore) {
-			restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
+		handler = new ResourceHandler(instanceLocation, applicationDefinitionInstance,
+				saveAndRestore);
+
+		long restoreLastModified = handler.getLastStoreDatetime();
+		long lastApplicationModification = getLastApplicationModification(applicationDefinitionInstance);
+
+		boolean restore = restoreLastModified > lastApplicationModification;
+
+		Resource resource;
+		if (restore) {
+			resource = handler.loadRestoredModel();
+			workbench = (MApplication) resource.getContents().get(0);
+		} else {
+			resource = handler.loadBaseModel();
+			MApplication app = (MApplication) resource.getContents().get(0);
+
+			final EList<MWindow> windows = app.getChildren();
+			for (MWindow window : windows) {
+				processPartContributions(resource, window);
+			}
+
+			workbench = app;
 		}
-		long restoreLastModified = restoreLocation == null ? 0L : new File(restoreLocation
-				.toFileString()).lastModified();
 
+		init();
+
+		return workbench;
+	}
+
+	private long getLastApplicationModification(URI applicationDefinitionInstance) {
 		long appLastModified = 0L;
-
 		ResourceSetImpl resourceSetImpl = new ResourceSetImpl();
+
 		Map<String, ?> attributes = resourceSetImpl.getURIConverter().getAttributes(
 				applicationDefinitionInstance,
 				Collections.singletonMap(URIConverter.OPTION_REQUESTED_ATTRIBUTES, Collections
 						.singleton(URIConverter.ATTRIBUTE_TIME_STAMP)));
+
 		Object timestamp = attributes.get(URIConverter.ATTRIBUTE_TIME_STAMP);
 		if (timestamp instanceof Long) {
 			appLastModified = ((Long) timestamp).longValue();
@@ -249,41 +244,7 @@ public class Workbench implements IWorkbench {
 			}
 		}
 
-		// new java.util.Date(appLastModified)
-		boolean restore = restoreLastModified > appLastModified;
-
-		if (restore) {
-			Activator
-					.trace(Policy.DEBUG_WORKBENCH, "Restoring workbench: " + restoreLocation, null); //$NON-NLS-1$
-			workbench = (MApplication) resourceSetImpl.getResource(restoreLocation, true)
-					.getContents().get(0);
-		} else {
-			Activator.trace(Policy.DEBUG_WORKBENCH,
-					"Initializing workbench: " + applicationDefinitionInstance, null); //$NON-NLS-1$
-			Resource resource = new XMIResourceImpl();
-			workbench = loadDefaultModel(applicationDefinitionInstance);
-			resource.getContents().add((EObject) workbench);
-			resource.setURI(restoreLocation);
-		}
-
-		init();
-
-		// Hook the global notifications
-		((Notifier) workbench).eAdapters().add(new UIModelEventPublisher(workbench.getContext()));
-
-		return workbench;
-	}
-
-	private MApplication loadDefaultModel(URI defaultModelPath) {
-		Resource resource = new ResourceSetImpl().getResource(defaultModelPath, true);
-		MApplication app = (MApplication) resource.getContents().get(0);
-
-		final EList<MWindow> windows = app.getChildren();
-		for (MWindow window : windows) {
-			processPartContributions(resource, window);
-		}
-
-		return app;
+		return appLastModified;
 	}
 
 	private void processPartContributions(Resource resource, MWindow mWindow) {
@@ -431,16 +392,11 @@ public class Workbench implements IWorkbench {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "running event loop", null); //$NON-NLS-1$
 		windowHandler.runEvenLoop(workbench.getChildren().get(0).getWidget());
 
-		if (workbenchData != null && saveAndRestore && workbench != null) {
+		if (handler != null && saveAndRestore && workbench != null) {
 			try {
 				Activator.trace(Policy.DEBUG_WORKBENCH, "Saving workbench: " //$NON-NLS-1$
 						+ ((EObject) workbench).eResource().getURI(), null);
-				// workbenchData.getParentFile().mkdirs();
-				// workbenchData.createNewFile();
-				// FileOutputStream fos = new FileOutputStream(workbenchData);
-				// ((EObject)workbench).eResource().save(fos, null);
-				// fos.close();
-				((EObject) workbench).eResource().save(null);
+				handler.save();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
