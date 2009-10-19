@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2008 IBM Corporation and others.
+ *  Copyright (c) 2002, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Hofmann, Perspectix AG - https://bugs.eclipse.org/bugs/show_bug.cgi?id=291750
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
@@ -1036,12 +1037,21 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		link.setCursor(busyCursor);
 		currentItem = (ViewItem) link.getData();
 		CoreItem coreItem = (CoreItem) currentItem;
+		Page page= currentPage;
 
 		if (coreItem != null) {
 			try {
 				hookDialogListener();
 				dialogReturnCode = -1;
 				IStatus status = coreItem.runExecutable(getManager());
+				if ( status.getSeverity() == IStatus.ERROR) {
+					CheatSheetPlugin.getPlugin().getLog().log(status);
+					org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);								
+				}
+				if (page != currentPage) {
+					// action closed the cheatsheet view or changed the cheatsheet
+					return;
+				}
 				if (status.isOK() && dialogReturnCode != Window.CANCEL) {
 					coreItem.setRestartImage();
 					if (!coreItem.hasConfirm()) {
@@ -1049,10 +1059,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 					    advanceItem(link, true);
 					    saveCurrentSheet();
 					}
-				}
-				if ( status.getSeverity() == IStatus.ERROR) {
-					CheatSheetPlugin.getPlugin().getLog().log(status);
-				    org.eclipse.jface.dialogs.ErrorDialog.openError(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), null, null, status);								
 				}
 			}
 			finally {
