@@ -1190,56 +1190,26 @@ public class ProgressManager extends ProgressProvider implements
 	public void runInUI(final IRunnableContext context,
 			final IRunnableWithProgress runnable, final ISchedulingRule rule)
 			throws InvocationTargetException, InterruptedException {
-		final IJobManager manager = Job.getJobManager();
-		final InvocationTargetException[] exception = new InvocationTargetException[1];
-		final InterruptedException[] canceled = new InterruptedException[1];
-		BusyIndicator.showWhile(Display.getDefault(), new Runnable() {
+		final RunnableWithStatus runnableWithStatus = new RunnableWithStatus(
+				context,
+				runnable, rule);
+		final Display display = Display.getDefault();
+		display.syncExec(new Runnable() {
 			public void run() {
-				try {
-					manager.beginRule(rule, PlatformUI.getWorkbench().isStarting() 
-							? new NullProgressMonitor()
-							: getEventLoopMonitor());
-					context.run(false, false, runnable);
-				} catch (InvocationTargetException e) {
-					exception[0] = e;
-				} catch (InterruptedException e) {
-					canceled[0] = e;
-				} catch (OperationCanceledException e) {
-					canceled[0] = new InterruptedException(e.getMessage());
-				} finally {
-					manager.endRule(rule);
-				}
+				BusyIndicator.showWhile(display, runnableWithStatus);
 			}
 
-			/**
-			 * Get a progress monitor that forwards to an event loop monitor.
-			 * Override #setBlocked() so that we always open the blocked dialog.
-			 * 
-			 * @return the monitor on the event loop
-			 */
-			private IProgressMonitor getEventLoopMonitor() {
-				return new EventLoopProgressMonitor(new NullProgressMonitor()) {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.ui.internal.dialogs.EventLoopProgressMonitor#setBlocked(org.eclipse.core.runtime.IStatus)
-					 */
-					public void setBlocked(IStatus reason) {
-
-						// Set a shell to open with as we want to create this
-						// even if there is a modal shell.
-						Dialog.getBlockedHandler().showBlocked(
-								ProgressManagerUtil.getDefaultParent(), this,
-								reason, getTaskName());
-					}
-				};
-			}
 		});
-		if (exception[0] != null) {
-			throw exception[0];
-		}
-		if (canceled[0] != null) {
-			throw canceled[0];
+
+		IStatus status = runnableWithStatus.getStatus();
+		if (!status.isOK()) {
+			Throwable exception = status.getException();
+			if (exception instanceof InvocationTargetException)
+				throw (InvocationTargetException) exception;
+			else if (exception instanceof InterruptedException)
+				throw (InterruptedException) exception;
+			else // should be OperationCanceledException
+				throw new InterruptedException(exception.getMessage());
 		}
 	}
 
@@ -1367,6 +1337,69 @@ public class ProgressManager extends ProgressProvider implements
 		ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();
 		updater.debug = showSystem;
 		updater.refreshAll();
+
+	}
+
+	private class RunnableWithStatus implements Runnable {
+
+		IStatus status = Status.OK_STATUS;
+		private final IRunnableContext context;
+		private final IRunnableWithProgress runnable;
+		private final ISchedulingRule rule;
+
+		public RunnableWithStatus(IRunnableContext context,
+				IRunnableWithProgress runnable, ISchedulingRule rule) {
+			this.context = context;
+			this.runnable = runnable;
+			this.rule = rule;
+		}
+
+		public void run() {
+			IJobManager manager = Job.getJobManager();
+			try {
+				manager.beginRule(rule, getEventLoopMonitor());
+				context.run(false, false, runnable);
+			} catch (InvocationTargetException e) {
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
+						.getMessage(), e);
+			} catch (InterruptedException e) {
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
+						.getMessage(), e);
+			} catch (OperationCanceledException e) {
+				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e
+						.getMessage(), e);
+			} finally {
+				manager.endRule(rule);
+			}
+		}
+
+		/**
+		 * Get a progress monitor that forwards to an event loop monitor.
+		 * Override #setBlocked() so that we always open the blocked dialog.
+		 * 
+		 * @return the monitor on the event loop
+		 */
+		private IProgressMonitor getEventLoopMonitor() {
+
+			if (PlatformUI.getWorkbench().isStarting())
+				return new NullProgressMonitor();
+
+			return new EventLoopProgressMonitor(new NullProgressMonitor()) {
+
+				public void setBlocked(IStatus reason) {
+
+					// Set a shell to open with as we want to create
+					// this
+					// even if there is a modal shell.
+					Dialog.getBlockedHandler().showBlocked(
+							ProgressManagerUtil.getDefaultParent(), this,
+							reason, getTaskName());
+				}
+			};
+		}
+		public IStatus getStatus() {
+			return status;
+		}
 
 	}
 }
