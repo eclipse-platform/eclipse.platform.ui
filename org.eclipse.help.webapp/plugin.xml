@@ -126,4 +126,12 @@
             filter="(other.info=org.eclipse.help)">
       </serviceSelector>
    </extension>
+   <extension
+         id="org.eclipse.help.webapp.remoteStatusProducer"
+         name="Remote Status Producer"
+         point="org.eclipse.help.contentProducer">
+      <contentProducer
+            producer="org.eclipse.help.internal.webapp.StatusProducer">
+      </contentProducer>
+   </extension>
 </plugin>

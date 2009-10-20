@@ -253,6 +253,7 @@ public final class Messages extends NLS {
 
 	public static String ViewICPropsDialog_8;
 	public static String ViewICPropsDialog_URL;
+	public static String remoteHelpUnavailable;
 
 	public static String See;
 	public static String SeeAlso;

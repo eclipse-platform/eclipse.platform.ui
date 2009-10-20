@@ -22,7 +22,9 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.help.internal.webapp.StatusProducer;
 import org.eclipse.help.webapp.AbstractView;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
@@ -109,7 +111,10 @@ public class LayoutData extends RequestData {
 		}
 		String topicHref = request.getParameter("topic"); //$NON-NLS-1$
 		if (topicHref == null || topicHref.length() == 0) {
-			return UrlUtil.getHelpURL(preferences.getHelpHome());
+			if (BaseHelpSystem.getMode()!=BaseHelpSystem.MODE_INFOCENTER && RemoteStatusData.isAnyRemoteHelpUnavailable())
+				return "../topic/"+HelpWebappPlugin.PLUGIN_ID+'/'+StatusProducer.REMOTE_STATUS_HREF; //$NON-NLS-1$
+			else
+				return UrlUtil.getHelpURL(preferences.getHelpHome());
 		}
 		else {
 			TocData tocData = new TocData(context, request, response);

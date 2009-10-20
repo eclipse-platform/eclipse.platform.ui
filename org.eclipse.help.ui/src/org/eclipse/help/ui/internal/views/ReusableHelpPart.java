@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -381,6 +381,17 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		public PartRec[] getParts() {
 			return (PartRec[]) partRecs.toArray(new PartRec[partRecs.size()]);
+		}
+		
+		public void refreshPage()
+		{
+			PartRec parts[] = getParts();
+			if (parts==null)
+				return;
+			
+			for (int p=0;p<parts.length;p++)
+				if (parts[p]!=null && parts[p].part!=null && parts[p].part.isStale())
+					parts[p].part.refresh();
 		}
 
 		public int getNumberOfFlexibleParts() {
@@ -955,6 +966,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		
 		HelpPartPage page = findPage(id);
 		if (page != null) {
+			page.refreshPage();
 			boolean success = flipPages(currentPage, page);
 			return success ? page : null;
 		}

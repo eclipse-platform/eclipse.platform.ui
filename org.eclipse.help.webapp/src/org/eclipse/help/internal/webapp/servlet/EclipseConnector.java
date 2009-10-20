@@ -32,9 +32,11 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
+import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.help.internal.webapp.StatusProducer;
 import org.eclipse.help.internal.webapp.data.ServletResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.webapp.IFilter;
@@ -119,10 +121,15 @@ public class EclipseConnector {
 			    pageNotFound = true;
 			    if (notFoundCallout != null) {
 			    	notFoundCallout.notFound(url);
-			    }
-				if (requiresErrorPage(lowerCaseuRL)) { 
-					// Try to load the error page if defined
-		            String errorPage = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, "page_not_found", null, null); //$NON-NLS-1$
+			    }				if (requiresErrorPage(lowerCaseuRL)) { 
+					
+			    	String errorPage;
+			    	
+					if (RemoteStatusData.isAnyRemoteHelpUnavailable())
+			            errorPage = '/'+HelpWebappPlugin.PLUGIN_ID+'/'+StatusProducer.MISSING_TOPIC_HREF;
+					else // Try to load the error page if defined
+			            errorPage = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, "page_not_found", null, null); //$NON-NLS-1$
+					
 					if (errorPage != null && errorPage.length() > 0) {				
 						con = createConnection(req, resp, "help:" + errorPage); //$NON-NLS-1$
 						resp.setContentType("text/html"); //$NON-NLS-1$
