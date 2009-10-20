@@ -15,7 +15,8 @@ package org.eclipse.ui.menus;
  * Provides utilities and constants for use with the new menus API.
  * 
  * @since 3.3
- * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 public class MenuUtil {
 	/** Main Menu */
