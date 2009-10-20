@@ -55,7 +55,6 @@ public class ActivateEditorHandler extends AbstractEvaluationHandler {
 			IEditorPart part = HandlerUtil.getActiveEditor(event);
 			if (part != null) {
 				page.activate(part);
-				part.setFocus();
 			} else {
 				IWorkbenchPartReference ref = page.getActivePartReference();
 				if (ref instanceof IViewReference) {
