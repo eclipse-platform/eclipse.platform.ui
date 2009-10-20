@@ -1730,8 +1730,7 @@ class FilterEditDialog extends TrayDialog {
 						.getDescriptor(filter.getId()).getDescription());
 			}
 		});
-		idCombo.select(((Integer) FilterTypeUtil.getValue(filter,
-				FilterTypeUtil.ID)).intValue());
+		selectComboItem(filter.getId());
 		Composite argumentComposite = new Composite(idComposite, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -1743,6 +1742,23 @@ class FilterEditDialog extends TrayDialog {
 		createArgumentsArea(font, argumentComposite);
 
 		createDescriptionArea(font, idComposite);
+	}
+
+	/**
+	 * 
+	 */
+	private void selectComboItem(String filterID) {
+		IFilterDescriptor descriptor = ResourcesPlugin.getWorkspace()
+		.getFilterDescriptor(filterID);
+		if (descriptor != null) {
+			String [] items = idCombo.getItems();
+			for (int i = 0; i < items.length; i++) {
+				if (items[i].equals(descriptor.getName())) {
+					idCombo.select(i);
+					break;
+				}
+			}
+		}
 	}
 
 	/**
