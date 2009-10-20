@@ -419,7 +419,6 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			partActivated(part);
 			fPageDropDown.update();
 			createOpenAndLinkWithEditorHelper(getViewer());
-			getViewer().setComparer(COMPARER);
             rememberCurrentParticipant();
             PlatformUI.getWorkbench().getHelpSystem().setHelp(getPageBook().getParent(), participant.getHelpContextId());
 		}
@@ -857,25 +856,31 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	boolean showInput(Object input) {
 		Object element = input;
 		if (element != null) {
-			ISelection newSelection = new StructuredSelection(element);
-			if (getViewer().getSelection().equals(newSelection)) {
-				getViewer().reveal(element);
-			} else {
-				getViewer().setSelection(newSelection, true);
+			IElementComparer previousComparer = getViewer().getComparer();
+			getViewer().setComparer(COMPARER);
+			try {
+				ISelection newSelection = new StructuredSelection(element);
+				if (getViewer().getSelection().equals(newSelection)) {
+					getViewer().reveal(element);
+				} else {
+					getViewer().setSelection(newSelection, true);
 
-				while (element != null && getViewer().getSelection().isEmpty()) {
-					// Try to select parent in case element is filtered
-					element = getParent(element);
-					if (element != null) {
-						newSelection = new StructuredSelection(element);
-						getViewer().setSelection(newSelection, true);
-					} else {
-						// Failed to find parent to select
-						return false;
+					while (element != null && getViewer().getSelection().isEmpty()) {
+						// Try to select parent in case element is filtered
+						element = getParent(element);
+						if (element != null) {
+							newSelection = new StructuredSelection(element);
+							getViewer().setSelection(newSelection, true);
+						} else {
+							// Failed to find parent to select
+							return false;
+						}
 					}
 				}
+				return true;
+			} finally {
+				getViewer().setComparer(previousComparer);
 			}
-			return true;
 		}
 		return false;
 	}
