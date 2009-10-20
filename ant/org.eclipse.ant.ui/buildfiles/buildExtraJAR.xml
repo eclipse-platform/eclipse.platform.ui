@@ -44,7 +44,6 @@
 					<include name="org.eclipse.debug.ui/bin"/>
 					<include name="org.eclipse.ui.console/bin"/>
 			 		<include name="org.eclipse.jface/bin"/>
-					<include name="org.eclipse.ant.ui/common_ant_support_bin"/>
 					<include name="org.eclipse.osgi/bin"/>
 				</dirset>
 				<fileset dir="${eclipse.home}">
@@ -67,7 +66,6 @@
 		<!-- copy necessary resources -->
 		<copy todir="${destdir}">
 			<fileset dir="Ant Runner Support/" excludes="**/*.java"/>
-			<fileset dir="${basedir}/common_ant_support_bin"/>
 		</copy>
 		<mkdir dir="${build.result.folder}/lib"/>
 		<jar destfile="${build.result.folder}/lib/antrunner.jar" basedir="${destdir}"/>
