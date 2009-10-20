@@ -36,8 +36,10 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
+import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
 import org.eclipse.jface.viewers.ComboBoxCellEditor;
@@ -88,6 +90,7 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.fieldassist.ContentAssistCommandAdapter;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
@@ -1490,13 +1493,16 @@ class FilterCopy implements IResourceFilter {
 		if (children == null) {
 			if (getChildrenLimit() > 0) {
 				children = new LinkedList();
-				IResourceFilter[] filters = (IResourceFilter[]) getArguments();
-				if (filters != null)
-					for (int i = 0; i < filters.length; i++) {
-						FilterCopy child = new FilterCopy(filters[i]);
-						child.parent = this;
-						children.add(child);
-					}
+				Object arguments = getArguments();
+				if (arguments instanceof IResourceFilter[]) {
+					IResourceFilter[] filters = (IResourceFilter[]) arguments;
+					if (filters != null)
+						for (int i = 0; i < filters.length; i++) {
+							FilterCopy child = new FilterCopy(filters[i]);
+							child.parent = this;
+							children.add(child);
+						}
+				}
 			}
 		}
 	}
@@ -1560,6 +1566,14 @@ class FilterEditDialog extends TrayDialog {
 	protected Label argumentsLabel;
 	protected Label description;
 	protected FilterTypeUtil util;
+
+	private static final String REGEX_FILTER_ID = "org.eclipse.core.resources.regexFilter"; //$NON-NLS-1$
+	
+	/**
+	 * Find and replace command adapters.
+	 * @since 3.3
+	 */
+	private ContentAssistCommandAdapter fContentAssistField;
 
 	/**
 	 * Constructor for FilterEditDialog.
@@ -1675,6 +1689,16 @@ class FilterEditDialog extends TrayDialog {
 					FilterTypeUtil.ARGUMENTS));
 		arguments.setEnabled(filter.hasStringArguments());
 		setArgumentLabelEnabled();
+
+		TextContentAdapter contentAdapter= new TextContentAdapter();
+		FindReplaceDocumentAdapterContentProposalProvider findProposer= new FindReplaceDocumentAdapterContentProposalProvider(true);
+		fContentAssistField= new ContentAssistCommandAdapter(
+				arguments,
+				contentAdapter,
+				findProposer, 
+				null,
+				new char[] {'\\', '[', '('},
+				true);
 	}
 
 	/**
@@ -1728,6 +1752,7 @@ class FilterEditDialog extends TrayDialog {
 				setArgumentLabelEnabled();
 				description.setText(FilterTypeUtil
 						.getDescriptor(filter.getId()).getDescription());
+				fContentAssistField.setEnabled(filter.getId().equals(REGEX_FILTER_ID));
 			}
 		});
 		selectComboItem(filter.getId());
@@ -1742,6 +1767,7 @@ class FilterEditDialog extends TrayDialog {
 		createArgumentsArea(font, argumentComposite);
 
 		createDescriptionArea(font, idComposite);
+		fContentAssistField.setEnabled(filter.getId().equals(REGEX_FILTER_ID));
 	}
 
 	/**
