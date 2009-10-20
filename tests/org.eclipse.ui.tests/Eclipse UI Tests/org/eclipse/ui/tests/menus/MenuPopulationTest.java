@@ -14,14 +14,17 @@ package org.eclipse.ui.tests.menus;
 import java.lang.reflect.Field;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.menus.AbstractContributionFactory;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -41,6 +44,10 @@ public class MenuPopulationTest extends MenuTestCase {
 	public static final String ID_DEFAULT = "org.eclipse.ui.tests.menus.iconsDefault";
 	public static final String ID_ALL = "org.eclipse.ui.tests.menus.iconsAll";
 	public static final String ID_TOOLBAR = "org.eclipse.ui.tests.menus.iconsToolbarOnly";
+	private AbstractContributionFactory afterOne;
+	private AbstractContributionFactory beforeOne;
+	private AbstractContributionFactory endofOne;
+	private CommandContributionItem usefulContribution;
 
 	/**
 	 * @param testName
@@ -161,7 +168,8 @@ public class MenuPopulationTest extends MenuTestCase {
 
 	public void testFactoryScopePopulation() throws Exception {
 		AbstractContributionFactory factory = new AbstractContributionFactory(
-				"menu:the.population.menu?after=additions", "org.eclipse.ui.tests") {
+				"menu:the.population.menu?after=additions",
+				"org.eclipse.ui.tests") {
 
 			public void createContributionItems(IServiceLocator serviceLocator,
 					IContributionRoot additions) {
@@ -178,12 +186,185 @@ public class MenuPopulationTest extends MenuTestCase {
 		assertNotNull(view);
 		IMenuService service = (IMenuService) view.getSite().getService(
 				IMenuService.class);
-		service.populateContributionManager(testManager, "menu:the.population.menu");
+		service.populateContributionManager(testManager,
+				"menu:the.population.menu");
 		assertEquals(0, testManager.getSize());
 		service.addContributionFactory(factory);
 		assertEquals(1, testManager.getSize());
 		window.getActivePage().hideView(view);
 		processEvents();
 		assertEquals(0, testManager.getSize());
+	}
+
+	public void testAfterQueryInvalid() throws Exception {
+		MenuManager manager = new MenuManager();
+		menuService.populateContributionManager(manager, "menu:after.menu");
+		assertEquals(0, manager.getSize());
+	}
+
+	public void testAfterQueryOneGroup() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("after.one"));
+		assertEquals(1, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:after.menu");
+		assertEquals(2, manager.getSize());
+		assertEquals("after.insert", manager.getItems()[1].getId());
+	}
+
+	public void testAfterQueryTwoGroups() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("after.one"));
+		manager.add(new GroupMarker("after.two"));
+		assertEquals(2, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:after.menu");
+		assertEquals(3, manager.getSize());
+		assertEquals("after.insert", manager.getItems()[1].getId());
+	}
+
+	public void testBeforeQueryInvalid() throws Exception {
+		MenuManager manager = new MenuManager();
+		menuService.populateContributionManager(manager, "menu:before.menu");
+		assertEquals(0, manager.getSize());
+	}
+
+	public void testBeforeQueryOneGroup() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("before.one"));
+		assertEquals(1, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:before.menu");
+		assertEquals(2, manager.getSize());
+		assertEquals("before.insert", manager.getItems()[0].getId());
+	}
+
+	public void testBeforeQueryTwoGroups() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("before.one"));
+		manager.add(new GroupMarker("before.two"));
+		assertEquals(2, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:before.menu");
+		assertEquals(3, manager.getSize());
+		assertEquals("before.insert", manager.getItems()[0].getId());
+	}
+
+	public void testBeforeQueryTwoGroups2() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("before.two"));
+		manager.add(new GroupMarker("before.one"));
+		assertEquals(2, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:before.menu");
+		assertEquals(3, manager.getSize());
+		assertEquals("before.insert", manager.getItems()[1].getId());
+	}
+
+	public void testEndofQueryInvalid() throws Exception {
+		MenuManager manager = new MenuManager();
+		menuService.populateContributionManager(manager, "menu:endof.menu");
+		assertEquals(0, manager.getSize());
+	}
+
+	public void testEndofQueryOneGroup() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("endof.one"));
+		assertEquals(1, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:endof.menu");
+		assertEquals(2, manager.getSize());
+		assertEquals("endof.insert", manager.getItems()[1].getId());
+	}
+
+	public void testEndofQueryTwoGroups() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("endof.one"));
+		manager.add(new GroupMarker("endof.two"));
+		assertEquals(2, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:endof.menu");
+		assertEquals(3, manager.getSize());
+		assertEquals("endof.insert", manager.getItems()[1].getId());
+	}
+
+	public void testEndofQueryTwoGroups2() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("endof.one"));
+		manager.add(usefulContribution);
+		manager.add(new GroupMarker("endof.two"));
+		assertEquals(3, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:endof.menu");
+		assertEquals(4, manager.getSize());
+		assertEquals("endof.insert", manager.getItems()[2].getId());
+	}
+
+	public void testEndofQueryTwoGroups3() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("endof.two"));
+		manager.add(new GroupMarker("endof.one"));
+		assertEquals(2, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:endof.menu");
+		assertEquals(3, manager.getSize());
+		assertEquals("endof.insert", manager.getItems()[2].getId());
+	}
+
+	public void testEndofQueryTwoGroups4() throws Exception {
+		MenuManager manager = new MenuManager();
+		manager.add(new GroupMarker("endof.two"));
+		manager.add(new GroupMarker("endof.one"));
+		manager.add(usefulContribution);
+		assertEquals(3, manager.getSize());
+		menuService.populateContributionManager(manager, "menu:endof.menu");
+		assertEquals(4, manager.getSize());
+		assertEquals("endof.insert", manager.getItems()[3].getId());
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.tests.menus.MenuTestCase#doSetUp()
+	 */
+	protected void doSetUp() throws Exception {
+		super.doSetUp();
+		afterOne = new AbstractContributionFactory(
+				"menu:after.menu?after=after.one", "org.eclipse.ui.tests") {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				additions.addContributionItem(new GroupMarker("after.insert"),
+						null);
+			}
+		};
+		menuService.addContributionFactory(afterOne);
+
+		beforeOne = new AbstractContributionFactory(
+				"menu:before.menu?before=before.one", "org.eclipse.ui.tests") {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				additions.addContributionItem(new GroupMarker("before.insert"),
+						null);
+			}
+		};
+		menuService.addContributionFactory(beforeOne);
+
+		endofOne = new AbstractContributionFactory(
+				"menu:endof.menu?endof=endof.one", "org.eclipse.ui.tests") {
+			public void createContributionItems(IServiceLocator serviceLocator,
+					IContributionRoot additions) {
+				additions.addContributionItem(new GroupMarker("endof.insert"),
+						null);
+			}
+		};
+		menuService.addContributionFactory(endofOne);
+		usefulContribution = new CommandContributionItem(
+				new CommandContributionItemParameter(window, null,
+						IWorkbenchCommandConstants.HELP_ABOUT, 0));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.tests.menus.MenuTestCase#doTearDown()
+	 */
+	protected void doTearDown() throws Exception {
+		menuService.removeContributionFactory(afterOne);
+		menuService.removeContributionFactory(beforeOne);
+		menuService.removeContributionFactory(endofOne);
+		usefulContribution.dispose();
+		usefulContribution = null;
+		super.doTearDown();
 	}
 }

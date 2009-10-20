@@ -37,7 +37,7 @@ The general strategy for this mechanism is to separate the &apos;location&apos; 
 &lt;ul&gt;
 &lt;li&gt;&lt;b&gt;Scheme&lt;/b&gt; - The &apos;type&apos; of the UI component into which the contributions will be added. It may be either &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar&quot;. While &apos;popup&apos; is indeed a form of menu it is provided to allow a distinction between a view&apos;s &apos;chevron&apos; menu (for which we use the &quot;menu&quot; scheme) and its default context menu which, by convention, should be registered using the &quot;popup&quot; scheme.&lt;/li&gt;
 &lt;li&gt;&lt;b&gt;ID&lt;/b&gt; - This is the id of menu or toolbar into which the contributions should be added. By convention views should use their view id as the id of the root of their chevron and default popup menu. Note that there is no explicit distinction between contributions supporting editors and &apos;normal&apos; contributions into the Menu Menu or Toolbar; both global contributions and editor contributions would use the &quot;org.eclipse.ui.main.menu&quot; id or &quot;org.eclipse.ui.main.toolbar&quot;. A special id used with popup:, &quot;org.eclipse.ui.popup.any&quot;, is reserved to handle contributions which are candidates to appear on any (top level) context menu. Note that these contributions are expected to implement a &apos;visibleWhen&apos; expression sufficient to limit their visibility to appropriate menus&lt;/li&gt;
-&lt;li&gt;&lt;b&gt;Query&lt;/b&gt; - This field allows fine-grained definition of the specific location &lt;i&gt;within&lt;/i&gt; a given menu. It has the form &quot;[placement]=[id]&quot; where placement is one of &quot;before&quot; or &quot;after&quot; and the id is expected to be the id of some IContributionItem in the menu.&lt;/li&gt;
+&lt;li&gt;&lt;b&gt;Query&lt;/b&gt; - This field allows fine-grained definition of the specific location &lt;i&gt;within&lt;/i&gt; a given menu. It has the form &quot;[placement]=[id]&quot; where placement is one of &quot;before&quot;, &quot;after&quot;, or &quot;endof&quot; and the id is expected to be the id of some IContributionItem in the menu.&lt;/li&gt;
 &lt;/ul&gt; 
 &lt;p&gt;
 This will define the location at which the contributions will appear in the eclipse UI. Once the insertion point has been defined the rest of the contributions describe the UI elements that will be added at that location. Each element supports a &apos;visibleWhen&apos; expression that determines at run time whether a particular item should appear in the menu based on the system&apos;s current state (selection, active view/editor, context...).  See &lt;code&gt;org.eclipse.ui.ISources&lt;/code&gt; for a list of currently
@@ -531,8 +531,8 @@ The format for the URI is comprised of three basic parts:
 Scheme: One of &quot;menu&quot;, &quot;popup&quot; or &quot;toolbar. Indicates the type of the manager used to handle the contributions
 Id: This is either the id of an existing menu, a view id or the id of the editor &apos;type&apos;
 Query: The query format is &amp;lt;placement&amp;gt;=&amp;lt;id&amp;gt; where:
- &amp;lt;placement&amp;gt; is either &quot;before&quot; or &quot;after&quot; and
- &amp;lt;id&amp;gt; is the id of an existing menu item
+ &amp;lt;placement&amp;gt; is either &quot;before&quot;, &quot;after&quot;, or &quot;endof&quot; and
+ &amp;lt;id&amp;gt; is the id of an existing menu item.  The placement modifier is executed when this contribution is processed.  Following contributions may change the final shape of the menu when they are processed.
                </documentation>
             </annotation>
          </attribute>
@@ -790,7 +790,7 @@ If omitted and the action appears in the toolbar, the Workbench will use a place
                <documentation>
                   The &apos;id&apos; of this contribution. If defined then it can be  used as a reference in the Query part of the location defining whether the additions are to go before or after this element (or at the end of the logical group containing this element using the &apos;endof&apos; value).
 &lt;p&gt;
-Separator contributions that have an id define the start of a logical group so the result of using the &apos;endof&apos; value for placement is to search forward in the current menu to locate the next id&apos;d separator and to place the inserted elements before that element. If no trailing separator is found then the items are placed at the end of the menu.
+Separator contributions that have an id define the start of a logical group so the result of using the &apos;endof&apos; value for placement is to search forward in the current menu to locate the next separator and to place the inserted elements before that element. If no trailing separator is found then the items are placed at the end of the menu.
 &lt;/p&gt;
                </documentation>
             </annotation>

@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -48,6 +47,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
@@ -73,6 +73,7 @@ import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.menus.AbstractContributionFactory;
+import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.services.IEvaluationReference;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.IServiceLocator;
@@ -90,6 +91,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * @since 3.2
  */
 public final class WorkbenchMenuService extends InternalMenuService {
+
+	private static final String INDEX_AFTER_ADDITIONS = "after=additions"; //$NON-NLS-1$
 
 	/**
 	 * A combined property and activity listener that updates the visibility of
@@ -736,11 +739,6 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		}
 	}
 
-	/**
-	 * @param mgr
-	 * @param uri
-	 * @return
-	 */
 	private int getInsertionIndex(ContributionManager mgr, String location) {
 		MenuLocationURI uri = new MenuLocationURI(location);
 		String query = uri.getQuery();
@@ -749,19 +747,36 @@ public final class WorkbenchMenuService extends InternalMenuService {
 
 		// No Query means 'after=additions' (if ther) or
 		// the end of the menu
-		if (query.length() == 0 || query.equals("after=additions")) { //$NON-NLS-1$
-			additionsIndex = mgr.indexOf("additions"); //$NON-NLS-1$
+		if (query.length() == 0 || query.equals(INDEX_AFTER_ADDITIONS)) {
+			additionsIndex = mgr
+					.indexOf(IWorkbenchActionConstants.MB_ADDITIONS);
 			if (additionsIndex == -1)
 				additionsIndex = mgr.getItems().length;
 			else
 				++additionsIndex;
 		} else {
-			// Should be in the form "[before|after]=id"
+			// Should be in the form "[before|after|endof]=id"
 			String[] queryParts = Util.split(query, '=');
 			if (queryParts.length>1 && queryParts[1].length() > 0) {
-				additionsIndex = mgr.indexOf(queryParts[1]);
-				if (additionsIndex != -1 && queryParts[0].equals("after")) //$NON-NLS-1$
-					additionsIndex++;
+				String modifier = queryParts[0];
+				String id = queryParts[1];
+				additionsIndex = mgr.indexOf(id);
+				if (additionsIndex != -1) {
+					if (MenuUtil.QUERY_BEFORE.equals(modifier)) {
+						// this is OK, the additionsIndex will either be correct
+						// or -1 (which is a no-op)
+					} else if (MenuUtil.QUERY_AFTER.equals(modifier)) {
+						additionsIndex++;
+					} else if (MenuUtil.QUERY_ENDOF.equals(modifier)) {
+						// OK, this one is exciting
+						IContributionItem[] items = mgr.getItems();
+						for (additionsIndex++; additionsIndex < items.length; additionsIndex++) {
+							if (items[additionsIndex].isGroupMarker()) {
+								break;
+							}
+						}
+					}
+				}
 			}
 		}
 
