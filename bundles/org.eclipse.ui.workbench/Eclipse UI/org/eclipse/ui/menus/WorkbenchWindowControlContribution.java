@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007 - 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,8 @@ package org.eclipse.ui.menus;
 
 import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.menus.InternalControlContribution;
 
@@ -81,5 +83,22 @@ public abstract class WorkbenchWindowControlContribution extends InternalControl
 			return SWT.VERTICAL;
 		
 		return SWT.HORIZONTAL;
+	}
+
+	/**
+	 * Important: This method is *NOT* to be used/extended by clients. This is
+	 * for the internal use inside Workbench
+	 * 
+	 * @param parent
+	 *            the parent composite
+	 * @return newly created Control
+	 * @since 3.6
+	 * 
+	 * @noreference This method is not intended to be referenced by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended
+	 *             by clients.
+	 */
+	public Control delegateCreateControl(Composite parent) {
+		return createControl(parent);
 	}
 }

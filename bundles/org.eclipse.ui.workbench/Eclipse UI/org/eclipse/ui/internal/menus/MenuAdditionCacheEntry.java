@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,10 +14,8 @@ package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
@@ -37,13 +35,10 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.provisional.presentations.IActionBarPresentationFactory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
-import org.eclipse.ui.menus.IWorkbenchContribution;
-import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -53,16 +48,6 @@ import org.eclipse.ui.services.IServiceLocator;
  */
 public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
 	
-	// Caches
-	
-	/**
-	 * If an {@link IConfigurationElement} is in the Set then we have already
-	 * tried (and failed) to load the associated ExecutableExtension.
-	 * 
-	 * This is used to prevent multiple retries which would spam the Log.
-	 */
-	Set failedLoads = new HashSet();
-
 	/**
 	 * Maps an IConfigurationElement to its parsed Expression
 	 */
@@ -284,33 +269,13 @@ public class MenuAdditionCacheEntry extends AbstractMenuAdditionCacheEntry {
 	private IContributionItem createControlAdditionContribution(
 			final IServiceLocator locator,
 			final IConfigurationElement widgetAddition) {
-		if (!inToolbar()) {
-			return null;
+
+		if (inToolbar()) {
+			return new DynamicToolBarContributionItem(getId(widgetAddition), locator, widgetAddition);
 		}
-		// If we've already tried (and failed) to load the
-		// executable extension then skip this addirion.
-		if (failedLoads.contains(widgetAddition))
-			return null;
-
-		// Attempt to load the addition's EE (creates a new instance)
-		final WorkbenchWindowControlContribution loadedWidget = (WorkbenchWindowControlContribution) Util
-				.safeLoadExecutableExtension(widgetAddition,
-						IWorkbenchRegistryConstants.ATT_CLASS,
-						WorkbenchWindowControlContribution.class);
-
-		// Cache failures
-		if (loadedWidget == null) {
-			failedLoads.add(widgetAddition);
-			return null;
-		}
-
-		// explicitly set the id
-		loadedWidget.setId(getId(widgetAddition));
-		if (loadedWidget instanceof IWorkbenchContribution) {
-			((IWorkbenchContribution)loadedWidget).initialize(locator);
-		}
-
-		return loadedWidget;
+		
+		return null;
+		
 	}
 
 	private IContributionItem createCommandAdditionContribution(
