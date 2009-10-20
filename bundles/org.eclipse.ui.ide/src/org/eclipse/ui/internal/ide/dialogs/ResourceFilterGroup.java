@@ -91,7 +91,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.misc.CompoundResourceFilter;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
@@ -179,7 +178,10 @@ public class ResourceFilterGroup {
 		}
 
 		boolean changed = false;
-		public LinkedList/* <IResourceFilter> */trash = new LinkedList/* <IResourceFilter> */();
+		public LinkedList/* <IResourceFilter> */trash = new LinkedList/*
+																	 * <IResourceFilter
+																	 * >
+																	 */();
 
 		public void add(FilterCopy newFilter) {
 			super.addChild(newFilter);
@@ -347,9 +349,10 @@ public class ResourceFilterGroup {
 								.bind(
 										IDEWorkbenchMessages.ResourceFilterPage_includeOnlyColumn,
 										null);
-					return NLS.bind(
-							IDEWorkbenchMessages.ResourceFilterPage_excludeAllColumn,
-							null);
+					return NLS
+							.bind(
+									IDEWorkbenchMessages.ResourceFilterPage_excludeAllColumn,
+									null);
 				}
 				return getFilterTypeName(filter);
 			}
@@ -367,13 +370,15 @@ public class ResourceFilterGroup {
 									IDEWorkbenchMessages.ResourceFilterPage_filesColumn,
 									null);
 				if (includeFolders)
-					return NLS.bind(
-							IDEWorkbenchMessages.ResourceFilterPage_foldersColumn,
-							null);
+					return NLS
+							.bind(
+									IDEWorkbenchMessages.ResourceFilterPage_foldersColumn,
+									null);
 			}
 			if (column.equals(FilterTypeUtil.ARGUMENTS)) {
 				if (filter.hasStringArguments())
-					return filter.getArguments();
+					return filter.getArguments() != null ? filter
+							.getArguments().toString() : ""; //$NON-NLS-1$
 				if ((filter.getChildrenLimit() > 0)
 						&& !filter.isUnderAGroupFilter())
 					return "< " + getFilterTypeName(filter) + " >"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -1156,8 +1161,9 @@ class FilterTypeUtil {
 			else
 				filter.setType(type);
 		}
-		if (property.equals(FilterTypeUtil.ARGUMENTS))
-			filter.setArguments((String) value);
+		if (property.equals(FilterTypeUtil.ARGUMENTS)) {
+			filter.setArguments(value.equals("") ? null : value); //$NON-NLS-1$
+		}
 	}
 
 	static IFilterDescriptor getDescriptor(String id) {
@@ -1206,7 +1212,7 @@ class FilterTypeUtil {
 					(filter.getType() & IResourceFilter.INHERITABLE) != 0);
 
 		if (property.equals(ARGUMENTS))
-			return filter.getArguments();
+			return filter.getArguments() != null ? filter.getArguments() : ""; //$NON-NLS-1$
 		return null;
 	}
 
@@ -1310,8 +1316,7 @@ class FilterTypeUtil {
 }
 
 class FilterCopy implements IResourceFilter {
-	static String EMPTY = ""; //$NON-NLS-1$
-	String arguments = EMPTY;
+	Object arguments = null;
 	String id = null;
 	IPath path = null;
 	IProject project = null;
@@ -1366,8 +1371,6 @@ class FilterCopy implements IResourceFilter {
 		path = filter.getPath();
 		project = filter.getProject();
 		type = filter.getType();
-		if (arguments == null)
-			arguments = EMPTY;
 	}
 
 	public boolean hasChanged() {
@@ -1387,7 +1390,7 @@ class FilterCopy implements IResourceFilter {
 		id = FilterTypeUtil.getDefaultFilterID();
 	}
 
-	public String getArguments() {
+	public Object getArguments() {
 		return arguments;
 	}
 
@@ -1407,7 +1410,7 @@ class FilterCopy implements IResourceFilter {
 		return type;
 	}
 
-	public void setArguments(String arguments) {
+	public void setArguments(Object arguments) {
 		this.arguments = arguments;
 		argumentsChanged();
 	}
@@ -1487,13 +1490,13 @@ class FilterCopy implements IResourceFilter {
 		if (children == null) {
 			if (getChildrenLimit() > 0) {
 				children = new LinkedList();
-				IResourceFilter[] filters = CompoundResourceFilter.unserialize(
-						getProject(), getArguments());
-				for (int i = 0; i < filters.length; i++) {
-					FilterCopy child = new FilterCopy(filters[i]);
-					child.parent = this;
-					children.add(child);
-				}
+				IResourceFilter[] filters = (IResourceFilter[]) getArguments();
+				if (filters != null)
+					for (int i = 0; i < filters.length; i++) {
+						FilterCopy child = new FilterCopy(filters[i]);
+						child.parent = this;
+						children.add(child);
+					}
 			}
 		}
 	}
@@ -1523,9 +1526,7 @@ class FilterCopy implements IResourceFilter {
 	protected void argumentsChanged() {
 		initializeChildren();
 		if (children != null)
-			arguments = CompoundResourceFilter
-					.serialize((FilterCopy[]) children
-							.toArray(new FilterCopy[0]));
+			arguments = (FilterCopy[]) children.toArray(new FilterCopy[0]);
 		FilterCopy up = parent;
 		while (up != null) {
 			up.serializeChildren();
@@ -1680,7 +1681,8 @@ class FilterEditDialog extends TrayDialog {
 	 * 
 	 */
 	private void setArgumentLabelEnabled() {
-		Color color = argumentsLabel.getDisplay().getSystemColor(filter.hasStringArguments() ? SWT.COLOR_BLACK : SWT.COLOR_GRAY); 
+		Color color = argumentsLabel.getDisplay().getSystemColor(
+				filter.hasStringArguments() ? SWT.COLOR_BLACK : SWT.COLOR_GRAY);
 		argumentsLabel.setForeground(color);
 	}
 
@@ -1707,7 +1709,8 @@ class FilterEditDialog extends TrayDialog {
 	private void createIdArea(Font font, Composite composite) {
 		GridData data;
 		Group idComposite = createGroup(font, composite, NLS.bind(
-				IDEWorkbenchMessages.ResourceFilterPage_columnFilterID, null), true);
+				IDEWorkbenchMessages.ResourceFilterPage_columnFilterID, null),
+				true);
 		idCombo = new Combo(idComposite, SWT.READ_ONLY);
 		idCombo.setItems(FilterTypeUtil.getFilterNames(filter
 				.getChildrenLimit() > 0));
@@ -1797,7 +1800,8 @@ class FilterEditDialog extends TrayDialog {
 	 * @param composite
 	 * @return the group
 	 */
-	private Group createGroup(Font font, Composite composite, String text, boolean grabExcessVerticalSpace) {
+	private Group createGroup(Font font, Composite composite, String text,
+			boolean grabExcessVerticalSpace) {
 		GridLayout layout;
 		GridData data;
 		Group modeComposite = new Group(composite, SWT.NONE);

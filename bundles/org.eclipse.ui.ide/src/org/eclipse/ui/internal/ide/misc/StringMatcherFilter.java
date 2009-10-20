@@ -51,8 +51,8 @@ public class StringMatcherFilter implements IFileInfoFilterFactory {
 
 	}
 
-	public IFileInfoFilter instantiate(IProject project, String arguments) {
-		return new FilterType(arguments);
+	public IFileInfoFilter instantiate(IProject project, Object arguments) {
+		return new FilterType((String)arguments);
 	}
 
 }

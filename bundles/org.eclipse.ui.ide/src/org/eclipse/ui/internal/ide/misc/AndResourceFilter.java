@@ -37,7 +37,7 @@ public class AndResourceFilter extends CompoundResourceFilter implements
 		}
 	}
 
-	public IFileInfoFilter instantiate(IProject project, String arguments) {
-		return new AndFileInfoFilter(project, unserialize(project, arguments));
+	public IFileInfoFilter instantiate(IProject project, Object arguments) {
+		return new AndFileInfoFilter(project,(IResourceFilter[])arguments);
 	}
 }

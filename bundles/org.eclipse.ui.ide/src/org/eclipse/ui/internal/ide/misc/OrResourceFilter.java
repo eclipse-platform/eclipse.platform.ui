@@ -40,7 +40,7 @@ public class OrResourceFilter extends CompoundResourceFilter implements
 		}
 	}
 
-	public IFileInfoFilter instantiate(IProject project, String arguments) {
-		return new OrFileInfoFilter(project, unserialize(project, arguments));
+	public IFileInfoFilter instantiate(IProject project, Object arguments) {
+		return new OrFileInfoFilter(project, (IResourceFilter[])arguments);
 	}
 }
