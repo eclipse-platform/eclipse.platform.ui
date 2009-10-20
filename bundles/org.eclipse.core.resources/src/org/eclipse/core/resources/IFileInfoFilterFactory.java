@@ -28,5 +28,5 @@ public interface IFileInfoFilterFactory  {
 	 * @param arguments the test arguments, or <code>null</code> if not applicable
 	 * for this filter type.
 	 */
-	public IFileInfoFilter instantiate(IProject project, String arguments);
+	public IFileInfoFilter instantiate(IProject project, Object arguments);
 }

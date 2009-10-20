@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
+ *     IBM Corporation - ongoing implementation
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -64,7 +65,7 @@ public class Filter implements IResourceFilter {
 		return false;
 	}
 
-	public String getArguments() {
+	public Object getArguments() {
 		return description.getArguments();
 	}
 

@@ -707,9 +707,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IContainer#addFilter(String, int, String, IProgressMonitor)
+	 * @see org.eclipse.core.resources.IContainer#addFilter(String, int, Object, IProgressMonitor)
 	 */
-	public void addFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	public void addFilter(String filterID, int type, Object arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(filterID);
 		Assert.isNotNull(getProject());
 		monitor = Policy.monitorFor(monitor);
@@ -754,9 +754,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFolder#removeFilter(String, int, String, IProgressMonitor)
+	 * @see org.eclipse.core.resources.IFolder#removeFilter(String, int, Object, IProgressMonitor)
 	 */
-	public void removeFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	public void removeFilter(String filterID, int type, Object arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(filterID);
 		monitor = Policy.monitorFor(monitor);
 		try {

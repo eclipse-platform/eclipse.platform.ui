@@ -7,27 +7,23 @@
  * 
  * Contributors:
  *     Serge Beauchamp (Freescale Semiconductor) - initial API and implementation
+ *     IBM Corporation - ongoing implementation
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
 import java.util.Iterator;
-
 import java.util.LinkedList;
-import org.eclipse.core.runtime.IPath;
-
-import org.eclipse.core.resources.IResourceFilter;
-
-import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
  * Class for describing the characteristics of filters that are stored
  * in the project description.
  */
-public class FilterDescription implements Comparable {
+public class FilterDescription implements Comparable, IResourceFilter {
 
 	private String id;
-	private String arguments;
+	private Object arguments;
 
 	/**
 	 * The project relative path.
@@ -45,7 +41,7 @@ public class FilterDescription implements Comparable {
 		this.arguments = null;
 	}
 
-	public FilterDescription(IResource resource, int type, String filterID, String arguments) {
+	public FilterDescription(IResource resource, int type, String filterID, Object arguments) {
 		super();
 		Assert.isNotNull(resource);
 		Assert.isNotNull(filterID);
@@ -55,7 +51,7 @@ public class FilterDescription implements Comparable {
 		this.arguments = arguments;
 	}
 
-	public FilterDescription(IPath projectRelativePath, int type, String filterID, String arguments) {
+	private FilterDescription(IPath projectRelativePath, int type, String filterID, Object arguments) {
 		super();
 		Assert.isNotNull(projectRelativePath);
 		Assert.isNotNull(filterID);
@@ -69,17 +65,14 @@ public class FilterDescription implements Comparable {
 		if (!(o.getClass() == FilterDescription.class))
 			return false;
 		FilterDescription other = (FilterDescription) o;
-		return path.equals(other.path) && 
-				type == other.type &&
-				id.equals(other.id)&&
-				((arguments == null) ? (arguments == other.arguments) : (arguments.equals(other.arguments)));
+		return path.equals(other.path) && type == other.type && id.equals(other.id) && ((arguments == null) ? (arguments == other.arguments) : (arguments.equals(other.arguments)));
 	}
 
 	public String getFilterID() {
 		return id;
 	}
 
-	public String getArguments() {
+	public Object getArguments() {
 		return arguments;
 	}
 
@@ -103,7 +96,7 @@ public class FilterDescription implements Comparable {
 		this.id = id;
 	}
 
-	public void setArguments(String arguments) {
+	public void setArguments(Object arguments) {
 		this.arguments = arguments;
 	}
 
@@ -147,5 +140,17 @@ public class FilterDescription implements Comparable {
 			copy.add(newDesc);
 		}
 		return copy;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public IPath getPath() {
+		return path;
+	}
+
+	public IProject getProject() {
+		return null;
 	}
 }

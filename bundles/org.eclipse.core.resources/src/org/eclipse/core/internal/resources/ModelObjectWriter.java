@@ -20,8 +20,7 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.internal.utils.FileUtil;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IncrementalProjectBuilder;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 
 //
@@ -76,10 +75,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		//cases to avoid dirtying .project files unnecessarily.	
 		if (!command.isConfigurable())
 			return false;
-		return !command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD) || 
-			!command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD) || 
-			!command.isBuilding(IncrementalProjectBuilder.FULL_BUILD) || 
-			!command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		return !command.isBuilding(IncrementalProjectBuilder.AUTO_BUILD) || !command.isBuilding(IncrementalProjectBuilder.CLEAN_BUILD) || !command.isBuilding(IncrementalProjectBuilder.FULL_BUILD) || !command.isBuilding(IncrementalProjectBuilder.INCREMENTAL_BUILD);
 	}
 
 	protected void write(LinkDescription description, XMLWriter writer) {
@@ -93,14 +89,27 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.endTag(LINK);
 	}
 
-	protected void write(FilterDescription description, XMLWriter writer) {
+	protected void write(IResourceFilter description, XMLWriter writer) {
 		writer.startTag(FILTER, null);
 		if (description != null) {
-			writer.printSimpleTag(NAME, description.getProjectRelativePath());
+			writer.printSimpleTag(NAME, description.getPath());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
-			writer.printSimpleTag(ID, description.getFilterID());
-			if (description.getArguments() != null)
-				writer.printSimpleTag(ARGUMENTS, description.getArguments());
+			writer.printSimpleTag(ID, description.getId());
+			if (description.getArguments() != null) {
+				if (description.getArguments() instanceof String) {
+					writer.printSimpleTag(ARGUMENTS, description.getArguments());
+				} else if (description.getArguments() instanceof IResourceFilter[]) {
+					writer.startTag(ARGUMENTS, null);
+					IResourceFilter[] array = (IResourceFilter[]) description.getArguments();
+					for (int i = 0; i < array.length; i++) {
+						write(array[i], writer);
+					}
+					writer.endTag(ARGUMENTS);
+				} else
+					writer.printSimpleTag(ARGUMENTS, ""); //$NON-NLS-1$
+
+			}
+
 		}
 		writer.endTag(FILTER);
 	}
@@ -176,8 +185,8 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			write((LinkDescription) obj, writer);
 			return;
 		}
-		if (obj instanceof FilterDescription) {
-			write((FilterDescription) obj, writer);
+		if (obj instanceof IResourceFilter) {
+			write((IResourceFilter) obj, writer);
 			return;
 		}
 		if (obj instanceof VariableDescription) {
@@ -237,19 +246,19 @@ public class ModelObjectWriter implements IModelObjectConstants {
 	protected void write(String name, Map table, XMLWriter writer) {
 		writer.startTag(name, null);
 		if (table != null) {
-		// ensure consistent order of map elements
-		List sorted = new ArrayList(table.keySet());
-		Collections.sort(sorted);
-		
-		for (Iterator it = sorted.iterator(); it.hasNext();) {
-			String key = (String) it.next();
-			Object value = table.get(key);
-			writer.startTag(DICTIONARY, null);
-			{
-				writer.printSimpleTag(KEY, key);
-				writer.printSimpleTag(VALUE, value);
-			}
-			writer.endTag(DICTIONARY);
+			// ensure consistent order of map elements
+			List sorted = new ArrayList(table.keySet());
+			Collections.sort(sorted);
+
+			for (Iterator it = sorted.iterator(); it.hasNext();) {
+				String key = (String) it.next();
+				Object value = table.get(key);
+				writer.startTag(DICTIONARY, null);
+				{
+					writer.printSimpleTag(KEY, key);
+					writer.printSimpleTag(VALUE, value);
+				}
+				writer.endTag(DICTIONARY);
 			}
 		}
 		writer.endTag(name);

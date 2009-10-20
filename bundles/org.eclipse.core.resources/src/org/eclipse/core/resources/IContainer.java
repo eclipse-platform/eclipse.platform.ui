@@ -484,12 +484,12 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 *
-	 * @see IContainer#removeFilter(String, int, String, int, IProgressMonitor)
+	 * @see IContainer#removeFilter(String, int, Object, int, IProgressMonitor)
 	 * @see IContainer#getFilters()
 	 * 
 	 * @since 3.6
 	 */
-	public void addFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	public void addFilter(String filterID, int type, Object arguments, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Remove the filter matching the arguments from this folder's filter list  
@@ -508,12 +508,12 @@ public interface IContainer extends IResource, IAdaptable {
 	 * @exception OperationCanceledException if the operation is canceled. 
 	 * Cancelation can occur even if no progress monitor is provided.
 	 *
-	 * @see IContainer#addFilter(String, int, String, int, IProgressMonitor)
+	 * @see IContainer#addFilter(String, int, Object, int, IProgressMonitor)
 	 * @see IContainer#getFilters()
 	 * 
 	 * @since 3.6
 	 */
-	public void removeFilter(String filterID, int type, String arguments, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	public void removeFilter(String filterID, int type, Object arguments, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Retrieve the filters for this folder.
@@ -524,8 +524,8 @@ public interface IContainer extends IResource, IAdaptable {
 	 * <ul>
 	 * <li> This resource is not a folder.</li>
 	 *
-	 * @see IContainer#addFilter(String, int, String, int, IProgressMonitor)
-	 * @see IContainer#removeFilter(String, int, String, int, IProgressMonitor)
+	 * @see IContainer#addFilter(String, int, Object, int, IProgressMonitor)
+	 * @see IContainer#removeFilter(String, int, Object, int, IProgressMonitor)
 	 * 
 	 * @since 3.6
 	 */

@@ -38,7 +38,7 @@ public class RegexFilterFactory implements IFileInfoFilterFactory {
 		}
 	}
 
-	public IFileInfoFilter instantiate(IProject project, String arguments) {
-		return new RegexFilterType(project, arguments);
+	public IFileInfoFilter instantiate(IProject project, Object arguments) {
+		return new RegexFilterType(project, (String)arguments);
 	}
 }

@@ -17,8 +17,8 @@ import org.eclipse.core.runtime.*;
  * Interface for resource filters.  A filter determines which file system
  * objects will be visible when a local refresh is performed for an IContainer.
  *
- * @see IFolder#addFilter(String, int, String, int, IProgressMonitor)
- * @see IFolder#removeFilter(String, int, String, int, IProgressMonitor)
+ * @see IFolder#addFilter(String, int, Object, int, IProgressMonitor)
+ * @see IFolder#removeFilter(String, int, Object, int, IProgressMonitor)
  * @see IFolder#getFilters()
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.6
@@ -88,7 +88,7 @@ public interface IResourceFilter {
 	 * 
 	 * @return the argument string, or null
 	 */
-	public String getArguments();
+	public Object getArguments();
 
 	/**
 	 * Returns the project which contains this filter.

@@ -474,7 +474,6 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	 */
 	private void endFilterElement(String elementName) {
 		if (elementName.equals(FILTER)) {
-			state = S_FILTERED_RESOURCES;
 			// Pop off the filter description
 			FilterDescription filter = (FilterDescription) objectStack.pop();
 			// Make sure that you have something reasonable
@@ -495,14 +494,23 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				return;
 			}
 
-			// The HashMap of filtered resources is the next thing on the stack
-			HashMap map = ((HashMap) objectStack.peek());
-			LinkedList/*FilterDescription*/ list = (LinkedList/*FilterDescription*/) map.get(filter.getProjectRelativePath());
-			if (list == null) {
-				list = new LinkedList/*FilterDescription*/();
-				map.put(filter.getProjectRelativePath(), list);
+			if (objectStack.peek() instanceof HashMap) {
+				state = S_FILTERED_RESOURCES;
+				// The HashMap of filtered resources is the next thing on the stack
+				HashMap map = ((HashMap) objectStack.peek());
+				LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getProjectRelativePath());
+				if (list == null) {
+					list = new LinkedList/*FilterDescription*/();
+					map.put(filter.getProjectRelativePath(), list);
+				}
+				list.add(filter);
 			}
-			list.add(filter);
+			
+			if (objectStack.peek() instanceof ArrayList) {
+				state = S_FILTER_ARGUMENTS;
+				ArrayList l = ((ArrayList) objectStack.peek());
+				l.add(filter);
+			}
 		}
 	}
 
@@ -603,9 +611,13 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	private void endFilterArguments(String elementName) {
 		if (elementName.equals(ARGUMENTS)) {
-			String newArguments = charBuffer.toString();
-			// objectStack has a FilterDescription on it. Set the type on this FilterDescription.
-			String oldArguments = ((FilterDescription) objectStack.peek()).getArguments();
+			ArrayList filters = (ArrayList) objectStack.pop();
+			Object newArguments = charBuffer.toString();
+			
+			if (filters.size() > 0)
+				newArguments = filters.toArray(new IResourceFilter[filters.size()]);
+			
+			Object oldArguments = ((FilterDescription) objectStack.peek()).getArguments();
 			if (oldArguments != null) {
 				parseProblem(NLS.bind(Messages.projRead_badArguments, oldArguments, newArguments));
 			} else
@@ -958,7 +970,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_FILTERED_RESOURCES :
 				if (elementName.equals(FILTER)) {
 					state = S_FILTER;
-					// Push place holders for the name, type, id and argumkents of
+					// Push place holders for the name, type, id and arguments of
 					// this filter.
 					objectStack.push(new FilterDescription());
 				}
@@ -972,6 +984,15 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_FILTER_ID;
 				} else if (elementName.equals(ARGUMENTS)) {
 					state = S_FILTER_ARGUMENTS;
+					objectStack.push(new ArrayList());
+				}
+				break;
+			case S_FILTER_ARGUMENTS:
+				if (elementName.equals(FILTER)) {
+					state = S_FILTER;
+					// Push place holders for the name, type, id and arguments of
+					// this filter.
+					objectStack.push(new FilterDescription());
 				}
 				break;
 			case S_VARIABLE:
