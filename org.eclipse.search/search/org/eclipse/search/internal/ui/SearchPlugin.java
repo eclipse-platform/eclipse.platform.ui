@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -48,6 +48,7 @@ import org.eclipse.search.ui.NewSearchUI;
 
 import org.eclipse.search2.internal.ui.InternalSearchUI;
 import org.eclipse.search2.internal.ui.text2.TextSearchQueryProviderRegistry;
+
 
 /**
  * The plug-in runtime class for Search plug-in
@@ -220,7 +221,8 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @deprecated old search
 	 */
 	private void disposeOldSearchManager() {
-		SearchManager.getDefault().dispose();
+		if (SearchManager.fgDefault != null)
+			SearchManager.fgDefault.dispose();
 	}
 
 	/**

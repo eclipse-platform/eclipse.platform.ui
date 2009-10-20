@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -42,13 +42,14 @@ import org.eclipse.search.internal.ui.util.ExceptionHandler;
 import org.eclipse.search.ui.IGroupByKeyComputer;
 import org.eclipse.search.ui.SearchUI;
 
+
 /**
  * Manage search results
  * 	@deprecated old search
  */
 public class SearchManager implements IResourceChangeListener {
 
-	static final SearchManager fgDefault= new SearchManager();
+	static SearchManager fgDefault;
 
 	Search fCurrentSearch= null;
 
@@ -60,7 +61,9 @@ public class SearchManager implements IResourceChangeListener {
 	private LinkedList fPreviousSearches= new LinkedList();
 	private boolean fIsRemoveAll= false;
 
-	public static SearchManager getDefault() {
+	public static synchronized SearchManager getDefault() {
+		if (fgDefault == null)
+			fgDefault= new SearchManager();
 		return fgDefault;
 	}
 
