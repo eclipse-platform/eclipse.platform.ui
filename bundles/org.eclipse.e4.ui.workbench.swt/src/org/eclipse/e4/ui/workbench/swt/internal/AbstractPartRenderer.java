@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
-import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -22,8 +21,6 @@ import org.eclipse.emf.databinding.EMFDataBindingContext;
 public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
-	protected PartRenderingEngine renderer;
-	protected IContributionFactory contributionFactory;
 	protected IEclipseContext context;
 	protected EMFDataBindingContext dbc;
 
@@ -31,10 +28,7 @@ public abstract class AbstractPartRenderer {
 		dbc = new EMFDataBindingContext();
 	}
 
-	public void init(PartRenderingEngine renderer, IEclipseContext context,
-			IContributionFactory contributionFactory) {
-		this.renderer = renderer;
-		this.contributionFactory = contributionFactory;
+	public void init(IEclipseContext context) {
 		this.context = context;
 	}
 

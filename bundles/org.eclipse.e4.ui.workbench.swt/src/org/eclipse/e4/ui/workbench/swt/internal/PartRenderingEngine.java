@@ -13,23 +13,23 @@ package org.eclipse.e4.ui.workbench.swt.internal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
-import org.eclipse.e4.workbench.ui.internal.UIModelEventPublisher;
+import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
-import org.osgi.service.event.Event;
-import org.osgi.service.event.EventHandler;
 
 public class PartRenderingEngine implements IPresentationEngine {
 	public static final String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"
@@ -121,12 +121,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	};
 
-	private IContributionFactory contributionFactory;
 	private IEclipseContext context;
 
-	public PartRenderingEngine(IContributionFactory factory,
-			IEclipseContext context, IExtensionRegistry registry) {
-		initialize(factory, context, registry);
+	public PartRenderingEngine(IEclipseContext context) {
+		initialize(context);
 	}
 
 	/**
@@ -141,11 +139,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * @param f
 	 *            the IContributionFactory already provided to <code>r</code>
 	 */
-	public void initialize(IContributionFactory factoryIn,
-			IEclipseContext context, IExtensionRegistry registry) {
-		this.contributionFactory = factoryIn;
+	public void initialize(IEclipseContext context) {
 		this.context = context;
 
+		IExtensionRegistry registry = (IExtensionRegistry) context
+				.get(IExtensionRegistry.class.getName());
 		IConfigurationElement[] factories = registry
 				.getConfigurationElementsFor("org.eclipse.e4.workbench.rendererfactory"); //$NON-NLS-1$
 		for (int i = 0; i < factories.length; i++) {
@@ -162,22 +160,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 
 			if (factory != null) {
-				factory.init(this, context, contributionFactory);
+				factory.init(context);
 				curFactory = factory;
 			}
 		}
 
 		// Add the renderer to the context
-		context.set(PartRenderingEngine.SERVICE_NAME, this);
-
-		IEventBroker eventPublisher = (IEventBroker) context
-				.get(IEventBroker.class.getName());
-		eventPublisher.subscribe(UIModelEventPublisher.UIElementTopic,
-				new EventHandler() {
-					public void handleEvent(Event event) {
-						System.out.println("PRE: " + event);
-					}
-				});
+		context.set(IPresentationEngine.class.getName(), this);
 	}
 
 	public Object createGui(MUIElement element, Object parent) {
@@ -186,6 +175,19 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		if (!element.isVisible())
 			return null;
+
+		if (element instanceof MContext) {
+			MContext ctxt = (MContext) element;
+			// Assert.isTrue(ctxt.getContext() == null,
+			// "Before rendering Context should be null");
+			if (ctxt.getContext() == null) {
+				IEclipseContext lclContext = EclipseContextFactory.create(
+						getContext(element.getParent()), UISchedulerStrategy
+								.getInstance());
+				lclContext.set(MApplicationElement.class.getName(), element);
+				ctxt.setContext(lclContext);
+			}
+		}
 
 		// Create a control appropriate to the part
 		Object newWidget = createWidget(element, parent);
@@ -213,9 +215,29 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (parentFactory != null)
 					parentFactory.childRendered(parentElement, element);
 			}
+		} else {
+			// failed to create the widget, dispose its context if necessary
+			if (element instanceof MContext) {
+				MContext ctxt = (MContext) element;
+				IEclipseContext lclContext = ctxt.getContext();
+				if (lclContext instanceof IDisposable) {
+					((IDisposable) lclContext).dispose();
+				}
+			}
 		}
 
 		return newWidget;
+	}
+
+	private IEclipseContext getContext(MElementContainer<MUIElement> parent) {
+		MUIElement uiElement = parent;
+		while (uiElement != null) {
+			if (uiElement instanceof MContext) {
+				return ((MContext) uiElement).getContext();
+			}
+			uiElement = uiElement.getParent();
+		}
+		return null;
 	}
 
 	public Object createGui(MUIElement element) {
@@ -250,6 +272,15 @@ public class PartRenderingEngine implements IPresentationEngine {
 		parentFactory.hideChild(element.getParent(), element);
 
 		factory.disposeWidget(element);
+
+		// dispose the context
+		if (element instanceof MContext) {
+			MContext ctxt = (MContext) element;
+			IEclipseContext lclContext = ctxt.getContext();
+			if (lclContext instanceof IDisposable) {
+				((IDisposable) lclContext).dispose();
+			}
+		}
 	}
 
 	/**

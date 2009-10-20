@@ -10,12 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
-import org.eclipse.e4.ui.model.application.MWindow;
-
 import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -23,7 +17,13 @@ import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
@@ -201,6 +201,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		MWindow wbwModel = (MWindow) ((MUIElement) me);
 		// Populate the main menu
 		if (wbwModel.getMainMenu() != null) {
+			IPresentationEngine renderer = (IPresentationEngine) context
+					.get(IPresentationEngine.class.getName());
 			renderer.createGui(wbwModel.getMainMenu(), me.getWidget());
 			Shell shell = (Shell) me.getWidget();
 			shell.setMenuBar((Menu) wbwModel.getMainMenu().getWidget());

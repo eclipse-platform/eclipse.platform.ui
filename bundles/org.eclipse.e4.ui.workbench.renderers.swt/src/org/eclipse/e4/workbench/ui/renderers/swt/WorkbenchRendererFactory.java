@@ -1,6 +1,5 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -14,7 +13,6 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
-import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 
 public class WorkbenchRendererFactory implements IRendererFactory {
 
@@ -27,9 +25,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private TrimRenderer trimRenderer;
 	private WBWRenderer wbwRenderer;
 
-	private PartRenderingEngine renderingEngine;
 	private IEclipseContext context;
-	private IContributionFactory contributionFactory;
 
 	public AbstractPartRenderer getRenderer(MUIElement uiElement, Object parent) {
 		if (uiElement instanceof MPart) {
@@ -93,15 +89,12 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	}
 
 	protected void initRenderer(AbstractPartRenderer renderer) {
-		renderer.init(renderingEngine, context, contributionFactory);
+		renderer.init(context);
 		ContextInjectionFactory.inject(renderer, context);
 	}
 
-	public void init(PartRenderingEngine partRenderingEngine,
-			IEclipseContext context, IContributionFactory contributionFactory) {
-		renderingEngine = partRenderingEngine;
+	public void init(IEclipseContext context) {
 		this.context = context;
-		this.contributionFactory = contributionFactory;
 	}
 
 }

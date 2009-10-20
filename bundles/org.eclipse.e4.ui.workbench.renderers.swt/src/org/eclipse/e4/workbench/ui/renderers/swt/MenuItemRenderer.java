@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
-
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.workbench.ContributionUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -65,8 +65,9 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			MenuItem mi = (MenuItem) me.getWidget();
 			mi.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
-					ContributionUtils.execute(contributionFactory, contrib,
-							lclContext);
+					IContributionFactory factory = (IContributionFactory) context
+							.get(IContributionFactory.class.getName());
+					ContributionUtils.execute(factory, contrib, lclContext);
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {

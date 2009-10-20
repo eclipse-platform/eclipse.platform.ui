@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.impl.AdapterImpl;
 import org.eclipse.emf.ecore.EObject;
@@ -53,6 +54,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			// the active child changing will do it
 			stack.setActiveChild(stack.getChildren().get(0));
 		} else if (selPart != null && selPart.getWidget() == null) {
+			IPresentationEngine renderer = (IPresentationEngine) context
+					.get(IPresentationEngine.class.getName());
 			renderer.createGui(selPart);
 		}
 	}
@@ -120,9 +123,12 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						.equals(msg.getFeature())) {
 					MPartStack stack = (MPartStack) msg.getNotifier();
 					MPart selPart = stack.getActiveChild();
-					if (selPart != null && selPart.getWidget() == null)
+					if (selPart != null && selPart.getWidget() == null) {
+						IPresentationEngine renderer = (IPresentationEngine) context
+								.get(IPresentationEngine.class.getName());
 						renderer.createGui(selPart);
-					// activate(selPart);
+						// activate(selPart);
+					}
 				}
 			}
 		});

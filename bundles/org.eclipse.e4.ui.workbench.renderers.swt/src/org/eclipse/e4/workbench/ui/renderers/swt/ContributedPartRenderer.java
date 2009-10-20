@@ -10,13 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.e4.ui.model.application.MUIElement;
-
+import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.SWT;
@@ -61,6 +61,8 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 
 		parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
 
+		IContributionFactory contributionFactory = (IContributionFactory) localContext
+				.get(IContributionFactory.class.getName());
 		Object newPart = contributionFactory
 				.create(part.getURI(), localContext);
 		part.setObject(newPart);
