@@ -1,7 +1,5 @@
 package org.eclipse.e4.core.commands.tests;
 
-import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -27,12 +25,6 @@ public class TestActivator implements BundleActivator {
 		serviceContext = EclipseContextFactory.createServiceContext(context);
 		appContext = EclipseContextFactory.create(serviceContext, null);
 		addLogService(appContext);
-		IExtensionRegistry registry = (IExtensionRegistry) appContext
-				.get(IExtensionRegistry.class.getName());
-		LogService logService = (LogService) appContext.get(LogService.class
-				.getName());
-		appContext.set(IContributionFactory.class.getName(),
-				new ReflectionContributionFactory(registry, logService));
 	}
 
 	private void addLogService(IEclipseContext context) {

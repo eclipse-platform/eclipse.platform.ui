@@ -15,9 +15,9 @@ import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
@@ -33,8 +33,6 @@ public class HandlerServiceImpl implements EHandlerService {
 	final static String LOOKUP_HANDLER = "handler"; //$NON-NLS-1$
 
 	private IEclipseContext context;
-
-	private IContributionFactory contributionFactory;
 
 	/*
 	 * (non-Javadoc)
@@ -84,7 +82,7 @@ public class HandlerServiceImpl implements EHandlerService {
 			return false;
 		}
 		addParmsToContext(command);
-		return ((Boolean) contributionFactory.call(handler, null, METHOD_CAN_EXECUTE, context,
+		return ((Boolean) ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
 				Boolean.TRUE)).booleanValue();
 	}
 
@@ -112,12 +110,12 @@ public class HandlerServiceImpl implements EHandlerService {
 			return null;
 		}
 		addParmsToContext(command);
-		Object rc = contributionFactory.call(handler, null, METHOD_CAN_EXECUTE, context,
-				Boolean.TRUE);
+		Object rc = ContextInjectionFactory
+				.invoke(handler, METHOD_CAN_EXECUTE, context, Boolean.TRUE);
 		if (Boolean.FALSE.equals(rc)) {
 			return null;
 		}
-		return contributionFactory.call(handler, null, METHOD_EXECUTE, context, null);
+		return ContextInjectionFactory.invoke(handler, METHOD_EXECUTE, context, null);
 	}
 
 	private Object[] lookupHandler(String handlerId) {
@@ -127,10 +125,5 @@ public class HandlerServiceImpl implements EHandlerService {
 	@In
 	public void setContext(IEclipseContext c) {
 		context = c;
-	}
-
-	@In
-	public void setContributionFactory(IContributionFactory f) {
-		contributionFactory = f;
 	}
 }
