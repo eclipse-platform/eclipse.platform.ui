@@ -65,6 +65,7 @@ public class MWindowTest extends TestCase {
 			appContext.set(MApplication.class.getName(), app);
 			appContext.set(IContributionFactory.class.getName(), getCFactory());
 			appContext.set(IEclipseContext.class.getName(), appContext);
+			app.setContext(appContext);
 		}
 		return appContext;
 	}
@@ -109,17 +110,21 @@ public class MWindowTest extends TestCase {
 	}
 
 	public void testCreateWindow() {
+		MApplication application = (MApplication) getAppContext().get(
+				MApplication.class.getName());
 
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
 		window.setName("MyWindow");
+
+		application.getChildren().add(window);
+
 		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
 				new Runnable() {
 
 					public void run() {
 						IEclipseContext context = getAppContext();
-						Workbench.initializeContext(context, window);
 
 						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
@@ -141,7 +146,6 @@ public class MWindowTest extends TestCase {
 				new Runnable() {
 					public void run() {
 						IEclipseContext context = getAppContext();
-						Workbench.initializeContext(context, window);
 
 						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
@@ -181,7 +185,6 @@ public class MWindowTest extends TestCase {
 				new Runnable() {
 					public void run() {
 						IEclipseContext context = getAppContext();
-						Workbench.initializeContext(context, window);
 
 						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
@@ -239,7 +242,6 @@ public class MWindowTest extends TestCase {
 				new Runnable() {
 					public void run() {
 						IEclipseContext context = getAppContext();
-						Workbench.initializeContext(context, window);
 
 						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
 								.create(PartRenderingEngine.engineURI, context);
@@ -285,6 +287,9 @@ public class MWindowTest extends TestCase {
 	}
 
 	private MWindow createWindowWithOneView() {
+		MApplication application = (MApplication) getAppContext().get(
+				MApplication.class.getName());
+
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
@@ -299,10 +304,16 @@ public class MWindowTest extends TestCase {
 		contributedPart.setName("Sample View");
 		contributedPart
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
+
+		application.getChildren().add(window);
+
 		return window;
 	}
 
 	private MWindow createWindowWithOneViewAndMenu() {
+		MApplication application = (MApplication) getAppContext().get(
+				MApplication.class.getName());
+
 		final MWindow window = createWindowWithOneView();
 		final MMenu menuBar = MApplicationFactory.eINSTANCE.createMenu();
 		window.setMainMenu(menuBar);
@@ -320,6 +331,8 @@ public class MWindowTest extends TestCase {
 		item2.setId("item2");
 		item2.setName("item2");
 		fileItem.getChildren().add(item2);
+
+		application.getChildren().add(window);
 
 		return window;
 	}

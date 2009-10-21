@@ -110,7 +110,8 @@ public class RenderingTestCase extends TestCase {
 		appContext.set(IContributionFactory.class.getName(),
 				contributionFactory);
 		appContext.set(IEclipseContext.class.getName(), appContext);
-		appContext.set(MApplication.class.getName(), app);
+
+		app.setContext(appContext);
 	}
 
 	/*
@@ -147,6 +148,10 @@ public class RenderingTestCase extends TestCase {
 	}
 
 	protected Widget createModel(final MWindow window) {
+		MApplication application = (MApplication) appContext
+				.get(MApplication.class.getName());
+		application.getChildren().add(window);
+
 		final Widget[] renderedObject = new Widget[1];
 		renderedObject[0] = null;
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
@@ -154,7 +159,6 @@ public class RenderingTestCase extends TestCase {
 				// Capture the expected 'invariant' results
 				// SWTResult expectedResults = createSWTResultTree(modelRoot);
 
-				Workbench.initializeContext(appContext, window);
 				renderer = (PartRenderingEngine) contributionFactory.create(
 						PartRenderingEngine.engineURI, appContext);
 				Object o = renderer.createGui(window);
