@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - Initial API and implementation
+ * Martin Oberhuber (Wind River) - [288140] allow default web browser on Solaris 
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
@@ -152,7 +153,7 @@ public class WebBrowserUtil {
 
 	public static boolean canUseSystemBrowser() {
 		// Disabling system browser on Solaris due to bug 94497
-		if (Platform.OS_SOLARIS.equals(Platform.getOS()))
+		if (Platform.OS_SOLARIS.equals(Platform.getOS()) && !Platform.WS_GTK.equals(Platform.getWS()))
 			return false;
 		return Program.findProgram("html") != null; //$NON-NLS-1$
 	}
