@@ -9,31 +9,23 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.ui.tests;
+package org.eclipse.e4.ui.tests.application;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.e4.ui.tests.application.StartupTestSuite;
-import org.eclipse.e4.ui.tests.workbench.ContextTest;
-import org.eclipse.e4.ui.tests.workbench.HandlerTest;
-import org.eclipse.e4.ui.tests.workbench.MSashTest;
-import org.eclipse.e4.ui.tests.workbench.MWindowTest;
+public class StartupTestSuite extends TestSuite {
 
-/**
- *
- */
-public class UIAllTests extends TestSuite {
 	public static Test suite() {
-		return new UIAllTests();
+		TestSuite suite = new StartupTestSuite();
+
+		suite.addTestSuite(HeadlessContactsDemoTest.class);
+		suite.addTestSuite(HeadlessPhotoDemoTest.class);
+
+		suite.addTestSuite(UIContactsDemoTest.class);
+		suite.addTestSuite(UIPhotoDemoTest.class);
+
+		return suite;
 	}
 
-	public UIAllTests() {
-		addTestSuite(MWindowTest.class);
-		addTestSuite(MSashTest.class);
-		addTestSuite(HandlerTest.class);
-		addTestSuite(ContextTest.class);
-
-		addTest(StartupTestSuite.suite());
-	}
 }

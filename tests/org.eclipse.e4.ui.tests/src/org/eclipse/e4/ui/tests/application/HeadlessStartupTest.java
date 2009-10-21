@@ -62,6 +62,8 @@ import org.osgi.service.event.EventHandler;
 
 public abstract class HeadlessStartupTest extends TestCase {
 
+	protected IEclipseContext osgiContext;
+
 	protected MApplication application;
 
 	protected IPresentationEngine renderer;
@@ -113,8 +115,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 										newPart == null ? null
 												: ((MContext) newPart)
 														.getContext());
-								context.set(IServiceConstants.ACTIVE_PART,
-										newPart);
 							} else if (newPart instanceof MContext) {
 								if (((MContext) newPart).getContext() == null) {
 									return;
@@ -124,8 +124,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 												IContextConstants.PARENT);
 								context.set(IContextConstants.ACTIVE_CHILD,
 										((MContext) newPart).getContext());
-								context.set(IServiceConstants.ACTIVE_PART,
-										newPart);
 							}
 						}
 					}
@@ -191,6 +189,10 @@ public abstract class HeadlessStartupTest extends TestCase {
 		parts[1].getParent().setActiveChild(parts[1]);
 		assertEquals(parts[1].getId(), context
 				.get(IServiceConstants.ACTIVE_PART_ID));
+
+		// the OSGi context should not have been affected by the recursion
+		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
+		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART_ID));
 	}
 
 	public void test_SwitchActivePartsInContext() throws Exception {
@@ -205,6 +207,10 @@ public abstract class HeadlessStartupTest extends TestCase {
 		context.set(IServiceConstants.ACTIVE_PART, parts[1]);
 		assertEquals(parts[1].getId(), context
 				.get(IServiceConstants.ACTIVE_PART_ID));
+
+		// the OSGi context should not have been affected by the recursion
+		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
+		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART_ID));
 	}
 
 	protected MPart[] getTwoParts() {
@@ -224,10 +230,9 @@ public abstract class HeadlessStartupTest extends TestCase {
 	protected abstract MPart getSecondPart();
 
 	private IEclipseContext createOSGiContext() {
-		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(Activator.getDefault().getBundle()
-						.getBundleContext());
-		return serviceContext;
+		osgiContext = EclipseContextFactory.createServiceContext(Activator
+				.getDefault().getBundle().getBundleContext());
+		return osgiContext;
 	}
 
 	protected IEclipseContext createAppContext() {
@@ -280,17 +285,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 				return IServiceConstants.ACTIVE_PART_ID;
 			}
 		});
-		mainContext.set(IServiceConstants.ACTIVE_PART_ID,
-				new ContextFunction() {
-
-					@Override
-					public Object compute(IEclipseContext context,
-							Object[] arguments) {
-						MApplicationElement element = (MApplicationElement) context
-								.get(IServiceConstants.ACTIVE_PART);
-						return element == null ? null : element.getId();
-					}
-				});
 		mainContext.set(IServiceConstants.SELECTION,
 				new ActiveChildOutputFunction(IServiceConstants.SELECTION));
 		mainContext.set(IServiceConstants.INPUT, new ContextFunction() {
