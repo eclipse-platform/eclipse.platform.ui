@@ -191,6 +191,17 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
       
 	    assertEquals(offset, element.getOffset());
 	}
+	
+	/**
+	 * Tests if target is internal or not
+	 */
+	public void testInternalTargets(){
+		AntModel model= getAntModel("internalTargets.xml");
+		assertTrue("Target without description should be internal", model.getTargetNode("internal1").isInternal());
+		assertTrue("Target with name starting with '-' should be internal", model.getTargetNode("-internal2").isInternal());
+		assertFalse("Target with description attribute should not be internal", model.getTargetNode("non-internal").isInternal());
+		assertFalse("Default target should not be internal", model.getTargetNode("-default").isInternal());
+	}
 
     public static Test suite() {
 		return new TestSuite(AntEditorContentOutlineTests.class);

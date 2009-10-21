@@ -67,13 +67,13 @@ public class AntTargetNode extends AntElementNode {
 	
 	/**
 	 * Returns whether this target is an internal target. Internal
-	 * targets are targets which have no description. The default target
+	 * targets are targets which has no description or starts with hyphen ('-') character. The default target
 	 * is never considered internal.
 	 * @return whether the given target is an internal target
 	 */
 	public boolean isInternal() {
 		Target target= getTarget();
-		return target.getDescription() == null && !isDefaultTarget();
+		return (target.getDescription() == null || getTargetName().startsWith("-")) && !isDefaultTarget(); //$NON-NLS-1$
 	}
 	
 	/* (non-Javadoc)
@@ -83,7 +83,7 @@ public class AntTargetNode extends AntElementNode {
 		ImageDescriptor base= null;
 		if (isDefaultTarget()) {
 			base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_DEFAULT_TARGET);
-		} else if (getTarget().getDescription() == null) {
+		} else if (isInternal()) {
 			base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET_INTERNAL);
 		} else {
 			base = AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_TARGET);
