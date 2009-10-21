@@ -13,7 +13,6 @@ package org.eclipse.e4.core.services.context;
 
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
-import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.internal.core.services.osgi.OSGiContextStrategy;
 import org.osgi.framework.BundleContext;
@@ -46,7 +45,9 @@ public final class EclipseContextFactory {
 	 * @return A new empty context with the given parent and strategy
 	 */
 	static public IEclipseContext create(IEclipseContext parent, IEclipseContextStrategy strategy) {
-		return new EclipseContext(parent, strategy);
+		EclipseContext eclipseContext = new EclipseContext(parent, strategy);
+		eclipseContext.set(IEclipseContext.class.getName(), eclipseContext);
+		return eclipseContext;
 	}
 
 	/**
