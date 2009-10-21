@@ -11,10 +11,10 @@
 
 package org.eclipse.e4.workbench;
 
-import org.eclipse.e4.ui.model.application.MContribution;
-
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.model.application.MContribution;
 
 /**
  *
@@ -56,9 +56,8 @@ public class ContributionUtils {
 	public static void execute(IContributionFactory factory,
 			MContribution contrib, IEclipseContext context) {
 		Object implementation = getInstance(factory, contrib, context);
-		factory
-				.call(implementation, contrib.getURI(),
-						"execute", context, null); //$NON-NLS-1$
+		ContextInjectionFactory
+				.invoke(implementation, "execute", context, null); //$NON-NLS-1$
 	}
 
 }
