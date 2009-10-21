@@ -133,7 +133,6 @@ public class Workbench implements IWorkbench {
 			mainContext.set(IContributionFactory.class.getName(), contributionFactory);
 		}
 		mainContext.set(ContextManager.class.getName(), new ContextManager());
-		mainContext.set(IContextConstants.ROOT_CONTEXT, mainContext);
 		ContextUtil.commandSetup(mainContext);
 		ContextUtil.handlerSetup(mainContext);
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());

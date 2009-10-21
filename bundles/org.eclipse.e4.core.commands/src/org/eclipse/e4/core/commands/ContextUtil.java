@@ -16,6 +16,7 @@ import org.eclipse.e4.core.commands.internal.CommandServiceImpl;
 import org.eclipse.e4.core.commands.internal.HandlerServiceCreationFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
  * Utility methods for setting up an IEclipseContext with support for commands.
@@ -40,6 +41,7 @@ public class ContextUtil {
 	 * @param context
 	 */
 	public static void handlerSetup(IEclipseContext context) {
+		context.set(IContextConstants.ROOT_CONTEXT, context);
 		context.set(EHandlerService.class.getName(), new HandlerServiceCreationFunction());
 	}
 }

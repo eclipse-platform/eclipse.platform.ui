@@ -96,7 +96,6 @@ public class DefineCommandsTest extends TestCase {
 
 	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
 		IEclipseContext wb = TestUtil.createContext(globalContext, "workbenchContext");
-		wb.set(IContextConstants.ROOT_CONTEXT, wb);
 		ContextUtil.commandSetup(wb);
 		return wb;
 	}

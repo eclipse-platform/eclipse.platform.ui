@@ -250,7 +250,6 @@ public class HandlerTest extends TestCase {
 		appContext.set(IContributionFactory.class.getName(), MWindowTest
 				.getCFactory());
 		appContext.set(CommandManager.class.getName(), new CommandManager());
-		appContext.set(IContextConstants.ROOT_CONTEXT, appContext);
 
 		ContextUtil.commandSetup(appContext);
 		ContextUtil.handlerSetup(appContext);
