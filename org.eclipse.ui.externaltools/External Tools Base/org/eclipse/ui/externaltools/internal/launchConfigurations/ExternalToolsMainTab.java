@@ -605,7 +605,7 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
 	 */
 	public Image getImage() {
-		return ExternalToolsImages.getImage(IExternalToolConstants.IMG_TAB_MAIN);
+		return ExternalToolsImages.getImage(org.eclipse.ui.externaltools.internal.model.IExternalToolConstants.IMG_TAB_MAIN);
 	}
 	
 	/* (non-Javadoc)

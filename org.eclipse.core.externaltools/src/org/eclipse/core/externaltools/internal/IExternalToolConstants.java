@@ -28,12 +28,6 @@ public interface IExternalToolConstants {
 	 */
 	public static final String PLUGIN_ID = "org.eclipse.core.externaltools"; //$NON-NLS-1$;
 
-	// ------- Extensions Points -------
-	/**
-	 * Extension point to declare the launch configuration type that should be
-	 * created when duplicating an existing configuration as a project builder.
-	 */
-	public static final String EXTENSION_POINT_CONFIGURATION_DUPLICATION_MAPS = "configurationDuplicationMaps"; //$NON-NLS-1$
 	// ------- Refresh Variables -------
 	/**
 	 * Variable that expands to the workspace root object (value <code>workspace</code>).
@@ -93,18 +87,6 @@ public interface IExternalToolConstants {
 	 */
 	public static final String BUILD_TYPE_NONE = "none"; //$NON-NLS-1$
 
-	// ------- Images -------
-
-	/**
-	 * Main tab image.
-	 */
-	public static final String IMG_TAB_MAIN = UI_PLUGIN_ID + ".IMG_TAB_MAIN"; //$NON-NLS-1$
-
-	/**
-	 * Build tab image
-	 */
-	public static final String IMG_TAB_BUILD = UI_PLUGIN_ID + ".IMG_TAB_BUILD"; //$NON-NLS-1$
-
 	// ------- Launch configuration types --------
 	/**
 	 * Program launch configuration type identifier.
@@ -130,18 +112,6 @@ public interface IExternalToolConstants {
 	 * belong to this category.
 	 */
 	public static final String ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY = "org.eclipse.ui.externaltools.builder"; //$NON-NLS-1$
-
-	// ------- Launch configuration groups --------
-	/**
-	 * Identifier for external tools launch configuration group. The external
-	 * tools launch configuration group corresponds to the external tools
-	 * category in run mode.
-	 */
-	public static final String ID_EXTERNAL_TOOLS_LAUNCH_GROUP = "org.eclipse.ui.externaltools.launchGroup"; //$NON-NLS-1$
-	/**
-	 * Identifier for external tools launch configuration group
-	 */
-	public static final String ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP = "org.eclipse.ui.externaltools.launchGroup.builder"; //$NON-NLS-1$
 
 	// ------- Common External Tool Launch Configuration Attributes -------
 

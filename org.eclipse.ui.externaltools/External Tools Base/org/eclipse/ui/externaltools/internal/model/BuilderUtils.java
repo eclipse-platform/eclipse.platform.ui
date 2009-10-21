@@ -12,7 +12,6 @@ package org.eclipse.ui.externaltools.internal.model;
 
 import java.util.Map;
 
-import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.externaltools.internal.model.BuilderCoreUtils;
 import org.eclipse.core.resources.ICommand;
 import org.eclipse.core.resources.IFolder;

@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.menu;
 
-import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.debug.ui.actions.AbstractLaunchToolbarAction;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * This action delegate is responsible for producing the

@@ -629,7 +629,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
         if (shell == null) {
             return Window.CANCEL;
         }
-		int code= DebugUITools.openLaunchConfigurationPropertiesDialog(shell, config, IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
+		int code= DebugUITools.openLaunchConfigurationPropertiesDialog(shell, config, org.eclipse.ui.externaltools.internal.model.IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_GROUP);
 		manager.removeLaunchConfigurationListener(configurationListener);
 		return code;
 	}

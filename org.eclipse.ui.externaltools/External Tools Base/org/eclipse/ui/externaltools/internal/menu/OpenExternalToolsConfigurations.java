@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.ui.externaltools.internal.menu;
 
-import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.debug.ui.actions.OpenLaunchDialogAction;
+import org.eclipse.ui.externaltools.internal.model.IExternalToolConstants;
 
 /**
  * Opens the launch config dialog on the external tools launch group.

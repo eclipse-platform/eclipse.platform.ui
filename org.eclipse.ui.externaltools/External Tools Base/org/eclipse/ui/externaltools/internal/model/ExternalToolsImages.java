@@ -14,7 +14,6 @@ package org.eclipse.ui.externaltools.internal.model;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
