@@ -17,15 +17,13 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ContextUtil;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.internal.services.ContextCommandService;
-import org.eclipse.e4.ui.internal.services.HandlerContextFunction;
-import org.eclipse.e4.ui.services.ECommandService;
-import org.eclipse.e4.ui.services.EHandlerService;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 
@@ -70,7 +68,9 @@ public class HandlerTest extends TestCase {
 				.get(EHandlerService.class.getName());
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
-		Command command = (Command) appContext.get(HELP_COMMAND_ID);
+		ECommandService cmdService = (ECommandService) appContext
+				.get(ECommandService.class.getName());
+		Command command = cmdService.getCommand(HELP_COMMAND_ID);
 		assertEquals(HELP_COMMAND_ID, command.getId());
 		assertEquals(HELP_COMMAND_ID, service.executeHandler(helpCommand));
 		assertTrue(handler.ran);
@@ -114,7 +114,7 @@ public class HandlerTest extends TestCase {
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
 		IEclipseContext window = createContext(appContext, "windowContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
 		String windowRC = HELP_COMMAND_ID + ".window";
@@ -156,7 +156,7 @@ public class HandlerTest extends TestCase {
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
 		IEclipseContext window = createContext(appContext, "windowContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
 		String windowRC = HELP_COMMAND_ID + ".window";
@@ -185,7 +185,7 @@ public class HandlerTest extends TestCase {
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
 		IEclipseContext window = createContext(appContext, "windowContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
 		String windowRC = HELP_COMMAND_ID + ".window";
@@ -194,10 +194,10 @@ public class HandlerTest extends TestCase {
 		assertEquals(windowRC, service.executeHandler(helpCommand));
 
 		IEclipseContext dialog = createContext(appContext, "dialogContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, dialog);
+		appContext.set(IContextConstants.ACTIVE_CHILD, dialog);
 		assertEquals(HELP_COMMAND_ID, service.executeHandler(helpCommand));
 
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		assertEquals(windowRC, service.executeHandler(helpCommand));
 	}
 
@@ -214,7 +214,7 @@ public class HandlerTest extends TestCase {
 		service.activateHandler(HELP_COMMAND_ID, handler);
 
 		IEclipseContext window = createContext(appContext, "windowContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		EHandlerService windowService = (EHandlerService) window
 				.get(EHandlerService.class.getName());
 		String windowRC = HELP_COMMAND_ID + ".window";
@@ -232,12 +232,12 @@ public class HandlerTest extends TestCase {
 	private void defineCommands(IEclipseContext appContext) {
 		ECommandService cmdService = (ECommandService) appContext
 				.get(ECommandService.class.getName());
-		Category category = cmdService.getCategory("cat." + HELP_COMMAND_ID);
-		category.define("Help Category", null);
-		Command command = cmdService.getCommand(HELP_COMMAND_ID);
-		command.define("Help Command", null, category);
-		command = cmdService.getCommand(HELP_COMMAND1_ID);
-		command.define("Help 1 Command", null, category);
+		Category category = cmdService.defineCategory("cat." + HELP_COMMAND_ID,
+				"Help Category", null);
+		cmdService.defineCommand(HELP_COMMAND_ID, "Help Command", null,
+				category, null);
+		cmdService.defineCommand(HELP_COMMAND1_ID, "Help 1 Command", null,
+				category, null);
 	}
 
 	private IEclipseContext createGlobalContext() {
@@ -250,12 +250,11 @@ public class HandlerTest extends TestCase {
 		appContext.set(IContributionFactory.class.getName(), MWindowTest
 				.getCFactory());
 		appContext.set(CommandManager.class.getName(), new CommandManager());
+		appContext.set(IContextConstants.ROOT_CONTEXT, appContext);
 
-		// supply the services
-		appContext.set(ECommandService.class.getName(),
-				new ContextCommandService(appContext));
-		appContext.set(EHandlerService.class.getName(),
-				new HandlerContextFunction());
+		ContextUtil.commandSetup(appContext);
+		ContextUtil.handlerSetup(appContext);
+
 		return appContext;
 	}
 

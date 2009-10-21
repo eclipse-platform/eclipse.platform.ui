@@ -57,7 +57,7 @@ public class ContextTest extends TestCase {
 		assertEquals(0, cs.getActiveContextIds().size());
 
 		IEclipseContext window = createContext(appContext, "windowContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 
 		EContextService windowService = (EContextService) window
 				.get(EContextService.class.getName());
@@ -81,7 +81,7 @@ public class ContextTest extends TestCase {
 		assertEquals(0, cs.getActiveContextIds().size());
 
 		IEclipseContext window = createContext(appContext, "windowContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 
 		EContextService windowService = (EContextService) window
 				.get(EContextService.class.getName());
@@ -116,7 +116,7 @@ public class ContextTest extends TestCase {
 				.get(EContextService.class.getName());
 
 		IEclipseContext dialog = createContext(appContext, "dialogContext");
-		appContext.set(IServiceConstants.ACTIVE_CHILD, dialog);
+		appContext.set(IContextConstants.ACTIVE_CHILD, dialog);
 
 		EContextService dialogService = (EContextService) dialog
 				.get(EContextService.class.getName());
@@ -148,7 +148,7 @@ public class ContextTest extends TestCase {
 		assertTrue(windowService.getActiveContextIds().contains(WINDOW_ID));
 
 		// switch to window active :-)
-		appContext.set(IServiceConstants.ACTIVE_CHILD, window);
+		appContext.set(IContextConstants.ACTIVE_CHILD, window);
 		assertEquals(2, cs.getActiveContextIds().size());
 		assertEquals(2, dialogService.getActiveContextIds().size());
 		assertEquals(2, windowService.getActiveContextIds().size());

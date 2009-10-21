@@ -110,8 +110,8 @@ public class HandlerServiceImpl implements EHandlerService {
 			return null;
 		}
 		addParmsToContext(command);
-		Object rc = ContextInjectionFactory
-				.invoke(handler, METHOD_CAN_EXECUTE, context, Boolean.TRUE);
+		Object rc = ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
+				Boolean.TRUE);
 		if (Boolean.FALSE.equals(rc)) {
 			return null;
 		}
@@ -125,5 +125,9 @@ public class HandlerServiceImpl implements EHandlerService {
 	@In
 	public void setContext(IEclipseContext c) {
 		context = c;
+	}
+
+	public IEclipseContext getContext() {
+		return context;
 	}
 }

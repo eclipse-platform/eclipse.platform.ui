@@ -13,11 +13,11 @@ package org.eclipse.e4.ui.tests.application;
 
 import junit.framework.TestCase;
 
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -27,7 +27,6 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
-import org.eclipse.e4.ui.internal.services.ContextCommandService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -38,7 +37,6 @@ import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.EventBrokerFactory;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -111,7 +109,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 								IEclipseContext context = (IEclipseContext) ((MContext) oldPart)
 										.getContext().get(
 												IContextConstants.PARENT);
-								context.set(IServiceConstants.ACTIVE_CHILD,
+								context.set(IContextConstants.ACTIVE_CHILD,
 										newPart == null ? null
 												: ((MContext) newPart)
 														.getContext());
@@ -124,7 +122,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 								IEclipseContext context = (IEclipseContext) ((MContext) newPart)
 										.getContext().get(
 												IContextConstants.PARENT);
-								context.set(IServiceConstants.ACTIVE_CHILD,
+								context.set(IContextConstants.ACTIVE_CHILD,
 										((MContext) newPart).getContext());
 								context.set(IServiceConstants.ACTIVE_PART,
 										newPart);
@@ -155,7 +153,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 	public void testGet_ActiveChild() throws Exception {
 		IEclipseContext context = application.getContext();
 
-		assertNull(context.get(IServiceConstants.ACTIVE_CHILD));
+		assertNull(context.get(IContextConstants.ACTIVE_CHILD));
 	}
 
 	public void testGet_ActivePart() throws Exception {
@@ -258,10 +256,9 @@ public abstract class HeadlessStartupTest extends TestCase {
 				new ExceptionHandler());
 		mainContext.set(Logger.class.getName(), new WorkbenchLogger());
 
-		mainContext.set(CommandManager.class.getName(), new CommandManager());
 		mainContext.set(ContextManager.class.getName(), new ContextManager());
-		mainContext.set(ECommandService.class.getName(),
-				new ContextCommandService(mainContext));
+		ContextUtil.commandSetup(mainContext);
+
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS,
 				new ActiveContextsFunction());
 		mainContext.set(IServiceConstants.ACTIVE_PART,

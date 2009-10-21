@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.services.EHandlerService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -56,8 +55,6 @@ public class Activator implements BundleActivator {
 		Hashtable<String, String> props = new Hashtable<String, String>(4);
 		props.put(IContextFunction.SERVICE_CONTEXT_KEY, EContextService.class.getName());
 		contextServiceReg = context.registerService(IContextFunction.class.getName(), new ContextContextFunction(), props);
-		props.put(IContextFunction.SERVICE_CONTEXT_KEY, EHandlerService.class.getName());
-		handlerServiceReg = context.registerService(IContextFunction.class.getName(), new HandlerContextFunction(), props);
 	}
 	
 	/*

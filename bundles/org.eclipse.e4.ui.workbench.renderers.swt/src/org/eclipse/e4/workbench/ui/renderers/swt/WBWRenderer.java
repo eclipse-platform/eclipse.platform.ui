@@ -22,7 +22,6 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.notify.Notification;
@@ -86,7 +85,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		// set up context
 		IEclipseContext localContext = getContext(wbwModel);
 		localContext.set(IContextConstants.DEBUG_STRING, "MWindow"); //$NON-NLS-1$
-		parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
+		parentContext.set(IContextConstants.ACTIVE_CHILD, localContext);
 
 		// Add the shell into the WBW's context
 		localContext.set(Shell.class.getName(), wbwShell);

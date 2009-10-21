@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.tests.application;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MContext;
@@ -55,7 +56,7 @@ public abstract class UIStartupTest extends HeadlessStartupTest {
 	public void testGet_ActiveChild() throws Exception {
 		IEclipseContext context = application.getContext();
 
-		assertNotNull(context.get(IServiceConstants.ACTIVE_CHILD));
+		assertNotNull(context.get(IContextConstants.ACTIVE_CHILD));
 	}
 
 	public void testGet_ActiveShell() throws Exception {
@@ -91,7 +92,7 @@ public abstract class UIStartupTest extends HeadlessStartupTest {
 	public void testGet_ActiveChild2() throws Exception {
 		IEclipseContext context = getActiveChildContext(application);
 
-		assertNotNull(context.get(IServiceConstants.ACTIVE_CHILD));
+		assertNotNull(context.get(IContextConstants.ACTIVE_CHILD));
 	}
 
 	public void testGet_ActivePart2() throws Exception {

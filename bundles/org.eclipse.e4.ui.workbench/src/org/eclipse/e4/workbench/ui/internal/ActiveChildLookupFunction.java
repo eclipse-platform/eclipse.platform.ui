@@ -13,7 +13,7 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
  *
@@ -31,14 +31,13 @@ public class ActiveChildLookupFunction extends ContextFunction {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.e4.core.services.context.spi.ContextFunction#compute(org.
+	 * @see org.eclipse.e4.core.services.context.spi.ContextFunction#compute(org.
 	 * eclipse.e4.core.services.context.IEclipseContext, java.lang.Object[])
 	 */
 	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
 		IEclipseContext childContext = (IEclipseContext) context
-				.getLocal(IServiceConstants.ACTIVE_CHILD);
+				.getLocal(IContextConstants.ACTIVE_CHILD);
 		if (childContext != null) {
 			return childContext.get(var);
 		}

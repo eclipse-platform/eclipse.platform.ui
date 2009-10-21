@@ -17,13 +17,14 @@ import java.util.Collections;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
+import org.eclipse.e4.core.commands.ContextUtil;
+import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -32,7 +33,6 @@ import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
-import org.eclipse.e4.ui.internal.services.ContextCommandService;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -43,7 +43,6 @@ import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.ui.services.ECommandService;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
@@ -133,9 +132,10 @@ public class Workbench implements IWorkbench {
 		if (contributionFactory != null) {
 			mainContext.set(IContributionFactory.class.getName(), contributionFactory);
 		}
-		mainContext.set(CommandManager.class.getName(), new CommandManager());
 		mainContext.set(ContextManager.class.getName(), new ContextManager());
-		mainContext.set(ECommandService.class.getName(), new ContextCommandService(mainContext));
+		mainContext.set(IContextConstants.ROOT_CONTEXT, mainContext);
+		ContextUtil.commandSetup(mainContext);
+		ContextUtil.handlerSetup(mainContext);
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
 		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
 		mainContext.runAndTrack(new Runnable() {
@@ -298,8 +298,8 @@ public class Workbench implements IWorkbench {
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize service from model", null); //$NON-NLS-1$
 		ECommandService cs = (ECommandService) workbenchContext
 				.get(ECommandService.class.getName());
-		Category cat = cs.getCategory(MApplication.class.getName());
-		cat.define("Application Category", null); //$NON-NLS-1$
+		Category cat = cs
+				.defineCategory(MApplication.class.getName(), "Application Category", null); //$NON-NLS-1$
 		EList<MCommand> commands = workbench.getCommands();
 		for (MCommand cmd : commands) {
 			String id = cmd.getId();

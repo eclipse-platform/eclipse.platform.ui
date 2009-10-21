@@ -17,7 +17,6 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -59,7 +58,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MPart.class.getName(), part);
 
-		parentContext.set(IServiceConstants.ACTIVE_CHILD, localContext);
+		parentContext.set(IContextConstants.ACTIVE_CHILD, localContext);
 
 		IContributionFactory contributionFactory = (IContributionFactory) localContext
 				.get(IContributionFactory.class.getName());

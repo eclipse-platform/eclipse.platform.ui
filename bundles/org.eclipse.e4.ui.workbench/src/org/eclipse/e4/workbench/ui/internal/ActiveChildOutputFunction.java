@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
-
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
-import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 public final class ActiveChildOutputFunction extends ContextFunction {
 	private final String attr;
@@ -25,12 +23,11 @@ public final class ActiveChildOutputFunction extends ContextFunction {
 
 	public Object compute(IEclipseContext context, Object[] arguments) {
 		IEclipseContext childContext = (IEclipseContext) context
-				.getLocal(IServiceConstants.ACTIVE_CHILD);
+				.getLocal(IContextConstants.ACTIVE_CHILD);
 		if (childContext != null) {
 			return childContext.get(attr);
 		} else if (context.containsKey(IContextConstants.OUTPUTS)) {
-			IEclipseContext outputs = (IEclipseContext) context
-					.get(IContextConstants.OUTPUTS);
+			IEclipseContext outputs = (IEclipseContext) context.get(IContextConstants.OUTPUTS);
 			return outputs.get(attr);
 		}
 		return null;

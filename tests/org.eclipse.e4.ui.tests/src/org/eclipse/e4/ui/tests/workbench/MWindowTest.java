@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -198,7 +199,7 @@ public class MWindowTest extends TestCase {
 
 						// should get the window context
 						IEclipseContext child = (IEclipseContext) appContext
-								.getLocal(IServiceConstants.ACTIVE_CHILD);
+								.getLocal(IContextConstants.ACTIVE_CHILD);
 						assertNotNull(child);
 						assertEquals(window.getContext(), child);
 
@@ -214,11 +215,11 @@ public class MWindowTest extends TestCase {
 						factory.activate(modelPart);
 
 						IEclipseContext next = (IEclipseContext) child
-								.getLocal(IServiceConstants.ACTIVE_CHILD);
+								.getLocal(IContextConstants.ACTIVE_CHILD);
 						while (next != null) {
 							child = next;
 							next = (IEclipseContext) child
-									.getLocal(IServiceConstants.ACTIVE_CHILD);
+									.getLocal(IContextConstants.ACTIVE_CHILD);
 							if (next == child) {
 								fail("Cycle detected in part context");
 								break;

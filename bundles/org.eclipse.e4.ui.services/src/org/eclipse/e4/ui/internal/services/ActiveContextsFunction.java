@@ -14,7 +14,7 @@ public class ActiveContextsFunction extends ContextFunction {
 	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
 		IEclipseContext childContext = (IEclipseContext) context
-				.getLocal(IServiceConstants.ACTIVE_CHILD);
+				.getLocal(IContextConstants.ACTIVE_CHILD);
 		if (childContext != null && arguments.length == 0) {
 			return childContext.get(IServiceConstants.ACTIVE_CONTEXTS);
 		}
