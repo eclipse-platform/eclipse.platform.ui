@@ -15,8 +15,10 @@ import java.net.URI;
 import java.util.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.FileUtil;
+import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.osgi.util.NLS;
 
 public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	/**
@@ -210,7 +212,18 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	public IProject[] getProjects(int memberFlags) {
 		IResource[] roots = getChildren(memberFlags);
 		IProject[] result = new IProject[roots.length];
-		System.arraycopy(roots, 0, result, 0, roots.length);
+		try {
+			System.arraycopy(roots, 0, result, 0, roots.length);
+		} catch (ArrayStoreException ex) {
+			// Shouldn't happen since only projects should be children of the workspace root
+			for (int i = 0; i < roots.length; i++) {
+				if (roots[i].getType() != IResource.PROJECT)
+					Policy.log(IStatus.ERROR, NLS.bind("{0} is an invalid child of the workspace root.", //$NON-NLS-1$
+							roots[i]), null);
+
+			}
+			throw ex;
+		}
 		return result;
 	}
 
