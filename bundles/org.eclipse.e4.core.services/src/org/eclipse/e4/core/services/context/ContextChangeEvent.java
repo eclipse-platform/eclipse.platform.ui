@@ -52,6 +52,12 @@ public final class ContextChangeEvent {
 	 */
 	public static final int DISPOSE = 3;
 
+	/**
+	 * A change event type (value "4"), indicating that a context has been un-injected from the
+	 * object.
+	 */
+	public static final int UNINJECTED = 4;
+
 	private Object[] args;
 	private IEclipseContext context;
 	private int eventType;

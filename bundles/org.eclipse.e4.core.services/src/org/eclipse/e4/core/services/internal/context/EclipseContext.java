@@ -312,6 +312,15 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 			((IDisposable) strategy).dispose();
 	}
 
+	public void uninject(Object userObject) {
+		Computation[] ls = (Computation[]) listeners.toArray(new Computation[listeners.size()]);
+		ContextChangeEvent event = EclipseContextFactory.createContextEvent(this,
+				ContextChangeEvent.UNINJECTED, new Object[] { userObject }, null, null);
+		for (int i = 0; i < ls.length; i++) {
+			ls[i].handleUninjected(event);
+		}
+	}
+
 	public Object get(String name) {
 		return internalGet(this, name, NO_ARGUMENTS, false);
 	}

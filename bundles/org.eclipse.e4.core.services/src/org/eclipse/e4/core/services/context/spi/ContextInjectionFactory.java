@@ -13,6 +13,7 @@ package org.eclipse.e4.core.services.context.spi;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.internal.context.ContextInjectionImpl;
+import org.eclipse.e4.core.services.internal.context.EclipseContext;
 
 /**
  * An injection factory is used to inject data and services from a context into a domain object. The
@@ -140,5 +141,18 @@ final public class ContextInjectionFactory {
 	static public Object invoke(Object object, String methodName, IEclipseContext context,
 			Object defaultValue) {
 		return ContextInjectionImpl.invoke(object, methodName, context, defaultValue);
+	}
+
+	/**
+	 * Un-injects the context from the object.
+	 * 
+	 * @param object
+	 *            the object previously injected into the context
+	 * @param context
+	 *            the context previously injected into the object
+	 */
+	static public void uninject(Object object, IEclipseContext context) {
+		if (context instanceof EclipseContext)
+			((EclipseContext) context).uninject(object);
 	}
 }

@@ -24,6 +24,7 @@ import java.util.Set;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
@@ -365,12 +366,34 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		}
 	}
 
+	private void handleRelease(ContextChangeEvent event) {
+		Object releasedObject = event.getArguments()[0];
+		synchronized (userObjects) {
+			boolean found = false;
+			for (Iterator i = userObjects.iterator(); i.hasNext();) {
+				WeakReference ref = (WeakReference) i.next();
+				Object userObject = ref.get();
+				if (userObject == null)
+					continue;
+				if (userObject.equals(releasedObject)) {
+					i.remove();
+					found = true;
+					break;
+				}
+			}
+			if (!found)
+				return;
+		}
+		processClassHierarchy(releasedObject, getRemovalProcessor());
+	}
+
 	private void handleDispose(ContextChangeEvent event) {
-		for (Iterator it = userObjects.iterator(); it.hasNext();) {
-			WeakReference ref = (WeakReference) it.next();
-			Object referent = ref.get();
-			if (referent != null)
-				findAndCallDispose(referent, referent.getClass(), new ProcessMethodsResult());
+		Processor processor = getRemovalProcessor();
+		Object[] objectsCopy = safeObjectsCopy();
+		for (int i = 0; i < objectsCopy.length; i++) {
+			processClassHierarchy(objectsCopy[i], processor);
+			findAndCallDispose(objectsCopy[i], objectsCopy[i].getClass(),
+					new ProcessMethodsResult());
 		}
 	}
 
@@ -509,6 +532,31 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		}
 	}
 
+	private Processor getRemovalProcessor() {
+		return new Processor(true) {
+			void processField(final Field field, String injectName, boolean optional) {
+				String key = findKey(injectName, field.getType());
+				if (key != null)
+					setField(userObject, field, null);
+			}
+
+			void processMethod(final Method method, boolean optional) {
+				String candidateName = method.getName();
+				if (!candidateName.startsWith(setMethodPrefix))
+					return;
+				candidateName = candidateName.substring(setMethodPrefix.length());
+				Class[] parameterTypes = method.getParameterTypes();
+				// only inject methods with a single parameter
+				if (parameterTypes.length != 1)
+					return;
+				// when initializing, inject every method that has a match in the context
+				String key = findKey(candidateName, parameterTypes[0]);
+				if (key != null)
+					setMethod(userObject, method, null);
+			}
+		};
+	}
+
 	/**
 	 * Returns whether the given method is a post-construction process method, as defined by the
 	 * class comment of {@link ContextInjectionFactory}.
@@ -557,6 +605,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			break;
 		case ContextChangeEvent.REMOVED:
 			handleRemove(event);
+			break;
+		case ContextChangeEvent.UNINJECTED:
+			handleRelease(event);
 			break;
 		case ContextChangeEvent.DISPOSE:
 			handleDispose(event);

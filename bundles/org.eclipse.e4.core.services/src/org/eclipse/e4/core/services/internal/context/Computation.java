@@ -59,6 +59,10 @@ abstract class Computation {
 		}
 	}
 
+	final void handleUninjected(ContextChangeEvent event) {
+		doHandleInvalid(event);
+	}
+
 	/**
 	 * Computations must define hashCode because they are stored in a set.
 	 */
