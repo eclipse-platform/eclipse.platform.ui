@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
+  <children xsi:type="application:Window">
+    <children xsi:type="application:PartSashContainer" horizontal="true">
+      <children xsi:type="application:PartStack">
+        <children xsi:type="application:Part" id="ContactsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+      </children>
+      <children xsi:type="application:PartStack">
+        <children xsi:type="application:Part" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+      </children>
+      <weights>30</weights>
+      <weights>70</weights>
+    </children>
+    <variables>selection</variables>
+    <variables>input</variables>
+    <mainMenu>
+      <children xsi:type="application:MenuItem" name="File">
+        <children xsi:type="application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
+      </children>
+      <children xsi:type="application:MenuItem" name="Theme">
+        <children xsi:type="application:MenuItem" name="Dark Theme" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler"/>
+        <children xsi:type="application:MenuItem" name="Bright Theme" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.BrightThemeHandler"/>
+      </children>
+    </mainMenu>
+  </children>
+</application:Application>
