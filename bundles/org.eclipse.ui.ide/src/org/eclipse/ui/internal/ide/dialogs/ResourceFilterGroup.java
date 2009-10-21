@@ -1615,20 +1615,22 @@ class FilterEditDialog extends TrayDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(),
 				IIDEHelpContextIds.EDIT_RESOURCE_FILTER_PROPERTY_PAGE);
 
-		Composite topComposite = new Composite(composite, SWT.NONE);
-		layout = new GridLayout();
-		layout.numColumns = 2;
-		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
-		layout.marginWidth = 0;
-		layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
-		layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
-		topComposite.setLayout(layout);
-		data = new GridData(SWT.FILL, SWT.FILL, true, false);
-		topComposite.setLayoutData(data);
-		topComposite.setFont(font);
+		if (!filter.isUnderAGroupFilter()) {
+			Composite topComposite = new Composite(composite, SWT.NONE);
+			layout = new GridLayout();
+			layout.numColumns = 2;
+			layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
+			layout.marginWidth = 0;
+			layout.verticalSpacing = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_SPACING);
+			layout.horizontalSpacing = convertHorizontalDLUsToPixels(IDialogConstants.HORIZONTAL_SPACING);
+			topComposite.setLayout(layout);
+			data = new GridData(SWT.FILL, SWT.FILL, true, false);
+			topComposite.setLayoutData(data);
+			topComposite.setFont(font);
 
-		createModeArea(font, topComposite);
-		createTargetArea(font, topComposite);
+			createModeArea(font, topComposite);
+			createTargetArea(font, topComposite);
+		}
 		createIdArea(font, composite);
 
 		return composite;
@@ -1640,29 +1642,27 @@ class FilterEditDialog extends TrayDialog {
 	 */
 	private void createInheritableArea(Font font, Composite composite) {
 		GridData data;
-		if (!filter.isUnderAGroupFilter()) {
-			inherited = new Button(composite, SWT.CHECK);
-			inherited
-					.setText(NLS
-							.bind(
-									IDEWorkbenchMessages.ResourceFilterPage_columnFilterInheritable,
-									null));
-			data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-			data.horizontalSpan = 1;
-			inherited.setLayoutData(data);
-			inherited.setFont(font);
-			inherited.addSelectionListener(new SelectionListener() {
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
+		inherited = new Button(composite, SWT.CHECK);
+		inherited
+				.setText(NLS
+						.bind(
+								IDEWorkbenchMessages.ResourceFilterPage_columnFilterInheritable,
+								null));
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		data.horizontalSpan = 1;
+		inherited.setLayoutData(data);
+		inherited.setFont(font);
+		inherited.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
 
-				public void widgetSelected(SelectionEvent e) {
-					FilterTypeUtil.setValue(filter, FilterTypeUtil.INHERITABLE,
-							new Boolean(inherited.getSelection()));
-				}
-			});
-			inherited.setSelection((((Boolean) FilterTypeUtil.getValue(filter,
-					FilterTypeUtil.INHERITABLE)).booleanValue()));
-		}
+			public void widgetSelected(SelectionEvent e) {
+				FilterTypeUtil.setValue(filter, FilterTypeUtil.INHERITABLE,
+						new Boolean(inherited.getSelection()));
+			}
+		});
+		inherited.setSelection((((Boolean) FilterTypeUtil.getValue(filter,
+				FilterTypeUtil.INHERITABLE)).booleanValue()));
 	}
 
 	/**
@@ -1793,48 +1793,45 @@ class FilterEditDialog extends TrayDialog {
 	 */
 	private void createModeArea(Font font, Composite composite) {
 		GridData data;
-		if (!filter.isUnderAGroupFilter()) {
-			Group modeComposite = createGroup(font, composite, NLS.bind(
-					IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
-					null), false);
-			String[] modes = FilterTypeUtil.getModes();
-			includeButton = new Button(modeComposite, SWT.RADIO);
-			includeButton.setText(modes[0]);
-			includeButton.setImage(util.getImage(FilterTypeUtil.MODE, 0));
-			data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-			includeButton.setLayoutData(data);
-			includeButton.setFont(font);
-			includeButton.addSelectionListener(new SelectionListener() {
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
+		Group modeComposite = createGroup(font, composite, NLS.bind(
+				IDEWorkbenchMessages.ResourceFilterPage_columnFilterMode,
+				null), false);
+		String[] modes = FilterTypeUtil.getModes();
+		includeButton = new Button(modeComposite, SWT.RADIO);
+		includeButton.setText(modes[0]);
+		includeButton.setImage(util.getImage(FilterTypeUtil.MODE, 0));
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		includeButton.setLayoutData(data);
+		includeButton.setFont(font);
+		includeButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
 
-				public void widgetSelected(SelectionEvent e) {
-					FilterTypeUtil.setValue(filter, FilterTypeUtil.MODE,
-							new Integer(0));
-				}
-			});
-			includeButton.setSelection(((Integer) FilterTypeUtil.getValue(
-					filter, FilterTypeUtil.MODE)).intValue() == 0);
-			excludeButton = new Button(modeComposite, SWT.RADIO);
-			excludeButton.setText(modes[1]);
-			excludeButton.setImage(util.getImage(FilterTypeUtil.MODE, 1));
-			data = new GridData(SWT.FILL, SWT.CENTER, true, false);
-			excludeButton.setLayoutData(data);
-			excludeButton.setFont(font);
-			excludeButton.addSelectionListener(new SelectionListener() {
-				public void widgetDefaultSelected(SelectionEvent e) {
-				}
+			public void widgetSelected(SelectionEvent e) {
+				FilterTypeUtil.setValue(filter, FilterTypeUtil.MODE,
+						new Integer(0));
+			}
+		});
+		includeButton.setSelection(((Integer) FilterTypeUtil.getValue(
+				filter, FilterTypeUtil.MODE)).intValue() == 0);
+		excludeButton = new Button(modeComposite, SWT.RADIO);
+		excludeButton.setText(modes[1]);
+		excludeButton.setImage(util.getImage(FilterTypeUtil.MODE, 1));
+		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
+		excludeButton.setLayoutData(data);
+		excludeButton.setFont(font);
+		excludeButton.addSelectionListener(new SelectionListener() {
+			public void widgetDefaultSelected(SelectionEvent e) {
+			}
 
-				public void widgetSelected(SelectionEvent e) {
-					FilterTypeUtil.setValue(filter, FilterTypeUtil.MODE,
-							new Integer(1));
-				}
-			});
-			excludeButton.setSelection(((Integer) FilterTypeUtil.getValue(
-					filter, FilterTypeUtil.MODE)).intValue() == 1);
-			createInheritableArea(font, modeComposite);
-		} else
-			createInheritableArea(font, composite);
+			public void widgetSelected(SelectionEvent e) {
+				FilterTypeUtil.setValue(filter, FilterTypeUtil.MODE,
+						new Integer(1));
+			}
+		});
+		excludeButton.setSelection(((Integer) FilterTypeUtil.getValue(
+				filter, FilterTypeUtil.MODE)).intValue() == 1);
+		createInheritableArea(font, modeComposite);
 	}
 
 	/**
