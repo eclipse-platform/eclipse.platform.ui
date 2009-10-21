@@ -13,7 +13,6 @@ package org.eclipse.e4.core.services.internal.context;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
@@ -54,5 +53,10 @@ public class ContextInjectionImpl implements IContextConstants {
 			}
 		}
 		context.runAndTrack(link, new Object[] { userObject });
+	}
+
+	public static Object invoke(final Object userObject, final String methodName,
+			final IEclipseContext context, final Object defaultValue) {
+		return ContextToObjectLink.processInvoke(userObject, methodName, context, defaultValue);
 	}
 }

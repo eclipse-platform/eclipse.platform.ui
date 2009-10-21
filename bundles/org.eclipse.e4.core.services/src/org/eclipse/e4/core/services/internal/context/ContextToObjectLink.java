@@ -24,7 +24,6 @@ import java.util.Set;
 import org.eclipse.e4.core.services.context.ContextChangeEvent;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IRunAndTrack;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
@@ -33,6 +32,8 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
  * for details on the injection algorithm.
  */
 public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
+
+	private static final Object[] EMPTY_ARR = new Object[0];
 
 	static class ProcessMethodsResult {
 		List outMethods = new ArrayList();
@@ -181,12 +182,12 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				continue;
 			try {
 				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations", //$NON-NLS-1$
-						new Class[0]).invoke(method, new Object[0]);
+						new Class[0]).invoke(method, EMPTY_ARR);
 				for (int j = 0; j < annotations.length; j++) {
 					Object annotation = annotations[j];
 					try {
 						String annotationName = ((Class) annotation.getClass().getMethod(
-								"annotationType", new Class[0]).invoke(annotation, new Object[0])) //$NON-NLS-1$
+								"annotationType", new Class[0]).invoke(annotation, EMPTY_ARR)) //$NON-NLS-1$
 								.getName();
 						if (annotationName.endsWith(PRE_DESTROY)) {
 							if (!result.seen(method))
@@ -303,7 +304,8 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	private void handleParentChange(final ContextChangeEvent event) {
 		final EclipseContext eventContext = (EclipseContext) event.getContext();
 		final EclipseContext oldParent = (EclipseContext) event.getOldValue();
-		final EclipseContext newParent = (EclipseContext) eventContext.get(IContextConstants.PARENT);
+		final EclipseContext newParent = (EclipseContext) eventContext
+				.get(IContextConstants.PARENT);
 		if (oldParent == newParent)
 			return;
 		Processor processor = new Processor(true) {
@@ -422,12 +424,12 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 					if (!m.isAccessible()) {
 						m.setAccessible(true);
 						try {
-							value = m.invoke(userObject, new Object[0]);
+							value = m.invoke(userObject, EMPTY_ARR);
 						} finally {
 							m.setAccessible(false);
 						}
 					} else {
-						value = m.invoke(userObject, new Object[0]);
+						value = m.invoke(userObject, EMPTY_ARR);
 					}
 					// this has to be done asynchronously, see bug 281659
 					outputContext.schedule(new Runnable() {
@@ -628,26 +630,25 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			boolean optional = true;
 			try {
 				Object[] annotations = (Object[]) field.getClass().getMethod("getAnnotations", //$NON-NLS-1$
-						new Class[0]).invoke(field, new Object[0]);
+						new Class[0]).invoke(field, EMPTY_ARR);
 				for (int j = 0; j < annotations.length; j++) {
 					Object annotation = annotations[j];
 					try {
 						String annotationName = ((Class) annotation.getClass().getMethod(
-								"annotationType", new Class[0]).invoke(annotation, new Object[0])) //$NON-NLS-1$
+								"annotationType", new Class[0]).invoke(annotation, EMPTY_ARR)) //$NON-NLS-1$
 								.getName();
 						if (annotationName.endsWith(INJECT) || annotationName.endsWith(IN)) {
 							inject = true;
 							try {
 								optional = ((Boolean) annotation.getClass().getMethod("optional",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, new Object[0]))
-										.booleanValue();
+										new Class[0]).invoke(annotation, EMPTY_ARR)).booleanValue();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						} else if (annotationName.endsWith(NAMED)) {
 							try {
 								injectName = (String) annotation.getClass().getMethod("value",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, new Object[0]);
+										new Class[0]).invoke(annotation, EMPTY_ARR);
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -656,7 +657,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 							String resourceName = null;
 							try {
 								resourceName = (String) annotation.getClass().getMethod("name",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, new Object[0]);
+										new Class[0]).invoke(annotation, EMPTY_ARR);
 							} catch (Exception e) {
 								logWarning(field, e);
 							}
@@ -681,6 +682,83 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		}
 	}
 
+	public static Object processInvoke(Object userObject, String methodName,
+			IEclipseContext localContext, Object defaultValue) {
+		boolean wasAccessible = true;
+		Method[] methods = userObject.getClass().getDeclaredMethods();
+		for (int j = 0; j < methods.length; j++) {
+			Method method = methods[j];
+			if (methodName.equals(method.getName())) {
+				try {
+					boolean satisfiable = true;
+					Class[] params = method.getParameterTypes();
+					Object[] contextParms = new Object[params.length];
+					Object[][] parameterAnnotations = (Object[][]) Method.class.getMethod(
+							"getParameterAnnotations", //$NON-NLS-1$
+							new Class[0]).invoke(method, EMPTY_ARR);
+					for (int i = 0; i < params.length && satisfiable; i++) {
+						Class clazz = params[i];
+						Object[] array = EMPTY_ARR;
+						if (parameterAnnotations.length > 0 && parameterAnnotations[i].length > 0) {
+							array = parameterAnnotations[i];
+						}
+						if (array != EMPTY_ARR) {
+							String injectName = clazz.getName();
+							for (int k = 0; k < array.length; k++) {
+								String annotationName = ((Class) array[k].getClass().getMethod(
+										"annotationType", new Class[0]).invoke(array[k], EMPTY_ARR)) //$NON-NLS-1$
+										.getName();
+
+								if (annotationName.endsWith(NAMED)) {
+									try {
+										injectName = (String) array[k].getClass().getMethod(
+												"value",//$NON-NLS-1$
+												new Class[0]).invoke(array[k], EMPTY_ARR);
+									} catch (Exception e) {
+										e.printStackTrace();
+									}
+								}
+							}
+							if (IEclipseContext.class.equals(injectName)) {
+								contextParms[i] = localContext;
+							} else if (localContext.containsKey(injectName)) {
+								contextParms[i] = localContext.get(injectName);
+							} else {
+								satisfiable = false;
+							}
+						} else if (IEclipseContext.class.equals(clazz)) {
+							contextParms[i] = localContext;
+						} else if (localContext.containsKey(clazz.getName())) {
+							contextParms[i] = localContext.get(clazz.getName());
+						} else if (!localContext.containsKey(clazz.getName())
+								&& !IEclipseContext.class.equals(clazz)) {
+							satisfiable = false;
+						}
+					}
+					if (satisfiable) {
+						if (!method.isAccessible()) {
+							method.setAccessible(true);
+							wasAccessible = false;
+						}
+						return method.invoke(userObject, contextParms);
+					}
+
+				} catch (Exception e) {
+					e.printStackTrace();
+				} finally {
+					if (!wasAccessible) {
+						method.setAccessible(false);
+					}
+				}
+			}
+		}
+		if (defaultValue == null) {
+			throw new RuntimeException(
+					"could not find satisfiable method " + methodName + " in class " + userObject.getClass()); //$NON-NLS-1$//$NON-NLS-2$
+		}
+		return defaultValue;
+	}
+
 	/**
 	 * Make the processor visit all declared methods on the given class.
 	 */
@@ -701,19 +779,18 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			boolean optional = false;
 			try {
 				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations", //$NON-NLS-1$
-						new Class[0]).invoke(method, new Object[0]);
+						new Class[0]).invoke(method, EMPTY_ARR);
 				for (int j = 0; j < annotations.length; j++) {
 					Object annotation = annotations[j];
 					try {
 						String annotationName = ((Class) annotation.getClass().getMethod(
-								"annotationType", new Class[0]).invoke(annotation, new Object[0]))//$NON-NLS-1$
+								"annotationType", new Class[0]).invoke(annotation, EMPTY_ARR))//$NON-NLS-1$
 								.getName();
 						if (annotationName.endsWith(INJECT) || annotationName.endsWith(IN)) {
 							inject = true;
 							try {
 								optional = ((Boolean) annotation.getClass().getMethod("optional",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, new Object[0]))
-										.booleanValue();
+										new Class[0]).invoke(annotation, EMPTY_ARR)).booleanValue();
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

@@ -12,7 +12,6 @@
 package org.eclipse.e4.core.services.context.spi;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.IEclipseContextAware;
 import org.eclipse.e4.core.services.internal.context.ContextInjectionImpl;
 
 /**
@@ -123,5 +122,23 @@ final public class ContextInjectionFactory {
 		ContextInjectionImpl injector = new ContextInjectionImpl(fieldPrefix, setMethodPrefix);
 		injector.injectInto(object, context);
 		return object;
+	}
+
+	/**
+	 * Call a method, injecting the parameters from the context.
+	 * 
+	 * @param object
+	 *            The object to perform injection on
+	 * @param methodName
+	 *            The method to call
+	 * @param context
+	 *            The context to obtain injected values from
+	 * @param defaultValue
+	 *            A value to be returned if the method cannot be called
+	 * @return the return value of the method call, or <code>null</code>
+	 */
+	static public Object invoke(Object object, String methodName, IEclipseContext context,
+			Object defaultValue) {
+		return ContextInjectionImpl.invoke(object, methodName, context, defaultValue);
 	}
 }
