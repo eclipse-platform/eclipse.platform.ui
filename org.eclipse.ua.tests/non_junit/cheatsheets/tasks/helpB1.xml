@@ -32,7 +32,7 @@
    </item>
    <item title="Follow link" dialog="false" skip="false">
       <description>
-         Click on the &quot;Installing new features with the update manager&quot; link in the displayed document. This should load a new document.
+         Click on the &quot;Installing new software&quot; link in the displayed document. This should load a new document.
       </description>
    </item>
 </cheatsheet>
