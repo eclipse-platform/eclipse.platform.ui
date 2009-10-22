@@ -47,6 +47,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISourceProvider;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
@@ -390,6 +391,16 @@ public final class WorkbenchMenuService extends InternalMenuService {
 		if (serviceListener != null) {
 			evaluationService.removeServiceListener(serviceListener);
 			serviceListener = null;
+		}
+
+		if (activityManagerListener != null) {
+			IWorkbenchLocationService wls = (IWorkbenchLocationService) serviceLocator
+					.getService(IWorkbenchLocationService.class);
+			IWorkbench workbench = wls.getWorkbench();
+			if (workbench != null) {
+				workbench.getActivitySupport().getActivityManager()
+						.removeActivityManagerListener(activityManagerListener);
+			}
 		}
 	}
 
@@ -766,7 +777,7 @@ public final class WorkbenchMenuService extends InternalMenuService {
 						// this is OK, the additionsIndex will either be correct
 						// or -1 (which is a no-op)
 					} else if (MenuUtil.QUERY_AFTER.equals(modifier)) {
-						additionsIndex++;
+					additionsIndex++;
 					} else if (MenuUtil.QUERY_ENDOF.equals(modifier)) {
 						// OK, this one is exciting
 						IContributionItem[] items = mgr.getItems();
