@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -205,5 +204,15 @@ public class WizardPreferencesExportPage1 extends WizardPreferencesPage  {
 	 */
 	protected String getInvalidDestinationMessage() {
 		return PreferencesMessages.WizardPreferencesExportPage1_noPrefFile;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#
+	 * shouldSaveTransferAll()
+	 */
+	protected boolean shouldSaveTransferAll() {
+		return true;
 	}
 }

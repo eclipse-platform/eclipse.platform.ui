@@ -121,24 +121,6 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 	}
 
 	/**
-	 * Answer the icon of this element.
-	 * 
-	 * @return an image descriptor
-	 */
-	public ImageDescriptor getImageDescriptor() {
-		if (imageDescriptor == null) {
-			String iconName = configurationElement
-					.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-			if (iconName == null) {
-				return null;
-			}
-			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-					getPluginId(), iconName);
-		}
-		return imageDescriptor;
-	}
-
-	/**
 	 * Returns the name of this preference transfer element.
 	 * 
 	 * @return the name of the element
@@ -184,6 +166,36 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements
 		public Map getMapping(String scope) {
 			return (Map) mappings.get(scope);
 		}
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.model.WorkbenchAdapter#getLabel(java.lang.Object)
+	 */
+	public String getLabel(Object object) {
+		return getName();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.model.WorkbenchAdapter#getImageDescriptor(java.lang.Object
+	 * )
+	 */
+	public ImageDescriptor getImageDescriptor(Object object) {
+		if (imageDescriptor == null) {
+			String iconName = configurationElement
+					.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+			if (iconName == null) {
+				return null;
+			}
+			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+					getPluginId(), iconName);
+		}
+		return imageDescriptor;
 
 	}
 }

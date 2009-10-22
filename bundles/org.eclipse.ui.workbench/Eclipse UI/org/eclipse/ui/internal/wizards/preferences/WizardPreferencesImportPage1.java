@@ -14,7 +14,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IExportedPreferences;
@@ -134,10 +133,12 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
     protected void setPreferenceTransfers() {
     	super.setPreferenceTransfers();	
     	
-		if(validFromFile() && (transfersTable.getItemCount() == 0)) {
-			text.setText(PreferencesMessages.WizardPreferences_noSpecificPreferenceDescription);
+		if (validFromFile()
+				&& (transfersTree.getViewer().getTree().getItemCount() == 0)) {
+			descText
+					.setText(PreferencesMessages.WizardPreferences_noSpecificPreferenceDescription);
 		} else {
-			text.setText(""); //$NON-NLS-1$
+			descText.setText(""); //$NON-NLS-1$
 		}
 	}
   
@@ -245,5 +246,15 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 	 */
 	protected String getInvalidDestinationMessage() {
 		return PreferencesMessages.WizardPreferencesImportPage1_invalidPrefFile;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.ui.internal.wizards.preferences.WizardPreferencesPage#
+	 * shouldSaveTransferAll()
+	 */
+	protected boolean shouldSaveTransferAll() {
+		return false;
 	}
 }

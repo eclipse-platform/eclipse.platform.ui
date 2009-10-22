@@ -11,10 +11,7 @@
 package org.eclipse.ui.internal.wizards.preferences;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
@@ -26,7 +23,12 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -46,14 +48,15 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.IOverwriteQuery;
+import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.preferences.PreferenceTransferElement;
 import org.eclipse.ui.internal.preferences.PreferenceTransferManager;
+import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Base class for preference export/import pages.
@@ -66,22 +69,25 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	// widgets
 	protected Combo destinationNameField;
 
-	// constants
 	private Button destinationBrowseButton;
 
 	private Button overwriteExistingFilesCheckbox;
 
-	protected Table transfersTable;
+	protected FilteredTree transfersTree;
 	
-	protected Text text;
+	protected Text descText;
 
 	private Composite buttonComposite;
 
-	private Button allButton;
-
-	protected Button chooseImportsButton;
+	private Button transferAllButton;
 
 	private Group group;
+
+	private CheckboxTreeViewer viewer;
+
+	private Button selectAllButton;
+
+	private Button deselectAllButton;
 
 	// dialog store id constants
 	private static final String STORE_DESTINATION_NAMES_ID = "WizardPreferencesExportPage1.STORE_DESTINATION_NAMES_ID";//$NON-NLS-1$
@@ -90,7 +96,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	private static final String TRANSFER_ALL_PREFERENCES_ID = "WizardPreferencesExportPage1.EXPORT_ALL_PREFERENCES_ID"; //$NON-NLS-1$
 
-	private Hashtable imageTable;
+	private static final String TRANSFER_PREFERENCES_NAMES_ID = "WizardPreferencesExportPage1.TRANSFER_PREFERENCES_NAMES_ID"; //$NON-NLS-1$
 
 	private PreferenceTransferElement[] transfers;
 
@@ -99,6 +105,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	private static final String STORE_DESTINATION_ID = null;
 
     protected static final int COMBO_HISTORY_LENGTH = 5;
+
     
 	/**
 	 * @param pageName
@@ -174,6 +181,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		
 
 		createTransferArea(composite);
+		setPreferenceTransfers();
 
 		restoreWidgetValues();
 		// updateWidgetEnablements();
@@ -184,7 +192,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			setPageComplete(false);
 		}
 
-		setPreferenceTransfers();
 		setControl(composite);
 
 		giveFocusToDestination();
@@ -225,16 +232,9 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		return !(file.getPath().length() <= 0 || file.isDirectory());
 	}
 
-	/**
-	 * 
-	 */
 	protected void setPreferenceTransfers() {
 		PreferenceTransferElement[] transfers = getTransfers();
-		transfersTable.removeAll();
-		for (int i = 0; i < transfers.length; i++) {
-			PreferenceTransferElement element = transfers[i];
-			createItem(element, transfersTable);
-		}
+		viewer.setInput(transfers);
 	}
 
 	/*
@@ -248,108 +248,96 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * @param element
-	 * @param table
-	 */
-	private void createItem(PreferenceTransferElement element, Table table) {
-		TableItem item = new TableItem(table, SWT.CHECK);
-		item.setText(element.getName());
-		item.setData(element);
-		ImageDescriptor descriptor = element.getImageDescriptor();
-		Image image = null;
-		if (descriptor != null) {
-			Hashtable images = getImageTable();
-			image = (Image) images.get(descriptor);
-			if (image == null) {
-				image = descriptor.createImage();
-				images.put(descriptor, image);
-			}
-			item.setImage(image);
-		}
-
-	}
-
-	/**
-	 * @return <code>Hashtable</code> the table of images
-	 */
-	private Hashtable getImageTable() {
-		if (imageTable == null) {
-			imageTable = new Hashtable(10);
-		}
-		return imageTable;
-	}
-
-	/**
 	 * @param composite
 	 */
 	protected void createTransfersList(Composite composite) {
 
-		allButton = new Button(composite, SWT.RADIO);
-		allButton.setText(getAllButtonText());
-		
-		chooseImportsButton = new Button(composite, SWT.RADIO);
-		chooseImportsButton.setText(getChooseButtonText());
+		transferAllButton = new Button(composite, SWT.CHECK);
+		transferAllButton.setText(getAllButtonText());
 		
 		group = new Group(composite, SWT.NONE);
-		group.setText(PreferencesMessages.WizardPreferencesExportPage1_preferences);
-		GridData data = new GridData(GridData.FILL_BOTH);
-		data.horizontalSpan = 2;
-		group.setLayoutData(data);
+		GridData groupData = new GridData(GridData.FILL_BOTH);
+		groupData.horizontalSpan = 2;
+		groupData.horizontalIndent = IDialogConstants.LEFT_MARGIN;
+		group.setLayoutData(groupData);
 
 		GridLayout layout = new GridLayout();
 		group.setLayout(layout);
 		
-		transfersTable = new Table(group, SWT.CHECK | SWT.BORDER);
-		transfersTable.setLayoutData(new GridData(GridData.FILL_BOTH));
-		
+		transfersTree = createFilteredTree(group);
+
+		transfersTree.setLayoutData(new GridData(GridData.FILL_BOTH));
+
+		viewer = (CheckboxTreeViewer) transfersTree.getViewer();
+		viewer.setContentProvider(new PreferencesContentProvider());
+		viewer.setLabelProvider(new WorkbenchLabelProvider());
+
 		Label description = new Label(group, SWT.NONE);
 		description.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		description.setText(PreferencesMessages.WizardPreferences_description);
 		
-		text = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY
+		descText = new Text(group, SWT.V_SCROLL | SWT.READ_ONLY
 				| SWT.BORDER | SWT.WRAP);
-		text.setLayoutData(new GridData(GridData.FILL_BOTH));
+		GridData descriptionData = new GridData(GridData.FILL_BOTH);
+		descriptionData.heightHint = convertHeightInCharsToPixels(3);
+		descText.setLayoutData(descriptionData);
 		
-		SelectionListener selection = new SelectionListener() {
+		SelectionListener selectionListener = createSelectionListener();
+
+		transferAllButton.addSelectionListener(selectionListener);
+
+		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
+
+			public void selectionChanged(SelectionChangedEvent event) {
+				updateDescription();
+				updatePageCompletion();
+			}
+		});
+
+		addSelectionButtons(group);
+
+	}
+
+	protected void updateDescription() {
+		ISelection selection = viewer.getSelection();
+		String desc = ""; //$NON-NLS-1$
+		if (!selection.isEmpty()) {
+			Object element = ((IStructuredSelection) selection)
+					.getFirstElement();
+			if ((element instanceof PreferenceTransferElement)) {
+				desc = ((PreferenceTransferElement) element).getDescription();
+			}
+		}
+		descText.setText(desc);
+	}
+
+	private SelectionListener createSelectionListener() {
+		SelectionListener selectionListener = new SelectionAdapter() {
 
 			public void widgetSelected(SelectionEvent e) {
 				// Selecting an item in the list forces 
 				// the radio buttons to get selected 
-				if (e.widget == transfersTable) {
-					updateState(e);
+				if (e.widget == transfersTree) {
 					updateDescription();
+				} else if (e.widget == transferAllButton) {
+					updateEnablement();
 				}
 				updatePageCompletion();
 			}
 
-			private void updateState(SelectionEvent e) {
-				if (((TableItem)e.item).getChecked()) {
-					allButton.setSelection(false);
-					chooseImportsButton.setSelection(true);
-				}
-			}
+		};
+		return selectionListener;
+	}
 
-			public void widgetDefaultSelected(SelectionEvent e) {
-				widgetSelected(e);
-			}
-
-			private void updateDescription() {
-				if (transfersTable.getSelectionCount() > 0) {
-					TableItem item = transfersTable.getSelection()[0];
-					text.setText(((PreferenceTransferElement) item.getData())
-							.getDescription());
-				} else {
-					text.setText(""); //$NON-NLS-1$
-				}
+	private FilteredTree createFilteredTree(Group group) {
+		int style = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
+		FilteredTree transfersTree = new FilteredTree(group, style,
+				new PatternFilter(), true) {
+			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
+				return new CheckboxTreeViewer(parent, style);
 			}
 		};
-
-		transfersTable.addSelectionListener(selection);
-		chooseImportsButton.addSelectionListener(selection);
-		allButton.addSelectionListener(selection);
-		
-		addSelectionButtons(group);
-
+		return transfersTree;
 	}
 
 	protected abstract String getChooseButtonText();
@@ -373,44 +361,38 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		buttonComposite.setLayoutData(data);
 		buttonComposite.setFont(parentFont);
 		
-		Button selectButton = createButton(buttonComposite,
+		selectAllButton = createButton(buttonComposite,
 				IDialogConstants.SELECT_ALL_ID,
 				PreferencesMessages.SelectionDialog_selectLabel, false);
 
 		SelectionListener listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setAllChecked(true);
+				viewer.setAllChecked(true);
 				updatePageCompletion();
 			}
 		};
-		selectButton.addSelectionListener(listener);
-		selectButton.setFont(parentFont);
+		selectAllButton.addSelectionListener(listener);
+		selectAllButton.setFont(parentFont);
 		
-		Button deselectButton = createButton(buttonComposite,
+		deselectAllButton = createButton(buttonComposite,
 				IDialogConstants.DESELECT_ALL_ID,
 				PreferencesMessages.SelectionDialog_deselectLabel, false);
 
 		listener = new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
-				setAllChecked(false);
+				viewer.setAllChecked(false);
 				updatePageCompletion();
 			}
 		};
-		deselectButton.addSelectionListener(listener);
-		deselectButton.setFont(parentFont);
+		deselectAllButton.addSelectionListener(listener);
+		deselectAllButton.setFont(parentFont);
 	}
 
 	/**
 	 * @param bool
 	 */
 	protected void setAllChecked(boolean bool) {
-		allButton.setSelection(false);
-		chooseImportsButton.setSelection(true);
-		TableItem[] items = transfersTable.getItems();
-		for (int i = 0; i < items.length; i++) {
-			TableItem item = items[i];
-			item.setChecked(bool);
-		}
+		transferAllButton.setSelection(false);
 	}
 
 	/**
@@ -559,8 +541,43 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * @see org.eclipse.ui.dialogs.WizardDataTransferPage#saveWidgetValues()
 	 */
 	protected void saveWidgetValues() {
-		// allow subclasses to save values
-		internalSaveWidgetValues();
+
+		IDialogSettings settings = getDialogSettings();
+		if (settings != null) {
+			String[] directoryNames = settings
+					.getArray(STORE_DESTINATION_NAMES_ID);
+			if (directoryNames == null) {
+				directoryNames = new String[0];
+			}
+		
+			directoryNames = addToHistory(directoryNames, getDestinationValue());
+			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
+			String current = getDestinationValue();
+			if (current != null && !current.equals("")) { //$NON-NLS-1$
+				settings.put(STORE_DESTINATION_ID, current);
+			}
+			// options
+			if (overwriteExistingFilesCheckbox != null) {
+				settings.put(STORE_OVERWRITE_EXISTING_FILES_ID,
+						overwriteExistingFilesCheckbox.getSelection());
+			}
+
+			if (shouldSaveTransferAll()) {
+
+				boolean transferAll = getTransferAll();
+				settings.put(TRANSFER_ALL_PREFERENCES_ID, transferAll);
+				if (!transferAll) {
+					Object[] elements = viewer.getCheckedElements();
+					String[] preferenceIds = new String[elements.length];
+					for (int i = 0; i < elements.length; i++) {
+						PreferenceTransferElement element = (PreferenceTransferElement) elements[i];
+						preferenceIds[i] = element.getID();
+					}
+					settings.put(TRANSFER_PREFERENCES_NAMES_ID, preferenceIds);
+				}
+			}
+		
+		}
 	}
 
 	/**
@@ -634,22 +651,10 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * @return the list of transfer elements
 	 */
 	protected PreferenceTransferElement[] getPreferenceTransferElements() {
-		PreferenceTransferElement[] transferElements;
-		// export selected transfer types
-		TableItem[] items = transfersTable.getItems();
-		List transferList = new ArrayList();
-		for (int i = 0; i < items.length; i++) {
-			TableItem item = items[i];
-			if (item.getChecked()) {
-				transferList.add(item.getData());
-			}
-		}
-		transferElements = new PreferenceTransferElement[transferList.size()];
-		int i = 0;
-		for (Iterator iter = transferList.iterator(); iter.hasNext();) {
-			transferElements[i] = (PreferenceTransferElement) iter.next();
-			i++;
-		}
+		Object[] checkedElements = viewer.getCheckedElements();
+		PreferenceTransferElement[] transferElements = new PreferenceTransferElement[checkedElements.length];
+		System.arraycopy(checkedElements, 0, transferElements, 0,
+				checkedElements.length);
 		return transferElements;
 	}
 
@@ -716,18 +721,15 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 *         options group
 	 */
 	protected boolean validateOptionsGroup() {
-		if (chooseImportsButton.getSelection()) {
-			TableItem[] items = transfersTable.getItems();
-			for (int i = 0; i < items.length; i++) {
-				TableItem item = items[i];
-				if (item.getChecked()) {
-					return true;
-				}
+		boolean isValid = true;
+		if (!getTransferAll()) {
+			Object[] checkedElements = viewer.getCheckedElements();
+			if (checkedElements == null || checkedElements.length == 0) {
+				currentMessage = getNoOptionsMessage();
+				isValid = false;
 			}
-			currentMessage = getNoOptionsMessage();
-			return false;
 		}
-		return true;
+		return isValid;
 	}
 
 	/**
@@ -818,36 +820,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	}
 
 	/**
-	 * Hook method for saving widget values for restoration by the next instance
-	 * of this class.
-	 */
-	protected void internalSaveWidgetValues() {
-		// update directory names history
-		IDialogSettings settings = getDialogSettings();
-		if (settings != null) {
-			String[] directoryNames = settings
-					.getArray(STORE_DESTINATION_NAMES_ID);
-			if (directoryNames == null) {
-				directoryNames = new String[0];
-			}
-
-			directoryNames = addToHistory(directoryNames, getDestinationValue());
-			settings.put(STORE_DESTINATION_NAMES_ID, directoryNames);
-			String current = getDestinationValue();
-			if (current != null && !current.equals("")) { //$NON-NLS-1$
-				settings.put(STORE_DESTINATION_ID, current);
-			}
-			// options
-			if (overwriteExistingFilesCheckbox != null) {
-				settings.put(STORE_OVERWRITE_EXISTING_FILES_ID,
-						overwriteExistingFilesCheckbox.getSelection());
-			}
-			settings.put(TRANSFER_ALL_PREFERENCES_ID, allButton.getSelection());
-
-		}
-	}
-
-	  /**
      * Adds an entry to a history, while taking care of duplicate history items
      * and excessively long histories.  The assumption is made that all histories
      * should be of length <code>WizardDataTransferPage.COMBO_HISTORY_LENGTH</code>.
@@ -887,7 +859,37 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 * time this wizard was used to completion.
 	 */
 	protected void restoreWidgetValues() {
+
 		IDialogSettings settings = getDialogSettings();
+		if (shouldSaveTransferAll() && settings != null) {
+
+			boolean transferAll;
+			if (settings.get(TRANSFER_ALL_PREFERENCES_ID) == null)
+				transferAll = true;
+			else
+				transferAll = settings
+					.getBoolean(TRANSFER_ALL_PREFERENCES_ID);
+			transferAllButton.setSelection(transferAll);
+			if (!transferAll) {
+				String[] preferenceIds = settings
+						.getArray(TRANSFER_PREFERENCES_NAMES_ID);
+				if (preferenceIds != null) {
+					PreferenceTransferElement[] transfers = getTransfers();
+					for (int i = 0; i < transfers.length; i++) {
+						for (int j = 0; j < preferenceIds.length; j++) {
+							if (transfers[i].getID().equals(preferenceIds[j])) {
+								viewer.setChecked(transfers[i], true);
+								break;
+							}
+						}
+					}
+				}
+			}
+		} else {
+			transferAllButton.setSelection(true);
+		}
+		updateEnablement();
+
 		if (settings != null) {
 			String[] directoryNames = settings
 					.getArray(STORE_DESTINATION_NAMES_ID);
@@ -909,16 +911,16 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 				}
 			}
 		}
-
-		allButton.setSelection(true);
 	}
+
+	protected abstract boolean shouldSaveTransferAll();
 
 	private boolean getOverwriteExisting() {
 		return overwriteExistingFilesCheckbox.getSelection();
 	}
 
 	private boolean getTransferAll() {
-		return allButton.getSelection();
+		return transferAllButton.getSelection();
 	}
 
 	/**
@@ -939,14 +941,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 	 */
 	public void dispose() {
 		super.dispose();
-		if (imageTable == null) {
-			return;
-		}
-
-		for (Iterator i = imageTable.values().iterator(); i.hasNext();) {
-			((Image) i.next()).dispose();
-		}
-		imageTable = null;
 		transfers = null;
 	}
 
@@ -1009,5 +1003,15 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		});
 		return dialog.getReturnCode() < 0 ? CANCEL : response[dialog
 				.getReturnCode()];
+	}
+
+	private void updateEnablement() {
+		boolean transferAll = getTransferAll();
+		group.setEnabled(!transferAll);
+		selectAllButton.setEnabled(!transferAll);
+		deselectAllButton.setEnabled(!transferAll);
+		viewer.getTree().setEnabled(!transferAll);
+		transfersTree.setEnabled(!transferAll);
+		descText.setEnabled(!transferAll);
 	}
 }
