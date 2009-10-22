@@ -15,9 +15,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.commands.ITerminateHandler;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.actions.DebugCommandAction;
@@ -66,15 +65,7 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
         IStatus status = request.getStatus();
         if(status == null || status.isOK()) {
             for (int i = 0; i < targets.length; i++) {
-                Object element = targets[i];
-                ILaunch launch= null;
-                if (element instanceof ILaunch) {
-                    launch= (ILaunch) element;
-                } else if (element instanceof IDebugElement) {
-                    launch= ((IDebugElement) element).getLaunch();
-                } else if (element instanceof IProcess) {
-                    launch= ((IProcess) element).getLaunch();
-                }   
+                ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
                 if (launch != null)
                     DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);                   
             }

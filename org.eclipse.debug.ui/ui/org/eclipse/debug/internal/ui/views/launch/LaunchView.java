@@ -32,7 +32,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.commands.IRestartHandler;
-import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -838,16 +837,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * Terminates and removes the given element from the launch manager
 	 */
 	public static void terminateAndRemove(Object element) throws DebugException {
-		ILaunch launch= null;
-		ITerminate terminable = null;
-		if (element instanceof ILaunch) {
-			launch= (ILaunch) element;
-		} else if (element instanceof IDebugElement) {
-			launch= ((IDebugElement) element).getLaunch();
-		} else if (element instanceof IProcess) {
-			launch= ((IProcess) element).getLaunch();
-		}		
-		terminable = launch;
+		ILaunch launch = DebugUIPlugin.getLaunch(element);
+		ITerminate terminable = launch;
 		if (terminable == null) {
 			if (element instanceof ITerminate) {
 				terminable = (ITerminate) element;

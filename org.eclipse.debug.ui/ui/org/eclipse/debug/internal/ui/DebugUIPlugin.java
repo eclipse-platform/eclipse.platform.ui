@@ -48,6 +48,8 @@ import org.eclipse.debug.core.ILaunchListener;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IDebugElement;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.ClosedProjectFilter;
@@ -832,6 +834,31 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener {
 	public void launchRemoved(ILaunch launch) {}
 
 	/**
+     * Return the ILaunch associated with a model element, or null if there is
+     * no such association.
+     * 
+     * @param element the model element
+     * @return the ILaunch associated with the element, or null.
+     * @since 3.6
+     */
+    public static ILaunch getLaunch(Object element) {
+    	// support for custom models
+        ILaunch launch= (ILaunch)DebugPlugin.getAdapter(element, ILaunch.class);
+        if (launch == null) {
+        	// support for standard debug model
+            if (element instanceof IDebugElement) {
+                launch= ((IDebugElement)element).getLaunch();
+            } else if (element instanceof ILaunch) {
+                launch= ((ILaunch)element);
+            } else if (element instanceof IProcess) {
+                launch= ((IProcess)element).getLaunch();
+            }
+        }
+        return launch;
+    }
+    
+
+    /**
 	 * Save dirty editors before launching, according to preferences.
 	 * 
 	 * @return whether to proceed with launch

@@ -15,6 +15,7 @@ import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IProcess;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.ui.DebugUITools;
 
@@ -24,23 +25,11 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 * @see AbstractDebugActionDelegate#doAction(Object)
 	 */
 	protected void doAction(Object object) {
-		ILaunch launch= getLaunch(object);
+		ILaunch launch= DebugUIPlugin.getLaunch(object);
         if (launch != null) {
             relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
         }
 	}
-    
-    public static ILaunch getLaunch(Object element) {
-        ILaunch launch= null;
-        if (element instanceof IDebugElement) {
-            launch= ((IDebugElement)element).getLaunch();
-        } else if (element instanceof ILaunch) {
-            launch= ((ILaunch)element);
-        } else if (element instanceof IProcess) {
-            launch= ((IProcess)element).getLaunch();
-        }
-        return launch;
-    }
 	
 	/**
 	 * Re-launches the given configuration in the specified mode.

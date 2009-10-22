@@ -38,7 +38,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
                     // Must be run in the UI thread since the launch can require
                     // prompting to proceed
                     for (int i = 0; i < targets.length; i++) {
-                        ILaunch launch = RelaunchActionDelegate.getLaunch(targets[i]);
+                        ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
                         RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
                     }
                 }
@@ -66,7 +66,7 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 	}
 
     protected boolean canRelaunch(Object element) {
-    	ILaunch launch = RelaunchActionDelegate.getLaunch(element);
+    	ILaunch launch = DebugUIPlugin.getLaunch(element);
     	if (launch != null) {
     		ILaunchConfiguration configuration = launch.getLaunchConfiguration();
     		if (configuration != null) {
