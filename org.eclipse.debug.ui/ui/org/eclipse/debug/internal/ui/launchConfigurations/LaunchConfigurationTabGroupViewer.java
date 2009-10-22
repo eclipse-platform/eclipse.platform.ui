@@ -16,6 +16,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -483,10 +485,6 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	public void refresh() {
 		if (fInitializingTabs) {
-			return;
-		}
-		if(fOriginal != null && fOriginal.isReadOnly()) {
-			updateButtons();
 			return;
 		}
 		ILaunchConfigurationTab[] tabs = getTabs();
@@ -1032,9 +1030,6 @@ public class LaunchConfigurationTabGroupViewer {
 				return false;
 			}
 		}
-		if(getWorkingCopy() != null) {
-			return !getWorkingCopy().isReadOnly();
-		}
 		return true;
 	}	
 	
@@ -1176,9 +1171,6 @@ public class LaunchConfigurationTabGroupViewer {
 				return temp.toString();
 			}
 		}
-		if(getWorkingCopy().isReadOnly()) {
-			return LaunchConfigurationsMessages.LaunchConfigurationTabGroupViewer_9;
-		}
 		if(!canLaunchWithModes()) {
 			Set modes = getCurrentModeSet();
 			List names = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(modes);
@@ -1311,7 +1303,13 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Notification that the 'Apply' button has been pressed
 	 */
-	protected void handleApplyPressed() {
+	protected boolean handleApplyPressed() {
+		if(fOriginal != null && fOriginal.isReadOnly()) {
+			IStatus status = ResourcesPlugin.getWorkspace().validateEdit(new IFile[] {fOriginal.getFile()}, fViewerControl.getShell());
+			if(!status.isOK()) {
+				return false;
+			}
+		}
 		Exception exception = null;
 		try {
 			// update launch config
@@ -1348,7 +1346,9 @@ public class LaunchConfigurationTabGroupViewer {
 		catch (InterruptedException e) {exception = e;} 
 		if(exception != null) {
 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, exception); // 
-			return;
+			return false;
+		} else {
+			return true;
 		}
 	}
 

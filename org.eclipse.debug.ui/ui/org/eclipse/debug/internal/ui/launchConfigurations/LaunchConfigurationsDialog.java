@@ -931,11 +931,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	protected void handleLaunchPressed() {
 		ILaunchConfiguration config = fTabViewer.getOriginal();
 		if (fTabViewer.isDirty() && fTabViewer.canSave()) {
-			fTabViewer.handleApplyPressed();
-			config = fTabViewer.getOriginal();
+			if (fTabViewer.handleApplyPressed())
+				config = fTabViewer.getOriginal();
+			else config = null;
 		}
-		close();
 		if(config != null) {
+			close();
 			DebugUITools.launch(config, getMode());
 		}
 	}
