@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -37,7 +35,6 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	private static final Object[] EMPTY_ARR = new Object[0];
 
 	static class ProcessMethodsResult {
-		List outMethods = new ArrayList();
 		List postConstructMethods = new ArrayList();
 		Set seenMethods = new HashSet();
 
@@ -57,7 +54,6 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	abstract private class Processor {
 
 		protected boolean isSetter;
-		protected boolean shouldProcessOutMethods = false;
 		protected boolean shouldProcessPostConstruct = false;
 		protected Object userObject;
 
@@ -73,10 +69,6 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			// do nothing by default
 		}
 
-		void processOutMethod(Method m, String name) {
-			// do nothing by default
-		}
-
 		void processPostConstructMethod(Method m) {
 			// do nothing by default
 		}
@@ -86,26 +78,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		}
 	}
 
-	private static class PropertyChangeListenerImplementation implements PropertyChangeListener {
-		private final String name;
-		private final IEclipseContext outputContext;
-
-		PropertyChangeListenerImplementation(String name, IEclipseContext outputContext) {
-			this.name = name;
-			this.outputContext = outputContext;
-		}
-
-		public void propertyChange(PropertyChangeEvent evt) {
-			outputContext.set(name, evt.getNewValue());
-		}
-	}
-
 	private static final String IN = ".In";//$NON-NLS-1$
 	private static final String INJECT = ".Inject";//$NON-NLS-1$
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 	private static final String NAMED = ".Named";//$NON-NLS-1$
-
-	private static final String OUT = ".Out";//$NON-NLS-1$
 
 	private static final String POST_CONSTRUCT = ".PostConstruct";//$NON-NLS-1$
 
@@ -435,42 +411,6 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				}
 			}
 
-			public void processOutMethod(Method m, final String name) {
-				final EclipseContext outputContext = (EclipseContext) event.getContext().get(
-						IContextConstants.OUTPUTS);
-				if (outputContext == null) {
-					throw new IllegalStateException("No output context available for @Out " + m //$NON-NLS-1$
-							+ " in " + userObject); //$NON-NLS-1$
-				}
-				final Object value;
-				try {
-					if (!m.isAccessible()) {
-						m.setAccessible(true);
-						try {
-							value = m.invoke(userObject, EMPTY_ARR);
-						} finally {
-							m.setAccessible(false);
-						}
-					} else {
-						value = m.invoke(userObject, EMPTY_ARR);
-					}
-					// this has to be done asynchronously, see bug 281659
-					outputContext.schedule(new Runnable() {
-						public void run() {
-							outputContext.set(name, value);
-						}
-					});
-
-					Method addListener = userObject.getClass().getMethod(
-							"addPropertyChangeListener", //$NON-NLS-1$
-							new Class[] { String.class, PropertyChangeListener.class });
-					callMethod(userObject, addListener, new Object[] { name,
-							new PropertyChangeListenerImplementation(name, outputContext) });
-				} catch (Exception ex) {
-					throw new RuntimeException(ex);
-				}
-			}
-
 			void processPostConstructMethod(Method m) {
 				Object[] methodArgs = null;
 				if (m.getParameterTypes().length == 1)
@@ -491,7 +431,6 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				}
 			}
 		};
-		processor.shouldProcessOutMethods = true;
 		processor.shouldProcessPostConstruct = true;
 		processClassHierarchy(event.getArguments()[0], processor);
 
@@ -647,25 +586,6 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				Method m = (Method) it.next();
 				processor.processPostConstructMethod(m);
 			}
-		}
-		if (!processor.shouldProcessOutMethods)
-			return;
-		for (Iterator it = processMethodsResult.outMethods.iterator(); it.hasNext();) {
-			Method m = (Method) it.next();
-			String name = m.getName();
-			if (name.startsWith("get") && name.length() > 3) { //$NON-NLS-1$
-				name = name.substring(3);
-				char firstChar = name.charAt(0);
-				if (Character.isUpperCase(firstChar)) {
-					firstChar = Character.toLowerCase(firstChar);
-					if (name.length() == 1) {
-						name = Character.toString(firstChar);
-					} else {
-						name = Character.toString(firstChar) + name.substring(1);
-					}
-				}
-			}
-			processor.processOutMethod(m, name);
 		}
 	}
 
@@ -849,10 +769,6 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 								&& annotationName.endsWith(POST_CONSTRUCT)) {
 							inject = false;
 							result.postConstructMethods.add(method);
-						} else if (processor.shouldProcessOutMethods
-								&& annotationName.endsWith(OUT)) {
-							inject = false;
-							result.outMethods.add(method);
 						}
 					} catch (Exception ex) {
 						logWarning(method, ex);
