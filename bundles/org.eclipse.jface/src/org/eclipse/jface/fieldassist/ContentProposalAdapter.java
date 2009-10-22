@@ -2181,13 +2181,27 @@ public class ContentProposalAdapter {
 	/**
 	 * Sets focus to the proposal popup.  If the proposal popup is not opened,
 	 * this method is ignored.  If the secondary popup has focus, focus is returned
-	 * to the main proposalpopup.
+	 * to the main proposal popup.
 	 * 
 	 * @since 3.6
 	 */
 	public void setProposalPopupFocus() {
 		if (isValid() && popup != null)
 			popup.getShell().setFocus();
+	}
+	
+	/**
+	 * Answers a boolean indicating whether the main proposal popup is open.
+	 * 
+	 * @return <code>true</code> if the proposal popup is open, and
+	 *         <code>false</code> if it is not.
+	 * 
+	 * @since 3.6
+	 */
+	public boolean isProposalPopupOpen() {
+		if (isValid() && popup != null)
+			return true;
+		return false;
 	}
 
 }

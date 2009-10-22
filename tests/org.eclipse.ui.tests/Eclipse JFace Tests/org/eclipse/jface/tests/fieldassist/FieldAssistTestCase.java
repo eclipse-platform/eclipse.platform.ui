@@ -14,8 +14,6 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.fieldassist.ContentProposalAdapter;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
-import org.eclipse.jface.fieldassist.IContentProposal;
-import org.eclipse.jface.fieldassist.IContentProposalProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
@@ -206,48 +204,24 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		assertOneShellUp();
 		assertFalse("1.2", window.getContentProposalAdapter().hasProposalPopupFocus());
 	}
-	// in progress
-	public void testBug275525() {
-			final boolean [] closeWindow = new boolean[1];
-			closeWindow[0] = false;
-			AbstractFieldAssistWindow window = getFieldAssistWindow();
-			window.setPropagateKeys(false);
-			window.setContentProposalProvider(new IContentProposalProvider() {
-				public IContentProposal[] getProposals(String contents,
-						int position) {
-					IContentProposal[] proposals = new IContentProposal[1];
-					proposals[0] = new IContentProposal() {
-						public String getContent() {
-							return "Foo";
-						}
-
-						public int getCursorPosition() {
-							return 0;
-						}
-
-						public String getDescription() {
-							if (closeWindow[0]) {
-								closeFieldAssistWindow();
-								return "Description";
-							}
-							return null;
-						}
-
-						public String getLabel() {
-							return "Foo";
-						}
-						
-					};
-					return proposals;
-				}
-				
-			});
-			window.open();
-			setControlContent(SAMPLE_CONTENT);
-			sendKeyDownToControl(ACTIVATE_CHAR);
-			// autoactivate is started but nothing is up yet.  Set the flag
-			// that will destroy the window during description access.
-			closeWindow[0] = true;
+	
+	public void testPopupIsOpen() {
+		AbstractFieldAssistWindow window = getFieldAssistWindow();
+		window.setPropagateKeys(false);
+		KeyStroke stroke = KeyStroke.getInstance(SWT.F4);
+		window.setKeyStroke(stroke);
+		window.open();
+		
+		assertFalse("1.0", window.getContentProposalAdapter().isProposalPopupOpen());
+		sendKeyDownToControl(stroke);
+		assertTwoShellsUp();
+		assertTrue("1.1", window.getContentProposalAdapter().isProposalPopupOpen());
+		
+		// Setting focus to another shell deactivates the popup
+		sendFocusElsewhere();
+		spinEventLoop();
+		assertOneShellUp();
+		assertFalse("1.2", window.getContentProposalAdapter().isProposalPopupOpen());
 	}
 	
 	/**
