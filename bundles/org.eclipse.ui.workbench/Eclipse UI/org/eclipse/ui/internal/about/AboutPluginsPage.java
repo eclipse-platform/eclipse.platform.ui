@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -526,26 +525,27 @@ public class AboutPluginsPage extends ProductInfoPage {
 	}
 
 	/**
-     * Check if the currently selected plugin has additional information to
-     * show.
-     * @param bundleInfo 
-     * 
-     * @return true if the selected plugin has additional info available to
-     *         display
-     */
-    private boolean selectionHasInfo(AboutBundleData bundleInfo) {
-        
-        URL infoURL = getMoreInfoURL(bundleInfo, false);
+	 * Check if the currently selected plugin has additional information to
+	 * show.
+	 * 
+	 * @param bundleInfo
+	 * 
+	 * @return true if the selected plugin has additional info available to
+	 *         display
+	 */
+	private boolean selectionHasInfo(AboutBundleData bundleInfo) {
 
-        // only report ini problems if the -debug command line argument is used
-        if (infoURL == null && WorkbenchPlugin.DEBUG) {
-        	WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
+		URL infoURL = getMoreInfoURL(bundleInfo, false);
+
+		// only report ini problems if the -debug command line argument is used
+		if (infoURL == null && WorkbenchPlugin.DEBUG) {
+			WorkbenchPlugin.log("Problem reading plugin info for: " //$NON-NLS-1$
 					+ bundleInfo.getName());
 		}
 
-        return infoURL != null;
-    }
-    
+		return infoURL != null;
+	}
+
 	/**
 	 * The More Info button was pressed. Open a browser showing the license
 	 * information for the selected bundle or an error dialog if the browser
@@ -584,7 +584,9 @@ public class AboutPluginsPage extends ProductInfoPage {
 class TableComparator extends ViewerComparator {
 
 	private int sortColumn = 0;
+	private int lastSortColumn = 0;
 	private boolean ascending = true;
+	private boolean lastAscending = true;
 
 	/*
 	 * (non-Javadoc)
@@ -599,7 +601,26 @@ class TableComparator extends ViewerComparator {
 			AboutBundleData d1 = (AboutBundleData) e1;
 			AboutBundleData d2 = (AboutBundleData) e2;
 			int diff = getSignedSortValue(d1) - getSignedSortValue(d2);
-			return ascending ? diff : -diff;
+			// If values are different, or there is no secondary column defined,
+			// we are done
+			if (diff != 0 || lastSortColumn == 0)
+				return ascending ? diff : -diff;
+			// try a secondary sort
+			if (viewer instanceof TableViewer) {
+				TableViewer tableViewer = (TableViewer) viewer;
+				IBaseLabelProvider baseLabel = tableViewer.getLabelProvider();
+				if (baseLabel instanceof ITableLabelProvider) {
+					ITableLabelProvider tableProvider = (ITableLabelProvider) baseLabel;
+					String e1p = tableProvider
+							.getColumnText(e1, lastSortColumn);
+					String e2p = tableProvider
+							.getColumnText(e2, lastSortColumn);
+					int result = getComparator().compare(e1p, e2p);
+					return lastAscending ? result : (-1) * result;
+				}
+			}
+			// we couldn't determine a secondary sort, call it equal
+			return 0;
 		}
 		if (viewer instanceof TableViewer) {
 			TableViewer tableViewer = (TableViewer) viewer;
@@ -609,6 +630,24 @@ class TableComparator extends ViewerComparator {
 				String e1p = tableProvider.getColumnText(e1, sortColumn);
 				String e2p = tableProvider.getColumnText(e2, sortColumn);
 				int result = getComparator().compare(e1p, e2p);
+				// Secondary column sort
+				if (result == 0) {
+					if (lastSortColumn != 0) {
+						e1p = tableProvider.getColumnText(e1, lastSortColumn);
+						e2p = tableProvider.getColumnText(e2, lastSortColumn);
+						result = getComparator().compare(e1p, e2p);
+						return lastAscending ? result : (-1) * result;
+					} // secondary sort is by column 0
+					if (e1 instanceof AboutBundleData
+							&& e2 instanceof AboutBundleData) {
+						AboutBundleData d1 = (AboutBundleData) e1;
+						AboutBundleData d2 = (AboutBundleData) e2;
+						int diff = getSignedSortValue(d1)
+								- getSignedSortValue(d2);
+						return lastAscending ? diff : -diff;
+					}
+				}
+				// primary column sort
 				return ascending ? result : (-1) * result;
 			}
 		}
@@ -642,7 +681,11 @@ class TableComparator extends ViewerComparator {
 	 *            The sortColumn to set.
 	 */
 	public void setSortColumn(int sortColumn) {
-		this.sortColumn = sortColumn;
+		if (this.sortColumn != sortColumn) {
+			lastSortColumn = this.sortColumn;
+			lastAscending = this.ascending;
+			this.sortColumn = sortColumn;
+		}
 	}
 
 	/**
