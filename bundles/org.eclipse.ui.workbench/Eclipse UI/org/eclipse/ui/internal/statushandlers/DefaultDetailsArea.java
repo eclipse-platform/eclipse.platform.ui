@@ -57,6 +57,8 @@ import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
  */
 public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
+	private static final int MINIMUM_HEIGHT = 100;
+
 	private WorkbenchStatusDialogManager workbenchStatusDialog;
 
 	public DefaultDetailsArea(WorkbenchStatusDialogManager wsd){
@@ -103,7 +105,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		gd.grabExcessHorizontalSpace = true;
 		gd.grabExcessVerticalSpace = true;
 		gd.widthHint = 250;
-		gd.heightHint = 100;
+		gd.minimumHeight = MINIMUM_HEIGHT;
 		text.setLayoutData(gd);
 		// There is no support for triggering commands in the dialogs. I am
 		// trying to emulate the workbench behavior as exactly as possible.
@@ -183,6 +185,32 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		int delimiterLength = getLineSeparator().length();
 		text.setText(resultText.substring(0, resultText.length()
 				- delimiterLength));
+		adjustHeight(text);
+	}
+
+	private void adjustHeight(Text text) {
+		int lineCount = text.getLineCount();
+		int lineHeight = text.getLineHeight();
+		int startPos = text.getLocation().y;
+		Composite c = text.getParent();
+		while (c != null) {
+			startPos += c.getLocation().y;
+			c = c.getParent();
+		}
+		// the text is not positioned yet, we assume that it will appear
+		// on the bottom of the dialog
+		startPos += text.getShell().getBounds().height;
+		int screenHeight = text.getShell().getMonitor().getBounds().height;
+		int availableScreenForText = screenHeight - startPos;
+		if (availableScreenForText <= MINIMUM_HEIGHT) {
+			// should not happen. But in that case nothing can improve user
+			// experience.
+			return;
+		}
+		int desiredHeight = lineCount * lineHeight;
+		if (desiredHeight > availableScreenForText * 0.75) {
+			((GridData) text.getLayoutData()).heightHint = (int) (availableScreenForText * 0.75);
+		}
 	}
 
 	/**
