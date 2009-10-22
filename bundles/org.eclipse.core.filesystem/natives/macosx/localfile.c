@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,6 +23,7 @@
 
 #define USE_IMMUTABLE_FLAG 1
 #define USE_ARCHIVE_FLAG 0
+#define EFS_SYMLINK_SUPPORT 1
 
 /*
  * Get a null-terminated byte array from a java char array.
@@ -120,6 +121,31 @@ jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo)
 	return JNI_TRUE;
 }
 
+#if defined(EFS_SYMLINK_SUPPORT)
+/*
+ * Set symbolic link information in IFileInfo 
+ */
+jboolean setSymlinkInFileInfo (JNIEnv *env, jobject fileInfo, jstring linkTarget) {
+    jclass cls;
+    jmethodID mid;
+
+    cls = (*env)->GetObjectClass(env, fileInfo);
+    if (cls == 0) return JNI_FALSE;
+
+    // set symlink attribute
+    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
+    if (mid == 0) return JNI_FALSE;
+    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_SYMLINK, JNI_TRUE);
+
+    // set link target
+    mid = (*env)->GetMethodID(env, cls, "setStringAttribute", "(ILjava/lang/String;)V");
+    if (mid == 0) return JNI_FALSE;
+    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_LINK_TARGET, linkTarget);
+
+    return JNI_TRUE;
+}
+#endif
+
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
  * Method:    internalGetFileInfo
@@ -141,15 +167,38 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
 	struct stat info;
 	jint code;
+	jstring linkTarget = NULL;
 
 	/* get stat */
 	char *name= (char*) getUTF8ByteArray(env, target);
+#if defined(EFS_SYMLINK_SUPPORT)
+	//do an lstat first to see if it is a symbolic link
+	code = lstat(name, &info);
+	if (code == 0 && (info.st_mode & S_IFLNK) == S_IFLNK) {
+		//symbolic link: read link target
+		char buf[PATH_MAX+1];
+		int len;
+		len = readlink((const char*)name, buf, PATH_MAX);
+		if (len>0) {
+			buf[len]=0;
+		} else {
+			buf[0]=0;
+		}
+		// Mac OS encodes symlink target using UTF-8, ignoring platform default
+		linkTarget = (*env)->NewStringUTF(env, buf);
+		setSymlinkInFileInfo(env, fileInfo, linkTarget);
+
+		//stat link target (will fail for broken links)
+		code = stat((const char*)name, &info);
+	}
+#else
 	code = stat(name, &info);
+#endif
 	free(name);
 
 	/* test if an error occurred */
 	if (code == -1)
-	  return 0;
+	  return JNI_FALSE;
 	return convertStatToFileInfo(env, info, fileInfo);
 }
 

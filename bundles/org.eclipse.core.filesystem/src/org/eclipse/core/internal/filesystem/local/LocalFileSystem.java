@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -101,7 +101,7 @@ public class LocalFileSystem extends FileSystem {
 		else if (os.equals(Constants.OS_LINUX) || (os.equals(Constants.OS_SOLARIS) && arch.equals(Constants.ARCH_SPARC)))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
 		else if (os.equals(Constants.OS_MACOSX) || os.equals(Constants.OS_HPUX) || os.equals(Constants.OS_QNX))
-			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
+			attributes |= EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
 		return attributes;
 	}
 

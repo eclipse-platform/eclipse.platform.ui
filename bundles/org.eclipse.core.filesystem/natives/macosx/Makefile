@@ -12,8 +12,7 @@
 LIB_NAME = liblocalfile_1_0_0.jnilib
 
 core:
-	cc -I /System/Library/Frameworks/JavaVM.framework/Headers localfile.c -o $(LIB_NAME) -bundle -framework JavaVM -framework CoreServices -arch i386 -arch ppc -arch x86_64
+	cc -I /System/Library/Frameworks/JavaVM.framework/Headers localfile.c -o $(LIB_NAME) -bundle -framework JavaVM -framework CoreServices -arch i386 -arch ppc -arch x86_64 -mmacosx-version-min=10.4
 
 clean:
-	rm *.o
-	
+	rm *.jnilib

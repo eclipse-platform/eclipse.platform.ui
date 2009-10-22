@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2009 Wind River Systems, Inc. and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
-import java.io.*;
+import java.io.OutputStream;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -48,8 +48,8 @@ public class SymlinkTest extends FileSystemTest {
 	public static boolean isTestablePlatform() {
 		// A Platform is testable if it supports the "ln -s" command.
 		String os = Platform.getOS();
-		//currently we only support linux and solaris
-		if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_SOLARIS)
+		//currently we only support linux, solaris and mac os
+		if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_SOLARIS) || os.equals(Platform.OS_MACOSX)
 		//		  ||os.equals(Platform.OS_AIX)
 		//		  ||os.equals(Platform.OS_HPUX)
 		//		  ||isWindowsVista()
@@ -295,7 +295,7 @@ public class SymlinkTest extends FileSystemTest {
 	public void testSymlinkEnabled() {
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
-		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch))) {
+		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os)) {
 			assertTrue(haveSymlinks());
 		} else {
 			assertFalse(haveSymlinks());
@@ -332,8 +332,12 @@ public class SymlinkTest extends FileSystemTest {
 		}
 	}
 
-	public void testSymlinkPutInfo() throws Exception {
+	public void testSymlinkPutLastModified() throws Exception {
 		if (!isTestablePlatform()) {
+			return;
+		}
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) {
+			// flag EFS.SET_LAST_MODIFIED is set by java.io and it fails on Mac OS
 			return;
 		}
 		//check that putInfo() "writes through" the symlink
@@ -341,21 +345,79 @@ public class SymlinkTest extends FileSystemTest {
 		long oldTime = iFile.getLastModified();
 		long timeToSet = oldTime - 100000;
 		illFile.setLastModified(timeToSet);
-		illFile.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
 		llFile.putInfo(illFile, EFS.SET_ATTRIBUTES | EFS.SET_LAST_MODIFIED, getMonitor());
 		iFile = aFile.fetchInfo();
 		assertEquals(iFile.getLastModified(), timeToSet);
-		assertTrue(iFile.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
 
 		oldTime = iDir.getLastModified();
 		timeToSet = oldTime - 100000;
 		illDir.setLastModified(timeToSet);
-		illDir.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
 		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES | EFS.SET_LAST_MODIFIED, getMonitor());
 		iDir = aDir.fetchInfo();
 		assertTrue(iDir.getLastModified() != oldTime);
 		assertEquals(iDir.getLastModified(), timeToSet);
+		if (haveSymlinks()) {
+			//check that link properties are maintained even through putInfo
+			illFile = llFile.fetchInfo();
+			illDir = llDir.fetchInfo();
+			assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+			assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+			assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+			assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
+		}
+	}
+
+	public void testSymlinkPutReadOnly() throws Exception {
+		if (!isTestablePlatform()) {
+			return;
+		}
+		//check that putInfo() "writes through" the symlink
+		makeLinkStructure();
+		illFile.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
+		llFile.putInfo(illFile, EFS.SET_ATTRIBUTES, getMonitor());
+		iFile = aFile.fetchInfo();
+		assertTrue(iFile.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+
+		illFile.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+		llFile.putInfo(illFile, EFS.SET_ATTRIBUTES, getMonitor());
+		iFile = aFile.fetchInfo();
+		assertFalse(iFile.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+
+		illDir.setAttribute(EFS.ATTRIBUTE_READ_ONLY, true);
+		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
+		iDir = aDir.fetchInfo();
 		assertTrue(iDir.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+
+		illDir.setAttribute(EFS.ATTRIBUTE_READ_ONLY, false);
+		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
+		iDir = aDir.fetchInfo();
+		assertFalse(iDir.getAttribute(EFS.ATTRIBUTE_READ_ONLY));
+		if (haveSymlinks()) {
+			//check that link properties are maintained even through putInfo
+			illFile = llFile.fetchInfo();
+			illDir = llDir.fetchInfo();
+			assertTrue(illFile.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+			assertTrue(illDir.getAttribute(EFS.ATTRIBUTE_SYMLINK));
+			assertEquals(illFile.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lFile");
+			assertEquals(illDir.getStringAttribute(EFS.ATTRIBUTE_LINK_TARGET), "lDir");
+		}
+	}
+
+	public void testSymlinkPutExecutable() throws Exception {
+		if (!isTestablePlatform()) {
+			return;
+		}
+		//check that putInfo() "writes through" the symlink
+		makeLinkStructure();
+		illFile.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, true);
+		llFile.putInfo(illFile, EFS.SET_ATTRIBUTES, getMonitor());
+		iFile = aFile.fetchInfo();
+		assertTrue(iFile.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
+
+		illDir.setAttribute(EFS.ATTRIBUTE_EXECUTABLE, false);
+		llDir.putInfo(illDir, EFS.SET_ATTRIBUTES, getMonitor());
+		iDir = aDir.fetchInfo();
+		assertFalse(iDir.getAttribute(EFS.ATTRIBUTE_EXECUTABLE));
 		if (haveSymlinks()) {
 			//check that link properties are maintained even through putInfo
 			illFile = llFile.fetchInfo();
