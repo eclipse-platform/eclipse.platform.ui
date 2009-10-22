@@ -39,7 +39,9 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
                     // prompting to proceed
                     for (int i = 0; i < targets.length; i++) {
                         ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
-                        RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+                        if (launch != null) {
+                            RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
+                        }
                     }
                 }
             }); 
