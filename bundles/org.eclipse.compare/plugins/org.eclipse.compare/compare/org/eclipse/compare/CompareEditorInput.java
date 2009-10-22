@@ -82,6 +82,7 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.texteditor.ITextEditorExtension3;
 
 
 /**
@@ -318,7 +319,16 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 				}
 			}
 		}
-			
+		
+		if (adapter == ITextEditorExtension3.class) {
+			if (fContentInputPane != null) {
+				Viewer v = fContentInputPane.getViewer();
+				if (v != null) {
+					return Utilities.getAdapter(v, ITextEditorExtension3.class);
+				}
+			}
+		}
+
 		return null;
 	}
 

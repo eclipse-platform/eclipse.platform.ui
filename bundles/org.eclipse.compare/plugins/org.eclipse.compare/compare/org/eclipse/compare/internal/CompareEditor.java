@@ -63,6 +63,7 @@ import org.eclipse.ui.part.EditorPart;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.services.IServiceLocator;
+import org.eclipse.ui.texteditor.ITextEditorExtension3;
 import org.eclipse.ui.views.contentoutline.IContentOutlinePage;
 
 /**
@@ -207,6 +208,10 @@ public class CompareEditor extends EditorPart implements IReusableEditor, ISavea
 		
 		if (key == IEditorInput.class) {
 			return getEditorInput().getAdapter(IEditorInput.class);
+		}
+		
+		if (key == ITextEditorExtension3.class) {
+			return getEditorInput().getAdapter(ITextEditorExtension3.class);
 		}
 
 		return super.getAdapter(key);
