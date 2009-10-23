@@ -16,9 +16,10 @@ import java.util.List;
 
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -38,7 +39,7 @@ import org.eclipse.emf.common.notify.Notifier;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
-public class UIEventsTest extends HeadlessStartupTest {
+public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	class EventTester {
 		String testerName;
@@ -186,23 +187,17 @@ public class UIEventsTest extends HeadlessStartupTest {
 	}
 
 	@Override
-	protected String getAppURI() {
-		return "org.eclipse.e4.ui.tests/xmi/contacts.xmi";
-	}
-
-	@Override
-	protected MPart getFirstPart() {
-		return (MPart) findElement("DetailsView");
-	}
-
-	@Override
-	protected MPart getSecondPart() {
-		return (MPart) findElement("ContactsView");
+	protected MApplicationElement createApplicationElement(
+			IEclipseContext appContext) throws Exception {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(
+				MApplicationFactory.eINSTANCE.createWindow());
+		return application;
 	}
 
 	public void testAllTopics() {
-		IEclipseContext appContext = application.getContext();
-		IEventBroker eventBroker = (IEventBroker) appContext
+		IEventBroker eventBroker = (IEventBroker) applicationContext
 				.get(IEventBroker.class.getName());
 
 		// Create a tester for each topic
@@ -228,7 +223,8 @@ public class UIEventsTest extends HeadlessStartupTest {
 		// Create the test harness and hook up the event publisher
 		MTestHarness allData = MApplicationFactory.eINSTANCE
 				.createTestHarness();
-		((Notifier) allData).eAdapters().add(new UIEventPublisher(appContext));
+		((Notifier) allData).eAdapters().add(
+				new UIEventPublisher(applicationContext));
 
 		// AppElement
 		reset(allTesters);
@@ -300,7 +296,8 @@ public class UIEventsTest extends HeadlessStartupTest {
 
 		// Window tests
 		reset(allTesters);
-		MWindow window = application.getChildren().get(0);
+		MWindow window = ((MApplication) applicationElement).getChildren().get(
+				0);
 		window.setX(1234);
 		window.setY(1234);
 		window.setWidth(1234);

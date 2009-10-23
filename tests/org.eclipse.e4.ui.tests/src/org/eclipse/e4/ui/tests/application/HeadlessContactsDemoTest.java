@@ -13,10 +13,10 @@ package org.eclipse.e4.ui.tests.application;
 
 import org.eclipse.e4.ui.model.application.MPart;
 
-public class HeadlessContactsDemoTest extends HeadlessStartupTest {
+public class HeadlessContactsDemoTest extends HeadlessApplicationTest {
 
 	@Override
-	protected String getAppURI() {
+	protected String getURI() {
 		return "org.eclipse.e4.ui.tests/xmi/contacts.xmi";
 	}
 

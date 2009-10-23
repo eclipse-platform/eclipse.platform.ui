@@ -52,7 +52,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 					.create(parentContext, null);
 
 			createdContext.set(IContextConstants.DEBUG_STRING, element
-					.getClass().getInterfaces()[0].getName());
+					.getClass().getInterfaces()[0].getName()
+					+ " eclipse context"); //$NON-NLS-1$
 			createdContext.set(MApplicationElement.class.getName(), element);
 
 			createdContext.runAndTrack(new Runnable() {
@@ -67,7 +68,25 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 				@Override
 				public String toString() {
-					return IServiceConstants.ACTIVE_PART_ID;
+					return getClass().getName() + '['
+							+ IServiceConstants.ACTIVE_PART_ID + ']';
+				}
+			});
+
+			createdContext.runAndTrack(new Runnable() {
+				public void run() {
+					IEclipseContext childContext = (IEclipseContext) createdContext
+							.getLocal(IContextConstants.ACTIVE_CHILD);
+					if (childContext != null) {
+						parentContext.set(IContextConstants.ACTIVE_CHILD,
+								createdContext);
+					}
+				}
+
+				@Override
+				public String toString() {
+					return getClass().getName() + '['
+							+ IContextConstants.ACTIVE_CHILD + ']';
 				}
 			});
 
@@ -84,9 +103,14 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 				@Override
 				public String toString() {
-					return IServiceConstants.ACTIVE_PART_ID;
+					return getClass().getName() + '['
+							+ IContextConstants.ACTIVE_CHILD + ']';
 				}
 			});
+
+			for (String variable : mcontext.getVariables()) {
+				createdContext.declareModifiable(variable);
+			}
 
 			mcontext.setContext(createdContext);
 		}

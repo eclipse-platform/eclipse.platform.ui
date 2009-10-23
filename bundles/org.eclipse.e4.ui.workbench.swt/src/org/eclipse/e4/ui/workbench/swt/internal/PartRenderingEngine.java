@@ -186,6 +186,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 								.getInstance());
 				lclContext.set(MApplicationElement.class.getName(), element);
 				ctxt.setContext(lclContext);
+
+				// make sure the context knows about these variables that have
+				// been defined in the model
+				for (String variable : ctxt.getVariables()) {
+					lclContext.declareModifiable(variable);
+				}
 			}
 		}
 

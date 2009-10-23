@@ -11,53 +11,24 @@
 
 package org.eclipse.e4.ui.tests.application;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.ISchedulingExecutor;
 import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.services.events.EventBrokerFactory;
 import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleException;
 import org.osgi.service.event.EventAdmin;
 
-public class ContextContentsTest extends TestCase {
-
-	private IEclipseContext osgiContext;
-	private IEclipseContext appContext;
-
-	@Override
-	protected void setUp() throws Exception {
-		osgiContext = createOSGiContext();
-		appContext = createAppContext();
-		super.setUp();
-	}
-
-	static {
-		// we need EventAdmin
-		Bundle bundle = Platform.getBundle("org.eclipse.equinox.event");
-		try {
-			if (bundle.getState() != Bundle.ACTIVE) {
-				bundle.start(Bundle.START_TRANSIENT);
-			}
-		} catch (BundleException e) {
-			throw new RuntimeException(e);
-		}
-	}
+public class ContextContentsTest extends HeadlessStartupTest {
 
 	private void testGet(IEclipseContext eclipseContext, String name,
 			boolean expected) {
@@ -74,7 +45,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_PARENT() {
 		testGet_PARENT(osgiContext, false);
-		testGet_PARENT(appContext, true);
+		testGet_PARENT(applicationContext, true);
 	}
 
 	private void testGet(IEclipseContext eclipseContext, Class<?> cls,
@@ -82,15 +53,15 @@ public class ContextContentsTest extends TestCase {
 		testGet(eclipseContext, cls.getName(), expected);
 	}
 
-	// private void testGet_IEclipseContext(IEclipseContext eclipseContext,
-	// boolean expected) {
-	// testGet(eclipseContext, IEclipseContext.class, expected);
-	// }
-	//
-	// public void testGet_IEclipseContext() {
-	// testGet_IEclipseContext(osgiContext, true);
-	// testGet_IEclipseContext(appContext, true);
-	// }
+	private void testGet_IEclipseContext(IEclipseContext eclipseContext,
+			boolean expected) {
+		testGet(eclipseContext, IEclipseContext.class, expected);
+	}
+
+	public void testGet_IEclipseContext() {
+		testGet_IEclipseContext(osgiContext, true);
+		testGet_IEclipseContext(applicationContext, true);
+	}
 
 	private void testGet_IExtensionRegistry(IEclipseContext eclipseContext,
 			boolean expected) {
@@ -99,7 +70,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IExtensionRegistry() {
 		testGet_IExtensionRegistry(osgiContext, true);
-		testGet_IExtensionRegistry(appContext, true);
+		testGet_IExtensionRegistry(applicationContext, true);
 	}
 
 	private void testGet_EventAdmin(IEclipseContext eclipseContext,
@@ -109,7 +80,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_EventAdmin() {
 		testGet_EventAdmin(osgiContext, true);
-		testGet_EventAdmin(appContext, true);
+		testGet_EventAdmin(applicationContext, true);
 	}
 
 	private void testGet_IAdapterManager(IEclipseContext eclipseContext,
@@ -119,7 +90,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IAdapterManager() {
 		testGet_IAdapterManager(osgiContext, true);
-		testGet_IAdapterManager(appContext, true);
+		testGet_IAdapterManager(applicationContext, true);
 	}
 
 	private void testGet_IPreferencesService(IEclipseContext eclipseContext,
@@ -129,7 +100,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IPreferencesService() {
 		testGet_IPreferencesService(osgiContext, true);
-		testGet_IPreferencesService(appContext, true);
+		testGet_IPreferencesService(applicationContext, true);
 	}
 
 	private void testGet_ISchedulingExecutor(IEclipseContext eclipseContext,
@@ -139,7 +110,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_ISchedulingExecutor() {
 		testGet_ISchedulingExecutor(osgiContext, true);
-		testGet_ISchedulingExecutor(appContext, true);
+		testGet_ISchedulingExecutor(applicationContext, true);
 	}
 
 	private void testGet_IEventBroker(IEclipseContext eclipseContext,
@@ -149,7 +120,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IEventBroker() {
 		testGet_IEventBroker(osgiContext, false);
-		testGet_IEventBroker(appContext, true);
+		testGet_IEventBroker(applicationContext, true);
 	}
 
 	private void testGet_IContributionFactory(IEclipseContext eclipseContext,
@@ -159,7 +130,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IContributionFactory() {
 		testGet_IContributionFactory(osgiContext, false);
-		testGet_IContributionFactory(appContext, true);
+		testGet_IContributionFactory(applicationContext, true);
 	}
 
 	// private void testGet_IContributionFactorySpi(
@@ -169,7 +140,7 @@ public class ContextContentsTest extends TestCase {
 	//
 	// public void testGet_IContributionFactorySpi() {
 	// testGet_IContributionFactorySpi(osgiContext, false);
-	// testGet_IContributionFactorySpi(appContext, true);
+	// testGet_IContributionFactorySpi(applicationContext, true);
 	// }
 
 	private void testGet_IExceptionHandler(IEclipseContext eclipseContext,
@@ -179,7 +150,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IExceptionHandler() {
 		testGet_IExceptionHandler(osgiContext, false);
-		testGet_IExceptionHandler(appContext, true);
+		testGet_IExceptionHandler(applicationContext, true);
 	}
 
 	private void testGet_Logger(IEclipseContext eclipseContext, boolean expected) {
@@ -188,7 +159,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_Logger() {
 		testGet_Logger(osgiContext, false);
-		testGet_Logger(appContext, true);
+		testGet_Logger(applicationContext, true);
 	}
 
 	private void testGet_IStylingEngine(IEclipseContext eclipseContext,
@@ -198,7 +169,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IStylingEngine() {
 		testGet_IStylingEngine(osgiContext, false);
-		testGet_IStylingEngine(appContext, false);
+		testGet_IStylingEngine(applicationContext, false);
 	}
 
 	private void testGet_IPresentationEngine(IEclipseContext eclipseContext,
@@ -208,18 +179,18 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_IPresentationEngine() {
 		testGet_IPresentationEngine(osgiContext, false);
-		testGet_IPresentationEngine(appContext, false);
+		testGet_IPresentationEngine(applicationContext, false);
 	}
 
-	// private void testGet_ECommandService(IEclipseContext eclipseContext,
-	// boolean expected) {
-	// testGet(eclipseContext, ECommandService.class, expected);
-	// }
-	//
-	// public void testGet_ECommandService() {
-	// testGet_ECommandService(osgiContext, true);
-	// testGet_ECommandService(appContext, true);
-	// }
+	private void testGet_ECommandService(IEclipseContext eclipseContext,
+			boolean expected) {
+		testGet(eclipseContext, ECommandService.class, expected);
+	}
+
+	public void testGet_ECommandService() {
+		testGet_ECommandService(osgiContext, false);
+		testGet_ECommandService(applicationContext, true);
+	}
 
 	private void testGet_EHandlerService(IEclipseContext eclipseContext,
 			boolean expected) {
@@ -227,8 +198,8 @@ public class ContextContentsTest extends TestCase {
 	}
 
 	public void testGet_EHandlerService() {
-		testGet_EHandlerService(osgiContext, true);
-		testGet_EHandlerService(appContext, true);
+		testGet_EHandlerService(osgiContext, false);
+		testGet_EHandlerService(applicationContext, true);
 	}
 
 	// private void testGet_EBindingService(IEclipseContext eclipseContext,
@@ -237,8 +208,8 @@ public class ContextContentsTest extends TestCase {
 	// }
 	//
 	// public void testGet_EBindingService() {
-	// testGet_EBindingService(osgiContext, true);
-	// testGet_EBindingService(appContext, true);
+	// testGet_EBindingService(osgiContext, false);
+	// testGet_EBindingService(applicationContext, true);
 	// }
 
 	private void testGet_EContextService(IEclipseContext eclipseContext,
@@ -248,32 +219,7 @@ public class ContextContentsTest extends TestCase {
 
 	public void testGet_EContextService() {
 		testGet_EContextService(osgiContext, true);
-		testGet_EContextService(appContext, true);
-	}
-
-	private IEclipseContext createOSGiContext() {
-		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(Activator.getDefault().getBundle()
-						.getBundleContext());
-		return serviceContext;
-	}
-
-	private IEclipseContext createAppContext() {
-		assertNotNull(osgiContext);
-
-		IEclipseContext appContext = createContext(osgiContext);
-		appContext.set(IEventBroker.class.getName(), EventBrokerFactory
-				.newEventBroker());
-		appContext.set(IContributionFactory.class.getName(), new Object());
-		appContext.set(IExceptionHandler.class.getName(), new Object());
-		appContext.set(Logger.class.getName(), new Object());
-		return appContext;
-	}
-
-	private IEclipseContext createContext(IEclipseContext parent) {
-		IEclipseContext eclipseContext = EclipseContextFactory.create(parent,
-				null);
-		return eclipseContext;
+		testGet_EContextService(applicationContext, true);
 	}
 
 }
