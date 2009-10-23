@@ -12,12 +12,11 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
+import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -49,11 +48,9 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		final MPart part = (MPart) element;
 
 		// Create a context for this part
-		IEclipseContext localContext = EclipseContextFactory.create(
-				parentContext, UISchedulerStrategy.getInstance());
-		localContext.set(IContextConstants.DEBUG_STRING,
-				"PartContext(" + element + ')'); //$NON-NLS-1$
-		part.setContext(localContext);
+		IEclipseContext localContext = Workbench.initializeContext(
+				parentContext, part);
+		Workbench.processHandlers(part);
 
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MPart.class.getName(), part);

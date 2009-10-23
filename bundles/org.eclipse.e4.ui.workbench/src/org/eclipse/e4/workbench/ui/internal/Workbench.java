@@ -312,6 +312,7 @@ public class Workbench implements IWorkbench {
 			initializeContext(workbenchContext, window);
 		}
 
+		processHandlers(workbench);
 		// Hook the global notifications
 		((Notifier) workbench).eAdapters().add(new UIEventPublisher(workbench.getContext()));
 
@@ -337,7 +338,8 @@ public class Workbench implements IWorkbench {
 	 * @param contextModel
 	 *            needs a context created
 	 */
-	public static void initializeContext(IEclipseContext parentContext, MContext contextModel) {
+	public static IEclipseContext initializeContext(IEclipseContext parentContext,
+			MContext contextModel) {
 		final IEclipseContext context;
 		if (contextModel.getContext() != null) {
 			context = contextModel.getContext();
@@ -365,7 +367,7 @@ public class Workbench implements IWorkbench {
 		}
 
 		contextModel.setContext(context);
-		processHandlers(contextModel);
+		return context;
 
 		// NMH: how do we do this now?
 		// take care of generating the contexts.
@@ -412,8 +414,7 @@ public class Workbench implements IWorkbench {
 		return rv;
 	}
 
-	// NMH: how do we do this now?
-	private static void processHandlers(Object me) {
+	public static void processHandlers(Object me) {
 
 		if (me instanceof MHandlerContainer) {
 			MContext contextModel = (MContext) me;
