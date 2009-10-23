@@ -11,7 +11,6 @@
 package org.eclipse.ui.menus;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -159,6 +158,15 @@ public class CommandContributionItem extends ContributionItem {
 
 	private Display display;
 
+	// items contributed
+	private String contributedLabel;
+
+	private ImageDescriptor contributedIcon;
+
+	private ImageDescriptor contributedDisabledIcon;
+
+	private ImageDescriptor contributedHoverIcon;
+
 	/**
 	 * Create a CommandContributionItem to place in a ContributionManager.
 	 * 
@@ -169,6 +177,11 @@ public class CommandContributionItem extends ContributionItem {
 	public CommandContributionItem(
 			CommandContributionItemParameter contributionParameters) {
 		super(contributionParameters.id);
+
+		contributedLabel = contributionParameters.label;
+		contributedIcon = contributionParameters.icon;
+		contributedDisabledIcon = contributionParameters.disabledIcon;
+		contributedHoverIcon = contributionParameters.hoverIcon;
 
 		this.icon = contributionParameters.icon;
 		this.disabledIcon = contributionParameters.disabledIcon;
@@ -347,6 +360,13 @@ public class CommandContributionItem extends ContributionItem {
 						if (parent != null) {
 							parent.update(true);
 						}
+					}
+					if(commandEvent.getCommand().getHandler() == null) {
+						// no handlers. Reset the appearance
+						label = contributedLabel;
+						icon = contributedIcon;
+						disabledIcon = contributedDisabledIcon;
+						hoverIcon = contributedHoverIcon;
 					}
 				}
 				if (commandEvent.getCommand().isDefined()) {

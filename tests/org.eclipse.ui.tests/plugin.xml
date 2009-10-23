@@ -4131,6 +4131,14 @@
                id="popup:org.eclipse.ui.tests.dynamicMenuContribution">
          </dynamic>
       </menuContribution>
+      <menuContribution
+            locationURI="menu:org.eclipse.ui.tests.Bug275126">
+         <command
+               commandId="tests.commands.CCT.cmd1"
+               label="Contributed Label"
+               style="push">
+         </command>
+      </menuContribution>
    </extension>
    <extension
          point="org.eclipse.ui.bindings">

@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.tests.commands;
 
+import java.lang.reflect.Field;
+import java.util.Map;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
@@ -27,10 +30,13 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.jface.action.IContributionItem;
+import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.ISources;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
@@ -39,6 +45,10 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.WorkbenchSourceProvider;
+import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.menus.MenuUtil;
+import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -228,7 +238,77 @@ public class CommandEnablementTest extends UITestCase {
 			}
 		}
 	}
+	
+	class UpdatingHandler extends AbstractHandler implements IElementUpdater {
+		
+		private final String text;
 
+		public UpdatingHandler(String text) {
+			this.text = text;
+		}
+		
+		public void updateElement(UIElement element, Map parameters) {
+			element.setText(text);
+		}
+
+		public Object execute(ExecutionEvent event) {
+			return null;
+		}
+
+	}
+	
+	public void testRestoreContributionUI() throws Exception {
+
+		Field labelField = CommandContributionItem.class.getDeclaredField("label");
+		labelField.setAccessible(true);
+		String menuId = "org.eclipse.ui.tests.Bug275126";
+		MenuManager manager = new MenuManager(null, menuId);
+		IMenuService menuService = (IMenuService) fWorkbench.getService(IMenuService.class);
+		menuService.populateContributionManager(manager, MenuUtil.menuUri(menuId));
+		IContributionItem[] items = manager.getItems();
+		assertTrue(items.length ==1);
+		assertTrue(items[0] instanceof CommandContributionItem);
+		CommandContributionItem item = (CommandContributionItem) items[0];
+
+		String text1 = "text1";
+		String text2 = "text2";
+		
+		// contributed from plugin.xml
+		String contributedLabel = "Contributed Label";
+		
+		// no handler yet
+		assertNull(cmd1.getHandler());
+		assertEquals(contributedLabel, labelField.get(item)); 
+
+		UpdatingHandler handler1 = new UpdatingHandler(text1);
+		activation1 = handlerService.activateHandler(CMD1_ID, handler1, new ActiveContextExpression(CONTEXT_TEST1,
+				new String[] { ISources.ACTIVE_CONTEXT_NAME }));
+		UpdatingHandler handler2 = new UpdatingHandler(text2);
+		activation2 = handlerService.activateHandler(CMD1_ID, handler2, new ActiveContextExpression(CONTEXT_TEST2,
+				new String[] { ISources.ACTIVE_CONTEXT_NAME }));
+
+		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
+		assertEquals(handler1, cmd1.getHandler());
+		assertEquals(text1, labelField.get(item));
+		
+		contextService.deactivateContext(contextActivation1);
+		// back to no handler state
+		assertNull(cmd1.getHandler());
+		assertEquals(contributedLabel, labelField.get(item)); 
+
+		contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
+		assertEquals(handler2, cmd1.getHandler());
+		assertEquals(text2, labelField.get(item));
+
+		// activate both context
+		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
+
+		// both handler activations eval to true, no handler set
+		assertNull(cmd1.getHandler());
+		assertEquals(contributedLabel, labelField.get(item)); 
+
+	}
+	
 	public void testEnablementForNormalHandlers() throws Exception {
 		activation1 = handlerService.activateHandler(CMD1_ID, normalHandler1,
 				new ActiveContextExpression(CONTEXT_TEST1,
