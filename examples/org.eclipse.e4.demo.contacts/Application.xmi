@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
-<org.eclipse.e4.ui.model.application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:org.eclipse.e4.ui.model.application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
-  <children xsi:type="org.eclipse.e4.ui.model.application:Window">
-    <children xsi:type="org.eclipse.e4.ui.model.application:PartSashContainer" horizontal="true">
-      <children xsi:type="org.eclipse.e4.ui.model.application:PartStack">
-        <children xsi:type="org.eclipse.e4.ui.model.application:Part" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
+  <children xsi:type="application:Window">
+    <children xsi:type="application:PartSashContainer" horizontal="true">
+      <children xsi:type="application:PartStack">
+        <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
-      <children xsi:type="org.eclipse.e4.ui.model.application:PartStack">
-        <children xsi:type="org.eclipse.e4.ui.model.application:Part" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+      <children xsi:type="application:PartStack">
+        <children xsi:type="application:Part" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
       <weights>30</weights>
       <weights>70</weights>
@@ -14,13 +14,19 @@
     <variables>selection</variables>
     <variables>input</variables>
     <mainMenu>
-      <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="File">
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
+      <children xsi:type="application:MenuItem" name="File">
+        <children xsi:type="application:MenuItem" name="Exit" command="//@commands.0"/>
       </children>
-      <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Theme">
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Dark Theme" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler"/>
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Bright Theme" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.BrightThemeHandler"/>
+      <children xsi:type="application:MenuItem" name="Theme">
+        <children xsi:type="application:MenuItem" name="Dark Theme" command="//@commands.1"/>
+        <children xsi:type="application:MenuItem" name="Bright Theme" command="//@commands.2"/>
       </children>
     </mainMenu>
   </children>
-</org.eclipse.e4.ui.model.application:Application>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="//@commands.0"/>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler" command="//@commands.1"/>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.BrightThemeHandler" command="//@commands.2"/>
+  <commands id="contacts.exit" commandName="Exit" description=""/>
+  <commands id="contacts.darkTheme" commandName="Dark Theme"/>
+  <commands id="contacts.brightTheme" commandName="Bright Theme" description=""/>
+</application:Application>
