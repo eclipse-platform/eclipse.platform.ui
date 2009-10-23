@@ -18,6 +18,8 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 
@@ -51,6 +53,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  * </ul>
  * </p>
@@ -157,6 +160,16 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * @ordered
 	 */
 	protected MWindow activeChild;
+
+	/**
+	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHandlers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MHandler> handlers;
 
 	/**
 	 * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
@@ -368,6 +381,18 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MHandler> getHandlers() {
+		if (handlers == null) {
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, MApplicationPackage.APPLICATION__HANDLERS);
+		}
+		return handlers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MCommand> getCommands() {
 		if (commands == null) {
 			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, MApplicationPackage.APPLICATION__COMMANDS);
@@ -406,6 +431,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.APPLICATION__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.APPLICATION__HANDLERS:
+				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
 		}
@@ -449,6 +476,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
 				if (resolve) return getActiveChild();
 				return basicGetActiveChild();
+			case MApplicationPackage.APPLICATION__HANDLERS:
+				return getHandlers();
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return getCommands();
 		}
@@ -485,6 +514,10 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return;
 			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
 				setActiveChild((MWindow)newValue);
+				return;
+			case MApplicationPackage.APPLICATION__HANDLERS:
+				getHandlers().clear();
+				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				getCommands().clear();
@@ -523,6 +556,9 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
 				setActiveChild((MWindow)null);
 				return;
+			case MApplicationPackage.APPLICATION__HANDLERS:
+				getHandlers().clear();
+				return;
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				getCommands().clear();
 				return;
@@ -552,6 +588,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return children != null && !children.isEmpty();
 			case MApplicationPackage.APPLICATION__ACTIVE_CHILD:
 				return activeChild != null;
+			case MApplicationPackage.APPLICATION__HANDLERS:
+				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
 		}
@@ -587,6 +625,12 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				default: return -1;
 			}
 		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.APPLICATION__HANDLERS: return MApplicationPackage.HANDLER_CONTAINER__HANDLERS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -616,6 +660,12 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.APPLICATION__CHILDREN;
 				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.APPLICATION__ACTIVE_CHILD;
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.APPLICATION__HANDLERS;
 				default: return -1;
 			}
 		}

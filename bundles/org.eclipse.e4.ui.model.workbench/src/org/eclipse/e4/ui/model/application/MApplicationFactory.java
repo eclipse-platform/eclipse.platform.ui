@@ -48,6 +48,15 @@ public interface MApplicationFactory extends EFactory {
 	MCommand createCommand();
 
 	/**
+	 * Returns a new object of class '<em>Handler</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handler</em>'.
+	 * @generated
+	 */
+	MHandler createHandler();
+
+	/**
 	 * Returns a new object of class '<em>Input</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

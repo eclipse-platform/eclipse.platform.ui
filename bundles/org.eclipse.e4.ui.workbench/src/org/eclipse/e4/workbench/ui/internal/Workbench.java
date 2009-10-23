@@ -14,9 +14,9 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.io.IOException;
 import java.net.URLConnection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
-import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -25,6 +25,7 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
@@ -39,6 +40,8 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -217,9 +220,6 @@ public class Workbench implements IWorkbench {
 
 		init();
 
-		// Hook the global notifications
-		((Notifier) workbench).eAdapters().add(new UIEventPublisher(workbench.getContext()));
-
 		return workbench;
 	}
 
@@ -303,8 +303,7 @@ public class Workbench implements IWorkbench {
 		for (MCommand cmd : commands) {
 			String id = cmd.getId();
 			String name = cmd.getCommandName();
-			Command command = cs.getCommand(id);
-			command.define(name, null, cat);
+			cs.defineCommand(id, name, null, cat, null);
 		}
 
 		// take care of generating the contexts.
@@ -312,6 +311,9 @@ public class Workbench implements IWorkbench {
 		for (MWindow window : windows) {
 			initializeContext(workbenchContext, window);
 		}
+
+		// Hook the global notifications
+		((Notifier) workbench).eAdapters().add(new UIEventPublisher(workbench.getContext()));
 
 		// NMH: how do we do this now?
 		// workbench.eAdapters().add(new AdapterImpl() {
@@ -363,6 +365,7 @@ public class Workbench implements IWorkbench {
 		}
 
 		contextModel.setContext(context);
+		processHandlers(contextModel);
 
 		// NMH: how do we do this now?
 		// take care of generating the contexts.
@@ -410,24 +413,38 @@ public class Workbench implements IWorkbench {
 	}
 
 	// NMH: how do we do this now?
-	// private void processHandlers(MPart part) {
-	// IEclipseContext context = part.getContext();
-	// if (context != null) {
-	// EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
-	// EList<MHandler> handlers = part.getHandlers();
-	// for (MHandler handler : handlers) {
-	// String commandId = handler.getCommand().getId();
-	// if (handler.getObject() == null) {
-	// handler.setObject(contributionFactory.create(handler.getURI(), context));
-	// }
-	// hs.activateHandler(commandId, handler.getObject());
-	// }
-	// }
-	// EList<MPart> children = part.getChildren();
-	// for (MPart child : children) {
-	// processHandlers((MPart) child);
-	// }
-	// }
+	private static void processHandlers(Object me) {
+
+		if (me instanceof MHandlerContainer) {
+			MContext contextModel = (MContext) me;
+			MHandlerContainer container = (MHandlerContainer) contextModel;
+			IEclipseContext context = contextModel.getContext();
+			if (context == null) {
+				return;
+			}
+			IContributionFactory cf = (IContributionFactory) context.get(IContributionFactory.class
+					.getName());
+			if (context != null) {
+				EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
+				EList<MHandler> handlers = container.getHandlers();
+				for (MHandler handler : handlers) {
+					String commandId = handler.getCommand().getId();
+					if (handler.getObject() == null) {
+						handler.setObject(cf.create(handler.getURI(), context));
+					}
+					hs.activateHandler(commandId, handler.getObject());
+				}
+			}
+		}
+		if (me instanceof MElementContainer<?>) {
+			EList children = ((MElementContainer) me).getChildren();
+			Iterator i = children.iterator();
+			while (i.hasNext()) {
+				MUIElement e = (MUIElement) i.next();
+				processHandlers(e);
+			}
+		}
+	}
 
 	public void createGUI(MUIElement uiRoot) {
 		if (renderer == null) {

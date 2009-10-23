@@ -27,7 +27,7 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MIDEWindow extends MTrimStructure<MVSCElement>, MUIItem, MContext {
+public interface MIDEWindow extends MTrimStructure<MVSCElement>, MUIItem, MContext, MHandlerContainer {
 	/**
 	 * Returns the value of the '<em><b>Main Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->

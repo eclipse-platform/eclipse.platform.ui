@@ -17,6 +17,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MIDEWindow;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MUIItem;
@@ -24,6 +26,7 @@ import org.eclipse.e4.ui.model.application.MVSCElement;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -33,6 +36,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -46,6 +51,7 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getMainMenu <em>Main Menu</em>}</li>
  * </ul>
  * </p>
@@ -142,6 +148,16 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHandlers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MHandler> handlers;
 
 	/**
 	 * The cached value of the '{@link #getMainMenu() <em>Main Menu</em>}' reference.
@@ -273,6 +289,18 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MHandler> getHandlers() {
+		if (handlers == null) {
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, MApplicationPackage.IDE_WINDOW__HANDLERS);
+		}
+		return handlers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MMenu getMainMenu() {
 		if (mainMenu != null && ((EObject)mainMenu).eIsProxy()) {
 			InternalEObject oldMainMenu = (InternalEObject)mainMenu;
@@ -312,6 +340,20 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 	 * @generated
 	 */
 	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MApplicationPackage.IDE_WINDOW__HANDLERS:
+				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case MApplicationPackage.IDE_WINDOW__NAME:
@@ -324,6 +366,8 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				return getContext();
 			case MApplicationPackage.IDE_WINDOW__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.IDE_WINDOW__HANDLERS:
+				return getHandlers();
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				if (resolve) return getMainMenu();
 				return basicGetMainMenu();
@@ -356,6 +400,10 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
 				return;
+			case MApplicationPackage.IDE_WINDOW__HANDLERS:
+				getHandlers().clear();
+				getHandlers().addAll((Collection<? extends MHandler>)newValue);
+				return;
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)newValue);
 				return;
@@ -386,6 +434,9 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 			case MApplicationPackage.IDE_WINDOW__VARIABLES:
 				getVariables().clear();
 				return;
+			case MApplicationPackage.IDE_WINDOW__HANDLERS:
+				getHandlers().clear();
+				return;
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)null);
 				return;
@@ -411,6 +462,8 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.IDE_WINDOW__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.IDE_WINDOW__HANDLERS:
+				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				return mainMenu != null;
 		}
@@ -439,6 +492,12 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				default: return -1;
 			}
 		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.IDE_WINDOW__HANDLERS: return MApplicationPackage.HANDLER_CONTAINER__HANDLERS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -461,6 +520,12 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.IDE_WINDOW__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.IDE_WINDOW__VARIABLES;
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.IDE_WINDOW__HANDLERS;
 				default: return -1;
 			}
 		}

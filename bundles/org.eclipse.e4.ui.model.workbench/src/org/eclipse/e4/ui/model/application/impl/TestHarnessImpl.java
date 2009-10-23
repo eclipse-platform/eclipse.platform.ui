@@ -49,10 +49,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getCommandURI <em>Command URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getImpl <em>Impl</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getArgs <em>Args</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getCommandName <em>Command Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getURI <em>URI</em>}</li>
@@ -81,56 +79,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  */
 public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarness {
 	/**
-	 * The default value of the '{@link #getCommandURI() <em>Command URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getCommandURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String COMMAND_URI_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getCommandURI() <em>Command URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getCommandURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected String commandURI = COMMAND_URI_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getImpl() <em>Impl</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getImpl()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object IMPL_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getImpl() <em>Impl</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getImpl()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object impl = IMPL_EDEFAULT;
-
-	/**
-	 * The cached value of the '{@link #getArgs() <em>Args</em>}' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getArgs()
-	 * @generated
-	 * @ordered
-	 */
-	protected EList<String> args;
-
-	/**
 	 * The default value of the '{@link #getCommandName() <em>Command Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -149,6 +97,26 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * @ordered
 	 */
 	protected String commandName = COMMAND_NAME_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String DESCRIPTION_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getDescription() <em>Description</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescription()
+	 * @generated
+	 * @ordered
+	 */
+	protected String description = DESCRIPTION_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -544,60 +512,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getCommandURI() {
-		return commandURI;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setCommandURI(String newCommandURI) {
-		String oldCommandURI = commandURI;
-		commandURI = newCommandURI;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__COMMAND_URI, oldCommandURI, commandURI));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getImpl() {
-		return impl;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setImpl(Object newImpl) {
-		Object oldImpl = impl;
-		impl = newImpl;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__IMPL, oldImpl, impl));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<String> getArgs() {
-		if (args == null) {
-			args = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.TEST_HARNESS__ARGS);
-		}
-		return args;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public String getCommandName() {
 		return commandName;
 	}
@@ -612,6 +526,27 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		commandName = newCommandName;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__COMMAND_NAME, oldCommandName, commandName));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getDescription() {
+		return description;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDescription(String newDescription) {
+		String oldDescription = description;
+		description = newDescription;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__DESCRIPTION, oldDescription, description));
 	}
 
 	/**
@@ -1132,14 +1067,10 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.TEST_HARNESS__COMMAND_URI:
-				return getCommandURI();
-			case MApplicationPackage.TEST_HARNESS__IMPL:
-				return getImpl();
-			case MApplicationPackage.TEST_HARNESS__ARGS:
-				return getArgs();
 			case MApplicationPackage.TEST_HARNESS__COMMAND_NAME:
 				return getCommandName();
+			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
+				return getDescription();
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				return getContext();
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
@@ -1196,18 +1127,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.TEST_HARNESS__COMMAND_URI:
-				setCommandURI((String)newValue);
-				return;
-			case MApplicationPackage.TEST_HARNESS__IMPL:
-				setImpl(newValue);
-				return;
-			case MApplicationPackage.TEST_HARNESS__ARGS:
-				getArgs().clear();
-				getArgs().addAll((Collection<? extends String>)newValue);
-				return;
 			case MApplicationPackage.TEST_HARNESS__COMMAND_NAME:
 				setCommandName((String)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
+				setDescription((String)newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -1286,17 +1210,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.TEST_HARNESS__COMMAND_URI:
-				setCommandURI(COMMAND_URI_EDEFAULT);
-				return;
-			case MApplicationPackage.TEST_HARNESS__IMPL:
-				setImpl(IMPL_EDEFAULT);
-				return;
-			case MApplicationPackage.TEST_HARNESS__ARGS:
-				getArgs().clear();
-				return;
 			case MApplicationPackage.TEST_HARNESS__COMMAND_NAME:
 				setCommandName(COMMAND_NAME_EDEFAULT);
+				return;
+			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
+				setDescription(DESCRIPTION_EDEFAULT);
 				return;
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
@@ -1373,14 +1291,10 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.TEST_HARNESS__COMMAND_URI:
-				return COMMAND_URI_EDEFAULT == null ? commandURI != null : !COMMAND_URI_EDEFAULT.equals(commandURI);
-			case MApplicationPackage.TEST_HARNESS__IMPL:
-				return IMPL_EDEFAULT == null ? impl != null : !IMPL_EDEFAULT.equals(impl);
-			case MApplicationPackage.TEST_HARNESS__ARGS:
-				return args != null && !args.isEmpty();
 			case MApplicationPackage.TEST_HARNESS__COMMAND_NAME:
 				return COMMAND_NAME_EDEFAULT == null ? commandName != null : !COMMAND_NAME_EDEFAULT.equals(commandName);
+			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
+				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
@@ -1436,10 +1350,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MCommand.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.TEST_HARNESS__COMMAND_URI: return MApplicationPackage.COMMAND__COMMAND_URI;
-				case MApplicationPackage.TEST_HARNESS__IMPL: return MApplicationPackage.COMMAND__IMPL;
-				case MApplicationPackage.TEST_HARNESS__ARGS: return MApplicationPackage.COMMAND__ARGS;
 				case MApplicationPackage.TEST_HARNESS__COMMAND_NAME: return MApplicationPackage.COMMAND__COMMAND_NAME;
+				case MApplicationPackage.TEST_HARNESS__DESCRIPTION: return MApplicationPackage.COMMAND__DESCRIPTION;
 				default: return -1;
 			}
 		}
@@ -1516,10 +1428,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MCommand.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.COMMAND__COMMAND_URI: return MApplicationPackage.TEST_HARNESS__COMMAND_URI;
-				case MApplicationPackage.COMMAND__IMPL: return MApplicationPackage.TEST_HARNESS__IMPL;
-				case MApplicationPackage.COMMAND__ARGS: return MApplicationPackage.TEST_HARNESS__ARGS;
 				case MApplicationPackage.COMMAND__COMMAND_NAME: return MApplicationPackage.TEST_HARNESS__COMMAND_NAME;
+				case MApplicationPackage.COMMAND__DESCRIPTION: return MApplicationPackage.TEST_HARNESS__DESCRIPTION;
 				default: return -1;
 			}
 		}
@@ -1597,14 +1507,10 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (commandURI: "); //$NON-NLS-1$
-		result.append(commandURI);
-		result.append(", impl: "); //$NON-NLS-1$
-		result.append(impl);
-		result.append(", args: "); //$NON-NLS-1$
-		result.append(args);
-		result.append(", commandName: "); //$NON-NLS-1$
+		result.append(" (commandName: "); //$NON-NLS-1$
 		result.append(commandName);
+		result.append(", description: "); //$NON-NLS-1$
+		result.append(description);
 		result.append(", context: "); //$NON-NLS-1$
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$

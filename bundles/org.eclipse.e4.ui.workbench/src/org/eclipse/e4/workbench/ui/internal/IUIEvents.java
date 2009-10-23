@@ -57,12 +57,8 @@ public interface IUIEvents {
 		public static final String Topic = UITopicBase + '/'
 				+ MApplicationPackage.Literals.COMMAND.getName();
 
-		public static final String URI = MApplicationPackage.Literals.COMMAND__COMMAND_URI
-				.getName();
 		public static final String Name = MApplicationPackage.Literals.COMMAND__COMMAND_NAME
 				.getName();
-		public static final String Impl = MApplicationPackage.Literals.COMMAND__IMPL.getName();
-		public static final String Args = MApplicationPackage.Literals.COMMAND__ARGS.getName();
 	}
 
 	public static interface Context {

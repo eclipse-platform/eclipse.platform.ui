@@ -28,6 +28,8 @@ import org.eclipse.e4.ui.model.application.MEditorStack;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MGenericTile;
 import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MIDEWindow;
 import org.eclipse.e4.ui.model.application.MInput;
 import org.eclipse.e4.ui.model.application.MItem;
@@ -102,6 +104,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass commandEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass handlerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass handlerContainerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -514,7 +530,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getCommand_CommandURI() {
+	public EAttribute getCommand_CommandName() {
 		return (EAttribute)commandEClass.getEStructuralFeatures().get(0);
 	}
 
@@ -523,7 +539,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getCommand_Impl() {
+	public EAttribute getCommand_Description() {
 		return (EAttribute)commandEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -532,8 +548,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getCommand_Args() {
-		return (EAttribute)commandEClass.getEStructuralFeatures().get(2);
+	public EClass getHandler() {
+		return handlerEClass;
 	}
 
 	/**
@@ -541,8 +557,26 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getCommand_CommandName() {
-		return (EAttribute)commandEClass.getEStructuralFeatures().get(3);
+	public EReference getHandler_Command() {
+		return (EReference)handlerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getHandlerContainer() {
+		return handlerContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getHandlerContainer_Handlers() {
+		return (EReference)handlerContainerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -919,17 +953,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getHandledItem_Menu() {
-		return (EReference)handledItemEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getHandledItem_WbCommand() {
-		return (EAttribute)handledItemEClass.getEStructuralFeatures().get(2);
+		return (EAttribute)handledItemEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -938,7 +963,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	public EReference getHandledItem_Parameters() {
-		return (EReference)handledItemEClass.getEStructuralFeatures().get(3);
+		return (EReference)handledItemEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1277,10 +1302,14 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(contributionEClass, CONTRIBUTION__PERSISTED_STATE);
 
 		commandEClass = createEClass(COMMAND);
-		createEAttribute(commandEClass, COMMAND__COMMAND_URI);
-		createEAttribute(commandEClass, COMMAND__IMPL);
-		createEAttribute(commandEClass, COMMAND__ARGS);
 		createEAttribute(commandEClass, COMMAND__COMMAND_NAME);
+		createEAttribute(commandEClass, COMMAND__DESCRIPTION);
+
+		handlerEClass = createEClass(HANDLER);
+		createEReference(handlerEClass, HANDLER__COMMAND);
+
+		handlerContainerEClass = createEClass(HANDLER_CONTAINER);
+		createEReference(handlerContainerEClass, HANDLER_CONTAINER__HANDLERS);
 
 		inputEClass = createEClass(INPUT);
 		createEAttribute(inputEClass, INPUT__INPUT_URI);
@@ -1337,7 +1366,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		handledItemEClass = createEClass(HANDLED_ITEM);
 		createEReference(handledItemEClass, HANDLED_ITEM__COMMAND);
-		createEReference(handledItemEClass, HANDLED_ITEM__MENU);
 		createEAttribute(handledItemEClass, HANDLED_ITEM__WB_COMMAND);
 		createEReference(handledItemEClass, HANDLED_ITEM__PARAMETERS);
 
@@ -1438,6 +1466,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		// Add supertypes to classes
 		contributionEClass.getESuperTypes().add(this.getApplicationElement());
 		commandEClass.getESuperTypes().add(this.getApplicationElement());
+		handlerEClass.getESuperTypes().add(this.getContribution());
 		parameterEClass.getESuperTypes().add(this.getApplicationElement());
 		uiElementEClass.getESuperTypes().add(this.getApplicationElement());
 		g1 = createEGenericType(this.getApplicationElement());
@@ -1477,23 +1506,24 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g2 = createEGenericType(this.getWindow());
 		g1.getETypeArguments().add(g2);
 		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getHandlerContainer());
+		applicationEClass.getEGenericSuperTypes().add(g1);
 		itemEClass.getESuperTypes().add(this.getUIElement());
 		itemEClass.getESuperTypes().add(this.getUIItem());
-		itemEClass.getESuperTypes().add(this.getContribution());
 		handledItemEClass.getESuperTypes().add(this.getItem());
-		menuItemEClass.getESuperTypes().add(this.getItem());
 		menuItemEClass.getESuperTypes().add(this.getMenu());
+		menuItemEClass.getESuperTypes().add(this.getHandledItem());
 		g1 = createEGenericType(this.getUIElement());
 		menuEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getMenuItem());
 		g1.getETypeArguments().add(g2);
 		menuEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getItem());
-		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getMenuItem());
 		g1.getETypeArguments().add(g2);
+		toolItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getHandledItem());
 		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getUIElement());
 		toolBarEClass.getEGenericSuperTypes().add(g1);
@@ -1506,6 +1536,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass.getESuperTypes().add(this.getContext());
 		partEClass.getESuperTypes().add(this.getPSCElement());
 		partEClass.getESuperTypes().add(this.getUIItem());
+		partEClass.getESuperTypes().add(this.getHandlerContainer());
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getPart());
 		g1.getETypeArguments().add(g2);
@@ -1529,6 +1560,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(this.getContext());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getUIElement());
+		windowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getHandlerContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		vscElementEClass.getESuperTypes().add(this.getUIElement());
 		viewEClass.getESuperTypes().add(this.getPart());
@@ -1599,6 +1632,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		ideWindowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getContext());
 		ideWindowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getHandlerContainer());
+		ideWindowEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(v____________Abstract_____________VEClass, MV____________Abstract_____________V.class, "V____________Abstract_____________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1612,10 +1647,14 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getContribution_PersistedState(), ecorePackage.getEString(), "persistedState", null, 0, 1, MContribution.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(commandEClass, MCommand.class, "Command", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getCommand_CommandURI(), ecorePackage.getEString(), "commandURI", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCommand_Impl(), ecorePackage.getEJavaObject(), "impl", null, 0, 1, MCommand.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getCommand_Args(), ecorePackage.getEString(), "args", null, 0, -1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getCommand_CommandName(), ecorePackage.getEString(), "commandName", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getCommand_Description(), ecorePackage.getEString(), "description", null, 0, 1, MCommand.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(handlerEClass, MHandler.class, "Handler", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getHandler_Command(), this.getCommand(), null, "command", null, 1, 1, MHandler.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(handlerContainerEClass, MHandlerContainer.class, "HandlerContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getHandlerContainer_Handlers(), this.getHandler(), null, "handlers", null, 0, -1, MHandlerContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(inputEClass, MInput.class, "Input", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getInput_InputURI(), ecorePackage.getEString(), "inputURI", null, 0, 1, MInput.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1689,7 +1728,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(handledItemEClass, MHandledItem.class, "HandledItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getHandledItem_Command(), this.getCommand(), null, "command", null, 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEReference(getHandledItem_Menu(), this.getMenu(), null, "menu", null, 0, 1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getHandledItem_WbCommand(), this.getParameterizedCommand(), "wbCommand", null, 0, 1, MHandledItem.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getHandledItem_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, MHandledItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 

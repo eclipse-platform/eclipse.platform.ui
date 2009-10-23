@@ -186,40 +186,22 @@ public interface MApplicationPackage extends EPackage {
 	int COMMAND__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Command URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND__COMMAND_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Impl</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND__IMPL = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Args</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND__ARGS = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int COMMAND__COMMAND_NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int COMMAND__COMMAND_NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__DESCRIPTION = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The number of structural features of the '<em>Command</em>' class.
@@ -228,7 +210,99 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int COMMAND_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int COMMAND_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.HandlerImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
+	 * @generated
+	 */
+	int HANDLER = 4;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__ID = CONTRIBUTION__ID;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__URI = CONTRIBUTION__URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__OBJECT = CONTRIBUTION__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__COMMAND = CONTRIBUTION_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Handler</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
+	 * @generated
+	 */
+	int HANDLER_CONTAINER = 5;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER_CONTAINER__HANDLERS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Handler Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER_CONTAINER_FEATURE_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.InputImpl <em>Input</em>}' class.
@@ -238,7 +312,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getInput()
 	 * @generated
 	 */
-	int INPUT = 4;
+	int INPUT = 6;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -275,7 +349,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
 	 * @generated
 	 */
-	int PARAMETER = 5;
+	int PARAMETER = 7;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -321,7 +395,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUIItem()
 	 * @generated
 	 */
-	int UI_ITEM = 6;
+	int UI_ITEM = 8;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -367,7 +441,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUIElement()
 	 * @generated
 	 */
-	int UI_ELEMENT = 7;
+	int UI_ELEMENT = 9;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -431,7 +505,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 8;
+	int CONTEXT = 10;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -468,7 +542,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 	 * @generated
 	 */
-	int VTESTING_V = 9;
+	int VTESTING_V = 11;
 
 	/**
 	 * The number of structural features of the '<em>VTesting V</em>' class.
@@ -487,7 +561,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 	 * @generated
 	 */
-	int TEST_HARNESS = 10;
+	int TEST_HARNESS = 12;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -499,40 +573,22 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS__ID = APPLICATION_ELEMENT__ID;
 
 	/**
-	 * The feature id for the '<em><b>Command URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__COMMAND_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Impl</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__IMPL = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Args</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__ARGS = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
 	 * The feature id for the '<em><b>Command Name</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__COMMAND_NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int TEST_HARNESS__COMMAND_NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__DESCRIPTION = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -541,7 +597,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CONTEXT = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int TEST_HARNESS__CONTEXT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -550,7 +606,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VARIABLES = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
+	int TEST_HARNESS__VARIABLES = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>URI</b></em>' attribute.
@@ -559,7 +615,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__URI = APPLICATION_ELEMENT_FEATURE_COUNT + 6;
+	int TEST_HARNESS__URI = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
@@ -568,7 +624,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__OBJECT = APPLICATION_ELEMENT_FEATURE_COUNT + 7;
+	int TEST_HARNESS__OBJECT = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
@@ -577,7 +633,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__PERSISTED_STATE = APPLICATION_ELEMENT_FEATURE_COUNT + 8;
+	int TEST_HARNESS__PERSISTED_STATE = APPLICATION_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -586,7 +642,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__WIDGET = APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	int TEST_HARNESS__WIDGET = APPLICATION_ELEMENT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Factory</b></em>' attribute.
@@ -595,7 +651,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__FACTORY = APPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	int TEST_HARNESS__FACTORY = APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -604,7 +660,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 11;
+	int TEST_HARNESS__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -613,7 +669,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 12;
+	int TEST_HARNESS__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -622,7 +678,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 13;
+	int TEST_HARNESS__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -631,7 +687,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 14;
+	int TEST_HARNESS__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Tag</b></em>' attribute.
@@ -640,7 +696,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 15;
+	int TEST_HARNESS__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -649,7 +705,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 16;
+	int TEST_HARNESS__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -658,7 +714,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__INPUT_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 17;
+	int TEST_HARNESS__INPUT_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -667,7 +723,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__DIRTY = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
+	int TEST_HARNESS__DIRTY = APPLICATION_ELEMENT_FEATURE_COUNT + 16;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -676,7 +732,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 19;
+	int TEST_HARNESS__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -685,7 +741,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ICON_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 20;
+	int TEST_HARNESS__ICON_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -694,7 +750,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TOOLTIP = APPLICATION_ELEMENT_FEATURE_COUNT + 21;
+	int TEST_HARNESS__TOOLTIP = APPLICATION_ELEMENT_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -703,7 +759,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ENABLED = APPLICATION_ELEMENT_FEATURE_COUNT + 22;
+	int TEST_HARNESS__ENABLED = APPLICATION_ELEMENT_FEATURE_COUNT + 20;
 
 	/**
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
@@ -712,7 +768,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SELECTED = APPLICATION_ELEMENT_FEATURE_COUNT + 23;
+	int TEST_HARNESS__SELECTED = APPLICATION_ELEMENT_FEATURE_COUNT + 21;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -721,7 +777,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SEPARATOR = APPLICATION_ELEMENT_FEATURE_COUNT + 24;
+	int TEST_HARNESS__SEPARATOR = APPLICATION_ELEMENT_FEATURE_COUNT + 22;
 
 	/**
 	 * The number of structural features of the '<em>Test Harness</em>' class.
@@ -730,7 +786,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 25;
+	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 23;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}' class.
@@ -740,7 +796,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________AbstractContainers__________V()
 	 * @generated
 	 */
-	int VABSTRACT_CONTAINERS_V = 11;
+	int VABSTRACT_CONTAINERS_V = 13;
 
 	/**
 	 * The number of structural features of the '<em>VAbstract Containers V</em>' class.
@@ -759,7 +815,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getElementContainer()
 	 * @generated
 	 */
-	int ELEMENT_CONTAINER = 12;
+	int ELEMENT_CONTAINER = 14;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -841,7 +897,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getGenericTile()
 	 * @generated
 	 */
-	int GENERIC_TILE = 13;
+	int GENERIC_TILE = 15;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -941,7 +997,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimStructure()
 	 * @generated
 	 */
-	int TRIM_STRUCTURE = 14;
+	int TRIM_STRUCTURE = 16;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1059,7 +1115,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________RCP_______________V()
 	 * @generated
 	 */
-	int VRCP_V = 15;
+	int VRCP_V = 17;
 
 	/**
 	 * The number of structural features of the '<em>VRCP V</em>' class.
@@ -1078,7 +1134,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
 	 * @generated
 	 */
-	int APPLICATION = 16;
+	int APPLICATION = 18;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -1162,13 +1218,22 @@ public interface MApplicationPackage extends EPackage {
 	int APPLICATION__ACTIVE_CHILD = CONTEXT_FEATURE_COUNT + 6;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__HANDLERS = CONTEXT_FEATURE_COUNT + 7;
+
+	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 7;
+	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -1177,7 +1242,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 8;
+	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 9;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ItemImpl <em>Item</em>}' class.
@@ -1187,7 +1252,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItem()
 	 * @generated
 	 */
-	int ITEM = 17;
+	int ITEM = 19;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1262,40 +1327,13 @@ public interface MApplicationPackage extends EPackage {
 	int ITEM__TOOLTIP = UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__URI = UI_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__OBJECT = UI_ELEMENT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__PERSISTED_STATE = UI_ELEMENT_FEATURE_COUNT + 5;
-
-	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__ENABLED = UI_ELEMENT_FEATURE_COUNT + 6;
+	int ITEM__ENABLED = UI_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
@@ -1304,7 +1342,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__SELECTED = UI_ELEMENT_FEATURE_COUNT + 7;
+	int ITEM__SELECTED = UI_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -1313,7 +1351,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__SEPARATOR = UI_ELEMENT_FEATURE_COUNT + 8;
+	int ITEM__SEPARATOR = UI_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Item</em>' class.
@@ -1322,7 +1360,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 9;
+	int ITEM_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 6;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl <em>Handled Item</em>}' class.
@@ -1332,7 +1370,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
 	 * @generated
 	 */
-	int HANDLED_ITEM = 18;
+	int HANDLED_ITEM = 20;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1407,33 +1445,6 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM__TOOLTIP = ITEM__TOOLTIP;
 
 	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__URI = ITEM__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__OBJECT = ITEM__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__PERSISTED_STATE = ITEM__PERSISTED_STATE;
-
-	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1470,22 +1481,13 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM__COMMAND = ITEM_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Menu</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__MENU = ITEM_FEATURE_COUNT + 1;
-
-	/**
 	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__WB_COMMAND = ITEM_FEATURE_COUNT + 2;
+	int HANDLED_ITEM__WB_COMMAND = ITEM_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
@@ -1494,7 +1496,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__PARAMETERS = ITEM_FEATURE_COUNT + 3;
+	int HANDLED_ITEM__PARAMETERS = ITEM_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Handled Item</em>' class.
@@ -1503,7 +1505,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 4;
+	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl <em>Menu Item</em>}' class.
@@ -1513,160 +1515,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenuItem()
 	 * @generated
 	 */
-	int MENU_ITEM = 19;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ID = ITEM__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__WIDGET = ITEM__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__FACTORY = ITEM__FACTORY;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__VISIBLE = ITEM__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__PARENT = ITEM__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__NAME = ITEM__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ICON_URI = ITEM__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__TOOLTIP = ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__URI = ITEM__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__OBJECT = ITEM__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__PERSISTED_STATE = ITEM__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ENABLED = ITEM__ENABLED;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__SELECTED = ITEM__SELECTED;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__SEPARATOR = ITEM__SEPARATOR;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__CHILDREN = ITEM_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ACTIVE_CHILD = ITEM_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Menu Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
+	int MENU_ITEM = 21;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuImpl <em>Menu</em>}' class.
@@ -1676,7 +1525,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenu()
 	 * @generated
 	 */
-	int MENU = 20;
+	int MENU = 22;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1751,23 +1600,13 @@ public interface MApplicationPackage extends EPackage {
 	int MENU_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl <em>Tool Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ToolItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolItem()
-	 * @generated
-	 */
-	int TOOL_ITEM = 21;
-
-	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__ID = ITEM__ID;
+	int MENU_ITEM__ID = MENU__ID;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1776,7 +1615,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__WIDGET = ITEM__WIDGET;
+	int MENU_ITEM__WIDGET = MENU__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Factory</b></em>' attribute.
@@ -1785,7 +1624,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__FACTORY = ITEM__FACTORY;
+	int MENU_ITEM__FACTORY = MENU__FACTORY;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1794,7 +1633,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__VISIBLE = ITEM__VISIBLE;
+	int MENU_ITEM__VISIBLE = MENU__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -1803,88 +1642,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__PARENT = ITEM__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__NAME = ITEM__NAME;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__ICON_URI = ITEM__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__TOOLTIP = ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__URI = ITEM__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__OBJECT = ITEM__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__PERSISTED_STATE = ITEM__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__ENABLED = ITEM__ENABLED;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__SELECTED = ITEM__SELECTED;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__SEPARATOR = ITEM__SEPARATOR;
+	int MENU_ITEM__PARENT = MENU__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1893,7 +1651,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__CHILDREN = ITEM_FEATURE_COUNT + 0;
+	int MENU_ITEM__CHILDREN = MENU__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -1902,7 +1660,251 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__ACTIVE_CHILD = ITEM_FEATURE_COUNT + 1;
+	int MENU_ITEM__ACTIVE_CHILD = MENU__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__NAME = MENU_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__ICON_URI = MENU_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__TOOLTIP = MENU_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__ENABLED = MENU_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__SELECTED = MENU_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__SEPARATOR = MENU_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__COMMAND = MENU_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__WB_COMMAND = MENU_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__PARAMETERS = MENU_FEATURE_COUNT + 8;
+
+	/**
+	 * The number of structural features of the '<em>Menu Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM_FEATURE_COUNT = MENU_FEATURE_COUNT + 9;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl <em>Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolItem()
+	 * @generated
+	 */
+	int TOOL_ITEM = 23;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ID = ELEMENT_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__WIDGET = ELEMENT_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__FACTORY = ELEMENT_CONTAINER__FACTORY;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__PARENT = ELEMENT_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__NAME = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ICON_URI = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__TOOLTIP = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ENABLED = ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__SELECTED = ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__SEPARATOR = ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__COMMAND = ELEMENT_CONTAINER_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__WB_COMMAND = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__PARAMETERS = ELEMENT_CONTAINER_FEATURE_COUNT + 8;
 
 	/**
 	 * The number of structural features of the '<em>Tool Item</em>' class.
@@ -1911,7 +1913,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
+	int TOOL_ITEM_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 9;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl <em>Tool Bar</em>}' class.
@@ -1921,7 +1923,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolBar()
 	 * @generated
 	 */
-	int TOOL_BAR = 22;
+	int TOOL_BAR = 24;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2003,7 +2005,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPSCElement()
 	 * @generated
 	 */
-	int PSC_ELEMENT = 23;
+	int PSC_ELEMENT = 25;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2067,7 +2069,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPart()
 	 * @generated
 	 */
-	int PART = 24;
+	int PART = 26;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2187,13 +2189,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__HANDLERS = CONTRIBUTION_FEATURE_COUNT + 9;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 9;
+	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
@@ -2202,7 +2213,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 10;
+	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 11;
 
 	/**
 	 * The number of structural features of the '<em>Part</em>' class.
@@ -2211,7 +2222,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 11;
+	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -2221,7 +2232,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartStack()
 	 * @generated
 	 */
-	int PART_STACK = 25;
+	int PART_STACK = 27;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2303,7 +2314,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartSashContainer()
 	 * @generated
 	 */
-	int PART_SASH_CONTAINER = 26;
+	int PART_SASH_CONTAINER = 28;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2403,7 +2414,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindow()
 	 * @generated
 	 */
-	int WINDOW = 27;
+	int WINDOW = 29;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2514,13 +2525,22 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW__VARIABLES = UI_ITEM_FEATURE_COUNT + 8;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__HANDLERS = UI_ITEM_FEATURE_COUNT + 9;
+
+	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 9;
+	int WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -2529,7 +2549,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__X = UI_ITEM_FEATURE_COUNT + 10;
+	int WINDOW__X = UI_ITEM_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -2538,7 +2558,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__Y = UI_ITEM_FEATURE_COUNT + 11;
+	int WINDOW__Y = UI_ITEM_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -2547,7 +2567,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__WIDTH = UI_ITEM_FEATURE_COUNT + 12;
+	int WINDOW__WIDTH = UI_ITEM_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -2556,7 +2576,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HEIGHT = UI_ITEM_FEATURE_COUNT + 13;
+	int WINDOW__HEIGHT = UI_ITEM_FEATURE_COUNT + 14;
 
 	/**
 	 * The number of structural features of the '<em>Window</em>' class.
@@ -2565,7 +2585,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 14;
+	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 15;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}' class.
@@ -2575,7 +2595,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________IDE_______________V()
 	 * @generated
 	 */
-	int VIDE_V = 28;
+	int VIDE_V = 30;
 
 	/**
 	 * The number of structural features of the '<em>VIDE V</em>' class.
@@ -2594,7 +2614,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getVSCElement()
 	 * @generated
 	 */
-	int VSC_ELEMENT = 29;
+	int VSC_ELEMENT = 31;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2658,7 +2678,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getView()
 	 * @generated
 	 */
-	int VIEW = 30;
+	int VIEW = 32;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2778,6 +2798,15 @@ public interface MApplicationPackage extends EPackage {
 	int VIEW__TOOLTIP = PART__TOOLTIP;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VIEW__HANDLERS = PART__HANDLERS;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -2812,7 +2841,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewStack()
 	 * @generated
 	 */
-	int VIEW_STACK = 31;
+	int VIEW_STACK = 33;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2894,7 +2923,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
 	 * @generated
 	 */
-	int VIEW_SASH_CONTAINER = 32;
+	int VIEW_SASH_CONTAINER = 34;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2994,7 +3023,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
 	 * @generated
 	 */
-	int EDITOR = 33;
+	int EDITOR = 35;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3114,6 +3143,15 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR__TOOLTIP = PART__TOOLTIP;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__HANDLERS = PART__HANDLERS;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3166,7 +3204,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMultiEditor()
 	 * @generated
 	 */
-	int MULTI_EDITOR = 34;
+	int MULTI_EDITOR = 36;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3286,6 +3324,15 @@ public interface MApplicationPackage extends EPackage {
 	int MULTI_EDITOR__TOOLTIP = EDITOR__TOOLTIP;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MULTI_EDITOR__HANDLERS = EDITOR__HANDLERS;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3356,7 +3403,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getESCElement()
 	 * @generated
 	 */
-	int ESC_ELEMENT = 35;
+	int ESC_ELEMENT = 37;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3420,7 +3467,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorStack()
 	 * @generated
 	 */
-	int EDITOR_STACK = 36;
+	int EDITOR_STACK = 38;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3511,7 +3558,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorSashContainer()
 	 * @generated
 	 */
-	int EDITOR_SASH_CONTAINER = 37;
+	int EDITOR_SASH_CONTAINER = 39;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3611,7 +3658,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 38;
+	int PERSPECTIVE = 40;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3738,7 +3785,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
 	 * @generated
 	 */
-	int PERSPECTIVE_STACK = 39;
+	int PERSPECTIVE_STACK = 41;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3820,7 +3867,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIDEWindow()
 	 * @generated
 	 */
-	int IDE_WINDOW = 40;
+	int IDE_WINDOW = 42;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3967,13 +4014,22 @@ public interface MApplicationPackage extends EPackage {
 	int IDE_WINDOW__VARIABLES = TRIM_STRUCTURE_FEATURE_COUNT + 4;
 
 	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDE_WINDOW__HANDLERS = TRIM_STRUCTURE_FEATURE_COUNT + 5;
+
+	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__MAIN_MENU = TRIM_STRUCTURE_FEATURE_COUNT + 5;
+	int IDE_WINDOW__MAIN_MENU = TRIM_STRUCTURE_FEATURE_COUNT + 6;
 
 	/**
 	 * The number of structural features of the '<em>IDE Window</em>' class.
@@ -3982,7 +4038,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW_FEATURE_COUNT = TRIM_STRUCTURE_FEATURE_COUNT + 6;
+	int IDE_WINDOW_FEATURE_COUNT = TRIM_STRUCTURE_FEATURE_COUNT + 7;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -3992,7 +4048,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 41;
+	int IECLIPSE_CONTEXT = 43;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -4002,7 +4058,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	int PARAMETERIZED_COMMAND = 42;
+	int PARAMETERIZED_COMMAND = 44;
 
 
 	/**
@@ -4090,39 +4146,6 @@ public interface MApplicationPackage extends EPackage {
 	EClass getCommand();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MCommand#getCommandURI <em>Command URI</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Command URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MCommand#getCommandURI()
-	 * @see #getCommand()
-	 * @generated
-	 */
-	EAttribute getCommand_CommandURI();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MCommand#getImpl <em>Impl</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Impl</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MCommand#getImpl()
-	 * @see #getCommand()
-	 * @generated
-	 */
-	EAttribute getCommand_Impl();
-
-	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MCommand#getArgs <em>Args</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Args</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MCommand#getArgs()
-	 * @see #getCommand()
-	 * @generated
-	 */
-	EAttribute getCommand_Args();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MCommand#getCommandName <em>Command Name</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4132,6 +4155,59 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getCommand_CommandName();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MCommand#getDescription <em>Description</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Description</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MCommand#getDescription()
+	 * @see #getCommand()
+	 * @generated
+	 */
+	EAttribute getCommand_Description();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandler <em>Handler</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Handler</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandler
+	 * @generated
+	 */
+	EClass getHandler();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MHandler#getCommand <em>Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandler#getCommand()
+	 * @see #getHandler()
+	 * @generated
+	 */
+	EReference getHandler_Command();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Handler Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
+	 * @generated
+	 */
+	EClass getHandlerContainer();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MHandlerContainer#getHandlers <em>Handlers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Handlers</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer#getHandlers()
+	 * @see #getHandlerContainer()
+	 * @generated
+	 */
+	EReference getHandlerContainer_Handlers();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MInput <em>Input</em>}'.
@@ -4568,17 +4644,6 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getHandledItem_Command();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MHandledItem#getMenu()
-	 * @see #getHandledItem()
-	 * @generated
-	 */
-	EReference getHandledItem_Menu();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MHandledItem#getWbCommand <em>Wb Command</em>}'.
@@ -5038,36 +5103,56 @@ public interface MApplicationPackage extends EPackage {
 		EClass COMMAND = eINSTANCE.getCommand();
 
 		/**
-		 * The meta object literal for the '<em><b>Command URI</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND__COMMAND_URI = eINSTANCE.getCommand_CommandURI();
-
-		/**
-		 * The meta object literal for the '<em><b>Impl</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND__IMPL = eINSTANCE.getCommand_Impl();
-
-		/**
-		 * The meta object literal for the '<em><b>Args</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND__ARGS = eINSTANCE.getCommand_Args();
-
-		/**
 		 * The meta object literal for the '<em><b>Command Name</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
 		EAttribute COMMAND__COMMAND_NAME = eINSTANCE.getCommand_CommandName();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMMAND__DESCRIPTION = eINSTANCE.getCommand_Description();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.HandlerImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
+		 * @generated
+		 */
+		EClass HANDLER = eINSTANCE.getHandler();
+
+		/**
+		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLER__COMMAND = eINSTANCE.getHandler_Command();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
+		 * @generated
+		 */
+		EClass HANDLER_CONTAINER = eINSTANCE.getHandlerContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLER_CONTAINER__HANDLERS = eINSTANCE.getHandlerContainer_Handlers();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.InputImpl <em>Input</em>}' class.
@@ -5426,14 +5511,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
-
-		/**
-		 * The meta object literal for the '<em><b>Menu</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference HANDLED_ITEM__MENU = eINSTANCE.getHandledItem_Menu();
 
 		/**
 		 * The meta object literal for the '<em><b>Wb Command</b></em>' attribute feature.

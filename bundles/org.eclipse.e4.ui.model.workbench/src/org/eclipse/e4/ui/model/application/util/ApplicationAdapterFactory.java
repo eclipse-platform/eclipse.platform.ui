@@ -92,6 +92,14 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createCommandAdapter();
 			}
 			@Override
+			public Adapter caseHandler(MHandler object) {
+				return createHandlerAdapter();
+			}
+			@Override
+			public Adapter caseHandlerContainer(MHandlerContainer object) {
+				return createHandlerContainerAdapter();
+			}
+			@Override
 			public Adapter caseInput(MInput object) {
 				return createInputAdapter();
 			}
@@ -312,6 +320,34 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createCommandAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandler <em>Handler</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MHandler
+	 * @generated
+	 */
+	public Adapter createHandlerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
+	 * @generated
+	 */
+	public Adapter createHandlerContainerAdapter() {
 		return null;
 	}
 

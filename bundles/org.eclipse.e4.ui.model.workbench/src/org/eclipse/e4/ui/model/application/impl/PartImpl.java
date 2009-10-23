@@ -18,6 +18,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -37,8 +39,10 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -56,6 +60,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getMenus <em>Menus</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getToolbar <em>Toolbar</em>}</li>
  * </ul>
@@ -213,6 +218,16 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHandlers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MHandler> handlers;
 
 	/**
 	 * The cached value of the '{@link #getMenus() <em>Menus</em>}' reference list.
@@ -459,6 +474,18 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MHandler> getHandlers() {
+		if (handlers == null) {
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, MApplicationPackage.PART__HANDLERS);
+		}
+		return handlers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MMenu> getMenus() {
 		if (menus == null) {
 			menus = new EObjectResolvingEList<MMenu>(MMenu.class, this, MApplicationPackage.PART__MENUS);
@@ -531,6 +558,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 		switch (featureID) {
 			case MApplicationPackage.PART__PARENT:
 				return basicSetParent(null, msgs);
+			case MApplicationPackage.PART__HANDLERS:
+				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -575,6 +604,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getIconURI();
 			case MApplicationPackage.PART__TOOLTIP:
 				return getTooltip();
+			case MApplicationPackage.PART__HANDLERS:
+				return getHandlers();
 			case MApplicationPackage.PART__MENUS:
 				return getMenus();
 			case MApplicationPackage.PART__TOOLBAR:
@@ -620,6 +651,10 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return;
 			case MApplicationPackage.PART__TOOLTIP:
 				setTooltip((String)newValue);
+				return;
+			case MApplicationPackage.PART__HANDLERS:
+				getHandlers().clear();
+				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
 			case MApplicationPackage.PART__MENUS:
 				getMenus().clear();
@@ -667,6 +702,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
+			case MApplicationPackage.PART__HANDLERS:
+				getHandlers().clear();
+				return;
 			case MApplicationPackage.PART__MENUS:
 				getMenus().clear();
 				return;
@@ -703,6 +741,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MApplicationPackage.PART__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
+			case MApplicationPackage.PART__HANDLERS:
+				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.PART__MENUS:
 				return menus != null && !menus.isEmpty();
 			case MApplicationPackage.PART__TOOLBAR:
@@ -747,6 +787,12 @@ public class PartImpl extends ContributionImpl implements MPart {
 				default: return -1;
 			}
 		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.PART__HANDLERS: return MApplicationPackage.HANDLER_CONTAINER__HANDLERS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -783,6 +829,12 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case MApplicationPackage.UI_ITEM__NAME: return MApplicationPackage.PART__NAME;
 				case MApplicationPackage.UI_ITEM__ICON_URI: return MApplicationPackage.PART__ICON_URI;
 				case MApplicationPackage.UI_ITEM__TOOLTIP: return MApplicationPackage.PART__TOOLTIP;
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.PART__HANDLERS;
 				default: return -1;
 			}
 		}

@@ -117,6 +117,20 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.HANDLER: {
+				MHandler handler = (MHandler)theEObject;
+				T1 result = caseHandler(handler);
+				if (result == null) result = caseContribution(handler);
+				if (result == null) result = caseApplicationElement(handler);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.HANDLER_CONTAINER: {
+				MHandlerContainer handlerContainer = (MHandlerContainer)theEObject;
+				T1 result = caseHandlerContainer(handlerContainer);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.INPUT: {
 				MInput input = (MInput)theEObject;
 				T1 result = caseInput(input);
@@ -160,11 +174,11 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseTestHarness(testHarness);
 				if (result == null) result = caseCommand(testHarness);
 				if (result == null) result = caseContext(testHarness);
+				if (result == null) result = caseContribution(testHarness);
 				if (result == null) result = caseElementContainer(testHarness);
 				if (result == null) result = caseParameter(testHarness);
 				if (result == null) result = caseInput(testHarness);
 				if (result == null) result = caseItem(testHarness);
-				if (result == null) result = caseContribution(testHarness);
 				if (result == null) result = caseUIElement(testHarness);
 				if (result == null) result = caseUIItem(testHarness);
 				if (result == null) result = caseApplicationElement(testHarness);
@@ -214,6 +228,7 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseApplication(application);
 				if (result == null) result = caseContext(application);
 				if (result == null) result = caseElementContainer(application);
+				if (result == null) result = caseHandlerContainer(application);
 				if (result == null) result = caseUIElement(application);
 				if (result == null) result = caseApplicationElement(application);
 				if (result == null) result = defaultCase(theEObject);
@@ -224,7 +239,6 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseItem(item);
 				if (result == null) result = caseUIElement(item);
 				if (result == null) result = caseUIItem(item);
-				if (result == null) result = caseContribution(item);
 				if (result == null) result = caseApplicationElement(item);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -235,7 +249,6 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseItem(handledItem);
 				if (result == null) result = caseUIElement(handledItem);
 				if (result == null) result = caseUIItem(handledItem);
-				if (result == null) result = caseContribution(handledItem);
 				if (result == null) result = caseApplicationElement(handledItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -243,13 +256,13 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.MENU_ITEM: {
 				MMenuItem menuItem = (MMenuItem)theEObject;
 				T1 result = caseMenuItem(menuItem);
-				if (result == null) result = caseItem(menuItem);
 				if (result == null) result = caseMenu(menuItem);
-				if (result == null) result = caseUIItem(menuItem);
-				if (result == null) result = caseContribution(menuItem);
+				if (result == null) result = caseHandledItem(menuItem);
 				if (result == null) result = caseElementContainer(menuItem);
+				if (result == null) result = caseItem(menuItem);
 				if (result == null) result = caseUIElement(menuItem);
 				if (result == null) result = caseApplicationElement(menuItem);
+				if (result == null) result = caseUIItem(menuItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -265,12 +278,12 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.TOOL_ITEM: {
 				MToolItem toolItem = (MToolItem)theEObject;
 				T1 result = caseToolItem(toolItem);
-				if (result == null) result = caseItem(toolItem);
 				if (result == null) result = caseElementContainer(toolItem);
+				if (result == null) result = caseHandledItem(toolItem);
+				if (result == null) result = caseItem(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
-				if (result == null) result = caseUIItem(toolItem);
-				if (result == null) result = caseContribution(toolItem);
 				if (result == null) result = caseApplicationElement(toolItem);
+				if (result == null) result = caseUIItem(toolItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -298,6 +311,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContext(part);
 				if (result == null) result = casePSCElement(part);
 				if (result == null) result = caseUIItem(part);
+				if (result == null) result = caseHandlerContainer(part);
 				if (result == null) result = caseUIElement(part);
 				if (result == null) result = caseApplicationElement(part);
 				if (result == null) result = defaultCase(theEObject);
@@ -330,6 +344,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseUIItem(window);
 				if (result == null) result = caseElementContainer(window);
 				if (result == null) result = caseContext(window);
+				if (result == null) result = caseHandlerContainer(window);
 				if (result == null) result = caseUIElement(window);
 				if (result == null) result = caseApplicationElement(window);
 				if (result == null) result = defaultCase(theEObject);
@@ -358,6 +373,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContext(view);
 				if (result == null) result = casePSCElement(view);
 				if (result == null) result = caseUIItem(view);
+				if (result == null) result = caseHandlerContainer(view);
 				if (result == null) result = caseUIElement(view);
 				if (result == null) result = caseApplicationElement(view);
 				if (result == null) result = defaultCase(theEObject);
@@ -395,6 +411,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContext(editor);
 				if (result == null) result = casePSCElement(editor);
 				if (result == null) result = caseUIItem(editor);
+				if (result == null) result = caseHandlerContainer(editor);
 				if (result == null) result = caseUIElement(editor);
 				if (result == null) result = caseApplicationElement(editor);
 				if (result == null) result = defaultCase(theEObject);
@@ -412,6 +429,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContext(multiEditor);
 				if (result == null) result = casePSCElement(multiEditor);
 				if (result == null) result = caseUIItem(multiEditor);
+				if (result == null) result = caseHandlerContainer(multiEditor);
 				if (result == null) result = caseUIElement(multiEditor);
 				if (result == null) result = caseApplicationElement(multiEditor);
 				if (result == null) result = defaultCase(theEObject);
@@ -474,6 +492,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseTrimStructure(ideWindow);
 				if (result == null) result = caseUIItem(ideWindow);
 				if (result == null) result = caseContext(ideWindow);
+				if (result == null) result = caseHandlerContainer(ideWindow);
 				if (result == null) result = caseElementContainer(ideWindow);
 				if (result == null) result = caseUIElement(ideWindow);
 				if (result == null) result = caseApplicationElement(ideWindow);
@@ -541,6 +560,36 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseCommand(MCommand object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Handler</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Handler</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseHandler(MHandler object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Handler Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Handler Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseHandlerContainer(MHandlerContainer object) {
 		return null;
 	}
 

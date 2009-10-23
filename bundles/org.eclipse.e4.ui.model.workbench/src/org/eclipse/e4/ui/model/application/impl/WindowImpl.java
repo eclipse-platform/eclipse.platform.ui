@@ -19,6 +19,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MHandler;
+import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -36,6 +38,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -56,6 +59,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getMainMenu <em>Main Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getX <em>X</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getY <em>Y</em>}</li>
@@ -196,6 +200,16 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The cached value of the '{@link #getHandlers() <em>Handlers</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getHandlers()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MHandler> handlers;
 
 	/**
 	 * The cached value of the '{@link #getMainMenu() <em>Main Menu</em>}' containment reference.
@@ -520,6 +534,18 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MHandler> getHandlers() {
+		if (handlers == null) {
+			handlers = new EObjectContainmentEList<MHandler>(MHandler.class, this, MApplicationPackage.WINDOW__HANDLERS);
+		}
+		return handlers;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MMenu getMainMenu() {
 		return mainMenu;
 	}
@@ -673,6 +699,8 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.WINDOW__CHILDREN:
 				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.WINDOW__HANDLERS:
+				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				return basicSetMainMenu(null, msgs);
 		}
@@ -720,6 +748,8 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 				return getContext();
 			case MApplicationPackage.WINDOW__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.WINDOW__HANDLERS:
+				return getHandlers();
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				return getMainMenu();
 			case MApplicationPackage.WINDOW__X:
@@ -771,6 +801,10 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 			case MApplicationPackage.WINDOW__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
+				return;
+			case MApplicationPackage.WINDOW__HANDLERS:
+				getHandlers().clear();
+				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)newValue);
@@ -826,6 +860,9 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 			case MApplicationPackage.WINDOW__VARIABLES:
 				getVariables().clear();
 				return;
+			case MApplicationPackage.WINDOW__HANDLERS:
+				getHandlers().clear();
+				return;
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)null);
 				return;
@@ -871,6 +908,8 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.WINDOW__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.WINDOW__HANDLERS:
+				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.WINDOW__MAIN_MENU:
 				return mainMenu != null;
 			case MApplicationPackage.WINDOW__X:
@@ -921,6 +960,12 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 				default: return -1;
 			}
 		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.WINDOW__HANDLERS: return MApplicationPackage.HANDLER_CONTAINER__HANDLERS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -957,6 +1002,12 @@ public class WindowImpl extends UIItemImpl implements MWindow {
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.WINDOW__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.WINDOW__VARIABLES;
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandlerContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.WINDOW__HANDLERS;
 				default: return -1;
 			}
 		}

@@ -40,7 +40,6 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl#getCommand <em>Command</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl#getMenu <em>Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl#getWbCommand <em>Wb Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
@@ -58,16 +57,6 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 	 * @ordered
 	 */
 	protected MCommand command;
-
-	/**
-	 * The cached value of the '{@link #getMenu() <em>Menu</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getMenu()
-	 * @generated
-	 * @ordered
-	 */
-	protected MMenu menu;
 
 	/**
 	 * The default value of the '{@link #getWbCommand() <em>Wb Command</em>}' attribute.
@@ -161,44 +150,6 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MMenu getMenu() {
-		if (menu != null && ((EObject)menu).eIsProxy()) {
-			InternalEObject oldMenu = (InternalEObject)menu;
-			menu = (MMenu)eResolveProxy(oldMenu);
-			if (menu != oldMenu) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.HANDLED_ITEM__MENU, oldMenu, menu));
-			}
-		}
-		return menu;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MMenu basicGetMenu() {
-		return menu;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setMenu(MMenu newMenu) {
-		MMenu oldMenu = menu;
-		menu = newMenu;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_ITEM__MENU, oldMenu, menu));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public ParameterizedCommand getWbCommand() {
 		return wbCommand;
 	}
@@ -238,9 +189,6 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 			case MApplicationPackage.HANDLED_ITEM__COMMAND:
 				if (resolve) return getCommand();
 				return basicGetCommand();
-			case MApplicationPackage.HANDLED_ITEM__MENU:
-				if (resolve) return getMenu();
-				return basicGetMenu();
 			case MApplicationPackage.HANDLED_ITEM__WB_COMMAND:
 				return getWbCommand();
 			case MApplicationPackage.HANDLED_ITEM__PARAMETERS:
@@ -260,9 +208,6 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 		switch (featureID) {
 			case MApplicationPackage.HANDLED_ITEM__COMMAND:
 				setCommand((MCommand)newValue);
-				return;
-			case MApplicationPackage.HANDLED_ITEM__MENU:
-				setMenu((MMenu)newValue);
 				return;
 			case MApplicationPackage.HANDLED_ITEM__WB_COMMAND:
 				setWbCommand((ParameterizedCommand)newValue);
@@ -286,9 +231,6 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 			case MApplicationPackage.HANDLED_ITEM__COMMAND:
 				setCommand((MCommand)null);
 				return;
-			case MApplicationPackage.HANDLED_ITEM__MENU:
-				setMenu((MMenu)null);
-				return;
 			case MApplicationPackage.HANDLED_ITEM__WB_COMMAND:
 				setWbCommand(WB_COMMAND_EDEFAULT);
 				return;
@@ -309,8 +251,6 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 		switch (featureID) {
 			case MApplicationPackage.HANDLED_ITEM__COMMAND:
 				return command != null;
-			case MApplicationPackage.HANDLED_ITEM__MENU:
-				return menu != null;
 			case MApplicationPackage.HANDLED_ITEM__WB_COMMAND:
 				return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
 			case MApplicationPackage.HANDLED_ITEM__PARAMETERS:

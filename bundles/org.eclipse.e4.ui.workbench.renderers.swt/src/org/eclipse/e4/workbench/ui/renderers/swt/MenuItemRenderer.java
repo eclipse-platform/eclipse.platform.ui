@@ -10,14 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.e4.core.commands.ECommandService;
+import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.workbench.ContributionUtils;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -95,15 +96,23 @@ public class MenuItemRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void hookControllerLogic(MUIElement me) {
-		if (me instanceof MContribution) {
-			final MContribution contrib = (MContribution) me;
+		if (me instanceof MHandledItem) {
+			final MHandledItem item = (MHandledItem) me;
 			final IEclipseContext lclContext = getContext(me);
 			MenuItem mi = (MenuItem) me.getWidget();
 			mi.addSelectionListener(new SelectionListener() {
 				public void widgetSelected(SelectionEvent e) {
-					IContributionFactory factory = (IContributionFactory) context
-							.get(IContributionFactory.class.getName());
-					ContributionUtils.execute(factory, contrib, lclContext);
+					EHandlerService service = (EHandlerService) lclContext
+							.get(EHandlerService.class.getName());
+					ParameterizedCommand cmd = item.getWbCommand();
+					if (cmd == null) {
+						ECommandService cmdService = (ECommandService) lclContext
+								.get(ECommandService.class.getName());
+						cmd = cmdService.createCommand(item.getCommand()
+								.getId(), null);
+						item.setWbCommand(cmd);
+					}
+					service.executeHandler(cmd);
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {

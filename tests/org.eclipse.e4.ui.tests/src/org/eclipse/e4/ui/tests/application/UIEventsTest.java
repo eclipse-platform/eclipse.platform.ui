@@ -121,8 +121,8 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	public class CommandTester extends EventTester {
 		CommandTester(IEventBroker eventBroker) {
-			super("Command", Command.Topic, new String[] { Command.Name,
-					Command.URI, Command.Args, Command.Impl }, eventBroker);
+			super("Command", Command.Topic, new String[] { Command.Name },
+					eventBroker);
 		}
 	}
 

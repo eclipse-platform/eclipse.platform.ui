@@ -125,13 +125,7 @@ public class UIEventPublisher extends EContentAdapter {
 	private String getTopic(String attName) {
 		if (AppElement.Id.equals(attName))
 			return AppElement.Topic;
-		else if (Command.Args.equals(attName))
-			return Command.Topic;
-		else if (Command.Impl.equals(attName))
-			return Command.Topic;
 		else if (Command.Name.equals(attName))
-			return Command.Topic;
-		else if (Command.URI.equals(attName))
 			return Command.Topic;
 		else if (Context.Context.equals(attName))
 			return Context.Topic;

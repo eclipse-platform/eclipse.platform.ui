@@ -23,7 +23,6 @@ import org.eclipse.emf.common.util.EList;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getCommand <em>Command</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getWbCommand <em>Wb Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MHandledItem#getParameters <em>Parameters</em>}</li>
  * </ul>
@@ -59,32 +58,6 @@ public interface MHandledItem extends MItem {
 	 * @generated
 	 */
 	void setCommand(MCommand value);
-
-	/**
-	 * Returns the value of the '<em><b>Menu</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Menu</em>' reference isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Menu</em>' reference.
-	 * @see #setMenu(MMenu)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledItem_Menu()
-	 * @model
-	 * @generated
-	 */
-	MMenu getMenu();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MHandledItem#getMenu <em>Menu</em>}' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Menu</em>' reference.
-	 * @see #getMenu()
-	 * @generated
-	 */
-	void setMenu(MMenu value);
 
 	/**
 	 * Returns the value of the '<em><b>Wb Command</b></em>' attribute.

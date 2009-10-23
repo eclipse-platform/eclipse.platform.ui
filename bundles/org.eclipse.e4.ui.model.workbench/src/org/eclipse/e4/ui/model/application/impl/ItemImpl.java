@@ -31,9 +31,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getURI <em>URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getObject <em>Object</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getPersistedState <em>Persisted State</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#isSelected <em>Selected</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#isSeparator <em>Separator</em>}</li>
@@ -102,66 +99,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 	 * @ordered
 	 */
 	protected String tooltip = TOOLTIP_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getURI() <em>URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String URI_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getURI() <em>URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected String uri = URI_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getObject() <em>Object</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getObject()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object OBJECT_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getObject() <em>Object</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getObject()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object object = OBJECT_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPersistedState()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String PERSISTED_STATE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getPersistedState()
-	 * @generated
-	 * @ordered
-	 */
-	protected String persistedState = PERSISTED_STATE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isEnabled() <em>Enabled</em>}' attribute.
@@ -310,69 +247,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getURI() {
-		return uri;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setURI(String newURI) {
-		String oldURI = uri;
-		uri = newURI;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.ITEM__URI, oldURI, uri));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getObject() {
-		return object;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setObject(Object newObject) {
-		Object oldObject = object;
-		object = newObject;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.ITEM__OBJECT, oldObject, object));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getPersistedState() {
-		return persistedState;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setPersistedState(String newPersistedState) {
-		String oldPersistedState = persistedState;
-		persistedState = newPersistedState;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.ITEM__PERSISTED_STATE, oldPersistedState, persistedState));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public boolean isEnabled() {
 		return enabled;
 	}
@@ -445,12 +319,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 				return getIconURI();
 			case MApplicationPackage.ITEM__TOOLTIP:
 				return getTooltip();
-			case MApplicationPackage.ITEM__URI:
-				return getURI();
-			case MApplicationPackage.ITEM__OBJECT:
-				return getObject();
-			case MApplicationPackage.ITEM__PERSISTED_STATE:
-				return getPersistedState();
 			case MApplicationPackage.ITEM__ENABLED:
 				return isEnabled();
 			case MApplicationPackage.ITEM__SELECTED:
@@ -477,15 +345,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 				return;
 			case MApplicationPackage.ITEM__TOOLTIP:
 				setTooltip((String)newValue);
-				return;
-			case MApplicationPackage.ITEM__URI:
-				setURI((String)newValue);
-				return;
-			case MApplicationPackage.ITEM__OBJECT:
-				setObject(newValue);
-				return;
-			case MApplicationPackage.ITEM__PERSISTED_STATE:
-				setPersistedState((String)newValue);
 				return;
 			case MApplicationPackage.ITEM__ENABLED:
 				setEnabled((Boolean)newValue);
@@ -517,15 +376,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 			case MApplicationPackage.ITEM__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
-			case MApplicationPackage.ITEM__URI:
-				setURI(URI_EDEFAULT);
-				return;
-			case MApplicationPackage.ITEM__OBJECT:
-				setObject(OBJECT_EDEFAULT);
-				return;
-			case MApplicationPackage.ITEM__PERSISTED_STATE:
-				setPersistedState(PERSISTED_STATE_EDEFAULT);
-				return;
 			case MApplicationPackage.ITEM__ENABLED:
 				setEnabled(ENABLED_EDEFAULT);
 				return;
@@ -553,12 +403,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MApplicationPackage.ITEM__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case MApplicationPackage.ITEM__URI:
-				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
-			case MApplicationPackage.ITEM__OBJECT:
-				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
-			case MApplicationPackage.ITEM__PERSISTED_STATE:
-				return PERSISTED_STATE_EDEFAULT == null ? persistedState != null : !PERSISTED_STATE_EDEFAULT.equals(persistedState);
 			case MApplicationPackage.ITEM__ENABLED:
 				return enabled != ENABLED_EDEFAULT;
 			case MApplicationPackage.ITEM__SELECTED:
@@ -584,14 +428,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 				default: return -1;
 			}
 		}
-		if (baseClass == MContribution.class) {
-			switch (derivedFeatureID) {
-				case MApplicationPackage.ITEM__URI: return MApplicationPackage.CONTRIBUTION__URI;
-				case MApplicationPackage.ITEM__OBJECT: return MApplicationPackage.CONTRIBUTION__OBJECT;
-				case MApplicationPackage.ITEM__PERSISTED_STATE: return MApplicationPackage.CONTRIBUTION__PERSISTED_STATE;
-				default: return -1;
-			}
-		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -607,14 +443,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 				case MApplicationPackage.UI_ITEM__NAME: return MApplicationPackage.ITEM__NAME;
 				case MApplicationPackage.UI_ITEM__ICON_URI: return MApplicationPackage.ITEM__ICON_URI;
 				case MApplicationPackage.UI_ITEM__TOOLTIP: return MApplicationPackage.ITEM__TOOLTIP;
-				default: return -1;
-			}
-		}
-		if (baseClass == MContribution.class) {
-			switch (baseFeatureID) {
-				case MApplicationPackage.CONTRIBUTION__URI: return MApplicationPackage.ITEM__URI;
-				case MApplicationPackage.CONTRIBUTION__OBJECT: return MApplicationPackage.ITEM__OBJECT;
-				case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE: return MApplicationPackage.ITEM__PERSISTED_STATE;
 				default: return -1;
 			}
 		}
@@ -637,12 +465,6 @@ public class ItemImpl extends UIElementImpl implements MItem {
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
 		result.append(tooltip);
-		result.append(", URI: "); //$NON-NLS-1$
-		result.append(uri);
-		result.append(", object: "); //$NON-NLS-1$
-		result.append(object);
-		result.append(", persistedState: "); //$NON-NLS-1$
-		result.append(persistedState);
 		result.append(", enabled: "); //$NON-NLS-1$
 		result.append(enabled);
 		result.append(", selected: "); //$NON-NLS-1$
