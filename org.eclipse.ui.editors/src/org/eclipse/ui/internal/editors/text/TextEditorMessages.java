@@ -59,6 +59,8 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_colorsAndFonts_link_tooltip;
 	public static String QuickDiffConfigurationBlock_description;
 	public static String QuickDiffConfigurationBlock_referenceProviderTitle;
+	public static String QuickDiffConfigurationBlock_referenceProviderNoteMessage;
+	public static String QuickDiffConfigurationBlock_referenceProviderNoteTitle;
 	public static String QuickDiffConfigurationBlock_characterMode;
 	public static String QuickDiffConfigurationBlock_showForNewEditors;
 	public static String QuickDiffConfigurationBlock_showInOverviewRuler;

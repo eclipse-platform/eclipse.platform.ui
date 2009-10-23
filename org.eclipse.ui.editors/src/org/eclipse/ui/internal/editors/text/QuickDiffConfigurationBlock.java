@@ -19,6 +19,7 @@ import java.util.Map;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -34,6 +35,7 @@ import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.PreferenceConverter;
+import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.ui.texteditor.AbstractDecoratedTextEditorPreferenceConstants;
 import org.eclipse.ui.texteditor.AnnotationPreference;
@@ -94,6 +96,11 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	 */
 	private Button fEnablementCheckbox;
 
+	/**
+	 * The reference provider note.
+	 * @since 3.6
+	 */
+	private Composite fQuickDiffProviderNote;
 
 	public QuickDiffConfigurationBlock(OverlayPreferenceStore store) {
 		Assert.isNotNull(store);
@@ -172,6 +179,33 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		return checkBox;
 	}
 
+	/*
+	 *  XXX: Copied from
+	 *  org.eclipse.jface.preference.PreferencePage.createNoteComposite(Font, Composite, String, String)
+	 * @since 3.6
+	 */
+	private Composite createNoteComposite(Font font, Composite composite, String title, String message) {
+		Composite messageComposite= new Composite(composite, SWT.NONE);
+		GridLayout messageLayout= new GridLayout();
+		messageLayout.numColumns= 2;
+		messageLayout.marginWidth= 0;
+		messageLayout.marginHeight= 0;
+		messageComposite.setLayout(messageLayout);
+		messageComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		messageComposite.setFont(font);
+
+		final Label noteLabel= new Label(messageComposite, SWT.BOLD);
+		noteLabel.setText(title);
+		noteLabel.setFont(JFaceResources.getFontRegistry().getBold(
+				JFaceResources.DIALOG_FONT));
+		noteLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+
+		Label messageLabel= new Label(messageComposite, SWT.WRAP);
+		messageLabel.setText(message);
+		messageLabel.setFont(font);
+		return messageComposite;
+	}
+	
 	/**
 	 * Creates page for hover preferences.
 	 *
@@ -287,14 +321,6 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
 		fQuickDiffProviderCombo.setLayoutData(gd);
 
-		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
-		layout= new GridLayout();
-		layout.marginHeight= 0;
-		layout.marginWidth= 0;
-		layout.numColumns= 2;
-		stylesComposite.setLayout(layout);
-		stylesComposite.setLayoutData(new GridData(GridData.FILL_BOTH));
-
 		fQuickDiffProviderCombo.addSelectionListener(new SelectionListener() {
 			public void widgetDefaultSelected(SelectionEvent e) {
 				// do nothing
@@ -306,6 +332,12 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 
 		});
+		
+		fQuickDiffProviderNote= createNoteComposite(parent.getFont(), editorComposite, TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderNoteTitle,
+				TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderNoteMessage);
+		gd= new GridData(GridData.FILL_VERTICAL);
+		gd.horizontalSpan= 2;
+		fQuickDiffProviderNote.setLayoutData(gd);
 
 		return composite;
 	}
@@ -333,6 +365,11 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		fQuickDiffProviderCombo.setEnabled(enabled);
 		for (int i= 0; i < fQuickDiffColorEditors.length; i++)
 			fQuickDiffColorEditors[i].setEnabled(enabled);
+		fQuickDiffProviderNote.setEnabled(enabled);
+		Control[] quickDiffProviderNoteChildren= fQuickDiffProviderNote.getChildren();
+		for (int i= 0; i < quickDiffProviderNoteChildren.length; i++) {
+			quickDiffProviderNoteChildren[i].setEnabled(enabled);
+		}
 	}
 
 	private void updateProviderList() {
