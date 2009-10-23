@@ -28,17 +28,23 @@
     <variables>exif</variables>
     <mainMenu>
       <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="File">
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Create Album" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler"/>
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Image Dialog" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler"/>
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Create Album" URI="" separator="true"/>
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Create Album" command="//@commands.1"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Image Dialog" command="//@commands.2" />
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Create Album"  separator="true"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" command="//@commands.0" />
       </children>
       <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Edit">
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" command="//@commands.0" />
       </children>
       <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit">
-        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler"/>
+        <children xsi:type="org.eclipse.e4.ui.model.application:MenuItem" name="Exit" command="//@commands.0" />
       </children>
     </mainMenu>
   </children>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="//@commands.0"/>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="//@commands.1"/>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="//@commands.2"/>
+  <commands id="e4photo.exit" commandName="Exit" description=""/>
+  <commands id="e4photo.createAlbum" commandName="Create Album"/>
+  <commands id="e4photo.imageDialog" commandName="Image Dialog" description=""/>
 </org.eclipse.e4.ui.model.application:Application>
