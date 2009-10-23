@@ -13,8 +13,11 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -96,7 +99,29 @@ public class MenuItemRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void hookControllerLogic(MUIElement me) {
-		if (me instanceof MHandledItem) {
+		if (me instanceof MContribution
+				&& ((MContribution) me).getURI() != null) {
+			final MContribution contrib = (MContribution) me;
+			final IEclipseContext lclContext = getContext(me);
+			MenuItem mi = (MenuItem) me.getWidget();
+			mi.addSelectionListener(new SelectionListener() {
+				public void widgetSelected(SelectionEvent e) {
+					if (contrib.getObject() == null) {
+						IContributionFactory cf = (IContributionFactory) lclContext
+								.get(IContributionFactory.class.getName());
+						contrib.setObject(cf.create(contrib.getURI(),
+								lclContext));
+						ContextInjectionFactory.inject(contrib.getObject(),
+								lclContext);
+					}
+					ContextInjectionFactory.invoke(contrib.getObject(),
+							"execute", lclContext, null); //$NON-NLS-1$
+				}
+
+				public void widgetDefaultSelected(SelectionEvent e) {
+				}
+			});
+		} else if (me instanceof MHandledItem) {
 			final MHandledItem item = (MHandledItem) me;
 			final IEclipseContext lclContext = getContext(me);
 			MenuItem mi = (MenuItem) me.getWidget();

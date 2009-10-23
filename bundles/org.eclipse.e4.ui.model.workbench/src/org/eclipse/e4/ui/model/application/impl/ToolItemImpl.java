@@ -56,6 +56,9 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl#getWbCommand <em>Wb Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl#getParameters <em>Parameters</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl#getURI <em>URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl#getObject <em>Object</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl#getPersistedState <em>Persisted State</em>}</li>
  * </ul>
  * </p>
  *
@@ -221,6 +224,66 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 	 * @ordered
 	 */
 	protected EList<MParameter> parameters;
+
+	/**
+	 * The default value of the '{@link #getURI() <em>URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String URI_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getURI() <em>URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected String uri = URI_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getObject() <em>Object</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getObject()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object OBJECT_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getObject() <em>Object</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getObject()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object object = OBJECT_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPersistedState()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String PERSISTED_STATE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getPersistedState() <em>Persisted State</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getPersistedState()
+	 * @generated
+	 * @ordered
+	 */
+	protected String persistedState = PERSISTED_STATE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -443,6 +506,69 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getURI() {
+		return uri;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setURI(String newURI) {
+		String oldURI = uri;
+		uri = newURI;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TOOL_ITEM__URI, oldURI, uri));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object getObject() {
+		return object;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setObject(Object newObject) {
+		Object oldObject = object;
+		object = newObject;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TOOL_ITEM__OBJECT, oldObject, object));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getPersistedState() {
+		return persistedState;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPersistedState(String newPersistedState) {
+		String oldPersistedState = persistedState;
+		persistedState = newPersistedState;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TOOL_ITEM__PERSISTED_STATE, oldPersistedState, persistedState));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -465,6 +591,12 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 				return getWbCommand();
 			case MApplicationPackage.TOOL_ITEM__PARAMETERS:
 				return getParameters();
+			case MApplicationPackage.TOOL_ITEM__URI:
+				return getURI();
+			case MApplicationPackage.TOOL_ITEM__OBJECT:
+				return getObject();
+			case MApplicationPackage.TOOL_ITEM__PERSISTED_STATE:
+				return getPersistedState();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -506,6 +638,15 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 				getParameters().clear();
 				getParameters().addAll((Collection<? extends MParameter>)newValue);
 				return;
+			case MApplicationPackage.TOOL_ITEM__URI:
+				setURI((String)newValue);
+				return;
+			case MApplicationPackage.TOOL_ITEM__OBJECT:
+				setObject(newValue);
+				return;
+			case MApplicationPackage.TOOL_ITEM__PERSISTED_STATE:
+				setPersistedState((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -545,6 +686,15 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 			case MApplicationPackage.TOOL_ITEM__PARAMETERS:
 				getParameters().clear();
 				return;
+			case MApplicationPackage.TOOL_ITEM__URI:
+				setURI(URI_EDEFAULT);
+				return;
+			case MApplicationPackage.TOOL_ITEM__OBJECT:
+				setObject(OBJECT_EDEFAULT);
+				return;
+			case MApplicationPackage.TOOL_ITEM__PERSISTED_STATE:
+				setPersistedState(PERSISTED_STATE_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -575,6 +725,12 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 				return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
 			case MApplicationPackage.TOOL_ITEM__PARAMETERS:
 				return parameters != null && !parameters.isEmpty();
+			case MApplicationPackage.TOOL_ITEM__URI:
+				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
+			case MApplicationPackage.TOOL_ITEM__OBJECT:
+				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+			case MApplicationPackage.TOOL_ITEM__PERSISTED_STATE:
+				return PERSISTED_STATE_EDEFAULT == null ? persistedState != null : !PERSISTED_STATE_EDEFAULT.equals(persistedState);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -607,6 +763,14 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 				case MApplicationPackage.TOOL_ITEM__COMMAND: return MApplicationPackage.HANDLED_ITEM__COMMAND;
 				case MApplicationPackage.TOOL_ITEM__WB_COMMAND: return MApplicationPackage.HANDLED_ITEM__WB_COMMAND;
 				case MApplicationPackage.TOOL_ITEM__PARAMETERS: return MApplicationPackage.HANDLED_ITEM__PARAMETERS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MContribution.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.TOOL_ITEM__URI: return MApplicationPackage.CONTRIBUTION__URI;
+				case MApplicationPackage.TOOL_ITEM__OBJECT: return MApplicationPackage.CONTRIBUTION__OBJECT;
+				case MApplicationPackage.TOOL_ITEM__PERSISTED_STATE: return MApplicationPackage.CONTRIBUTION__PERSISTED_STATE;
 				default: return -1;
 			}
 		}
@@ -644,6 +808,14 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 				default: return -1;
 			}
 		}
+		if (baseClass == MContribution.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.CONTRIBUTION__URI: return MApplicationPackage.TOOL_ITEM__URI;
+				case MApplicationPackage.CONTRIBUTION__OBJECT: return MApplicationPackage.TOOL_ITEM__OBJECT;
+				case MApplicationPackage.CONTRIBUTION__PERSISTED_STATE: return MApplicationPackage.TOOL_ITEM__PERSISTED_STATE;
+				default: return -1;
+			}
+		}
 		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
 	}
 
@@ -671,6 +843,12 @@ public class ToolItemImpl extends ElementContainerImpl<MMenuItem> implements MTo
 		result.append(separator);
 		result.append(", wbCommand: "); //$NON-NLS-1$
 		result.append(wbCommand);
+		result.append(", URI: "); //$NON-NLS-1$
+		result.append(uri);
+		result.append(", object: "); //$NON-NLS-1$
+		result.append(object);
+		result.append(", persistedState: "); //$NON-NLS-1$
+		result.append(persistedState);
 		result.append(')');
 		return result.toString();
 	}

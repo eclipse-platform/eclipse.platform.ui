@@ -155,7 +155,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
         eType="#//Parameter"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//Menu #//HandledItem"/>
+  <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//Menu #//HandledItem #//Contribution"/>
   <eClassifiers xsi:type="ecore:EClass" name="Menu">
     <eGenericSuperTypes eClassifier="#//UIElement"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
@@ -167,6 +167,7 @@
       <eTypeArguments eClassifier="#//MenuItem"/>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//HandledItem"/>
+    <eGenericSuperTypes eClassifier="#//Contribution"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ToolBar">
     <eGenericSuperTypes eClassifier="#//UIElement"/>

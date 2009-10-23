@@ -258,6 +258,7 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseMenuItem(menuItem);
 				if (result == null) result = caseMenu(menuItem);
 				if (result == null) result = caseHandledItem(menuItem);
+				if (result == null) result = caseContribution(menuItem);
 				if (result == null) result = caseElementContainer(menuItem);
 				if (result == null) result = caseItem(menuItem);
 				if (result == null) result = caseUIElement(menuItem);
@@ -280,6 +281,7 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseToolItem(toolItem);
 				if (result == null) result = caseElementContainer(toolItem);
 				if (result == null) result = caseHandledItem(toolItem);
+				if (result == null) result = caseContribution(toolItem);
 				if (result == null) result = caseItem(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
 				if (result == null) result = caseApplicationElement(toolItem);

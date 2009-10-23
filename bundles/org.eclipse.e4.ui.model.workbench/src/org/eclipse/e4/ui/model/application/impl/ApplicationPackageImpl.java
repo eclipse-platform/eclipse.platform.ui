@@ -1513,6 +1513,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		handledItemEClass.getESuperTypes().add(this.getItem());
 		menuItemEClass.getESuperTypes().add(this.getMenu());
 		menuItemEClass.getESuperTypes().add(this.getHandledItem());
+		menuItemEClass.getESuperTypes().add(this.getContribution());
 		g1 = createEGenericType(this.getUIElement());
 		menuEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
@@ -1524,6 +1525,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1.getETypeArguments().add(g2);
 		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getHandledItem());
+		toolItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getContribution());
 		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getUIElement());
 		toolBarEClass.getEGenericSuperTypes().add(g1);
