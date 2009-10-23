@@ -677,7 +677,7 @@ public class ContentProposalAdapter {
 		 */
 		protected void adjustBounds() {
 			// Get our control's location in display coordinates.
-			Point location = control.toDisplay(control.getLocation());
+			Point location = control.getDisplay().map(control.getParent(), null, control.getLocation());			
 			int initialX = location.x + POPUP_OFFSET;
 			int initialY = location.y + control.getSize().y + POPUP_OFFSET;
 			// If we are inserting content, use the cursor position to
