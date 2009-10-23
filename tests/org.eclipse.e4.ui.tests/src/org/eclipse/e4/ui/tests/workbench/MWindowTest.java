@@ -28,6 +28,8 @@ import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.events.EventBrokerFactory;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
@@ -66,6 +68,8 @@ public class MWindowTest extends TestCase {
 			appContext.set(MApplication.class.getName(), app);
 			appContext.set(IContributionFactory.class.getName(), getCFactory());
 			appContext.set(IEclipseContext.class.getName(), appContext);
+			appContext.set(IEventBroker.class.getName(), EventBrokerFactory
+					.newEventBroker());
 			app.setContext(appContext);
 		}
 		return appContext;
