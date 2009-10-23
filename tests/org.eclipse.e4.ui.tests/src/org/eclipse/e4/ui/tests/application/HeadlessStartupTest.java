@@ -46,8 +46,9 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.ActiveChildOutputFunction;
 import org.eclipse.e4.workbench.ui.internal.ActivePartLookupFunction;
 import org.eclipse.e4.workbench.ui.internal.ExceptionHandler;
+import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
-import org.eclipse.e4.workbench.ui.internal.UIModelEventPublisher;
+import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
 import org.eclipse.e4.workbench.ui.internal.WorkbenchLogger;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
@@ -97,16 +98,15 @@ public abstract class HeadlessStartupTest extends TestCase {
 	private void addActiveChildEventHandling() {
 		IEventBroker eventBroker = (IEventBroker) application.getContext().get(
 				IEventBroker.class.getName());
-		eventBroker.subscribe(UIModelEventPublisher.ElementContainer.Topic,
-				null, new EventHandler() {
+		eventBroker.subscribe(IUIEvents.ElementContainer.Topic, null,
+				new EventHandler() {
 					public void handleEvent(Event event) {
-						if (event.getProperty(
-								UIModelEventPublisher.EventTags.AttName)
+						if (event.getProperty(IUIEvents.EventTags.AttName)
 								.equals("activeChild")) {
 							Object oldPart = event
-									.getProperty(UIModelEventPublisher.EventTags.OldValue);
+									.getProperty(IUIEvents.EventTags.OldValue);
 							Object newPart = event
-									.getProperty(UIModelEventPublisher.EventTags.NewValue);
+									.getProperty(IUIEvents.EventTags.NewValue);
 							if (oldPart instanceof MContext) {
 								IEclipseContext context = (IEclipseContext) ((MContext) oldPart)
 										.getContext().get(
@@ -349,7 +349,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 
 		// Hook the global notifications
 		((Notifier) application).eAdapters().add(
-				new UIModelEventPublisher(appContext));
+				new UIEventPublisher(appContext));
 
 		return application;
 	}

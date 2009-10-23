@@ -59,7 +59,19 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V_________Testing__________V" abstract="true"
       interface="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="TestHarness" eSuperTypes="#//ApplicationElement #//Command #//Context #//Contribution #//Input #//Item #//UIItem #//Parameter"/>
+  <eClassifiers xsi:type="ecore:EClass" name="TestHarness">
+    <eGenericSuperTypes eClassifier="#//ApplicationElement"/>
+    <eGenericSuperTypes eClassifier="#//Command"/>
+    <eGenericSuperTypes eClassifier="#//Context"/>
+    <eGenericSuperTypes eClassifier="#//Contribution"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//UIElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//Parameter"/>
+    <eGenericSuperTypes eClassifier="#//Input"/>
+    <eGenericSuperTypes eClassifier="#//Item"/>
+    <eGenericSuperTypes eClassifier="#//UIItem"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V_________AbstractContainers__________V"
       abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="ElementContainer" abstract="true" eSuperTypes="#//UIElement">

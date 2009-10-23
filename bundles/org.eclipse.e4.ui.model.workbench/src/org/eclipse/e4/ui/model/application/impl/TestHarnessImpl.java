@@ -38,7 +38,9 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -56,20 +58,22 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getURI <em>URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getObject <em>Object</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getPersistedState <em>Persisted State</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getInputURI <em>Input URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getFactory <em>Factory</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getChildren <em>Children</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getActiveChild <em>Active Child</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTag <em>Tag</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getInputURI <em>Input URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isSelected <em>Selected</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isSeparator <em>Separator</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTag <em>Tag</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getValue <em>Value</em>}</li>
  * </ul>
  * </p>
  *
@@ -237,46 +241,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	protected String persistedState = PERSISTED_STATE_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getInputURI() <em>Input URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getInputURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String INPUT_URI_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getInputURI() <em>Input URI</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getInputURI()
-	 * @generated
-	 * @ordered
-	 */
-	protected String inputURI = INPUT_URI_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDirty()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean DIRTY_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDirty()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean dirty = DIRTY_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -335,6 +299,106 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getChildren()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MUIElement> children;
+
+	/**
+	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getActiveChild()
+	 * @generated
+	 * @ordered
+	 */
+	protected MUIElement activeChild;
+
+	/**
+	 * The default value of the '{@link #getTag() <em>Tag</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTag()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String TAG_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getTag() <em>Tag</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getTag()
+	 * @generated
+	 * @ordered
+	 */
+	protected String tag = TAG_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String VALUE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getValue()
+	 * @generated
+	 * @ordered
+	 */
+	protected String value = VALUE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getInputURI() <em>Input URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInputURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String INPUT_URI_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getInputURI() <em>Input URI</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getInputURI()
+	 * @generated
+	 * @ordered
+	 */
+	protected String inputURI = INPUT_URI_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DIRTY_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean dirty = DIRTY_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -455,46 +519,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * @ordered
 	 */
 	protected boolean separator = SEPARATOR_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getTag() <em>Tag</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTag()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String TAG_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getTag() <em>Tag</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getTag()
-	 * @generated
-	 * @ordered
-	 */
-	protected String tag = TAG_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getValue() <em>Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final String VALUE_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getValue() <em>Value</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getValue()
-	 * @generated
-	 * @ordered
-	 */
-	protected String value = VALUE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -838,6 +862,56 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MUIElement> getChildren() {
+		if (children == null) {
+			children = new EObjectContainmentWithInverseEList<MUIElement>(MUIElement.class, this, MApplicationPackage.TEST_HARNESS__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
+		}
+		return children;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MUIElement getActiveChild() {
+		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
+			InternalEObject oldActiveChild = (InternalEObject)activeChild;
+			activeChild = (MUIElement)eResolveProxy(oldActiveChild);
+			if (activeChild != oldActiveChild) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD, oldActiveChild, activeChild));
+			}
+		}
+		return activeChild;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MUIElement basicGetActiveChild() {
+		return activeChild;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setActiveChild(MUIElement newActiveChild) {
+		MUIElement oldActiveChild = activeChild;
+		activeChild = newActiveChild;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD, oldActiveChild, activeChild));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getName() {
 		return name;
 	}
@@ -1014,6 +1088,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetParent((MElementContainer<MUIElement>)otherEnd, msgs);
+			case MApplicationPackage.TEST_HARNESS__CHILDREN:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -1028,6 +1104,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		switch (featureID) {
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return basicSetParent(null, msgs);
+			case MApplicationPackage.TEST_HARNESS__CHILDREN:
+				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -1072,10 +1150,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return getObject();
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
 				return getPersistedState();
-			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
-				return getInputURI();
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				return isDirty();
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				return getWidget();
 			case MApplicationPackage.TEST_HARNESS__FACTORY:
@@ -1084,6 +1158,19 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return isVisible();
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return getParent();
+			case MApplicationPackage.TEST_HARNESS__CHILDREN:
+				return getChildren();
+			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
+				if (resolve) return getActiveChild();
+				return basicGetActiveChild();
+			case MApplicationPackage.TEST_HARNESS__TAG:
+				return getTag();
+			case MApplicationPackage.TEST_HARNESS__VALUE:
+				return getValue();
+			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
+				return getInputURI();
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				return isDirty();
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				return getName();
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
@@ -1096,10 +1183,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return isSelected();
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				return isSeparator();
-			case MApplicationPackage.TEST_HARNESS__TAG:
-				return getTag();
-			case MApplicationPackage.TEST_HARNESS__VALUE:
-				return getValue();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1142,12 +1225,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
 				setPersistedState((String)newValue);
 				return;
-			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
-				setInputURI((String)newValue);
-				return;
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				setDirty((Boolean)newValue);
-				return;
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				setWidget(newValue);
 				return;
@@ -1159,6 +1236,25 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__CHILDREN:
+				getChildren().clear();
+				getChildren().addAll((Collection<? extends MUIElement>)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
+				setActiveChild((MUIElement)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__TAG:
+				setTag((String)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__VALUE:
+				setValue((String)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
+				setInputURI((String)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				setDirty((Boolean)newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				setName((String)newValue);
@@ -1177,12 +1273,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				setSeparator((Boolean)newValue);
-				return;
-			case MApplicationPackage.TEST_HARNESS__TAG:
-				setTag((String)newValue);
-				return;
-			case MApplicationPackage.TEST_HARNESS__VALUE:
-				setValue((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -1223,12 +1313,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
 				setPersistedState(PERSISTED_STATE_EDEFAULT);
 				return;
-			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
-				setInputURI(INPUT_URI_EDEFAULT);
-				return;
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				setDirty(DIRTY_EDEFAULT);
-				return;
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
@@ -1240,6 +1324,24 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
+				return;
+			case MApplicationPackage.TEST_HARNESS__CHILDREN:
+				getChildren().clear();
+				return;
+			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
+				setActiveChild((MUIElement)null);
+				return;
+			case MApplicationPackage.TEST_HARNESS__TAG:
+				setTag(TAG_EDEFAULT);
+				return;
+			case MApplicationPackage.TEST_HARNESS__VALUE:
+				setValue(VALUE_EDEFAULT);
+				return;
+			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
+				setInputURI(INPUT_URI_EDEFAULT);
+				return;
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				setDirty(DIRTY_EDEFAULT);
 				return;
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				setName(NAME_EDEFAULT);
@@ -1258,12 +1360,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				setSeparator(SEPARATOR_EDEFAULT);
-				return;
-			case MApplicationPackage.TEST_HARNESS__TAG:
-				setTag(TAG_EDEFAULT);
-				return;
-			case MApplicationPackage.TEST_HARNESS__VALUE:
-				setValue(VALUE_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -1295,10 +1391,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
 			case MApplicationPackage.TEST_HARNESS__PERSISTED_STATE:
 				return PERSISTED_STATE_EDEFAULT == null ? persistedState != null : !PERSISTED_STATE_EDEFAULT.equals(persistedState);
-			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
-				return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				return dirty != DIRTY_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.TEST_HARNESS__FACTORY:
@@ -1307,6 +1399,18 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.TEST_HARNESS__CHILDREN:
+				return children != null && !children.isEmpty();
+			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
+				return activeChild != null;
+			case MApplicationPackage.TEST_HARNESS__TAG:
+				return TAG_EDEFAULT == null ? tag != null : !TAG_EDEFAULT.equals(tag);
+			case MApplicationPackage.TEST_HARNESS__VALUE:
+				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
+				return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				return dirty != DIRTY_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
@@ -1319,10 +1423,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return selected != SELECTED_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				return separator != SEPARATOR_EDEFAULT;
-			case MApplicationPackage.TEST_HARNESS__TAG:
-				return TAG_EDEFAULT == null ? tag != null : !TAG_EDEFAULT.equals(tag);
-			case MApplicationPackage.TEST_HARNESS__VALUE:
-				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1358,19 +1458,33 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				default: return -1;
 			}
 		}
-		if (baseClass == MInput.class) {
-			switch (derivedFeatureID) {
-				case MApplicationPackage.TEST_HARNESS__INPUT_URI: return MApplicationPackage.INPUT__INPUT_URI;
-				case MApplicationPackage.TEST_HARNESS__DIRTY: return MApplicationPackage.INPUT__DIRTY;
-				default: return -1;
-			}
-		}
 		if (baseClass == MUIElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.TEST_HARNESS__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
 				case MApplicationPackage.TEST_HARNESS__FACTORY: return MApplicationPackage.UI_ELEMENT__FACTORY;
 				case MApplicationPackage.TEST_HARNESS__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.TEST_HARNESS__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
+				default: return -1;
+			}
+		}
+		if (baseClass == MElementContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.TEST_HARNESS__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
+				case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
+				default: return -1;
+			}
+		}
+		if (baseClass == MParameter.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.TEST_HARNESS__TAG: return MApplicationPackage.PARAMETER__TAG;
+				case MApplicationPackage.TEST_HARNESS__VALUE: return MApplicationPackage.PARAMETER__VALUE;
+				default: return -1;
+			}
+		}
+		if (baseClass == MInput.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.TEST_HARNESS__INPUT_URI: return MApplicationPackage.INPUT__INPUT_URI;
+				case MApplicationPackage.TEST_HARNESS__DIRTY: return MApplicationPackage.INPUT__DIRTY;
 				default: return -1;
 			}
 		}
@@ -1387,13 +1501,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				case MApplicationPackage.TEST_HARNESS__ENABLED: return MApplicationPackage.ITEM__ENABLED;
 				case MApplicationPackage.TEST_HARNESS__SELECTED: return MApplicationPackage.ITEM__SELECTED;
 				case MApplicationPackage.TEST_HARNESS__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
-				default: return -1;
-			}
-		}
-		if (baseClass == MParameter.class) {
-			switch (derivedFeatureID) {
-				case MApplicationPackage.TEST_HARNESS__TAG: return MApplicationPackage.PARAMETER__TAG;
-				case MApplicationPackage.TEST_HARNESS__VALUE: return MApplicationPackage.PARAMETER__VALUE;
 				default: return -1;
 			}
 		}
@@ -1431,19 +1538,33 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				default: return -1;
 			}
 		}
-		if (baseClass == MInput.class) {
-			switch (baseFeatureID) {
-				case MApplicationPackage.INPUT__INPUT_URI: return MApplicationPackage.TEST_HARNESS__INPUT_URI;
-				case MApplicationPackage.INPUT__DIRTY: return MApplicationPackage.TEST_HARNESS__DIRTY;
-				default: return -1;
-			}
-		}
 		if (baseClass == MUIElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.TEST_HARNESS__WIDGET;
 				case MApplicationPackage.UI_ELEMENT__FACTORY: return MApplicationPackage.TEST_HARNESS__FACTORY;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.TEST_HARNESS__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.TEST_HARNESS__PARENT;
+				default: return -1;
+			}
+		}
+		if (baseClass == MElementContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.TEST_HARNESS__CHILDREN;
+				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD;
+				default: return -1;
+			}
+		}
+		if (baseClass == MParameter.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.PARAMETER__TAG: return MApplicationPackage.TEST_HARNESS__TAG;
+				case MApplicationPackage.PARAMETER__VALUE: return MApplicationPackage.TEST_HARNESS__VALUE;
+				default: return -1;
+			}
+		}
+		if (baseClass == MInput.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.INPUT__INPUT_URI: return MApplicationPackage.TEST_HARNESS__INPUT_URI;
+				case MApplicationPackage.INPUT__DIRTY: return MApplicationPackage.TEST_HARNESS__DIRTY;
 				default: return -1;
 			}
 		}
@@ -1460,13 +1581,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.TEST_HARNESS__ENABLED;
 				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.TEST_HARNESS__SELECTED;
 				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.TEST_HARNESS__SEPARATOR;
-				default: return -1;
-			}
-		}
-		if (baseClass == MParameter.class) {
-			switch (baseFeatureID) {
-				case MApplicationPackage.PARAMETER__TAG: return MApplicationPackage.TEST_HARNESS__TAG;
-				case MApplicationPackage.PARAMETER__VALUE: return MApplicationPackage.TEST_HARNESS__VALUE;
 				default: return -1;
 			}
 		}
@@ -1501,16 +1615,20 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(object);
 		result.append(", persistedState: "); //$NON-NLS-1$
 		result.append(persistedState);
-		result.append(", inputURI: "); //$NON-NLS-1$
-		result.append(inputURI);
-		result.append(", dirty: "); //$NON-NLS-1$
-		result.append(dirty);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
 		result.append(", factory: "); //$NON-NLS-1$
 		result.append(factory);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", tag: "); //$NON-NLS-1$
+		result.append(tag);
+		result.append(", value: "); //$NON-NLS-1$
+		result.append(value);
+		result.append(", inputURI: "); //$NON-NLS-1$
+		result.append(inputURI);
+		result.append(", dirty: "); //$NON-NLS-1$
+		result.append(dirty);
 		result.append(", name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(", iconURI: "); //$NON-NLS-1$
@@ -1523,10 +1641,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(selected);
 		result.append(", separator: "); //$NON-NLS-1$
 		result.append(separator);
-		result.append(", tag: "); //$NON-NLS-1$
-		result.append(tag);
-		result.append(", value: "); //$NON-NLS-1$
-		result.append(value);
 		result.append(')');
 		return result.toString();
 	}

@@ -218,7 +218,7 @@ public class Workbench implements IWorkbench {
 		init();
 
 		// Hook the global notifications
-		((Notifier) workbench).eAdapters().add(new UIModelEventPublisher(workbench.getContext()));
+		((Notifier) workbench).eAdapters().add(new UIEventPublisher(workbench.getContext()));
 
 		return workbench;
 	}

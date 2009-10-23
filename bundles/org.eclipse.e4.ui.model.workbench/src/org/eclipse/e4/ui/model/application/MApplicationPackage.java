@@ -580,31 +580,13 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS__PERSISTED_STATE = APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
-	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__INPUT_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__DIRTY = APPLICATION_ELEMENT_FEATURE_COUNT + 10;
-
-	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__WIDGET = APPLICATION_ELEMENT_FEATURE_COUNT + 11;
+	int TEST_HARNESS__WIDGET = APPLICATION_ELEMENT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Factory</b></em>' attribute.
@@ -613,7 +595,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__FACTORY = APPLICATION_ELEMENT_FEATURE_COUNT + 12;
+	int TEST_HARNESS__FACTORY = APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -622,7 +604,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 13;
+	int TEST_HARNESS__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -631,61 +613,25 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 14;
+	int TEST_HARNESS__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 15;
+	int TEST_HARNESS__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ICON_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 16;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__TOOLTIP = APPLICATION_ELEMENT_FEATURE_COUNT + 17;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__ENABLED = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__SELECTED = APPLICATION_ELEMENT_FEATURE_COUNT + 19;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TEST_HARNESS__SEPARATOR = APPLICATION_ELEMENT_FEATURE_COUNT + 20;
+	int TEST_HARNESS__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Tag</b></em>' attribute.
@@ -694,7 +640,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 21;
+	int TEST_HARNESS__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -703,7 +649,79 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 22;
+	int TEST_HARNESS__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 16;
+
+	/**
+	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__INPUT_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 17;
+
+	/**
+	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__DIRTY = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 19;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__ICON_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 20;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__TOOLTIP = APPLICATION_ELEMENT_FEATURE_COUNT + 21;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__ENABLED = APPLICATION_ELEMENT_FEATURE_COUNT + 22;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__SELECTED = APPLICATION_ELEMENT_FEATURE_COUNT + 23;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__SEPARATOR = APPLICATION_ELEMENT_FEATURE_COUNT + 24;
 
 	/**
 	 * The number of structural features of the '<em>Test Harness</em>' class.
@@ -712,7 +730,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 23;
+	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 25;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}' class.

@@ -160,9 +160,10 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseTestHarness(testHarness);
 				if (result == null) result = caseCommand(testHarness);
 				if (result == null) result = caseContext(testHarness);
+				if (result == null) result = caseElementContainer(testHarness);
+				if (result == null) result = caseParameter(testHarness);
 				if (result == null) result = caseInput(testHarness);
 				if (result == null) result = caseItem(testHarness);
-				if (result == null) result = caseParameter(testHarness);
 				if (result == null) result = caseContribution(testHarness);
 				if (result == null) result = caseUIElement(testHarness);
 				if (result == null) result = caseUIItem(testHarness);

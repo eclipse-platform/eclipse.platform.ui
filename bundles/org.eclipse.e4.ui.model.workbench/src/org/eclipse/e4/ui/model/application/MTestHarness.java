@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MTestHarness extends MApplicationElement, MCommand, MContext, MContribution, MInput, MItem, MUIItem, MParameter {
+public interface MTestHarness extends MApplicationElement, MCommand, MContext, MContribution, MElementContainer<MUIElement>, MParameter, MInput, MItem, MUIItem {
 } // MTestHarness

@@ -126,16 +126,16 @@ public abstract class UIStartupTest extends HeadlessStartupTest {
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
-				parts[0].getParent().setActiveChild(parts[0]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[0].getId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
-
-				parts[1].getParent().setActiveChild(parts[1]);
+				parts[0].getParent().setActiveChild(parts[1]);
 				while (display.readAndDispatch())
 					;
 				assertEquals(parts[1].getId(), context
+						.get(IServiceConstants.ACTIVE_PART_ID));
+
+				parts[1].getParent().setActiveChild(parts[0]);
+				while (display.readAndDispatch())
+					;
+				assertEquals(parts[0].getId(), context
 						.get(IServiceConstants.ACTIVE_PART_ID));
 			}
 		});
@@ -148,16 +148,16 @@ public abstract class UIStartupTest extends HeadlessStartupTest {
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
-				parts[0].getParent().setActiveChild(parts[0]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[0].getId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
-
-				parts[1].getParent().setActiveChild(parts[1]);
+				parts[0].getParent().setActiveChild(parts[1]);
 				while (display.readAndDispatch())
 					;
 				assertEquals(parts[1].getId(), context
+						.get(IServiceConstants.ACTIVE_PART_ID));
+
+				parts[1].getParent().setActiveChild(parts[0]);
+				while (display.readAndDispatch())
+					;
+				assertEquals(parts[0].getId(), context
 						.get(IServiceConstants.ACTIVE_PART_ID));
 			}
 		});
