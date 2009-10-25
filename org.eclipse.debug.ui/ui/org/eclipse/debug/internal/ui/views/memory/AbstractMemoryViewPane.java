@@ -290,7 +290,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 							public void run() {
 								//remove the tab folder , and all contained tab items
 								disposeOfFolder((CTabFolder) folder);
-								fTabFolderForDebugView.remove(key);
+								if (fTabFolderForDebugView != null)
+									fTabFolderForDebugView.remove(key);
 							}
 						});
 					}
