@@ -22,7 +22,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -839,7 +838,8 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
             
             if (newPartContainer == activePartContainer) {
                 makeActive(ref);
-            } else if (newPartContainer == activeEditorContainer) {
+			} else if (newPartContainer != null
+					&& newPartContainer == activeEditorContainer) {
                 if (ref instanceof IEditorReference) {
                 	if (part!=null) {
                     	IWorkbenchPartSite site = part.getSite();
