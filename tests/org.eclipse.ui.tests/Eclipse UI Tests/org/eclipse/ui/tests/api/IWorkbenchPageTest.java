@@ -765,6 +765,59 @@ public class IWorkbenchPageTest extends UITestCase {
 		fActivePage.bringToTop(part2);
 		assertEquals(callTrace.contains("partBroughtToTop"), true);
 	}
+	
+	/**
+	 * Test to ensure that a minimized view can be brought to the top and
+	 * consequently made visible.
+	 * 
+	 * @param hasEditors whether there should be editors open or not
+	 */
+	private void testBringToTop_MinimizedViewBug292966(boolean hasEditors) throws Throwable {
+		// first show the view we're going to test
+		IViewPart propertiesView = fActivePage.showView(IPageLayout.ID_PROP_SHEET);
+		assertNotNull(propertiesView);
+		
+		proj = FileUtil.createProject("testOpenEditor");
+		// open an editor
+		IEditorPart editor = IDE.openEditor(fActivePage, FileUtil.createFile(
+				"a.mock1", proj));
+		assertNotNull("The editor could not be opened", editor); //$NON-NLS-1$
+		assertTrue("The editor is not visible", fActivePage.isPartVisible(editor)); //$NON-NLS-1$
+		
+		if (!hasEditors) {
+			// close editors if we don't want them opened for this test
+			fActivePage.closeAllEditors(false);
+			assertEquals("All the editors should have been closed", 0, fActivePage.getEditorReferences().length); //$NON-NLS-1$
+		}
+		
+		// minimize the view we're testing
+		fActivePage.setPartState(fActivePage.getReference(propertiesView), IWorkbenchPage.STATE_MINIMIZED);
+		assertFalse("A minimized view should not be visible", fActivePage.isPartVisible(propertiesView)); //$NON-NLS-1$
+		
+		// open another view so that it now becomes the active part container
+		IViewPart projectExplorer = fActivePage.showView(IPageLayout.ID_PROJECT_EXPLORER);
+		// get the list of views that shares the stack with this other view
+		IViewPart[] viewStack = fActivePage.getViewStack(projectExplorer);
+		// make sure that we didn't inadvertently bring back the test view by mistake
+		for (int i = 0; i < viewStack.length; i++) {
+			assertFalse("The properties view should not be on the same stack as the project explorer", //$NON-NLS-1$
+					viewStack[i].getSite().getId().equals(IPageLayout.ID_PROP_SHEET));
+		}
+		
+		// bring the test view back from its minimized state
+		fActivePage.bringToTop(propertiesView);
+		// the view should be visible
+		assertTrue("Invoking bringToTop(IWorkbenchPart) should cause the part to be visible", //$NON-NLS-1$
+				fActivePage.isPartVisible(propertiesView));
+	}
+	
+	public void testBringToTop_MinimizedViewWithEditorsBug292966() throws Throwable {
+		testBringToTop_MinimizedViewBug292966(false);
+	}
+	
+	public void testBringToTop_MinimizedViewWithoutEditorsBug292966() throws Throwable {
+		testBringToTop_MinimizedViewBug292966(true);
+	}
 
 	public void testGetWorkbenchWindow() {
 		/*
