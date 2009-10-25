@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     QNX - Alena Laskavaia Bug 240330 - [Memory View] Items per row should not be limited to 16
+ *     Freescale -  Teodor Madan  Bug 248486 -  [Memory View] Need a way to set default memory view format for a particular renderer
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.memory.renderings;
 
@@ -489,18 +490,12 @@ public class FormatTableRenderingDialog extends TrayDialog
 		}
 
 		private void restoreDefaults() {
-			String modelId = fRendering.getMemoryBlock().getModelIdentifier();
-			int defaultRowSize = DebugUITools.getPreferenceStore().getInt(getRowPrefId(modelId));
-			int defaultColSize = DebugUITools.getPreferenceStore().getInt(getColumnPrefId(modelId));
-			
-			if (defaultRowSize == 0 || defaultColSize == 0)
-			{
-				defaultRowSize = DebugUITools.getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_ROW_SIZE);
-				defaultColSize = DebugUITools.getPreferenceStore().getInt(IDebugPreferenceConstants.PREF_COLUMN_SIZE);
-				
-				DebugUITools.getPreferenceStore().setValue(getRowPrefId(modelId), defaultRowSize);
-				DebugUITools.getPreferenceStore().setValue(getColumnPrefId(modelId), defaultColSize);
-			}
+
+			// Determine the default values by using the following search order: 
+			// IPersistableDebugElement, workspace preference, plugin defaults
+			// issue: 248486 
+			int defaultRowSize = getDefaultRowSize();
+			int defaultColSize = getDefaultColumnSize();
 			
 			populateControl(defaultRowSize, fRowSizes, fRowControl);
 			populateControl(defaultColSize, fColumnSizes, fColumnControl);
