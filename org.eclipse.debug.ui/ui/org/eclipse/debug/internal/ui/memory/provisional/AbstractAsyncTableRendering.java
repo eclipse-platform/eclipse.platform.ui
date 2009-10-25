@@ -7,6 +7,7 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Teodor Madan (Freescale) -  Bug 292360 -  [Memory View] platform renderings do not implement correctly IMemoryRendering#getControl
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.memory.provisional;
@@ -981,7 +982,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @see org.eclipse.debug.ui.memory.IMemoryRendering#getControl()
 	 */
 	public Control getControl() {
-		return fPageBook.getParent();
+		return fPageBook;
 	}
 
 	/* (non-Javadoc)
