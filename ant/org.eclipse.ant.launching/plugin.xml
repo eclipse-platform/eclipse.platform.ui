@@ -42,7 +42,7 @@
          point="org.eclipse.jdt.launching.runtimeClasspathEntries">
       <runtimeClasspathEntry
             class="org.eclipse.ant.internal.launching.launchConfigurations.AntHomeClasspathEntry"
-            id="org.eclipse.antui.classpathentry.antHome">
+            id="org.eclipse.ant.ui.classpathentry.antHome">
       </runtimeClasspathEntry>
       <runtimeClasspathEntry
             class="org.eclipse.ant.internal.launching.launchConfigurations.ContributedClasspathEntriesEntry"
