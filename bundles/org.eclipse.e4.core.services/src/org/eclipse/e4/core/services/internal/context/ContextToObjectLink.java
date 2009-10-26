@@ -595,11 +595,11 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				Class clazz = params[i];
 				InjectionProperties properties = InjectionPropertyResolver
 						.getInjectionProperties(clazz);
-				String injectName;
-				if (properties == null)
-					injectName = clazz.getName();
-				else
+				String injectName = null;
+				if (properties != null)
 					injectName = properties.getPropertyName();
+				if (injectName == null)
+					injectName = clazz.getName();
 
 				if (IEclipseContext.class.equals(injectName)) {
 					contextParms[i] = localContext;
