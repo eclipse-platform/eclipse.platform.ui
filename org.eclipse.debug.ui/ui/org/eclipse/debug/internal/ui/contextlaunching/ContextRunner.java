@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *	   Daniel Friederich (freescale) -  Bug 293210 -  Context launch launches shared launch configuration twice.
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contextlaunching;
 
@@ -122,6 +123,7 @@ public final class ContextRunner {
 			ILaunchConfiguration config = lcm.isSharedConfig(resource);
 			if(config != null) {
 				launch(config, mode);
+				return;
 			}
 		//get the configurations from the resource and participants	
 			List configs = fLRM.getParticipatingLaunchConfigurations(selection, resource, shortcuts, mode);
