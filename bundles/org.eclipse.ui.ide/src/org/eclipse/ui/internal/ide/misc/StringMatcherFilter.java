@@ -46,13 +46,15 @@ public class StringMatcherFilter implements IFileInfoFilterFactory {
 		 * filesystem.IFileInfo)
 		 */
 		public boolean matches(IFileInfo fileInfo) {
+			if (matcher == null)
+				return false;
 			return matcher.match(fileInfo.getName());
 		}
 
 	}
 
 	public IFileInfoFilter instantiate(IProject project, Object arguments) {
-		return new FilterType((String)arguments);
+		return new FilterType((String) arguments);
 	}
 
 }
