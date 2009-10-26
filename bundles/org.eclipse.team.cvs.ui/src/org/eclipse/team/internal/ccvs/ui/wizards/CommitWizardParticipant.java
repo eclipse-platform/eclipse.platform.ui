@@ -25,9 +25,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.team.core.mapping.provider.SynchronizationContext;
 import org.eclipse.team.internal.ccvs.ui.CVSDecoration;
 import org.eclipse.team.internal.ccvs.ui.Policy;
+import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceChangeSetCapability;
 import org.eclipse.team.internal.ccvs.ui.mappings.WorkspaceModelParticipant;
 import org.eclipse.team.internal.ccvs.ui.subscriber.CVSParticipantLabelDecorator;
 import org.eclipse.team.internal.ui.Utils;
+import org.eclipse.team.internal.ui.synchronize.ChangeSetCapability;
 import org.eclipse.team.internal.ui.synchronize.SynchronizePageConfiguration;
 import org.eclipse.team.ui.mapping.SynchronizationActionProvider;
 import org.eclipse.team.ui.synchronize.*;
@@ -51,6 +53,22 @@ public class CommitWizardParticipant extends WorkspaceModelParticipant {
                 }
             });
         }
+    }
+    
+    private WorkspaceChangeSetCapability capability;
+    
+    public ChangeSetCapability getChangeSetCapability() {
+    	if (capability == null) {
+            capability = new WorkspaceChangeSetCapability() {
+            	public boolean supportsCheckedInChangeSets() {
+            		return false;
+            	}
+            	public boolean enableActiveChangeSetsFor(ISynchronizePageConfiguration configuration) {
+            		return false;
+            	};
+            };
+        }
+        return capability;
     }
 
     /**

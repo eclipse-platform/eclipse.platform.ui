@@ -192,23 +192,10 @@ public class CommitWizard extends ResizableWizard {
 
 	private void getAllOutOfSync() throws CVSException {
 		try {
-			PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					monitor.beginTask(null, IProgressMonitor.UNKNOWN);
-
-					ISynchronizationContext context = getParticipant().getContext();
-					SubscriberDiffTreeEventHandler handler = (SubscriberDiffTreeEventHandler) Utils.getAdapter(context,	SubscriberDiffTreeEventHandler.class);
-					handler.initializeIfNeeded();
-					Job.getJobManager().join(context, monitor);
-
-					if (monitor.isCanceled()) {
-						throw new InterruptedException();
-					}
-					monitor.done();
-				}
-			});
-		} catch (InvocationTargetException e) {
-			throw CVSException.wrapException(e);
+			ISynchronizationContext context = getParticipant().getContext();
+			SubscriberDiffTreeEventHandler handler = (SubscriberDiffTreeEventHandler) Utils.getAdapter(context,	SubscriberDiffTreeEventHandler.class);
+			handler.initializeIfNeeded();
+			Job.getJobManager().join(context, null);
 		} catch(InterruptedException e) {
 			throw new OperationCanceledException();
 		}
