@@ -104,7 +104,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	private static final String STORE_DESTINATION_ID = null;
 
-    protected static final int COMBO_HISTORY_LENGTH = 5;
+	protected static final int COMBO_HISTORY_LENGTH = 5;
 
     
 	/**
@@ -258,7 +258,12 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		group = new Group(composite, SWT.NONE);
 		GridData groupData = new GridData(GridData.FILL_BOTH);
 		groupData.horizontalSpan = 2;
-		groupData.horizontalIndent = IDialogConstants.LEFT_MARGIN;
+		groupData.horizontalIndent = IDialogConstants.INDENT;
+		Object compositeLayout = composite.getLayout();
+		if (compositeLayout instanceof GridLayout) {
+			groupData.horizontalIndent -= ((GridLayout) compositeLayout).marginWidth;
+			groupData.horizontalIndent -= ((GridLayout) compositeLayout).marginLeft;
+		}
 		group.setLayoutData(groupData);
 
 		GridLayout layout = new GridLayout();
