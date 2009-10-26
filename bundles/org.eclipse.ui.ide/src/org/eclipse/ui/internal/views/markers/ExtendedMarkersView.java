@@ -1526,15 +1526,20 @@ public class ExtendedMarkersView extends ViewPart {
 	/**
 	 * @param block
 	 */
-	synchronized void cancelQueuedUpdates(boolean block) {
-		if (uiUpdateJob != null) {
-			uiUpdateJob.cancel();
+	void cancelQueuedUpdates(boolean block) {
+		//grab a reference because it may be replaced concurrently
+		UIUpdateJob toCancel = uiUpdateJob;
+		if (toCancel != null) {
+			if (toCancel.cancel())
+				return;
 			if (block) {
 				try {
-					if (uiUpdateJob.getDisplay() != Display.getCurrent()) {
-						if (uiUpdateJob.getDisplay().getSyncThread() != Thread
+					final Display display = toCancel.getDisplay();
+					//make sure we don't join from within the UI thread where the ui update job runs
+					if (display != null && display != Display.getCurrent()) {
+						if (display.getSyncThread() != Thread
 								.currentThread()) {
-							uiUpdateJob.join();
+							toCancel.join();
 						}
 					}
 				} catch (InterruptedException e) {
