@@ -168,7 +168,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		Button checkBox= new Button(parent, SWT.CHECK);
 		checkBox.setText(label);
 
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
 		gd.horizontalIndent= indentation;
 		gd.horizontalSpan= 2;
 		checkBox.setLayoutData(gd);
@@ -191,14 +191,14 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		messageLayout.marginWidth= 0;
 		messageLayout.marginHeight= 0;
 		messageComposite.setLayout(messageLayout);
-		messageComposite.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL));
+		messageComposite.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		messageComposite.setFont(font);
 
 		final Label noteLabel= new Label(messageComposite, SWT.BOLD);
 		noteLabel.setText(title);
 		noteLabel.setFont(JFaceResources.getFontRegistry().getBold(
 				JFaceResources.DIALOG_FONT));
-		noteLabel.setLayoutData(new GridData(GridData.VERTICAL_ALIGN_BEGINNING));
+		noteLabel.setLayoutData(new GridData(SWT.BEGINNING, SWT.BEGINNING, false, false));
 
 		Label messageLabel= new Label(messageComposite, SWT.WRAP);
 		messageLabel.setText(message);
@@ -239,7 +239,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		fQuickDiffOverviewRulerCheckBox= new Button(composite, SWT.CHECK);
 		fQuickDiffOverviewRulerCheckBox.setText(label);
 
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		GridData gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
 		gd.horizontalIndent= 0;
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 10;
@@ -257,7 +257,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		// spacer
 		Label l= new Label(composite, SWT.LEFT );
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd= new GridData(SWT.FILL, SWT.CENTER, false, false);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 10;
 		gd.heightHint= 5;
@@ -268,7 +268,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		layout= new GridLayout();
 		layout.numColumns= 2;
 		group.setLayout(layout);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd= new GridData(SWT.BEGINNING, SWT.CENTER, false, false);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 10;
 		group.setLayoutData(gd);
@@ -281,7 +281,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			final ColorSelector editor= new ColorSelector(group);
 			fQuickDiffColorEditors[i]= editor;
 			Button changeColorButton= editor.getButton();
-			gd= new GridData(GridData.FILL_HORIZONTAL);
+			gd= new GridData(SWT.FILL, SWT.CENTER, true, false);
 			gd.horizontalAlignment= GridData.BEGINNING;
 			changeColorButton.setLayoutData(gd);
 			final int index= i;
@@ -301,7 +301,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 
 		l= new Label(composite, SWT.LEFT);
 		l.setText(TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderTitle);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		gd= new GridData(SWT.FILL, SWT.CENTER, false, false);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 10;
 		l.setLayoutData(gd);
@@ -312,13 +312,13 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
 		editorComposite.setLayout(layout);
-		gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.FILL_VERTICAL);
+		gd= new GridData(SWT.FILL, SWT.FILL, false, true);
 		gd.horizontalSpan= 2;
 		gd.horizontalIndent= 10;
 		editorComposite.setLayoutData(gd);
 
 		fQuickDiffProviderCombo= new Combo(editorComposite, SWT.DROP_DOWN | SWT.READ_ONLY);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_HORIZONTAL);
+		gd= new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		fQuickDiffProviderCombo.setLayoutData(gd);
 
 		fQuickDiffProviderCombo.addSelectionListener(new SelectionListener() {
@@ -335,7 +335,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		
 		fQuickDiffProviderNote= createNoteComposite(parent.getFont(), editorComposite, TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderNoteTitle,
 				TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderNoteMessage);
-		gd= new GridData(GridData.FILL_VERTICAL);
+		gd= new GridData(SWT.BEGINNING, SWT.FILL, false, true);
 		gd.horizontalSpan= 2;
 		fQuickDiffProviderNote.setLayoutData(gd);
 
@@ -353,7 +353,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		PixelConverter pixelConverter= new PixelConverter(composite);
 
 		Label filler= new Label(composite, SWT.LEFT );
-		GridData gd= new GridData(GridData.HORIZONTAL_ALIGN_FILL);
+		GridData gd= new GridData(SWT.FILL, SWT.CENTER, false, false);
 		gd.horizontalSpan= 2;
 		gd.heightHint= pixelConverter.convertHeightInCharsToPixels(1) / 2;
 		filler.setLayoutData(gd);
