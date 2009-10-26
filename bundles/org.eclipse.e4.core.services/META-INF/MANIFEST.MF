@@ -16,3 +16,5 @@ Export-Package: org.eclipse.e4.core.services,
  org.eclipse.e4.core.services.internal.context;x-internal:=true,
  org.eclipse.e4.internal.core.services.osgi;x-internal:=true
 Bundle-Vendor: Eclipse.org
+Eclipse-ExtensibleAPI: true
+Bundle-ClassPath: injection_annotations.jar, .

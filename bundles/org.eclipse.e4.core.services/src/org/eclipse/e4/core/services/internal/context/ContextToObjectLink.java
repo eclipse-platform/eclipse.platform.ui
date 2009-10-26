@@ -32,8 +32,6 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
  */
 public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 
-	private static final Object[] EMPTY_ARR = new Object[0];
-
 	static class ProcessMethodsResult {
 		List postConstructMethods = new ArrayList();
 		Set seenMethods = new HashSet();
@@ -78,17 +76,9 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		}
 	}
 
-	private static final String IN = ".In";//$NON-NLS-1$
-	private static final String INJECT = ".Inject";//$NON-NLS-1$
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
-	private static final String NAMED = ".Named";//$NON-NLS-1$
-
-	private static final String POST_CONSTRUCT = ".PostConstruct";//$NON-NLS-1$
-
-	private static final String PRE_DESTROY = ".PreDestroy";//$NON-NLS-1$
 
 	// annotation names
-	private static final String RESOURCE = ".Resource"; //$NON-NLS-1$
 	protected IEclipseContext context;
 
 	final protected String fieldPrefix;
@@ -133,21 +123,23 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		return candidate;
 	}
 
-	void callMethod(Object object, Method m, Object[] args) {
+	static Object callMethod(Object object, Method m, Object[] args) {
+		Object result = null;
 		try {
 			if (!m.isAccessible()) {
 				m.setAccessible(true);
 				try {
-					m.invoke(object, args);
+					result = m.invoke(object, args);
 				} finally {
 					m.setAccessible(false);
 				}
 			} else {
-				m.invoke(object, args);
+				result = m.invoke(object, args);
 			}
 		} catch (Exception e) {
 			logWarning(object, e);
 		}
+		return result;
 	}
 
 	private void findAndCallDispose(Object object, Class objectsClass, ProcessMethodsResult result) {
@@ -157,26 +149,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			Method method = methods[i];
 			if (method.getParameterTypes().length > 0)
 				continue;
-			try {
-				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations", //$NON-NLS-1$
-						new Class[0]).invoke(method, EMPTY_ARR);
-				for (int j = 0; j < annotations.length; j++) {
-					Object annotation = annotations[j];
-					try {
-						String annotationName = ((Class) annotation.getClass().getMethod(
-								"annotationType", new Class[0]).invoke(annotation, EMPTY_ARR)) //$NON-NLS-1$
-								.getName();
-						if (annotationName.endsWith(PRE_DESTROY)) {
-							if (!result.seen(method))
-								callMethod(object, method, null);
-						}
-					} catch (Exception ex) {
-						logWarning(method, ex);
-					}
-				}
-			} catch (Exception e) {
-				// ignore - no annotation support
-			}
+			if (!InjectionPropertyResolver.isPreDestory(method))
+				continue;
+			if (!result.seen(method))
+				callMethod(object, method, null);
 		}
 		// 2. Try IEclipseContextAware#contextDisposed(IEclipseContext)
 		try {
@@ -524,7 +500,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		return key1.equals(candidate);
 	}
 
-	void logWarning(Object destination, Exception e) {
+	static void logWarning(Object destination, Exception e) {
 		System.out.println("Injection failed " + destination.toString()); //$NON-NLS-1$
 		if (e != null)
 			e.printStackTrace();
@@ -596,137 +572,53 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		Field[] fields = objectsClass.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
-			String injectName = field.getName();
-			boolean inject = false;
-			boolean optional = true;
-			try {
-				Object[] annotations = (Object[]) field.getClass().getMethod("getAnnotations", //$NON-NLS-1$
-						new Class[0]).invoke(field, EMPTY_ARR);
-				for (int j = 0; j < annotations.length; j++) {
-					Object annotation = annotations[j];
-					try {
-						String annotationName = ((Class) annotation.getClass().getMethod(
-								"annotationType", new Class[0]).invoke(annotation, EMPTY_ARR)) //$NON-NLS-1$
-								.getName();
-						if (annotationName.endsWith(INJECT) || annotationName.endsWith(IN)) {
-							inject = true;
-							try {
-								optional = ((Boolean) annotation.getClass().getMethod("optional",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, EMPTY_ARR)).booleanValue();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						} else if (annotationName.endsWith(NAMED)) {
-							try {
-								injectName = (String) annotation.getClass().getMethod("value",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, EMPTY_ARR);
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						} else if (annotationName.endsWith(RESOURCE)) {
-							inject = true;
-							String resourceName = null;
-							try {
-								resourceName = (String) annotation.getClass().getMethod("name",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, EMPTY_ARR);
-							} catch (Exception e) {
-								logWarning(field, e);
-							}
-							if (resourceName != null && !resourceName.equals("")) {//$NON-NLS-1$
-								injectName = resourceName;
-							}
-						}
-					} catch (Exception e1) {
-						logWarning(field, e1);
-					}
-				}
-			} catch (Exception e2) {
-				// ignore - no annotation support
-			}
-			if (!inject && injectName.startsWith(fieldPrefix)) {
-				inject = true;
-				injectName = injectName.substring(fieldPrefixLength);
-			}
-			if (inject) {
-				processor.processField(field, injectName, optional);
-			}
+
+			InjectionProperties properties = InjectionPropertyResolver.getInjectionProperties(
+					field, fieldPrefix);
+			if (properties == null)
+				continue;
+			processor.processField(field, properties.getPropertyName(), properties.isOptional());
 		}
 	}
 
 	public static Object processInvoke(Object userObject, String methodName,
 			IEclipseContext localContext, Object defaultValue) {
-		boolean wasAccessible = true;
 		Method[] methods = userObject.getClass().getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
-			if (methodName.equals(method.getName())) {
-				try {
-					boolean satisfiable = true;
-					Class[] params = method.getParameterTypes();
-					Object[] contextParms = new Object[params.length];
-					Object[][] parameterAnnotations = (Object[][]) Method.class.getMethod(
-							"getParameterAnnotations", //$NON-NLS-1$
-							new Class[0]).invoke(method, EMPTY_ARR);
-					for (int i = 0; i < params.length && satisfiable; i++) {
-						Class clazz = params[i];
-						Object[] array = EMPTY_ARR;
-						if (parameterAnnotations.length > 0 && parameterAnnotations[i].length > 0) {
-							array = parameterAnnotations[i];
-						}
-						if (array != EMPTY_ARR) {
-							String injectName = clazz.getName();
-							for (int k = 0; k < array.length; k++) {
-								String annotationName = ((Class) array[k].getClass().getMethod(
-										"annotationType", new Class[0]).invoke(array[k], EMPTY_ARR)) //$NON-NLS-1$
-										.getName();
+			if (!method.getName().equals(methodName))
+				continue;
+			Class[] params = method.getParameterTypes();
+			Object[] contextParms = new Object[params.length];
+			boolean satisfiable = true;
+			for (int i = 0; i < params.length; i++) {
+				Class clazz = params[i];
+				InjectionProperties properties = InjectionPropertyResolver
+						.getInjectionProperties(clazz);
+				String injectName;
+				if (properties == null)
+					injectName = clazz.getName();
+				else
+					injectName = properties.getPropertyName();
 
-								if (annotationName.endsWith(NAMED)) {
-									try {
-										injectName = (String) array[k].getClass().getMethod(
-												"value",//$NON-NLS-1$
-												new Class[0]).invoke(array[k], EMPTY_ARR);
-									} catch (Exception e) {
-										e.printStackTrace();
-									}
-								}
-							}
-							if (IEclipseContext.class.equals(injectName)) {
-								contextParms[i] = localContext;
-							} else if (localContext.containsKey(injectName)) {
-								contextParms[i] = localContext.get(injectName);
-							} else {
-								satisfiable = false;
-							}
-						} else if (IEclipseContext.class.equals(clazz)) {
-							contextParms[i] = localContext;
-						} else if (localContext.containsKey(clazz.getName())) {
-							contextParms[i] = localContext.get(clazz.getName());
-						} else if (!localContext.containsKey(clazz.getName())
-								&& !IEclipseContext.class.equals(clazz)) {
-							satisfiable = false;
-						}
-					}
-					if (satisfiable) {
-						if (!method.isAccessible()) {
-							method.setAccessible(true);
-							wasAccessible = false;
-						}
-						return method.invoke(userObject, contextParms);
-					}
-
-				} catch (Exception e) {
-					e.printStackTrace();
-				} finally {
-					if (!wasAccessible) {
-						method.setAccessible(false);
-					}
+				if (IEclipseContext.class.equals(injectName)) {
+					contextParms[i] = localContext;
+					continue;
 				}
+				// XXX code below is wrong; should be similar to findKey()
+				if (localContext.containsKey(injectName)) {
+					contextParms[i] = localContext.get(injectName);
+					continue;
+				}
+				satisfiable = false;
+				break;
 			}
+			if (!satisfiable)
+				continue;
+			return callMethod(userObject, method, contextParms);
 		}
-		if (defaultValue == null) {
-			throw new RuntimeException(
-					"could not find satisfiable method " + methodName + " in class " + userObject.getClass()); //$NON-NLS-1$//$NON-NLS-2$
-		}
+		//"could not find satisfiable method " + methodName + " in class " + userObject.getClass()); //$NON-NLS-1$//$NON-NLS-2$
+		logWarning(userObject, null);
 		return defaultValue;
 	}
 
@@ -741,44 +633,22 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			// don't process methods already visited in subclasses
 			if (result.seen(method))
 				continue;
-			if (isPostConstruct(method)) {
+			if (isPostConstruct(method)) { // TBD move into InjectionPropertyResolver
 				result.postConstructMethods.add(method);
 				continue;
 			}
-			String candidateName = method.getName();
-			boolean inject = candidateName.startsWith(setMethodPrefix);
-			boolean optional = false;
-			try {
-				Object[] annotations = (Object[]) method.getClass().getMethod("getAnnotations", //$NON-NLS-1$
-						new Class[0]).invoke(method, EMPTY_ARR);
-				for (int j = 0; j < annotations.length; j++) {
-					Object annotation = annotations[j];
-					try {
-						String annotationName = ((Class) annotation.getClass().getMethod(
-								"annotationType", new Class[0]).invoke(annotation, EMPTY_ARR))//$NON-NLS-1$
-								.getName();
-						if (annotationName.endsWith(INJECT) || annotationName.endsWith(IN)) {
-							inject = true;
-							try {
-								optional = ((Boolean) annotation.getClass().getMethod("optional",//$NON-NLS-1$
-										new Class[0]).invoke(annotation, EMPTY_ARR)).booleanValue();
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						} else if (processor.shouldProcessPostConstruct
-								&& annotationName.endsWith(POST_CONSTRUCT)) {
-							inject = false;
-							result.postConstructMethods.add(method);
-						}
-					} catch (Exception ex) {
-						logWarning(method, ex);
-					}
+			if (processor.shouldProcessPostConstruct) {
+				if (InjectionPropertyResolver.isPostConstruct(method)) {
+					result.postConstructMethods.add(method);
+					continue;
 				}
-			} catch (Exception e) {
-				// ignore - no annotation support
 			}
-			if (inject) {
-				processor.processMethod(method, optional);
+			InjectionProperties properties = InjectionPropertyResolver.getInjectionProperties(
+					method, setMethodPrefix);
+			if (properties == null)
+				continue;
+			if (properties.shoudlInject()) { // XXX process @Named; pass the name in
+				processor.processMethod(method, properties.isOptional());
 			}
 		}
 		return result;
