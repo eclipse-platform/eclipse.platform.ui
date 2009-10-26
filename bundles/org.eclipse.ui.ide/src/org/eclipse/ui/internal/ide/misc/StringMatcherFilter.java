@@ -36,7 +36,8 @@ public class StringMatcherFilter implements IFileInfoFilterFactory {
 		 * @param arguments
 		 */
 		public FilterType(String arguments) {
-			matcher = new StringMatcher(arguments, true, false);
+			if (arguments != null)
+				matcher = new StringMatcher(arguments, true, false);
 		}
 
 		/*
