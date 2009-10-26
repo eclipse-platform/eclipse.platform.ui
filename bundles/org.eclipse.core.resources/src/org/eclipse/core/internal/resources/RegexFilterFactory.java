@@ -33,12 +33,14 @@ public class RegexFilterFactory implements IFileInfoFilterFactory {
 		}
 
 		public boolean matches(IFileInfo fileInfo) {
+			if (pattern == null)
+				return false;
 			Matcher m = pattern.matcher(fileInfo.getName());
 			return m.matches();
 		}
 	}
 
 	public IFileInfoFilter instantiate(IProject project, Object arguments) {
-		return new RegexFilterType(project, (String)arguments);
+		return new RegexFilterType(project, (String) arguments);
 	}
 }
