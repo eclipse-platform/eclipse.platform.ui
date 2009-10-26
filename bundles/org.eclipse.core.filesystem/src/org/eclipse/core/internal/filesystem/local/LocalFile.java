@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -328,7 +328,8 @@ public class LocalFile extends FileStore {
 					}
 					// source exists but destination doesn't so try to copy below
 				} else {
-					if (!destination.exists()) {
+					// destination.exists() returns false for broken links, this has to be handled explicitly
+					if (!destination.exists() && !destFile.fetchInfo().getAttribute(EFS.ATTRIBUTE_SYMLINK)) {
 						// neither the source nor the destination exist. this is REALLY bad
 						String message = NLS.bind(Messages.failedMove, source.getAbsolutePath(), destination.getAbsolutePath());
 						Policy.error(EFS.ERROR_WRITE, message);

@@ -143,6 +143,50 @@ public class SymlinkTest extends FileSystemTest {
 		}
 	}
 
+	public void testBrokenSymlinkMove() throws Exception {
+		//moving a broken symlink is possible
+		if (!isTestablePlatform()) {
+			return;
+		}
+		makeLinkStructure();
+		ensureDoesNotExist(aFile);
+		ensureDoesNotExist(aDir);
+		IFileInfo[] infos = baseStore.childInfos(EFS.NONE, getMonitor());
+		assertEquals(infos.length, 4);
+
+		IFileStore _llFile = baseStore.getChild("_llFile");
+		IFileStore _llDir = baseStore.getChild("_llDir");
+		llFile.move(_llFile, EFS.NONE, getMonitor());
+		llDir.move(_llDir, EFS.NONE, getMonitor());
+		infos = baseStore.childInfos(EFS.NONE, getMonitor());
+		assertEquals(infos.length, 4);
+		assertFalse("1.0", containsSymlink(infos, llFile.getName()));
+		assertFalse("1.1", containsSymlink(infos, llDir.getName()));
+		assertTrue("1.2", containsSymlink(infos, _llFile.getName()));
+		assertTrue("1.3", containsSymlink(infos, _llFile.getName()));
+
+		IFileStore _lFile = baseStore.getChild("_lFile");
+		IFileStore _lDir = baseStore.getChild("_lDir");
+		lFile.move(_lFile, EFS.NONE, getMonitor());
+		lDir.move(_lDir, EFS.NONE, getMonitor());
+		infos = baseStore.childInfos(EFS.NONE, getMonitor());
+		assertEquals(infos.length, 4);
+		assertFalse("1.4", containsSymlink(infos, lFile.getName()));
+		assertFalse("1.5", containsSymlink(infos, lDir.getName()));
+		assertTrue("1.6", containsSymlink(infos, _lFile.getName()));
+		assertTrue("1.7", containsSymlink(infos, _lFile.getName()));
+	}
+
+	private boolean containsSymlink(IFileInfo[] infos, String link) {
+		for (int i = 0; i < infos.length; i++) {
+			if (link.equals(infos[i].getName())) {
+				if (infos[i].getAttribute(EFS.ATTRIBUTE_SYMLINK))
+					return true;
+			}
+		}
+		return false;
+	}
+
 	public void testBrokenSymlinkRemove() throws Exception {
 		//removing a broken symlink is possible
 		if (!isTestablePlatform()) {
