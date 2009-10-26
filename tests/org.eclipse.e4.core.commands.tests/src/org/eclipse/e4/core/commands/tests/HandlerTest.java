@@ -242,37 +242,16 @@ public class HandlerTest extends TestCase {
 		HandlerWithAnnotations handler = new HandlerWithAnnotations();
 		wHS.activateHandler(TEST_ID1, handler);
 
-		Exception found = null;
-		try {
-			assertEquals(helloInfo, wHS.executeHandler(cmd));
-		} catch (RuntimeException e) {
-			found = e;
-			// believe it or not, this is a pass
-		}
-		assertNotNull(found);
-		
-		workbenchContext.remove(Info.class.getName());
-		found = null;
-		try {
-			assertEquals(helloInfo, wHS.executeHandler(cmd));
-		} catch (RuntimeException e) {
-			found = e;
-			// believe it or not, this is a pass
-		}
-		assertNotNull(found);
-		
-		workbenchContext.set(ACTIVE_INFO_ID, helloInfo);
 		assertEquals(helloInfo, wHS.executeHandler(cmd));
 		
+		workbenchContext.remove(Info.class.getName());
+		assertNull(wHS.executeHandler(cmd));
+		
+		workbenchContext.set(ACTIVE_INFO_ID, helloInfo);
+		assertNull(wHS.executeHandler(cmd));
+		
 		workbenchContext.remove(ACTIVE_INFO_ID);
-		found = null;
-		try {
-			assertEquals(helloInfo, wHS.executeHandler(cmd));
-		} catch (RuntimeException e) {
-			found = e;
-			// believe it or not, this is a pass
-		}
-		assertNotNull(found);
+		assertNull(wHS.executeHandler(cmd));
 	}
 
 	private IEclipseContext workbenchContext;
