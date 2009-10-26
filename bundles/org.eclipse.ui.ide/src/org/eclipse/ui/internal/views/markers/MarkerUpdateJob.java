@@ -80,11 +80,10 @@ class MarkerUpdateJob extends Job {
 	 */
 	protected void buildMarkers(IProgressMonitor monitor) {
 		MarkersChangeListener markersListener = builder.getMarkerListener();
-		markersListener.cancelQueuedUIUpdates(true);
+		markersListener.cancelQueuedUIUpdates();
 		markersListener
 				.indicateStatus(
-						MarkerMessages.MarkerView_searching_for_markers, false,
-						true/* false */);
+						MarkerMessages.MarkerView_searching_for_markers, false);
 		if (clean || !isIncremental()) {
 			clean = !clean(markersListener, monitor);
 		}
@@ -246,7 +245,7 @@ class SortingJob extends MarkerUpdateJob {
 		monitor.beginTask(MarkerMessages.MarkerView_19,
 				IProgressMonitor.UNKNOWN);
 		MarkersChangeListener markersListener = builder.getMarkerListener();
-		markersListener.cancelQueuedUIUpdates(true);
+		markersListener.cancelQueuedUIUpdates();
 		markersListener.indicateStatus(
 				MarkerMessages.MarkerView_19, true/* false */);
 		builder.getMarkers().sortMarkerEntries(monitor);

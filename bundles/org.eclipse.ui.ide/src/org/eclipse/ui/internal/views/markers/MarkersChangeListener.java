@@ -120,10 +120,10 @@ class MarkersChangeListener implements IResourceChangeListener {
 	void scheduleUpdate(long delay, boolean cancelPrevious,
 			boolean[] changeFlags) {
 		if (cancelPrevious) {
-			cancelQueuedUIUpdates(false);
+			cancelQueuedUIUpdates();
 			cancelUpdate(false);
 		}
-		indicateStatus(MarkerMessages.MarkerView_queueing_updates, true, false);
+		indicateStatus(MarkerMessages.MarkerView_queueing_updates, true);
 		builder.scheduleUpdateJob(delay, true, changeFlags);
 	}
 
@@ -152,26 +152,12 @@ class MarkersChangeListener implements IResourceChangeListener {
 	 * 
 	 * @param messsage
 	 *            the status to display
-	 * @param block
-	 *            <code>true</code> return after showing
-	 */
-	void indicateStatus(String messsage, boolean block) {
-		indicateStatus(messsage, false, block);
-	}
-
-	/**
-	 * Indicate the status message on UI.
-	 * 
-	 * @param messsage
-	 *            the status to display
 	 * @param updateUI
 	 *            <code>true</code> update label to show changing status
-	 * @param block
-	 *            <code>true</code> return after showing
 	 */
-	void indicateStatus(String messsage, boolean updateUI, boolean block) {
+	void indicateStatus(String messsage, boolean updateUI) {
 		view.indicateUpdating(messsage != null ? messsage
-				: MarkerMessages.MarkerView_queueing_updates, updateUI, block);
+				: MarkerMessages.MarkerView_queueing_updates, updateUI);
 	}
 
 	/**
@@ -187,11 +173,9 @@ class MarkersChangeListener implements IResourceChangeListener {
 	/**
 	 * Cancel any UI update if pending.
 	 * 
-	 * @param block
-	 *            <code>true</code> return after showing
 	 */
-	void cancelQueuedUIUpdates(boolean block) {
-		view.cancelQueuedUpdates(block);
+	void cancelQueuedUIUpdates() {
+		view.cancelQueuedUpdates();
 	}
 
 	/**

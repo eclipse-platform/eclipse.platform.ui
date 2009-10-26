@@ -70,7 +70,7 @@ class UIUpdateJob extends WorkbenchJob {
 			contentProvider.inputChanged(viewer, view.getViewerInput(),clone);
 			
 			view.indicateUpdating(MarkerMessages.MarkerView_19,
-					true, true);
+					true);
 			if (viewer.getControl().isDisposed()) {
 				return Status.CANCEL_STATUS;
 			}

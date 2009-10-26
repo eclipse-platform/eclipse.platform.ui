@@ -531,7 +531,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	public void dispose() {
 		builder.cancelUpdate(false);
-		cancelQueuedUpdates(false);
+		cancelQueuedUpdates();
 		
 		builder.dispose();
 		generator.dispose();
@@ -1465,8 +1465,7 @@ public class ExtendedMarkersView extends ViewPart {
 		scheduleUpdate(0L);
 	}
 
-	void indicateUpdating(final String message, final boolean updateLabels,
-			boolean block) {
+	void indicateUpdating(final String message, final boolean updateLabels) {
 		Display display = getSite().getShell().getDisplay();
 		if (Display.getCurrent() == display) {
 			setContentDescription(message != null ? message
@@ -1489,14 +1488,15 @@ public class ExtendedMarkersView extends ViewPart {
 		};
 		job.setPriority(Job.INTERACTIVE);
 		job.schedule();
-		if (block) {
-			try {
-				if (display.getSyncThread() != Thread.currentThread()) {
-					job.join();// the join locks while running tests
-				}
-			} catch (InterruptedException e) {
-			}
-		}
+// See Bug 293305
+//		if (block) {
+//			try {
+//				if (display.getSyncThread() != Thread.currentThread()) {
+//					job.join();
+//				}
+//			} catch (InterruptedException e) {
+//			}
+//		}
 	}
 
 	void updateCategoryLabels() {
@@ -1524,27 +1524,25 @@ public class ExtendedMarkersView extends ViewPart {
 	private UIUpdateJob uiUpdateJob;
 
 	/**
-	 * @param block
 	 */
-	void cancelQueuedUpdates(boolean block) {
-		//grab a reference because it may be replaced concurrently
-		UIUpdateJob toCancel = uiUpdateJob;
-		if (toCancel != null) {
-			if (toCancel.cancel())
+	synchronized void cancelQueuedUpdates() {
+		if (uiUpdateJob != null) {
+			if (uiUpdateJob.cancel())
 				return;
-			if (block) {
-				try {
-					final Display display = toCancel.getDisplay();
-					//make sure we don't join from within the UI thread where the ui update job runs
-					if (display != null && display != Display.getCurrent()) {
-						if (display.getSyncThread() != Thread
-								.currentThread()) {
-							toCancel.join();
-						}
-					}
-				} catch (InterruptedException e) {
-				}
-			}
+// See Bug 293305,
+//			if (false) {
+//				try {
+//					final Display display = uiUpdateJob.getDisplay();
+//					//make sure we don't join from within the UI thread where the ui update job runs
+//					if (display != null && display != Display.getCurrent()) {
+//						if (display.getSyncThread() != Thread
+//								.currentThread()) {
+//							uiUpdateJob.join();
+//						}
+//					}
+//				} catch (InterruptedException e) {
+//				}
+//			}
 		}
 	}
 
