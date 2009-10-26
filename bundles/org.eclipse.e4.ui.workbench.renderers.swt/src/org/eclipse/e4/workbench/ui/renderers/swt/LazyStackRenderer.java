@@ -10,21 +10,20 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.ecore.EObject;
+import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * This class encapsulates the functionality necessary to manage stacks of parts
@@ -39,6 +38,29 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class LazyStackRenderer extends SWTPartRenderer {
 	public LazyStackRenderer() {
 		super();
+	}
+
+	@Inject
+	public void init(IEventBroker eventBroker) {
+		EventHandler lazyLoader = new EventHandler() {
+			public void handleEvent(Event event) {
+				String attName = (String) event
+						.getProperty(IUIEvents.EventTags.AttName);
+				if (IUIEvents.ElementContainer.ActiveChild.equals(attName)) {
+					MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) event
+							.getProperty(IUIEvents.EventTags.Element);
+					MUIElement selPart = stack.getActiveChild();
+					if (selPart != null && selPart.getWidget() == null) {
+						IPresentationEngine renderer = (IPresentationEngine) context
+								.get(IPresentationEngine.class.getName());
+						renderer.createGui(selPart);
+						// activate(selPart);
+					}
+				}
+			}
+		};
+
+		eventBroker.subscribe(IUIEvents.ElementContainer.Topic, lazyLoader);
 	}
 
 	public void postProcess(MUIElement element) {
@@ -103,34 +125,18 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		// (already active) part
 		if (sm.getWidget() instanceof Control) {
 			Control ctrl = (Control) sm.getWidget();
-			ctrl.addListener(SWT.Activate, new Listener() {
-				public void handleEvent(Event event) {
-					CTabFolder ctf = (CTabFolder) event.widget;
-					MPartStack stack = (MPartStack) ctf.getData(OWNING_ME);
-					MPart selPart = stack.getActiveChild();
-					if (selPart != null)
-						activate(selPart);
-				}
-			});
+			ctrl.addListener(SWT.Activate,
+					new org.eclipse.swt.widgets.Listener() {
+						public void handleEvent(
+								org.eclipse.swt.widgets.Event event) {
+							CTabFolder ctf = (CTabFolder) event.widget;
+							MPartStack stack = (MPartStack) ctf
+									.getData(OWNING_ME);
+							MPart selPart = stack.getActiveChild();
+							if (selPart != null)
+								activate(selPart);
+						}
+					});
 		}
-
-		// Listen for changes to the 'activeChild'. If necessary render the
-		// contents of the newly activated child before making it active
-		((EObject) me).eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD
-						.equals(msg.getFeature())) {
-					MPartStack stack = (MPartStack) msg.getNotifier();
-					MPart selPart = stack.getActiveChild();
-					if (selPart != null && selPart.getWidget() == null) {
-						IPresentationEngine renderer = (IPresentationEngine) context
-								.get(IPresentationEngine.class.getName());
-						renderer.createGui(selPart);
-						// activate(selPart);
-					}
-				}
-			}
-		});
 	}
 }

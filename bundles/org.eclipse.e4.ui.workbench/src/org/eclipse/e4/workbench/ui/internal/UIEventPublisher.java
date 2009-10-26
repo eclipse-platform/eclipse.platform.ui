@@ -62,7 +62,7 @@ public class UIEventPublisher extends EContentAdapter {
 		String topic = formatData(notification, argMap);
 
 		if (topic != null) {
-			//System.out.println("UI Model Event: " + topic + " args: " + argMap); //$NON-NLS-1$ //$NON-NLS-2$
+			System.out.println("UI Model Event: " + topic + " args: " + argMap); //$NON-NLS-1$ //$NON-NLS-2$
 			IEventBroker eventManager = (IEventBroker) context.get(IEventBroker.class.getName());
 			eventManager.send(topic, argMap);
 		} else {

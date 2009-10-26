@@ -12,38 +12,30 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.In;
+import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.databinding.EMFObservables;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Render a Window or Workbench Window.
@@ -54,6 +46,46 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	public WBWRenderer() {
 		super();
+	}
+
+	@Inject
+	public void init(IEventBroker eventBroker) {
+		EventHandler shellUpdater = new EventHandler() {
+			public void handleEvent(Event event) {
+				// Ensure that this event is for a MMenuItem
+				Object objElement = event
+						.getProperty(IUIEvents.EventTags.Element);
+				if (!(event.getProperty(IUIEvents.EventTags.Element) instanceof MWindow))
+					return;
+
+				// Is this listener interested ?
+				MWindow windowModel = (MWindow) objElement;
+				if (windowModel.getFactory() != this)
+					return;
+
+				// No widget == nothing to update
+				Shell theShell = (Shell) windowModel.getWidget();
+				if (theShell == null)
+					return;
+
+				String attName = (String) event
+						.getProperty(IUIEvents.EventTags.AttName);
+
+				if (IUIEvents.UIItem.Name.equals(attName)) {
+					String newTitle = (String) event
+							.getProperty(IUIEvents.EventTags.NewValue);
+					theShell.setText(newTitle);
+				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+					theShell.setImage(getImage(windowModel));
+				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+					String newTTip = (String) event
+							.getProperty(IUIEvents.EventTags.NewValue);
+					theShell.setToolTipText(newTTip);
+				}
+			}
+		};
+
+		eventBroker.subscribe(IUIEvents.UIItem.Topic, shellUpdater);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -137,50 +169,6 @@ public class WBWRenderer extends SWTPartRenderer {
 				}
 			});
 		}
-
-		// Set up the text binding...perhaps should catch exceptions?
-		IObservableValue emfTextObs = EMFObservables.observeValue((EObject) me,
-				MApplicationPackage.Literals.UI_ITEM__NAME);
-		if (widget instanceof Control && !(widget instanceof Composite)) {
-			ISWTObservableValue uiTextObs = SWTObservables
-					.observeText((Control) widget);
-			dbc.bindValue(uiTextObs, emfTextObs, null, null);
-		} else if (widget instanceof org.eclipse.swt.widgets.Item) {
-			ISWTObservableValue uiTextObs = SWTObservables.observeText(widget);
-			dbc.bindValue(uiTextObs, emfTextObs, null, null);
-		}
-
-		// Set up the tool tip binding...perhaps should catch exceptions?
-		IObservableValue emfTTipObs = EMFObservables.observeValue((EObject) me,
-				MApplicationPackage.Literals.UI_ITEM__TOOLTIP);
-		if (widget instanceof Control) {
-			ISWTObservableValue uiTTipObs = SWTObservables
-					.observeTooltipText((Control) widget);
-			dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
-		} else if (widget instanceof org.eclipse.swt.widgets.Item
-				&& !(widget instanceof MenuItem)) {
-			ISWTObservableValue uiTTipObs = SWTObservables
-					.observeTooltipText(widget);
-			dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
-		}
-
-		// Handle generic image changes
-		((EObject) me).eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				MUIElement wbwModel = (MUIElement) msg.getNotifier();
-				if (MApplicationPackage.Literals.UI_ITEM__ICON_URI.equals(msg
-						.getFeature())) {
-					Widget widget = (Widget) wbwModel.getWidget();
-					if (widget instanceof Item) {
-						org.eclipse.swt.widgets.Item item = (org.eclipse.swt.widgets.Item) widget;
-						Image image = getImage((MUIItem) wbwModel);
-						if (image != null)
-							item.setImage(image);
-					}
-				}
-			}
-		});
 	}
 
 	/*

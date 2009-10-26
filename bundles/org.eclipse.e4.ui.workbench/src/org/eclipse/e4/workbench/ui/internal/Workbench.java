@@ -315,18 +315,6 @@ public class Workbench implements IWorkbench {
 		processHandlers(workbench);
 		// Hook the global notifications
 		((Notifier) workbench).eAdapters().add(new UIEventPublisher(workbench.getContext()));
-
-		// NMH: how do we do this now?
-		// workbench.eAdapters().add(new AdapterImpl() {
-		// @Override
-		// public void notifyChanged(Notification msg) {
-		// if (ApplicationPackage.Literals.MAPPLICATION__WINDOWS.equals(msg.getFeature())
-		// && msg.getEventType() == Notification.ADD) {
-		// MPart<?> added = (MPart<?>) msg.getNewValue();
-		// initializeContext(workbenchContext, added);
-		// }
-		// }
-		// });
 	}
 
 	/**
@@ -368,22 +356,6 @@ public class Workbench implements IWorkbench {
 
 		contextModel.setContext(context);
 		return context;
-
-		// NMH: how do we do this now?
-		// take care of generating the contexts.
-		// for (MPart child : (EList<MPart>) contextModel.getChildren()) {
-		// initializeContext(context, child);
-		// }
-		// contextModel.eAdapters().add(new AdapterImpl() {
-		// @Override
-		// public void notifyChanged(Notification msg) {
-		// if (ApplicationPackage.Literals.MPART__CHILDREN.equals(msg.getFeature())
-		// && msg.getEventType() == Notification.ADD) {
-		// MPart added = (MPart) msg.getNewValue();
-		// initializeContext(context, added);
-		// }
-		// }
-		// });
 	}
 
 	/**

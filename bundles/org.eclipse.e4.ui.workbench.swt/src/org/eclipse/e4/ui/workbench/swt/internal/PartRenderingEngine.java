@@ -17,19 +17,18 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.ecore.EObject;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public class PartRenderingEngine implements IPresentationEngine {
 	public static final String engineURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/"
@@ -39,84 +38,75 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private String curFactoryId = defaultRenderingFactoryId;
 	IRendererFactory curFactory = null;
 
-	// Life Cycle listeners
-	private AdapterImpl visibilityListener = new AdapterImpl() {
-		@Override
-		public void notifyChanged(Notification msg) {
-			if (MApplicationPackage.Literals.UI_ELEMENT__VISIBLE.equals(msg
-					.getFeature())) {
-				// skip no-ops
-				if (msg.getOldBooleanValue() == msg.getNewBooleanValue())
-					return;
+	// Life Cycle handlers
+	private EventHandler visibilityHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			String attName = (String) event
+					.getProperty(IUIEvents.EventTags.AttName);
+			if (!IUIEvents.UIElement.Visible.equals(attName))
+				return;
 
-				MUIElement changedPart = (MUIElement) msg.getNotifier();
+			MUIElement changedElement = (MUIElement) event
+					.getProperty(IUIEvents.EventTags.Element);
 
-				// If the parent isn't displayed who cares?
-				MElementContainer<?> parent = changedPart.getParent();
-				AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent)
-						: null;
-				if (parentFactory == null)
-					return;
+			// If the parent isn't displayed who cares?
+			MElementContainer<?> parent = changedElement.getParent();
+			AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent)
+					: null;
+			if (parentFactory == null)
+				return;
 
-				if (changedPart.isVisible()) {
-					Activator.trace(Policy.DEBUG_RENDERER,
-							"visible -> true", null); //$NON-NLS-1$
+			if (changedElement.isVisible()) {
+				Activator.trace(Policy.DEBUG_RENDERER, "visible -> true", null); //$NON-NLS-1$
 
-					// Note that the 'createGui' protocol calls 'childAdded'
-					createGui(changedPart);
-				} else {
-					Activator.trace(Policy.DEBUG_RENDERER,
-							"visible -> false", null); //$NON-NLS-1$
+				// Note that the 'createGui' protocol calls 'childAdded'
+				createGui(changedElement);
+			} else {
+				Activator
+						.trace(Policy.DEBUG_RENDERER, "visible -> false", null); //$NON-NLS-1$
 
-					// Note that the 'createGui' protocol calls 'childRemoved'
-					removeGui(changedPart);
-				}
+				// Note that the 'createGui' protocol calls 'childRemoved'
+				removeGui(changedElement);
 			}
+
 		}
 	};
 
-	private AdapterImpl childrenListener = new AdapterImpl() {
-		@Override
-		public void notifyChanged(Notification msg) {
-			if (MApplicationPackage.Literals.ELEMENT_CONTAINER__CHILDREN
-					.equals(msg.getFeature())) {
-				MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) msg
-						.getNotifier();
-				AbstractPartRenderer factory = getFactoryFor(changedElement);
+	private EventHandler childrenHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) event
+					.getProperty(IUIEvents.EventTags.Element);
 
-				// If the parent isn't in the UI then who cares?
-				if (factory == null)
+			// If the parent isn't in the UI then who cares?
+			AbstractPartRenderer factory = getFactoryFor(changedElement);
+			if (factory == null)
+				return;
+
+			String eventType = (String) event
+					.getProperty(IUIEvents.EventTags.Type);
+			if (IUIEvents.EventTypes.Add.equals(eventType)) {
+				Activator.trace(Policy.DEBUG_RENDERER, "Child Added", null); //$NON-NLS-1$
+				MUIElement added = (MUIElement) event
+						.getProperty(IUIEvents.EventTags.NewValue);
+
+				// OK, we have a new -visible- part we either have to create
+				// it or host it under the correct parent
+				if (added.getWidget() == null)
+					// NOTE: createGui will call 'childAdded' if successful
+					createGui(added);
+				else {
+					factory.childRendered(changedElement, added);
+				}
+			} else if (IUIEvents.EventTypes.Remove.equals(eventType)) {
+				Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
+				MUIElement removed = (MUIElement) event
+						.getProperty(IUIEvents.EventTags.OldValue);
+				// Removing invisible elements is a NO-OP as far as the
+				// renderer is concerned
+				if (!removed.isVisible())
 					return;
 
-				if (msg.getEventType() == Notification.ADD) {
-					Activator.trace(Policy.DEBUG_RENDERER, "Child Added", null); //$NON-NLS-1$
-					MPart added = (MPart) msg.getNewValue();
-					// Adding invisible elements is a NO-OP as far as the
-					// renderer is concerned
-					if (!added.isVisible()) {
-						installLifeCycleHooks(added);
-						return;
-					}
-
-					// OK, we have a new -visible- part we either have to create
-					// it or host it under the correct parent
-					if (added.getWidget() == null)
-						// NOTE: createGui will call 'childAdded' if successful
-						createGui(added);
-					else {
-						factory.childRendered(changedElement, added);
-					}
-				} else if (msg.getEventType() == Notification.REMOVE) {
-					Activator.trace(Policy.DEBUG_RENDERER,
-							"Child Removed", null); //$NON-NLS-1$
-					MPart removed = (MPart) msg.getOldValue();
-					// Removing invisible elements is a NO-OP as far as the
-					// renderer is concerned
-					if (!removed.isVisible())
-						return;
-
-					factory.hideChild(changedElement, removed);
-				}
+				factory.hideChild(changedElement, removed);
 			}
 		}
 	};
@@ -167,12 +157,16 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 		// Add the renderer to the context
 		context.set(IPresentationEngine.class.getName(), this);
+
+		// Hook up the widget life-cycle subscriber
+		IEventBroker eventBroker = (IEventBroker) context
+				.get(IEventBroker.class.getName());
+		eventBroker.subscribe(IUIEvents.UIElement.Topic, visibilityHandler);
+		eventBroker
+				.subscribe(IUIEvents.ElementContainer.Topic, childrenHandler);
 	}
 
 	public Object createGui(MUIElement element, Object parent) {
-		// Life-cycle hooks
-		installLifeCycleHooks(element);
-
 		if (!element.isVisible())
 			return null;
 
@@ -287,20 +281,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 				((IDisposable) lclContext).dispose();
 			}
 		}
-	}
-
-	/**
-	 * @param element
-	 *            an element that's been seen by createGui
-	 */
-	private void installLifeCycleHooks(MUIElement element) {
-		// Handle visibility changes
-		if (!((EObject) element).eAdapters().contains(visibilityListener))
-			((EObject) element).eAdapters().add(visibilityListener);
-
-		// Handle children
-		if (!((EObject) element).eAdapters().contains(childrenListener))
-			((EObject) element).eAdapters().add(childrenListener);
 	}
 
 	protected Object createWidget(MUIElement element, Object parent) {

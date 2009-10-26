@@ -16,17 +16,11 @@ import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
-import org.eclipse.emf.databinding.EMFDataBindingContext;
 
 public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
 
 	protected IEclipseContext context;
-	protected EMFDataBindingContext dbc;
-
-	public AbstractPartRenderer() {
-		dbc = new EMFDataBindingContext();
-	}
 
 	public void init(IEclipseContext context) {
 		this.context = context;

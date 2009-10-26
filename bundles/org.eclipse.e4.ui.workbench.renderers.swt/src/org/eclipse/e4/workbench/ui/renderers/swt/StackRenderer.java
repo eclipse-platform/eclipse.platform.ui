@@ -10,11 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.e4.core.services.annotations.In;
+import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MEditorStack;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -24,6 +22,7 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabFolder2Adapter;
 import org.eclipse.e4.ui.widgets.CTabFolderEvent;
@@ -31,14 +30,9 @@ import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
+import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
-import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.impl.AdapterImpl;
-import org.eclipse.emf.databinding.EMFObservables;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
@@ -47,11 +41,11 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public class StackRenderer extends LazyStackRenderer {
 
@@ -64,6 +58,53 @@ public class StackRenderer extends LazyStackRenderer {
 
 	public StackRenderer() {
 		super();
+	}
+
+	@Inject
+	public void init(IEventBroker eventBroker) {
+		super.init(eventBroker);
+
+		EventHandler itemUpdater = new EventHandler() {
+			public void handleEvent(Event event) {
+				Object objElement = event
+						.getProperty(IUIEvents.EventTags.Element);
+				// Ensure that this event is for a MMenuItem
+				if (!(objElement instanceof MUIItem)
+						|| !(objElement instanceof MUIElement))
+					return;
+
+				// Extract the data bits
+				MUIElement uiElement = (MUIElement) objElement;
+				MUIItem modelItem = (MUIItem) objElement;
+
+				// Is this Item visible
+				if (!(uiElement.getWidget() instanceof CTabItem))
+					return;
+
+				// This listener only updates stacks -it- rendered
+				MElementContainer<MUIElement> parent = uiElement.getParent();
+				if (!(parent.getFactory() == this))
+					return;
+
+				CTabItem tabItem = (CTabItem) uiElement.getWidget();
+				String attName = (String) event
+						.getProperty(IUIEvents.EventTags.AttName);
+
+				if (IUIEvents.UIItem.Name.equals(attName)) {
+					String newName = (String) event
+							.getProperty(IUIEvents.EventTags.NewValue);
+					tabItem.setText(newName);
+				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+					tabItem.setImage(getImage(modelItem));
+				} else if (IUIEvents.UIItem.Tooltip.equals(attName)) {
+					String newTTip = (String) event
+							.getProperty(IUIEvents.EventTags.NewValue);
+					tabItem.setToolTipText(newTTip);
+				}
+			}
+		};
+
+		eventBroker.subscribe(IUIEvents.UIItem.Topic, itemUpdater);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -257,44 +298,6 @@ public class StackRenderer extends LazyStackRenderer {
 
 	private void hookTabControllerLogic(final MPartStack stack,
 			final MPart part, final CTabItem cti) {
-		// Handle label changes
-		IObservableValue textObs = EMFObservables.observeValue((EObject) part,
-				MApplicationPackage.Literals.UI_ITEM__NAME);
-		ISWTObservableValue uiObs = SWTObservables.observeText(cti);
-		dbc.bindValue(uiObs, textObs, null, null);
-
-		// Observe tooltip changes
-		IObservableValue emfTTipObs = EMFObservables.observeValue(
-				(EObject) part, MApplicationPackage.Literals.UI_ITEM__TOOLTIP);
-		IObservableValue uiTTipObs = new AbstractObservableValue() {
-
-			public Object getValueType() {
-				return String.class;
-			}
-
-			protected Object doGetValue() {
-				return cti.getToolTipText();
-			}
-
-			protected void doSetValue(Object val) {
-				cti.setToolTipText((String) val);
-			}
-		};
-		dbc.bindValue(uiTTipObs, emfTTipObs, null, null);
-
-		// Handle tab item image changes
-		((EObject) part).eAdapters().add(new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				MPart sm = (MPart) msg.getNotifier();
-				if (MApplicationPackage.Literals.UI_ITEM__ICON_URI.equals(msg
-						.getFeature())
-						&& !cti.isDisposed()) {
-					Image image = getImage(sm);
-					cti.setImage(image);
-				}
-			}
-		});
 	}
 
 	@Override
@@ -378,31 +381,13 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// Detect activation...picks up cases where the user clicks on the
 		// (already active) tab
-		ctf.addListener(SWT.Activate, new Listener() {
-			public void handleEvent(Event event) {
+		ctf.addListener(SWT.Activate, new org.eclipse.swt.widgets.Listener() {
+			public void handleEvent(org.eclipse.swt.widgets.Event event) {
 				CTabFolder ctf = (CTabFolder) event.widget;
 				MPartStack stack = (MPartStack) ctf.getData(OWNING_ME);
 				MPart part = stack.getActiveChild();
 				if (part != null)
 					activate(part);
-			}
-		});
-
-		((EObject) me).eAdapters().add(0, new AdapterImpl() {
-			@Override
-			public void notifyChanged(Notification msg) {
-				if (MApplicationPackage.Literals.ELEMENT_CONTAINER__ACTIVE_CHILD
-						.equals(msg.getFeature())) {
-					MPartStack stack = (MPartStack) msg.getNotifier();
-					MPart selPart = stack.getActiveChild();
-					CTabFolder ctf = (CTabFolder) ((MPartStack) msg
-							.getNotifier()).getWidget();
-					CTabItem item = findItemForPart(stack, selPart);
-					if (item != null) {
-						if (ctf.getSelection() != item)
-							ctf.setSelection(item);
-					}
-				}
 			}
 		});
 	}
