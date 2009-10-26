@@ -7,7 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - Initial API and implementation
- * Martin Oberhuber (Wind River) - [288140] allow default web browser on Solaris 
+ * Martin Oberhuber (Wind River) - [292882] Default Browser on Solaris
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
@@ -16,16 +16,18 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
+import org.eclipse.swt.program.Program;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.osgi.framework.Constants;
+import org.osgi.framework.Version;
 /**
  * Utility class for the Web browser tools.
  */
@@ -152,9 +154,23 @@ public class WebBrowserUtil {
 	}
 
 	public static boolean canUseSystemBrowser() {
-		// Disabling system browser on Solaris due to bug 94497
-		if (Platform.OS_SOLARIS.equals(Platform.getOS()) && !Platform.WS_GTK.equals(Platform.getWS()))
-			return false;
+		// Disabling system browser on Solaris < Solaris10 due to bug 94497
+		// The problem is that the SWT Program fails with the Tooltalk / DT integration on Solaris 9 or older
+		// The GTK / Gnome integration on Solaris 10 or newer does work though.
+		// https://bugs.eclipse.org/bugs/show_bug.cgi?id=94497#c56
+		if (Platform.OS_SOLARIS.equals(Platform.getOS())) {
+			//No system browser on Solaris Motif
+			if (!Platform.WS_GTK.equals(Platform.getWS())) {
+				return false;
+			}
+			//No system browser on Solaris 9 or older
+			String osVersion = WebBrowserUIPlugin.getInstance().getBundle().getBundleContext().getProperty(Constants.FRAMEWORK_OS_VERSION);
+			int compareVal = new Version(osVersion).compareTo(new Version(5,10,0));
+			if (compareVal < 0) {
+				//older than Solaris 10
+				return false;
+			}
+		}
 		return Program.findProgram("html") != null; //$NON-NLS-1$
 	}
 
