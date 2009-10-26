@@ -193,14 +193,15 @@ public class CommitWizard extends ResizableWizard {
 	private void getAllOutOfSync() throws CVSException {
 		try {
 			ISynchronizationContext context = getParticipant().getContext();
-			SubscriberDiffTreeEventHandler handler = (SubscriberDiffTreeEventHandler) Utils.getAdapter(context,	SubscriberDiffTreeEventHandler.class);
+			SubscriberDiffTreeEventHandler handler = (SubscriberDiffTreeEventHandler) Utils
+					.getAdapter(context, SubscriberDiffTreeEventHandler.class);
 			handler.initializeIfNeeded();
 			Job.getJobManager().join(context, null);
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			throw new OperationCanceledException();
 		}
 	}
-    
+
     public boolean hasOutgoingChanges() {
     	IResourceDiffTree tree = getDiffTree();
 		return tree != null && tree.hasMatchingDiffs(ResourcesPlugin.getWorkspace().getRoot().getFullPath(), new FastDiffFilter() {
