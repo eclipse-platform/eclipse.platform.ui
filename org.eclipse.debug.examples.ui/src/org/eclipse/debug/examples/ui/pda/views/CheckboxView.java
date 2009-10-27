@@ -7,13 +7,12 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 286310)
+ *     IBM Corporation - ongoing maintenance and enhancements
  *****************************************************************/
 package org.eclipse.debug.examples.ui.pda.views;
 
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.part.ViewPart;
 
 public class CheckboxView extends VariablesView {
 	public static String ID = "CHECKBOX_VIEW_ID";

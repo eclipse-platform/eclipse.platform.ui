@@ -7,17 +7,15 @@
  *
  * Contributors:
  *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 286310)
+ *     IBM Corporation - ongoing maintenance and enhancements
  *****************************************************************/
 package org.eclipse.debug.examples.ui.midi.adapters;
 
 import javax.sound.midi.Track;
 
-import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckboxModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.provisional.AbstractModelProxy;
-import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.Viewer;
 
 public class TrackModelProxy extends AbstractModelProxy {
