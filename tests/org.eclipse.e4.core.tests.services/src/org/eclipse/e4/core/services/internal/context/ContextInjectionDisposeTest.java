@@ -10,11 +10,11 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import javax.inject.Inject;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -46,7 +46,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 
 			boolean disposeInvoked = false;
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			private String field;
 
 			@SuppressWarnings("unused")
@@ -77,7 +77,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 
 			boolean disposeInvoked = false;
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			private String field;
 
 			@SuppressWarnings("unused")
@@ -107,7 +107,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 			boolean contextDisposedInvoked = false;
 			boolean disposeInvoked = false;
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			private String field;
 
 			@SuppressWarnings("unused")
@@ -133,7 +133,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 		class Injected {
 			boolean contextDisposedInvoked = false;
 			boolean disposeInvoked = false;
-			@In
+			@Inject
 			Object injectedField;
 			Object methodValue;
 
@@ -155,7 +155,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 			}
 
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			public void setInjectedMethod(Object arg) {
 				methodValue = arg;
 			}
@@ -181,7 +181,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 			boolean contextDisposedInvoked = false;
 			boolean disposeInvoked = false;
 			boolean destroyInvoked = false;
-			@In
+			@Inject
 			Object injectedField;
 			Object methodValue;
 
@@ -202,7 +202,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 			}
 
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			public void setInjectedMethod(Object arg) {
 				methodValue = arg;
 			}

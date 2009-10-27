@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import javax.inject.Inject;
 import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -49,7 +49,7 @@ public class ContextInjectionTest extends TestCase {
 			}
 
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			public void setInjectedMethod(Object arg) {
 				setMethodCalled++;
 			}
@@ -77,7 +77,7 @@ public class ContextInjectionTest extends TestCase {
 			}
 
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			public void setInjectedMethod(Object arg) {
 				setMethodCalled++;
 			}
@@ -100,12 +100,12 @@ public class ContextInjectionTest extends TestCase {
 	public void testFieldMethodOrder() {
 		final AssertionFailedError[] error = new AssertionFailedError[1];
 		class Injected {
-			@In
+			@Inject
 			Object injectedField;
 			Object methodValue;
 
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			public void setInjectedMethod(Object arg) {
 				try {
 					assertTrue(injectedField != null);
@@ -381,7 +381,7 @@ public class ContextInjectionTest extends TestCase {
 			}
 
 			@SuppressWarnings("unused")
-			@In
+			@Inject
 			public void setInjectedMethod(Object arg) {
 				setMethodCalled++;
 			}

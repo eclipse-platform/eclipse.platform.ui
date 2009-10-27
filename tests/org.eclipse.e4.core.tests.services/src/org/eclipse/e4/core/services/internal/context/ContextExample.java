@@ -12,7 +12,7 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import java.text.NumberFormat;
-import org.eclipse.e4.core.services.annotations.In;
+import javax.inject.Inject;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -26,7 +26,7 @@ import org.osgi.framework.ServiceRegistration;
  */
 public class ContextExample {
 	class Crayon {
-		@In
+		@Inject
 		IPaletteService pallete;
 
 		public void draw() {

@@ -11,10 +11,9 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import javax.inject.Inject;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.annotations.In;
-import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -29,7 +28,7 @@ import org.osgi.framework.ServiceRegistration;
  */
 public class ServiceContextTest extends TestCase {
 	class Crayon {
-		@In
+		@Inject
 		IPaletteService palette;
 
 		public void draw() {
