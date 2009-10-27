@@ -36,5 +36,6 @@ public class AllSearchTests extends TestSuite {
 		addTestSuite(AnalyzerTest.class);
 		addTest(SearchCheatsheet.suite());
 		addTest(EncodedCharacterSearch.suite());
+		addTest(MetaKeywords.suite());
 	}
 }

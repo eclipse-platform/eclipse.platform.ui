@@ -29,5 +29,9 @@
   </topic>
   <topic href="data/help/search/test_de.html" label="testde.html">
   </topic>
+        <topic href="data/help/search/testMeta.htm" label="HTML doc with meta">
+      </topic>
+      <topic href="data/help/search/testMeta.xhtml" label="XHTML doc with meta">
+      </topic>
 	</topic>
 </toc>
