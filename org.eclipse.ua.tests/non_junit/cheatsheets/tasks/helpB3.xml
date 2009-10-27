@@ -93,7 +93,8 @@
    </item>
    <item title="Select an item" dialog="false" skip="false">
       <description>
-         Select thSelect the &quot;Minimizing data loss from crashes&quot; hit, and click on the &quot;Show in Table of Contents&quot; button on the navigation or content toolbar. This should switch the navigation view to the Contents view, and expand the Workbench User Guide down to the &quot;Minimizing data loss from crashes&quot; topic./description>
+         Select the &quot;Minimizing data loss from crashes&quot; hit, and click on the &quot;Show in table of contents&quot; button on the navigation or content toolbar. This should switch the navigation view to the Contents view, and expand the Workbench User Guide down to the &quot;Minimizing data loss from crashes&quot; topic.
+      </description>
    </item>
    <item title="Redisplay search results" dialog="false" skip="false">
       <description>
