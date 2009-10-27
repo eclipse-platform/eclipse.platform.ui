@@ -11,10 +11,9 @@
 package org.eclipse.e4.demo.e4photo;
 
 import java.io.BufferedInputStream;
-
-import org.eclipse.e4.core.services.annotations.In;
-
 import java.io.InputStream;
+
+import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.ChangeEvent;
 import org.eclipse.core.databinding.observable.IChangeListener;
@@ -151,7 +150,7 @@ public class Preview {
 	}
 
 
-	@In
+	@Inject
 	public void setSelection(final IFile input) {
 		bgRealm.asyncExec(new Runnable() {
 			public void run() {

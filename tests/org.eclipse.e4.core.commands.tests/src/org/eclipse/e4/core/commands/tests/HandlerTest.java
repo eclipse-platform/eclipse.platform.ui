@@ -1,5 +1,7 @@
 package org.eclipse.e4.core.commands.tests;
 
+import javax.inject.Named;
+
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
@@ -8,7 +10,6 @@ import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.annotations.Named;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 

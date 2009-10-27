@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
-import org.eclipse.e4.core.services.annotations.In;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Inject;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -89,7 +89,7 @@ public class Thumbnails {
 		return new Point(newWidth, newHeight);
 	}
 
-	@In
+	@Inject
 	public void setSelection(IResource selection) {
 		if (selection == null)
 			return;

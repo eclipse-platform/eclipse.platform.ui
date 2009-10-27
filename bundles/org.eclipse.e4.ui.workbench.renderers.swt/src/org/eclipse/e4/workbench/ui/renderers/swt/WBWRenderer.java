@@ -12,9 +12,8 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import javax.inject.Inject;
 import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.annotations.In;
-import org.eclipse.e4.core.services.annotations.Inject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -41,7 +40,7 @@ import org.osgi.service.event.EventHandler;
  * Render a Window or Workbench Window.
  */
 public class WBWRenderer extends SWTPartRenderer {
-	@In
+	@Inject
 	Logger logger;
 
 	public WBWRenderer() {

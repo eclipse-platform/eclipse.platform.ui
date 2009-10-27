@@ -12,13 +12,13 @@
 package org.eclipse.e4.core.commands.internal;
 
 import java.util.Map;
+import javax.inject.Inject;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
@@ -31,12 +31,12 @@ public class CommandServiceImpl implements ECommandService {
 	private CommandManager commandManager;
 	private IEclipseContext context;
 
-	@In
+	@Inject
 	public void setManager(CommandManager m) {
 		commandManager = m;
 	}
 
-	@In
+	@Inject
 	public void setContext(IEclipseContext c) {
 		context = c;
 	}

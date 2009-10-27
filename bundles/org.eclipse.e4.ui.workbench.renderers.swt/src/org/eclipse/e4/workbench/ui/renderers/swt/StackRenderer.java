@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import org.eclipse.e4.core.services.annotations.In;
-import org.eclipse.e4.core.services.annotations.Inject;
+import javax.inject.Inject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MEditorStack;
@@ -53,7 +52,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	Image viewMenuImage;
 
-	@In
+	@Inject
 	IStylingEngine stylingEngine;
 
 	public StackRenderer() {

@@ -11,9 +11,11 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.ArrayList;
-import org.eclipse.core.runtime.*;
+import javax.inject.Inject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.osgi.framework.log.FrameworkLog;
 import org.eclipse.osgi.framework.log.FrameworkLogEntry;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -42,8 +44,8 @@ public final class WorkbenchLogger extends Logger {
 	}
 
 	public void error(Throwable t, String message) {
-		log(new Status(IStatus.ERROR, Activator.getDefault().getBundle()
-				.getSymbolicName(), message, t));
+		log(new Status(IStatus.ERROR, Activator.getDefault().getBundle().getSymbolicName(),
+				message, t));
 	}
 
 	/**
@@ -72,13 +74,13 @@ public final class WorkbenchLogger extends Logger {
 		FrameworkLogEntry[] children = (FrameworkLogEntry[]) (childlist.size() == 0 ? null
 				: childlist.toArray(new FrameworkLogEntry[childlist.size()]));
 
-		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(),
-				status.getCode(), status.getMessage(), stackCode, t, children);
+		return new FrameworkLogEntry(status.getPlugin(), status.getSeverity(), status.getCode(),
+				status.getMessage(), stackCode, t, children);
 	}
 
 	public void info(Throwable t, String message) {
-		log(new Status(IStatus.INFO, Activator.getDefault().getBundle()
-				.getSymbolicName(), message, t));
+		log(new Status(IStatus.INFO, Activator.getDefault().getBundle().getSymbolicName(), message,
+				t));
 	}
 
 	public boolean isDebugEnabled() {
@@ -117,16 +119,15 @@ public final class WorkbenchLogger extends Logger {
 	 * @param options
 	 *            The debug options to be used by this logger
 	 */
-	@In
+	@Inject
 	public void setDebugOptions(DebugOptions options) {
-		this.trace = options.newDebugTrace(Activator.PI_WORKBENCH,
-				WorkbenchLogger.class);
+		this.trace = options.newDebugTrace(Activator.PI_WORKBENCH, WorkbenchLogger.class);
 	}
 
 	/**
 	 * @param log
 	 */
-	@In
+	@Inject
 	public void setFrameworkLog(FrameworkLog log) {
 		this.log = log;
 	}
@@ -141,7 +142,7 @@ public final class WorkbenchLogger extends Logger {
 	}
 
 	public void warn(Throwable t, String message) {
-		log(new Status(IStatus.WARNING, Activator.getDefault().getBundle()
-				.getSymbolicName(), message, t));
+		log(new Status(IStatus.WARNING, Activator.getDefault().getBundle().getSymbolicName(),
+				message, t));
 	}
 }

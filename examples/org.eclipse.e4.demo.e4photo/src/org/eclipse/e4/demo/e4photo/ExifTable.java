@@ -14,6 +14,8 @@ import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.resources.IContainer;
@@ -22,7 +24,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.JSONObject;
 import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.annotations.In;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
@@ -48,12 +50,12 @@ public class ExifTable {
 	
 	static public String EVENT_NAME = "org/eclipse/e4/demo/e4photo/exif"; 
 
-	@In
+	@Inject
 	private Composite parent;
-	@In
+	@Inject
 	private Logger logger;
 	
-	@In
+	@Inject
 	private IEventBroker eventBroker;
 	
 	
@@ -62,7 +64,7 @@ public class ExifTable {
 		super();
 	}
 
-	@In
+	@Inject
 	void setSelection(IResource selection) {
 		if (selection == null)
 			return;
@@ -103,7 +105,7 @@ public class ExifTable {
 		}
 	}
 
-	@In (optional = true)
+	@Inject @Optional(true)
 	void setPersistedState(String persistedState) {
 		changeSupport.firePropertyChange("persistedState", this.persistedState,
 				this.persistedState = persistedState);

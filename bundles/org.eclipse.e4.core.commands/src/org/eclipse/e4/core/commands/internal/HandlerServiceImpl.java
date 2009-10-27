@@ -13,9 +13,9 @@ package org.eclipse.e4.core.commands.internal;
 
 import java.util.Iterator;
 import java.util.Map;
+import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.services.annotations.In;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -122,7 +122,7 @@ public class HandlerServiceImpl implements EHandlerService {
 		return new Object[] { LOOKUP_HANDLER, handlerId + H_PREFIX };
 	}
 
-	@In
+	@Inject
 	public void setContext(IEclipseContext c) {
 		context = c;
 	}
