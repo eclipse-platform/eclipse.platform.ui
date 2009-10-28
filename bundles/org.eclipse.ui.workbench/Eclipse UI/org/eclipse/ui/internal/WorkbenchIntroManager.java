@@ -217,6 +217,14 @@ public class WorkbenchIntroManager implements IIntroManager {
 			return false;
 		}
 
+		// if the welcome view is minimized then return true
+		WorkbenchPage page = (WorkbenchPage) viewIntroAdapterPart.getSite()
+				.getPage();
+		IViewReference reference = page
+				.findViewReference(IIntroConstants.INTRO_VIEW_ID);
+		if (page.isFastView(reference))
+			return true;
+
         return !((PartSite) viewIntroAdapterPart.getSite()).getPane()
                 .isZoomed();
     }
