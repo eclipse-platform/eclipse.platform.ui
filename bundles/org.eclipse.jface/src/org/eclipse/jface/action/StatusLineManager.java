@@ -186,10 +186,8 @@ public class StatusLineManager extends ContributionManager implements
             public void setCanceled(boolean value) {
                 //Don't bother updating for disposed status
                 if (statusLineExist()) {
-					return;
+                	progressDelegate.setCanceled(value);
 				}
-                progressDelegate.setCanceled(value);
-
             }
 
             /* (non-Javadoc)
