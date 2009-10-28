@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
@@ -199,6 +200,11 @@ public class StackRenderer extends LazyStackRenderer {
 		// Find the tab associated with the part and set it as the selection
 		CTabItem selItem = findItemForPart((MPartStack) element, selPart);
 		if (selItem != null) {
+			if (selPart.getWidget() == null) {
+				IPresentationEngine renderer = (IPresentationEngine) getContext(
+						selPart).get(IPresentationEngine.class.getName());
+				renderer.createGui(selPart);
+			}
 			ctf.setSelection(selItem);
 			activate(selPart);
 		}
