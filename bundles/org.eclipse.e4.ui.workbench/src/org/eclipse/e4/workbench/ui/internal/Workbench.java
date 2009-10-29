@@ -48,6 +48,8 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.services.events.EventBrokerFactory;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
@@ -130,6 +132,10 @@ public class Workbench implements IWorkbench {
 		mainContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), mainContext));
 		mainContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
+
+		// If we don't already have an event broker, put one here
+		if (applicationContext.get(IEventBroker.class.getName()) == null)
+			mainContext.set(IEventBroker.class.getName(), EventBrokerFactory.newEventBroker());
 
 		// setup for commands and handlers
 		if (contributionFactory != null) {
