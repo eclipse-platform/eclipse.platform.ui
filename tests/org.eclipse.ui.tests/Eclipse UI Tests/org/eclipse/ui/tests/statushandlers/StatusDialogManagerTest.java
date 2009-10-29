@@ -867,9 +867,6 @@ public class StatusDialogManagerTest extends TestCase {
 		Shell shell = StatusDialogUtil.getStatusShell();
 		Rectangle newSize = shell.getBounds();
 		assertTrue(newSize.height > sizeY);
-		// the dialog has to be visible
-		assertTrue(shell.getMonitor().getBounds().height > newSize.y
-				+ newSize.height);
 	}
 
 	/**
