@@ -17,7 +17,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -885,36 +884,8 @@ public class MarkerContentGenerator {
 		Collection resourceSet = getResourcesFor(getEnabledFilters(), andFilters());
 		// return common most parents
 		if (andFilters()) {
-			// this will be always almost empty
-			// except if same prefix paths are contained,
-			// in which case the most specific resource
-			// is returned
-			IResource longPathRes = null;
-			Iterator iterator = resourceSet.iterator();
-			while (iterator.hasNext()) {
-				IResource resource = (IResource) iterator.next();
-				if (longPathRes == null) {
-					longPathRes = resource;
-				} else if (resource.getFullPath().segmentCount() > longPathRes
-						.getFullPath().segmentCount()) {
-					longPathRes = resource;
-				}
-			}
-			iterator = resourceSet.iterator();
-			while (iterator.hasNext()) {
-				IResource resource = (IResource) iterator.next();
-				if (!resource.equals(longPathRes)) {
-					if (!resource.getFullPath().isPrefixOf(
-							longPathRes.getFullPath())) {
-						return Collections.EMPTY_LIST;
-					}
-				}
-			}
-			if (longPathRes != null) {
-				List list = new ArrayList(1);
-				list.add(longPathRes);
-				return list;
-			}
+			// Skip Anding the resources (optimization).
+			//TODO: include the elaborate logic later ?
 		}
 		Set ressouceSetClone = new HashSet(resourceSet);
 		Iterator cloneIterator = ressouceSetClone.iterator();
@@ -972,7 +943,7 @@ public class MarkerContentGenerator {
 			}
 			case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
 				IResource[] resources = getProjects(selectedResources);
-				for (int i = 0; i < selectedResources.length; i++) {
+				for (int i = 0; i < resources.length; i++) {
 					resourceSet.add(resources[i]);
 				}
 				break;
@@ -980,7 +951,7 @@ public class MarkerContentGenerator {
 			case MarkerFieldFilterGroup.ON_WORKING_SET: {
 				group.refresh();
 				IResource[] resources = group.getResourcesInWorkingSet();
-				for (int i = 0; i < selectedResources.length; i++) {
+				for (int i = 0; i < resources.length; i++) {
 					resourceSet.add(resources[i]);
 				}
 				break;
