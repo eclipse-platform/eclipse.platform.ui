@@ -138,6 +138,24 @@ public interface MApplicationFactory extends EFactory {
 	MMenuItem createMenuItem();
 
 	/**
+	 * Returns a new object of class '<em>Handled Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handled Menu Item</em>'.
+	 * @generated
+	 */
+	MHandledMenuItem createHandledMenuItem();
+
+	/**
+	 * Returns a new object of class '<em>Direct Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Direct Menu Item</em>'.
+	 * @generated
+	 */
+	MDirectMenuItem createDirectMenuItem();
+
+	/**
 	 * Returns a new object of class '<em>Menu</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -154,6 +172,24 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MToolItem createToolItem();
+
+	/**
+	 * Returns a new object of class '<em>Handled Tool Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handled Tool Item</em>'.
+	 * @generated
+	 */
+	MHandledToolItem createHandledToolItem();
+
+	/**
+	 * Returns a new object of class '<em>Direct Tool Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Direct Tool Item</em>'.
+	 * @generated
+	 */
+	MDirectToolItem createDirectToolItem();
 
 	/**
 	 * Returns a new object of class '<em>Tool Bar</em>'.

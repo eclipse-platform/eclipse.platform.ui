@@ -13,20 +13,18 @@ package org.eclipse.e4.ui.model.application.impl;
 import java.util.Collection;
 
 import org.eclipse.core.commands.ParameterizedCommand;
+
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.MItem;
-import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
+import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIItem;
-import org.eclipse.e4.ui.model.application.MUIElement;
 
 import org.eclipse.emf.common.notify.Notification;
-import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.common.util.EList;
 
@@ -37,28 +35,29 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
-import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
-import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Menu Item</b></em>'.
+ * An implementation of the model object '<em><b>Handled Tool Item</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl#getIconURI <em>Icon URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl#getTooltip <em>Tooltip</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl#isEnabled <em>Enabled</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl#isSelected <em>Selected</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getIconURI <em>Icon URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#isEnabled <em>Enabled</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#isSelected <em>Selected</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getCommand <em>Command</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getWbCommand <em>Wb Command</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class MenuItemImpl extends MenuImpl implements MMenuItem {
+public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> implements MHandledToolItem {
 	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -180,11 +179,51 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	protected boolean separator = SEPARATOR_EDEFAULT;
 
 	/**
+	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCommand()
+	 * @generated
+	 * @ordered
+	 */
+	protected MCommand command;
+
+	/**
+	 * The default value of the '{@link #getWbCommand() <em>Wb Command</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWbCommand()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final ParameterizedCommand WB_COMMAND_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getWbCommand() <em>Wb Command</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWbCommand()
+	 * @generated
+	 * @ordered
+	 */
+	protected ParameterizedCommand wbCommand = WB_COMMAND_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getParameters()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MParameter> parameters;
+
+	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected MenuItemImpl() {
+	protected HandledToolItemImpl() {
 		super();
 	}
 
@@ -195,7 +234,7 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.MENU_ITEM;
+		return MApplicationPackage.Literals.HANDLED_TOOL_ITEM;
 	}
 
 	/**
@@ -216,7 +255,7 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 		String oldName = name;
 		name = newName;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU_ITEM__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__NAME, oldName, name));
 	}
 
 	/**
@@ -237,7 +276,7 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU_ITEM__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__ICON_URI, oldIconURI, iconURI));
 	}
 
 	/**
@@ -258,7 +297,7 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU_ITEM__TOOLTIP, oldTooltip, tooltip));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__TOOLTIP, oldTooltip, tooltip));
 	}
 
 	/**
@@ -279,7 +318,7 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 		boolean oldEnabled = enabled;
 		enabled = newEnabled;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU_ITEM__ENABLED, oldEnabled, enabled));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED, oldEnabled, enabled));
 	}
 
 	/**
@@ -300,7 +339,7 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 		boolean oldSelected = selected;
 		selected = newSelected;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU_ITEM__SELECTED, oldSelected, selected));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED, oldSelected, selected));
 	}
 
 	/**
@@ -321,7 +360,78 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 		boolean oldSeparator = separator;
 		separator = newSeparator;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MENU_ITEM__SEPARATOR, oldSeparator, separator));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR, oldSeparator, separator));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCommand getCommand() {
+		if (command != null && ((EObject)command).eIsProxy()) {
+			InternalEObject oldCommand = (InternalEObject)command;
+			command = (MCommand)eResolveProxy(oldCommand);
+			if (command != oldCommand) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND, oldCommand, command));
+			}
+		}
+		return command;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCommand basicGetCommand() {
+		return command;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCommand(MCommand newCommand) {
+		MCommand oldCommand = command;
+		command = newCommand;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND, oldCommand, command));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ParameterizedCommand getWbCommand() {
+		return wbCommand;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setWbCommand(ParameterizedCommand newWbCommand) {
+		ParameterizedCommand oldWbCommand = wbCommand;
+		wbCommand = newWbCommand;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND, oldWbCommand, wbCommand));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<MParameter> getParameters() {
+		if (parameters == null) {
+			parameters = new EObjectResolvingEList<MParameter>(MParameter.class, this, MApplicationPackage.HANDLED_TOOL_ITEM__PARAMETERS);
+		}
+		return parameters;
 	}
 
 	/**
@@ -332,18 +442,25 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.MENU_ITEM__NAME:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__NAME:
 				return getName();
-			case MApplicationPackage.MENU_ITEM__ICON_URI:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ICON_URI:
 				return getIconURI();
-			case MApplicationPackage.MENU_ITEM__TOOLTIP:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TOOLTIP:
 				return getTooltip();
-			case MApplicationPackage.MENU_ITEM__ENABLED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED:
 				return isEnabled();
-			case MApplicationPackage.MENU_ITEM__SELECTED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				return isSelected();
-			case MApplicationPackage.MENU_ITEM__SEPARATOR:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
 				return isSeparator();
+			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
+				if (resolve) return getCommand();
+				return basicGetCommand();
+			case MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND:
+				return getWbCommand();
+			case MApplicationPackage.HANDLED_TOOL_ITEM__PARAMETERS:
+				return getParameters();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -357,23 +474,33 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.MENU_ITEM__NAME:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__NAME:
 				setName((String)newValue);
 				return;
-			case MApplicationPackage.MENU_ITEM__ICON_URI:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ICON_URI:
 				setIconURI((String)newValue);
 				return;
-			case MApplicationPackage.MENU_ITEM__TOOLTIP:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TOOLTIP:
 				setTooltip((String)newValue);
 				return;
-			case MApplicationPackage.MENU_ITEM__ENABLED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED:
 				setEnabled((Boolean)newValue);
 				return;
-			case MApplicationPackage.MENU_ITEM__SELECTED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				setSelected((Boolean)newValue);
 				return;
-			case MApplicationPackage.MENU_ITEM__SEPARATOR:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
 				setSeparator((Boolean)newValue);
+				return;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
+				setCommand((MCommand)newValue);
+				return;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND:
+				setWbCommand((ParameterizedCommand)newValue);
+				return;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__PARAMETERS:
+				getParameters().clear();
+				getParameters().addAll((Collection<? extends MParameter>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -387,23 +514,32 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MENU_ITEM__NAME:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__NAME:
 				setName(NAME_EDEFAULT);
 				return;
-			case MApplicationPackage.MENU_ITEM__ICON_URI:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ICON_URI:
 				setIconURI(ICON_URI_EDEFAULT);
 				return;
-			case MApplicationPackage.MENU_ITEM__TOOLTIP:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
-			case MApplicationPackage.MENU_ITEM__ENABLED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED:
 				setEnabled(ENABLED_EDEFAULT);
 				return;
-			case MApplicationPackage.MENU_ITEM__SELECTED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				setSelected(SELECTED_EDEFAULT);
 				return;
-			case MApplicationPackage.MENU_ITEM__SEPARATOR:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
 				setSeparator(SEPARATOR_EDEFAULT);
+				return;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
+				setCommand((MCommand)null);
+				return;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND:
+				setWbCommand(WB_COMMAND_EDEFAULT);
+				return;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__PARAMETERS:
+				getParameters().clear();
 				return;
 		}
 		super.eUnset(featureID);
@@ -417,18 +553,24 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MENU_ITEM__NAME:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case MApplicationPackage.MENU_ITEM__ICON_URI:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ICON_URI:
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case MApplicationPackage.MENU_ITEM__TOOLTIP:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
-			case MApplicationPackage.MENU_ITEM__ENABLED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED:
 				return enabled != ENABLED_EDEFAULT;
-			case MApplicationPackage.MENU_ITEM__SELECTED:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				return selected != SELECTED_EDEFAULT;
-			case MApplicationPackage.MENU_ITEM__SEPARATOR:
+			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
 				return separator != SEPARATOR_EDEFAULT;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
+				return command != null;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND:
+				return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
+			case MApplicationPackage.HANDLED_TOOL_ITEM__PARAMETERS:
+				return parameters != null && !parameters.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}
@@ -442,17 +584,30 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
 		if (baseClass == MUIItem.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.MENU_ITEM__NAME: return MApplicationPackage.UI_ITEM__NAME;
-				case MApplicationPackage.MENU_ITEM__ICON_URI: return MApplicationPackage.UI_ITEM__ICON_URI;
-				case MApplicationPackage.MENU_ITEM__TOOLTIP: return MApplicationPackage.UI_ITEM__TOOLTIP;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__NAME: return MApplicationPackage.UI_ITEM__NAME;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__ICON_URI: return MApplicationPackage.UI_ITEM__ICON_URI;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__TOOLTIP: return MApplicationPackage.UI_ITEM__TOOLTIP;
 				default: return -1;
 			}
 		}
 		if (baseClass == MItem.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.MENU_ITEM__ENABLED: return MApplicationPackage.ITEM__ENABLED;
-				case MApplicationPackage.MENU_ITEM__SELECTED: return MApplicationPackage.ITEM__SELECTED;
-				case MApplicationPackage.MENU_ITEM__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED: return MApplicationPackage.ITEM__ENABLED;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED: return MApplicationPackage.ITEM__SELECTED;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandledItem.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND: return MApplicationPackage.HANDLED_ITEM__COMMAND;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND: return MApplicationPackage.HANDLED_ITEM__WB_COMMAND;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__PARAMETERS: return MApplicationPackage.HANDLED_ITEM__PARAMETERS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MToolItem.class) {
+			switch (derivedFeatureID) {
 				default: return -1;
 			}
 		}
@@ -468,17 +623,30 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
 		if (baseClass == MUIItem.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.UI_ITEM__NAME: return MApplicationPackage.MENU_ITEM__NAME;
-				case MApplicationPackage.UI_ITEM__ICON_URI: return MApplicationPackage.MENU_ITEM__ICON_URI;
-				case MApplicationPackage.UI_ITEM__TOOLTIP: return MApplicationPackage.MENU_ITEM__TOOLTIP;
+				case MApplicationPackage.UI_ITEM__NAME: return MApplicationPackage.HANDLED_TOOL_ITEM__NAME;
+				case MApplicationPackage.UI_ITEM__ICON_URI: return MApplicationPackage.HANDLED_TOOL_ITEM__ICON_URI;
+				case MApplicationPackage.UI_ITEM__TOOLTIP: return MApplicationPackage.HANDLED_TOOL_ITEM__TOOLTIP;
 				default: return -1;
 			}
 		}
 		if (baseClass == MItem.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.MENU_ITEM__ENABLED;
-				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.MENU_ITEM__SELECTED;
-				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.MENU_ITEM__SEPARATOR;
+				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED;
+				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED;
+				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR;
+				default: return -1;
+			}
+		}
+		if (baseClass == MHandledItem.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.HANDLED_ITEM__COMMAND: return MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND;
+				case MApplicationPackage.HANDLED_ITEM__WB_COMMAND: return MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND;
+				case MApplicationPackage.HANDLED_ITEM__PARAMETERS: return MApplicationPackage.HANDLED_TOOL_ITEM__PARAMETERS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MToolItem.class) {
+			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}
@@ -507,8 +675,10 @@ public class MenuItemImpl extends MenuImpl implements MMenuItem {
 		result.append(selected);
 		result.append(", separator: "); //$NON-NLS-1$
 		result.append(separator);
+		result.append(", wbCommand: "); //$NON-NLS-1$
+		result.append(wbCommand);
 		result.append(')');
 		return result.toString();
 	}
 
-} //MenuItemImpl
+} //HandledToolItemImpl

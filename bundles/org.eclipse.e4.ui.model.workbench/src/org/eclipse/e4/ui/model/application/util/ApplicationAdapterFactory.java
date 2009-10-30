@@ -164,12 +164,28 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createMenuItemAdapter();
 			}
 			@Override
+			public Adapter caseHandledMenuItem(MHandledMenuItem object) {
+				return createHandledMenuItemAdapter();
+			}
+			@Override
+			public Adapter caseDirectMenuItem(MDirectMenuItem object) {
+				return createDirectMenuItemAdapter();
+			}
+			@Override
 			public Adapter caseMenu(MMenu object) {
 				return createMenuAdapter();
 			}
 			@Override
 			public Adapter caseToolItem(MToolItem object) {
 				return createToolItemAdapter();
+			}
+			@Override
+			public Adapter caseHandledToolItem(MHandledToolItem object) {
+				return createHandledToolItemAdapter();
+			}
+			@Override
+			public Adapter caseDirectToolItem(MDirectToolItem object) {
+				return createDirectToolItemAdapter();
 			}
 			@Override
 			public Adapter caseToolBar(MToolBar object) {
@@ -576,6 +592,34 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledMenuItem <em>Handled Menu Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MHandledMenuItem
+	 * @generated
+	 */
+	public Adapter createHandledMenuItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MDirectMenuItem <em>Direct Menu Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MDirectMenuItem
+	 * @generated
+	 */
+	public Adapter createDirectMenuItemAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MMenu <em>Menu</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -600,6 +644,34 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createToolItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledToolItem <em>Handled Tool Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MHandledToolItem
+	 * @generated
+	 */
+	public Adapter createHandledToolItemAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MDirectToolItem <em>Direct Tool Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MDirectToolItem
+	 * @generated
+	 */
+	public Adapter createDirectToolItemAdapter() {
 		return null;
 	}
 

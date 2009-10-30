@@ -15,11 +15,11 @@
     <variables>input</variables>
     <mainMenu>
       <children xsi:type="application:MenuItem" name="File">
-        <children xsi:type="application:MenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
+        <children xsi:type="application:DirectMenuItem" name="Exit" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler"/>
       </children>
       <children xsi:type="application:MenuItem" name="Theme">
-        <children xsi:type="application:MenuItem" name="Dark Theme" command="//@commands.1"/>
-        <children xsi:type="application:MenuItem" name="Bright Theme" command="//@commands.2"/>
+        <children xsi:type="application:HandledMenuItem" name="Dark Theme" command="//@commands.1"/>
+        <children xsi:type="application:HandledMenuItem" name="Bright Theme" command="//@commands.2"/>
       </children>
     </mainMenu>
   </children>

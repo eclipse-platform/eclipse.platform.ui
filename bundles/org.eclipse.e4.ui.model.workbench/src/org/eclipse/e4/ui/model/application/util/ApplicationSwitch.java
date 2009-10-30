@@ -257,13 +257,39 @@ public class ApplicationSwitch<T1> {
 				MMenuItem menuItem = (MMenuItem)theEObject;
 				T1 result = caseMenuItem(menuItem);
 				if (result == null) result = caseMenu(menuItem);
-				if (result == null) result = caseHandledItem(menuItem);
-				if (result == null) result = caseContribution(menuItem);
-				if (result == null) result = caseElementContainer(menuItem);
 				if (result == null) result = caseItem(menuItem);
+				if (result == null) result = caseElementContainer(menuItem);
+				if (result == null) result = caseUIItem(menuItem);
 				if (result == null) result = caseUIElement(menuItem);
 				if (result == null) result = caseApplicationElement(menuItem);
-				if (result == null) result = caseUIItem(menuItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.HANDLED_MENU_ITEM: {
+				MHandledMenuItem handledMenuItem = (MHandledMenuItem)theEObject;
+				T1 result = caseHandledMenuItem(handledMenuItem);
+				if (result == null) result = caseMenuItem(handledMenuItem);
+				if (result == null) result = caseHandledItem(handledMenuItem);
+				if (result == null) result = caseMenu(handledMenuItem);
+				if (result == null) result = caseItem(handledMenuItem);
+				if (result == null) result = caseElementContainer(handledMenuItem);
+				if (result == null) result = caseUIItem(handledMenuItem);
+				if (result == null) result = caseUIElement(handledMenuItem);
+				if (result == null) result = caseApplicationElement(handledMenuItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.DIRECT_MENU_ITEM: {
+				MDirectMenuItem directMenuItem = (MDirectMenuItem)theEObject;
+				T1 result = caseDirectMenuItem(directMenuItem);
+				if (result == null) result = caseContribution(directMenuItem);
+				if (result == null) result = caseMenuItem(directMenuItem);
+				if (result == null) result = caseMenu(directMenuItem);
+				if (result == null) result = caseItem(directMenuItem);
+				if (result == null) result = caseElementContainer(directMenuItem);
+				if (result == null) result = caseUIItem(directMenuItem);
+				if (result == null) result = caseApplicationElement(directMenuItem);
+				if (result == null) result = caseUIElement(directMenuItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -279,13 +305,35 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.TOOL_ITEM: {
 				MToolItem toolItem = (MToolItem)theEObject;
 				T1 result = caseToolItem(toolItem);
-				if (result == null) result = caseElementContainer(toolItem);
-				if (result == null) result = caseHandledItem(toolItem);
-				if (result == null) result = caseContribution(toolItem);
 				if (result == null) result = caseItem(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
-				if (result == null) result = caseApplicationElement(toolItem);
 				if (result == null) result = caseUIItem(toolItem);
+				if (result == null) result = caseApplicationElement(toolItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.HANDLED_TOOL_ITEM: {
+				MHandledToolItem handledToolItem = (MHandledToolItem)theEObject;
+				T1 result = caseHandledToolItem(handledToolItem);
+				if (result == null) result = caseElementContainer(handledToolItem);
+				if (result == null) result = caseHandledItem(handledToolItem);
+				if (result == null) result = caseToolItem(handledToolItem);
+				if (result == null) result = caseItem(handledToolItem);
+				if (result == null) result = caseUIElement(handledToolItem);
+				if (result == null) result = caseApplicationElement(handledToolItem);
+				if (result == null) result = caseUIItem(handledToolItem);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.DIRECT_TOOL_ITEM: {
+				MDirectToolItem directToolItem = (MDirectToolItem)theEObject;
+				T1 result = caseDirectToolItem(directToolItem);
+				if (result == null) result = caseContribution(directToolItem);
+				if (result == null) result = caseToolItem(directToolItem);
+				if (result == null) result = caseItem(directToolItem);
+				if (result == null) result = caseUIElement(directToolItem);
+				if (result == null) result = caseUIItem(directToolItem);
+				if (result == null) result = caseApplicationElement(directToolItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -836,6 +884,36 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Handled Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Handled Menu Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseHandledMenuItem(MHandledMenuItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Direct Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Direct Menu Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseDirectMenuItem(MDirectMenuItem object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Menu</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -862,6 +940,36 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseToolItem(MToolItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Handled Tool Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Handled Tool Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseHandledToolItem(MHandledToolItem object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Direct Tool Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Direct Tool Item</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseDirectToolItem(MDirectToolItem object) {
 		return null;
 	}
 

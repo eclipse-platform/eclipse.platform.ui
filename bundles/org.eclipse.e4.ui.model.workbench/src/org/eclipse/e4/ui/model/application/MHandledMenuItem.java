@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Menu Item</b></em>'.
+ * A representation of the model object '<em><b>Handled Menu Item</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getMenuItem()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledMenuItem()
  * @model
  * @generated
  */
-public interface MMenuItem extends MMenu, MItem {
-} // MMenuItem
+public interface MHandledMenuItem extends MMenuItem, MHandledItem {
+} // MHandledMenuItem

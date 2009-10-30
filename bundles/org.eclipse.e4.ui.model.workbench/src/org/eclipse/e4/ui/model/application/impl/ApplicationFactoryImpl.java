@@ -77,8 +77,12 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.ITEM: return (EObject)createItem();
 			case MApplicationPackage.HANDLED_ITEM: return (EObject)createHandledItem();
 			case MApplicationPackage.MENU_ITEM: return (EObject)createMenuItem();
+			case MApplicationPackage.HANDLED_MENU_ITEM: return (EObject)createHandledMenuItem();
+			case MApplicationPackage.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
 			case MApplicationPackage.MENU: return (EObject)createMenu();
 			case MApplicationPackage.TOOL_ITEM: return (EObject)createToolItem();
+			case MApplicationPackage.HANDLED_TOOL_ITEM: return (EObject)createHandledToolItem();
+			case MApplicationPackage.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MApplicationPackage.TOOL_BAR: return (EObject)createToolBar();
 			case MApplicationPackage.PART: return (EObject)createPart();
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
@@ -250,6 +254,26 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MHandledMenuItem createHandledMenuItem() {
+		HandledMenuItemImpl handledMenuItem = new HandledMenuItemImpl();
+		return handledMenuItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MDirectMenuItem createDirectMenuItem() {
+		DirectMenuItemImpl directMenuItem = new DirectMenuItemImpl();
+		return directMenuItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MMenu createMenu() {
 		MenuImpl menu = new MenuImpl();
 		return menu;
@@ -263,6 +287,26 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MToolItem createToolItem() {
 		ToolItemImpl toolItem = new ToolItemImpl();
 		return toolItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MHandledToolItem createHandledToolItem() {
+		HandledToolItemImpl handledToolItem = new HandledToolItemImpl();
+		return handledToolItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MDirectToolItem createDirectToolItem() {
+		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
+		return directToolItem;
 	}
 
 	/**

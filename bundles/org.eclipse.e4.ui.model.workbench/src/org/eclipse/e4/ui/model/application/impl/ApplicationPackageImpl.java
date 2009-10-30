@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MESCElement;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MEditorSashContainer;
@@ -28,6 +30,8 @@ import org.eclipse.e4.ui.model.application.MEditorStack;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MGenericTile;
 import org.eclipse.e4.ui.model.application.MHandledItem;
+import org.eclipse.e4.ui.model.application.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MIDEWindow;
@@ -236,6 +240,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass handledMenuItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass directMenuItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass menuEClass = null;
 
 	/**
@@ -244,6 +262,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass toolItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass handledToolItemEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass directToolItemEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -980,6 +1012,24 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getHandledMenuItem() {
+		return handledMenuItemEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getDirectMenuItem() {
+		return directMenuItemEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getMenu() {
 		return menuEClass;
 	}
@@ -991,6 +1041,24 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EClass getToolItem() {
 		return toolItemEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getHandledToolItem() {
+		return handledToolItemEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getDirectToolItem() {
+		return directToolItemEClass;
 	}
 
 	/**
@@ -1371,9 +1439,17 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		menuItemEClass = createEClass(MENU_ITEM);
 
+		handledMenuItemEClass = createEClass(HANDLED_MENU_ITEM);
+
+		directMenuItemEClass = createEClass(DIRECT_MENU_ITEM);
+
 		menuEClass = createEClass(MENU);
 
 		toolItemEClass = createEClass(TOOL_ITEM);
+
+		handledToolItemEClass = createEClass(HANDLED_TOOL_ITEM);
+
+		directToolItemEClass = createEClass(DIRECT_TOOL_ITEM);
 
 		toolBarEClass = createEClass(TOOL_BAR);
 
@@ -1512,22 +1588,28 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		itemEClass.getESuperTypes().add(this.getUIItem());
 		handledItemEClass.getESuperTypes().add(this.getItem());
 		menuItemEClass.getESuperTypes().add(this.getMenu());
-		menuItemEClass.getESuperTypes().add(this.getHandledItem());
-		menuItemEClass.getESuperTypes().add(this.getContribution());
+		menuItemEClass.getESuperTypes().add(this.getItem());
+		handledMenuItemEClass.getESuperTypes().add(this.getMenuItem());
+		handledMenuItemEClass.getESuperTypes().add(this.getHandledItem());
+		directMenuItemEClass.getESuperTypes().add(this.getContribution());
+		directMenuItemEClass.getESuperTypes().add(this.getMenuItem());
 		g1 = createEGenericType(this.getUIElement());
 		menuEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getMenuItem());
 		g1.getETypeArguments().add(g2);
 		menuEClass.getEGenericSuperTypes().add(g1);
+		toolItemEClass.getESuperTypes().add(this.getItem());
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getMenuItem());
 		g1.getETypeArguments().add(g2);
-		toolItemEClass.getEGenericSuperTypes().add(g1);
+		handledToolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getHandledItem());
-		toolItemEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getContribution());
-		toolItemEClass.getEGenericSuperTypes().add(g1);
+		handledToolItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getToolItem());
+		handledToolItemEClass.getEGenericSuperTypes().add(g1);
+		directToolItemEClass.getESuperTypes().add(this.getContribution());
+		directToolItemEClass.getESuperTypes().add(this.getToolItem());
 		g1 = createEGenericType(this.getUIElement());
 		toolBarEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
@@ -1736,9 +1818,17 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(menuItemEClass, MMenuItem.class, "MenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
+		initEClass(handledMenuItemEClass, MHandledMenuItem.class, "HandledMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(directMenuItemEClass, MDirectMenuItem.class, "DirectMenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
 		initEClass(menuEClass, MMenu.class, "Menu", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(toolItemEClass, MToolItem.class, "ToolItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(handledToolItemEClass, MHandledToolItem.class, "HandledToolItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
+		initEClass(directToolItemEClass, MDirectToolItem.class, "DirectToolItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(toolBarEClass, MToolBar.class, "ToolBar", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
