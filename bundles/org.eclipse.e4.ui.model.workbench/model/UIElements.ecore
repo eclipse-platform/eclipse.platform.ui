@@ -62,6 +62,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="variables" ordered="false"
         upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KeySequence" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="keySequence" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V_________Testing__________V" abstract="true"
       interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="TestHarness">
@@ -141,6 +145,7 @@
       <eTypeArguments eClassifier="#//Window"/>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
+    <eGenericSuperTypes eClassifier="#//BindingContainer"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//UIElement #//UIItem">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
@@ -181,7 +186,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PSCElement" abstract="true" interface="true"
       eSuperTypes="#//UIElement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UIItem #//HandlerContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UIItem #//HandlerContainer #//BindingContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
         eType="#//Menu"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"/>
@@ -213,6 +218,15 @@
     <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//UIElement"/>
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
+    <eGenericSuperTypes eClassifier="#//BindingContainer"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//KeySequence">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
+        eType="#//Command"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="BindingContainer" abstract="true" interface="true">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="bindings" upperBound="-1"
+        eType="#//KeyBinding" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V______________IDE_______________V"
       abstract="true" interface="true"/>
@@ -279,5 +293,6 @@
     <eGenericSuperTypes eClassifier="#//UIItem"/>
     <eGenericSuperTypes eClassifier="#//Context"/>
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
+    <eGenericSuperTypes eClassifier="#//BindingContainer"/>
   </eClassifiers>
 </ecore:EPackage>

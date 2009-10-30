@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
@@ -37,6 +38,8 @@ import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MIDEWindow;
 import org.eclipse.e4.ui.model.application.MInput;
 import org.eclipse.e4.ui.model.application.MItem;
+import org.eclipse.e4.ui.model.application.MKeyBinding;
+import org.eclipse.e4.ui.model.application.MKeySequence;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MMultiEditor;
@@ -157,6 +160,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass contextEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass keySequenceEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -318,6 +328,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass windowEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass keyBindingEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass bindingContainerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -778,6 +802,24 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getKeySequence() {
+		return keySequenceEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getKeySequence_KeySequence() {
+		return (EAttribute)keySequenceEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getV_________Testing__________V() {
 		return v_________Testing__________VEClass;
 	}
@@ -1183,6 +1225,42 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getKeyBinding() {
+		return keyBindingEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getKeyBinding_Command() {
+		return (EReference)keyBindingEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getBindingContainer() {
+		return bindingContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getBindingContainer_Bindings() {
+		return (EReference)bindingContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getV______________IDE_______________V() {
 		return v______________IDE_______________VEClass;
 	}
@@ -1402,6 +1480,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(contextEClass, CONTEXT__CONTEXT);
 		createEAttribute(contextEClass, CONTEXT__VARIABLES);
 
+		keySequenceEClass = createEClass(KEY_SEQUENCE);
+		createEAttribute(keySequenceEClass, KEY_SEQUENCE__KEY_SEQUENCE);
+
 		v_________Testing__________VEClass = createEClass(VTESTING_V);
 
 		testHarnessEClass = createEClass(TEST_HARNESS);
@@ -1469,6 +1550,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(windowEClass, WINDOW__Y);
 		createEAttribute(windowEClass, WINDOW__WIDTH);
 		createEAttribute(windowEClass, WINDOW__HEIGHT);
+
+		keyBindingEClass = createEClass(KEY_BINDING);
+		createEReference(keyBindingEClass, KEY_BINDING__COMMAND);
+
+		bindingContainerEClass = createEClass(BINDING_CONTAINER);
+		createEReference(bindingContainerEClass, BINDING_CONTAINER__BINDINGS);
 
 		v______________IDE_______________VEClass = createEClass(VIDE_V);
 
@@ -1584,6 +1671,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getHandlerContainer());
 		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getBindingContainer());
+		applicationEClass.getEGenericSuperTypes().add(g1);
 		itemEClass.getESuperTypes().add(this.getUIElement());
 		itemEClass.getESuperTypes().add(this.getUIItem());
 		handledItemEClass.getESuperTypes().add(this.getItem());
@@ -1622,6 +1711,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass.getESuperTypes().add(this.getPSCElement());
 		partEClass.getESuperTypes().add(this.getUIItem());
 		partEClass.getESuperTypes().add(this.getHandlerContainer());
+		partEClass.getESuperTypes().add(this.getBindingContainer());
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getPart());
 		g1.getETypeArguments().add(g2);
@@ -1648,6 +1738,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getHandlerContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getBindingContainer());
+		windowEClass.getEGenericSuperTypes().add(g1);
+		keyBindingEClass.getESuperTypes().add(this.getKeySequence());
 		vscElementEClass.getESuperTypes().add(this.getUIElement());
 		viewEClass.getESuperTypes().add(this.getPart());
 		viewEClass.getESuperTypes().add(this.getVSCElement());
@@ -1719,6 +1812,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		ideWindowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getHandlerContainer());
 		ideWindowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getBindingContainer());
+		ideWindowEClass.getEGenericSuperTypes().add(g1);
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(v____________Abstract_____________VEClass, MV____________Abstract_____________V.class, "V____________Abstract_____________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -1766,6 +1861,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(contextEClass, MContext.class, "Context", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getContext_Context(), this.getIEclipseContext(), "context", null, 0, 1, MContext.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getContext_Variables(), ecorePackage.getEString(), "variables", null, 0, -1, MContext.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, !IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(keySequenceEClass, MKeySequence.class, "KeySequence", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getKeySequence_KeySequence(), ecorePackage.getEString(), "keySequence", null, 1, 1, MKeySequence.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(v_________Testing__________VEClass, MV_________Testing__________V.class, "V_________Testing__________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -1848,6 +1946,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getWindow_Y(), ecorePackage.getEInt(), "y", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Width(), ecorePackage.getEInt(), "width", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(keyBindingEClass, MKeyBinding.class, "KeyBinding", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getKeyBinding_Command(), this.getCommand(), null, "command", null, 1, 1, MKeyBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(bindingContainerEClass, MBindingContainer.class, "BindingContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getBindingContainer_Bindings(), this.getKeyBinding(), null, "bindings", null, 0, -1, MBindingContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(v______________IDE_______________VEClass, MV______________IDE_______________V.class, "V______________IDE_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

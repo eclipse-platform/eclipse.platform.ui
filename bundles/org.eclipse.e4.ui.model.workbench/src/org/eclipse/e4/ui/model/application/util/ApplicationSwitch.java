@@ -163,6 +163,12 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.KEY_SEQUENCE: {
+				MKeySequence keySequence = (MKeySequence)theEObject;
+				T1 result = caseKeySequence(keySequence);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.VTESTING_V: {
 				MV_________Testing__________V v_________Testing__________V = (MV_________Testing__________V)theEObject;
 				T1 result = caseV_________Testing__________V(v_________Testing__________V);
@@ -229,6 +235,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContext(application);
 				if (result == null) result = caseElementContainer(application);
 				if (result == null) result = caseHandlerContainer(application);
+				if (result == null) result = caseBindingContainer(application);
 				if (result == null) result = caseUIElement(application);
 				if (result == null) result = caseApplicationElement(application);
 				if (result == null) result = defaultCase(theEObject);
@@ -362,6 +369,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePSCElement(part);
 				if (result == null) result = caseUIItem(part);
 				if (result == null) result = caseHandlerContainer(part);
+				if (result == null) result = caseBindingContainer(part);
 				if (result == null) result = caseUIElement(part);
 				if (result == null) result = caseApplicationElement(part);
 				if (result == null) result = defaultCase(theEObject);
@@ -395,8 +403,22 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseElementContainer(window);
 				if (result == null) result = caseContext(window);
 				if (result == null) result = caseHandlerContainer(window);
+				if (result == null) result = caseBindingContainer(window);
 				if (result == null) result = caseUIElement(window);
 				if (result == null) result = caseApplicationElement(window);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.KEY_BINDING: {
+				MKeyBinding keyBinding = (MKeyBinding)theEObject;
+				T1 result = caseKeyBinding(keyBinding);
+				if (result == null) result = caseKeySequence(keyBinding);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.BINDING_CONTAINER: {
+				MBindingContainer bindingContainer = (MBindingContainer)theEObject;
+				T1 result = caseBindingContainer(bindingContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -424,6 +446,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePSCElement(view);
 				if (result == null) result = caseUIItem(view);
 				if (result == null) result = caseHandlerContainer(view);
+				if (result == null) result = caseBindingContainer(view);
 				if (result == null) result = caseUIElement(view);
 				if (result == null) result = caseApplicationElement(view);
 				if (result == null) result = defaultCase(theEObject);
@@ -462,6 +485,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePSCElement(editor);
 				if (result == null) result = caseUIItem(editor);
 				if (result == null) result = caseHandlerContainer(editor);
+				if (result == null) result = caseBindingContainer(editor);
 				if (result == null) result = caseUIElement(editor);
 				if (result == null) result = caseApplicationElement(editor);
 				if (result == null) result = defaultCase(theEObject);
@@ -480,6 +504,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = casePSCElement(multiEditor);
 				if (result == null) result = caseUIItem(multiEditor);
 				if (result == null) result = caseHandlerContainer(multiEditor);
+				if (result == null) result = caseBindingContainer(multiEditor);
 				if (result == null) result = caseUIElement(multiEditor);
 				if (result == null) result = caseApplicationElement(multiEditor);
 				if (result == null) result = defaultCase(theEObject);
@@ -543,6 +568,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseUIItem(ideWindow);
 				if (result == null) result = caseContext(ideWindow);
 				if (result == null) result = caseHandlerContainer(ideWindow);
+				if (result == null) result = caseBindingContainer(ideWindow);
 				if (result == null) result = caseElementContainer(ideWindow);
 				if (result == null) result = caseUIElement(ideWindow);
 				if (result == null) result = caseApplicationElement(ideWindow);
@@ -715,6 +741,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseContext(MContext object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Key Sequence</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Key Sequence</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseKeySequence(MKeySequence object) {
 		return null;
 	}
 
@@ -1060,6 +1101,36 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseWindow(MWindow object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Key Binding</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Key Binding</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseKeyBinding(MKeyBinding object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Binding Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Binding Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseBindingContainer(MBindingContainer object) {
 		return null;
 	}
 

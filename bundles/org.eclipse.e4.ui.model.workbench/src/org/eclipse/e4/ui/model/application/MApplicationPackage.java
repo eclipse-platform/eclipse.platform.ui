@@ -535,6 +535,34 @@ public interface MApplicationPackage extends EPackage {
 	int CONTEXT_FEATURE_COUNT = 2;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MKeySequence
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
+	 * @generated
+	 */
+	int KEY_SEQUENCE = 11;
+
+	/**
+	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_SEQUENCE__KEY_SEQUENCE = 0;
+
+	/**
+	 * The number of structural features of the '<em>Key Sequence</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_SEQUENCE_FEATURE_COUNT = 1;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -542,7 +570,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 	 * @generated
 	 */
-	int VTESTING_V = 11;
+	int VTESTING_V = 12;
 
 	/**
 	 * The number of structural features of the '<em>VTesting V</em>' class.
@@ -561,7 +589,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 	 * @generated
 	 */
-	int TEST_HARNESS = 12;
+	int TEST_HARNESS = 13;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -796,7 +824,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________AbstractContainers__________V()
 	 * @generated
 	 */
-	int VABSTRACT_CONTAINERS_V = 13;
+	int VABSTRACT_CONTAINERS_V = 14;
 
 	/**
 	 * The number of structural features of the '<em>VAbstract Containers V</em>' class.
@@ -815,7 +843,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getElementContainer()
 	 * @generated
 	 */
-	int ELEMENT_CONTAINER = 14;
+	int ELEMENT_CONTAINER = 15;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -897,7 +925,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getGenericTile()
 	 * @generated
 	 */
-	int GENERIC_TILE = 15;
+	int GENERIC_TILE = 16;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -997,7 +1025,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimStructure()
 	 * @generated
 	 */
-	int TRIM_STRUCTURE = 16;
+	int TRIM_STRUCTURE = 17;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1115,7 +1143,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________RCP_______________V()
 	 * @generated
 	 */
-	int VRCP_V = 17;
+	int VRCP_V = 18;
 
 	/**
 	 * The number of structural features of the '<em>VRCP V</em>' class.
@@ -1134,7 +1162,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
 	 * @generated
 	 */
-	int APPLICATION = 18;
+	int APPLICATION = 19;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -1227,13 +1255,22 @@ public interface MApplicationPackage extends EPackage {
 	int APPLICATION__HANDLERS = CONTEXT_FEATURE_COUNT + 7;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__BINDINGS = CONTEXT_FEATURE_COUNT + 8;
+
+	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 8;
+	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -1242,7 +1279,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 9;
+	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ItemImpl <em>Item</em>}' class.
@@ -1252,7 +1289,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItem()
 	 * @generated
 	 */
-	int ITEM = 19;
+	int ITEM = 20;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1370,7 +1407,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
 	 * @generated
 	 */
-	int HANDLED_ITEM = 20;
+	int HANDLED_ITEM = 21;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1515,7 +1552,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenuItem()
 	 * @generated
 	 */
-	int MENU_ITEM = 21;
+	int MENU_ITEM = 22;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuImpl <em>Menu</em>}' class.
@@ -1525,7 +1562,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenu()
 	 * @generated
 	 */
-	int MENU = 24;
+	int MENU = 25;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1733,7 +1770,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
 	 * @generated
 	 */
-	int HANDLED_MENU_ITEM = 22;
+	int HANDLED_MENU_ITEM = 23;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1896,7 +1933,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getDirectMenuItem()
 	 * @generated
 	 */
-	int DIRECT_MENU_ITEM = 23;
+	int DIRECT_MENU_ITEM = 24;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2059,7 +2096,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolItem()
 	 * @generated
 	 */
-	int TOOL_ITEM = 25;
+	int TOOL_ITEM = 26;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2177,7 +2214,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
 	 * @generated
 	 */
-	int HANDLED_TOOL_ITEM = 26;
+	int HANDLED_TOOL_ITEM = 27;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2340,7 +2377,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getDirectToolItem()
 	 * @generated
 	 */
-	int DIRECT_TOOL_ITEM = 27;
+	int DIRECT_TOOL_ITEM = 28;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2485,7 +2522,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolBar()
 	 * @generated
 	 */
-	int TOOL_BAR = 28;
+	int TOOL_BAR = 29;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2567,7 +2604,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPSCElement()
 	 * @generated
 	 */
-	int PSC_ELEMENT = 29;
+	int PSC_ELEMENT = 30;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2631,7 +2668,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPart()
 	 * @generated
 	 */
-	int PART = 30;
+	int PART = 31;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2760,13 +2797,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART__HANDLERS = CONTRIBUTION_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__BINDINGS = CONTRIBUTION_FEATURE_COUNT + 10;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 10;
+	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
@@ -2775,7 +2821,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 11;
+	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The number of structural features of the '<em>Part</em>' class.
@@ -2784,7 +2830,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 12;
+	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -2794,7 +2840,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartStack()
 	 * @generated
 	 */
-	int PART_STACK = 31;
+	int PART_STACK = 32;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2876,7 +2922,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartSashContainer()
 	 * @generated
 	 */
-	int PART_SASH_CONTAINER = 32;
+	int PART_SASH_CONTAINER = 33;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2976,7 +3022,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindow()
 	 * @generated
 	 */
-	int WINDOW = 33;
+	int WINDOW = 34;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -3096,13 +3142,22 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW__HANDLERS = UI_ITEM_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__BINDINGS = UI_ITEM_FEATURE_COUNT + 10;
+
+	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 10;
+	int WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -3111,7 +3166,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__X = UI_ITEM_FEATURE_COUNT + 11;
+	int WINDOW__X = UI_ITEM_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -3120,7 +3175,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__Y = UI_ITEM_FEATURE_COUNT + 12;
+	int WINDOW__Y = UI_ITEM_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -3129,7 +3184,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__WIDTH = UI_ITEM_FEATURE_COUNT + 13;
+	int WINDOW__WIDTH = UI_ITEM_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -3138,7 +3193,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HEIGHT = UI_ITEM_FEATURE_COUNT + 14;
+	int WINDOW__HEIGHT = UI_ITEM_FEATURE_COUNT + 15;
 
 	/**
 	 * The number of structural features of the '<em>Window</em>' class.
@@ -3147,7 +3202,72 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 15;
+	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 16;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.KeyBindingImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
+	 * @generated
+	 */
+	int KEY_BINDING = 35;
+
+	/**
+	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING__KEY_SEQUENCE = KEY_SEQUENCE__KEY_SEQUENCE;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING__COMMAND = KEY_SEQUENCE_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Key Binding</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING_FEATURE_COUNT = KEY_SEQUENCE_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
+	 * @generated
+	 */
+	int BINDING_CONTAINER = 36;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTAINER__BINDINGS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Binding Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTAINER_FEATURE_COUNT = 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}' class.
@@ -3157,7 +3277,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________IDE_______________V()
 	 * @generated
 	 */
-	int VIDE_V = 34;
+	int VIDE_V = 37;
 
 	/**
 	 * The number of structural features of the '<em>VIDE V</em>' class.
@@ -3176,7 +3296,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getVSCElement()
 	 * @generated
 	 */
-	int VSC_ELEMENT = 35;
+	int VSC_ELEMENT = 38;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3240,7 +3360,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getView()
 	 * @generated
 	 */
-	int VIEW = 36;
+	int VIEW = 39;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3369,6 +3489,15 @@ public interface MApplicationPackage extends EPackage {
 	int VIEW__HANDLERS = PART__HANDLERS;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VIEW__BINDINGS = PART__BINDINGS;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3403,7 +3532,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewStack()
 	 * @generated
 	 */
-	int VIEW_STACK = 37;
+	int VIEW_STACK = 40;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3485,7 +3614,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
 	 * @generated
 	 */
-	int VIEW_SASH_CONTAINER = 38;
+	int VIEW_SASH_CONTAINER = 41;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3585,7 +3714,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
 	 * @generated
 	 */
-	int EDITOR = 39;
+	int EDITOR = 42;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3714,6 +3843,15 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR__HANDLERS = PART__HANDLERS;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__BINDINGS = PART__BINDINGS;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3766,7 +3904,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMultiEditor()
 	 * @generated
 	 */
-	int MULTI_EDITOR = 40;
+	int MULTI_EDITOR = 43;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3895,6 +4033,15 @@ public interface MApplicationPackage extends EPackage {
 	int MULTI_EDITOR__HANDLERS = EDITOR__HANDLERS;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MULTI_EDITOR__BINDINGS = EDITOR__BINDINGS;
+
+	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3965,7 +4112,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getESCElement()
 	 * @generated
 	 */
-	int ESC_ELEMENT = 41;
+	int ESC_ELEMENT = 44;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4029,7 +4176,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorStack()
 	 * @generated
 	 */
-	int EDITOR_STACK = 42;
+	int EDITOR_STACK = 45;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4120,7 +4267,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorSashContainer()
 	 * @generated
 	 */
-	int EDITOR_SASH_CONTAINER = 43;
+	int EDITOR_SASH_CONTAINER = 46;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4220,7 +4367,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 44;
+	int PERSPECTIVE = 47;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -4347,7 +4494,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
 	 * @generated
 	 */
-	int PERSPECTIVE_STACK = 45;
+	int PERSPECTIVE_STACK = 48;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4429,7 +4576,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIDEWindow()
 	 * @generated
 	 */
-	int IDE_WINDOW = 46;
+	int IDE_WINDOW = 49;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4585,13 +4732,22 @@ public interface MApplicationPackage extends EPackage {
 	int IDE_WINDOW__HANDLERS = TRIM_STRUCTURE_FEATURE_COUNT + 5;
 
 	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int IDE_WINDOW__BINDINGS = TRIM_STRUCTURE_FEATURE_COUNT + 6;
+
+	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__MAIN_MENU = TRIM_STRUCTURE_FEATURE_COUNT + 6;
+	int IDE_WINDOW__MAIN_MENU = TRIM_STRUCTURE_FEATURE_COUNT + 7;
 
 	/**
 	 * The number of structural features of the '<em>IDE Window</em>' class.
@@ -4600,7 +4756,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW_FEATURE_COUNT = TRIM_STRUCTURE_FEATURE_COUNT + 7;
+	int IDE_WINDOW_FEATURE_COUNT = TRIM_STRUCTURE_FEATURE_COUNT + 8;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -4610,7 +4766,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 47;
+	int IECLIPSE_CONTEXT = 50;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -4620,7 +4776,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	int PARAMETERIZED_COMMAND = 48;
+	int PARAMETERIZED_COMMAND = 51;
 
 
 	/**
@@ -4963,6 +5119,27 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getContext_Variables();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Key Sequence</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MKeySequence
+	 * @generated
+	 */
+	EClass getKeySequence();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MKeySequence#getKeySequence <em>Key Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Key Sequence</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MKeySequence#getKeySequence()
+	 * @see #getKeySequence()
+	 * @generated
+	 */
+	EAttribute getKeySequence_KeySequence();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}'.
@@ -5435,6 +5612,48 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getWindow_Height();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MKeyBinding <em>Key Binding</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Key Binding</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MKeyBinding
+	 * @generated
+	 */
+	EClass getKeyBinding();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MKeyBinding#getCommand <em>Command</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Command</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MKeyBinding#getCommand()
+	 * @see #getKeyBinding()
+	 * @generated
+	 */
+	EReference getKeyBinding_Command();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Binding Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+	 * @generated
+	 */
+	EClass getBindingContainer();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MBindingContainer#getBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer#getBindings()
+	 * @see #getBindingContainer()
+	 * @generated
+	 */
+	EReference getBindingContainer_Bindings();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}'.
@@ -5911,6 +6130,24 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute CONTEXT__VARIABLES = eINSTANCE.getContext_Variables();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MKeySequence
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
+		 * @generated
+		 */
+		EClass KEY_SEQUENCE = eINSTANCE.getKeySequence();
+
+		/**
+		 * The meta object literal for the '<em><b>Key Sequence</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute KEY_SEQUENCE__KEY_SEQUENCE = eINSTANCE.getKeySequence_KeySequence();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6315,6 +6552,42 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute WINDOW__HEIGHT = eINSTANCE.getWindow_Height();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.KeyBindingImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
+		 * @generated
+		 */
+		EClass KEY_BINDING = eINSTANCE.getKeyBinding();
+
+		/**
+		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference KEY_BINDING__COMMAND = eINSTANCE.getKeyBinding_Command();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
+		 * @generated
+		 */
+		EClass BINDING_CONTAINER = eINSTANCE.getBindingContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference BINDING_CONTAINER__BINDINGS = eINSTANCE.getBindingContainer_Bindings();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}' class.

@@ -16,10 +16,12 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.core.commands.ParameterizedCommand;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MIDEWindow;
+import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.model.application.MVSCElement;
@@ -52,6 +54,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getHandlers <em>Handlers</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getBindings <em>Bindings</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl#getMainMenu <em>Main Menu</em>}</li>
  * </ul>
  * </p>
@@ -158,6 +161,16 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 	 * @ordered
 	 */
 	protected EList<MHandler> handlers;
+
+	/**
+	 * The cached value of the '{@link #getBindings() <em>Bindings</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getBindings()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MKeyBinding> bindings;
 
 	/**
 	 * The cached value of the '{@link #getMainMenu() <em>Main Menu</em>}' reference.
@@ -301,6 +314,18 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MKeyBinding> getBindings() {
+		if (bindings == null) {
+			bindings = new EObjectContainmentEList<MKeyBinding>(MKeyBinding.class, this, MApplicationPackage.IDE_WINDOW__BINDINGS);
+		}
+		return bindings;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MMenu getMainMenu() {
 		if (mainMenu != null && ((EObject)mainMenu).eIsProxy()) {
 			InternalEObject oldMainMenu = (InternalEObject)mainMenu;
@@ -344,6 +369,8 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 		switch (featureID) {
 			case MApplicationPackage.IDE_WINDOW__HANDLERS:
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.IDE_WINDOW__BINDINGS:
+				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -368,6 +395,8 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				return getVariables();
 			case MApplicationPackage.IDE_WINDOW__HANDLERS:
 				return getHandlers();
+			case MApplicationPackage.IDE_WINDOW__BINDINGS:
+				return getBindings();
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				if (resolve) return getMainMenu();
 				return basicGetMainMenu();
@@ -404,6 +433,10 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				getHandlers().clear();
 				getHandlers().addAll((Collection<? extends MHandler>)newValue);
 				return;
+			case MApplicationPackage.IDE_WINDOW__BINDINGS:
+				getBindings().clear();
+				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
+				return;
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)newValue);
 				return;
@@ -437,6 +470,9 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 			case MApplicationPackage.IDE_WINDOW__HANDLERS:
 				getHandlers().clear();
 				return;
+			case MApplicationPackage.IDE_WINDOW__BINDINGS:
+				getBindings().clear();
+				return;
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				setMainMenu((MMenu)null);
 				return;
@@ -464,6 +500,8 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				return variables != null && !variables.isEmpty();
 			case MApplicationPackage.IDE_WINDOW__HANDLERS:
 				return handlers != null && !handlers.isEmpty();
+			case MApplicationPackage.IDE_WINDOW__BINDINGS:
+				return bindings != null && !bindings.isEmpty();
 			case MApplicationPackage.IDE_WINDOW__MAIN_MENU:
 				return mainMenu != null;
 		}
@@ -498,6 +536,12 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 				default: return -1;
 			}
 		}
+		if (baseClass == MBindingContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.IDE_WINDOW__BINDINGS: return MApplicationPackage.BINDING_CONTAINER__BINDINGS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -526,6 +570,12 @@ public class IDEWindowImpl extends TrimStructureImpl<MVSCElement> implements MID
 		if (baseClass == MHandlerContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.HANDLER_CONTAINER__HANDLERS: return MApplicationPackage.IDE_WINDOW__HANDLERS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MBindingContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.BINDING_CONTAINER__BINDINGS: return MApplicationPackage.IDE_WINDOW__BINDINGS;
 				default: return -1;
 			}
 		}

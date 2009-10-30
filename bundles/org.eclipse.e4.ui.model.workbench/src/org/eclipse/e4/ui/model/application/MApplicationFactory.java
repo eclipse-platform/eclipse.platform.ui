@@ -237,6 +237,15 @@ public interface MApplicationFactory extends EFactory {
 	MWindow createWindow();
 
 	/**
+	 * Returns a new object of class '<em>Key Binding</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Key Binding</em>'.
+	 * @generated
+	 */
+	MKeyBinding createKeyBinding();
+
+	/**
 	 * Returns a new object of class '<em>View</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

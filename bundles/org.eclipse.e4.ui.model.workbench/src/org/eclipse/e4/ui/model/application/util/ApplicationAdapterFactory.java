@@ -120,6 +120,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createContextAdapter();
 			}
 			@Override
+			public Adapter caseKeySequence(MKeySequence object) {
+				return createKeySequenceAdapter();
+			}
+			@Override
 			public Adapter caseV_________Testing__________V(MV_________Testing__________V object) {
 				return createV_________Testing__________VAdapter();
 			}
@@ -210,6 +214,14 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseWindow(MWindow object) {
 				return createWindowAdapter();
+			}
+			@Override
+			public Adapter caseKeyBinding(MKeyBinding object) {
+				return createKeyBindingAdapter();
+			}
+			@Override
+			public Adapter caseBindingContainer(MBindingContainer object) {
+				return createBindingContainerAdapter();
 			}
 			@Override
 			public Adapter caseV______________IDE_______________V(MV______________IDE_______________V object) {
@@ -434,6 +446,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MKeySequence
+	 * @generated
+	 */
+	public Adapter createKeySequenceAdapter() {
 		return null;
 	}
 
@@ -756,6 +782,34 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createWindowAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MKeyBinding <em>Key Binding</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MKeyBinding
+	 * @generated
+	 */
+	public Adapter createKeyBindingAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+	 * @generated
+	 */
+	public Adapter createBindingContainerAdapter() {
 		return null;
 	}
 

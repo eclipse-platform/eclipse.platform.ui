@@ -88,6 +88,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
 			case MApplicationPackage.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
+			case MApplicationPackage.KEY_BINDING: return (EObject)createKeyBinding();
 			case MApplicationPackage.VIEW: return (EObject)createView();
 			case MApplicationPackage.VIEW_STACK: return (EObject)createViewStack();
 			case MApplicationPackage.VIEW_SASH_CONTAINER: return (EObject)createViewSashContainer();
@@ -357,6 +358,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MWindow createWindow() {
 		WindowImpl window = new WindowImpl();
 		return window;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MKeyBinding createKeyBinding() {
+		KeyBindingImpl keyBinding = new KeyBindingImpl();
+		return keyBinding;
 	}
 
 	/**
