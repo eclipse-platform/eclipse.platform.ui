@@ -67,7 +67,7 @@ public class ProjectPreferences extends EclipsePreferences {
 	/**
 	 * Cache which nodes have been loaded from disk
 	 */
-	protected static Set loadedNodes = new HashSet();
+	protected static Set loadedNodes = Collections.synchronizedSet(new HashSet());
 	private IFile file;
 	private boolean initialized = false;
 	/**
@@ -246,9 +246,9 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 		removeLoadedNodes(node);
 	}
-	
+
 	static void clearNode(Preferences node) throws CoreException {
- 		// if the underlying properties file was deleted, clear the values and remove
+		// if the underlying properties file was deleted, clear the values and remove
 		// it from the list of loaded nodes, keep the node as it might still be referenced
 		try {
 			clearAll(node);
@@ -259,7 +259,7 @@ public class ProjectPreferences extends EclipsePreferences {
 		}
 		removeLoadedNodes(node);
 	}
-	
+
 	private static void clearAll(Preferences node) throws BackingStoreException {
 		node.clear();
 		String[] names = node.childrenNames();
@@ -267,13 +267,15 @@ public class ProjectPreferences extends EclipsePreferences {
 			clearAll(node.node(names[i]));
 		}
 	}
-	
-	private static synchronized void removeLoadedNodes(Preferences node){
+
+	private static void removeLoadedNodes(Preferences node) {
 		String path = node.absolutePath();
-		for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
-			String key = (String) i.next();
-			if (key.startsWith(path))
-				i.remove();
+		synchronized (loadedNodes) {
+			for (Iterator i = loadedNodes.iterator(); i.hasNext();) {
+				String key = (String) i.next();
+				if (key.startsWith(path))
+					i.remove();
+			}
 		}
 	}
 
@@ -432,11 +434,11 @@ public class ProjectPreferences extends EclipsePreferences {
 		return new ProjectPreferences(nodeParent, nodeName);
 	}
 
-	protected synchronized boolean isAlreadyLoaded(IEclipsePreferences node) {
+	protected boolean isAlreadyLoaded(IEclipsePreferences node) {
 		return loadedNodes.contains(node.absolutePath());
 	}
 
-	protected synchronized boolean isAlreadyLoaded(String path) {
+	protected boolean isAlreadyLoaded(String path) {
 		return loadedNodes.contains(path);
 	}
 
@@ -468,14 +470,14 @@ public class ProjectPreferences extends EclipsePreferences {
 		convertFromProperties(this, fromDisk, true);
 	}
 
-	protected synchronized void loaded() {
+	protected void loaded() {
 		loadedNodes.add(absolutePath());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.internal.preferences.EclipsePreferences#nodeExists(java.lang.String)
 	 * 
-	 * If we are at the /project node and we are checking for the existance of a child, we
+	 * If we are at the /project node and we are checking for the existence of a child, we
 	 * want special behaviour. If the child is a single segment name, then we want to
 	 * return true if the node exists OR if a project with that name exists in the workspace.
 	 */
