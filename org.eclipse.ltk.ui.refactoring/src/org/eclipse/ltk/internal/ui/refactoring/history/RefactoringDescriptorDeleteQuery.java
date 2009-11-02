@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -27,7 +27,6 @@ import org.eclipse.ltk.internal.ui.refactoring.BasicElementLabels;
 import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
-import org.eclipse.ltk.internal.ui.refactoring.scripting.ScriptingMessages;
 
 /**
  * Default implementation of a refactoring descriptor delete query.
@@ -92,10 +91,21 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 						if (!fShell.isDisposed()) {
 							final String count= new Integer(fCount).toString();
 							String message= null;
-							if (fProject != null)
-								message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern, new String[] { count, BasicElementLabels.getResourceName(fProject)});
-							else
-								message= Messages.format(ScriptingMessages.ShowRefactoringHistoryWizard_confirm_deletion, count);
+							if (fProject != null) {
+								if (fCount == 1) {
+									message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern_singular, BasicElementLabels.getResourceName(fProject));
+								} else {
+									message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern_plural, new String[] { count,
+											BasicElementLabels.getResourceName(fProject) });
+								}
+							}
+							else {
+								if (fCount == 1) {
+									message= RefactoringUIMessages.RefactoringDescriptorDeleteQuery_confirm_deletion_singular;
+								} else {
+									message= Messages.format(RefactoringUIMessages.RefactoringDescriptorDeleteQuery_confirm_deletion_plural, count);
+								}
+							}
 							final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(fShell, RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
 							store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
 							fReturnCode= dialog.getReturnCode();

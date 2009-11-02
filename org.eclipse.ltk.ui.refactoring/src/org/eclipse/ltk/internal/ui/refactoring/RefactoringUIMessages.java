@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -280,13 +280,19 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringModelMerger_workspace_caption;
 
+	public static String RefactoringDescriptorDeleteQuery_confirm_deletion_singular;
+
+	public static String RefactoringDescriptorDeleteQuery_confirm_deletion_plural;
+
 	public static String RefactoringPropertyPage_confirm_delete_all_caption;
 
 	public static String RefactoringPropertyPage_confirm_delete_all_pattern;
 
 	public static String RefactoringPropertyPage_confirm_delete_caption;
 
-	public static String RefactoringPropertyPage_confirm_delete_pattern;
+	public static String RefactoringPropertyPage_confirm_delete_pattern_singular;
+
+	public static String RefactoringPropertyPage_confirm_delete_pattern_plural;
 
 	public static String RefactoringPropertyPage_edit_caption;
 
