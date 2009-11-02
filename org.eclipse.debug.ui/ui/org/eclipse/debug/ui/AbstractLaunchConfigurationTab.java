@@ -419,7 +419,9 @@ public abstract class AbstractLaunchConfigurationTab implements ILaunchConfigura
 	protected Job createUpdateJob() {
 		return  new WorkbenchJob(getControl().getDisplay(), "Update LCD") { //$NON-NLS-1$
 			public IStatus runInUIThread(IProgressMonitor monitor) {
-				updateLaunchConfigurationDialog();
+				if (!getControl().isDisposed()) {
+					updateLaunchConfigurationDialog();
+				}
 				return Status.OK_STATUS;
 			}
 			public boolean shouldRun() {
