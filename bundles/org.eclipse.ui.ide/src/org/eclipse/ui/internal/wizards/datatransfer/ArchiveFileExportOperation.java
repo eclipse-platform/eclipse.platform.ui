@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2006 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -162,22 +162,6 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             throws InterruptedException {
         exportResource(exportResource, 1);
     }
-    
-    /**
-     * Creates and returns the string that should be used as the name of the entry in the archive.
-     * 
-     * @param exportResource the resource to export
-     * @param leadupDepth the number of resource levels to be included in the path including the resourse itself.
-     * @since 3.6
-     */
-    private String createDestinationName(int leadupDepth, IResource exportResource) {
-        IPath fullPath = exportResource.getFullPath();
-        if (createLeadupStructure) {
-        	return fullPath.makeRelative().toString();
-        }
-		return fullPath.removeFirstSegments(
-                fullPath.segmentCount() - leadupDepth).toString();
-    }
 
     /**
      *  Export the passed resource to the destination .zip
@@ -193,7 +177,14 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 		}
 
         if (exportResource.getType() == IResource.FILE) {
-        	String destinationName = createDestinationName(leadupDepth, exportResource);
+            String destinationName;
+            IPath fullPath = exportResource.getFullPath();
+            if (createLeadupStructure) {
+				destinationName = fullPath.makeRelative().toString();
+			} else {
+				destinationName = fullPath.removeFirstSegments(
+                        fullPath.segmentCount() - leadupDepth).toString();
+			}
             monitor.subTask(destinationName);
 
             try {
@@ -207,15 +198,6 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
             monitor.worked(1);
             ModalContext.checkCanceled(monitor);
         } else {
-    		// create an entry for ourselves, see bug 278402
-        	String destinationName = createDestinationName(leadupDepth, exportResource);
-
-            try {
-        		exporter.write((IContainer) exportResource, destinationName + java.io.File.separator);
-            } catch (IOException e) {
-                addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
-            }
-        	
             IResource[] children = null;
 
             try {
