@@ -192,6 +192,7 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * @see ISaveParticipant
 	 * @see #removeSaveParticipant(String)
+	 * @since 3.6
 	 */
 	public ISavedState addSaveParticipant(String pluginId, ISaveParticipant participant) throws CoreException;
 
@@ -974,6 +975,7 @@ public interface IWorkspace extends IAdaptable {
 	 * @param pluginId the unique identifier of the plug-in
 	 * @see ISaveParticipant
 	 * @see #addSaveParticipant(String, ISaveParticipant)
+	 * @since 3.6
 	 */
 	public void removeSaveParticipant(String pluginId);
 
