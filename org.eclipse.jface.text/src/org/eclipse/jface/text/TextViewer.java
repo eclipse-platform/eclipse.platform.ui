@@ -1740,7 +1740,9 @@ public class TextViewer extends Viewer implements
 	 * @return the text widget to be used
 	 */
 	protected StyledText createTextWidget(Composite parent, int styles) {
-		return new StyledText(parent, styles);
+		StyledText styledText= new StyledText(parent, styles);
+		styledText.setLeftMargin(Math.max(styledText.getLeftMargin(), 2));
+		return styledText;
 	}
 
 	/**
