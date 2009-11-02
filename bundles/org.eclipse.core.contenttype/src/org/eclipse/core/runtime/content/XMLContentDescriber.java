@@ -13,6 +13,8 @@ package org.eclipse.core.runtime.content;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.core.internal.content.TextContentDescriber;
 import org.eclipse.core.internal.content.Util;
 import org.eclipse.core.runtime.QualifiedName;
@@ -47,9 +49,10 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public class XMLContentDescriber extends TextContentDescriber implements ITextContentDescriber {
 	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
-	private static final String ENCODING = "encoding="; //$NON-NLS-1$
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final String XML_DECL_END = "?>"; //$NON-NLS-1$
+	private static final String ENCODING_REGEX = "encoding[\\x20\\x09\\x0D\\x0A]*=[\\x20\\x09\\x0D\\x0A]*[\"\']"; //$NON-NLS-1$
+	private static final Pattern ENCODING_PATTERN = Pattern.compile(ENCODING_REGEX);
 
 	private static final String BOM = "org.eclipse.core.runtime.content.XMLContentDescriber.bom"; //$NON-NLS-1$
 	private static final String CHARSET = "org.eclipse.core.runtime.content.XMLContentDescriber.charset"; //$NON-NLS-1$
@@ -184,7 +187,10 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	}
 
 	private String getCharset(String firstLine) {
-		int encodingPos = firstLine.indexOf(ENCODING);
+		int encodingPos = -1;
+		Matcher matcher = ENCODING_PATTERN.matcher(firstLine);
+		if (matcher.find())
+			encodingPos = matcher.start();
 		if (encodingPos == -1)
 			return null;
 		char quoteChar = '"';
