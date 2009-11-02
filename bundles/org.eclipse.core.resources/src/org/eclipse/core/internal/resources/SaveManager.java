@@ -75,7 +75,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected Map savedStates;
 
 	/**
-	 * Plugins that participate on a workspace save. Maps (Plugin -> ISaveParticipant).
+	 * Ids of plugins that participate on a workspace save. Maps String (plugin id)-> ISaveParticipant.
 	 * This map is accessed from API that is not synchronized, so it requires
 	 * independent synchronization. This is accomplished using a synchronized
 	 * wrapper map.
@@ -100,17 +100,16 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		saveParticipants = Collections.synchronizedMap(new HashMap(10));
 	}
 
-	public ISavedState addParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException {
+	public ISavedState addParticipant(String pluginId, ISaveParticipant participant) throws CoreException {
 		// If the plugin was already registered as a save participant we return null
-		if (saveParticipants.put(plugin, participant) != null)
+		if (saveParticipants.put(pluginId, participant) != null)
 			return null;
-		String id = plugin.getBundle().getSymbolicName();
-		SavedState state = (SavedState) savedStates.get(id);
+		SavedState state = (SavedState) savedStates.get(pluginId);
 		if (state != null) {
-			if (isDeltaCleared(id)) {
+			if (isDeltaCleared(pluginId)) {
 				// this plugin was marked not to receive deltas
 				state.forgetTrees();
-				removeClearDeltaMarks(id);
+				removeClearDeltaMarks(pluginId);
 			} else {
 				try {
 					// thread safety: (we need to guarantee that the tree is immutable when computing deltas)
@@ -125,8 +124,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			}
 		}
 		// if the plug-in has a previous save number, we return a state, otherwise we return null
-		if (getSaveNumber(id) > 0)
-			return new SavedState(workspace, id, null, null);
+		if (getSaveNumber(pluginId) > 0)
+			return new SavedState(workspace, pluginId, null, null);
 		return null;
 	}
 
@@ -136,8 +135,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			monitor.beginTask("", contexts.size()); //$NON-NLS-1$
 			for (final Iterator it = contexts.entrySet().iterator(); it.hasNext();) {
 				Map.Entry entry = (Map.Entry) it.next();
-				Plugin plugin = (Plugin) entry.getKey();
-				final ISaveParticipant participant = (ISaveParticipant) saveParticipants.get(plugin);
+				String pluginId = (String) entry.getKey();
+				final ISaveParticipant participant = (ISaveParticipant) saveParticipants.get(pluginId);
 				//save participants can be removed concurrently
 				if (participant == null) {
 					monitor.worked(1);
@@ -219,7 +218,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected void clearSavedDelta() {
 		synchronized (saveParticipants) {
 			for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = ((Plugin) i.next()).getBundle().getSymbolicName();
+				String pluginId = (String) i.next();
 				masterTable.setProperty(CLEAR_DELTA_PREFIX + pluginId, "true"); //$NON-NLS-1$
 			}
 		}
@@ -289,13 +288,13 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * <code>SaveContexts</code> to use during the save lifecycle.
 	 * The keys are plugins and values are SaveContext objects.
 	 */
-	protected Map computeSaveContexts(Plugin[] plugins, int kind, IProject project) {
-		HashMap result = new HashMap(plugins.length);
-		for (int i = 0; i < plugins.length; i++) {
-			Plugin plugin = plugins[i];
+	protected Map computeSaveContexts(String[] pluginIds, int kind, IProject project) {
+		HashMap result = new HashMap(pluginIds.length);
+		for (int i = 0; i < pluginIds.length; i++) {
+			String pluginId = pluginIds[i];
 			try {
-				SaveContext context = new SaveContext(plugin, kind, project);
-				result.put(plugin, context);
+				SaveContext context = new SaveContext(pluginId, kind, project);
+				result.put(pluginId, context);
 			} catch (CoreException e) {
 				// FIXME: should return a status to the user and not just log it
 				Policy.log(e.getStatus());
@@ -325,7 +324,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			SaveContext context = (SaveContext) i.next();
 			if (!context.isDeltaNeeded())
 				continue;
-			String pluginId = context.getPlugin().getBundle().getSymbolicName();
+			String pluginId = context.getPluginId();
 			result.put(pluginId, current);
 		}
 		return result;
@@ -387,9 +386,9 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		return (value == null) ? 0 : new Integer(value).intValue();
 	}
 
-	protected Plugin[] getSaveParticipantPlugins() {
+	protected String[] getSaveParticipantPluginIds() {
 		synchronized (saveParticipants) {
-			return (Plugin[]) saveParticipants.keySet().toArray(new Plugin[saveParticipants.size()]);
+			return (String[]) saveParticipants.keySet().toArray(new String[saveParticipants.size()]);
 		}
 	}
 
@@ -502,7 +501,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected void removeClearDeltaMarks() {
 		synchronized (saveParticipants) {
 			for (Iterator i = saveParticipants.keySet().iterator(); i.hasNext();) {
-				String pluginId = ((Plugin) i.next()).getBundle().getSymbolicName();
+				String pluginId = (String) i.next();
 				removeClearDeltaMarks(pluginId);
 			}
 		}
@@ -536,8 +535,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 	}
 
-	public void removeParticipant(Plugin plugin) {
-		saveParticipants.remove(plugin);
+	public void removeParticipant(String pluginId) {
+		saveParticipants.remove(pluginId);
 	}
 
 	protected void removeUnusedSafeTables() {
@@ -1006,7 +1005,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 				workspace.beginOperation(false);
 				hookStartSave(kind, project);
 				long start = System.currentTimeMillis();
-				Map contexts = computeSaveContexts(getSaveParticipantPlugins(), kind, project);
+				Map contexts = computeSaveContexts(getSaveParticipantPluginIds(), kind, project);
 				broadcastLifecycle(PREPARE_TO_SAVE, contexts, warnings, Policy.subMonitorFor(monitor, 1));
 				try {
 					broadcastLifecycle(SAVING, contexts, warnings, Policy.subMonitorFor(monitor, 1));

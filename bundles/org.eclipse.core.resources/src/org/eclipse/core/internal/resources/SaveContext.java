@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,7 +14,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 public class SaveContext implements ISaveContext {
-	protected Plugin plugin;
+	protected String pluginId;
 	protected int kind;
 	protected boolean needDelta;
 	protected boolean needSaveNumber;
@@ -22,20 +22,18 @@ public class SaveContext implements ISaveContext {
 	protected int previousSaveNumber;
 	protected IProject project;
 
-	protected SaveContext(Plugin plugin, int kind, IProject project) throws CoreException {
-		this.plugin = plugin;
+	protected SaveContext(String pluginId, int kind, IProject project) throws CoreException {
 		this.kind = kind;
 		this.project = project;
+		this.pluginId = pluginId;
 		needDelta = false;
 		needSaveNumber = false;
-		String pluginId = plugin.getBundle().getSymbolicName();
 		fileTable = new SafeFileTable(pluginId);
 		previousSaveNumber = getWorkspace().getSaveManager().getSaveNumber(pluginId);
 	}
 
 	public void commit() throws CoreException {
 		if (needSaveNumber) {
-			String pluginId = plugin.getBundle().getSymbolicName();
 			IPath oldLocation = getWorkspace().getMetaArea().getSafeTableLocationFor(pluginId);
 			getWorkspace().getSaveManager().setSaveNumber(pluginId, getSaveNumber());
 			fileTable.setLocation(getWorkspace().getMetaArea().getSafeTableLocationFor(pluginId));
@@ -62,11 +60,8 @@ public class SaveContext implements ISaveContext {
 		return kind;
 	}
 
-	/**
-	 * @see ISaveContext
-	 */
-	public Plugin getPlugin() {
-		return plugin;
+	public String getPluginId() {
+		return pluginId;
 	}
 
 	/**

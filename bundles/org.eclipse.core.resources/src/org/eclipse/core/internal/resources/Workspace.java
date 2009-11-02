@@ -276,7 +276,16 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException {
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
 		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
-		return saveManager.addParticipant(plugin, participant);
+		return saveManager.addParticipant(plugin.getBundle().getSymbolicName(), participant);
+	}
+	
+	/* (non-Javadoc)
+	 * @see IWorkspace#addSaveParticipant(String, ISaveParticipant)
+	 */
+	public ISavedState addSaveParticipant(String pluginId, ISaveParticipant participant) throws CoreException {
+		Assert.isNotNull(pluginId, "Plugin id must not be null"); //$NON-NLS-1$
+		Assert.isNotNull(participant, "Participant must not be null"); //$NON-NLS-1$
+		return saveManager.addParticipant(pluginId, participant);
 	}
 
 	public void beginOperation(boolean createNewTree) throws CoreException {
@@ -1812,7 +1821,15 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 */
 	public void removeSaveParticipant(Plugin plugin) {
 		Assert.isNotNull(plugin, "Plugin must not be null"); //$NON-NLS-1$
-		saveManager.removeParticipant(plugin);
+		saveManager.removeParticipant(plugin.getBundle().getSymbolicName());
+	}
+	
+	/* (non-Javadoc)
+	 * @see IWorkspace#removeSaveParticipant(String)
+	 */
+	public void removeSaveParticipant(String pluginId) {
+		Assert.isNotNull(pluginId, "Plugin id must not be null"); //$NON-NLS-1$
+		saveManager.removeParticipant(pluginId);
 	}
 
 	/* (non-Javadoc)

@@ -168,8 +168,32 @@ public interface IWorkspace extends IAdaptable {
 	 * </ul>
 	 * @see ISaveParticipant
 	 * @see #removeSaveParticipant(Plugin)
+	 * @deprecated Use {@link #addSaveParticipant(String, ISaveParticipant)} instead
 	 */
 	public ISavedState addSaveParticipant(Plugin plugin, ISaveParticipant participant) throws CoreException;
+	
+	/**
+	 * Registers the given plug-in's workspace save participant, and returns an
+	 * object describing the workspace state at the time of the last save in
+	 * which the bundle participated.
+	 * <p>
+	 * Once registered, the workspace save participant will actively participate
+	 * in the saving of this workspace.
+	 * </p>
+	 * 
+	 * @param pluginId the unique identifier of the plug-in
+	 * @param participant the participant
+	 * @return the last saved state in which the plug-in participated, or
+	 * <code>null</code> if the plug-in has not participated before
+	 * @exception CoreException if the method fails to add the participant.
+	 * Reasons include:
+	 * <ul>
+	 * <li>The previous state could not be recovered.</li>
+	 * </ul>
+	 * @see ISaveParticipant
+	 * @see #removeSaveParticipant(String)
+	 */
+	public ISavedState addSaveParticipant(String pluginId, ISaveParticipant participant) throws CoreException;
 
 	/**
 	 * Builds all projects in this workspace. Projects are built in the order
@@ -935,8 +959,23 @@ public interface IWorkspace extends IAdaptable {
 	 * @param plugin the plug-in
 	 * @see ISaveParticipant
 	 * @see #addSaveParticipant(Plugin, ISaveParticipant)
+	 * @deprecated Use {@link #removeSaveParticipant(String)} instead
 	 */
 	public void removeSaveParticipant(Plugin plugin);
+	
+	/**
+	 * Removes the workspace save participant for the given plug-in from this
+	 * workspace. If no such participant is registered, no action is taken.
+	 * <p>
+	 * Once removed, the workspace save participant no longer actively
+	 * participates in any future saves of this workspace.
+	 * </p>
+	 * 
+	 * @param pluginId the unique identifier of the plug-in
+	 * @see ISaveParticipant
+	 * @see #addSaveParticipant(String, ISaveParticipant)
+	 */
+	public void removeSaveParticipant(String pluginId);
 
 	/**
 	 * Runs the given action as an atomic workspace operation.
