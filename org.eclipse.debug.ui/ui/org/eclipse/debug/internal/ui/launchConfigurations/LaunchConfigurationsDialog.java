@@ -591,7 +591,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		if (name == null) {
 			name = IInternalDebugCoreConstants.EMPTY_STRING;
 		}
-		return getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+		return getLaunchManager().generateLaunchConfigurationName(name);
 	}
 	
 	/**
@@ -981,7 +981,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			int w1, w2;
 			try {
 				w1 = settings.getInt(DIALOG_SASH_WEIGHTS_1);
+				if(w1 < 10) {
+					w1 = DEFAULT_SASH_WEIGHTS[0];
+				}
 				w2 = settings.getInt(DIALOG_SASH_WEIGHTS_2);
+				if(w2 < 10) {
+					w2 = DEFAULT_SASH_WEIGHTS[1];
+				}
 			}
 			catch(NumberFormatException nfe) {
 				w1 = DEFAULT_SASH_WEIGHTS[0];
@@ -1148,8 +1154,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		IDialogSettings settings = getDialogSettings();
 		if (fSashForm != null) {
 			int[] sashWeights = fSashForm.getWeights();
-			settings.put(DIALOG_SASH_WEIGHTS_1, sashWeights[0]);
-			settings.put(DIALOG_SASH_WEIGHTS_2, sashWeights[1]);
+			settings.put(DIALOG_SASH_WEIGHTS_1, (sashWeights[0] < 10 ? DEFAULT_SASH_WEIGHTS[0] : sashWeights[0]));
+			settings.put(DIALOG_SASH_WEIGHTS_2, (sashWeights[1] < 10 ? DEFAULT_SASH_WEIGHTS[1] : sashWeights[1]));
 		}
 	}
 	
