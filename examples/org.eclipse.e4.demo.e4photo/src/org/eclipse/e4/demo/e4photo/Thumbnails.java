@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -90,7 +91,7 @@ public class Thumbnails {
 	}
 
 	@Inject
-	public void setSelection(IResource selection) {
+	public void setSelection(@Named("selection") IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;

@@ -11,7 +11,6 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -27,7 +26,6 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.emf.common.util.URI;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
@@ -54,10 +52,9 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.e4.core.services.IContributionFactory#call(java.lang.Object,
-	 * java.lang.String, java.lang.String,
-	 * org.eclipse.e4.core.services.context.IEclipseContext, java.lang.Object)
+	 * @see org.eclipse.e4.core.services.IContributionFactory#call(java.lang.Object,
+	 * java.lang.String, java.lang.String, org.eclipse.e4.core.services.context.IEclipseContext,
+	 * java.lang.Object)
 	 */
 	public Object call(Object object, String uriString, String methodName, IEclipseContext context,
 			Object defaultValue) {
@@ -96,8 +93,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 				/*
 				 * (non-Javadoc)
 				 * 
-				 * @see java.util.Comparator#compare(java.lang.Object,
-				 * java.lang.Object)
+				 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 				 */
 				public int compare(Method m1, Method m2) {
 					int l1 = m1.getParameterTypes().length;
@@ -160,9 +156,8 @@ public class ReflectionContributionFactory implements IContributionFactory {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see
-	 * org.eclipse.e4.core.services.IContributionFactory#create(java.lang.String
-	 * , org.eclipse.e4.core.services.context.IEclipseContext)
+	 * @see org.eclipse.e4.core.services.IContributionFactory#create(java.lang.String ,
+	 * org.eclipse.e4.core.services.context.IEclipseContext)
 	 */
 	public Object create(String uriString, IEclipseContext context) {
 		URI uri = URI.createURI(uriString);
@@ -193,7 +188,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			String clazz = uri.segment(2);
 			try {
 				Class<?> targetClass = bundle.loadClass(clazz);
-				contribution = createObject(targetClass, context);
+				contribution = context.make(targetClass);
 			} catch (ClassNotFoundException e) {
 				contribution = null;
 				String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
@@ -220,79 +215,6 @@ public class ReflectionContributionFactory implements IContributionFactory {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-	}
-
-	private Object createObject(Class<?> targetClass, IEclipseContext context) {
-
-		Constructor<?> targetConstructor = null;
-
-		Constructor<?>[] constructors = targetClass.getConstructors();
-
-		// Optimization: if there's only one constructor, use it.
-		if (constructors.length == 1) {
-			targetConstructor = constructors[0];
-		} else {
-			ArrayList<Constructor<?>> toSort = new ArrayList<Constructor<?>>();
-
-			for (int i = 0; i < constructors.length; i++) {
-				Constructor<?> constructor = constructors[i];
-
-				// Filter out non-public constructors
-				if ((constructor.getModifiers() & Modifier.PUBLIC) != 0) {
-					toSort.add(constructor);
-				}
-			}
-
-			// Sort the constructors by descending number of constructor
-			// arguments
-			Collections.sort(toSort, new Comparator<Constructor<?>>() {
-				public int compare(Constructor<?> c1, Constructor<?> c2) {
-
-					int l1 = c1.getParameterTypes().length;
-					int l2 = c2.getParameterTypes().length;
-
-					return l1 - l2;
-				}
-			});
-
-			// Find the first satisfiable constructor
-			for (Constructor<?> next : toSort) {
-				boolean satisfiable = true;
-
-				Class<?>[] params = next.getParameterTypes();
-				for (int i = 0; i < params.length && satisfiable; i++) {
-					Class<?> clazz = params[i];
-
-					if (!context.containsKey(clazz.getName())) {
-						satisfiable = false;
-					}
-				}
-
-				if (satisfiable) {
-					targetConstructor = next;
-				}
-			}
-		}
-
-		if (targetConstructor == null) {
-			throw new RuntimeException(
-					"could not find satisfiable constructor in class " + targetClass); //$NON-NLS-1$
-		}
-
-		Class<?>[] paramKeys = targetConstructor.getParameterTypes();
-
-		try {
-			Object[] params = new Object[paramKeys.length];
-			for (int i = 0; i < params.length; i++) {
-				params[i] = context.get(paramKeys[i].getName());
-			}
-
-			Object newInstance = targetConstructor.newInstance(params);
-			ContextInjectionFactory.inject(newInstance, context, null, null);
-			return newInstance;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
 		}
 	}
 

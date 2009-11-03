@@ -166,8 +166,6 @@ public class Workbench implements IWorkbench {
 		// EContextService comes from a ContextFunction
 		mainContext.set(IExceptionHandler.class.getName(), exceptionHandler);
 		mainContext.set(IExtensionRegistry.class.getName(), registry);
-		mainContext.set(IServiceConstants.SELECTION, new ActiveChildOutputFunction(
-				IServiceConstants.SELECTION));
 		mainContext.set(IServiceConstants.INPUT, new ContextFunction() {
 			public Object compute(IEclipseContext context, Object[] arguments) {
 				Class adapterType = null;

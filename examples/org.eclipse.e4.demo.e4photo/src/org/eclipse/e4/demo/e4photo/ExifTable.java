@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.eclipse.core.databinding.beans.PojoObservables;
 import org.eclipse.core.databinding.observable.list.WritableList;
@@ -65,7 +66,7 @@ public class ExifTable {
 	}
 
 	@Inject
-	void setSelection(IResource selection) {
+	void setSelection(@Named("selection") IResource selection) {
 		if (selection == null)
 			return;
 		IContainer newInput;
@@ -106,7 +107,7 @@ public class ExifTable {
 	}
 
 	@Inject @Optional(true)
-	void setPersistedState(String persistedState) {
+	void setPersistedState(@Named("persistedState") String persistedState) {
 		changeSupport.firePropertyChange("persistedState", this.persistedState,
 				this.persistedState = persistedState);
 	}

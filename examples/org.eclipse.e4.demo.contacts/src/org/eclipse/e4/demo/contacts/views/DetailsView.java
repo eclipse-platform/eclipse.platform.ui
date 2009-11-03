@@ -12,6 +12,9 @@
 
 package org.eclipse.e4.demo.contacts.views;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -32,15 +35,10 @@ public class DetailsView {
 		return Contact.class;
 	}
 
-	public void setSelection(Object selection) {
+	@Inject
+	public void setSelection(@Named("selection") Contact selection) {
 		if (selection instanceof Contact) {
 			detailComposite.update((Contact) selection);
-		}
-	}
-
-	public void setInput(Object input) {
-		if (input instanceof Contact) {
-			detailComposite.update((Contact) input);
 		}
 	}
 
