@@ -45,10 +45,10 @@ public class ReparentingTest extends TestCase {
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
 		child.set(IContextConstants.DEBUG_STRING, "child");
 		parent.set("sum", new AddContextFunction());
-		parent.set("x", 3);
-		parent.set("y", 3);
-		child.set("x", 1);
-		child.set("y", 1);
+		parent.set("x", new Integer(3));
+		parent.set("y", new Integer(3));
+		child.set("x", new Integer(1));
+		child.set("y", new Integer(1));
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 		child.set(IContextConstants.PARENT, EclipseContextFactory.create());
@@ -64,8 +64,8 @@ public class ReparentingTest extends TestCase {
 		// setup
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
-		child.set("x", 1);
-		child.set("y", 1);
+		child.set("x", new Integer(1));
+		child.set("y", new Integer(1));
 		assertEquals(null, parent.get("sum"));
 		assertEquals(null, child.get("sum"));
 
@@ -77,8 +77,8 @@ public class ReparentingTest extends TestCase {
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 
 		// changed values in parent shouldn't affect child
-		newParent.set("x", 3);
-		newParent.set("y", 3);
+		newParent.set("x", new Integer(3));
+		newParent.set("y", new Integer(3));
 		assertEquals(6, ((Integer) newParent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 	}
@@ -88,8 +88,8 @@ public class ReparentingTest extends TestCase {
 		child.set("sum", new AddContextFunction());
 		assertEquals(0, ((Integer) child.get("sum")).intValue());
 		IEclipseContext parent = EclipseContextFactory.create();
-		parent.set("x", 3);
-		parent.set("y", 3);
+		parent.set("x", new Integer(3));
+		parent.set("y", new Integer(3));
 		child.set(IContextConstants.PARENT, parent);
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 
@@ -98,8 +98,8 @@ public class ReparentingTest extends TestCase {
 	public void testContextFunctionParentBecomeNull() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
-		parent.set("x", 3);
-		parent.set("y", 3);
+		parent.set("x", new Integer(3));
+		parent.set("y", new Integer(3));
 		child.set("sum", new AddContextFunction());
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 		child.set(IContextConstants.PARENT, null);
@@ -110,13 +110,13 @@ public class ReparentingTest extends TestCase {
 	public void testContextFunctionSwitchParent() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
-		parent.set("x", 3);
-		parent.set("y", 3);
+		parent.set("x", new Integer(3));
+		parent.set("y", new Integer(3));
 		child.set("sum", new AddContextFunction());
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 		IEclipseContext newParent = EclipseContextFactory.create();
-		newParent.set("x", 1);
-		newParent.set("y", 1);
+		newParent.set("x", new Integer(1));
+		newParent.set("y", new Integer(1));
 		child.set(IContextConstants.PARENT, newParent);
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
 	}
@@ -181,11 +181,13 @@ public class ReparentingTest extends TestCase {
 	public void testInjectSwitchParent() {
 
 		IEclipseContext oldParent = EclipseContextFactory.create();
-		oldParent.set("StringViaMethod", "old");
-		oldParent.set("OverriddenMethod", "s");
+		oldParent.set("String", "oldField");
+		oldParent.set(String.class.getName(), "old");
+		oldParent.set(Float.class.getName(), new Float(12.3));
 		IEclipseContext newParent = EclipseContextFactory.create();
-		newParent.set("StringViaMethod", "new");
-		newParent.set("OverriddenMethod", "s");
+		newParent.set("String", "newField");
+		newParent.set(String.class.getName(), "new");
+		newParent.set(Float.class.getName(), new Float(34.5));
 		IEclipseContext child = EclipseContextFactory.create(oldParent, null);
 
 		ObjectSuperClass object = new ObjectSuperClass();
@@ -205,8 +207,9 @@ public class ReparentingTest extends TestCase {
 	 */
 	public void testInjectSwitchParentSameGrandparent() {
 		IEclipseContext grandpa = EclipseContextFactory.create();
-		grandpa.set("StringViaMethod", "s");
-		grandpa.set("OverriddenMethod", "s");
+		grandpa.set("String", "field");
+		grandpa.set(String.class.getName(), "s");
+		grandpa.set(Float.class.getName(), new Float(12.3));
 
 		IEclipseContext oldParent = EclipseContextFactory.create(grandpa, null);
 		IEclipseContext newParent = EclipseContextFactory.create(grandpa, null);
@@ -218,6 +221,5 @@ public class ReparentingTest extends TestCase {
 
 		child.set(IContextConstants.PARENT, newParent);
 		assertEquals(1, object.setStringCalled);
-
 	}
 }

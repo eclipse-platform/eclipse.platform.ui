@@ -25,12 +25,11 @@ public class AddContextFunction extends ContextFunction {
 	 * @see org.eclipse.e4.core.services.context.spi.ContextFunction#compute(org.
 	 * eclipse.e4.core.services.context.IEclipseContext, java.lang.Object[])
 	 */
-	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
 		Integer xInt = (Integer) context.get("x");
 		Integer yInt = (Integer) context.get("y");
 		int sum = xInt == null ? 0 : xInt.intValue();
 		sum += yInt == null ? 0 : yInt.intValue();
-		return sum;
+		return new Integer(sum);
 	}
 }

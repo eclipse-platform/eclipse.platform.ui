@@ -333,8 +333,8 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 		return internalGet(this, name, null, true);
 	}
 
-	protected Object internalGet(EclipseContext originatingContext, String name,
-			Object[] arguments, boolean local) {
+	public Object internalGet(EclipseContext originatingContext, String name, Object[] arguments,
+			boolean local) {
 		trackAccess(name);
 		if (DEBUG_VERBOSE) {
 			System.out.println("IEC.get(" + name + ", " + arguments + ", " + local + "):"
@@ -541,5 +541,10 @@ public class EclipseContext implements IEclipseContext, IDisposable {
 				return true;
 		}
 		return false;
+	}
+
+	// TBD add processing of scopes
+	public Object make(Class clazz) {
+		return ContextInjectionImpl.make(clazz, this);
 	}
 }

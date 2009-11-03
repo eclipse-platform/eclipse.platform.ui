@@ -43,7 +43,7 @@ public class InjectionProperties {
 		return optional;
 	}
 
-	public boolean shoudlInject() {
+	public boolean shouldInject() {
 		return inject;
 	}
 

@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.annotations.PostConstruct;
-import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
  * Test class to check injection mechanism into classes with inheritance
  */
 public class ObjectSubClass extends ObjectSuperClass {
-	/* package */Integer di_Integer;
+	/* package */Integer inject_Integer;
+
 	private Object myObject;
 
-	public int setObjectCalled;
-	public int setOverriddenCalled;
-	public int setSubFinalized;
+	public int setObjectCalled = 0;
+	public int setSubFinalized = 0;
 	public int postConstructSetObjectCalled;
 	public int postConstructSetOverriddenCalled;
 	public int subPostConstructCount;
@@ -32,16 +30,14 @@ public class ObjectSubClass extends ObjectSuperClass {
 
 	public ObjectSubClass() {
 		super();
-		setObjectCalled = 0;
-		setSubFinalized = 0;
 	}
 
-	public void setObjectViaMethod(Object object) {
-		myObject = object;
+	public void inject_ObjectViaMethod(Float f) {
+		myObject = f;
 		setObjectCalled++;
 	}
 
-	public void setOverriddenMethod(Object o) {
+	public void inject_OverriddenMethod(Float f) {
 		setOverriddenCalled++;
 	}
 
@@ -51,7 +47,7 @@ public class ObjectSubClass extends ObjectSuperClass {
 	}
 
 	public Integer getInteger() {
-		return di_Integer;
+		return inject_Integer;
 	}
 
 	public Object getObjectViaMethod() {
@@ -65,24 +61,4 @@ public class ObjectSubClass extends ObjectSuperClass {
 	public int getOverriddenCount() {
 		return setOverriddenCalled;
 	}
-
-	@PostConstruct
-	public void subPostConstruct() {
-		postConstructSetObjectCalled = setObjectCalled;
-		postConstructSetStringCalled = setStringCalled;
-		postConstructSetOverriddenCalled = setOverriddenCalled;
-		subPostConstructCount++;
-	}
-
-	@PreDestroy
-	public void subPreDestroy() {
-		subPreDestroyCount++;
-
-	}
-
-	@PreDestroy()
-	public void overriddenPreDestroy() {
-		overriddenPreDestroyCount++;
-	}
-
 }

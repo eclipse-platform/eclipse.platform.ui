@@ -10,12 +10,10 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import javax.inject.Inject;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -45,57 +43,22 @@ public class ContextInjectionDisposeTest extends TestCase {
 			boolean contextDisposedInvoked = false;
 
 			boolean disposeInvoked = false;
-			@SuppressWarnings("unused")
-			@Inject
-			private String field;
+			private String inject_Field;
 
-			@SuppressWarnings("unused")
 			public void contextDisposed(IEclipseContext context) {
 				contextDisposedInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
 			public void dispose() {
 				disposeInvoked = true;
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set("field", "hello");
+		context.set("Field", "hello");
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		((IDisposable) context).dispose();
 		assertTrue(object.contextDisposedInvoked);
-		assertFalse(object.disposeInvoked);
-	}
-
-	/**
-	 * Should prefer dispose() over contextDisposed(IEclipseContext, String)
-	 */
-	public void testContextDisposedTwoArgs() {
-		class Injected {
-			boolean contextDisposedInvoked = false;
-
-			boolean disposeInvoked = false;
-			@SuppressWarnings("unused")
-			@Inject
-			private String field;
-
-			@SuppressWarnings("unused")
-			public void contextDisposed(IEclipseContext context, String arg2) {
-				contextDisposedInvoked = true;
-			}
-
-			@SuppressWarnings("unused")
-			public void dispose() {
-				disposeInvoked = true;
-			}
-		}
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("field", "hello");
-		Injected object = new Injected();
-		ContextInjectionFactory.inject(object, context);
-		((IDisposable) context).dispose();
-		assertFalse(object.contextDisposedInvoked);
 		assertTrue(object.disposeInvoked);
 	}
 
@@ -106,74 +69,61 @@ public class ContextInjectionDisposeTest extends TestCase {
 		class Injected {
 			boolean contextDisposedInvoked = false;
 			boolean disposeInvoked = false;
-			@SuppressWarnings("unused")
-			@Inject
-			private String field;
+			private String inject_Field;
 
-			@SuppressWarnings("unused")
 			public void contextDisposed() {
 				contextDisposedInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
 			public void dispose() {
 				disposeInvoked = true;
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set("field", "hello");
+		context.set("Field", "hello");
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		((IDisposable) context).dispose();
 		assertTrue(object.contextDisposedInvoked);
-		assertFalse(object.disposeInvoked);
+		assertTrue(object.disposeInvoked);
 	}
 
 	public void testDisposeContext() {
 		class Injected {
 			boolean contextDisposedInvoked = false;
 			boolean disposeInvoked = false;
-			@Inject
-			Object injectedField;
-			Object methodValue;
+			Object inject_Field;
+			String methodValue;
 
-			@SuppressWarnings("unused")
-			@PreDestroy
-			public void destroy() {
-				injectedField = null;
-				methodValue = null;
-			}
-
-			@SuppressWarnings("unused")
 			public void dispose() {
 				disposeInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
 			public void contextDisposed(IEclipseContext context) {
 				contextDisposedInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
-			@Inject
-			public void setInjectedMethod(Object arg) {
+			public void inject_InjectedMethod(String arg) {
 				methodValue = arg;
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
 		Object fieldValue = new Object();
-		Object methodValue = new Object();
-		context.set("injectedField", fieldValue);
-		context.set("injectedMethod", methodValue);
+		Object methodValue = "abc";
+		context.set("Field", fieldValue);
+		context.set(String.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 
+		assertEquals(fieldValue, object.inject_Field);
+		assertEquals(methodValue, object.methodValue);
+
 		// disposing context should clear values
 		((IDisposable) context).dispose();
-		assertNull(object.injectedField);
+		assertNull(object.inject_Field);
 		assertNull(object.methodValue);
-		assertFalse(object.disposeInvoked);
-		assertFalse(object.contextDisposedInvoked);
+		assertTrue(object.disposeInvoked);
+		assertTrue(object.contextDisposedInvoked);
 	}
 
 	public void testReleaseObject() {
@@ -181,45 +131,42 @@ public class ContextInjectionDisposeTest extends TestCase {
 			boolean contextDisposedInvoked = false;
 			boolean disposeInvoked = false;
 			boolean destroyInvoked = false;
-			@Inject
-			Object injectedField;
+
+			Object inject_Field;
 			Object methodValue;
 
-			@SuppressWarnings("unused")
-			@PreDestroy
 			public void destroy() {
 				destroyInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
 			public void dispose() {
 				disposeInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
 			public void contextDisposed(IEclipseContext context) {
 				contextDisposedInvoked = true;
 			}
 
-			@SuppressWarnings("unused")
-			@Inject
-			public void setInjectedMethod(Object arg) {
+			public void inject_InjectedMethod(String arg) {
 				methodValue = arg;
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
 		Object fieldValue = new Object();
-		Object methodValue = new Object();
-		context.set("injectedField", fieldValue);
-		context.set("injectedMethod", methodValue);
+		Object methodValue = "abc";
+		context.set("Field", fieldValue);
+		context.set(String.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
+
+		assertEquals(fieldValue, object.inject_Field);
+		assertEquals(methodValue, object.methodValue);
 
 		// releasing should have the same effect on the single object as
 		// disposing the context does.
 		ContextInjectionFactory.uninject(object, context);
 
-		assertNull(object.injectedField);
+		assertNull(object.inject_Field);
 		assertNull(object.methodValue);
 		assertFalse(object.disposeInvoked);
 		assertFalse(object.destroyInvoked);

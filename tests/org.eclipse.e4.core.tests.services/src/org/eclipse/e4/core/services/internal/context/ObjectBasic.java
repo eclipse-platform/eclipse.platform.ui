@@ -12,51 +12,40 @@ package org.eclipse.e4.core.services.internal.context;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
-
 /**
  * Test class to check injection mechanism
  */
 public class ObjectBasic {
-	
-	public String di_String;
-	private Integer di_Integer;
+
+	// Injected directly
+	public String inject_String;
+	private Integer inject_Integer;
+
+	// Injected indirectly
+	public Double d;
+	public Float f;
+	public Character c;
 	protected IEclipseContext context;
 
-	private String myString;
-	private Object myObject;
-
-	private boolean finalized;
-	private boolean disposed;
-	public int setStringCalled;
-	public int setObjectCalled;
+	// Test status
+	public boolean finalized = false;
+	public boolean disposed = false;
+	public int setMethodCalled = 0;
+	public int setMethodCalled2 = 0;
 
 	public ObjectBasic() {
-		setStringCalled = 0;
-		setObjectCalled = 0;
-		finalized = false;
-		disposed = false;
+		// placeholder
 	}
 
-	public void setStringViaMethod(String string) {
-		myString = string;
-		setStringCalled++;
+	public void inject_ObjectViaMethod(Double d) {
+		setMethodCalled++;
+		this.d = d;
 	}
 
-	public void removeStringViaMethod(String string) {
-		if (string != myString)
-			throw new IllegalArgumentException("Unexpected string");
-		myString = null;
-	}
-
-	public void setObjectViaMethod(Object object) {
-		myObject = object;
-		setObjectCalled++;
-	}
-
-	public void removeObjectViaMethod(Object object) {
-		if (object != myObject)
-			throw new IllegalArgumentException("Unexpected object");
-		myObject = null;
+	public void inject_Arguments(Float f, Character c) {
+		setMethodCalled2++;
+		this.f = f;
+		this.c = c;
 	}
 
 	public void contextSet(IEclipseContext context) {
@@ -71,32 +60,8 @@ public class ObjectBasic {
 		disposed = true;
 	}
 
-	public String getString() {
-		return di_String;
-	}
-
-	public Integer getInteger() {
-		return di_Integer;
-	}
-
-	public IEclipseContext getContext() {
-		return context;
-	}
-
-	public String getStringViaMethod() {
-		return myString;
-	}
-
-	public Object getObjectViaMethod() {
-		return myObject;
-	}
-
-	public boolean isFinalized() {
-		return finalized;
-	}
-
-	public boolean isDisposed() {
-		return disposed;
+	public Integer getInt() {
+		return inject_Integer;
 	}
 
 }

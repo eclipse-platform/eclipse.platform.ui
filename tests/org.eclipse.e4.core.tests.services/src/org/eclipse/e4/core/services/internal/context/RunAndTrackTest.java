@@ -12,6 +12,7 @@
 package org.eclipse.e4.core.services.internal.context;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.services.IDisposable;
@@ -36,7 +37,6 @@ public class RunAndTrackTest extends TestCase {
 		 * @see org.eclipse.e4.core.services.context.spi.ContextFunction#compute(
 		 * org.eclipse.e4.core.services.context.IEclipseContext, java.lang.Object[])
 		 */
-		@Override
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			IEclipseContext childContext = (IEclipseContext) context.getLocal(ACTIVE_CHILD);
 			if (childContext != null) {
@@ -55,11 +55,11 @@ public class RunAndTrackTest extends TestCase {
 
 	static final String INTERNAL_LOCAL_PART = "localPart";
 
-	private List<IDisposable> createdContexts = new ArrayList<IDisposable>();
+	private List createdContexts = new ArrayList();
 
 	private IEclipseContext createContext(IEclipseContext parentContext, String level) {
 		IEclipseContext childContext = EclipseContextFactory.create(parentContext, null);
-		createdContexts.add((IDisposable) childContext);
+		createdContexts.add(childContext);
 		childContext.set(IContextConstants.DEBUG_STRING, level);
 		return childContext;
 	}
@@ -67,7 +67,7 @@ public class RunAndTrackTest extends TestCase {
 	private IEclipseContext createGlobalContext() {
 		IEclipseContext serviceContext = EclipseContextFactory
 				.createServiceContext(TestActivator.bundleContext);
-		createdContexts.add((IDisposable) serviceContext);
+		createdContexts.add(serviceContext);
 		// global initialization and setup, usually done by workbench
 		IEclipseContext appContext = createContext(serviceContext, "globalContext");
 
@@ -92,9 +92,9 @@ public class RunAndTrackTest extends TestCase {
 	 * 
 	 * @see junit.framework.TestCase#tearDown()
 	 */
-	@Override
 	protected void tearDown() throws Exception {
-		for (IDisposable context : createdContexts) {
+		for (Iterator i = createdContexts.iterator(); i.hasNext();) {
+			IDisposable context = (IDisposable) i.next();
 			context.dispose();
 		}
 		createdContexts.clear();
@@ -229,7 +229,6 @@ public class RunAndTrackTest extends TestCase {
 				windows[0].set(ACTIVE_PART_ID, part);
 			}
 
-			@Override
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}
@@ -283,7 +282,6 @@ public class RunAndTrackTest extends TestCase {
 				windows[0].set(ACTIVE_PART_ID, part);
 			}
 
-			@Override
 			public String toString() {
 				return ACTIVE_PART_ID;
 			}

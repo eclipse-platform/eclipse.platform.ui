@@ -46,7 +46,7 @@ public class ComputedValueLimitationTest extends TestCase {
 
 		private String txt;
 
-		public void setComputed(String txt) {
+		public void inject_Computed(String txt) {
 			this.txt = txt;
 		}
 
@@ -71,10 +71,9 @@ public class ComputedValueLimitationTest extends TestCase {
 	}
 
 	public class Time extends ContextFunction {
-		@Override
 		public Object compute(IEclipseContext context, Object[] arguments) {
 			context.get(String.valueOf(System.currentTimeMillis()));
-			return System.currentTimeMillis();
+			return new Long(System.currentTimeMillis());
 		}
 	}
 
@@ -105,13 +104,14 @@ public class ComputedValueLimitationTest extends TestCase {
 	public void testVolatileFunction() {
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("time", new Time());
-		long time = (Long) context.get("time");
+		long time = ((Long) context.get("time")).longValue();
 		try {
 			Thread.sleep(100);
 		} catch (InterruptedException e) {
 			//
 		}
-		long newTime = (Long) context.get("time", new Object[] { System.currentTimeMillis() });
+		long newTime = ((Long) context.get("time", new Object[] { new Long(System
+				.currentTimeMillis()) })).longValue();
 		assertTrue(time != newTime);
 	}
 

@@ -44,7 +44,6 @@ public class EclipseContextTest extends TestCase {
 
 	private int runCounter;
 
-	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
 		this.parentContext = EclipseContextFactory.create();
@@ -133,19 +132,19 @@ public class EclipseContextTest extends TestCase {
 		IEclipseContext parent = EclipseContextFactory.create();
 		final IEclipseContext child = EclipseContextFactory.create(parent, null);
 		parent.set("sum", new AddContextFunction());
-		parent.set("x", 3);
-		parent.set("y", 3);
-		child.set("x", 1);
-		child.set("y", 1);
+		parent.set("x", new Integer(3));
+		parent.set("y", new Integer(3));
+		child.set("x", new Integer(1));
+		child.set("y", new Integer(1));
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(2, ((Integer) child.get("sum")).intValue());
-		child.set("x", 5);
+		child.set("x", new Integer(5));
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(6, ((Integer) child.get("sum")).intValue());
 		child.remove("x");
 		assertEquals(6, ((Integer) parent.get("sum")).intValue());
 		assertEquals(4, ((Integer) child.get("sum")).intValue());
-		parent.set("x", 10);
+		parent.set("x", new Integer(10));
 		assertEquals(13, ((Integer) parent.get("sum")).intValue());
 		assertEquals(11, ((Integer) child.get("sum")).intValue());
 	}
@@ -304,8 +303,8 @@ public class EclipseContextTest extends TestCase {
 	public void testRemoveValueComputationOnDispose() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		IEclipseContext child = EclipseContextFactory.create(parent, null);
-		parent.set("x", 1);
-		parent.set("y", 1);
+		parent.set("x", new Integer(1));
+		parent.set("y", new Integer(1));
 		parent.set("sum", new AddContextFunction());
 		parent.set(IContextConstants.DEBUG_STRING, "ParentContext");
 		child.set(IContextConstants.DEBUG_STRING, "ChildContext");

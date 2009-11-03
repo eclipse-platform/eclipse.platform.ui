@@ -10,13 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import javax.inject.Inject;
-import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import org.eclipse.e4.core.services.IDisposable;
-import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -38,161 +34,76 @@ public class ContextInjectionTest extends TestCase {
 		super(name);
 	}
 
+	/**
+	 * Test trivial method injection and finalize method with context as an argument
+	 */
 	public void testContextSetOneArg() {
+		class TestData {
+		}
 		class Injected {
 			int contextSetCalled = 0;
 			int setMethodCalled = 0;
 
-			@SuppressWarnings("unused")
+			public TestData value;
+
 			public void contextSet(IEclipseContext context) {
 				contextSetCalled++;
 			}
 
-			@SuppressWarnings("unused")
-			@Inject
-			public void setInjectedMethod(Object arg) {
+			public void inject_InjectedMethod(TestData arg) {
 				setMethodCalled++;
+				value = arg;
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		Object methodValue = new Object();
-		context.set("injectedMethod", methodValue);
+		TestData methodValue = new TestData();
+		context.set(TestData.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		assertEquals(1, object.setMethodCalled);
 		assertEquals(1, object.contextSetCalled);
-		context.set("injectedMethod", "AnotherValue");
+
+		TestData methodValue2 = new TestData();
+		context.set(TestData.class.getName(), methodValue2);
 		assertEquals(2, object.setMethodCalled);
+		assertEquals(methodValue2, object.value);
 		assertEquals(1, object.contextSetCalled);
 	}
 
+	/**
+	 * Test filnalize method - no args
+	 */
 	public void testContextSetZeroArgs() {
+		class TestData {
+		}
 		class Injected {
 			int contextSetCalled = 0;
 			int setMethodCalled = 0;
 
-			@SuppressWarnings("unused")
+			public TestData value;
+
 			public void contextSet() {
 				contextSetCalled++;
 			}
 
-			@SuppressWarnings("unused")
-			@Inject
-			public void setInjectedMethod(Object arg) {
+			public void inject_InjectedMethod(TestData arg) {
 				setMethodCalled++;
+				value = arg;
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		Object methodValue = new Object();
-		context.set("injectedMethod", methodValue);
+		TestData methodValue = new TestData();
+		context.set(TestData.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		assertEquals(1, object.setMethodCalled);
 		assertEquals(1, object.contextSetCalled);
-		context.set("injectedMethod", "AnotherValue");
+
+		TestData methodValue2 = new TestData();
+		context.set(TestData.class.getName(), methodValue2);
 		assertEquals(2, object.setMethodCalled);
+		assertEquals(methodValue2, object.value);
 		assertEquals(1, object.contextSetCalled);
-	}
-
-	/**
-	 * Tests that fields are injected before methods.
-	 */
-	public void testFieldMethodOrder() {
-		final AssertionFailedError[] error = new AssertionFailedError[1];
-		class Injected {
-			@Inject
-			Object injectedField;
-			Object methodValue;
-
-			@SuppressWarnings("unused")
-			@Inject
-			public void setInjectedMethod(Object arg) {
-				try {
-					assertTrue(injectedField != null);
-				} catch (AssertionFailedError e) {
-					error[0] = e;
-				}
-				methodValue = arg;
-			}
-		}
-		IEclipseContext context = EclipseContextFactory.create();
-		Object fieldValue = new Object();
-		Object methodValue = new Object();
-		context.set("injectedField", fieldValue);
-		context.set("injectedMethod", methodValue);
-		Injected object = new Injected();
-		ContextInjectionFactory.inject(object, context);
-		if (error[0] != null)
-			throw error[0];
-		assertEquals(fieldValue, object.injectedField);
-		assertEquals(methodValue, object.methodValue);
-
-		// removing method value, the field should still have value
-		context.remove("injectedMethod");
-		if (error[0] != null)
-			throw error[0];
-		assertEquals(fieldValue, object.injectedField);
-		assertNull(object.methodValue);
-
-		((IDisposable) context).dispose();
-		if (error[0] != null)
-			throw error[0];
-	}
-
-	/**
-	 * Tests that a class with multiple post-construct methods has post-construct methods invoked at
-	 * the correct time.
-	 */
-	public void testInheritedPostConstruct() {
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("OverriddenMethod", new Object());
-		context.set("StringViaMethod", "");
-		context.set("ObjectViaMethod", new Object());
-		ObjectSubClass userObject = new ObjectSubClass();
-		ContextInjectionFactory.inject(userObject, context);
-		assertEquals(1, userObject.superPostConstructCount);
-		assertEquals(1, userObject.subPostConstructCount);
-		context.set("OverriddenMethod", new Object());
-		assertEquals(1, userObject.superPostConstructCount);
-		assertEquals(1, userObject.subPostConstructCount);
-	}
-
-	/**
-	 * Tests that a class with multiple pre-destroy methods has those methods invoked at the correct
-	 * time.
-	 */
-	public void testInheritedPreDestroy() {
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("OverriddenMethod", new Object());
-		context.set("StringViaMethod", "");
-		context.set("ObjectViaMethod", new Object());
-		ObjectSubClass userObject = new ObjectSubClass();
-		ContextInjectionFactory.inject(userObject, context);
-		assertEquals(0, userObject.superPreDestroyCount);
-		assertEquals(0, userObject.subPreDestroyCount);
-		context.set("OverriddenMethod", new Object());
-		assertEquals(0, userObject.superPreDestroyCount);
-		assertEquals(0, userObject.subPreDestroyCount);
-		((IDisposable) context).dispose();
-		assertEquals(1, userObject.superPreDestroyCount);
-		assertEquals(1, userObject.subPreDestroyCount);
-	}
-
-	/**
-	 * Tests that a class with a @PreDestroy method that is overridden by a subclass.
-	 */
-	public void testOverriddenPreDestroy() {
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("OverriddenMethod", new Object());
-		context.set("StringViaMethod", "");
-		context.set("ObjectViaMethod", new Object());
-		ObjectSubClass userObject = new ObjectSubClass();
-		ContextInjectionFactory.inject(userObject, context);
-		assertEquals(0, userObject.overriddenPreDestroyCount);
-		context.set("OverriddenMethod", new Object());
-		assertEquals(0, userObject.overriddenPreDestroyCount);
-		((IDisposable) context).dispose();
-		assertEquals(1, userObject.overriddenPreDestroyCount);
 	}
 
 	/**
@@ -201,36 +112,75 @@ public class ContextInjectionTest extends TestCase {
 	public synchronized void testInjection() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
-		Boolean testBoolean = new Boolean(true);
-		String testStringViaMethod = new String("abcd");
-		Object testObjectViaMethod = new Object();
+		Double testDouble = new Double(1.23);
+		Float testFloat = new Float(12.3);
+		Character testChar = new Character('v');
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
-		// elements to be populated via fields
 		context.set("Integer", testInt);
-		context.set("string", testString); // this checks capitalization as well
-		context.set("Boolean", testBoolean);
-		// elements to be populated via methods
-		context.set("StringViaMethod", testStringViaMethod);
-		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
+		context.set("String", testString);
+		context.set(Double.class.getName(), testDouble);
+		context.set(Float.class.getName(), testFloat);
+		context.set(Character.class.getName(), testChar);
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check field injection
-		assertEquals(testString, userObject.getString());
-		assertEquals(testInt, userObject.getInteger());
-		assertEquals(context, userObject.getContext());
+		assertEquals(testString, userObject.inject_String);
+		assertEquals(testInt, userObject.getInt());
+		assertEquals(context, userObject.context);
 
 		// check method injection
-		assertEquals(1, userObject.setStringCalled);
-		assertEquals(1, userObject.setObjectCalled);
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
+		assertEquals(1, userObject.setMethodCalled);
+		assertEquals(1, userObject.setMethodCalled2);
+		assertEquals(testDouble, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertEquals(testChar, userObject.c);
 
 		// check post processing
-		assertTrue(userObject.isFinalized());
+		assertTrue(userObject.finalized);
+	}
+
+	/**
+	 * Tests injection of objects from parent context
+	 */
+	public synchronized void testInjectionFromParent() {
+		Integer testInt = new Integer(123);
+		String testString = new String("abc");
+		Double testDouble = new Double(1.23);
+		Float testFloat = new Float(12.3);
+		Character testChar = new Character('v');
+
+		// create parent context
+		IEclipseContext parentContext = EclipseContextFactory.create();
+		parentContext.set("Integer", testInt);
+		parentContext.set("String", testString);
+
+		// create child context
+		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
+		context.set(Double.class.getName(), testDouble);
+		context.set(Float.class.getName(), testFloat);
+		context.set(Character.class.getName(), testChar);
+
+		ObjectBasic userObject = new ObjectBasic();
+		ContextInjectionFactory.inject(userObject, context);
+
+		// check field injection
+		assertEquals(testString, userObject.inject_String);
+		assertEquals(testInt, userObject.getInt());
+		assertEquals(context, userObject.context);
+
+		// check method injection
+		assertEquals(1, userObject.setMethodCalled);
+		assertEquals(1, userObject.setMethodCalled2);
+		assertEquals(testDouble, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertEquals(testChar, userObject.c);
+
+		// check post processing
+		assertTrue(userObject.finalized);
 	}
 
 	/**
@@ -239,18 +189,14 @@ public class ContextInjectionTest extends TestCase {
 	public synchronized void testInjectionAndInheritance() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
-		String testStringViaMethod = new String("abcd");
-		Object testObjectViaMethod = new Object();
+		Float testFloat = new Float(12.3);
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
-		// elements to be populated via fields
 		context.set("Integer", testInt);
-		context.set("string", testString); // this checks capitalization as well
-		// elements to be populated via methods
-		context.set("StringViaMethod", testStringViaMethod);
-		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
-		context.set("OverriddenMethod", new Object());
+		context.set("String", testString);
+		context.set(String.class.getName(), testString);
+		context.set(Float.class.getName(), testFloat);
 
 		ObjectSubClass userObject = new ObjectSubClass();
 		ContextInjectionFactory.inject(userObject, context);
@@ -258,160 +204,19 @@ public class ContextInjectionTest extends TestCase {
 		// check inherited portion
 		assertEquals(testString, userObject.getString());
 		assertEquals(context, userObject.getContext());
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
+		assertEquals(testString, userObject.getStringViaMethod());
 		assertEquals(1, userObject.setStringCalled);
 
 		// check declared portion
 		assertEquals(testInt, userObject.getInteger());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
+		assertEquals(testFloat, userObject.getObjectViaMethod());
 		assertEquals(1, userObject.setObjectCalled);
+
+		// make sure overridden injected method was called only once
+		assertEquals(1, userObject.setOverriddenCalled);
 
 		// check post processing
 		assertEquals(1, userObject.getFinalizedCalled());
-	}
-
-	/**
-	 * Tests injection of objects from parent context
-	 */
-	public synchronized void testInjectionFromParent() {
-		Integer testInt = new Integer(123);
-		String testStringViaMethod = new String("abcd");
-		Object testObjectViaMethod = new Object();
-
-		// create parent context
-		IEclipseContext parentContext = EclipseContextFactory.create();
-		parentContext.set("Integer", testInt);
-		parentContext.set("StringViaMethod", testStringViaMethod);
-
-		// create child context
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
-		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
-		context.set("string", "foo"); // not important for this test
-
-		ObjectBasic userObject = new ObjectBasic();
-		ContextInjectionFactory.inject(userObject, context);
-
-		assertEquals(testInt, userObject.getInteger());
-		assertEquals(context, userObject.getContext());
-
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
-		assertEquals(1, userObject.setStringCalled);
-		assertEquals(1, userObject.setObjectCalled);
-
-		// check post processing
-		assertTrue(userObject.isFinalized());
-	}
-
-	public void testOptionalInjection() {
-		Integer testInt = new Integer(123);
-		String testString = new String("abc");
-		Boolean testBoolean = new Boolean(true);
-		String testStringViaMethod = new String("abcd");
-		Object testObjectViaMethod = new Object();
-
-		// create context
-		IEclipseContext context = EclipseContextFactory.create();
-		// elements to be populated via fields
-		context.set("Integer", testInt);
-		context.set("string", testString); // this checks capitalization as well
-		context.set("Boolean", testBoolean);
-		// elements to be populated via methods
-		context.set("StringViaMethod", testStringViaMethod);
-		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
-
-		ObjectWithAnnotations userObject = new ObjectWithAnnotations();
-		ContextInjectionFactory.inject(userObject, context);
-
-		// check field injection
-		assertEquals(testString, userObject.getString());
-		assertEquals(testInt, userObject.getInteger());
-		assertEquals(context, userObject.getContext());
-
-		// check method injection
-		assertEquals(1, userObject.setStringCalled);
-		assertEquals(1, userObject.setObjectCalled);
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
-
-		// check that no extra injections are done
-		assertNull(userObject.diMissing);
-		assertNull(userObject.myMissing);
-		assertEquals(0, userObject.setMissingCalled);
-
-		// check incompatible types
-		assertNull(userObject.diBoolean);
-		assertNull(userObject.myBoolean);
-		assertEquals(0, userObject.setBooleanCalled);
-
-		// check incompatible types
-		assertNull(userObject.diBoolean);
-		assertNull(userObject.myBoolean);
-		assertEquals(0, userObject.setBooleanCalled);
-
-		// check post processing
-		assertTrue(userObject.isFinalized());
-	}
-
-	/**
-	 * Tests that a setter overridden from a superclass is only invoked once.
-	 */
-	public void testOverriddenSetter() {
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("OverriddenMethod", new Object());
-		context.set("StringViaMethod", "");
-		context.set("ObjectViaMethod", new Object());
-		ObjectSubClass userObject = new ObjectSubClass();
-		ContextInjectionFactory.inject(userObject, context);
-		assertEquals(1, userObject.getOverriddenCount());
-		context.set("OverriddenMethod", new Object());
-		assertEquals(2, userObject.getOverriddenCount());
-
-	}
-
-	public void testPostConstruct() {
-		class Injected {
-			int postConstructCalled = 0;
-			int setMethodCalled = 0;
-
-			@SuppressWarnings("unused")
-			@PostConstruct
-			public void init() {
-				postConstructCalled++;
-			}
-
-			@SuppressWarnings("unused")
-			@Inject
-			public void setInjectedMethod(Object arg) {
-				setMethodCalled++;
-			}
-		}
-		IEclipseContext context = EclipseContextFactory.create();
-		Object methodValue = new Object();
-		context.set("injectedMethod", methodValue);
-		Injected object = new Injected();
-		ContextInjectionFactory.inject(object, context);
-		assertEquals(1, object.setMethodCalled);
-		assertEquals(1, object.postConstructCalled);
-		context.set("injectedMethod", "AnotherValue");
-		assertEquals(2, object.setMethodCalled);
-		assertEquals(1, object.postConstructCalled);
-	}
-
-	/**
-	 * Tests that post-construct methods are always called after all setters have been called
-	 */
-	public void testPostConstructAfterSetters() {
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("OverriddenMethod", new Object());
-		context.set("StringViaMethod", "");
-		context.set("ObjectViaMethod", new Object());
-		ObjectSubClass userObject = new ObjectSubClass();
-		ContextInjectionFactory.inject(userObject, context);
-		assertEquals(1, userObject.postConstructSetObjectCalled);
-		assertEquals(1, userObject.postConstructSetStringCalled);
-		assertEquals(1, userObject.postConstructSetOverriddenCalled);
-
 	}
 
 }

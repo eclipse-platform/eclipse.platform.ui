@@ -30,7 +30,7 @@ public class ContextDynamicTest extends TestCase {
 	public ContextDynamicTest(String name) {
 		super(name);
 	}
-	
+
 	public void testReplaceFunctionWithStaticValue() {
 		IEclipseContext parent = EclipseContextFactory.create();
 		IEclipseContext context = EclipseContextFactory.create(parent, null);
@@ -53,50 +53,60 @@ public class ContextDynamicTest extends TestCase {
 	public synchronized void testAddRemove() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
-		String testStringViaMethod = new String("abcd");
-		Object testObjectViaMethod = new Object();
+		Double testDouble = new Double(1.23);
+		Float testFloat = new Float(12.3);
+		Character testChar = new Character('v');
 
 		// create original context
 		IEclipseContext context = EclipseContextFactory.create();
 		context.set("Integer", testInt);
-		context.set("StringViaMethod", testStringViaMethod);
-		context.set("objectViaMethod", null);
-		context.set("string", null);
+		context.set("String", testString);
+		context.set(Double.class.getName(), testDouble);
+		context.set(Float.class.getName(), testFloat);
+		context.set(Character.class.getName(), testChar);
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check basic injection
-		assertEquals(testInt, userObject.getInteger());
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
-		assertEquals(1, userObject.setStringCalled);
-		assertNull(userObject.getString());
-		assertNull(userObject.getObjectViaMethod());
-		assertEquals(1, userObject.setObjectCalled);
+		assertEquals(testString, userObject.inject_String);
+		assertEquals(testInt, userObject.getInt());
+		assertEquals(context, userObject.context);
+		assertEquals(1, userObject.setMethodCalled);
+		assertEquals(1, userObject.setMethodCalled2);
+		assertEquals(testDouble, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertEquals(testChar, userObject.c);
 
-		// add service
-		context.set("string", testString); // this checks capitalization as well
-		context.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
-
-		// and check
-		assertEquals(testString, userObject.getString());
-		assertEquals(testInt, userObject.getInteger());
-		assertEquals(1, userObject.setStringCalled);
-		assertEquals(2, userObject.setObjectCalled);
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
-
-		// remove service
-		context.remove("Integer");
-		context.remove("StringViaMethod");
+		// change value
+		Double testDouble2 = new Double(3.45);
+		Integer testInt2 = new Integer(123);
+		context.set(Double.class.getName(), testDouble2);
+		context.set("Integer", testInt2);
 
 		// and check
-		assertNull(userObject.getInteger());
-		assertEquals(testString, userObject.getString());
-		assertEquals(2, userObject.setStringCalled); // XXX same setter method called on remove
-		assertEquals(2, userObject.setObjectCalled);
-		assertNull(userObject.getStringViaMethod());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
+		assertEquals(testString, userObject.inject_String);
+		assertEquals(testInt2, userObject.getInt());
+		assertEquals(context, userObject.context);
+		assertEquals(2, userObject.setMethodCalled);
+		assertEquals(1, userObject.setMethodCalled2);
+		assertEquals(testDouble2, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertEquals(testChar, userObject.c);
+
+		// remove element
+		context.remove("String");
+		context.remove(Character.class.getName());
+
+		// and check
+		assertNull(userObject.inject_String);
+		assertEquals(testInt2, userObject.getInt());
+		assertEquals(context, userObject.context);
+		assertEquals(2, userObject.setMethodCalled);
+		assertEquals(2, userObject.setMethodCalled2);
+		assertEquals(testDouble2, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertNull(userObject.c);
 	}
 
 	/**
@@ -105,70 +115,61 @@ public class ContextDynamicTest extends TestCase {
 	public synchronized void testParentAddRemove() {
 		Integer testInt = new Integer(123);
 		String testString = new String("abc");
-		String testStringViaMethod = new String("abcd");
-		Object testObjectViaMethod = new Object();
+		Double testDouble = new Double(1.23);
+		Float testFloat = new Float(12.3);
+		Character testChar = new Character('v');
 
 		// create original context
 		IEclipseContext parentContext = EclipseContextFactory.create();
 		parentContext.set("Integer", testInt);
-		parentContext.set("StringViaMethod", testStringViaMethod);
-		parentContext.set("objectViaMethod", null);
-		parentContext.set("string", null);
-
-		IEclipseContext context = EclipseContextFactory.create(parentContext, null); 
+		parentContext.set("String", testString);
+		parentContext.set(Double.class.getName(), testDouble);
+		parentContext.set(Float.class.getName(), testFloat);
+		parentContext.set(Character.class.getName(), testChar);
+		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
 
 		ObjectBasic userObject = new ObjectBasic();
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check basic injection
-		assertEquals(testInt, userObject.getInteger());
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
-		assertEquals(1, userObject.setStringCalled);
-		assertNull(userObject.getString());
-		assertNull(userObject.getObjectViaMethod());
-		assertEquals(1, userObject.setObjectCalled);
+		assertEquals(testString, userObject.inject_String);
+		assertEquals(testInt, userObject.getInt());
+		assertEquals(context, userObject.context);
+		assertEquals(1, userObject.setMethodCalled);
+		assertEquals(1, userObject.setMethodCalled2);
+		assertEquals(testDouble, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertEquals(testChar, userObject.c);
 
-		// add service
-		parentContext.set("string", testString); // this checks capitalization as well
-		parentContext.set("objectViaMethod", testObjectViaMethod); // this checks capitalization as well
+		// change value
+		Double testDouble2 = new Double(3.45);
+		Integer testInt2 = new Integer(123);
+		context.set(Double.class.getName(), testDouble2);
+		context.set("Integer", testInt2);
 
 		// and check
-		assertEquals(testString, userObject.getString());
-		assertEquals(testInt, userObject.getInteger());
-		assertEquals(1, userObject.setStringCalled);
-		assertEquals(2, userObject.setObjectCalled);
-		assertEquals(testStringViaMethod, userObject.getStringViaMethod());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
+		assertEquals(testString, userObject.inject_String);
+		assertEquals(testInt2, userObject.getInt());
+		assertEquals(context, userObject.context);
+		assertEquals(2, userObject.setMethodCalled);
+		assertEquals(1, userObject.setMethodCalled2);
+		assertEquals(testDouble2, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertEquals(testChar, userObject.c);
 
-		// remove service
-		parentContext.remove("Integer");
-		parentContext.remove("StringViaMethod");
+		// remove element
+		parentContext.remove("String");
+		parentContext.remove(Character.class.getName());
 
-		// add check
-		assertNull(userObject.getInteger());
-		assertEquals(testString, userObject.getString());
-		// 2: the same setter method is called on set and remove
-		assertEquals(2, userObject.setStringCalled);
-		assertEquals(2, userObject.setObjectCalled);
-		assertNull(userObject.getStringViaMethod());
-		assertEquals(testObjectViaMethod, userObject.getObjectViaMethod());
-	}
-
-	/**
-	 * Tests context being disposed with objects implementing IContextAware
-	 */
-	public synchronized void testContextAware() {
-		// create context
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("stringViaMethod", null);
-		context.set("objectViaMethod", null);
-		context.set("string", null);
-		context.set("integer", null);
-		ObjectBasic userObject = new ObjectBasic();
-		ContextInjectionFactory.inject(userObject, context);
-
-		// check post processing
-		assertTrue(userObject.isFinalized());
+		// and check
+		assertNull(userObject.inject_String);
+		assertEquals(testInt2, userObject.getInt());
+		assertEquals(context, userObject.context);
+		assertEquals(2, userObject.setMethodCalled);
+		assertEquals(2, userObject.setMethodCalled2);
+		assertEquals(testDouble2, userObject.d);
+		assertEquals(testFloat, userObject.f);
+		assertNull(userObject.c);
 	}
 
 	public static Test suite() {

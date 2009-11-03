@@ -18,34 +18,6 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 
 public class ContextInjectionFactoryTest extends TestCase {
 
-	private TestObject testObject;
-
-	private IEclipseContext context;
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
-		testObject = new TestObject();
-		context = EclipseContextFactory.create();
-	}
-
-	public void testInvoke() throws Exception {
-		ContextInjectionFactory.invoke(testObject, "execute", context, null);
-
-		assertEquals(1, testObject.getExecuted());
-		assertEquals(0, testObject.getExecutedWithParams());
-	}
-
-	public void testInvokeWithParameters() throws Exception {
-		context.set("java.lang.String", "");
-
-		ContextInjectionFactory.invoke(testObject, "executeWithParams", context, null);
-
-		assertEquals(0, testObject.getExecuted());
-		assertEquals(1, testObject.getExecutedWithParams());
-	}
-
 	static class TestObject {
 
 		private int executed = 0;
@@ -70,4 +42,51 @@ public class ContextInjectionFactoryTest extends TestCase {
 
 	}
 
+	protected class TestConstructorObjectBasic {
+		public boolean defaultConstructorCalled = false;
+
+		public TestConstructorObjectBasic() {
+			defaultConstructorCalled = true;
+		}
+	}
+
+	private TestObject testObject;
+	private IEclipseContext context;
+
+	protected void setUp() throws Exception {
+		super.setUp();
+
+		testObject = new TestObject();
+		context = EclipseContextFactory.create();
+	}
+
+	public void testInvoke() throws Exception {
+		ContextInjectionFactory.invoke(testObject, "execute", context, null);
+
+		assertEquals(1, testObject.getExecuted());
+		assertEquals(0, testObject.getExecutedWithParams());
+	}
+
+	public void testInvokeWithParameters() throws Exception {
+		context.set(String.class.getName(), "");
+
+		ContextInjectionFactory.invoke(testObject, "executeWithParams", context, null);
+
+		assertEquals(0, testObject.getExecuted());
+		assertEquals(1, testObject.getExecutedWithParams());
+	}
+
+	/**
+	 * If no other constructors are available, the default constructor should be used
+	 */
+	public void testConstructorInjectionBasic() {
+		IEclipseContext context = EclipseContextFactory.create();
+		// add an extra argument for the inner class constructors
+		context.set(ContextInjectionFactoryTest.class.getName(), this);
+
+		Object basicResult = context.make(TestConstructorObjectBasic.class);
+		assertNotNull(basicResult);
+		assertTrue(basicResult instanceof TestConstructorObjectBasic);
+		assertTrue(((TestConstructorObjectBasic) basicResult).defaultConstructorCalled);
+	}
 }

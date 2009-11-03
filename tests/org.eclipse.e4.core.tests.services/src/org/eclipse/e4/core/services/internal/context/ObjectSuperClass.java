@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.annotations.PostConstruct;
-import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
@@ -20,18 +18,18 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 public class ObjectSuperClass {
 
 	protected IEclipseContext context;
-	private String di_String;
+	private String inject_String;
 	private String myString;
 
 	public int postConstructSetStringCalled;
-	public int setFinalizedCalled;
-	public int setStringCalled;
+	public int setFinalizedCalled = 0;
+	public int setStringCalled = 0;
 	public int superPostConstructCount;
 	public int superPreDestroyCount;
+	public int setOverriddenCalled = 0;
 
 	public ObjectSuperClass() {
-		setStringCalled = 0;
-		setFinalizedCalled = 0;
+		// placeholder
 	}
 
 	public void contextSet(IEclipseContext context) {
@@ -48,37 +46,20 @@ public class ObjectSuperClass {
 	}
 
 	public String getString() {
-		return di_String;
+		return inject_String;
 	}
 
 	public String getStringViaMethod() {
 		return myString;
 	}
 
-	public void setOverriddenMethod(Object o) {
-
+	public void inject_OverriddenMethod(Float f) {
+		setOverriddenCalled++;
 	}
 
-	public void setStringViaMethod(String string) {
+	public void inject_StringViaMethod(String string) {
 		myString = string;
 		setStringCalled++;
-	}
-
-	@PostConstruct
-	public void superPostConstruct() {
-		// record setter invocation counts at time of post construct invocation
-		postConstructSetStringCalled = setStringCalled;
-		superPostConstructCount++;
-	}
-
-	@PreDestroy
-	public void superPreDestroy() {
-		superPreDestroyCount++;
-	}
-
-	@PreDestroy()
-	public void overriddenPreDestroy() {
-		//
 	}
 
 }

@@ -203,4 +203,17 @@ public interface IEclipseContext {
 	 */
 	public void declareModifiable(String name);
 
+	/**
+	 * Obtain an instance of the specified class and inject it with the context.
+	 * <p>
+	 * Class'es scope dictates if a new instance of the class will be created, or existing instance
+	 * will be reused.
+	 * </p>
+	 * 
+	 * @param clazz
+	 *            the class to be instantiated
+	 * @return an instance of the specified class
+	 */
+	public Object make(Class clazz);
+
 }

@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.context.spi;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IEclipseContextAware;
+
 /**
  * This class contains various constants used by the context API.
  * 
@@ -18,13 +21,13 @@ package org.eclipse.e4.core.services.context.spi;
  */
 public interface IContextConstants {
 	/**
-	 * Default prefix for the fields to be injected (value "di_").
+	 * Default prefix for the fields to be injected (value "inject_").
 	 * <p>
 	 * For example, if the context has an object under the name "log", the object will be injected
 	 * into the field named "diLog".
 	 * </p>
 	 */
-	public static final String INJECTION_FIELD_PREFIX = "di_"; //$NON-NLS-1$
+	public static final String INJECTION_FIELD_PREFIX = "inject_"; //$NON-NLS-1$
 
 	/**
 	 * The name of the method to be called when a context is injected into the object (value
@@ -59,13 +62,13 @@ public interface IContextConstants {
 	public static final String INJECTION_DISPOSE_CONTEXT_METHOD = "contextDisposed"; //$NON-NLS-1$
 
 	/**
-	 * Default prefix for the methods to be injected (value "set").
+	 * Default prefix for the methods to be injected (value "inject_").
 	 * <p>
 	 * For example, if the context has an object under the name "log", the object will be injected
-	 * into the method named "setLog".
+	 * into the method named "inject_log".
 	 * </p>
 	 */
-	public static final String INJECTION_SET_METHOD_PREFIX = "set"; //$NON-NLS-1$
+	public static final String INJECTION_SET_METHOD_PREFIX = "inject_"; //$NON-NLS-1$
 
 	/**
 	 * A context key (value "debugString") identifying a value to use in debug statements for a

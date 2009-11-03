@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.annotations;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import org.eclipse.e4.core.services.internal.context.InjectionProperties;
@@ -20,15 +21,31 @@ import org.eclipse.e4.core.services.internal.context.InjectionProperties;
 public class AnnotationsSupport {
 
 	static public InjectionProperties getInjectProperties(Field field) {
-		return null;
+		return new InjectionProperties(false, null, true);
 	}
 
 	static public InjectionProperties getInjectProperties(Method method) {
-		return null;
+		return new InjectionProperties(false, null, true);
 	}
 
-	static public InjectionProperties getInjectProperties(Class type) {
-		return null;
+	static public InjectionProperties getInjectProperties(Constructor constructor) {
+		return new InjectionProperties(true, null, true);
+	}
+
+	static public InjectionProperties[] getInjectParamsProperties(Constructor constructor) {
+		Class[] params = constructor.getParameterTypes();
+		InjectionProperties[] result = new InjectionProperties[params.length];
+		for (int i = 0; i < result.length; i++)
+			result[i] = new InjectionProperties(false, null, true);
+		return result;
+	}
+
+	static public InjectionProperties[] getInjectParamProperties(Method method) {
+		Class[] params = method.getParameterTypes();
+		InjectionProperties[] result = new InjectionProperties[params.length];
+		for (int i = 0; i < result.length; i++)
+			result[i] = new InjectionProperties(false, null, true);
+		return result;
 	}
 
 	static public boolean isPostConstruct(Method method) {

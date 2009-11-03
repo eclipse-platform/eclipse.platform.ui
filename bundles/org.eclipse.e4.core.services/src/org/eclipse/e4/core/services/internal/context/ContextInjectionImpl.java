@@ -13,8 +13,10 @@ package org.eclipse.e4.core.services.internal.context;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
+// TBD this class should be merged into ContextInjector
 /**
  * Context injection implementation. See the class comment of {@link ContextInjectionFactory} for
  * details on the injection algorithm.
@@ -57,6 +59,12 @@ public class ContextInjectionImpl implements IContextConstants {
 
 	public static Object invoke(final Object userObject, final String methodName,
 			final IEclipseContext context, final Object defaultValue) {
-		return ContextToObjectLink.processInvoke(userObject, methodName, context, defaultValue);
+		ContextInjector injector = new ContextInjector(context, null, null);
+		return injector.invoke(userObject, methodName, defaultValue);
+	}
+
+	public static Object make(Class clazz, final IEclipseContext context) {
+		ContextInjector injector = new ContextInjector(context, null, null);
+		return injector.make(clazz, context);
 	}
 }
