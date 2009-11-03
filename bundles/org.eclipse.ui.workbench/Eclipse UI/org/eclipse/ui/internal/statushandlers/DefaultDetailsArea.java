@@ -23,6 +23,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSource;
@@ -40,7 +41,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.internal.progress.ProgressMessages;
@@ -72,14 +72,14 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 			| IStatus.INFO | IStatus.WARNING;
 
 	/*
-	 * New child entry in the list will be shifted by a tab
+	 * New child entry in the list will be shifted by a number of pixels
 	 */
-	private static final Object NESTING_INDENT = "\t"; //$NON-NLS-1$
+	private static final int NESTING_INDENT = 15;
 
 	/*
 	 * Displays statuses.
 	 */
-	private Text text;
+	private StyledText text;
 
 	/*
 	 * (non-Javadoc)
@@ -98,8 +98,8 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		parent = new Composite(parent, SWT.NONE);
 		parent.setLayout(new GridLayout());
 		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		text = new Text(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
-				| SWT.BORDER | SWT.READ_ONLY);
+		text = new StyledText(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.MULTI
+				| SWT.BORDER | SWT.READ_ONLY | SWT.WRAP);
 		text.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WHITE));
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		gd.grabExcessHorizontalSpace = true;
@@ -168,8 +168,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	}
 
 	protected void setStatusAdapter(StatusAdapter adapter) {
-		StringBuffer resultText = new StringBuffer();
-		populateList(resultText, adapter.getStatus(), 0);
+		populateList(text, adapter.getStatus(), 0, new int[] { 0 });
 		if (workbenchStatusDialog.getStatusAdapters().size() == 1) {
 			Long timestamp = (Long) adapter
 					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
@@ -178,17 +177,17 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 				String date = DateFormat.getDateTimeInstance(DateFormat.LONG,
 						DateFormat.LONG)
 						.format(new Date(timestamp.longValue()));
-				resultText.append(NLS.bind(ProgressMessages.JobInfo_Error,
+				text.append(NLS.bind(ProgressMessages.JobInfo_Error,
 						(new Object[] { "", date }))); //$NON-NLS-1$
 			}
 		}
 		int delimiterLength = getLineSeparator().length();
-		text.setText(resultText.substring(0, resultText.length()
-				- delimiterLength));
+		text.replaceTextRange(text.getText().length() - delimiterLength,
+				delimiterLength, ""); //$NON-NLS-1$
 		adjustHeight(text);
 	}
 
-	private void adjustHeight(Text text) {
+	private void adjustHeight(StyledText text) {
 		int lineCount = text.getLineCount();
 		int lineHeight = text.getLineHeight();
 		int startPos = text.getLocation().y;
@@ -261,52 +260,48 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		return text.getSelectionText();
 	}
 
-	private void populateList(StringBuffer buffer, IStatus status, int nesting) {
+	private void populateList(StyledText text, IStatus status, int nesting, int[] lineNumber) {
 		if (!status.matches(MASK)
 				&& !(isDialogHandlingOKStatuses() && status.isOK())) {
 			return;
 		}
-		for (int i = 0; i < nesting; i++) {
-			buffer.append(NESTING_INDENT);
-		}
-		buffer.append(status.getMessage());
-		buffer.append(getLineSeparator());
+		appendNewLine(text, status.getMessage(), nesting, lineNumber[0]++);
 
 		// Look for a nested core exception
 		Throwable t = status.getException();
 		if (t instanceof CoreException) {
 			CoreException ce = (CoreException) t;
-			populateList(buffer, ce.getStatus(), nesting + 1);
+			populateList(text, ce.getStatus(), nesting + 1,lineNumber);
 		} else if (t != null) {
 			// Include low-level exception message
-			for (int i = 0; i < nesting; i++) {
-				buffer.append(NESTING_INDENT);
-			}
 			String message = t.getLocalizedMessage();
 			if (message == null) {
 				message = t.toString();
 			}
-			buffer.append(message);
-			buffer.append(getLineSeparator());
+			appendNewLine(text, message, nesting, lineNumber[0]++);
 		}
 
 		IStatus[] children = status.getChildren();
 		for (int i = 0; i < children.length; i++) {
-			populateList(buffer, children[i], nesting + 1);
+			populateList(text, children[i], nesting + 1, lineNumber);
 		}
 	}
 
 	private String getLineSeparator() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
-
-	/**
-	 * @return Returns the text.
-	 */
-	public Text getText() {
-		return text;
-	}
 	
+	private void appendNewLine(StyledText text, String line, int indentLevel,
+			int lineNumber) {
+		text.append(line + getLineSeparator());
+		int pixelIndent = indentLevel * NESTING_INDENT;
+		if (lineNumber != 0) {
+			pixelIndent += NESTING_INDENT / 2;
+		}
+		text.setLineIndent(lineNumber, 1, pixelIndent);
+		text.setLineWrapIndent(lineNumber, 1, indentLevel * NESTING_INDENT);
+	}
+
 	private void copyToClipboard() {
 		Clipboard clipboard = null;
 		try {

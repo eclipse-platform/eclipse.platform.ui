@@ -1631,7 +1631,7 @@ public class WorkbenchStatusDialogManager {
 		initContentProvider();
 		initLabelProvider();
 		statusListViewer
-				.addSelectionChangedListener(new ISelectionChangedListener() {
+				.addPostSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
 						handleSelectionChange();
 					}
