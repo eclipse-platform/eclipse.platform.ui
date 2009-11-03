@@ -747,7 +747,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, boolean)
 	 */
 	public void setTemplate(ILaunchConfiguration template, boolean copy) throws CoreException {
-		if (template.isWorkingCopy()) {
+		if (template != null && template.isWorkingCopy()) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_6));
 		}
 		if (template == null) {

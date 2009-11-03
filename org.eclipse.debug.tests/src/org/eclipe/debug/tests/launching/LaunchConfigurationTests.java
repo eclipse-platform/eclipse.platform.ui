@@ -1147,6 +1147,30 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertNull(wc.getAttribute("String1", (String)null));
 		
 	}	
+	
+	/**
+	 * Tests that setting a configuration's template to null cleans its template
+	 * association.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testUnTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-un-template");
+		ILaunchConfigurationWorkingCopy t1 = newEmptyConfiguration(null, "template-un");
+		t1.setAttribute("COMMON", "TEMPLATE-1");
+		t1.setAttribute("T1", "T1");
+		t1.setAttribute("String1", "String2");
+		ILaunchConfiguration template = t1.doSave();
+		wc.setTemplate(template, true);
+		ILaunchConfiguration configuration = wc.doSave();
+		assertEquals(template, configuration.getTemplate());
+		wc = configuration.getWorkingCopy();
+		wc.setTemplate(null, false);
+		configuration = wc.doSave();
+		assertNull(configuration.getTemplate());
+		ILaunchConfiguration[] children = t1.getTemplateChildren();
+		assertEquals(0, children.length);
+	}
 }
 
 
