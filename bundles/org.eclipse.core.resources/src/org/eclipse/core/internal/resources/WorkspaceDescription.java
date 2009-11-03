@@ -21,15 +21,12 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 public class WorkspaceDescription extends ModelObject implements IWorkspaceDescription {
 	protected boolean autoBuilding;
 	protected String[] buildOrder;
-	// thread safety: (Concurrency004)
-	protected volatile long fileStateLongevity;
+	protected long fileStateLongevity;
 	protected int maxBuildIterations;
 	protected int maxFileStates;
-	// thread safety: (Concurrency004)
-	protected volatile long maxFileStateSize;
+	protected long maxFileStateSize;
 	protected boolean applyFileStatePolicy;
-	// thread safety: (Concurrency004)
-	private volatile long snapshotInterval;
+	private long snapshotInterval;
 	protected int operationsPerSnapshot;
 	protected long deltaExpiration;
 
