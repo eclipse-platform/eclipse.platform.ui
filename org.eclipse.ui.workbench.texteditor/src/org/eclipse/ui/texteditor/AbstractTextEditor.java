@@ -59,6 +59,8 @@ import org.eclipse.swt.widgets.Caret;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 
@@ -3313,6 +3315,13 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		styledText.addMouseListener(getCursorListener());
 		styledText.addKeyListener(getCursorListener());
+
+		// Disable orientation switching until we fully support it.
+		styledText.addListener(SWT.OrientationChange, new Listener() {
+			public void handleEvent(Event event) {
+				event.doit= false;
+			}
+		});
 
 		if (getHelpContextId() != null)
 			PlatformUI.getWorkbench().getHelpSystem().setHelp(styledText, getHelpContextId());
