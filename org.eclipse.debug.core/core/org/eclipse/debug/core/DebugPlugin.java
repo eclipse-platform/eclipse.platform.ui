@@ -57,12 +57,13 @@ import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.internal.core.BreakpointManager;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.DebugOptions;
-import org.eclipse.debug.internal.core.Preferences;
 import org.eclipse.debug.internal.core.ExpressionManager;
 import org.eclipse.debug.internal.core.IConfigurationElementConstants;
+import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.core.LogicalStructureManager;
 import org.eclipse.debug.internal.core.MemoryBlockManager;
+import org.eclipse.debug.internal.core.Preferences;
 import org.eclipse.debug.internal.core.StepFilterManager;
 import org.eclipse.debug.internal.core.commands.CommandAdapterFactory;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
@@ -537,6 +538,10 @@ public class DebugPlugin extends Plugin {
 	 * @since 2.0
 	 */
 	public IStatusHandler getStatusHandler(IStatus status) {
+		boolean enabled = Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, true, null);
+		if (!enabled) {
+			return null;
+		}
 		StatusHandlerKey key = new StatusHandlerKey(status.getPlugin(), status.getCode());
 		if (fStatusHandlers == null) {
 			initializeStatusHandlers();

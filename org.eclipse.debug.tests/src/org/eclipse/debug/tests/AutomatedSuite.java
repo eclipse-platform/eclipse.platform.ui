@@ -33,6 +33,7 @@ import org.eclipe.debug.tests.viewer.model.VirtualViewerLazyModeTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerSelectionTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerStateTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerUpdateTests;
+import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
 
 /**
  * Tests for integration and nightly builds.
@@ -83,5 +84,8 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(LaunchHistoryTests.class));
 		addTest(new TestSuite(LaunchManagerTests.class));
 		addTest(new TestSuite(RefreshTabTests.class));
+		
+		// Status handlers
+		addTest(new TestSuite(StatusHandlerTests.class));
 	}
 }
