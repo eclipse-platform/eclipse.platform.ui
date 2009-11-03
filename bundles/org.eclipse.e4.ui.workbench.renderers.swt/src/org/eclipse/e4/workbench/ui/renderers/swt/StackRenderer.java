@@ -77,29 +77,32 @@ public class StackRenderer extends LazyStackRenderer {
 				MUIElement uiElement = (MUIElement) objElement;
 				MUIItem modelItem = (MUIItem) objElement;
 
-				// Is this Item visible
-				if (!(uiElement.getWidget() instanceof CTabItem))
-					return;
-
 				// This listener only updates stacks -it- rendered
 				MElementContainer<MUIElement> parent = uiElement.getParent();
-				if (!(parent.getFactory() == this))
+				if (!(parent.getFactory() == StackRenderer.this))
 					return;
 
-				CTabItem tabItem = (CTabItem) uiElement.getWidget();
+				// Is this Item visible
+				Object stackObj = uiElement.getParent();
+				MPartStack stack = (MPartStack) stackObj;
+
+				CTabItem item = findItemForPart(stack, (MPart) uiElement);
+				if (item == null)
+					return;
+
 				String attName = (String) event
 						.getProperty(IUIEvents.EventTags.AttName);
 
 				if (IUIEvents.UIItem.Name.equals(attName)) {
 					String newName = (String) event
 							.getProperty(IUIEvents.EventTags.NewValue);
-					tabItem.setText(newName);
+					item.setText(newName);
 				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
-					tabItem.setImage(getImage(modelItem));
+					item.setImage(getImage(modelItem));
 				} else if (IUIEvents.UIItem.Tooltip.equals(attName)) {
 					String newTTip = (String) event
 							.getProperty(IUIEvents.EventTags.NewValue);
-					tabItem.setToolTipText(newTTip);
+					item.setToolTipText(newTTip);
 				}
 			}
 		};
