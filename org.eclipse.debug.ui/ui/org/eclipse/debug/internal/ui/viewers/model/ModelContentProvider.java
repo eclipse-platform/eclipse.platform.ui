@@ -68,11 +68,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
 	private ITreeModelContentProviderTarget fViewer;
 
-    /**
-     * Flag indicating whether the viewer should ignore SELECT, REVEAL, 
-     * EXPAND, and COLLAPSE flags of {@link IModelDelta} coming from the model.
-     */
-	private boolean fSuppressModelControlRequests = false;
+	/**
+	 * Mask used to filter delta updates coming from the model.
+	 */
+	private int fModelDeltaMask = ~0;
 	
 	/**
 	 * Map tree paths to model proxy responsible for element
@@ -910,7 +909,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                             DebugUIPlugin.debug("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
                         }
     
-                        updateNodes(new IModelDelta[] { delta }, false);
+                        updateModel(delta, getModelDeltaMask());
                         
                         // Call model listeners after updating the viewer model.
                         Object[] listeners = fModelListeners.getListeners();
@@ -927,27 +926,27 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	}
 
 	/**
-	 * Turns on the mode which causes the model viewer to ignore SELECT, 
-	 * EXPAND, and COLLAPSE flags of {@link IModelDelta}.
-	 *  
-	 * @param suppress If <code>true</code> it turns on the suppress mode.
+	 * @see ITreeModelContentProvider#setModelDeltaMask(int)
 	 */
-    public void setSuppressModelControlDeltas(boolean suppress) {
-        fSuppressModelControlRequests = suppress;
+    public void setModelDeltaMask(int mask) {
+        fModelDeltaMask = mask;
     }
     
     /**
-     * Returns true if the viewer is currently in the mode to ignore SELECT, 
-     * REVEAL, EXPAND, and COLLAPSE flags of {@link IModelDelta}.
-     *  
-     * @return Returns <code>true</code> if in suppress mode.
+     * @see ITreeModelContentProvider#getModelDeltaMask()
      */
-    public boolean isSuppressModelControlDeltas() {
-        return fSuppressModelControlRequests;
+    public int getModelDeltaMask() {
+        return fModelDeltaMask;
     }
 
-    public void updateModel(IModelDelta delta) {
-        updateNodes(new IModelDelta[] { delta }, true);
+    public void updateModel(IModelDelta delta, int mask) {
+        IModelDelta[] deltaArray = new IModelDelta[] { delta }; 
+        updateNodes(deltaArray,
+            mask & (IModelDelta.REMOVED | IModelDelta.UNINSTALL));
+        updateNodes(deltaArray, 
+            mask & ITreeModelContentProvider.UPDATE_MODEL_DELTA_FLAGS & ~(IModelDelta.REMOVED | IModelDelta.UNINSTALL));
+        updateNodes(deltaArray, 
+            mask & ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
     }
     
     /**
@@ -958,10 +957,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * processing of SELECT, REVEAL, EXPAND, COLLAPSE flags of 
      * {@link IModelDelta}.
      */
-	protected void updateNodes(IModelDelta[] nodes, boolean override) {
+	protected void updateNodes(IModelDelta[] nodes, int mask) {
 		for (int i = 0; i < nodes.length; i++) {
 			IModelDelta node = nodes[i];
-			int flags = node.getFlags();
+			int flags = node.getFlags() & mask;
 
 			if ((flags & IModelDelta.ADDED) != 0) {
 				handleAdd(node);
@@ -987,21 +986,19 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			if ((flags & IModelDelta.UNINSTALL) != 0) {
 				handleUninstall(node);
 			}
-            if (!fSuppressModelControlRequests || override) {
-                if ((flags & IModelDelta.EXPAND) != 0) {
-                    handleExpand(node);
-                }
-                if ((flags & IModelDelta.COLLAPSE) != 0) {
-                    handleCollapse(node);
-                }
-                if ((flags & IModelDelta.SELECT) != 0) {
-                    handleSelect(node);
-                }
-                if ((flags & IModelDelta.REVEAL) != 0) {
-                    handleReveal(node);
-                }
+            if ((flags & IModelDelta.EXPAND) != 0) {
+                handleExpand(node);
             }
-			updateNodes(node.getChildDeltas(), override);
+            if ((flags & IModelDelta.COLLAPSE) != 0) {
+                handleCollapse(node);
+            }
+            if ((flags & IModelDelta.SELECT) != 0) {
+                handleSelect(node);
+            }
+            if ((flags & IModelDelta.REVEAL) != 0) {
+                handleReveal(node);
+            }
+			updateNodes(node.getChildDeltas(), mask);
 		}
 	}
 

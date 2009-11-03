@@ -24,6 +24,34 @@ import org.eclipse.jface.viewers.TreePath;
 public interface ITreeModelContentProvider extends ILazyTreePathContentProvider {
 
     /**
+     * Bit-mask which allows all possible model delta flags.
+     * 
+     * @since 3.6
+     * @see #setModelDeltaMask(int)
+     */
+    public static final int ALL_MODEL_DELTA_FLAGS = ~0; 
+
+    /**
+     * Bit-mask which allows only flags which control selection and expansion. 
+     * 
+     * @since 3.6
+     * @see #setModelDeltaMask(int)
+     */
+    public static final int CONTROL_MODEL_DELTA_FLAGS = 
+        IModelDelta.EXPAND | IModelDelta.COLLAPSE | IModelDelta.SELECT | IModelDelta.REVEAL | IModelDelta.FORCE;
+
+    /**
+     * Bit-mask which allows only flags which update viewer's information
+     * about the model.
+     * 
+     * @since 3.6
+     * @see #setModelDeltaMask(int)
+     */
+    public static final int UPDATE_MODEL_DELTA_FLAGS = 
+        IModelDelta.ADDED | IModelDelta.CONTENT | IModelDelta.INSERTED | IModelDelta.INSTALL | IModelDelta.REMOVED |
+        IModelDelta.REPLACED | IModelDelta.STATE | IModelDelta.UNINSTALL;
+
+    /**
      * Translates and returns the given child index from the viewer coordinate
      * space to the model coordinate space.
      *  
@@ -72,20 +100,25 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
     public void unmapPath(TreePath path);
 
     /**
-     * Turns on the mode which causes the model viewer to ignore SELECT, 
-     * EXPAND, and COLLAPSE flags of {@link IModelDelta}.
+     * Sets the bit mask which will be used to filter the {@link IModelDelta}
+     * coming from the model.  Any delta flags which are hidden by the mask
+     * will be ignored.
      *  
-     * @param suppress If <code>true</code> it turns on the suppress mode.
+     * @param the bit mask for <code>IModelDelta</code> flags
+     * 
+     * @since 3.6
      */
-    public void setSuppressModelControlDeltas(boolean suppress);
+    public void setModelDeltaMask(int mask);
     
     /**
-     * Returns true if the viewer is currently in the mode to ignore SELECT, 
-     * REVEAL, EXPAND, and COLLAPSE flags of {@link IModelDelta}.
-     *  
-     * @return Returns <code>true</code> if in suppress mode.
+     * Returns the current model delta mask.
+     * 
+     * @return bit mask used to filter model delta events.
+     * 
+     * @see #setModelDeltaMask(int)
+     * @since 3.6
      */
-    public boolean isSuppressModelControlDeltas();
+    public int getModelDeltaMask();
     
     /**
      * Translates and returns the given child count from the model coordinate
@@ -125,6 +158,10 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * , etc.) 
      * 
      * @param delta The model delta to process.
+     * @param mask Mask that can be used to suppress processing of some of the 
+     * delta flags
+     * 
+     * @since 3.6
      */
-    public void updateModel(IModelDelta delta);
+    public void updateModel(IModelDelta delta, int mask);
 }

@@ -133,7 +133,7 @@ abstract public class DeltaTests extends TestCase {
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
-    public void testInsertElement() {
+    public void testInsert() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = TestModel.simpleSingleLevel();
@@ -144,6 +144,7 @@ abstract public class DeltaTests extends TestCase {
 
         // Set the input into the view and update the view.
         fViewer.setInput(model.getRootElement());
+        
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY);
         
@@ -166,7 +167,104 @@ abstract public class DeltaTests extends TestCase {
             if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY);
     }
+    
+    /**
+     * This test checks that insert and select delta flags are processed in correct order:
+     * insert then select.
+     */
+    public void testInsertAndSelect() {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
 
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
+
+	    // Set the input into the view and update the view.
+	    fViewer.setInput(model.getRootElement());
+	      
+	    while (!fListener.isFinished())
+	        if (!fDisplay.readAndDispatch ()) fDisplay.sleep();
+	
+	    model.validateData(fViewer, TreePath.EMPTY);        
+        
+        // Update the model
+        // Insert two new elements at once
+        TestElement element0 = new TestElement(model, "00", new TestElement[] {});
+        TestElement element1 = new TestElement(model, "01", new TestElement[] {});
+        TreePath elementPath0 = new TreePath(new Object[] { element0 });
+        TreePath elementPath1 = new TreePath(new Object[] { element1 });
+        ModelDelta rootDelta = model.insertElementChild(TreePath.EMPTY, 0, element0);
+        rootDelta = model.insertElementChild(rootDelta, TreePath.EMPTY, 1, element1);
+        
+        // Set the select flag on the first added node.
+        ModelDelta delta0 = rootDelta.getChildDelta(element0);
+        delta0.setFlags(delta0.getFlags() | IModelDelta.SELECT);
+
+        fListener.reset();
+        fListener.addHasChildrenUpdate(elementPath0);
+        fListener.addHasChildrenUpdate(elementPath1);
+        fListener.addLabelUpdate(elementPath0);
+        fListener.addLabelUpdate(elementPath1);
+        
+        // TODO: list full set of expected updates.
+        fListener.setFailOnRedundantUpdates(false);
+
+        model.postDelta(rootDelta);
+        while (!fListener.isFinished()) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        
+        model.validateData(fViewer, TreePath.EMPTY);
+    }
+
+    /**
+     * This test checks that insert and remove deltas are processed in correct order:
+     * remove deltas are processed first then insert deltas.  
+     */
+    public void testInsertAndRemove() {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        
+        TestModel model = TestModel.simpleSingleLevel();
+        fViewer.setAutoExpandLevel(-1);
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false);
+        fViewer.setInput(model.getRootElement());
+          
+        while (!fListener.isFinished())
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep();
+    
+        model.validateData(fViewer, TreePath.EMPTY);        
+        
+        // Update the model
+        // Remove one element then insert a new one
+        IModelDelta removeDelta = model.removeElementChild(TreePath.EMPTY, 3).getChildDeltas()[0];
+        
+        // Insert new elements at once
+        TestElement element = new TestElement(model, "00", new TestElement[] {});
+        TreePath elementPath = new TreePath(new Object[] { element });
+        IModelDelta insertDelta = model.insertElementChild(TreePath.EMPTY, 1, element).getChildDeltas()[0];
+
+        // Create a combined delta where the insert child delta is first and the remove child delta is second.
+        ModelDelta combinedDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE, 0, model.getRootElement().getChildren().length);
+        combinedDelta.addNode(insertDelta.getElement(), insertDelta.getIndex(), insertDelta.getFlags(), insertDelta.getChildCount());
+        combinedDelta.addNode(removeDelta.getElement(), removeDelta.getIndex(), removeDelta.getFlags(), removeDelta.getChildCount());
+        
+        // Set the select flag on the first added node.
+        fListener.reset();
+        fListener.addHasChildrenUpdate(elementPath);
+        fListener.addLabelUpdate(elementPath);
+        
+        // TODO: list full set of expected updates.
+        fListener.setFailOnRedundantUpdates(false);
+
+        model.postDelta(combinedDelta);
+        while (!fListener.isFinished(TestModelUpdatesListener.ALL_UPDATES_COMPLETE | TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        
+        model.validateData(fViewer, TreePath.EMPTY);
+    }
+
+    
     public void testAddElement() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         

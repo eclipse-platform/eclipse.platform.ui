@@ -363,8 +363,8 @@ public class SubTreeModelViewer extends TreeModelViewer {
             fBaseProvider.addViewerUpdateListener(listener);
         }
 
-        public boolean isSuppressModelControlDeltas() {
-            return fBaseProvider.isSuppressModelControlDeltas();
+        public int getModelDeltaMask() {
+            return fBaseProvider.getModelDeltaMask();
         }
 
         public int modelToViewChildCount(TreePath parentPath, int count) {
@@ -383,8 +383,8 @@ public class SubTreeModelViewer extends TreeModelViewer {
             fBaseProvider.removeViewerUpdateListener(listener);
         }
 
-        public void setSuppressModelControlDeltas(boolean suppress) {
-            fBaseProvider.setSuppressModelControlDeltas(suppress);
+        public void setModelDeltaMask(int mask) {
+            fBaseProvider.setModelDeltaMask(mask);
         }
 
         public boolean shouldFilter(Object parentElementOrTreePath, Object element) {
@@ -401,8 +401,8 @@ public class SubTreeModelViewer extends TreeModelViewer {
             fBaseProvider.unmapPath(createFullPath(path));
         }
 
-        public void updateModel(IModelDelta delta) {
-            fBaseProvider.updateModel(delta);
+        public void updateModel(IModelDelta delta, int mask) {
+            fBaseProvider.updateModel(delta, mask);
         }
 
         public TreePath[] getParents(Object element) {

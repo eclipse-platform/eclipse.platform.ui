@@ -40,14 +40,17 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
     public static final int CHILDREN_COUNT_UPDATES = 0X0010;
     public static final int CHILDREN_UPDATES = 0X0020;
     public static final int MODEL_CHANGED_COMPLETE = 0X0040; 
-    public static final int MODEL_PROXIES_INSTALLED = 0X0080; 
+    public static final int MODEL_PROXIES_INSTALLED = 0X0080;
+    
+    public static final int VIEWER_UPDATES_RUNNING = 0X0100; 
+    public static final int LABEL_UPDATES_RUNNING = 0X0200;
     
     public static final int LABEL_COMPLETE = LABEL_UPDATES_COMPLETE | LABEL_UPDATES;
     public static final int CONTENT_COMPLETE = 
         CONTENT_UPDATES_COMPLETE | HAS_CHILDREN_UPDATES | CHILDREN_COUNT_UPDATES | CHILDREN_UPDATES;
     
     
-    public static final int ALL_UPDATES_COMPLETE = LABEL_COMPLETE | CONTENT_COMPLETE | MODEL_PROXIES_INSTALLED;
+    public static final int ALL_UPDATES_COMPLETE = LABEL_COMPLETE | CONTENT_COMPLETE | MODEL_PROXIES_INSTALLED | LABEL_UPDATES_RUNNING | VIEWER_UPDATES_RUNNING;
     
     private boolean fFailOnRedundantUpdates;
     private boolean fFailOnMultipleUpdateSequences;
@@ -60,6 +63,8 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
     private boolean fViewerUpdatesComplete;
     private boolean fLabelUpdatesComplete;
     private boolean fModelChangedComplete;
+	private int fViewerUpdatesRunning;
+	private int fLabelUpdatesRunning;
     
     public TestModelUpdatesListener(boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
         setFailOnRedundantUpdates(failOnRedundantUpdates);
@@ -202,15 +207,32 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
         if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
             if (fProxyModels.size() != 0) return false;
         }
+        if ( (flags & VIEWER_UPDATES_RUNNING) != 0) {
+            if (fViewerUpdatesRunning != 0) {
+            	return false;
+            }
+        }
+        if ( (flags & LABEL_UPDATES_RUNNING) != 0) {
+            if (fLabelUpdatesRunning != 0) {
+            	return false;
+            }
+        }
         return true;
     }
     
     public void updateStarted(IViewerUpdate update) {
+        synchronized (this) {
+        	fViewerUpdatesRunning++;
+        }
         System.out.println("started: " + update);
-        
     }
     
     public void updateComplete(IViewerUpdate update) {
+        System.out.println("completed: " + update);
+        synchronized (this) {
+        	fViewerUpdatesRunning--;
+        }
+
         if (!update.isCanceled()) {
             if (update instanceof IHasChildrenUpdate) {
                 if (!fHasChildrenUpdates.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
@@ -251,12 +273,18 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
     }
 
     public void labelUpdateComplete(ILabelUpdate update) {
+        synchronized (this) {
+        	fLabelUpdatesRunning--;
+        }
         if (!fLabelUpdates.remove(update.getElementPath()) && fFailOnRedundantUpdates) {
             Assert.fail("Redundant update: " + update);
         }
     }
 
     public void labelUpdateStarted(ILabelUpdate update) {
+        synchronized (this) {
+        	fLabelUpdatesRunning++;
+        }
         System.out.println("started: " + update);
     }
 

@@ -1019,7 +1019,8 @@ public class InternalTreeModelViewer extends TreeViewer
 		
 		fIsPopup = (style & SWT.POP_UP) != 0;
 		if (fIsPopup) {
-		    ((ITreeModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
+		    ((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
+		        ~ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS & ~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
 		}
         if ((style & SWT.CHECK) != 0) {
             context.setProperty(ICheckUpdate.PROP_CHECK, Boolean.TRUE);
@@ -2255,7 +2256,7 @@ public class InternalTreeModelViewer extends TreeViewer
     }
     
     public void updateViewer(IModelDelta delta) {
-        ((ITreeModelContentProvider)getContentProvider()).updateModel(delta);
+        ((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
     }
 
     /*

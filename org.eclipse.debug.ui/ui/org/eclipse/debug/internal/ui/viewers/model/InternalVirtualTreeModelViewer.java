@@ -180,7 +180,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
         fLabelProvider = new TreeModelLabelProvider(this);
         
         if ((style & SWT.POP_UP) != 0) {
-            ((ITreeModelContentProvider)getContentProvider()).setSuppressModelControlDeltas(true);
+            ((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
+                ~ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS | ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
         }
     }
 
@@ -261,7 +262,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
             if (parentItem != null) {
                 VirtualItem item = parentItem.addItem(position);
                 item.setData(element);
-                
+                mapElement(element, item);
+                doUpdate(item);
             }
         } else {
             // TODO: Implement insert() for element
@@ -1294,7 +1296,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
 
     public void updateViewer(IModelDelta delta) {
-        ((ModelContentProvider)getContentProvider()).updateNodes(new IModelDelta[] { delta }, true);
+        ((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
     }
     
     public ViewerLabel getElementLabel(TreePath path, String columnId) {

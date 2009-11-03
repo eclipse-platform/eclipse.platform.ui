@@ -161,7 +161,11 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     ModelDelta getBaseDelta(ModelDelta rootDelta) {
         ModelDelta delta = rootDelta;
         for (int i = 0; i < fRootPath.getSegmentCount(); i++) {
-            delta = delta.addNode(fRootPath.getSegment(i), IModelDelta.NO_CHANGE);
+        	ModelDelta subDelta = delta.getChildDelta(fRootPath.getSegment(i));
+        	if (subDelta == null) {
+        		subDelta = delta.addNode(fRootPath.getSegment(i), IModelDelta.NO_CHANGE);
+        	}
+        	delta = subDelta;
         }
         return delta;
     }
@@ -294,7 +298,10 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         fModelProxy.fireModelChanged(delta);
     }
     
-    private ModelDelta getElementDelta(ModelDelta baseDelta, TreePath path) {
+    /** Create or retrieve delta for given path
+     * @param combine if then new deltas for the given path are created. If false existing ones are reused.
+     */
+    private ModelDelta getElementDelta(ModelDelta baseDelta, TreePath path, boolean combine) {
         TestElement element = getRootElement();
         ModelDelta delta = baseDelta;
         
@@ -306,7 +313,14 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             for (j = 0; j < children.length; j++) {
                 if (segment.equals(children[j])) {
                     element = children[j];
-                    delta = delta.addNode(element, j, IModelDelta.NO_CHANGE);
+                    ModelDelta nextDelta = null;
+                    if (combine) {
+                    	nextDelta = delta.getChildDelta(element);
+                    }
+                    if (nextDelta == null) {
+                    	nextDelta = delta.addNode(element, j, IModelDelta.NO_CHANGE);
+                    }
+                    delta = nextDelta;
                     break;
                 }
             }
@@ -332,7 +346,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(path);
         TestElement element = getElement(relativePath);
-        ModelDelta delta = getElementDelta(baseDelta, relativePath);
+        ModelDelta delta = getElementDelta(baseDelta, relativePath, false);
         element.setLabelAppendix(labelAppendix);
         delta.setFlags(delta.getFlags() | IModelDelta.STATE);
 
@@ -345,7 +359,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(path);
         TestElement element = getElement(relativePath);
-        ModelDelta delta = getElementDelta(baseDelta, relativePath);
+        ModelDelta delta = getElementDelta(baseDelta, relativePath, false);
         element.setChecked(checked, grayed);
         delta.setFlags(delta.getFlags() | IModelDelta.STATE);
 
@@ -360,7 +374,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(relativePath);
-        ModelDelta delta = getElementDelta(baseDelta, relativePath);
+        ModelDelta delta = getElementDelta(baseDelta, relativePath, false);
         
         // Set the new children array
         element.fChildren = children;
@@ -378,7 +392,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         TreePath relativePath = getRelativePath(parentPath);
         
         TestElement element = getElement(relativePath);
-        ModelDelta delta= getElementDelta(baseDelta, relativePath);
+        ModelDelta delta= getElementDelta(baseDelta, relativePath, false);
         TestElement oldChild = element.fChildren[index]; 
         element.fChildren[index] = child;
         delta.addNode(oldChild, child, IModelDelta.REPLACED);
@@ -394,7 +408,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(relativePath);
-        ModelDelta delta= getElementDelta(baseDelta, relativePath);
+        ModelDelta delta= getElementDelta(baseDelta, relativePath, false);
 
         // Add the new element
         element.fChildren = doInsertElementInArray(element.fChildren, index, newChild);
@@ -407,13 +421,19 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     }    
 
     public ModelDelta insertElementChild(TreePath parentPath, int index, TestElement newChild) {
-        ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+        return insertElementChild(null, parentPath, index, newChild);
+    }    
+
+    public ModelDelta insertElementChild(ModelDelta rootDelta, TreePath parentPath, int index, TestElement newChild) {
+        if (rootDelta == null) {
+        	rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+        }
         ModelDelta baseDelta = getBaseDelta(rootDelta);
         TreePath relativePath = getRelativePath(parentPath);
 
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(relativePath);
-        ModelDelta delta= getElementDelta(baseDelta, relativePath);
+        ModelDelta delta= getElementDelta(baseDelta, relativePath, false);
         
         // Add the new element
         element.fChildren = doInsertElementInArray(element.fChildren, index, newChild);
@@ -424,7 +444,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         
         return rootDelta;
     }    
-
+    
     private TestElement[] doInsertElementInArray(TestElement[] children, int index, TestElement newChild) {
         // Create the new children array add the element to it and set it to 
         // the parent.
@@ -441,7 +461,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
         // Find the parent element and generate the delta node for it.
         TestElement element = getElement(parentPath);
-        ModelDelta delta= getElementDelta(baseDelta, parentPath);
+        ModelDelta delta= getElementDelta(baseDelta, parentPath, false);
         
         // Create a new child array with the element removed
         TestElement[] children = element.getChildren();
