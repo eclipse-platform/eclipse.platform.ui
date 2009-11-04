@@ -17,6 +17,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.IAdapterManager;
@@ -33,15 +34,19 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
+import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -144,6 +149,8 @@ public class Workbench implements IWorkbench {
 		mainContext.set(ContextManager.class.getName(), new ContextManager());
 		ContextUtil.commandSetup(mainContext);
 		ContextUtil.handlerSetup(mainContext);
+		org.eclipse.e4.ui.bindings.ContextUtil.bindingSetup(mainContext);
+
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
 		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());
 		mainContext.runAndTrack(new Runnable() {
@@ -316,7 +323,7 @@ public class Workbench implements IWorkbench {
 			initializeContext(workbenchContext, window);
 		}
 
-		processHandlers(workbench);
+		processHierarchy(workbench);
 		// Hook the global notifications
 		((Notifier) workbench).eAdapters().add(new UIEventPublisher(workbench.getContext()));
 	}
@@ -390,18 +397,15 @@ public class Workbench implements IWorkbench {
 		return rv;
 	}
 
-	public static void processHandlers(Object me) {
+	public static void processHierarchy(Object me) {
 
 		if (me instanceof MHandlerContainer) {
 			MContext contextModel = (MContext) me;
 			MHandlerContainer container = (MHandlerContainer) contextModel;
 			IEclipseContext context = contextModel.getContext();
-			if (context == null) {
-				return;
-			}
-			IContributionFactory cf = (IContributionFactory) context.get(IContributionFactory.class
-					.getName());
 			if (context != null) {
+				IContributionFactory cf = (IContributionFactory) context
+						.get(IContributionFactory.class.getName());
 				EHandlerService hs = (EHandlerService) context.get(EHandlerService.class.getName());
 				EList<MHandler> handlers = container.getHandlers();
 				for (MHandler handler : handlers) {
@@ -413,12 +417,31 @@ public class Workbench implements IWorkbench {
 				}
 			}
 		}
+		if (me instanceof MBindingContainer) {
+			MContext contextModel = (MContext) me;
+			MBindingContainer container = (MBindingContainer) me;
+			IEclipseContext context = contextModel.getContext();
+			if (context != null) {
+				ECommandService cs = (ECommandService) context.get(ECommandService.class.getName());
+				EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
+				EList<MKeyBinding> bindings = container.getBindings();
+				for (MKeyBinding binding : bindings) {
+					ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getId(), null);
+					TriggerSequence sequence = bs.createSequence(binding.getKeySequence());
+					if (cmd == null || sequence == null) {
+						System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$
+					} else {
+						bs.activateBinding(sequence, cmd);
+					}
+				}
+			}
+		}
 		if (me instanceof MElementContainer<?>) {
 			EList children = ((MElementContainer) me).getChildren();
 			Iterator i = children.iterator();
 			while (i.hasNext()) {
 				MUIElement e = (MUIElement) i.next();
-				processHandlers(e);
+				processHierarchy(e);
 			}
 		}
 	}

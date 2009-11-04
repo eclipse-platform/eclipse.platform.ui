@@ -17,6 +17,8 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -55,9 +57,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 				String attName = (String) event
 						.getProperty(IUIEvents.EventTags.AttName);
 				if (IUIEvents.UIItem.Name.equals(attName)) {
-					String newValue = (String) event
-							.getProperty(IUIEvents.EventTags.NewValue);
-					menuItem.setText(newValue);
+					setItemText(itemModel, menuItem);
 				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
 					menuItem.setImage(getImage(itemModel));
 				}
@@ -84,10 +84,36 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			flags = SWT.CASCADE;
 		}
 		MenuItem newItem = new MenuItem((Menu) parent, flags);
-		newItem.setText(itemModel.getName());
+		setItemText(itemModel, newItem);
 		newItem.setEnabled(itemModel.isEnabled());
 
 		return newItem;
+	}
+
+	private void setItemText(MMenuItem model, MenuItem item) {
+		if (model instanceof MHandledItem) {
+			String text = model.getName();
+			MHandledItem handledItem = (MHandledItem) model;
+			IEclipseContext context = getContext(model);
+			EBindingService bs = (EBindingService) context
+					.get(EBindingService.class.getName());
+			ParameterizedCommand cmd = handledItem.getWbCommand();
+			if (cmd == null) {
+				ECommandService cmdService = (ECommandService) context
+						.get(ECommandService.class.getName());
+				cmd = cmdService.createCommand(
+						handledItem.getCommand().getId(), null);
+				handledItem.setWbCommand(cmd);
+			}
+			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
+					.getWbCommand());
+			if (sequence != null) {
+				text = text + '\t' + sequence.format();
+			}
+			item.setText(text);
+		} else {
+			item.setText(model.getName());
+		}
 	}
 
 	/*

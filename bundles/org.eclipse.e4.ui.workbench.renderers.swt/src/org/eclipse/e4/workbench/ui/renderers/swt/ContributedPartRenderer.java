@@ -50,7 +50,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		// Create a context for this part
 		IEclipseContext localContext = Workbench.initializeContext(
 				parentContext, part);
-		Workbench.processHandlers(part);
+		Workbench.processHierarchy(part);
 
 		localContext.set(Composite.class.getName(), newComposite);
 		localContext.set(MPart.class.getName(), part);
