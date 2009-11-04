@@ -1,0 +1,10 @@
+Native Build Info:
+------------------
+
+platform:         PPC64
+built by:         pawel.pogorzelski@pl.ibm.com
+build date:       04-Nov-2009
+OS Name:          AIX
+OS Version:       5.3.9.0
+Compiler version: xlC_r version 10.1.0.0
+Java version:     IBM J9 VM build 2.3, J2RE 1.5.0 IBM J9 2.3 AIX ppc64-64
