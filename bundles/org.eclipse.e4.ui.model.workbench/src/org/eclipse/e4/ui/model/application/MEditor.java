@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MEditor extends MPart, MInput, MESCElement {
+public interface MEditor extends MInput, MESCElement, MSaveablePart {
 } // MEditor

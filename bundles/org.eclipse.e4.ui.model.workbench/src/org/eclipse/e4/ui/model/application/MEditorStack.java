@@ -27,7 +27,7 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MEditorStack extends MElementContainer<MEditor>, MESCElement, MUIElement {
+public interface MEditorStack extends MElementContainer<MSaveablePart>, MESCElement, MUIElement {
 	/**
 	 * Returns the value of the '<em><b>Input URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->

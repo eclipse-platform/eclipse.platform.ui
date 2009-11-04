@@ -48,6 +48,15 @@ public interface MApplicationFactory extends EFactory {
 	MCommand createCommand();
 
 	/**
+	 * Returns a new object of class '<em>Dirtyable</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Dirtyable</em>'.
+	 * @generated
+	 */
+	MDirtyable createDirtyable();
+
+	/**
 	 * Returns a new object of class '<em>Handler</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -208,6 +217,15 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MPart createPart();
+
+	/**
+	 * Returns a new object of class '<em>Saveable Part</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Saveable Part</em>'.
+	 * @generated
+	 */
+	MSaveablePart createSaveablePart();
 
 	/**
 	 * Returns a new object of class '<em>Part Stack</em>'.

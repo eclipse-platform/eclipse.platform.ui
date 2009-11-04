@@ -16,6 +16,7 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MMultiEditor;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 
 import org.eclipse.emf.common.notify.Notification;
@@ -46,7 +47,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
+public class MultiEditorImpl extends SaveablePartImpl implements MMultiEditor {
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
@@ -55,7 +56,7 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MEditor> children;
+	protected EList<MSaveablePart> children;
 
 	/**
 	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
@@ -65,7 +66,7 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 	 * @generated
 	 * @ordered
 	 */
-	protected MEditor activeChild;
+	protected MSaveablePart activeChild;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -91,9 +92,9 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MEditor> getChildren() {
+	public EList<MSaveablePart> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MEditor>(MUIElement.class, this, MApplicationPackage.MULTI_EDITOR__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
+			children = new EObjectContainmentWithInverseEList<MSaveablePart>(MUIElement.class, this, MApplicationPackage.MULTI_EDITOR__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
 		}
 		return children;
 	}
@@ -103,10 +104,10 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MEditor getActiveChild() {
+	public MSaveablePart getActiveChild() {
 		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
 			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MEditor)eResolveProxy(oldActiveChild);
+			activeChild = (MSaveablePart)eResolveProxy(oldActiveChild);
 			if (activeChild != oldActiveChild) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.MULTI_EDITOR__ACTIVE_CHILD, oldActiveChild, activeChild));
@@ -120,7 +121,7 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MEditor basicGetActiveChild() {
+	public MSaveablePart basicGetActiveChild() {
 		return activeChild;
 	}
 
@@ -129,8 +130,8 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MEditor newActiveChild) {
-		MEditor oldActiveChild = activeChild;
+	public void setActiveChild(MSaveablePart newActiveChild) {
+		MSaveablePart oldActiveChild = activeChild;
 		activeChild = newActiveChild;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.MULTI_EDITOR__ACTIVE_CHILD, oldActiveChild, activeChild));
@@ -193,10 +194,10 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 		switch (featureID) {
 			case MApplicationPackage.MULTI_EDITOR__CHILDREN:
 				getChildren().clear();
-				getChildren().addAll((Collection<? extends MEditor>)newValue);
+				getChildren().addAll((Collection<? extends MSaveablePart>)newValue);
 				return;
 			case MApplicationPackage.MULTI_EDITOR__ACTIVE_CHILD:
-				setActiveChild((MEditor)newValue);
+				setActiveChild((MSaveablePart)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -214,7 +215,7 @@ public class MultiEditorImpl extends EditorImpl implements MMultiEditor {
 				getChildren().clear();
 				return;
 			case MApplicationPackage.MULTI_EDITOR__ACTIVE_CHILD:
-				setActiveChild((MEditor)null);
+				setActiveChild((MSaveablePart)null);
 				return;
 		}
 		super.eUnset(featureID);

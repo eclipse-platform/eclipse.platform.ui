@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MInput;
 import org.eclipse.e4.ui.model.application.MItem;
@@ -65,13 +66,13 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTag <em>Tag</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getInputURI <em>Input URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isDirty <em>Dirty</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isSelected <em>Selected</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isDirty <em>Dirty</em>}</li>
  * </ul>
  * </p>
  *
@@ -349,26 +350,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	protected String inputURI = INPUT_URI_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDirty()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean DIRTY_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isDirty()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean dirty = DIRTY_EDEFAULT;
-
-	/**
 	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -487,6 +468,26 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * @ordered
 	 */
 	protected boolean separator = SEPARATOR_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean DIRTY_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isDirty()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean dirty = DIRTY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -664,27 +665,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		inputURI = newInputURI;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__INPUT_URI, oldInputURI, inputURI));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public boolean isDirty() {
-		return dirty;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setDirty(boolean newDirty) {
-		boolean oldDirty = dirty;
-		dirty = newDirty;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__DIRTY, oldDirty, dirty));
 	}
 
 	/**
@@ -973,6 +953,27 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public boolean isDirty() {
+		return dirty;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setDirty(boolean newDirty) {
+		boolean oldDirty = dirty;
+		dirty = newDirty;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__DIRTY, oldDirty, dirty));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getTag() {
 		return tag;
 	}
@@ -1100,8 +1101,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return getValue();
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				return getInputURI();
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				return isDirty();
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				return getName();
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
@@ -1114,6 +1113,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return isSelected();
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				return isSeparator();
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				return isDirty();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -1177,9 +1178,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				setInputURI((String)newValue);
 				return;
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				setDirty((Boolean)newValue);
-				return;
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				setName((String)newValue);
 				return;
@@ -1197,6 +1195,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				setSeparator((Boolean)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				setDirty((Boolean)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -1258,9 +1259,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				setInputURI(INPUT_URI_EDEFAULT);
 				return;
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				setDirty(DIRTY_EDEFAULT);
-				return;
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				setName(NAME_EDEFAULT);
 				return;
@@ -1278,6 +1276,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				setSeparator(SEPARATOR_EDEFAULT);
+				return;
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				setDirty(DIRTY_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -1323,8 +1324,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
-			case MApplicationPackage.TEST_HARNESS__DIRTY:
-				return dirty != DIRTY_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__NAME:
 				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
@@ -1337,6 +1336,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return selected != SELECTED_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
 				return separator != SEPARATOR_EDEFAULT;
+			case MApplicationPackage.TEST_HARNESS__DIRTY:
+				return dirty != DIRTY_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -1396,7 +1397,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		if (baseClass == MInput.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.TEST_HARNESS__INPUT_URI: return MApplicationPackage.INPUT__INPUT_URI;
-				case MApplicationPackage.TEST_HARNESS__DIRTY: return MApplicationPackage.INPUT__DIRTY;
 				default: return -1;
 			}
 		}
@@ -1413,6 +1413,12 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				case MApplicationPackage.TEST_HARNESS__ENABLED: return MApplicationPackage.ITEM__ENABLED;
 				case MApplicationPackage.TEST_HARNESS__SELECTED: return MApplicationPackage.ITEM__SELECTED;
 				case MApplicationPackage.TEST_HARNESS__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
+				default: return -1;
+			}
+		}
+		if (baseClass == MDirtyable.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.TEST_HARNESS__DIRTY: return MApplicationPackage.DIRTYABLE__DIRTY;
 				default: return -1;
 			}
 		}
@@ -1474,7 +1480,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		if (baseClass == MInput.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.INPUT__INPUT_URI: return MApplicationPackage.TEST_HARNESS__INPUT_URI;
-				case MApplicationPackage.INPUT__DIRTY: return MApplicationPackage.TEST_HARNESS__DIRTY;
 				default: return -1;
 			}
 		}
@@ -1491,6 +1496,12 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.TEST_HARNESS__ENABLED;
 				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.TEST_HARNESS__SELECTED;
 				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.TEST_HARNESS__SEPARATOR;
+				default: return -1;
+			}
+		}
+		if (baseClass == MDirtyable.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.DIRTYABLE__DIRTY: return MApplicationPackage.TEST_HARNESS__DIRTY;
 				default: return -1;
 			}
 		}
@@ -1533,8 +1544,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(value);
 		result.append(", inputURI: "); //$NON-NLS-1$
 		result.append(inputURI);
-		result.append(", dirty: "); //$NON-NLS-1$
-		result.append(dirty);
 		result.append(", name: "); //$NON-NLS-1$
 		result.append(name);
 		result.append(", iconURI: "); //$NON-NLS-1$
@@ -1547,6 +1556,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(selected);
 		result.append(", separator: "); //$NON-NLS-1$
 		result.append(separator);
+		result.append(", dirty: "); //$NON-NLS-1$
+		result.append(dirty);
 		result.append(')');
 		return result.toString();
 	}

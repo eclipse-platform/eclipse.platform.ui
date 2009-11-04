@@ -20,6 +20,7 @@ import org.eclipse.e4.workbench.ui.internal.IUIEvents.AppElement;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.Command;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.Context;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.Contribution;
+import org.eclipse.e4.workbench.ui.internal.IUIEvents.Dirtyable;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.ElementContainer;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.EventTags;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.EventTypes;
@@ -141,8 +142,8 @@ public class UIEventPublisher extends EContentAdapter {
 			return ElementContainer.Topic;
 		else if (ElementContainer.ActiveChild.equals(attName))
 			return ElementContainer.Topic;
-		else if (Input.Dirty.equals(attName))
-			return Input.Topic;
+		else if (Dirtyable.Dirty.equals(attName))
+			return Dirtyable.Topic;
 		else if (Input.URI.equals(attName))
 			return Input.Topic;
 		else if (Parameter.Tag.equals(attName))

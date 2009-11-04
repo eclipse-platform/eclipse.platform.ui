@@ -28,6 +28,7 @@ import org.eclipse.e4.workbench.ui.internal.IUIEvents.AppElement;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.Command;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.Context;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.Contribution;
+import org.eclipse.e4.workbench.ui.internal.IUIEvents.Dirtyable;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.ElementContainer;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.EventTags;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents.Input;
@@ -149,10 +150,16 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
+	public class DirtyableTester extends EventTester {
+		DirtyableTester(IEventBroker eventBroker) {
+			super("Dirtyable", Dirtyable.Topic,
+					new String[] { Dirtyable.Dirty }, eventBroker);
+		}
+	}
+
 	public class InputTester extends EventTester {
 		InputTester(IEventBroker eventBroker) {
-			super("Input", Input.Topic,
-					new String[] { Input.URI, Input.Dirty }, eventBroker);
+			super("Input", Input.Topic, new String[] { Input.URI }, eventBroker);
 		}
 	}
 
@@ -208,6 +215,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 				eventBroker);
 		ElementContainerTester elementContainerTester = new ElementContainerTester(
 				eventBroker);
+		DirtyableTester dirtyableTester = new DirtyableTester(eventBroker);
 		InputTester inputTester = new InputTester(eventBroker);
 		ParameterTester parameterTester = new ParameterTester(eventBroker);
 		UIElementTester uiElementTester = new UIElementTester(eventBroker);
@@ -268,8 +276,12 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		// Input
 		reset(allTesters);
 		allData.setInputURI("New Input Uri");
-		allData.setDirty(!allData.isDirty());
 		checkForFailures(allTesters, inputTester);
+
+		// Dirtyable
+		reset(allTesters);
+		allData.setDirty(!allData.isDirty());
+		checkForFailures(allTesters, dirtyableTester);
 
 		// Parameter
 		reset(allTesters);

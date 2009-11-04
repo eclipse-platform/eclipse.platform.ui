@@ -67,6 +67,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 		switch (eClass.getClassifierID()) {
 			case MApplicationPackage.APPLICATION_ELEMENT: return (EObject)createApplicationElement();
 			case MApplicationPackage.COMMAND: return (EObject)createCommand();
+			case MApplicationPackage.DIRTYABLE: return (EObject)createDirtyable();
 			case MApplicationPackage.HANDLER: return (EObject)createHandler();
 			case MApplicationPackage.INPUT: return (EObject)createInput();
 			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
@@ -85,14 +86,15 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MApplicationPackage.TOOL_BAR: return (EObject)createToolBar();
 			case MApplicationPackage.PART: return (EObject)createPart();
+			case MApplicationPackage.SAVEABLE_PART: return (EObject)createSaveablePart();
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
 			case MApplicationPackage.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
 			case MApplicationPackage.KEY_BINDING: return (EObject)createKeyBinding();
 			case MApplicationPackage.VIEW: return (EObject)createView();
 			case MApplicationPackage.VIEW_STACK: return (EObject)createViewStack();
-			case MApplicationPackage.VIEW_SASH_CONTAINER: return (EObject)createViewSashContainer();
 			case MApplicationPackage.EDITOR: return (EObject)createEditor();
+			case MApplicationPackage.VIEW_SASH_CONTAINER: return (EObject)createViewSashContainer();
 			case MApplicationPackage.MULTI_EDITOR: return (EObject)createMultiEditor();
 			case MApplicationPackage.EDITOR_STACK: return (EObject)createEditorStack();
 			case MApplicationPackage.EDITOR_SASH_CONTAINER: return (EObject)createEditorSashContainer();
@@ -148,6 +150,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MCommand createCommand() {
 		CommandImpl command = new CommandImpl();
 		return command;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MDirtyable createDirtyable() {
+		DirtyableImpl dirtyable = new DirtyableImpl();
+		return dirtyable;
 	}
 
 	/**
@@ -328,6 +340,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MPart createPart() {
 		PartImpl part = new PartImpl();
 		return part;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MSaveablePart createSaveablePart() {
+		SaveablePartImpl saveablePart = new SaveablePartImpl();
+		return saveablePart;
 	}
 
 	/**

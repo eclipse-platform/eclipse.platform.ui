@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Test Harness</b></em>'.
+ * A representation of the model object '<em><b>Saveable Part</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getTestHarness()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getSaveablePart()
  * @model
  * @generated
  */
-public interface MTestHarness extends MApplicationElement, MCommand, MContext, MContribution, MElementContainer<MUIElement>, MParameter, MInput, MItem, MUIItem, MDirtyable {
-} // MTestHarness
+public interface MSaveablePart extends MPart, MDirtyable {
+} // MSaveablePart

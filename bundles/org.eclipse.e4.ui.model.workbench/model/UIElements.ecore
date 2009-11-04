@@ -18,6 +18,10 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="commandName" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="description" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Dirtyable">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        transient="true"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Handler" eSuperTypes="#//Contribution">
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
         eType="#//Command"/>
@@ -28,7 +32,6 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Input">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Parameter" eSuperTypes="#//ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tag" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -80,6 +83,7 @@
     <eGenericSuperTypes eClassifier="#//Input"/>
     <eGenericSuperTypes eClassifier="#//Item"/>
     <eGenericSuperTypes eClassifier="#//UIItem"/>
+    <eGenericSuperTypes eClassifier="#//Dirtyable"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V_________AbstractContainers__________V"
       abstract="true" interface="true"/>
@@ -191,6 +195,7 @@
         eType="#//Menu"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="SaveablePart" eSuperTypes="#//Part #//Dirtyable"/>
   <eClassifiers xsi:type="ecore:EClass" name="PartStack">
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//Part"/>
@@ -240,6 +245,7 @@
     <eGenericSuperTypes eClassifier="#//VSCElement"/>
     <eGenericSuperTypes eClassifier="#//UIElement"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Editor" eSuperTypes="#//Input #//ESCElement #//SaveablePart"/>
   <eClassifiers xsi:type="ecore:EClass" name="ViewSashContainer">
     <eGenericSuperTypes eClassifier="#//GenericTile">
       <eTypeArguments eClassifier="#//VSCElement"/>
@@ -247,11 +253,10 @@
     <eGenericSuperTypes eClassifier="#//VSCElement"/>
     <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Editor" eSuperTypes="#//Part #//Input #//ESCElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="MultiEditor">
-    <eGenericSuperTypes eClassifier="#//Editor"/>
+    <eGenericSuperTypes eClassifier="#//SaveablePart"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
-      <eTypeArguments eClassifier="#//Editor"/>
+      <eTypeArguments eClassifier="#//SaveablePart"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ESCElement" abstract="true" interface="true"
@@ -259,7 +264,7 @@
   <eClassifiers xsi:type="ecore:EClass" name="EditorStack">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
-      <eTypeArguments eClassifier="#//Editor"/>
+      <eTypeArguments eClassifier="#//SaveablePart"/>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//ESCElement"/>
     <eGenericSuperTypes eClassifier="#//UIElement"/>

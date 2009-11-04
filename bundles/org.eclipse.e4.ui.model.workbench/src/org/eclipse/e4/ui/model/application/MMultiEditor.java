@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MMultiEditor extends MEditor, MElementContainer<MEditor> {
+public interface MMultiEditor extends MSaveablePart, MElementContainer<MSaveablePart> {
 } // MMultiEditor

@@ -81,11 +81,17 @@ public interface IUIEvents {
 				.getName();
 	}
 
+	public static interface Dirtyable {
+		public static final String Topic = UITopicBase + '/'
+				+ MApplicationPackage.Literals.DIRTYABLE.getName();
+
+		public static final String Dirty = MApplicationPackage.Literals.DIRTYABLE__DIRTY.getName();
+	}
+
 	public static interface Input {
 		public static final String Topic = UITopicBase + '/'
 				+ MApplicationPackage.Literals.INPUT.getName();
 
-		public static final String Dirty = MApplicationPackage.Literals.INPUT__DIRTY.getName();
 		public static final String URI = MApplicationPackage.Literals.INPUT__INPUT_URI.getName();
 	}
 

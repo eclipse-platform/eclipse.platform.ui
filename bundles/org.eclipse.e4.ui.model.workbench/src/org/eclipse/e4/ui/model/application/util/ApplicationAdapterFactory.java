@@ -92,6 +92,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createCommandAdapter();
 			}
 			@Override
+			public Adapter caseDirtyable(MDirtyable object) {
+				return createDirtyableAdapter();
+			}
+			@Override
 			public Adapter caseHandler(MHandler object) {
 				return createHandlerAdapter();
 			}
@@ -204,6 +208,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createPartAdapter();
 			}
 			@Override
+			public Adapter caseSaveablePart(MSaveablePart object) {
+				return createSaveablePartAdapter();
+			}
+			@Override
 			public Adapter casePartStack(MPartStack object) {
 				return createPartStackAdapter();
 			}
@@ -240,12 +248,12 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createViewStackAdapter();
 			}
 			@Override
-			public Adapter caseViewSashContainer(MViewSashContainer object) {
-				return createViewSashContainerAdapter();
-			}
-			@Override
 			public Adapter caseEditor(MEditor object) {
 				return createEditorAdapter();
+			}
+			@Override
+			public Adapter caseViewSashContainer(MViewSashContainer object) {
+				return createViewSashContainerAdapter();
 			}
 			@Override
 			public Adapter caseMultiEditor(MMultiEditor object) {
@@ -348,6 +356,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createCommandAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MDirtyable <em>Dirtyable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MDirtyable
+	 * @generated
+	 */
+	public Adapter createDirtyableAdapter() {
 		return null;
 	}
 
@@ -740,6 +762,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPartAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MSaveablePart <em>Saveable Part</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MSaveablePart
+	 * @generated
+	 */
+	public Adapter createSaveablePartAdapter() {
 		return null;
 	}
 
