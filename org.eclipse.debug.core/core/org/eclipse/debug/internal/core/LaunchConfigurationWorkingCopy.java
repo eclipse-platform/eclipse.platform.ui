@@ -753,16 +753,17 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if (template != null && template.isWorkingCopy()) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_6));
 		}
-		if (isTemplate()) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_7));
-		}
 		if (template == null) {
 			removeAttribute(ATTR_TEMPLATE);
 		} else {
+			if (isTemplate()) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_7));
+			}
 			if (copy) {
 				copyAttributes(template);
 			}
 			setAttribute(ATTR_TEMPLATE, template.getMemento());
+			setTemplate(false); // template attribute was copied, so now remove it
 		}
 	}
 }
