@@ -2227,7 +2227,7 @@
          id="stringMatcherFilter">
       <filter
             argumentType="string"
-            class="org.eclipse.ui.internal.ide.misc.StringMatcherFilter"
+            class="org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher"
             description="%filterProvider.description"
             name="%filterProvider.name"
             ordering="first">
@@ -2238,7 +2238,7 @@
          id="orFilter">
       <filter
             argumentType="filters"
-            class="org.eclipse.ui.internal.ide.misc.OrResourceFilter"
+            class="org.eclipse.ui.internal.ide.misc.OrFileInfoMatcher"
             description="%orFilterProvider.description"
             name="%orFilterProvider.name"
             ordering="first">
@@ -2249,7 +2249,7 @@
          id="andFilter">
       <filter
             argumentType="filters"
-            class="org.eclipse.ui.internal.ide.misc.AndResourceFilter"
+            class="org.eclipse.ui.internal.ide.misc.AndFileInfoMatcher"
             description="%andFilterProvider.description"
             name="%andFilterProvider.name"
             ordering="first">
@@ -2260,7 +2260,7 @@
          id="notFilter">
       <filter
             argumentType="filter"
-            class="org.eclipse.ui.internal.ide.misc.NotResourceFilter"
+            class="org.eclipse.ui.internal.ide.misc.NotFileInfoMatcher"
             description="%notFilterProvider.description"
             name="%notFilterProvider.name"
             ordering="first">

@@ -16,6 +16,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -33,6 +34,7 @@ import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -47,6 +49,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.ide.dialogs.ResourceFilterEditDialog;
 import org.eclipse.ui.ide.undo.CreateFolderOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -82,12 +85,16 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 	private Button advancedButton;
 
+	private Button filterButton;
+	
 	private CreateLinkedResourceGroup linkedResourceGroup;
 
 	private Composite linkedResourceParent;
 
 	private Composite linkedResourceComposite;
 
+	private IResourceFilterDescription[] filterList = null;
+	
 	/**
 	 * Height of the "advanced" linked resource group. Set when the advanced
 	 * group is first made visible.
@@ -316,7 +323,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
 				CreateFolderOperation op = new CreateFolderOperation(
-						newFolderHandle, linkTargetPath,
+						newFolderHandle, linkTargetPath, filterList,
 						IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
 				try {
 					// see bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=219901
@@ -398,6 +405,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		if (linkedResourceComposite != null) {
 			linkedResourceComposite.dispose();
 			linkedResourceComposite = null;
+			filterButton.dispose();
+			filterButton = null;
 			composite.layout();
 			shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
@@ -410,11 +419,34 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				linkedResourceGroupHeight = groupSize.y;
 			}
 			shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
+
+			filterButton = new Button(linkedResourceParent, SWT.PUSH);
+			filterButton.setFont(linkedResourceParent.getFont());
+			filterButton.setText(IDEWorkbenchMessages.editfilters);
+			GridData data = setButtonLayoutData(filterButton);
+			data.horizontalAlignment = GridData.BEGINNING;
+			filterButton.setLayoutData(data);
+			filterButton.addSelectionListener(new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					handleEditFilterSelect();
+				}
+			});
+
 			composite.layout();
 			advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
 		}
 	}
 
+	/**
+	 * Show the Resource Filter dialog.
+	 */
+	private void handleEditFilterSelect() {
+		ResourceFilterEditDialog dialog = new ResourceFilterEditDialog(getShell());
+		dialog.setFilters(filterList);
+		if (dialog.open() == Window.OK)
+			filterList = dialog.getFilters();
+	}
+	
 	/**
 	 * The <code>WizardNewFolderCreationPage</code> implementation of this
 	 * <code>Listener</code> method handles all events and enablements for

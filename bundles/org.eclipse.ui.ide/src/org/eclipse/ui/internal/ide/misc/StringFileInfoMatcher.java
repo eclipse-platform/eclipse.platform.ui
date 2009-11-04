@@ -12,50 +12,36 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileInfoFilter;
-import org.eclipse.core.resources.IFileInfoFilterFactory;
+import org.eclipse.core.resources.AbstractFileInfoMatcher;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.ui.internal.ide.StringMatcher;
 
 /**
  * A file info filter that uses a simple string matcher to match on file name.
  */
-public class StringMatcherFilter implements IFileInfoFilterFactory {
+public class StringFileInfoMatcher extends AbstractFileInfoMatcher {
 
+	StringMatcher matcher = null;
 	/**
 	 * Creates a new factory for this filter type.
 	 */
-	public StringMatcherFilter() {
+	public StringFileInfoMatcher() {
 	}
 
-	class FilterType implements IFileInfoFilter {
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.AbstractFileInfoMatcher#initialize(org.eclipse.core.resources.IProject, java.lang.Object)
+	 */
+	public void initialize(IProject project, Object arguments) {
+		if ((arguments instanceof String) && ((String) arguments).length() > 0)
+			matcher = new StringMatcher((String) arguments, true, false);
+	}
 
-		StringMatcher matcher;
-
-		/**
-		 * @param arguments
-		 */
-		public FilterType(String arguments) {
-			if (arguments != null)
-				matcher = new StringMatcher(arguments, true, false);
-		}
-
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @seeorg.eclipse.core.resources.IFilterType#matches(org.eclipse.core.
-		 * filesystem.IFileInfo)
-		 */
-		public boolean matches(IFileInfo fileInfo) {
-			if (matcher == null)
-				return false;
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.AbstractFileInfoMatcher#matches(org.eclipse.core.filesystem.IFileInfo)
+	 */
+	public boolean matches(IFileInfo fileInfo) {
+		if (matcher != null)
 			return matcher.match(fileInfo.getName());
-		}
-
+		return false;
 	}
-
-	public IFileInfoFilter instantiate(IProject project, Object arguments) {
-		return new FilterType((String) arguments);
-	}
-
 }

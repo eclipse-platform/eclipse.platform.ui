@@ -13,6 +13,7 @@ package org.eclipse.ui.ide.undo;
 
 import java.net.URI;
 
+import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 
@@ -46,14 +47,35 @@ public class CreateFolderOperation extends AbstractCreateResourcesOperation {
 	 * @param label
 	 *            the label of the operation
 	 */
+
 	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
 			String label) {
+		this(folderHandle, linkLocation, null, label);
+	}
+
+	/**
+	 * Create a CreateFolderOperation
+	 * 
+	 * @param folderHandle
+	 *            the folder to be created
+	 * @param linkLocation
+	 *            the location of the folder if it is to be linked
+	 * @param label
+	 *            the label of the operation
+	 * @param filterList
+	 *            The filters to apply to the created folder
+	 * @since 3.6
+	 */
+	public CreateFolderOperation(IFolder folderHandle, URI linkLocation,
+			IResourceFilterDescription[] filterList, String label) {
 		super(null, label);
 		ContainerDescription containerDescription = ContainerDescription
 				.fromContainer(folderHandle);
 		if (linkLocation != null) {
 			containerDescription.getFirstLeafFolder().setLocation(linkLocation);
 		}
+		if (filterList != null)
+			containerDescription.getFirstLeafFolder().setFilters(filterList);
 		setResourceDescriptions(new ResourceDescription[] { containerDescription });
 	}
 }

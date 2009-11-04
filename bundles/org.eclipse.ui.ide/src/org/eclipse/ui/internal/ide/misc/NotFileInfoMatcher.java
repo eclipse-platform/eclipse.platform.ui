@@ -12,32 +12,21 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileInfoFilter;
-import org.eclipse.core.resources.IFileInfoFilterFactory;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceFilter;
+import org.eclipse.core.resources.CompoundFileInfoMatcher;
 
 /**
  * A Resource Filter Type Factory for supporting the NOT logical preposition
  */
-public class NotResourceFilter extends CompoundResourceFilter implements
-		IFileInfoFilterFactory {
+public class NotFileInfoMatcher extends CompoundFileInfoMatcher  {
 
-	class NotFileInfoFilter extends FileInfoFilter {
-		public NotFileInfoFilter(IProject project, IResourceFilter[] filters) {
-			super(project, filters);
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.AbstractFileInfoMatcher#matches(org.eclipse.core.filesystem.IFileInfo)
+	 */
+	public boolean matches(IFileInfo fileInfo) {
+		for (int i = 0; i < filterTypes.length; i++) {
+			if (filterTypes[i].matches(fileInfo))
+				return false;
 		}
-
-		public boolean matches(IFileInfo fileInfo) {
-			for (int i = 0; i < filterTypes.length; i++) {
-				if (filterTypes[i].matches(fileInfo))
-					return false;
-			}
-			return true;
-		}
-	}
-
-	public IFileInfoFilter instantiate(IProject project, Object arguments) {
-		return new NotFileInfoFilter(project, (IResourceFilter[])arguments);
+		return true;
 	}
 }

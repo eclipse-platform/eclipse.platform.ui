@@ -12,32 +12,21 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileInfoFilter;
-import org.eclipse.core.resources.IFileInfoFilterFactory;
-import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IResourceFilter;
+import org.eclipse.core.resources.CompoundFileInfoMatcher;
 
 /**
  * A Resource Filter Type Factory for supporting the AND logical preposition
  */
-public class AndResourceFilter extends CompoundResourceFilter implements
-		IFileInfoFilterFactory {
+public class AndFileInfoMatcher extends CompoundFileInfoMatcher {
 
-	class AndFileInfoFilter extends FileInfoFilter {
-		public AndFileInfoFilter(IProject project, IResourceFilter[] filters) {
-			super(project, filters);
+	/* (non-Javadoc)
+	 * @see org.eclipse.core.resources.AbstractFileInfoMatcher#matches(org.eclipse.core.filesystem.IFileInfo)
+	 */
+	public boolean matches(IFileInfo fileInfo) {
+		for (int i = 0; i < filterTypes.length; i++) {
+			if (!filterTypes[i].matches(fileInfo))
+				return false;
 		}
-
-		public boolean matches(IFileInfo fileInfo) {
-			for (int i = 0; i < filterTypes.length; i++) {
-				if (!filterTypes[i].matches(fileInfo))
-					return false;
-			}
-			return true;
-		}
-	}
-
-	public IFileInfoFilter instantiate(IProject project, Object arguments) {
-		return new AndFileInfoFilter(project,(IResourceFilter[])arguments);
+		return true;
 	}
 }
