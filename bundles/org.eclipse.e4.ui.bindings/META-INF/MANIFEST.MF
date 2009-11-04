@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Bindings Support (Incubation)
+Bundle-SymbolicName: org.eclipse.e4.ui.bindings;singleton:=true
+Bundle-Version: 0.9.0.qualifier
+Bundle-Activator: org.eclipse.e4.ui.bindings.internal.Activator
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-ActivationPolicy: lazy
+Import-Package: javax.inject;version="1.0.0",
+ org.eclipse.e4.core.commands,
+ org.eclipse.e4.core.services,
+ org.eclipse.e4.core.services.annotations,
+ org.eclipse.e4.core.services.context,
+ org.eclipse.e4.core.services.context.spi,
+ org.osgi.framework;version="1.5.0"
+Require-Bundle: org.eclipse.swt;bundle-version="3.6.0",
+ org.eclipse.core.commands;bundle-version="3.5.0"
+Export-Package: org.eclipse.e4.ui.bindings,
+ org.eclipse.e4.ui.bindings.internal,
+ org.eclipse.e4.ui.bindings.keys,
+ org.eclipse.e4.ui.bindings.keys.formatting
