@@ -14,8 +14,10 @@ package org.eclipse.e4.ui.tests.application;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.commands.Category;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -23,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPSCElement;
@@ -33,6 +36,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -340,11 +344,29 @@ public abstract class HeadlessApplicationTest extends
 		appContext.set(MApplication.class.getName(), application);
 		application.setContext(appContext);
 
+		ECommandService cs = (ECommandService) appContext
+				.get(ECommandService.class.getName());
+		Category cat = cs.defineCategory(MApplication.class.getName(),
+				"Application Category", null); //$NON-NLS-1$
+		EList<MCommand> commands = application.getCommands();
+		for (MCommand cmd : commands) {
+			String id = cmd.getId();
+			String name = cmd.getCommandName();
+			cs.defineCommand(id, name, null, cat, null);
+		}
+
+		// take care of generating the contexts.
+		EList<MWindow> windows = application.getChildren();
+		for (MWindow window : windows) {
+			Workbench.initializeContext(appContext, window);
+		}
+
+		Workbench.processHierarchy(application);
+
 		processPartContributions(application.getContext(), resource);
 
 		renderer = createPresentationEngine(getEngineURI());
 
-		EList<MWindow> windows = application.getChildren();
 		for (MWindow wbw : windows) {
 			createGUI(wbw);
 		}

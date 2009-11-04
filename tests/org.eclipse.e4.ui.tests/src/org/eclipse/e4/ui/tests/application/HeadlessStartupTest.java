@@ -102,6 +102,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 		appContext.set(ContextManager.class.getName(), new ContextManager());
 		ContextUtil.commandSetup(appContext);
 		ContextUtil.handlerSetup(appContext);
+		org.eclipse.e4.ui.bindings.ContextUtil.bindingSetup(appContext);
 
 		appContext.set(IServiceConstants.ACTIVE_CONTEXTS,
 				new ActiveContextsFunction());
