@@ -10,8 +10,7 @@
 
 CORE.C = ../localfile.c
 CORE.O = localfile.o
-LIB_NAME = liblocalfile.so
-LIB_NAME_FULL = liblocalfile_1_0_0.so
+LIB_NAME_FULL = liblocalfile_1_0_0.a
 
 OS_TYPE=aix
 CC=xlC_r
