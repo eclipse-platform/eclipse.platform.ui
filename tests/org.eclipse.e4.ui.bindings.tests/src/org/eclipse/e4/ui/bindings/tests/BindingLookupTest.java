@@ -4,7 +4,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -22,8 +21,8 @@ public class BindingLookupTest extends TestCase {
 	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
 		IEclipseContext wb = TestUtil.createContext(globalContext,
 				"workbenchContext");
-		ContextUtil.commandSetup(wb);
-		ContextUtil.handlerSetup(wb);
+		org.eclipse.e4.core.commands.ContextUtil.commandSetup(wb);
+		org.eclipse.e4.core.commands.ContextUtil.handlerSetup(wb);
 		org.eclipse.e4.ui.bindings.ContextUtil.bindingSetup(wb);
 		return wb;
 	}
@@ -68,12 +67,27 @@ public class BindingLookupTest extends TestCase {
 		assertEquals(cmd, bs.getPerfectMatch(seq));
 	}
 
-	public void testLookupChildBinding() throws Exception {
-		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
-		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+	public void testMultipleBindings() throws Exception {
 		ECommandService cs = (ECommandService) workbenchContext
 				.get(ECommandService.class.getName());
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
+		EBindingService bs = (EBindingService) workbenchContext
+				.get(EBindingService.class.getName());
+		TriggerSequence seq = bs.createSequence("CTRL+5 T");
+		TriggerSequence seq2 = bs.createSequence("CTRL+2 X");
+		bs.activateBinding(seq, cmd);
+		bs.activateBinding(seq2, cmd);
+
+		assertEquals(cmd, bs.getPerfectMatch(seq));
+		assertEquals(cmd, bs.getPerfectMatch(seq2));
+	}
+
+	public void testLookupChildBinding() throws Exception {
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
+		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
 
 		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
 				.getName());
@@ -83,5 +97,143 @@ public class BindingLookupTest extends TestCase {
 				.get(EBindingService.class.getName());
 		assertEquals(cmd, wBS.getPerfectMatch(seq));
 		assertEquals(cmd, bs1.getPerfectMatch(seq));
+
+		bs1.deactivateBinding(seq, cmd);
+		assertNull(wBS.getPerfectMatch(seq));
+		assertNull(bs1.getPerfectMatch(seq));
+	}
+
+	public void testLookupWithTwoChildren() throws Exception {
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		ParameterizedCommand cmd1 = cs.createCommand(TEST_ID1, null);
+		ParameterizedCommand cmd2 = cs.createCommand(TEST_ID2, null);
+
+		EBindingService wBS = (EBindingService) workbenchContext
+				.get(EBindingService.class.getName());
+		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
+
+		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+
+		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
+				.getName());
+		bs1.activateBinding(seq, cmd1);
+
+		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+
+		EBindingService bs2 = (EBindingService) c2.get(EBindingService.class
+				.getName());
+		bs2.activateBinding(seq, cmd2);
+
+		assertEquals(cmd1, wBS.getPerfectMatch(seq));
+		assertEquals(cmd1, bs1.getPerfectMatch(seq));
+		assertEquals(cmd2, bs2.getPerfectMatch(seq));
+	}
+
+	public void testLookupWithDifferentActiveChild() throws Exception {
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		ParameterizedCommand cmd1 = cs.createCommand(TEST_ID1, null);
+		ParameterizedCommand cmd2 = cs.createCommand(TEST_ID2, null);
+
+		EBindingService wBS = (EBindingService) workbenchContext
+				.get(EBindingService.class.getName());
+		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
+
+		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+
+		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
+				.getName());
+		bs1.activateBinding(seq, cmd1);
+
+		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+
+		EBindingService bs2 = (EBindingService) c2.get(EBindingService.class
+				.getName());
+		bs2.activateBinding(seq, cmd2);
+
+		assertEquals(cmd1, bs1.getPerfectMatch(seq));
+		assertEquals(cmd2, bs2.getPerfectMatch(seq));
+		assertEquals(cmd1, wBS.getPerfectMatch(seq));
+
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c2);
+		assertEquals(cmd1, bs1.getPerfectMatch(seq));
+		assertEquals(cmd2, bs2.getPerfectMatch(seq));
+		assertEquals(cmd2, wBS.getPerfectMatch(seq));
+
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		assertEquals(cmd1, bs1.getPerfectMatch(seq));
+		assertEquals(cmd2, bs2.getPerfectMatch(seq));
+		assertEquals(cmd1, wBS.getPerfectMatch(seq));
+
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c2);
+		assertEquals(cmd1, bs1.getPerfectMatch(seq));
+		assertEquals(cmd2, bs2.getPerfectMatch(seq));
+		assertEquals(cmd2, wBS.getPerfectMatch(seq));
+
+		assertTrue(wBS.isPerfectMatch(seq));
+	}
+
+	public void testLookupShortcut() throws Exception {
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
+		EBindingService bs = (EBindingService) workbenchContext
+				.get(EBindingService.class.getName());
+		TriggerSequence seq = bs.createSequence("CTRL+5 T");
+		bs.activateBinding(seq, cmd);
+
+		assertEquals(seq, bs.getBestSequenceFor(cmd));
+	}
+
+	public void testLookupShortcuts() throws Exception {
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
+		EBindingService bs = (EBindingService) workbenchContext
+				.get(EBindingService.class.getName());
+		TriggerSequence seq = bs.createSequence("CTRL+5 T");
+		TriggerSequence seq2 = bs.createSequence("CTRL+2 X");
+		bs.activateBinding(seq, cmd);
+		bs.activateBinding(seq2, cmd);
+
+		TriggerSequence foundSequence = bs.getBestSequenceFor(cmd);
+		assertNotNull(foundSequence);
+		assertEquals(seq, foundSequence);
+	}
+
+	public void testLookupShortcutsTwoChildren() throws Exception {
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		ParameterizedCommand cmd1 = cs.createCommand(TEST_ID1, null);
+		ParameterizedCommand cmd2 = cs.createCommand(TEST_ID2, null);
+
+		EBindingService wBS = (EBindingService) workbenchContext
+				.get(EBindingService.class.getName());
+		TriggerSequence seq = wBS.createSequence("CTRL+5 T");
+
+		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+
+		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
+				.getName());
+		bs1.activateBinding(seq, cmd1);
+
+		IEclipseContext c2 = TestUtil.createContext(workbenchContext, "c2");
+
+		EBindingService bs2 = (EBindingService) c2.get(EBindingService.class
+				.getName());
+		bs2.activateBinding(seq, cmd2);
+		
+		assertEquals(seq, wBS.getBestSequenceFor(cmd1));
+		assertNull(wBS.getBestSequenceFor(cmd2));
+		
+		assertEquals(seq, bs1.getBestSequenceFor(cmd1));
+		assertNull(bs1.getBestSequenceFor(cmd2));
+		
+		assertEquals(seq, bs2.getBestSequenceFor(cmd2));
+		assertNull(bs2.getBestSequenceFor(cmd1));
 	}
 }

@@ -17,4 +17,6 @@ public interface EBindingService {
 	boolean isPartialMatch(TriggerSequence keySequence);
 
 	boolean isPerfectMatch(TriggerSequence sequence);
+
+	TriggerSequence getBestSequenceFor(ParameterizedCommand command);
 }

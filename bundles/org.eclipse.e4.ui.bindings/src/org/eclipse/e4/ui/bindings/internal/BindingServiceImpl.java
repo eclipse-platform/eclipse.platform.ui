@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.ui.bindings.internal;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -26,8 +27,10 @@ import org.eclipse.e4.ui.bindings.keys.ParseException;
  */
 public class BindingServiceImpl implements EBindingService {
 	static final String LOOKUP_BINDING = "binding"; //$NON-NLS-1$
+	static final String LOOKUP_CMD = "cmd"; //$NON-NLS-1$
 	static final BindingLookupFinction LOOKUP_INSTANCE = new BindingLookupFinction();
 	static final String B_ID = "binding::"; //$NON-NLS-1$
+	static final String P_ID = "parmCmd::"; //$NON-NLS-1$
 
 	private IEclipseContext context;
 
@@ -43,6 +46,18 @@ public class BindingServiceImpl implements EBindingService {
 		if (context.get(keys) == null) {
 			addFunction(keys);
 		}
+		String cmdString = command.serialize();
+		if (context.get(cmdString) == null) {
+			addFunction(cmdString);
+		}
+		ArrayList bindings = new ArrayList(3);
+		String cmdBindingId = P_ID + cmdString;
+		ArrayList tmp = (ArrayList) context.getLocal(cmdBindingId);
+		if (tmp != null) {
+			bindings.addAll(tmp);
+		}
+		bindings.add(sequence);
+		context.set(cmdBindingId, bindings);
 	}
 
 	/*
@@ -56,7 +71,7 @@ public class BindingServiceImpl implements EBindingService {
 	}
 
 	/**
-	 * @param sequence
+	 * @param keys
 	 */
 	private void addFunction(String keys) {
 		IEclipseContext root = (IEclipseContext) context.get(IContextConstants.ROOT_CONTEXT);
@@ -74,7 +89,6 @@ public class BindingServiceImpl implements EBindingService {
 		try {
 			return KeySequence.getInstance(sequence);
 		} catch (ParseException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return null;
@@ -87,7 +101,6 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public Collection getConflictsFor(TriggerSequence sequence) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -109,8 +122,22 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public boolean isPartialMatch(TriggerSequence keySequence) {
-		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#getBestSequenceFor(org.eclipse.core.commands.
+	 * ParameterizedCommand)
+	 */
+	public TriggerSequence getBestSequenceFor(ParameterizedCommand command) {
+		String cmdString = command.serialize();
+		ArrayList tmp = (ArrayList) context.get(cmdString, lookupCommand(cmdString));
+		if (tmp != null && !tmp.isEmpty()) {
+			return (TriggerSequence) tmp.get(0);
+		}
+		return null;
 	}
 
 	/*
@@ -123,16 +150,26 @@ public class BindingServiceImpl implements EBindingService {
 		return getPerfectMatch(sequence) != null;
 	}
 
+	/**
+	 * @param c
+	 */
 	@Inject
 	public void setContext(IEclipseContext c) {
 		context = c;
 	}
 
+	/**
+	 * @return the context for this service.
+	 */
 	public IEclipseContext getContext() {
 		return context;
 	}
 
 	private Object[] lookupBinding(String bindingId) {
 		return new Object[] { LOOKUP_BINDING, B_ID + bindingId };
+	}
+
+	private Object[] lookupCommand(String cmdString) {
+		return new Object[] { LOOKUP_CMD, P_ID + cmdString };
 	}
 }

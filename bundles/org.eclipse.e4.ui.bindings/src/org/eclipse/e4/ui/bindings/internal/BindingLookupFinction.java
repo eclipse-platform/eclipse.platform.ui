@@ -32,16 +32,28 @@ public class BindingLookupFinction extends ContextFunction {
 		if (arguments == null) {
 			return this;
 		}
-		if (arguments.length > 1 && BindingServiceImpl.LOOKUP_BINDING.equals(arguments[0])) {
-			String bindingId = (String) arguments[1];
-			IEclipseContext current = context;
-			IEclipseContext child = (IEclipseContext) current
-					.getLocal(IContextConstants.ACTIVE_CHILD);
-			while (child != null) {
-				current = child;
-				child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
+		if (arguments.length > 1) {
+			if (BindingServiceImpl.LOOKUP_BINDING.equals(arguments[0])) {
+				String bindingId = (String) arguments[1];
+				IEclipseContext current = context;
+				IEclipseContext child = (IEclipseContext) current
+						.getLocal(IContextConstants.ACTIVE_CHILD);
+				while (child != null) {
+					current = child;
+					child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
+				}
+				return current.get(bindingId);
+			} else if (BindingServiceImpl.LOOKUP_CMD.equals(arguments[0])) {
+				String cmdBindingId = (String) arguments[1];
+				IEclipseContext current = context;
+				IEclipseContext child = (IEclipseContext) current
+						.getLocal(IContextConstants.ACTIVE_CHILD);
+				while (child != null) {
+					current = child;
+					child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
+				}
+				return current.get(cmdBindingId);
 			}
-			return current.get(bindingId);
 		}
 		return null;
 	}
