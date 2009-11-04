@@ -1171,6 +1171,44 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfiguration[] children = t1.getTemplateChildren();
 		assertEquals(0, children.length);
 	}
+	
+	/**
+	 * Tests that nested templates are not allowed.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testNestedTemplates() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newConfiguration(null, "test-nest-root");
+		ILaunchConfigurationWorkingCopy t2 = newConfiguration(null, "template-nested");
+		t1.setTemplate(true);
+		ILaunchConfiguration template = t1.doSave();
+		t2.setTemplate(true);
+		try {
+			t2.setTemplate(template, true);
+		} catch (CoreException e) {
+			return;
+		}
+		assertTrue("Shoud not be able to nest templates", false);
+	}
+	
+	/**
+	 * Tests that nested templates are not allowed.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testNestedTemplates2() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newConfiguration(null, "test-nest-root");
+		ILaunchConfigurationWorkingCopy t2 = newConfiguration(null, "template-nested");
+		t1.setTemplate(true);
+		ILaunchConfiguration template = t1.doSave();
+		t2.setTemplate(template, true);
+		try {
+			t2.setTemplate(true);
+		} catch (CoreException e) {
+			return;
+		}
+		assertTrue("Shoud not be able to nest templates", false);
+	}	
 }
 
 

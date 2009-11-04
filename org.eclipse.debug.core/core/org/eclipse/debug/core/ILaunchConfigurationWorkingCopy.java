@@ -278,9 +278,11 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * Sets whether this configuration is to be considered as a template.
 	 * 
 	 * @param isTemplate whether this configuration is to be considered as a template
+	 * @exception CoreException if an attempt is made to nest templates - this configuration
+	 * 	cannot already be associated with a template
 	 * @since 3.6
 	 */
-	public void setTemplate(boolean isTemplate);
+	public void setTemplate(boolean isTemplate) throws CoreException;
 	
 	/**
 	 * Sets the template that this configuration is based on, possibly <code>null</code>,
@@ -292,8 +294,13 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @param template template or <code>null</code>
 	 * @param copy whether to copy attributes from the template to this working copy. Has
 	 *  no effect when template is <code>null</code>
-	 * @exception CoreException if unable to generate a memento for the given configuration
-	 * 	or copy its attributes
+	 * @exception CoreException if
+	 * 	<ul>
+	 *  <li>unable to generate a memento for the given configuration
+	 * 	 or copy its attributes</li>
+	 *  <li>if attempting to set a template attribute on an existing template - templates
+	 *   cannot be nested</li>
+	 *  </ul>
 	 * @since 3.6
 	 */
 	public void setTemplate(ILaunchConfiguration template, boolean copy) throws CoreException;

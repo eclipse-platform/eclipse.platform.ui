@@ -735,10 +735,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(boolean)
 	 */
-	public void setTemplate(boolean isTemplate) {
+	public void setTemplate(boolean isTemplate) throws CoreException {
 		if (!isTemplate) {
 			removeAttribute(ATTR_IS_TEMPLATE);
 		} else {
+			if (getTemplate() != null) {
+				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_7));
+			}
 			setAttribute(ATTR_IS_TEMPLATE, isTemplate);
 		}
 	}
@@ -750,13 +753,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		if (template != null && template.isWorkingCopy()) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_6));
 		}
+		if (isTemplate()) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_7));
+		}
 		if (template == null) {
 			removeAttribute(ATTR_TEMPLATE);
 		} else {
-			setAttribute(ATTR_TEMPLATE, template.getMemento());
 			if (copy) {
 				copyAttributes(template);
 			}
+			setAttribute(ATTR_TEMPLATE, template.getMemento());
 		}
 	}
 }
