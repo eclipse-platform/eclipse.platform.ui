@@ -195,7 +195,7 @@
          id="regexFilter">
       <filter
             argumentType="string"
-            class="org.eclipse.core.internal.resources.RegexFilterFactory"
+            class="org.eclipse.core.internal.resources.RegexFileInfoMatcher"
             description="%regexFilterProvider.description"
             name="%regexFilterProvider.name"
             ordering="first">

@@ -11,30 +11,22 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IFileInfoFilterFactory;
-
-import org.eclipse.core.resources.IFilterDescriptor;
-import org.eclipse.core.resources.ResourcesPlugin;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-
 import java.util.HashMap;
+import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 /**
- *  This class collects all the registered {@link IFileInfoFilterFactory} instances along 
+ *  This class collects all the registered {@link AbstractFileInfoMatcher} instances along 
  *  with their properties.
- * @since 3.6
  */
 class FilterTypeManager implements IManager {
 
-	private static final String FILTER_ELEMENT = "filter";  //$NON-NLS-1$
+	private static final String FILTER_ELEMENT = "filter"; //$NON-NLS-1$
 
-	private HashMap/*<String, FilterDescriptor>*/  factories = new HashMap();
+	private HashMap/*<String, FilterDescriptor>*/factories = new HashMap();
 
 	public FilterTypeManager() {
-		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES,ResourcesPlugin.PT_FILTERS);
+		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILTERS);
 		if (point != null) {
 			IExtension[] ext = point.getExtensions();
 			// initial population
@@ -47,20 +39,23 @@ class FilterTypeManager implements IManager {
 					for (int i = 0; i < extensions.length; i++)
 						processExtension(extensions[i]);
 				}
+
 				public void added(IExtensionPoint[] extensionPoints) {
 					// nothing to do
 				}
+
 				public void removed(IExtension[] extensions) {
 					for (int i = 0; i < extensions.length; i++)
 						processRemovedExtension(extensions[i]);
 				}
+
 				public void removed(IExtensionPoint[] extensionPoints) {
 					// nothing to do
 				}
 			});
 		}
 	}
-	
+
 	public IFilterDescriptor getFilterDescriptor(String id) {
 		return (IFilterDescriptor) factories.get(id);
 	}
@@ -83,7 +78,7 @@ class FilterTypeManager implements IManager {
 			}
 		}
 	}
-	
+
 	protected void processRemovedExtension(IExtension extension) {
 		IConfigurationElement[] elements = extension.getConfigurationElements();
 		for (int i = 0; i < elements.length; i++) {

@@ -50,6 +50,7 @@ public interface IModelObjectConstants {
 	public static final String LINK = "link"; //$NON-NLS-1$
 	public static final String FILTERED_RESOURCES = "filteredResources"; //$NON-NLS-1$
 	public static final String FILTER = "filter"; //$NON-NLS-1$
+	public static final String MATCHER = "matcher"; //$NON-NLS-1$
 	public static final String VARIABLE = "variable"; //$NON-NLS-1$
 	public static final String VARIABLE_LIST = "variableList"; //$NON-NLS-1$
 }

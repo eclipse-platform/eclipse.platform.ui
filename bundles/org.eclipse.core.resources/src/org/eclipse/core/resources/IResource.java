@@ -1716,8 +1716,6 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * 
 	 * @return <code>true</code> if this resource has filters, and 
 	 *   <code>false</code> otherwise
-	 * @see IContainer#addFilter(String, int, Object, int, IProgressMonitor)
-	 * @see IContainer#removeFilter(String, int, Object, int, IProgressMonitor)
 	 * @since 3.6
 	 */
 	public boolean hasFilters();

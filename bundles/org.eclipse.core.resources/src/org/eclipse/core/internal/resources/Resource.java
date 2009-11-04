@@ -705,14 +705,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IContainer#addFilter(String, int, Object, IProgressMonitor)
-	 */
-	public void addFilter(String filterID, int type, Object arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(filterID);
+	public IResourceFilterDescription createFilter(int type, IFileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(getProject());
 		monitor = Policy.monitorFor(monitor);
+		FilterDescription filter = null;
 		try {
 			String message = NLS.bind(Messages.links_creating, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
@@ -725,7 +721,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.beginOperation(true);
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the filter in the project description
-				FilterDescription filter = new FilterDescription(this, type, filterID, arguments);
+				filter = new FilterDescription(this, type, matcherDescription);
+				filter.setId(System.currentTimeMillis());
+				
 				Project project = (Project) getProject();
 				project.internalGetDescription().addFilter(getProjectRelativePath(), filter);
 				project.writeDescription(IResource.NONE);
@@ -751,13 +749,10 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		} finally {
 			monitor.done();
 		}
+		return filter;
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IFolder#removeFilter(String, int, Object, IProgressMonitor)
-	 */
-	public void removeFilter(String filterID, int type, Object arguments, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		Assert.isNotNull(filterID);
+	public void removeFilter(IResourceFilterDescription filterDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		monitor = Policy.monitorFor(monitor);
 		try {
 			String message = NLS.bind(Messages.links_creating, getFullPath());
@@ -771,9 +766,8 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.beginOperation(true);
 				monitor.worked(Policy.opWork * 5 / 100);
 				//save the filter in the project description
-				FilterDescription filter = new FilterDescription(this, type, filterID, arguments);
 				Project project = (Project) getProject();
-				project.internalGetDescription().removeFilter(getProjectRelativePath(), filter);
+				project.internalGetDescription().removeFilter(getProjectRelativePath(), (FilterDescription)filterDescription);
 				project.writeDescription(IResource.NONE);
 				monitor.worked(Policy.opWork * 5 / 100);
 
@@ -802,22 +796,22 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IContainer#getFilters()
 	 */
-	public IResourceFilter[] getFilters() throws CoreException {
-		IResourceFilter[] results = null;
+	public IResourceFilterDescription[] getFilters() throws CoreException {
+		IResourceFilterDescription[] results = null;
 		checkValidPath(path, FOLDER | PROJECT, true);
 		Project project = (Project) getProject();
 		ProjectDescription desc = project.internalGetDescription();
 		if (desc != null) {
 			LinkedList/*<FilterDescription>*/ list = desc.getFilter(getProjectRelativePath());
 			if (list != null) {
-				results = new IResourceFilter[list.size()];
+				results = new IResourceFilterDescription[list.size()];
 				for (int i = 0; i < list.size(); i++) {
-					results[i] = new Filter(project, (FilterDescription) list.get(i));
+					results[i] = (FilterDescription) list.get(i);
 				}
 				return results;
 			}
 		}
-		return new IResourceFilter[0];
+		return new IResourceFilterDescription[0];
 	}
 
 	/* (non-Javadoc)

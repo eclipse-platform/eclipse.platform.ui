@@ -17,13 +17,12 @@ import org.eclipse.core.runtime.*;
  * Interface for resource filters.  A filter determines which file system
  * objects will be visible when a local refresh is performed for an IContainer.
  *
- * @see IFolder#addFilter(String, int, Object, int, IProgressMonitor)
- * @see IFolder#removeFilter(String, int, Object, int, IProgressMonitor)
  * @see IFolder#getFilters()
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This interface is not intended to be extended by clients.
  * @since 3.6
  */
-public interface IResourceFilter {
+public interface IResourceFilterDescription {
 
 	/*====================================================================
 	 * Constants defining which members are wanted:
@@ -53,7 +52,7 @@ public interface IResourceFilter {
 	 * Flag for resource filters indicating that this filter applies to folders.
 	 * 
 	 */
-	public static final int FOLDERS= 8;
+	public static final int FOLDERS = 8;
 
 	/**
 	 * Flag for resource filters indicating that the container children of the
@@ -68,27 +67,6 @@ public interface IResourceFilter {
 	 * @return the project relative Path towards which this filter is set
 	 */
 	public IPath getPath();
-	
-	/**
-	 * Return the filter type, either INCLUDE_ONLY or EXCLUDE_ALL
-	 * 
-	 * @return (INCLUDE_ONLY or EXCLUDE_ALL) and/or INHERITABLE
-	 */
-	public int getType();
-
-	/**
-	 * Return the filter id, which matches the resource filter provider ID.
-	 * 
-	 * @return the resource filter provider id.
-	 */
-	public String getId();
-
-	/**
-	 * Return the filter arguments, or null if no arguments exist.
-	 * 
-	 * @return the argument string, or null
-	 */
-	public Object getArguments();
 
 	/**
 	 * Returns the project which contains this filter.
@@ -100,4 +78,17 @@ public interface IResourceFilter {
 	 * @return the project handle
 	 */
 	public IProject getProject();
+
+	/**
+	 * Return the filter type, either INCLUDE_ONLY or EXCLUDE_ALL
+	 * 
+	 * @return (INCLUDE_ONLY or EXCLUDE_ALL) and/or INHERITABLE
+	 */
+	public int getType();
+
+	public void setType(int type);
+
+	public void setFileInfoMatcherDescription(IFileInfoMatcherDescription description);
+
+	public IFileInfoMatcherDescription getFileInfoMatcherDescription();
 }

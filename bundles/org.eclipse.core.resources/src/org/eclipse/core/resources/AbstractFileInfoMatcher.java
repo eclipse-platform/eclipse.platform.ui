@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileInfoFilter;
 
 /**
@@ -19,14 +20,16 @@ import org.eclipse.core.filesystem.IFileInfoFilter;
  * 
  * @since 3.6
  */
-public interface IFileInfoFilterFactory  {
+public abstract class AbstractFileInfoMatcher {
 
 	/**
-	 * Returns a filter instance with the given project and arguments.
+	 * Return if this filter matches with the fileInfo provided.
 	 * 
-	 * @param project the project from which this filter is called
-	 * @param arguments the test arguments, or <code>null</code> if not applicable
-	 * for this filter type.
+	 * @param fileInfo the object to test
+	 * @return <code>true</code> if this filter matches the given file info,
+	 * and <code>false</code> otherwise.
 	 */
-	public IFileInfoFilter instantiate(IProject project, Object arguments);
+	public abstract boolean matches(IFileInfo fileInfo);
+
+	public abstract void initialize(IProject project, Object arguments);
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,10 +20,9 @@ import org.eclipse.core.runtime.*;
  * Class for describing the characteristics of filters that are stored
  * in the project description.
  */
-public class FilterDescription implements Comparable, IResourceFilter {
+public class FilterDescription implements Comparable, IResourceFilterDescription {
 
-	private String id;
-	private Object arguments;
+	private long id;
 
 	/**
 	 * The project relative path.
@@ -34,78 +33,27 @@ public class FilterDescription implements Comparable, IResourceFilter {
 	 */
 	private int type;
 
+	private IFileInfoMatcherDescription matcherDescription;
+
 	public FilterDescription() {
 		this.path = Path.EMPTY;
 		this.type = -1;
-		this.id = null;
-		this.arguments = null;
 	}
 
-	public FilterDescription(IResource resource, int type, String filterID, Object arguments) {
+	public FilterDescription(IResource resource, int type, IFileInfoMatcherDescription matcherDescription) {
 		super();
 		Assert.isNotNull(resource);
-		Assert.isNotNull(filterID);
 		this.type = type;
 		this.path = resource.getProjectRelativePath();
-		this.id = filterID;
-		this.arguments = arguments;
+		this.matcherDescription = matcherDescription;
 	}
 
-	private FilterDescription(IPath projectRelativePath, int type, String filterID, Object arguments) {
+	public FilterDescription(IPath projectRelativePath, int type, IFileInfoMatcherDescription matcherDescription) {
 		super();
 		Assert.isNotNull(projectRelativePath);
-		Assert.isNotNull(filterID);
 		this.type = type;
 		this.path = projectRelativePath;
-		this.id = filterID;
-		this.arguments = arguments;
-	}
-
-	public boolean equals(Object o) {
-		if (!(o.getClass() == FilterDescription.class))
-			return false;
-		FilterDescription other = (FilterDescription) o;
-		return path.equals(other.path) && type == other.type && id.equals(other.id) && ((arguments == null) ? (arguments == other.arguments) : (arguments.equals(other.arguments)));
-	}
-
-	public String getFilterID() {
-		return id;
-	}
-
-	public Object getArguments() {
-		return arguments;
-	}
-
-	/**
-	 * Returns the project relative path of the resource that is filtered.
-	 * @return the project relative path of the resource that is filtered.
-	 */
-	public IPath getProjectRelativePath() {
-		return path;
-	}
-
-	public int getType() {
-		return type;
-	}
-
-	public int hashCode() {
-		return type + path.hashCode() + id.hashCode();
-	}
-
-	public void setFilterID(String id) {
-		this.id = id;
-	}
-
-	public void setArguments(Object arguments) {
-		this.arguments = arguments;
-	}
-
-	public void setPath(IPath path) {
-		this.path = path;
-	}
-
-	public void setType(int type) {
-		this.type = type;
+		this.matcherDescription = matcherDescription;
 	}
 
 	/**
@@ -113,8 +61,8 @@ public class FilterDescription implements Comparable, IResourceFilter {
 	 */
 	public int compareTo(Object o) {
 		FilterDescription that = (FilterDescription) o;
-		IPath path1 = this.getProjectRelativePath();
-		IPath path2 = that.getProjectRelativePath();
+		IPath path1 = this.getPath();
+		IPath path2 = that.getPath();
 		int count1 = path1.segmentCount();
 		int compare = count1 - path2.segmentCount();
 		if (compare != 0)
@@ -128,7 +76,7 @@ public class FilterDescription implements Comparable, IResourceFilter {
 	}
 
 	public boolean isInheritable() {
-		return (getType() & IResourceFilter.INHERITABLE) != 0;
+		return (getType() & IResourceFilterDescription.INHERITABLE) != 0;
 	}
 
 	public static LinkedList copy(LinkedList originalDescriptions, IPath projectRelativePath) {
@@ -136,14 +84,30 @@ public class FilterDescription implements Comparable, IResourceFilter {
 		Iterator it = originalDescriptions.iterator();
 		while (it.hasNext()) {
 			FilterDescription desc = (FilterDescription) it.next();
-			FilterDescription newDesc = new FilterDescription(projectRelativePath, desc.getType(), desc.getFilterID(), desc.getArguments());
+			FilterDescription newDesc = new FilterDescription(projectRelativePath, desc.getType(), desc.getFileInfoMatcherDescription());
 			copy.add(newDesc);
 		}
 		return copy;
 	}
 
-	public String getId() {
+	public long getId() {
 		return id;
+	}
+
+	public void setId(long id) {
+		this.id = id;
+	}
+
+	public int getType() {
+		return type;
+	}
+
+	public void setType(int type) {
+		this.type = type;
+	}
+
+	public void setPath(IPath path) {
+		this.path = path;
 	}
 
 	public IPath getPath() {
@@ -152,5 +116,49 @@ public class FilterDescription implements Comparable, IResourceFilter {
 
 	public IProject getProject() {
 		return null;
+	}
+
+	public void setProject(IProject project) {
+		//
+	}
+
+	public IFileInfoMatcherDescription getFileInfoMatcherDescription() {
+		return matcherDescription;
+	}
+
+	public void setFileInfoMatcherDescription(IFileInfoMatcherDescription matcherDescription) {
+		this.matcherDescription = matcherDescription;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#hashCode()
+	 */
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (int) (id ^ (id >>> 32));
+		result = prime * result + ((path == null) ? 0 : path.hashCode());
+		return result;
+	}
+
+	/* (non-Javadoc)
+	 * @see java.lang.Object#equals(java.lang.Object)
+	 */
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		FilterDescription other = (FilterDescription) obj;
+		if (id != other.id)
+			return false;
+		if (path == null) {
+			if (other.path != null)
+				return false;
+		} else if (!path.equals(other.path))
+			return false;
+		return true;
 	}
 }

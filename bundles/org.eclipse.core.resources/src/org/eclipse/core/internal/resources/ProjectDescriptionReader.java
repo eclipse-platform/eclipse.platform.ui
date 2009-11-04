@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,12 +52,17 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	protected static final int S_PROJECT_NAME = 19;
 	protected static final int S_PROJECTS = 20;
 	protected static final int S_REFERENCED_PROJECT_NAME = 21;
-	protected static final int S_FILTER = 22;
-	protected static final int S_FILTER_ID = 23;
-	protected static final int S_FILTER_ARGUMENTS = 24;
-	protected static final int S_FILTER_PATH = 25;
-	protected static final int S_FILTER_TYPE = 26;
-	protected static final int S_FILTERED_RESOURCES = 27;
+	
+	protected static final int S_FILTERED_RESOURCES = 23;
+	protected static final int S_FILTER = 24;
+	protected static final int S_FILTER_ID = 25;
+	protected static final int S_FILTER_PATH = 26;
+	protected static final int S_FILTER_TYPE = 27;
+	
+	protected static final int S_MATCHER = 28;
+	protected static final int S_MATCHER_ID = 29;
+	protected static final int S_MATCHER_ARGUMENTS = 30;
+	
 	protected static final int S_VARIABLE_LIST = 31;
 	protected static final int S_VARIABLE = 32;
 	protected static final int S_VARIABLE_NAME = 33;
@@ -377,17 +382,23 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_LINK_LOCATION_URI :
 				endLinkLocationURI(elementName);
 				break;
+			case S_FILTER_ID :
+				endFilterId(elementName);
+				break;
 			case S_FILTER_PATH :
 				endFilterPath(elementName);
 				break;
 			case S_FILTER_TYPE :
 				endFilterType(elementName);
 				break;
-			case S_FILTER_ID :
-				endFilterID(elementName);
+			case S_MATCHER :
+				endMatcherElement(elementName);
 				break;
-			case S_FILTER_ARGUMENTS:
-				endFilterArguments(elementName);
+			case S_MATCHER_ID :
+				endMatcherID(elementName);
+				break;
+			case S_MATCHER_ARGUMENTS:
+				endMatcherArguments(elementName);
 				break;
 			case S_VARIABLE_NAME :
 				endVariableName(elementName);
@@ -468,6 +479,33 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			((HashMap) objectStack.peek()).put(link.getProjectRelativePath(), link);
 		}
 	}
+	
+	private void endMatcherElement(String elementName) {
+		if (elementName.equals(MATCHER)) {
+			// Pop off the filter description
+			FileInfoMatcherDescription filter = (FileInfoMatcherDescription) objectStack.pop();
+			// Make sure that you have something reasonable
+			String id = filter.getId();
+			// arguments can be null
+			if (id == null) {
+				parseProblem(NLS.bind(Messages.projRead_badFilterID, id));
+				return;
+			}
+
+			if (objectStack.peek() instanceof ArrayList) {
+				state = S_MATCHER_ARGUMENTS;
+				// The HashMap of filtered resources is the next thing on the stack
+				ArrayList list = ((ArrayList) objectStack.peek());
+				list.add(filter);
+			}
+			
+			if (objectStack.peek() instanceof FilterDescription) {
+				state = S_FILTER;
+				FilterDescription d = ((FilterDescription) objectStack.peek());
+				d.setFileInfoMatcherDescription(filter);
+			}
+		}
+	}
 
 	/**
 	 * End a single filtered resource and add it to the HashMap.
@@ -477,40 +515,27 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Pop off the filter description
 			FilterDescription filter = (FilterDescription) objectStack.pop();
 			// Make sure that you have something reasonable
-			IPath path = filter.getProjectRelativePath();
+			IPath path = filter.getPath();
 			int type = filter.getType();
-			String id = filter.getFilterID();
 			// arguments can be null
-			if (id == null) {
-				parseProblem(NLS.bind(Messages.projRead_badFilterID, path, Integer.toString(type)));
-				return;
-			}
 			if (path == null) {
-				parseProblem(NLS.bind(Messages.projRead_emptyFilterName, Integer.toString(type), id));
+				parseProblem(NLS.bind(Messages.projRead_emptyFilterName, Integer.toString(type)));
 				return;
 			}
 			if (type == -1) {
-				parseProblem(NLS.bind(Messages.projRead_badFilterType, path, id));
+				parseProblem(NLS.bind(Messages.projRead_badFilterType, path));
 				return;
 			}
 
-			if (objectStack.peek() instanceof HashMap) {
-				state = S_FILTERED_RESOURCES;
-				// The HashMap of filtered resources is the next thing on the stack
-				HashMap map = ((HashMap) objectStack.peek());
-				LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getProjectRelativePath());
-				if (list == null) {
-					list = new LinkedList/*FilterDescription*/();
-					map.put(filter.getProjectRelativePath(), list);
-				}
-				list.add(filter);
+			state = S_FILTERED_RESOURCES;
+			// The HashMap of filtered resources is the next thing on the stack
+			HashMap map = ((HashMap) objectStack.peek());
+			LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getPath());
+			if (list == null) {
+				list = new LinkedList/*FilterDescription*/();
+				map.put(filter.getPath(), list);
 			}
-			
-			if (objectStack.peek() instanceof ArrayList) {
-				state = S_FILTER_ARGUMENTS;
-				ArrayList l = ((ArrayList) objectStack.peek());
-				l.add(filter);
-			}
+			list.add(filter);
 		}
 	}
 
@@ -594,34 +619,49 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 		}
 	}
 
-	private void endFilterID(String elementName) {
+	private void endMatcherID(String elementName) {
 		if (elementName.equals(ID)) {
 			// A filter is an String.
 			String newID = charBuffer.toString().trim();
 			// objectStack has a FilterDescription on it. Set the type on this FilterDescription.
-			String oldID = ((FilterDescription) objectStack.peek()).getFilterID();
+			String oldID = ((FileInfoMatcherDescription) objectStack.peek()).getId();
 			if (oldID != null) {
 				parseProblem(NLS.bind(Messages.projRead_badID, oldID, newID));
 			} else {
-				((FilterDescription) objectStack.peek()).setFilterID(newID);
+				((FileInfoMatcherDescription) objectStack.peek()).setId(newID);
 			}
-			state = S_FILTER;
+			state = S_MATCHER;
 		}
 	}
 
-	private void endFilterArguments(String elementName) {
+	private void endMatcherArguments(String elementName) {
 		if (elementName.equals(ARGUMENTS)) {
 			ArrayList filters = (ArrayList) objectStack.pop();
 			Object newArguments = charBuffer.toString();
 			
 			if (filters.size() > 0)
-				newArguments = filters.toArray(new IResourceFilter[filters.size()]);
+				newArguments = filters.toArray(new IFileInfoMatcherDescription[filters.size()]);
 			
-			Object oldArguments = ((FilterDescription) objectStack.peek()).getArguments();
+			Object oldArguments = ((FileInfoMatcherDescription) objectStack.peek()).getArguments();
 			if (oldArguments != null) {
 				parseProblem(NLS.bind(Messages.projRead_badArguments, oldArguments, newArguments));
 			} else
-				((FilterDescription) objectStack.peek()).setArguments(newArguments);
+				((FileInfoMatcherDescription) objectStack.peek()).setArguments(newArguments);
+			state = S_MATCHER;
+		}
+	}
+	
+	private void endFilterId(String elementName) {
+		if (elementName.equals(ID)) {
+			Long newId = new Long(charBuffer.toString());
+			// objectStack has a FilterDescription on it. Set the name
+			// on this FilterDescription.
+			long oldId = ((FilterDescription) objectStack.peek()).getId();
+			if (oldId != 0) {
+				parseProblem(NLS.bind(Messages.projRead_badFilterName, new Long(oldId), newId));
+			} else {
+				((FilterDescription) objectStack.peek()).setId(newId.longValue());
+			}
 			state = S_FILTER;
 		}
 	}
@@ -631,7 +671,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			IPath newPath = new Path(charBuffer.toString());
 			// objectStack has a FilterDescription on it. Set the name
 			// on this FilterDescription.
-			IPath oldPath = ((FilterDescription) objectStack.peek()).getProjectRelativePath();
+			IPath oldPath = ((FilterDescription) objectStack.peek()).getPath();
 			if (oldPath.segmentCount() != 0) {
 				parseProblem(NLS.bind(Messages.projRead_badFilterName, oldPath, newPath));
 			} else {
@@ -976,23 +1016,31 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 				}
 				break;
 			case S_FILTER:
-				if (elementName.equals(NAME)) {
+				if (elementName.equals(ID)) {
+					state = S_FILTER_ID;
+				}else if (elementName.equals(NAME)) {
 					state = S_FILTER_PATH;
 				} else if (elementName.equals(TYPE)) {
 					state = S_FILTER_TYPE;
-				} else if (elementName.equals(ID)) {
-					state = S_FILTER_ID;
+				} else if (elementName.equals(MATCHER)) {
+					state = S_MATCHER;
+					objectStack.push(new FileInfoMatcherDescription());
+				}
+				break;
+			case S_MATCHER:
+				if (elementName.equals(ID)) {
+					state = S_MATCHER_ID;
 				} else if (elementName.equals(ARGUMENTS)) {
-					state = S_FILTER_ARGUMENTS;
+					state = S_MATCHER_ARGUMENTS;
 					objectStack.push(new ArrayList());
 				}
 				break;
-			case S_FILTER_ARGUMENTS:
-				if (elementName.equals(FILTER)) {
-					state = S_FILTER;
+			case S_MATCHER_ARGUMENTS:
+				if (elementName.equals(MATCHER)) {
+					state = S_MATCHER;
 					// Push place holders for the name, type, id and arguments of
 					// this filter.
-					objectStack.push(new FilterDescription());
+					objectStack.push(new FileInfoMatcherDescription());
 				}
 				break;
 			case S_VARIABLE:

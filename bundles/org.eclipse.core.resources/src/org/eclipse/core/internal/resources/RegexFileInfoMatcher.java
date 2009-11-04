@@ -14,33 +14,31 @@ package org.eclipse.core.internal.resources;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.filesystem.IFileInfoFilter;
-import org.eclipse.core.resources.IFileInfoFilterFactory;
+import org.eclipse.core.resources.AbstractFileInfoMatcher;
 import org.eclipse.core.resources.IProject;
 
 /**
  * A Filter provider for Java Regular expression supported by 
  * java.util.regex.Pattern.
  */
-public class RegexFilterFactory implements IFileInfoFilterFactory {
+public class RegexFileInfoMatcher extends AbstractFileInfoMatcher {
 
-	static class RegexFilterType implements IFileInfoFilter {
-		Pattern pattern = null;
+	Pattern pattern = null;
 
-		public RegexFilterType(IProject project, String arguments) {
-			if (arguments != null)
-				pattern = Pattern.compile(arguments);
-		}
+	public RegexFileInfoMatcher() {
+		// nothing to do
+	}
 
-		public boolean matches(IFileInfo fileInfo) {
-			if (pattern == null)
-				return false;
+	public boolean matches(IFileInfo fileInfo) {
+		if (pattern != null) {
 			Matcher m = pattern.matcher(fileInfo.getName());
 			return m.matches();
 		}
+		return false;
 	}
 
-	public IFileInfoFilter instantiate(IProject project, Object arguments) {
-		return new RegexFilterType(project, (String) arguments);
+	public void initialize(IProject project, Object arguments) {
+		if (arguments != null)
+			pattern = Pattern.compile((String) arguments);
 	}
 }

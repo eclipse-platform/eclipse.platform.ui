@@ -23,7 +23,6 @@ import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 
-//
 public class ModelObjectWriter implements IModelObjectConstants {
 
 	/**
@@ -89,29 +88,36 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.endTag(LINK);
 	}
 
-	protected void write(IResourceFilter description, XMLWriter writer) {
+	protected void write(IResourceFilterDescription description, XMLWriter writer) {
 		writer.startTag(FILTER, null);
 		if (description != null) {
+			writer.printSimpleTag(ID, new Long(((FilterDescription)description).getId()));
 			writer.printSimpleTag(NAME, description.getPath());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
-			writer.printSimpleTag(ID, description.getId());
-			if (description.getArguments() != null) {
-				if (description.getArguments() instanceof String) {
-					writer.printSimpleTag(ARGUMENTS, description.getArguments());
-				} else if (description.getArguments() instanceof IResourceFilter[]) {
-					writer.startTag(ARGUMENTS, null);
-					IResourceFilter[] array = (IResourceFilter[]) description.getArguments();
-					for (int i = 0; i < array.length; i++) {
-						write(array[i], writer);
-					}
-					writer.endTag(ARGUMENTS);
-				} else
-					writer.printSimpleTag(ARGUMENTS, ""); //$NON-NLS-1$
-
+			if (description.getFileInfoMatcherDescription() != null) {
+				write(description.getFileInfoMatcherDescription(), writer);
 			}
-
 		}
 		writer.endTag(FILTER);
+	}
+		
+	protected void write(IFileInfoMatcherDescription description, XMLWriter writer) {
+		writer.startTag(MATCHER, null);
+		writer.printSimpleTag(ID, description.getId());
+		if (description.getArguments() != null) {
+			if (description.getArguments() instanceof String) {
+				writer.printSimpleTag(ARGUMENTS, description.getArguments());
+			} else if (description.getArguments() instanceof IFileInfoMatcherDescription[]) {
+				writer.startTag(ARGUMENTS , null);
+				IFileInfoMatcherDescription[] array = (IFileInfoMatcherDescription[]) description.getArguments();
+				for (int i = 0; i < array.length; i++) {
+					write(array[i], writer);
+				}
+				writer.endTag(ARGUMENTS);
+			} else
+				writer.printSimpleTag(ARGUMENTS, ""); //$NON-NLS-1$
+		}
+		writer.endTag(MATCHER);
 	}
 
 	protected void write(VariableDescription description, XMLWriter writer) {
@@ -185,8 +191,8 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			write((LinkDescription) obj, writer);
 			return;
 		}
-		if (obj instanceof IResourceFilter) {
-			write((IResourceFilter) obj, writer);
+		if (obj instanceof IResourceFilterDescription) {
+			write((IResourceFilterDescription) obj, writer);
 			return;
 		}
 		if (obj instanceof VariableDescription) {

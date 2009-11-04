@@ -10,28 +10,23 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
+import org.eclipse.core.resources.AbstractFileInfoMatcher;
 import org.eclipse.core.resources.IFilterDescriptor;
-
-import org.eclipse.core.resources.*;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-/**
- * @since 3.6
- */
 public class FilterDescriptor implements IFilterDescriptor {
 	private String id;
 	private String name;
 	private String description;
 	private String argumentType;
-	private IFileInfoFilterFactory factory;
 	private boolean isFirst = false;
-	
+	private IConfigurationElement element;
+
 	public FilterDescriptor(IConfigurationElement element) throws CoreException {
 		this(element, true);
 	}
-	
+
 	public FilterDescriptor(IConfigurationElement element, boolean instantiateFactory) throws CoreException {
 		id = element.getDeclaringExtension().getUniqueIdentifier();
 		name = element.getAttribute("name"); //$NON-NLS-1$
@@ -39,42 +34,53 @@ public class FilterDescriptor implements IFilterDescriptor {
 		argumentType = element.getAttribute("argumentType"); //$NON-NLS-1$
 		if (argumentType == null)
 			argumentType = IFilterDescriptor.ARGUMENT_TYPE_NONE;
-		if (instantiateFactory)
-			factory = (IFileInfoFilterFactory ) element.createExecutableExtension("class"); //$NON-NLS-1$
+		this.element = element;
 		String ordering = element.getAttribute("ordering"); //$NON-NLS-1$
 		if (ordering != null)
 			isFirst = ordering.equals("first"); //$NON-NLS-1$
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFilterDescriptor#getId()
 	 */
 	public String getId() {
 		return id;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFilterDescriptor#getName()
 	 */
 	public String getName() {
 		return name;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFilterDescriptor#getDescription()
 	 */
 	public String getDescription() {
 		return description;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFilterDescriptor#getArgumentType()
 	 */
 	public String getArgumentType() {
 		return argumentType;
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFilterDescriptor#getFactory()
 	 */
-	public IFileInfoFilterFactory getFactory() {
-		return factory;
+	public AbstractFileInfoMatcher createFilter() {
+		try {
+			return (AbstractFileInfoMatcher) element.createExecutableExtension("class"); //$NON-NLS-1$
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return null;
+		}
 	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IFilterDescriptor#isFirstOrdering()
 	 */

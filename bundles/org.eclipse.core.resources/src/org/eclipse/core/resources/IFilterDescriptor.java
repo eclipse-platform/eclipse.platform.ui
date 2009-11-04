@@ -12,14 +12,14 @@
 package org.eclipse.core.resources;
 
 /**
- * A filter descriptor contains information about a filter factory
+ * A filter descriptor contains information about a filter type
  * obtained from the plug-in manifest (<code>plugin.xml</code>) files.
  * <p>
  * Filter descriptors are platform-defined objects that exist
  * independent of whether that filter's bundle has been started. 
  * </p>
  * 
- * @see IFileInfoFilterFactory
+ * @see AbstractFileInfoMatcher
  * @see IWorkspace#getFilterDescriptor(String)
  * @see IWorkspace#getFilterDescriptors()
  * @since 3.6
@@ -61,13 +61,6 @@ public interface IFilterDescriptor {
 	 * @return The human-readable filter description
 	 */
 	public abstract String getDescription();
-
-	/**
-	 * Returns the factory for creating filters of this type.
-	 * 
-	 * @return The factory for creating filters of this type.
-	 */
-	public abstract IFileInfoFilterFactory getFactory();
 
 	/**
 	 * Returns the fully qualified id of the filter extension.
