@@ -15,10 +15,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import javax.inject.Inject;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -171,6 +173,17 @@ public class KeyBindingDispatcher {
 		return false;
 	}
 
+	private EBindingService bindingService;
+
+	private IEclipseContext context;
+
+	private EHandlerService handlerService;
+
+	/**
+	 * The listener that runs key events past the global key bindings.
+	 */
+	private final KeyDownFilter keyDownFilter = new KeyDownFilter();
+
 	/**
 	 * The single out-of-order listener used by the workbench. This listener is attached to one
 	 * widget at a time, and is used to catch key down events after all processing is done. This
@@ -313,11 +326,26 @@ public class KeyBindingDispatcher {
 	}
 
 	private EBindingService getBindingService() {
-		return null;
+		if (bindingService == null) {
+			bindingService = (EBindingService) context.get(EBindingService.class.getName());
+		}
+		return bindingService;
 	}
 
 	private EHandlerService getHandlerService() {
-		return null;
+		if (handlerService == null) {
+			handlerService = (EHandlerService) context.get(EHandlerService.class.getName());
+		}
+		return handlerService;
+	}
+
+	/**
+	 * An accessor for the filter that processes key down and traverse events on the display.
+	 * 
+	 * @return The global key down and traverse filter; never <code>null</code>.
+	 */
+	public KeyDownFilter getKeyDownFilter() {
+		return keyDownFilter;
 	}
 
 	/**
@@ -452,5 +480,10 @@ public class KeyBindingDispatcher {
 
 	private void resetState(boolean b) {
 		state = KeySequence.getInstance();
+	}
+
+	@Inject
+	public void setContext(IEclipseContext context) {
+		this.context = context;
 	}
 }
