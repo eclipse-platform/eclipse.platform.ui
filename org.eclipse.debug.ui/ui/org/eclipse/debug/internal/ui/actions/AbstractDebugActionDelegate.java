@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,13 +146,27 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 */
 	protected void update(IAction action, ISelection s) {
 		if (s instanceof IStructuredSelection) {
-			IStructuredSelection ss = (IStructuredSelection)s;
+			IStructuredSelection ss = getTargetSelection((IStructuredSelection)s);
 			action.setEnabled(getEnableStateForSelection(ss));
 			setSelection(ss);
 		} else {
 			action.setEnabled(false);
 			setSelection(StructuredSelection.EMPTY);
 		}
+	}
+	
+	/**
+	 * Returns a selection this operation should act on based on the given selection.
+	 * Provides an opportunity for actions to translate the selection/targets of the
+	 * operation.
+	 * <p>
+	 * By default, the original selection is returned. Subclasses may override.
+	 * </p>
+	 * @param s selection
+	 * @return selection to operate on
+	 */
+	protected IStructuredSelection getTargetSelection(IStructuredSelection s) {
+		return s;
 	}
 	
 	/**

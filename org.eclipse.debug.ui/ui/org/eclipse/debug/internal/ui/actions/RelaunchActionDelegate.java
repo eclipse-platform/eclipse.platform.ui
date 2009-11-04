@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,13 +11,17 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
-import org.eclipse.debug.core.model.IDebugElement;
-import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.ui.DebugUITools;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 
 public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	
@@ -42,16 +46,28 @@ public class RelaunchActionDelegate extends AbstractDebugActionDelegate {
 	 * @see AbstractDebugActionDelegate#isEnabledFor(Object)
 	 */
 	protected boolean isEnabledFor(Object element) {
-		ILaunch launch= null;
-		if (element instanceof ILaunch) {
-			launch= (ILaunch)element;
-		} else if (element instanceof IDebugElement) {
-			launch= ((IDebugElement)element).getLaunch();
-		} else if (element instanceof IProcess) {
-			launch= ((IProcess)element).getLaunch();
-		}
-		
+		ILaunch launch= DebugUIPlugin.getLaunch(element);
 		return launch != null && launch.getLaunchConfiguration() != null && LaunchConfigurationManager.isVisible(launch.getLaunchConfiguration());
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.actions.AbstractDebugActionDelegate#getTargetSelection(org.eclipse.jface.viewers.IStructuredSelection)
+	 */
+	protected IStructuredSelection getTargetSelection(IStructuredSelection s) {
+		if (s.isEmpty()) {
+			return s;
+		}
+		Set dups = new LinkedHashSet();
+		Iterator iterator = s.iterator();
+		while (iterator.hasNext()) {
+			Object object = iterator.next();
+			ILaunch launch = DebugUIPlugin.getLaunch(object);
+			if (launch == null) {
+				return s;
+			}
+			dups.add(launch);
+		}
+		return new StructuredSelection(dups.toArray());
 	}
 			
 	/**
