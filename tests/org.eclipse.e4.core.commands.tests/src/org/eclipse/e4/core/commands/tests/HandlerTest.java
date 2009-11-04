@@ -234,7 +234,6 @@ public class HandlerTest extends TestCase {
 
 	public void testMethodWithAnnocation() throws Exception {
 		Info helloInfo = new Info("Hello");
-		workbenchContext.set(Info.class.getName(), helloInfo);
 		ECommandService cs = (ECommandService) workbenchContext
 				.get(ECommandService.class.getName());
 		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
@@ -243,13 +242,14 @@ public class HandlerTest extends TestCase {
 		HandlerWithAnnotations handler = new HandlerWithAnnotations();
 		wHS.activateHandler(TEST_ID1, handler);
 
-		assertEquals(helloInfo, wHS.executeHandler(cmd));
+		workbenchContext.set(Info.class.getName(), helloInfo);
+		assertNull(wHS.executeHandler(cmd));
 		
 		workbenchContext.remove(Info.class.getName());
 		assertNull(wHS.executeHandler(cmd));
 		
 		workbenchContext.set(ACTIVE_INFO_ID, helloInfo);
-		assertNull(wHS.executeHandler(cmd));
+		assertEquals(helloInfo, wHS.executeHandler(cmd));
 		
 		workbenchContext.remove(ACTIVE_INFO_ID);
 		assertNull(wHS.executeHandler(cmd));
