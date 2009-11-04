@@ -164,6 +164,7 @@ public abstract class AbstractDebugActionDelegate implements IViewActionDelegate
 	 * </p>
 	 * @param s selection
 	 * @return selection to operate on
+	 * @since 3.6
 	 */
 	protected IStructuredSelection getTargetSelection(IStructuredSelection s) {
 		return s;
