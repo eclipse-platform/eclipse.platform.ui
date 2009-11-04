@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.LinkedList;
 
+import org.eclipse.core.resources.FileInfoMatcherDescription;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFileInfoMatcherDescription;
 import org.eclipse.core.resources.IFilterDescriptor;
@@ -1582,30 +1583,19 @@ class FilterCopy implements IResourceFilterDescription {
 	 * @see org.eclipse.core.resources.IResourceFilterDescription#getFileInfoMatcherDescription()
 	 */
 	public IFileInfoMatcherDescription getFileInfoMatcherDescription() {
-		return new IFileInfoMatcherDescription() {
-			public Object getArguments() {
-				Object arg = FilterCopy.this.getArguments();
-				if (arg instanceof FilterCopy []) {
-					FilterCopy [] filterCopies = (FilterCopy []) arg;
-					IFileInfoMatcherDescription[] descriptions = new IFileInfoMatcherDescription[filterCopies.length];
-					for (int i = 0; i < descriptions.length; i++)
-						descriptions[i] = filterCopies[i].getFileInfoMatcherDescription();
-					return descriptions;
-				}
-				return arg;
-			}
-			public String getId() {
-				return FilterCopy.this.getId();
-			}
-
-			public void setArguments(Object arguments) {
-				FilterCopy.this.setArguments(arguments);
-			}
-
-			public void setId(String id) {
-				FilterCopy.this.setId(id);
-			}
-		};
+		FileInfoMatcherDescription desc = new FileInfoMatcherDescription();
+		desc.setId(getId());
+		
+		Object arg = FilterCopy.this.getArguments();
+		if (arg instanceof FilterCopy []) {
+			FilterCopy [] filterCopies = (FilterCopy []) arg;
+			IFileInfoMatcherDescription[] descriptions = new IFileInfoMatcherDescription[filterCopies.length];
+			for (int i = 0; i < descriptions.length; i++)
+				descriptions[i] = filterCopies[i].getFileInfoMatcherDescription();
+			arg = descriptions;
+		}
+		desc.setArguments(arg);
+		return desc;
 	}
 
 	/* (non-Javadoc)
