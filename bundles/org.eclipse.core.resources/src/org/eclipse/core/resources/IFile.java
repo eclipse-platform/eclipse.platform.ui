@@ -384,7 +384,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *
 	 * @param localLocation a file system path where the file should be linked 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   ({@link IResource#ALLOW_MISSING_LOCAL} and {@link IResource#REPLACE})
+	 *   ({@link IResource#ALLOW_MISSING_LOCAL}, {@link IResource#REPLACE} and {@link IResource#HIDDEN})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -411,6 +411,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#isLinked()
 	 * @see IResource#ALLOW_MISSING_LOCAL
+	 * @see IResource#REPLACE
+	 * @see IResource#HIDDEN
 	 * @since 2.1
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -465,7 +467,7 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 *
 	 * @param location a file system URI where the file should be linked 
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   ({@link IResource#ALLOW_MISSING_LOCAL} and {@link IResource#REPLACE})
+	 *   ({@link IResource#ALLOW_MISSING_LOCAL}, {@link IResource#REPLACE} and {@link IResource#HIDDEN})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -492,6 +494,8 @@ public interface IFile extends IResource, IEncodedStorage, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#isLinked()
 	 * @see IResource#ALLOW_MISSING_LOCAL
+	 * @see IResource#REPLACE
+	 * @see IResource#HIDDEN
 	 * @since 3.2
 	 */
 	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;

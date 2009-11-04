@@ -212,7 +212,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * 
 	 * @param localLocation a file system path where the folder should be linked
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (only ALLOW_MISSING_LOCAL is relevant here) 
+	 *   ({@link IResource#ALLOW_MISSING_LOCAL}, {@link IResource#REPLACE}, {@link IResource#BACKGROUND_REFRESH}, and {@link IResource#HIDDEN})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -239,6 +239,9 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#isLinked()
 	 * @see IResource#ALLOW_MISSING_LOCAL
+	 * @see IResource#REPLACE
+	 * @see IResource#BACKGROUND_REFRESH
+	 * @see IResource#HIDDEN
 	 * @since 2.1
 	 */
 	public void createLink(IPath localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException;
@@ -297,7 +300,7 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * 
 	 * @param location a file system path where the folder should be linked
 	 * @param updateFlags bit-wise or of update flag constants
-	 *   (only ALLOW_MISSING_LOCAL is relevant here) 
+	 *   ({@link IResource#ALLOW_MISSING_LOCAL}, {@link IResource#REPLACE}, {@link IResource#BACKGROUND_REFRESH}, and {@link IResource#HIDDEN})
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:
@@ -324,6 +327,9 @@ public interface IFolder extends IContainer, IAdaptable {
 	 * Cancelation can occur even if no progress monitor is provided.
 	 * @see IResource#isLinked()
 	 * @see IResource#ALLOW_MISSING_LOCAL
+	 * @see IResource#REPLACE
+	 * @see IResource#BACKGROUND_REFRESH
+	 * @see IResource#HIDDEN
 	 * @since 3.2
 	 */
 	public void createLink(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
