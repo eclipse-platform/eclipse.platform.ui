@@ -732,10 +732,13 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(boolean)
+	/**
+	 * Sets whether this working copy is a template.
+	 * 
+	 * @param isTemplate
+	 * @throws CoreException
 	 */
-	public void setTemplate(boolean isTemplate) throws CoreException {
+	void setTemplate(boolean isTemplate) throws CoreException {
 		if (!isTemplate) {
 			removeAttribute(ATTR_IS_TEMPLATE);
 		} else {
@@ -750,6 +753,9 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, boolean)
 	 */
 	public void setTemplate(ILaunchConfiguration template, boolean copy) throws CoreException {
+		if (template != null && !template.isTemplate()) {
+			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_8));
+		}
 		if (template != null && template.isWorkingCopy()) {
 			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_6));
 		}
@@ -765,6 +771,27 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			setAttribute(ATTR_TEMPLATE, template.getMemento());
 			setTemplate(false); // template attribute was copied, so now remove it
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#doSave(int)
+	 */
+	public ILaunchConfiguration doSave(int flag) throws CoreException {
+		ILaunchConfiguration[] children = null;
+		if (UPDATE_TEMPLATE_CHILDREN == flag) {
+			if (!isNew() && isMoved() && getParent() == null) {
+				children = getOriginal().getTemplateChildren();
+			}
+		}
+		ILaunchConfiguration saved = doSave();
+		if (children != null) {
+			for (int i = 0; i < children.length; i++) {
+				ILaunchConfigurationWorkingCopy wc = children[i].getWorkingCopy();
+				wc.setTemplate(saved, false);
+				wc.doSave();
+			}
+		}
+		return saved;
 	}
 }
 

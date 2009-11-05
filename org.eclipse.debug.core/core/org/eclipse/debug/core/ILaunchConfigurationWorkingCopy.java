@@ -64,11 +64,40 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * saved to the parent working copy and the parent working copy is returned without
 	 * effecting the original launch configuration.
 	 * </p>
+	 * <p>
+	 * Equivalent to #doSave(UPDATE_NONE).
+	 * </p>
 	 * @return handle to saved launch configuration
 	 * @exception CoreException if an exception occurs while 
 	 *  writing this configuration to its underlying file.
+	 * @see #doSave(int)
 	 */
 	public ILaunchConfiguration doSave() throws CoreException;
+	
+	/**
+	 * Saves this working copy to its underlying file and returns
+	 * a handle to the resulting launch configuration.
+	 * Has no effect if this configuration does not need saving.
+	 * Creates the underlying file if not yet created.
+	 * <p>
+	 * Since 3.3, if this is a nested working copy, the contents of this working copy are
+	 * saved to the parent working copy and the parent working copy is returned without
+	 * effecting the original launch configuration.
+	 * </p>
+	 * <p>
+	 * Updates any affected template children based on the given flag. When a working
+	 * copy is renamed or moved to a new location, template children's back pointers
+	 * will be updated to refer the proper configuration.
+	 * </p>
+	 * @param flag one of {@link ILaunchConfiguration#UPDATE_NONE} or
+	 *  {@link ILaunchConfiguration#UPDATE_TEMPLATE_CHILDREN}
+	 * @return handle to saved launch configuration
+	 * @exception CoreException if an exception occurs while 
+	 *  writing this configuration or any of its affected template children
+	 *  to underlying storage
+	 * @since 3.6
+	 */
+	public ILaunchConfiguration doSave(int flag) throws CoreException;	
 			
 	/**
 	 * Sets the integer-valued attribute with the given name.  
@@ -273,16 +302,6 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @since 3.6
 	 */
 	public void copyAttributes(ILaunchConfiguration template) throws CoreException;
-	
-	/**
-	 * Sets whether this configuration is to be considered as a template.
-	 * 
-	 * @param isTemplate whether this configuration is to be considered as a template
-	 * @exception CoreException if an attempt is made to nest templates - this configuration
-	 * 	cannot already be associated with a template
-	 * @since 3.6
-	 */
-	public void setTemplate(boolean isTemplate) throws CoreException;
 	
 	/**
 	 * Sets the template that this configuration is based on, possibly <code>null</code>,

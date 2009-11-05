@@ -504,6 +504,15 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	}
 
 	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newTemplate(org.eclipse.core.resources.IContainer, java.lang.String)
+	 */
+	public ILaunchConfigurationWorkingCopy newTemplate(IContainer container, String name) throws CoreException {
+		LaunchConfigurationWorkingCopy wc = new LaunchConfigurationWorkingCopy(container, name, this);
+		wc.setTemplate(true);
+		return wc;
+	}
+
+	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
 	 */
 	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, ILaunchConfiguration template) throws CoreException {
@@ -513,7 +522,5 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		}
 		return wc;
 	}
-
-
 }
 

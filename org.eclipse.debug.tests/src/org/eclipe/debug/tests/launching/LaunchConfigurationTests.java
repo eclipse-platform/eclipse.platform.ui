@@ -142,6 +142,27 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	}
 	
 	/** 
+	 * Creates and returns a new launch config the given name, local
+	 * or shared, with 4 attributes:
+	 *  - String1 = "String1"
+	 *  - Int1 = 1
+	 *  - Boolean1 = true
+	 *  - Boolean2 = false
+	 */
+	protected ILaunchConfigurationWorkingCopy newTemplate(IContainer container, String name) throws CoreException {
+		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
+		 assertTrue("Should support debug mode", type.supportsMode(ILaunchManager.DEBUG_MODE)); //$NON-NLS-1$
+		 assertTrue("Should support run mode", type.supportsMode(ILaunchManager.RUN_MODE)); //$NON-NLS-1$
+		 ILaunchConfigurationWorkingCopy wc = type.newTemplate(container, name);
+		 wc.setAttribute("String1", "String1"); //$NON-NLS-1$ //$NON-NLS-2$
+		 wc.setAttribute("Int1", 1); //$NON-NLS-1$
+		 wc.setAttribute("Boolean1", true); //$NON-NLS-1$
+		 wc.setAttribute("Boolean2", false); //$NON-NLS-1$
+		 assertTrue("Should need saving", wc.isDirty()); //$NON-NLS-1$
+		 return wc;
+	}	
+	
+	/** 
 	 * Creates and returns a new launch configuration with the given name, local
 	 * or shared, with no attributes
 	 */
@@ -149,6 +170,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
 		 ILaunchConfigurationWorkingCopy wc = type.newInstance(container, name);
 		 assertEquals("Should have no attributes", 0, wc.getAttributes().size());
+		 return wc;
+	}	
+	
+	/** 
+	 * Creates and returns a new launch configuration template with the given name, local
+	 * or shared, with no attributes
+	 */
+	protected ILaunchConfigurationWorkingCopy newEmptyTemplate(IContainer container, String name) throws CoreException {
+		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
+		 ILaunchConfigurationWorkingCopy wc = type.newTemplate(container, name);
+		 assertEquals("Should have 1 attribute (IS_TEMPLATE)", 1, wc.getAttributes().size());
 		 return wc;
 	}	
 		
@@ -1067,7 +1099,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 * @throws CoreException
 	 */
 	public void testCreationFromTemplate() throws CoreException {
-		ILaunchConfigurationWorkingCopy temp = newConfiguration(null, "test-creation-from-template");
+		ILaunchConfigurationWorkingCopy temp = newTemplate(null, "test-creation-from-template");
 		temp.setAttribute("TEMPLATE", "TEMPLATE");
 		ILaunchConfiguration template = temp.doSave();
 		ILaunchConfigurationType type = temp.getType();
@@ -1084,16 +1116,16 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 * @throws CoreException
 	 */
 	public void testIsTemplate() throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-is-template");
-		wc.setTemplate(true);
+		ILaunchConfigurationWorkingCopy wc = newTemplate(null, "test-is-template");
 		ILaunchConfiguration template = wc.doSave();
 		assertTrue("Should be a template", template.isTemplate());
 		ILaunchConfiguration[] templates = wc.getType().getTemplates();
-		assertEquals("Expecting one template", 1, templates.length);
-		wc = template.getWorkingCopy();
-		wc.setTemplate(false);
-		template = wc.doSave();
-		assertFalse("Should not be a template", template.isTemplate());
+		List list = new ArrayList();
+		for (int i = 0; i < templates.length; i++) {
+			list.add(templates[i]);
+		}
+		assertFalse("Expecting at least template", list.isEmpty());
+		assertTrue("Missing created template", list.contains(template));
 	}
 	
 	/**
@@ -1102,7 +1134,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 * @throws CoreException
 	 */
 	public void testTemplateChildren() throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-references");
+		ILaunchConfigurationWorkingCopy wc = newTemplate(null, "test-references");
 		ILaunchConfiguration template = wc.doSave();
 		
 		ILaunchConfigurationWorkingCopy r1 = newConfiguration(null, "referee-1");
@@ -1132,7 +1164,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 */
 	public void testTemplateRemoveBehavior() throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-remove");
-		ILaunchConfigurationWorkingCopy t1 = newEmptyConfiguration(null, "template-1");
+		ILaunchConfigurationWorkingCopy t1 = newEmptyTemplate(null, "template-1");
 		t1.setAttribute("COMMON", "TEMPLATE-1");
 		t1.setAttribute("T1", "T1");
 		t1.setAttribute("String1", "String2");
@@ -1156,7 +1188,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 */
 	public void testUnTemplate() throws CoreException {
 		ILaunchConfigurationWorkingCopy wc = newConfiguration(null, "test-un-template");
-		ILaunchConfigurationWorkingCopy t1 = newEmptyConfiguration(null, "template-un");
+		ILaunchConfigurationWorkingCopy t1 = newEmptyTemplate(null, "template-un");
 		t1.setAttribute("COMMON", "TEMPLATE-1");
 		t1.setAttribute("T1", "T1");
 		t1.setAttribute("String1", "String2");
@@ -1178,11 +1210,9 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	 * @throws CoreException
 	 */
 	public void testNestedTemplates() throws CoreException {
-		ILaunchConfigurationWorkingCopy t1 = newConfiguration(null, "test-nest-root");
-		ILaunchConfigurationWorkingCopy t2 = newConfiguration(null, "template-nested");
-		t1.setTemplate(true);
+		ILaunchConfigurationWorkingCopy t1 = newTemplate(null, "test-nest-root");
+		ILaunchConfigurationWorkingCopy t2 = newTemplate(null, "template-nested");
 		ILaunchConfiguration template = t1.doSave();
-		t2.setTemplate(true);
 		try {
 			t2.setTemplate(template, true);
 		} catch (CoreException e) {
@@ -1191,24 +1221,19 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertTrue("Shoud not be able to nest templates", false);
 	}
 	
-	/**
-	 * Tests that nested templates are not allowed.
-	 * 
-	 * @throws CoreException
-	 */
-	public void testNestedTemplates2() throws CoreException {
-		ILaunchConfigurationWorkingCopy t1 = newConfiguration(null, "test-nest-root");
-		ILaunchConfigurationWorkingCopy t2 = newConfiguration(null, "template-nested");
-		t1.setTemplate(true);
-		ILaunchConfiguration template = t1.doSave();
-		t2.setTemplate(template, true);
+	public void testIllegalTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy c1 = newConfiguration(null, "test-config");
+		ILaunchConfigurationWorkingCopy t1 = newConfiguration(null, "test-not-a-template");
+		ILaunchConfiguration config = t1.doSave();
 		try {
-			t2.setTemplate(true);
+			c1.setTemplate(config, true);
 		} catch (CoreException e) {
+			// expected
 			return;
 		}
-		assertTrue("Shoud not be able to nest templates", false);
-	}	
+		assertTrue("Should not be able to set configration as template", false);
+	}
+	
 }
 
 

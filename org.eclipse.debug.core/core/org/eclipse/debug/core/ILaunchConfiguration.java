@@ -90,6 +90,23 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 */
 	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
 	
+	
+	/**
+	 * Flag indicating that only this configuration is to be modified by an operation.
+	 * Any template children referring to this configuration will not be modified.
+	 * 
+	 * @since 3.6
+	 */
+	public static final int UPDATE_NONE = 0;
+	
+	/**
+	 * Flag indicating that this configuration and any effected template children of this template
+	 * should be updated when this configuration is modified.
+	 * 
+	 * @since 3.6
+	 */
+	public static final int UPDATE_TEMPLATE_CHILDREN = 1;
+	
 	/**
 	 * Returns whether the contents of this launch configuration are 
 	 * equal to the contents of the given launch configuration.
@@ -124,7 +141,9 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * Deletes this launch configuration. This configuration's underlying
 	 * storage is deleted. Has no effect if this configuration
 	 * does not exist.
-	 * 
+	 * <p>
+	 * Equivalent to #delete(UPDATE_NONE)
+	 * </p>
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>An exception occurs while deleting this configuration's
@@ -132,6 +151,24 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 */
 	public void delete() throws CoreException;
+	
+	/**
+	 * Deletes this launch configuration. This configuration's underlying
+	 * storage is deleted. Has no effect if this configuration
+	 * does not exist.
+	 * <p>
+	 * When UPDATE_TEMPLATE_CHILDREN is specified, back pointers to this template
+	 * are cleared in any template children.
+	 * </p>
+	 * @param flag one of UPDATE_NONE or UPDATE_TEMPLATE_CHILDREN
+	 * @exception CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>An exception occurs while deleting this configuration's
+	 *  underlying storage or updating any template children.</li>
+	 * </ul>
+	 * @since 3.6
+	 */
+	public void delete(int flag) throws CoreException;
 	
 	/**
 	 * Returns whether this launch configuration's underlying

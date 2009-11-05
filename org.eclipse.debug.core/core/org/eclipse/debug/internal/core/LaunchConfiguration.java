@@ -317,6 +317,22 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#delete(int)
+	 */
+	public void delete(int flag) throws CoreException {
+		if (flag == UPDATE_TEMPLATE_CHILDREN && isTemplate()) {
+			// clear back pointers to this configuration
+			ILaunchConfiguration[] children = getTemplateChildren();
+			for (int i = 0; i < children.length; i++) {
+				ILaunchConfigurationWorkingCopy child = children[i].getWorkingCopy();
+				child.setTemplate(null, false);
+				child.doSave();
+			}
+		}
+		delete();
+	}
+	
 	/**
 	 * Returns whether this configuration is equal to the
 	 * given configuration. Two configurations are equal if
