@@ -49,8 +49,7 @@ public class SymlinkTest extends FileSystemTest {
 		// A Platform is testable if it supports the "ln -s" command.
 		String os = Platform.getOS();
 		//currently we only support linux, solaris and mac os
-		if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_SOLARIS) || os.equals(Platform.OS_MACOSX)
-		//		  ||os.equals(Platform.OS_AIX)
+		if (os.equals(Platform.OS_LINUX) || os.equals(Platform.OS_SOLARIS) || os.equals(Platform.OS_MACOSX) || os.equals(Platform.OS_AIX)
 		//		  ||os.equals(Platform.OS_HPUX)
 		//		  ||isWindowsVista()
 		) {
@@ -339,7 +338,7 @@ public class SymlinkTest extends FileSystemTest {
 	public void testSymlinkEnabled() {
 		String os = Platform.getOS();
 		String arch = Platform.getOSArch();
-		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os)) {
+		if (Platform.OS_LINUX.equals(os) || (Platform.OS_SOLARIS.equals(os) && Platform.ARCH_SPARC.equals(arch)) || Platform.OS_MACOSX.equals(os) || Platform.OS_AIX.equals(os)) {
 			assertTrue(haveSymlinks());
 		} else {
 			assertFalse(haveSymlinks());
