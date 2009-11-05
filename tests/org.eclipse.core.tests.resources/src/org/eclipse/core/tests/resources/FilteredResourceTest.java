@@ -723,8 +723,8 @@ public class FilteredResourceTest extends ResourceTest {
 
 		// Swap the links around, loading may be order independent...
 		try {
-			folder2.setLinkLocation(parentLoc, IResource.NONE, getMonitor());
-			folder1.setLinkLocation(childLoc, IResource.FORCE, getMonitor());
+			folder2.createLink(parentLoc, IResource.REPLACE, getMonitor());
+			folder1.createLink(childLoc, IResource.REPLACE | IResource.FORCE, getMonitor());
 
 			// Filter out all children from existingFolderInExistingProject 
 			folder2.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
@@ -866,8 +866,8 @@ public class FilteredResourceTest extends ResourceTest {
 
 		// Swap the links around, loading may be order independent...
 		try {
-			folder2.setLinkLocation(parentLoc, IResource.NONE, getMonitor());
-			folder1.setLinkLocation(childLoc, IResource.FORCE, getMonitor());
+			folder2.createLink(parentLoc, IResource.REPLACE | IResource.NONE, getMonitor());
+			folder1.createLink(childLoc, IResource.REPLACE | IResource.FORCE, getMonitor());
 
 			// Filter out all children from existingFolderInExistingProject 
 			folder2.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
