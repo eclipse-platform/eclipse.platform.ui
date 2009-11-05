@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Control;
  * </ul></p>
  * <p>
  * Clients may implement this interface or use the default implementation provided
- * by <code>OverviewlRuler</code>.</p>
+ * by <code>OverviewRuler</code>.</p>
  *
  * @see org.eclipse.jface.text.ITextViewer
  * @since 2.1
@@ -52,7 +52,7 @@ public interface IOverviewRuler extends IVerticalRuler {
 	 * overview ruler. Assumes that all annotations are represented using the
 	 * same height.
 	 *
-	 * @return int the visual height of an annotation
+	 * @return the visual height of an annotation
 	 */
 	int getAnnotationHeight();
 
