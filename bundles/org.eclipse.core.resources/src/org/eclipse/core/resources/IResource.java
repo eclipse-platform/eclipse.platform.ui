@@ -2669,42 +2669,4 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	 * @see IResourceDelta#DESCRIPTION
 	 */
 	public void touch(IProgressMonitor monitor) throws CoreException;
-
-	/**
-	 * Sets the value of the link location for a linked resource.
-	 * 
-	 * @param location
-	 *            the new location of the target link resource
-	 * @param updateFlags
-	 *            bit-wise or of update flag constants ({@link #FORCE},
-	 *            {@link #KEEP_HISTORY}, {@link #SHALLOW},
-	 *            {@link #BACKGROUND_REFRESH} and {@link #REPLACE}).
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @exception CoreException
-	 *                if isLinked() returns false.
-	 * @since 3.6
-	 */
-	public void setLinkLocation(URI location, int updateFlags, IProgressMonitor monitor) throws CoreException;
-
-	/**
-	 * Sets the value of the link location for a linked resource.
-	 * 
-	 * @param location
-	 *            the new location of the target link resource
-	 * @param updateFlags
-	 *            bit-wise or of update flag constants ({@link #FORCE},
-	 *            {@link #KEEP_HISTORY}, {@link #SHALLOW},
-	 *            {@link #BACKGROUND_REFRESH} and {@link #REPLACE}).
-	 * @param monitor
-	 *            a progress monitor, or <code>null</code> if progress
-	 *            reporting is not desired
-	 * @exception CoreException
-	 *                if isLinked() returns false.
-	 * @since 3.6
-	 */
-	public void setLinkLocation(IPath location, int updateFlags, IProgressMonitor monitor) throws CoreException;
-	
-	
 }
