@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
  *******************************************************************************/
-package org.eclipse.ui.ide.dialogs;
+package org.eclipse.ui.internal.ide.dialogs;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResourceFilterDescription;
@@ -22,7 +22,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.SelectionDialog;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-import org.eclipse.ui.internal.ide.dialogs.ResourceFilterGroup;
 
 /**
  * @since 3.6
@@ -108,8 +107,15 @@ public class ResourceFilterEditDialog extends SelectionDialog {
 	/**
 	 * @return the filters that were configured on this resource
 	 */
-	public IResourceFilterDescription[] getFilters() {
+	public UIResourceFilterDescription[] getFilters() {
 		return resourceFilterGroup.getFilters();
+	}
+
+	/**
+	 * @param filters the initial filters of the dialog
+	 */
+	public void setFilters(UIResourceFilterDescription[] filters) {
+		resourceFilterGroup.setFilters(filters);
 	}
 
 	/**

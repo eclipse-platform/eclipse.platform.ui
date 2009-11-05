@@ -112,7 +112,7 @@ public class ResourceFilterGroup {
 
 	private TreeViewer filterView;
 	private Filters filters;
-	private IResourceFilterDescription[] initialFilters = new IResourceFilterDescription[0];
+	private UIResourceFilterDescription[] initialFilters = new UIResourceFilterDescription[0];
 	private LabelProvider labelProvider;
 	private Image checkIcon = null;
 
@@ -166,7 +166,7 @@ public class ResourceFilterGroup {
 				IResourceFilterDescription[] tmp = resource.getFilters();
 				children = new LinkedList();
 				for (int i = 0; i < tmp.length; i++)
-					addChild(new FilterCopy(tmp[i]));
+					addChild(new FilterCopy(UIResourceFilterDescription.wrap(tmp[i])));
 			} catch (CoreException e) {
 				ErrorDialog.openError(shell, NLS.bind(
 						IDEWorkbenchMessages.InternalError, null), e
@@ -175,6 +175,14 @@ public class ResourceFilterGroup {
 		}
 
 		public Filters(IResourceFilterDescription filters[]) {
+			children = new LinkedList();
+			if (filters != null) {
+				for (int i = 0; i < filters.length; i++)
+					addChild(new FilterCopy(UIResourceFilterDescription.wrap(filters[i])));
+			}
+		}
+
+		public Filters(UIResourceFilterDescription filters[]) {
 			children = new LinkedList();
 			if (filters != null) {
 				for (int i = 0; i < filters.length; i++)
@@ -200,7 +208,7 @@ public class ResourceFilterGroup {
 			changed = true;
 		}
 
-		public void moveUp(IResourceFilterDescription filter) {
+		public void moveUp(UIResourceFilterDescription filter) {
 			FilterCopy[] content = getChildren();
 			for (int i = 1; i < content.length; i++) {
 				if (content[i] == filter) {
@@ -213,7 +221,7 @@ public class ResourceFilterGroup {
 			changed = true;
 		}
 
-		public void moveDown(IResourceFilterDescription filter) {
+		public void moveDown(UIResourceFilterDescription filter) {
 			FilterCopy[] content = getChildren();
 			for (int i = 0; i < (content.length - 1); i++) {
 				if (content[i] == filter) {
@@ -979,9 +987,9 @@ public class ResourceFilterGroup {
 	/**
 	 * @return the filters that were configured on this resource
 	 */
-	public IResourceFilterDescription[] getFilters() {
+	public UIResourceFilterDescription[] getFilters() {
 		FilterCopy[] newFilters = filters.getChildren();
-		IResourceFilterDescription[] result = new IResourceFilterDescription[newFilters.length];
+		UIResourceFilterDescription[] result = new UIResourceFilterDescription[newFilters.length];
 		for (int i = 0; i < newFilters.length; i++) {
 			result[i] = newFilters[i];
 		}
@@ -992,6 +1000,15 @@ public class ResourceFilterGroup {
 	 * @param filters
 	 */
 	public void setFilters(IResourceFilterDescription[] filters) {
+		initialFilters = new UIResourceFilterDescription[filters.length];
+		for (int i = 0; i < filters.length; i++)
+			initialFilters[i] = UIResourceFilterDescription.wrap(filters[i]);
+	}
+
+	/**
+	 * @param filters
+	 */
+	public void setFilters(UIResourceFilterDescription[] filters) {
 		initialFilters = filters;
 	}
 
@@ -1192,7 +1209,7 @@ class FilterTypeUtil {
 		return -1;
 	}
 
-	static Object getValue(IResourceFilterDescription filter, String property) {
+	static Object getValue(UIResourceFilterDescription filter, String property) {
 		if (property.equals(ID)) {
 			String id = filter.getFileInfoMatcherDescription().getId();
 			int index = getDescriptorIndex(id);
@@ -1321,7 +1338,7 @@ class FilterTypeUtil {
 	}
 }
 
-class FilterCopy implements IResourceFilterDescription {
+class FilterCopy extends UIResourceFilterDescription {
 	Object arguments = null;
 	String id = null;
 	IPath path = null;
@@ -1329,11 +1346,11 @@ class FilterCopy implements IResourceFilterDescription {
 	int type = 0;
 	FilterCopy parent = null;
 	LinkedList children = null;
-	IResourceFilterDescription original = null;
+	UIResourceFilterDescription original = null;
 	int serialNumber = ++lastSerialNumber;
 	static private int lastSerialNumber = 0;
 
-	public FilterCopy(IResourceFilterDescription filter) {
+	public FilterCopy(UIResourceFilterDescription filter) {
 		internalCopy(filter);
 		original = filter;
 	}
@@ -1365,12 +1382,12 @@ class FilterCopy implements IResourceFilterDescription {
 		return parent;
 	}
 
-	public void copy(IResourceFilterDescription filter) {
+	public void copy(UIResourceFilterDescription filter) {
 		internalCopy(filter);
 		argumentsChanged();
 	}
 
-	private void internalCopy(IResourceFilterDescription filter) {
+	private void internalCopy(UIResourceFilterDescription filter) {
 		children = null;
 		id = filter.getFileInfoMatcherDescription().getId();
 		path = filter.getPath();
@@ -1404,7 +1421,8 @@ class FilterCopy implements IResourceFilterDescription {
 	}
 
 	/**
-	 * @param iFileInfoMatcherDescription
+	 * @param parent 
+	 * @param description
 	 */
 	public FilterCopy(FilterCopy parent, IFileInfoMatcherDescription description) {
 		children = null;
@@ -1527,7 +1545,7 @@ class FilterCopy implements IResourceFilterDescription {
 					IResourceFilterDescription[] filters = (IResourceFilterDescription[]) arguments;
 					if (filters != null)
 						for (int i = 0; i < filters.length; i++) {
-							FilterCopy child = new FilterCopy(filters[i]);
+							FilterCopy child = new FilterCopy(UIResourceFilterDescription.wrap(filters[i]));
 							child.parent = this;
 							children.add(child);
 						}
@@ -1596,14 +1614,6 @@ class FilterCopy implements IResourceFilterDescription {
 		}
 		desc.setArguments(arg);
 		return desc;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.core.resources.IResourceFilterDescription#setFileInfoMatcherDescription(org.eclipse.core.resources.IFileInfoMatcherDescription)
-	 */
-	public void setFileInfoMatcherDescription(
-			IFileInfoMatcherDescription description) {
-		// not implemented
 	}
 }
 

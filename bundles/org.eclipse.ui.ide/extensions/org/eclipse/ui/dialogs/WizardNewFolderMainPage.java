@@ -15,8 +15,8 @@ package org.eclipse.ui.dialogs;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
 import java.util.Iterator;
+
 import org.eclipse.core.commands.ExecutionException;
-import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -49,13 +49,14 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.dialogs.ResourceFilterEditDialog;
 import org.eclipse.ui.ide.undo.CreateFolderOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
+import org.eclipse.ui.internal.ide.dialogs.ResourceFilterEditDialog;
+import org.eclipse.ui.internal.ide.dialogs.UIResourceFilterDescription;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
 
 /**
@@ -93,7 +94,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 	private Composite linkedResourceComposite;
 
-	private IResourceFilterDescription[] filterList = null;
+	private UIResourceFilterDescription[] filterList = null;
 	
 	/**
 	 * Height of the "advanced" linked resource group. Set when the advanced

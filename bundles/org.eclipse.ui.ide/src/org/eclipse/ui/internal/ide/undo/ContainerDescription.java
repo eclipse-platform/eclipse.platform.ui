@@ -15,7 +15,6 @@ import java.net.URI;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -27,6 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.SubProgressMonitor;
 import org.eclipse.ui.ide.undo.ResourceDescription;
+import org.eclipse.ui.internal.ide.dialogs.UIResourceFilterDescription;
 
 /**
  * ContainerDescription is a lightweight description that describes a container
@@ -43,7 +43,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 
 	URI location;
 
-	IResourceFilterDescription[] filters;
+	UIResourceFilterDescription[] filters;
 	
 	String defaultCharSet;
 
@@ -285,7 +285,7 @@ public abstract class ContainerDescription extends AbstractResourceDescription {
 	 * @param location
 	 *            the location URI, or <code>null</code> if there is no link
 	 */
-	public void setFilters(IResourceFilterDescription[] filters) {
+	public void setFilters(UIResourceFilterDescription[] filters) {
 		this.filters = filters;
 	}
 
