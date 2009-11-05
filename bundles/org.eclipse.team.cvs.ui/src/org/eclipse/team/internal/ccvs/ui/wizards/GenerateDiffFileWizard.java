@@ -1600,7 +1600,7 @@ public class GenerateDiffFileWizard extends Wizard {
 	}
 
 	private void generateDiffToClipboard(boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
-		DiffOperation diffop = new ClipboardDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
+		DiffOperation diffop = new ClipboardDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources, IResource.DEPTH_ZERO),optionsPage.getOptions(),multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
 		try {
 			diffop.run();
 		} catch (InvocationTargetException e) {}
@@ -1610,10 +1610,10 @@ public class GenerateDiffFileWizard extends Wizard {
 	private void generateDiffToFile(File file, boolean multiPatch, boolean useProjectRelativePaths) throws TeamException {
 		DiffOperation diffop = null;
 		if (locationPage.selectedLocation == LocationPage.WORKSPACE){
-			diffop = new WorkspaceFileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
+			diffop = new WorkspaceFileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources, IResource.DEPTH_ZERO),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
 		}
 		else {
-			diffop = new FileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
+			diffop = new FileDiffOperation(part,RepositoryProviderOperation.asResourceMappers(resources, IResource.DEPTH_ZERO),optionsPage.getOptions(),file, multiPatch, useProjectRelativePaths, optionsPage.patchRoot);
 		}
 
 		try {
