@@ -114,6 +114,7 @@ public class VCardContactsRepository implements IContactsRepository {
 	 */
 	public Contact readFromVCard(String fileName) {
 		Contact contact = new Contact();
+		contact.setSourceFile(fileName);
 		BufferedReader bufferedReader = null;
 		String charSet = "Cp1252";
 
@@ -222,18 +223,21 @@ public class VCardContactsRepository implements IContactsRepository {
 				value = getVCardValue(line, "PHOTO;TYPE=JPEG;ENCODING=BASE64");
 				if (value != null) {
 					line = bufferedReader.readLine();
-					String base64 = "";
+					StringBuilder builder = new StringBuilder();
 					while (line != null && line.length() > 0
 							&& line.charAt(0) == ' ') {
-						base64 += line.trim();
+						builder.append(line.trim());
 						line = bufferedReader.readLine();
 					}
-					byte[] imageBytes = Base64.decode(base64.getBytes());
+					String jpegString = builder.toString();
+					
+					byte[] imageBytes = Base64.decode(jpegString.getBytes());
 					ByteArrayInputStream is = new ByteArrayInputStream(
 							imageBytes);
 					ImageData imageData = new ImageData(is);
 					contact
 							.setImage(new Image(Display.getCurrent(), imageData));
+					contact.setJpegString(jpegString);
 					continue;
 				}
 			}

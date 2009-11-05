@@ -12,28 +12,55 @@
 
 package org.eclipse.e4.demo.contacts.model;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import org.eclipse.swt.graphics.Image;
 
-public class Contact {
-	private String firstName;
-	private String middleName;
-	private String lastName;
-	private String title;
-	private String company;
-	private String jobTitle;
-	private String street;
-	private String city;
-	private String zip;
-	private String state;
-	private String country;
-	private String email;
-	private String webPage;
-	private String phone;
-	private String mobile;
-	private String note;
+public class Contact implements Cloneable {
+
+	private PropertyChangeSupport changeSupport;
+	
+	private String sourceFile = null;
+	private String firstName = ""; //$NON-NLS-1$
+	private String middleName = ""; //$NON-NLS-1$
+	private String lastName = ""; //$NON-NLS-1$
+	private String title = ""; //$NON-NLS-1$
+	private String company = ""; //$NON-NLS-1$
+	private String jobTitle = ""; //$NON-NLS-1$
+	private String street = ""; //$NON-NLS-1$
+	private String city = ""; //$NON-NLS-1$
+	private String zip = ""; //$NON-NLS-1$
+	private String state = ""; //$NON-NLS-1$
+	private String country = ""; //$NON-NLS-1$
+	private String email = ""; //$NON-NLS-1$
+	private String webPage = ""; //$NON-NLS-1$
+	private String phone = ""; //$NON-NLS-1$
+	private String mobile = ""; //$NON-NLS-1$
+	private String note = ""; //$NON-NLS-1$
 	private Image image;
+	private String jpegString = ""; //$NON-NLS-1$
 
 	public Contact() {
+		changeSupport=new PropertyChangeSupport(this);
+	}
+	
+	public void addPropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		changeSupport.addPropertyChangeListener(propertyName, listener);
+	}
+
+	public void removePropertyChangeListener(String propertyName,
+			PropertyChangeListener listener) {
+		changeSupport.removePropertyChangeListener(propertyName, listener);
+	}
+	
+	public void setSourceFile(String sourceFile) {
+		this.sourceFile = sourceFile;
+	}
+	
+	public String getSourceFile() {
+		return sourceFile;
 	}
 
 	public String getFirstName() {
@@ -41,7 +68,9 @@ public class Contact {
 	}
 
 	public void setFirstName(String firstName) {
+		String oldFirstName = this.firstName;
 		this.firstName = firstName;
+		changeSupport.firePropertyChange("firstName", oldFirstName, firstName);
 	}
 
 	public String getLastName() {
@@ -49,7 +78,9 @@ public class Contact {
 	}
 
 	public void setLastName(String lastName) {
+		String oldLastName = this.lastName;
 		this.lastName = lastName;
+		changeSupport.firePropertyChange("lastName", oldLastName, lastName);
 	}
 
 	public String getMiddleName() {
@@ -170,6 +201,19 @@ public class Contact {
 
 	public void setImage(Image image) {
 		this.image = image;
+	}
+	
+	public void setJpegString(String jpegString) {
+		this.jpegString = jpegString;
+	}
+	
+	public String getJpegString() {
+		return jpegString;
+	}
+
+	@Override
+	public Object clone() throws CloneNotSupportedException {
+		return super.clone();
 	}
 
 	@Override

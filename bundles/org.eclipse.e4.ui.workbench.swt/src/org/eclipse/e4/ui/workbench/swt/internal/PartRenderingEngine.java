@@ -16,7 +16,6 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -166,6 +165,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 				.subscribe(IUIEvents.ElementContainer.Topic, childrenHandler);
 	}
 
+	private static void populateModelInterfaces(MContext contextModel,
+			IEclipseContext context, Class<?>[] interfaces) {
+		for (Class<?> intf : interfaces) {
+			Activator.trace(Policy.DEBUG_CONTEXTS,
+					"Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
+							+ contextModel.getClass().getName(), null);
+			context.set(intf.getName(), contextModel);
+
+			populateModelInterfaces(contextModel, context, intf.getInterfaces());
+		}
+	}
+
 	public Object createGui(MUIElement element, Object parent) {
 		if (!element.isVisible())
 			return null;
@@ -178,7 +189,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				IEclipseContext lclContext = EclipseContextFactory.create(
 						getContext(element.getParent()), UISchedulerStrategy
 								.getInstance());
-				lclContext.set(MApplicationElement.class.getName(), element);
+				populateModelInterfaces(ctxt, lclContext, element.getClass()
+						.getInterfaces());
 				ctxt.setContext(lclContext);
 
 				// make sure the context knows about these variables that have

@@ -24,9 +24,13 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.demo.contacts.model.Contact;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
@@ -38,6 +42,11 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class DetailComposite extends Composite {
+	
+	private MDirtyable dirtyable;
+	private Contact originalContact;
+	private Contact clonedContact;
+	private boolean commitChanges = false;
 
 	private Label imageLabel;
 
@@ -48,10 +57,11 @@ public class DetailComposite extends Composite {
 	private final WritableValue contactValue = new WritableValue();
 	private final IObservableValue scaledImage;
 
-	public DetailComposite(final Composite parent, final int style,
+	public DetailComposite(MDirtyable dirtyable, final Composite parent, final int style,
 			final boolean isEnabled, final ModifyListener modifyListener,
 			final Contact contact) {
 		super(parent, style);
+		this.dirtyable = dirtyable;
 
 		parent.getShell().setBackgroundMode(SWT.INHERIT_DEFAULT);
 
@@ -73,45 +83,11 @@ public class DetailComposite extends Composite {
 		final Composite composite = createComposite(this);
 
 		createSeparator(composite, "General");
-		Text fullNameText = createText(composite, "Full Name:", null);
-
-		final IObservableValue titleObservableValue = PojoObservables
-				.observeDetailValue(contactValue, "title", String.class);
-		final IObservableValue firstNameObservableValue = PojoObservables
-				.observeDetailValue(contactValue, "firstName", String.class);
-		final IObservableValue middleNameObservableValue = PojoObservables
-				.observeDetailValue(contactValue, "middleName", String.class);
-		final IObservableValue lastNameObservableValue = PojoObservables
-				.observeDetailValue(contactValue, "lastName", String.class);
-
-		dbc.bindValue(SWTObservables.observeText(fullNameText, SWT.Modify),
-				new ComputedValue() {
-
-					@Override
-					protected Object calculate() {
-						StringBuilder fullName = new StringBuilder();
-						if (checkEmptyString(titleObservableValue.getValue())) {
-							fullName.append(titleObservableValue.getValue());
-							fullName.append(" ");
-						}
-						if (checkEmptyString(firstNameObservableValue
-								.getValue())) {
-							fullName
-									.append(firstNameObservableValue.getValue());
-							fullName.append(" ");
-						}
-						if (checkEmptyString(middleNameObservableValue
-								.getValue())) {
-							fullName.append(middleNameObservableValue
-									.getValue());
-							fullName.append(" ");
-						}
-						if (checkEmptyString(lastNameObservableValue.getValue())) {
-							fullName.append(lastNameObservableValue.getValue());
-						}
-						return fullName.toString();
-					}
-				});
+		
+		createText(composite, "Title:", "title");
+		createText(composite, "First Name:", "firstName");
+		createText(composite, "Middle Name:", "middleName");
+		createText(composite, "Last Name:", "lastName");
 
 		createText(composite, "Company:", "company");
 		createText(composite, "Job Title:", "jobTitle");
@@ -181,6 +157,19 @@ public class DetailComposite extends Composite {
 				.bindValue(SWTObservables.observeImage(imageLabel),
 						scaledImage, new UpdateValueStrategy(
 								UpdateValueStrategy.POLICY_NEVER), null);
+		
+		addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+				dummyPortrait.dispose();
+				scaledImage.dispose();	
+			}
+		});
+		
+		commitChanges = true;
+	}
+	
+	private void setDirty(boolean dirty) {
+		dirtyable.setDirty(dirty);
 	}
 
 	public boolean checkEmptyString(Object testString) {
@@ -189,13 +178,6 @@ public class DetailComposite extends Composite {
 			return false;
 		}
 		return true;
-	}
-
-	@Override
-	public void dispose() {
-		dummyPortrait.dispose();
-		scaledImage.dispose();
-		super.dispose();
 	}
 
 	private void createSeparator(Composite parent, String text) {
@@ -252,11 +234,11 @@ public class DetailComposite extends Composite {
 			gridData2.horizontalSpan = 2;
 		} else {
 			gridData2.horizontalSpan = 1;
-			if (labelText.equals("Full Name:")) {
+			if (labelText.equals("Title:")) {
 				// The label image is set with data binding
 				imageLabel = new Label(parent, SWT.NONE);
 				GridData gridData3 = new GridData();
-				gridData3.verticalSpan = 4;
+				gridData3.verticalSpan = 7;
 				imageLabel.setLayoutData(gridData3);
 			}
 		}
@@ -267,11 +249,35 @@ public class DetailComposite extends Composite {
 					PojoObservables.observeDetailValue(contactValue, property,
 							String.class));
 		}
+		
+		text.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				if (commitChanges) {
+					setDirty(true);	
+				}
+			}
+		});
 
 		return text;
 	}
+	
+	public Contact getOriginalContact() {
+		return originalContact;
+	}
+	
+	public Contact getModifiedContact() {
+		return clonedContact;
+	}
 
 	public void update(final Contact contact) {
-		contactValue.setValue(contact);
+		commitChanges = false;
+		try {
+			clonedContact = (Contact) contact.clone();
+			originalContact = contact;
+			contactValue.setValue(clonedContact);
+			commitChanges = true;
+		} catch (CloneNotSupportedException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

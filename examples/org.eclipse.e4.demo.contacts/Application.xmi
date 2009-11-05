@@ -6,7 +6,7 @@
         <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
       <children xsi:type="application:PartStack">
-        <children xsi:type="application:Part" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+        <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
       <weights>30</weights>
       <weights>70</weights>
@@ -15,6 +15,7 @@
     <variables>input</variables>
     <mainMenu>
       <children xsi:type="application:MenuItem" name="File">
+        <children xsi:type="application:HandledMenuItem" name="Save" command="//@commands.3"/>
         <children xsi:type="application:DirectMenuItem" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" name="Exit"/>
       </children>
       <children xsi:type="application:MenuItem" name="Theme">
@@ -24,11 +25,14 @@
     </mainMenu>
   </children>
   <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" command="//@commands.0"/>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" command="//@commands.3"/>
   <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.DarkThemeHandler" command="//@commands.1"/>
   <handlers URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.BrightThemeHandler" command="//@commands.2"/>
-  <bindings keySequence="CTRL+L" command="//@commands.2"/>
   <bindings keySequence="CTRL+D" command="//@commands.1"/>
+  <bindings keySequence="CTRL+L" command="//@commands.2"/>
+  <bindings keySequence="CTRL+S" command="//@commands.3"/>
   <commands id="contacts.exit" commandName="Exit" description=""/>
   <commands id="contacts.darkTheme" commandName="Dark Theme"/>
   <commands id="contacts.brightTheme" commandName="Bright Theme" description=""/>
+  <commands id="contacts.save" commandName="Save" description=""/>
 </application:Application>

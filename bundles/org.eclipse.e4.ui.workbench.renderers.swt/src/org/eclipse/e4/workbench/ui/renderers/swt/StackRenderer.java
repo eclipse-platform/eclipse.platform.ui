@@ -12,11 +12,13 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MEditorStack;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.model.application.MViewStack;
@@ -96,7 +98,7 @@ public class StackRenderer extends LazyStackRenderer {
 				if (IUIEvents.UIItem.Name.equals(attName)) {
 					String newName = (String) event
 							.getProperty(IUIEvents.EventTags.NewValue);
-					item.setText(newName);
+					item.setText(getLabel((MPart) uiElement, newName));
 				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
 					item.setImage(getImage(modelItem));
 				} else if (IUIEvents.UIItem.Tooltip.equals(attName)) {
@@ -108,6 +110,61 @@ public class StackRenderer extends LazyStackRenderer {
 		};
 
 		eventBroker.subscribe(IUIEvents.UIItem.Topic, itemUpdater);
+
+		EventHandler dirtyUpdater = new EventHandler() {
+			public void handleEvent(Event event) {
+				Object objElement = event
+						.getProperty(IUIEvents.EventTags.Element);
+
+				// Ensure that this event is for a MMenuItem
+				if (!(objElement instanceof MSaveablePart)) {
+					return;
+				}
+
+				// Extract the data bits
+				MSaveablePart uiElement = (MSaveablePart) objElement;
+
+				// This listener only updates stacks -it- rendered
+				MElementContainer<MUIElement> parent = uiElement.getParent();
+				if (!(parent.getFactory() == StackRenderer.this)) {
+					return;
+				}
+
+				// Is this Item visible
+				Object stackObj = uiElement.getParent();
+				MPartStack stack = (MPartStack) stackObj;
+
+				CTabItem item = findItemForPart(stack, uiElement);
+				if (item == null) {
+					return;
+				}
+
+				String attName = (String) event
+						.getProperty(IUIEvents.EventTags.AttName);
+				if (IUIEvents.Dirtyable.Dirty.equals(attName)) {
+					Boolean dirtyState = (Boolean) event
+							.getProperty(IUIEvents.EventTags.NewValue);
+					String text = item.getText();
+					boolean hasAsterisk = text.charAt(0) == '*';
+					if (dirtyState.booleanValue()) {
+						if (!hasAsterisk) {
+							item.setText('*' + text);
+						}
+					} else if (hasAsterisk) {
+						item.setText(text.substring(1));
+					}
+				}
+			}
+		};
+
+		eventBroker.subscribe(IUIEvents.Dirtyable.Topic, dirtyUpdater);
+	}
+
+	private String getLabel(MPart part, String newName) {
+		if (part instanceof MDirtyable && ((MDirtyable) part).isDirty()) {
+			newName = '*' + newName;
+		}
+		return newName;
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -238,7 +295,7 @@ public class StackRenderer extends LazyStackRenderer {
 			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
 
 			cti.setData(OWNING_ME, part);
-			cti.setText(itemPart.getName());
+			cti.setText(getLabel(part, itemPart.getName()));
 			cti.setImage(getImage(part));
 			Control widget = (Control) part.getWidget();
 			if (widget != null)

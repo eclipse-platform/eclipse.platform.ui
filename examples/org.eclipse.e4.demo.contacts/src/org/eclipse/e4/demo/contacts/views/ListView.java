@@ -15,11 +15,13 @@ package org.eclipse.e4.demo.contacts.views;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.eclipse.core.databinding.beans.PojoObservables;
+import javax.inject.Inject;
+
+import org.eclipse.core.databinding.beans.BeansObservables;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
@@ -35,12 +37,15 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
-public class ListView implements IDisposable {
+public class ListView {
 
 	private final TableViewer contactsViewer;
+
+	@Inject
 	private IEclipseContext context;
 
 	public ListView(Composite parent) {
@@ -62,10 +67,9 @@ public class ListView implements IDisposable {
 					public void selectionChanged(SelectionChangedEvent event) {
 						StructuredSelection selection = (StructuredSelection) event
 								.getSelection();
-						context.modify(IServiceConstants.SELECTION,
-								selection.size() == 1 ? selection
-										.getFirstElement() : selection
-										.toArray());
+						context.modify(IServiceConstants.SELECTION, selection
+								.size() == 1 ? selection.getFirstElement()
+								: selection.toArray());
 					}
 				});
 
@@ -92,7 +96,7 @@ public class ListView implements IDisposable {
 
 		contactsViewer.setContentProvider(contentProvider);
 
-		IObservableMap[] attributes = PojoObservables.observeMaps(
+		IObservableMap[] attributes = BeansObservables.observeMaps(
 				contentProvider.getKnownElements(), Contact.class,
 				new String[] { "firstName", "lastName" });
 		contactsViewer.setLabelProvider(new ObservableMapLabelProvider(
@@ -103,12 +107,14 @@ public class ListView implements IDisposable {
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
-	public void contextSet(IEclipseContext context) {
-		this.context = context;
-	}
-	
-	public void dispose() {
-		// TODO Auto-generated method stub
-
+	@PreDestroy
+	void preDestroy() {
+		for (Contact contact : ContactsRepositoryFactory
+				.getContactsRepository().getAllContacts()) {
+			Image image = contact.getImage();
+			if (image != null) {
+				image.dispose();
+			}
+		}
 	}
 }
