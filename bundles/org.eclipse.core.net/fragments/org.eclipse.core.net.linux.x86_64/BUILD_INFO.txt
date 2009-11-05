@@ -1,0 +1,10 @@
+Native Build Info:
+------------------
+
+platform:         linux.gtk.x86_64
+built by:         Tristan Tarrant, tristan.tarrant@gmail.com
+build date:       05-November-2009
+OS Name:          CentOS 3.9
+OS Version:       Linux 2.4.21-50.EL
+Compiler version: gcc (GCC) 3.2.3 20030502 (Red Hat Linux 3.2.3-59)
+Java version:     Java(TM) 2 Runtime Environment, Standard Edition (build Blackdown-1.4.2_03) 64-Bit Server VM
