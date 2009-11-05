@@ -128,7 +128,7 @@ public interface ILaunchManager {
 	 * @param namePrefix the String that the returned name must begin with
 	 * @return launch configuration name
 	 * @since 2.0
-	 * @deprecated since 3.5 clients should use the {@link #generateLaunchConfigurationName(String)} method which
+	 * @deprecated since 3.6 clients should use the {@link #generateLaunchConfigurationName(String)} method which
 	 * will perform validation of the name and correct unsupported name parts. 
 	 */
 	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
