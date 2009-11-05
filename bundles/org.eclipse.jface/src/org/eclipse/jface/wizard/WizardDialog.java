@@ -16,24 +16,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.dialogs.ControlEnableState;
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.IMessageProvider;
-import org.eclipse.jface.dialogs.IPageChangeProvider;
-import org.eclipse.jface.dialogs.IPageChangedListener;
-import org.eclipse.jface.dialogs.IPageChangingListener;
-import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.dialogs.PageChangedEvent;
-import org.eclipse.jface.dialogs.PageChangingEvent;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.operation.ModalContext;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.HelpEvent;
@@ -52,6 +34,26 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Shell;
+
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+
+import org.eclipse.jface.dialogs.ControlEnableState;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.dialogs.IMessageProvider;
+import org.eclipse.jface.dialogs.IPageChangeProvider;
+import org.eclipse.jface.dialogs.IPageChangedListener;
+import org.eclipse.jface.dialogs.IPageChangingListener;
+import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PageChangedEvent;
+import org.eclipse.jface.dialogs.PageChangingEvent;
+import org.eclipse.jface.dialogs.TitleAreaDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.operation.ModalContext;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.SafeRunnable;
 
 /**
  * A dialog to show a wizard to the end user.
@@ -719,7 +721,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	}
 
 	/**
-	 * Creates and return a new wizard closing dialog without openiong it.
+	 * Creates and return a new wizard closing dialog without opening it.
 	 * 
 	 * @return MessageDalog
 	 */
@@ -822,7 +824,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	protected void nextPressed() {
 		IWizardPage page = currentPage.getNextPage();
 		if (page == null) {
-			// something must have happend getting the next page
+			// something must have happened getting the next page
 			return;
 		}
 
@@ -1156,8 +1158,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 		if (page.getControl() == null) {
 			page.createControl(pageContainer);
 			// the page is responsible for ensuring the created control is
-			// accessable
-			// via getControl.
+			// accessible via getControl.
 			Assert.isNotNull(page.getControl(), JFaceResources.format(
 					JFaceResources.getString("WizardDialog.missingSetControl"), //$NON-NLS-1$
 					new Object[] { page.getName() }));
@@ -1182,15 +1183,14 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	private void showStartingPage() {
 		currentPage = wizard.getStartingPage();
 		if (currentPage == null) {
-			// something must have happend getting the page
+			// something must have happened getting the page
 			return;
 		}
 		// ensure the page control has been created
 		if (currentPage.getControl() == null) {
 			currentPage.createControl(pageContainer);
 			// the page is responsible for ensuring the created control is
-			// accessable
-			// via getControl.
+			// accessible via getControl.
 			Assert.isNotNull(currentPage.getControl());
 			// we do not need to update the size since the call
 			// to initialize bounds has not been made yet.
@@ -1261,7 +1261,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 			nextButton.setEnabled(canFlipToNextPage);
 		}
 		finishButton.setEnabled(canFinish);
-		// finish is default unless it is diabled and next is enabled
+		// finish is default unless it is disabled and next is enabled
 		if (canFlipToNextPage && !canFinish) {
 			getShell().setDefaultButton(nextButton);
 		} else {
@@ -1272,7 +1272,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	/**
 	 * Update the message line with the page's description.
 	 * <p>
-	 * A discription is shown only if there is no message or error message.
+	 * A description is shown only if there is no message or error message.
 	 * </p>
 	 */
 	private void updateDescriptionMessage() {
@@ -1320,11 +1320,10 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	}
 
 	/**
-	 * Computes the correct dialog size for the current page and resizes its
-	 * shell if nessessary. Also causes the container to refresh its layout.
+	 * Computes the correct dialog size for the current page and resizes its shell if necessary.
+	 * Also causes the container to refresh its layout.
 	 * 
-	 * @param page
-	 *            the wizard page to use to resize the dialog
+	 * @param page the wizard page to use to resize the dialog
 	 * @since 2.0
 	 */
 	protected void updateSize(IWizardPage page) {
@@ -1345,11 +1344,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	}
 
 	/**
-	 * Computes the correct dialog size for the given page and resizes its shell
-	 * if nessessary.
+	 * Computes the correct dialog size for the given page and resizes its shell if necessary.
 	 * 
-	 * @param page
-	 *            the wizard page
+	 * @param page the wizard page
 	 */
 	private void updateSizeForPage(IWizardPage page) {
 		// ensure the page container is large enough
@@ -1364,11 +1361,9 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2,
 	}
 
 	/**
-	 * Computes the correct dialog size for the given wizard and resizes its
-	 * shell if nessessary.
+	 * Computes the correct dialog size for the given wizard and resizes its shell if necessary.
 	 * 
-	 * @param sizingWizard
-	 *            the wizard
+	 * @param sizingWizard the wizard
 	 */
 	private void updateSizeForWizard(IWizard sizingWizard) {
 		Point delta = new Point(0, 0);
