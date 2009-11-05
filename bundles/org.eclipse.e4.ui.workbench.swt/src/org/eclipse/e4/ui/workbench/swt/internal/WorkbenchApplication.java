@@ -20,7 +20,9 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.services.events.EventBrokerFactory;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.Activator;
@@ -30,7 +32,9 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Listener;
 
 /**
  *
@@ -104,6 +108,11 @@ public class WorkbenchApplication implements IApplication {
 							.getRegistry(), Activator.getDefault()
 							.getBundleAdmin(), appContext,
 							new WorkbenchWindowHandler(), engineURI);
+					KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
+					ContextInjectionFactory.inject(dispatcher, wb.getContext());
+					final Listener listener = dispatcher.getKeyDownFilter();
+					display.addFilter(SWT.KeyDown, listener);
+					display.addFilter(SWT.Traverse, listener);
 					wb.setWorkbenchModelURI(initialWorkbenchDefinitionInstance);
 					if (cssURI != null) {
 						CSSStylingSupport.initializeStyling(display, cssURI,
@@ -111,6 +120,8 @@ public class WorkbenchApplication implements IApplication {
 					}
 					wb.createUIFromModel();
 					wb.run();
+					display.removeFilter(SWT.KeyDown, listener);
+					display.removeFilter(SWT.Traverse, listener);
 				} catch (ThreadDeath th) {
 					throw th;
 				} catch (Exception ex) {
