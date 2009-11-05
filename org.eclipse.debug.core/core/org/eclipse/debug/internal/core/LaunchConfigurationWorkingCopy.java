@@ -732,23 +732,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 	}
 
-	/**
-	 * Sets whether this working copy is a template.
-	 * 
-	 * @param isTemplate
-	 * @throws CoreException
-	 */
-	void setTemplate(boolean isTemplate) throws CoreException {
-		if (!isTemplate) {
-			removeAttribute(ATTR_IS_TEMPLATE);
-		} else {
-			if (getTemplate() != null) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_7));
-			}
-			setAttribute(ATTR_IS_TEMPLATE, isTemplate);
-		}
-	}
-
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, boolean)
 	 */
@@ -769,7 +752,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				copyAttributes(template);
 			}
 			setAttribute(ATTR_TEMPLATE, template.getMemento());
-			setTemplate(false); // template attribute was copied, so now remove it
 		}
 	}
 
@@ -792,6 +774,16 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 			}
 		}
 		return saved;
+	}
+	
+	/**
+	 * Sets whether this working copy is a template.
+	 * 
+	 * @param template whether a template
+	 * @since 3.6
+	 */
+	void setTemplate(boolean template) {
+		getInfo().setTemplate(template);
 	}
 }
 

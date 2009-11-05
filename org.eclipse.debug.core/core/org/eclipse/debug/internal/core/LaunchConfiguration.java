@@ -107,15 +107,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.3
 	 */
 	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$	
-	
-	/**
-	 * Launch configuration attribute storing a boolean indicating whether this 
-	 * configuration is a template. Default value is <code>false</code>.
-	 * 
-	 * @since 3.6
-	 */
-	public static final String ATTR_IS_TEMPLATE = DebugPlugin.getUniqueIdentifier() + ".ATTR_IS_TEMPLATE"; //$NON-NLS-1$
-	
+		
 	/**
 	 * Launch configuration attribute storing a memento identifying the template
 	 * this configuration was made from, possibly <code>null</code>.
@@ -1013,7 +1005,17 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @see org.eclipse.debug.core.ILaunchConfiguration#isTemplate()
 	 */
 	public boolean isTemplate() throws CoreException {
-		return getAttribute(ATTR_IS_TEMPLATE, false);
+		return getInfo().isTemplate();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#getKind()
+	 */
+	public int getKind() throws CoreException {
+		if (isTemplate()) {
+			return TEMPLATE;
+		}
+		return CONFIGURATION;
 	}
 	
 }

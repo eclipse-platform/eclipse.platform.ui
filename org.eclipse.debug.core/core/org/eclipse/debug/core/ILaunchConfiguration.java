@@ -107,6 +107,22 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 */
 	public static final int UPDATE_TEMPLATE_CHILDREN = 1;
 	
+	/** 
+	 * Type constant (bit mask value 1) which identifies a launch configuration.
+	 * 
+	 * @see #getKind()
+	 * @since 3.6
+	 */
+	public static final int CONFIGURATION = 0x1;
+
+	/**
+	 * Type constant (bit mask value 2) which identifies a template.
+	 * 
+	 * @see #getKind()
+	 * @since 3.6
+	 */
+	public static final int TEMPLATE = 0x2;	
+	
 	/**
 	 * Returns whether the contents of this launch configuration are 
 	 * equal to the contents of the given launch configuration.
@@ -651,6 +667,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * 
 	 * @return whether this configuration is a template
 	 * @throws CoreException if unable to determine if this configuration is a template
+	 * 	or if this configuration does not exist
 	 * @since 3.6
 	 */
 	public boolean isTemplate() throws CoreException;
@@ -664,4 +681,16 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 3.6
 	 */
 	public ILaunchConfiguration[] getTemplateChildren() throws CoreException;
+	
+	/**
+	 * Returns this configuration's kind. One of CONFIGURATION or TEMPLATE.
+	 * 
+	 * @see #CONFIGURATION
+	 * @see #TEMPLATE
+	 * 
+	 * @return this configuration's kind
+	 * @throws CoreException if unable to retrieve this configuration's kind
+	 * @since 3.6
+	 */
+	public int getKind() throws CoreException;
 }

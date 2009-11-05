@@ -59,6 +59,7 @@ public class LaunchConfigurationInfo {
 	private static final String INT_ATTRIBUTE = "intAttribute"; //$NON-NLS-1$
 	private static final String STRING_ATTRIBUTE = "stringAttribute"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
+	private static final String TEMPLATE = "template"; //$NON-NLS-1$
 	
 	/**
 	 * This configurations attribute table. Keys are <code>String</code>s and
@@ -71,6 +72,11 @@ public class LaunchConfigurationInfo {
 	 * This launch configuration's type
 	 */
 	private ILaunchConfigurationType fType;
+	
+	/**
+	 * Whether this configuration is a template
+	 */
+	private boolean fIsTemplate = false;
 	
 	/**
 	 * Whether running on Sun 1.4 VM - see bug 110215
@@ -307,6 +313,7 @@ public class LaunchConfigurationInfo {
 		LaunchConfigurationInfo copy = new LaunchConfigurationInfo();
 		copy.setType(getType());
 		copy.setAttributeTable(getAttributes());
+		copy.setTemplate(isTemplate());
 		return copy;
 	}
 	
@@ -356,6 +363,9 @@ public class LaunchConfigurationInfo {
 		doc.appendChild(configRootElement);
 		
 		configRootElement.setAttribute(TYPE, getType().getIdentifier()); 
+		if (isTemplate()) {
+			configRootElement.setAttribute(TEMPLATE, Boolean.TRUE.toString());
+		}
 		
 		Iterator keys = getAttributeTable().keySet().iterator();
 		while (keys.hasNext()) {
@@ -506,6 +516,13 @@ public class LaunchConfigurationInfo {
 				);
 		}
 		setType(type);
+		
+		String template = root.getAttribute(TEMPLATE);
+		boolean is = false;
+		if (template != null && template.length() > 0) {
+			is = Boolean.valueOf(template).booleanValue();
+		}
+		setTemplate(is);
 		
 		NodeList list = root.getChildNodes();
 		Node node = null;
@@ -789,6 +806,25 @@ public class LaunchConfigurationInfo {
 			return fAttributes.remove(attributeName);
 		}
 		return null;
+	}
+	
+	/**
+	 * Sets whether this info is a template.
+	 * 
+	 * @param isTemplate
+	 * @throws CoreException
+	 */
+	void setTemplate(boolean isTemplate) {
+		fIsTemplate = isTemplate;
+	}	
+	
+	/**
+	 * Returns whether this info is a template.
+	 * 
+	 * @return whether a template
+	 */
+	boolean isTemplate() {
+		return fIsTemplate;
 	}
 }
 

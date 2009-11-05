@@ -180,7 +180,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	protected ILaunchConfigurationWorkingCopy newEmptyTemplate(IContainer container, String name) throws CoreException {
 		 ILaunchConfigurationType type = getLaunchManager().getLaunchConfigurationType(ID_TEST_LAUNCH_TYPE);
 		 ILaunchConfigurationWorkingCopy wc = type.newTemplate(container, name);
-		 assertEquals("Should have 1 attribute (IS_TEMPLATE)", 1, wc.getAttributes().size());
+		 assertEquals("Should have no attributes", 0, wc.getAttributes().size());
 		 return wc;
 	}	
 		
@@ -1221,6 +1221,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertTrue("Shoud not be able to nest templates", false);
 	}
 	
+	/**
+	 * Test that you cannot set a config's template to be a non-template.
+	 * 
+	 * @throws CoreException
+	 */
 	public void testIllegalTemplate() throws CoreException {
 		ILaunchConfigurationWorkingCopy c1 = newConfiguration(null, "test-config");
 		ILaunchConfigurationWorkingCopy t1 = newConfiguration(null, "test-not-a-template");
@@ -1232,6 +1237,17 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 			return;
 		}
 		assertTrue("Should not be able to set configration as template", false);
+	}
+	
+	/**
+	 * Test that a template can be duplicated (and results in a template).
+	 * 
+	 * @throws CoreException
+	 */
+	public void testCopyTemplate() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newEmptyTemplate(null, "template-to-duplicate");
+		ILaunchConfigurationWorkingCopy t2 = t1.copy("duplicate-template");
+		assertTrue(t2.isTemplate());
 	}
 	
 }

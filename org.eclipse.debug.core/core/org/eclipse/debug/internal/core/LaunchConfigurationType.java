@@ -11,7 +11,6 @@
 package org.eclipse.debug.internal.core;
 
  
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -492,15 +491,7 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getTemplates()
 	 */
 	public ILaunchConfiguration[] getTemplates() throws CoreException {
-		ILaunchConfiguration[] configurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(this);
-		List templates = new ArrayList();
-		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration config = configurations[i];
-			if (config.isTemplate()) {
-				templates.add(config);
-			}
-		}
-		return (ILaunchConfiguration[]) templates.toArray(new ILaunchConfiguration[templates.size()]);
+		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(this, ILaunchConfiguration.TEMPLATE);
 	}
 
 	/* (non-Javadoc)
