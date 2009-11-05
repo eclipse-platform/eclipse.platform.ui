@@ -11,7 +11,7 @@
 package org.eclipse.core.resources;
 
 /**
- * 
+ * @since 3.6
  */
 public final class FileInfoMatcherDescription implements IFileInfoMatcherDescription {
 

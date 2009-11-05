@@ -15,6 +15,7 @@ import org.eclipse.core.internal.resources.FilterDescriptor;
 
 /**
  * Resource Filter Type allowing serializing sub filters as the arguments
+ * @since 3.6
  */
 public abstract class CompoundFileInfoMatcher extends AbstractFileInfoMatcher {
 
