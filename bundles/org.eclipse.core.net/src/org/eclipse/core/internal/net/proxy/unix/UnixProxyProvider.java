@@ -190,8 +190,9 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 				"-c", //$NON-NLS-1$
 				"env | grep -i proxy" }; //$NON-NLS-1$
 		Properties props = new Properties();
+		Process proc = null;
 		try {
-			Process proc = Runtime.getRuntime().exec(cmd);
+			proc = Runtime.getRuntime().exec(cmd);
 			props.load(proc.getInputStream());
 			proc.waitFor();
 		} catch (IOException e) {
@@ -203,7 +204,12 @@ public class UnixProxyProvider extends AbstractProxyProvider {
 		} catch (InterruptedException e) {
 			Activator.logError(
 					"Problem during accessing system variable: " + env, e); //$NON-NLS-1$
+		} finally {
+			if (proc != null) {
+				proc.destroy();
+			}
 		}
+
 		return props.getProperty(env);
 	}
 
