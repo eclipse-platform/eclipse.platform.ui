@@ -10,7 +10,7 @@ public interface EBindingService {
 
 	TriggerSequence createSequence(String sequence);
 
-	Collection getConflictsFor(TriggerSequence sequence);
+	Collection<ParameterizedCommand> getConflictsFor(TriggerSequence sequence);
 
 	ParameterizedCommand getPerfectMatch(TriggerSequence trigger);
 
@@ -19,4 +19,6 @@ public interface EBindingService {
 	boolean isPerfectMatch(TriggerSequence sequence);
 
 	TriggerSequence getBestSequenceFor(ParameterizedCommand command);
+
+	Collection<TriggerSequence> getSequencesFor(ParameterizedCommand command);
 }

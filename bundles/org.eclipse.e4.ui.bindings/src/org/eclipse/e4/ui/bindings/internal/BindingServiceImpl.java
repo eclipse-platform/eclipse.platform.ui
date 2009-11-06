@@ -13,23 +13,85 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.bindings.Trigger;
 import org.eclipse.e4.ui.bindings.TriggerSequence;
+import org.eclipse.e4.ui.bindings.keys.IKeyLookup;
+import org.eclipse.e4.ui.bindings.keys.KeyLookupFactory;
 import org.eclipse.e4.ui.bindings.keys.KeySequence;
+import org.eclipse.e4.ui.bindings.keys.KeyStroke;
 import org.eclipse.e4.ui.bindings.keys.ParseException;
 
 /**
  *
  */
 public class BindingServiceImpl implements EBindingService {
+	static final Comparator<TriggerSequence> BEST_SEQUENCE = new Comparator<TriggerSequence>() {
+		public int compare(TriggerSequence o1, TriggerSequence o2) {
+			/*
+			 * Check to see which has the least number of triggers in the trigger sequence.
+			 */
+			final Trigger[] bestTriggers = o1.getTriggers();
+			final Trigger[] currentTriggers = o2.getTriggers();
+			int compareTo = bestTriggers.length - currentTriggers.length;
+			if (compareTo != 0) {
+				return compareTo;
+			}
+
+			/*
+			 * Compare the number of keys pressed in each trigger sequence. Some types of keys count
+			 * less than others (i.e., some types of modifiers keys are less likely to be chosen).
+			 */
+			compareTo = countStrokes(bestTriggers) - countStrokes(currentTriggers);
+			if (compareTo != 0) {
+				return compareTo;
+			}
+
+			// If this is still a tie, then just chose the shortest text.
+			return o1.format().length() - o2.format().length();
+		}
+
+		private final int countStrokes(final Trigger[] triggers) {
+			int strokeCount = triggers.length;
+			for (int i = 0; i < triggers.length; i++) {
+				final Trigger trigger = triggers[i];
+				if (trigger instanceof KeyStroke) {
+					final KeyStroke keyStroke = (KeyStroke) trigger;
+					final int modifierKeys = keyStroke.getModifierKeys();
+					final IKeyLookup lookup = KeyLookupFactory.getDefault();
+					if ((modifierKeys & lookup.getAlt()) != 0) {
+						strokeCount += 8;
+					}
+					if ((modifierKeys & lookup.getCtrl()) != 0) {
+						strokeCount += 2;
+					}
+					if ((modifierKeys & lookup.getShift()) != 0) {
+						strokeCount += 4;
+					}
+					if ((modifierKeys & lookup.getCommand()) != 0) {
+						strokeCount += 2;
+					}
+				} else {
+					strokeCount += 99;
+				}
+			}
+
+			return strokeCount;
+		}
+	};
+
 	static final String LOOKUP_BINDING = "binding"; //$NON-NLS-1$
 	static final String LOOKUP_CMD = "cmd"; //$NON-NLS-1$
 	static final String BINDING_LOOKUP = "org.eclipse.e4.ui.bindings.EBindingLookup"; //$NON-NLS-1$
 	static final String CMD_LOOKUP = "org.eclipse.e4.ui.bindings.ECommandLookup"; //$NON-NLS-1$
+	static final String CMD_SEQ_LOOKUP = "org.eclipse.e4.ui.bindings.ECommandSequenceLookup"; //$NON-NLS-1$
 	static final String B_ID = "binding::"; //$NON-NLS-1$
+	static final String B_SEQ = "bindSeq::"; //$NON-NLS-1$
 	static final String P_ID = "parmCmd::"; //$NON-NLS-1$
 
 	private IEclipseContext context;
@@ -43,16 +105,24 @@ public class BindingServiceImpl implements EBindingService {
 	public void activateBinding(TriggerSequence sequence, ParameterizedCommand command) {
 		String keys = sequence.format();
 		context.set(B_ID + keys, command);
+		TriggerSequence[] prefixes = sequence.getPrefixes();
+		if (prefixes.length > 1) {
+			for (int i = 0; i < prefixes.length; i++) {
+				context.set(B_SEQ + prefixes[i].format(), B_SEQ);
+			}
+		}
 
 		// add mapping from command to keys
 		String cmdString = command.serialize();
-		ArrayList bindings = new ArrayList(3);
+		ArrayList<TriggerSequence> bindings = new ArrayList<TriggerSequence>(3);
 		String cmdBindingId = P_ID + cmdString;
-		ArrayList tmp = (ArrayList) context.getLocal(cmdBindingId);
+		ArrayList<TriggerSequence> tmp = (ArrayList<TriggerSequence>) context
+				.getLocal(cmdBindingId);
 		if (tmp != null) {
 			bindings.addAll(tmp);
 		}
 		bindings.add(sequence);
+		Collections.sort(bindings, BEST_SEQUENCE);
 		context.set(cmdBindingId, bindings);
 	}
 
@@ -87,7 +157,7 @@ public class BindingServiceImpl implements EBindingService {
 	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#getConflictsFor(org.eclipse.e4.ui.bindings.
 	 * TriggerSequence)
 	 */
-	public Collection getConflictsFor(TriggerSequence sequence) {
+	public Collection<ParameterizedCommand> getConflictsFor(TriggerSequence sequence) {
 		return null;
 	}
 
@@ -119,11 +189,23 @@ public class BindingServiceImpl implements EBindingService {
 	 */
 	public TriggerSequence getBestSequenceFor(ParameterizedCommand command) {
 		String cmdString = command.serialize();
-		ArrayList tmp = (ArrayList) context.get(CMD_LOOKUP, lookupCommand(cmdString));
+		ArrayList<TriggerSequence> tmp = (ArrayList<TriggerSequence>) context.get(CMD_LOOKUP,
+				lookupCommand(cmdString));
 		if (tmp != null && !tmp.isEmpty()) {
-			return (TriggerSequence) tmp.get(0);
+			return tmp.get(0);
 		}
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.e4.ui.bindings.EBindingService#getSequencesFor(org.eclipse.core.commands.
+	 * ParameterizedCommand)
+	 */
+	public Collection<TriggerSequence> getSequencesFor(ParameterizedCommand command) {
+		String cmdString = command.serialize();
+		return (Collection<TriggerSequence>) context.get(CMD_SEQ_LOOKUP, lookupCommand(cmdString));
 	}
 
 	/*
