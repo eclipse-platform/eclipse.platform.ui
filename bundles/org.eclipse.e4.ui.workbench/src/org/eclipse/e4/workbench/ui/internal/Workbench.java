@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
@@ -147,9 +146,6 @@ public class Workbench implements IWorkbench {
 			mainContext.set(IContributionFactory.class.getName(), contributionFactory);
 		}
 		mainContext.set(ContextManager.class.getName(), new ContextManager());
-		ContextUtil.commandSetup(mainContext);
-		ContextUtil.handlerSetup(mainContext);
-		org.eclipse.e4.ui.bindings.ContextUtil.bindingSetup(mainContext);
 
 		mainContext.set(IServiceConstants.ACTIVE_CONTEXTS, new ActiveContextsFunction());
 		mainContext.set(IServiceConstants.ACTIVE_PART, new ActivePartLookupFunction());

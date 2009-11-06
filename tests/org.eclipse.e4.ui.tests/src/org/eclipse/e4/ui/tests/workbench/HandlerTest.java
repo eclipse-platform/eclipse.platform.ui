@@ -15,9 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
@@ -249,10 +247,6 @@ public class HandlerTest extends TestCase {
 				"globalContext");
 		appContext.set(IContributionFactory.class.getName(), MWindowTest
 				.getCFactory());
-		appContext.set(CommandManager.class.getName(), new CommandManager());
-
-		ContextUtil.commandSetup(appContext);
-		ContextUtil.handlerSetup(appContext);
 
 		return appContext;
 	}

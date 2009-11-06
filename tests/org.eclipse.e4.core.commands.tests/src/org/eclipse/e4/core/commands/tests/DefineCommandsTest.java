@@ -4,12 +4,10 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
-import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 public class DefineCommandsTest extends TestCase {
 
@@ -96,7 +94,6 @@ public class DefineCommandsTest extends TestCase {
 
 	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
 		IEclipseContext wb = TestUtil.createContext(globalContext, "workbenchContext");
-		ContextUtil.commandSetup(wb);
 		return wb;
 	}
 }

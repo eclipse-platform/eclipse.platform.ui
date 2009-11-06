@@ -6,7 +6,6 @@ import junit.framework.TestCase;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IDisposable;
@@ -283,8 +282,6 @@ public class HandlerTest extends TestCase {
 	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
 		IEclipseContext wb = TestUtil.createContext(globalContext,
 				"workbenchContext");
-		ContextUtil.commandSetup(wb);
-		ContextUtil.handlerSetup(wb);
 		return wb;
 	}
 }

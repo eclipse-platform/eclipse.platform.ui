@@ -16,7 +16,6 @@ import junit.framework.TestCase;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.e4.core.commands.ContextUtil;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.Logger;
@@ -100,9 +99,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 		appContext.set(Logger.class.getName(), new WorkbenchLogger());
 
 		appContext.set(ContextManager.class.getName(), new ContextManager());
-		ContextUtil.commandSetup(appContext);
-		ContextUtil.handlerSetup(appContext);
-		org.eclipse.e4.ui.bindings.ContextUtil.bindingSetup(appContext);
 
 		appContext.set(IServiceConstants.ACTIVE_CONTEXTS,
 				new ActiveContextsFunction());

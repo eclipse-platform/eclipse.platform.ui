@@ -21,9 +21,6 @@ public class BindingLookupTest extends TestCase {
 	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
 		IEclipseContext wb = TestUtil.createContext(globalContext,
 				"workbenchContext");
-		org.eclipse.e4.core.commands.ContextUtil.commandSetup(wb);
-		org.eclipse.e4.core.commands.ContextUtil.handlerSetup(wb);
-		org.eclipse.e4.ui.bindings.ContextUtil.bindingSetup(wb);
 		return wb;
 	}
 
