@@ -30,6 +30,8 @@ import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
+import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
+import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.ReflectionContributionFactory;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -41,9 +43,13 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class MPartTest extends TestCase {
 	private IEclipseContext appContext;
+	private ServiceTracker bundleTracker;
 	private static IContributionFactory contributionFactory;
 
 	private IEclipseContext getAppContext() {
@@ -61,9 +67,22 @@ public class MPartTest extends TestCase {
 			appContext.set(IEclipseContext.class.getName(), appContext);
 			appContext.set(IEventBroker.class.getName(), EventBrokerFactory
 					.newEventBroker());
+			appContext.set(IResourceUtiltities.class.getName(),
+					new ResourceUtility(getBundleAdmin()));
 			app.setContext(appContext);
 		}
 		return appContext;
+	}
+
+	protected PackageAdmin getBundleAdmin() {
+		if (bundleTracker == null) {
+			if (bundleContext == null)
+				return null;
+			bundleTracker = new ServiceTracker(bundleContext,
+					PackageAdmin.class.getName(), null);
+			bundleTracker.open();
+		}
+		return (PackageAdmin) bundleTracker.getService();
 	}
 
 	static IContributionFactory getCFactory() {
@@ -91,6 +110,12 @@ public class MPartTest extends TestCase {
 
 	private Widget topWidget;
 	private Display display;
+	private BundleContext bundleContext;
+
+	@Override
+	protected void setUp() throws Exception {
+		bundleContext = Activator.getDefault().getBundle().getBundleContext();
+	}
 
 	@Override
 	protected void tearDown() throws Exception {
@@ -99,9 +124,13 @@ public class MPartTest extends TestCase {
 			topWidget.dispose();
 			topWidget = null;
 		}
+		if (bundleTracker != null) {
+			bundleTracker.close();
+			bundleTracker = null;
+		}
 	}
 
-	public void testCreateView() {
+	public void testSetName() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		((Notifier) window.getParent()).eAdapters().add(
 				new UIEventPublisher(getAppContext()));
@@ -146,6 +175,41 @@ public class MPartTest extends TestCase {
 				});
 	}
 
+	public void testCTabItem_GetImage() {
+		final MWindow window = createWindowWithOneView("Part Name");
+		((Notifier) window.getParent()).eAdapters().add(
+				new UIEventPublisher(getAppContext()));
+		Realm.runWithDefault(SWTObservables.getRealm(getDisplay()),
+				new Runnable() {
+					public void run() {
+						IEclipseContext context = getAppContext();
+
+						PartRenderingEngine renderer = (PartRenderingEngine) getCFactory()
+								.create(PartRenderingEngine.engineURI, context);
+
+						Object o = renderer.createGui(window);
+						assertNotNull(o);
+						topWidget = (Widget) o;
+						assertTrue(topWidget instanceof Shell);
+						Shell shell = (Shell) topWidget;
+						Control[] controls = shell.getChildren();
+						assertEquals(1, controls.length);
+						SashForm sash = (SashForm) controls[0];
+						Control[] sashChildren = sash.getChildren();
+						assertEquals(1, sashChildren.length);
+
+						// HACK: see bug #280632 - always a composite around
+						// CTabFolder so can implement margins
+						Composite marginHolder = (Composite) sashChildren[0];
+						assertEquals(1, marginHolder.getChildren().length);
+						CTabFolder folder = (CTabFolder) marginHolder
+								.getChildren()[0];
+						CTabItem item = folder.getItem(0);
+						assertNotNull(item.getImage());
+					}
+				});
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		MApplication application = (MApplication) getAppContext().get(
 				MApplication.class.getName());
@@ -162,6 +226,8 @@ public class MPartTest extends TestCase {
 		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
 		contributedPart.setName(partName);
+		contributedPart
+				.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.gif");
 		contributedPart
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 

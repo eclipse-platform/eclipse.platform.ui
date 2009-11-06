@@ -13,7 +13,6 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.Iterator;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -123,17 +122,15 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	}
 
 	protected Image getImage(MUIItem element) {
-		if (element instanceof MItem) {
-			IEclipseContext localContext = context;
-			String iconURI = ((MItem) element).getIconURI();
-			if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$
-				ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
-						.get(IResourceUtiltities.class.getName());
-				ImageDescriptor desc = resUtils.imageDescriptorFromURI(URI
-						.createURI(iconURI));
-				if (desc != null)
-					return desc.createImage();
-			}
+		IEclipseContext localContext = context;
+		String iconURI = element.getIconURI();
+		if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$
+			ISWTResourceUtiltities resUtils = (ISWTResourceUtiltities) localContext
+					.get(IResourceUtiltities.class.getName());
+			ImageDescriptor desc = resUtils.imageDescriptorFromURI(URI
+					.createURI(iconURI));
+			if (desc != null)
+				return desc.createImage();
 		}
 		return null;
 	}

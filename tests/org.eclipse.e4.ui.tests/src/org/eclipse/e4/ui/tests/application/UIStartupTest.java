@@ -23,20 +23,50 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
+import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.packageadmin.PackageAdmin;
+import org.osgi.util.tracker.ServiceTracker;
 
 public abstract class UIStartupTest extends HeadlessApplicationTest {
+
+	private BundleContext bundleContext;
+	private ServiceTracker bundleTracker;
 
 	protected Display display;
 
 	@Override
 	protected void setUp() throws Exception {
+		bundleContext = Activator.getDefault().getBundle().getBundleContext();
 		display = Display.getDefault();
 		super.setUp();
 		while (display.readAndDispatch())
 			;
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		if (bundleTracker != null) {
+			bundleTracker.close();
+			bundleTracker = null;
+		}
+	}
+
+	protected PackageAdmin getBundleAdmin() {
+		if (bundleTracker == null) {
+			if (bundleContext == null)
+				return null;
+			bundleTracker = new ServiceTracker(bundleContext,
+					PackageAdmin.class.getName(), null);
+			bundleTracker.open();
+		}
+		return (PackageAdmin) bundleTracker.getService();
 	}
 
 	@Override
@@ -270,6 +300,8 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 			public void run() {
 				contexts[0] = UIStartupTest.super
 						.createApplicationContext(osgiContext);
+				contexts[0].set(IResourceUtiltities.class.getName(),
+						new ResourceUtility(getBundleAdmin()));
 				contexts[0].set(IStylingEngine.class.getName(),
 						new IStylingEngine() {
 							public void style(Object widget) {
