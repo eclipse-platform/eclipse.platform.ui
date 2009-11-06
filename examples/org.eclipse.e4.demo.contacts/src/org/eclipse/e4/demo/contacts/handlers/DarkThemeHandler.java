@@ -12,11 +12,14 @@
 
 package org.eclipse.e4.demo.contacts.handlers;
 
-import org.eclipse.e4.workbench.ui.IWorkbench;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MWindow;
 
 public class DarkThemeHandler {
 
-	public void execute(IWorkbench workbench) {
-		ThemeUtil.switchTheme(workbench, "dark-gradient.css");
+	public void execute(MApplication application) {
+		for (MWindow window : application.getChildren()) {
+			ThemeUtil.switchTheme(window, "dark-gradient.css");
+		}
 	}
 }
