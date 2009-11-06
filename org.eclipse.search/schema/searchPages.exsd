@@ -1,6 +1,6 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <!-- Schema file written by PDE -->
-<schema targetNamespace="org.eclipse.search">
+<schema targetNamespace="org.eclipse.search" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
          <meta.schema plugin="org.eclipse.search" id="searchPages" name="Search Pages"/>
@@ -14,6 +14,11 @@ locates the most specific registered search page for it.
    </annotation>
 
    <element name="extension">
+      <annotation>
+         <appInfo>
+            <meta.element />
+         </appInfo>
+      </annotation>
       <complexType>
          <sequence>
             <element ref="page" minOccurs="0" maxOccurs="unbounded"/>
@@ -132,13 +137,8 @@ page comes first
          <attribute name="extensions" type="string">
             <annotation>
                <documentation>
-                  a comma separated list with file extensions on which 
-the search page can operate. Each extension must 
-also include a weight (0 meaning lowest weight) 
-which enables the search infrastructure to find the 
-best fitting page. The weight is separated from 
-the extension by a colon. If a search page can 
-search all possible resources then &quot;*&quot; can be used.
+                  a comma separated list with file extensions on which the search page can operate. Each extension must also include a weight (0 meaning lowest weight) which enables the search infrastructure to find the best fitting page. The weight is separated from the extension by a colon. If a search page can search all possible resources then &quot;*&quot; can be used.
+&lt;br&gt;&lt;b&gt;Note:&lt;/b&gt; This only applies if there is no &lt;code&gt;org.eclipse.search.ui.ISearchPageScoreComputer&lt;/code&gt; adapter for the selected element.
                </documentation>
             </annotation>
          </attribute>
@@ -213,6 +213,7 @@ definition:
       </documentation>
    </annotation>
 
+
    <annotation>
       <appInfo>
          <meta.section type="implementation"/>
@@ -228,7 +229,7 @@ for full-text search.
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2001, 2004 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2001, 2009 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made available under the terms of the Eclipse Public License v1.0 which accompanies this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;
       </documentation>
    </annotation>
