@@ -14,5 +14,18 @@
          </run>
       </application>
    </extension>
+   <extension
+         id="E4Application"
+         name="E4 Application"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.e4.ui.workbench.swt.internal.E4Application">
+         </run>
+      </application>
+   </extension>
 
 </plugin>

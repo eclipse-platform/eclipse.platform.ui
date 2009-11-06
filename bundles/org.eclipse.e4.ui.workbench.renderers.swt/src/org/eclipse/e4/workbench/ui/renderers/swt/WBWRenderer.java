@@ -122,8 +122,8 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell = new Shell(parentShell, SWT.SHELL_TRIM);
 			wbwShell.setLocation(wbwModel.getX(), wbwModel.getY());
 			wbwShell.setSize(wbwModel.getWidth(), wbwModel.getHeight());
-			wbwShell.setVisible(true);
 		}
+		wbwShell.setVisible(true);
 
 		wbwShell.setLayout(new FillLayout());
 		newWidget = wbwShell;

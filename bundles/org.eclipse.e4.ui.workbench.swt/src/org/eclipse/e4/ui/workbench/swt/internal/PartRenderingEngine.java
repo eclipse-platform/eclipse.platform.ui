@@ -10,22 +10,37 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
+import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.equinox.app.IApplication;
+import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -110,7 +125,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		}
 	};
 
-	private IEclipseContext context;
+	private IEclipseContext appContext;
 
 	public PartRenderingEngine(IEclipseContext context) {
 		initialize(context);
@@ -129,7 +144,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 *            the IContributionFactory already provided to <code>r</code>
 	 */
 	public void initialize(IEclipseContext context) {
-		this.context = context;
+		this.appContext = context;
 
 		IExtensionRegistry registry = (IExtensionRegistry) context
 				.get(IExtensionRegistry.class.getName());
@@ -198,6 +213,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				for (String variable : ctxt.getVariables()) {
 					lclContext.declareModifiable(variable);
 				}
+
+				Workbench.processHierarchy(element);
 			}
 		}
 
@@ -276,12 +293,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		MUIElement parent = element.getParent();
 		AbstractPartRenderer parentFactory = parent != null ? getFactoryFor(parent)
 				: null;
-		if (parentFactory == null)
-			return;
-
-		// Remove the child from its current parent's -Composite- this does NOT
-		// mean removing the model element from its parent's model
-		parentFactory.hideChild(element.getParent(), element);
+		if (parentFactory != null) {
+			parentFactory.hideChild(element.getParent(), element);
+		}
 
 		factory.disposeWidget(element);
 
@@ -301,7 +315,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 			Object newWidget = renderer.createWidget(element, parent);
 			if (newWidget != null) {
 				renderer.bindWidget(element, newWidget);
-				processHandlers(element);
 				return newWidget;
 			}
 		}
@@ -313,16 +326,6 @@ public class PartRenderingEngine implements IPresentationEngine {
 		return curFactory.getRenderer(uiElement, parent);
 	}
 
-	protected void processHandlers(MUIElement element) {
-		// for (MHandler contributedHandler : element.getHandlers()) {
-		// if (contributedHandler.getURI() != null &&
-		// contributedHandler.getObject() == null) {
-		// contributedHandler.setObject(contributionFactory.create(
-		// contributedHandler.getURI(), context));
-		// }
-		// }
-	}
-
 	protected void setFactoryFor(MUIElement element,
 			AbstractPartRenderer factory) {
 		element.setFactory(factory);
@@ -330,5 +333,94 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	protected AbstractPartRenderer getFactoryFor(MUIElement element) {
 		return (AbstractPartRenderer) element.getFactory();
+	}
+
+	/*
+	 * For use when there is no real styling engine present. Has no behaviour
+	 * but conforms to IStylingEngine API.
+	 * 
+	 * @param appContext
+	 */
+	private static void initializeNullStyling(IEclipseContext appContext) {
+		appContext.set(IStylingEngine.SERVICE_NAME, new IStylingEngine() {
+			public void setClassname(Object widget, String classname) {
+			}
+
+			public void setId(Object widget, String id) {
+			}
+
+			public void style(Object widget) {
+			}
+		});
+	}
+
+	public Object run(final MApplicationElement uiRoot,
+			final IEclipseContext appContext) {
+		final Display display = new Display();
+		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
+			public void run() {
+				String cssURI = (String) appContext
+						.get(E4Workbench.CSS_URI_ARG);
+				if (cssURI != null) {
+					String cssResourcesURI = (String) appContext
+							.get(E4Workbench.CSS_RESOURCE_URI_ARG);
+					CSSStylingSupport.initializeStyling(display, cssURI,
+							cssResourcesURI, appContext);
+				} else {
+					initializeNullStyling(appContext);
+				}
+
+				// Register an SWT resource handler
+				appContext.set(IResourceUtiltities.class.getName(),
+						new ResourceUtility(Activator.getDefault()
+								.getBundleAdmin()));
+
+				// set up the keybinding manager
+				KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
+				ContextInjectionFactory.inject(dispatcher, appContext);
+				org.eclipse.swt.widgets.Listener listener = dispatcher
+						.getKeyDownFilter();
+				display.addFilter(SWT.KeyDown, listener);
+				display.addFilter(SWT.Traverse, listener);
+
+				// Show the initial UI
+
+				// HACK!! we should loop until the display gets disposed...
+				// ...then we listen for the last 'main' window to get disposed
+				// and dispose the Display
+				Shell hackShell = null;
+				if (uiRoot instanceof MApplication) {
+					MApplication app = (MApplication) uiRoot;
+					for (MWindow window : app.getChildren()) {
+						hackShell = (Shell) createGui(window);
+					}
+				} else if (uiRoot instanceof MUIElement) {
+					if (uiRoot instanceof MWindow) {
+						createGui((MUIElement) uiRoot);
+					} else {
+						// Special handling for partial models (for testing...)
+						hackShell = new Shell(display, SWT.SHELL_TRIM);
+						createGui((MUIElement) uiRoot, hackShell);
+					}
+				}
+
+				// Spin the event loop until someone disposes the display
+				while (!hackShell.isDisposed() && !display.isDisposed()) {
+					try {
+						if (!display.readAndDispatch()) {
+							display.sleep();
+						}
+					} catch (ThreadDeath th) {
+						throw th;
+					} catch (Exception ex) {
+						ex.printStackTrace();
+					} catch (Error err) {
+						err.printStackTrace();
+					}
+				}
+			}
+		});
+
+		return IApplication.EXIT_OK;
 	}
 }

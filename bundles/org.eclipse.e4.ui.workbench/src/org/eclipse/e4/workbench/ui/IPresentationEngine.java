@@ -12,6 +12,7 @@
 package org.eclipse.e4.workbench.ui;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MUIElement;
 
 /**
@@ -50,4 +51,14 @@ public interface IPresentationEngine {
 	 *            the model element whose UI element should removed
 	 */
 	public void removeGui(MUIElement element);
+
+	/**
+	 * Run the UI. This method is responsible for creating the initial UI and (if necessary)
+	 * spinning the event loop for the life of the application.
+	 * 
+	 * @param uiRoot
+	 * 
+	 * @return The application's return value
+	 */
+	public Object run(MApplicationElement uiRoot, IEclipseContext appContext);
 }
