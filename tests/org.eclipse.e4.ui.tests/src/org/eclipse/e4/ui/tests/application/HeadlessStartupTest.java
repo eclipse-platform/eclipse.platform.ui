@@ -57,12 +57,12 @@ public abstract class HeadlessStartupTest extends TestCase {
 	protected void tearDown() throws Exception {
 		super.tearDown();
 
-		if (osgiContext instanceof IDisposable) {
-			((IDisposable) osgiContext).dispose();
-		}
-
 		if (applicationContext instanceof IDisposable) {
 			((IDisposable) applicationContext).dispose();
+		}
+
+		if (osgiContext instanceof IDisposable) {
+			((IDisposable) osgiContext).dispose();
 		}
 	}
 
