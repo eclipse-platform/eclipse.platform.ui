@@ -291,8 +291,7 @@ public class OverviewRuler implements IOverviewRuler {
 			e.gc.fillRectangle(r);
 
 //			Display d= fHeader.getDisplay();
-//			if (d != null)
-//				drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
+//			drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
 			drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, fSeparatorColor, fSeparatorColor);
 
 			e.gc.setForeground(fSeparatorColor);
