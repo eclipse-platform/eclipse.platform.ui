@@ -88,6 +88,7 @@ public class BindingServiceImpl implements EBindingService {
 	static final String LOOKUP_BINDING = "binding"; //$NON-NLS-1$
 	static final String LOOKUP_CMD = "cmd"; //$NON-NLS-1$
 	static final String BINDING_LOOKUP = "org.eclipse.e4.ui.bindings.EBindingLookup"; //$NON-NLS-1$
+	static final String BINDING_PREFIX_LOOKUP = "org.eclipse.e4.ui.bindings.EBindingPrefixLookup"; //$NON-NLS-1$
 	static final String CMD_LOOKUP = "org.eclipse.e4.ui.bindings.ECommandLookup"; //$NON-NLS-1$
 	static final String CMD_SEQ_LOOKUP = "org.eclipse.e4.ui.bindings.ECommandSequenceLookup"; //$NON-NLS-1$
 	static final String B_ID = "binding::"; //$NON-NLS-1$
@@ -105,10 +106,14 @@ public class BindingServiceImpl implements EBindingService {
 	public void activateBinding(TriggerSequence sequence, ParameterizedCommand command) {
 		String keys = sequence.format();
 		context.set(B_ID + keys, command);
+
 		TriggerSequence[] prefixes = sequence.getPrefixes();
 		if (prefixes.length > 1) {
 			for (int i = 0; i < prefixes.length; i++) {
-				context.set(B_SEQ + prefixes[i].format(), B_SEQ);
+				String pref = prefixes[i].format();
+				if (pref.length() > 0) {
+					incPref(pref);
+				}
 			}
 		}
 
@@ -126,6 +131,17 @@ public class BindingServiceImpl implements EBindingService {
 		context.set(cmdBindingId, bindings);
 	}
 
+	private void incPref(String prefix) {
+		String name = B_SEQ + prefix;
+		Integer ref = (Integer) context.getLocal(name);
+		if (ref == null) {
+			ref = new Integer(1);
+		} else {
+			ref = new Integer(ref.intValue() + 1);
+		}
+		context.set(name, ref);
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -135,6 +151,7 @@ public class BindingServiceImpl implements EBindingService {
 	public void deactivateBinding(TriggerSequence sequence, ParameterizedCommand command) {
 		context.remove(B_ID + sequence.format());
 		// TODO remove command to key mapping
+		// TODO decrement prefix ref
 	}
 
 	/*
@@ -178,7 +195,7 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public boolean isPartialMatch(TriggerSequence keySequence) {
-		return false;
+		return context.get(BINDING_PREFIX_LOOKUP, lookupSequence(keySequence.format())) != null;
 	}
 
 	/*
@@ -239,5 +256,9 @@ public class BindingServiceImpl implements EBindingService {
 
 	private Object[] lookupCommand(String cmdString) {
 		return new Object[] { P_ID + cmdString };
+	}
+
+	private Object[] lookupSequence(String sequence) {
+		return new Object[] { B_SEQ + sequence };
 	}
 }
