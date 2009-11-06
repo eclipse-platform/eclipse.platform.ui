@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import javax.inject.Named;
 
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -50,6 +51,10 @@ public class SaveHandler {
 						pmContext, null);
 			}
 		});
+		
+		if (pmContext instanceof IDisposable) {
+			((IDisposable) pmContext).dispose();
+		}
 	}
 
 }
