@@ -88,7 +88,8 @@ public class EventBroker implements IEventBroker {
 		} else {
 			Dictionary<String, Object> d = new Hashtable<String, Object>(2);
 			d.put(EventConstants.EVENT_TOPIC, topic);
-			d.put(IEventBroker.DATA, data);
+			if (data != null)
+				d.put(IEventBroker.DATA, data);
 			event = new Event(topic, d);
 		}
 		return event;
