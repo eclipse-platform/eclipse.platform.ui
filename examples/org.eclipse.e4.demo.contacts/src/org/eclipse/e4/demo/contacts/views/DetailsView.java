@@ -22,8 +22,10 @@ import javax.inject.Named;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,8 +52,11 @@ public class DetailsView {
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
-	public void doSave(IProgressMonitor monitor) throws IOException,
+	public void doSave(@Optional IProgressMonitor monitor) throws IOException,
 			InterruptedException {
+		if (monitor == null) {
+			monitor = new NullProgressMonitor();
+		}
 		monitor.beginTask("Saving contact details to vCard...", 16);
 
 		Contact originalContact = detailComposite.getOriginalContact();
@@ -176,15 +181,17 @@ public class DetailsView {
 
 	@Inject
 	public void setSelection(@Named("selection") Contact selection) {
-		if (dirtyable.isDirty()) {
-			if (MessageDialog.openQuestion(detailComposite.getShell(),
-					"Save vCard",
-					"The current vCard has been modified. Save changes?")) {
-				ParameterizedCommand saveCommand = commandService
-						.createCommand("contacts.save", Collections.EMPTY_MAP);
-				handlerService.executeHandler(saveCommand);
+		if (selection != null) {
+			if (dirtyable.isDirty()) {
+				if (MessageDialog.openQuestion(detailComposite.getShell(),
+						"Save vCard",
+						"The current vCard has been modified. Save changes?")) {
+					ParameterizedCommand saveCommand = commandService
+							.createCommand("contacts.save", Collections.EMPTY_MAP);
+					handlerService.executeHandler(saveCommand);
+				}
+				dirtyable.setDirty(false);
 			}
-			dirtyable.setDirty(false);
 		}
 		detailComposite.update(selection);
 	}

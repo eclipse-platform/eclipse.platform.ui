@@ -12,24 +12,40 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.CheckboxTableViewer;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
+import org.eclipse.swt.events.ShellAdapter;
+import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
@@ -167,6 +183,12 @@ public class WBWRenderer extends SWTPartRenderer {
 					w.setY(shell.getLocation().y);
 				}
 			});
+
+			shell.addShellListener(new ShellAdapter() {
+				public void shellClosed(ShellEvent e) {
+					e.doit = promptForSave(shell, w);
+				}
+			});
 		}
 	}
 
@@ -210,4 +232,97 @@ public class WBWRenderer extends SWTPartRenderer {
 		Shell shell = (Shell) childME.getWidget();
 		shell.layout(true);
 	}
+
+	private List<MSaveablePart> collectSaveableParts(
+			MElementContainer<?> window, List<MSaveablePart> saveableParts) {
+		for (Object element : window.getChildren()) {
+			if (element instanceof MSaveablePart) {
+				MSaveablePart part = (MSaveablePart) element;
+				if (part.isDirty()) {
+					saveableParts.add(part);
+				}
+			}
+
+			if (element instanceof MElementContainer<?>) {
+				collectSaveableParts((MElementContainer<?>) element,
+						saveableParts);
+			}
+		}
+		return saveableParts;
+	}
+
+	private boolean promptForSave(Shell parentShell, MElementContainer<?> window) {
+		List<MSaveablePart> saveableParts = collectSaveableParts(window,
+				new ArrayList<MSaveablePart>());
+		if (!saveableParts.isEmpty()) {
+			SaveablePartPromptDialog dialog = new SaveablePartPromptDialog(
+					parentShell, saveableParts);
+			if (dialog.open() == Window.CANCEL) {
+				return false;
+			}
+
+			for (Object element : dialog.getCheckedElements()) {
+				MSaveablePart part = (MSaveablePart) element;
+				Object clientObject = part.getObject();
+				ContextInjectionFactory.invoke(clientObject, "doSave", //$NON-NLS-1$
+						context, null);
+			}
+		}
+
+		return true;
+	}
+
+	@Inject
+	private IEclipseContext context;
+
+	class SaveablePartPromptDialog extends Dialog {
+
+		private Collection<?> collection;
+
+		private CheckboxTableViewer tableViewer;
+
+		private Object[] checkedElements = new Object[0];
+
+		SaveablePartPromptDialog(Shell shell, Collection<?> collection) {
+			super(shell);
+			this.collection = collection;
+		}
+
+		@Override
+		protected Control createDialogArea(Composite parent) {
+			parent = (Composite) super.createDialogArea(parent);
+
+			Label label = new Label(parent, SWT.LEAD);
+			label.setText("Select the parts to save:"); //$NON-NLS-1$
+
+			tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.SINGLE);
+			GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
+			data.heightHint = 250;
+			data.widthHint = 300;
+			tableViewer.getControl().setLayoutData(data);
+			tableViewer.setLabelProvider(new LabelProvider() {
+				@Override
+				public String getText(Object element) {
+					return ((MSaveablePart) element).getName();
+				}
+			});
+			tableViewer.setContentProvider(ArrayContentProvider.getInstance());
+			tableViewer.setInput(collection);
+			tableViewer.setAllChecked(true);
+
+			return parent;
+		}
+
+		@Override
+		protected void okPressed() {
+			checkedElements = tableViewer.getCheckedElements();
+			super.okPressed();
+		}
+
+		public Object[] getCheckedElements() {
+			return checkedElements;
+		}
+
+	}
+
 }
