@@ -257,11 +257,11 @@ public class OverviewRuler implements IOverviewRuler {
 		}
 
 		private void drawBevelRect(GC gc, int x, int y, int w, int h, Color topLeft, Color bottomRight) {
-			gc.setForeground(topLeft == null ? fSeparatorColor : topLeft);
+			gc.setForeground(topLeft);
 			gc.drawLine(x, y, x + w -1, y);
 			gc.drawLine(x, y, x, y + h -1);
 
-			gc.setForeground(bottomRight == null ? fSeparatorColor : bottomRight);
+			gc.setForeground(bottomRight);
 			gc.drawLine(x + w, y, x + w, y + h);
 			gc.drawLine(x, y + h, x + w, y + h);
 		}
@@ -273,16 +273,35 @@ public class OverviewRuler implements IOverviewRuler {
 			Point s= fHeader.getSize();
 
 			e.gc.setBackground(fIndicatorColor);
-			Rectangle r= new Rectangle(INSET, (s.y - (2*ANNOTATION_HEIGHT)) / 2, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
+			
+			boolean isOnTop= fHeader.getParent().getClientArea().y == fHeader.getLocation().y;
+			boolean isTall= s.y > s.x + 2*ANNOTATION_HEIGHT;
+			int y;
+			if (!isOnTop) {
+				// not on top -> attach to bottom
+				y= s.y - 3*ANNOTATION_HEIGHT;
+			} else if (isTall) {
+				// attach to top
+				y= ANNOTATION_HEIGHT;
+			} else {
+				// center
+				y= (s.y - (2*ANNOTATION_HEIGHT)) / 2;
+			}
+			Rectangle r= new Rectangle(INSET, y, s.x - (2*INSET), 2*ANNOTATION_HEIGHT);
 			e.gc.fillRectangle(r);
-			Display d= fHeader.getDisplay();
-			if (d != null)
+
+//			Display d= fHeader.getDisplay();
+//			if (d != null)
 //				drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, d.getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW), d.getSystemColor(SWT.COLOR_WIDGET_HIGHLIGHT_SHADOW));
-				drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, null, null);
+			drawBevelRect(e.gc, r.x, r.y, r.width -1, r.height -1, fSeparatorColor, fSeparatorColor);
 
 			e.gc.setForeground(fSeparatorColor);
 			e.gc.setLineWidth(0); // NOTE: 0 means width is 1 but with optimized performance
-			e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
+
+			if (!isOnTop || !isTall) {
+				// only draw separator if at bottom or if gap is small
+				e.gc.drawLine(0, s.y -1, s.x -1, s.y -1);
+			}
 		}
 	}
 

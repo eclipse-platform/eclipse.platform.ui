@@ -15,12 +15,14 @@ import java.util.Iterator;
 import java.util.Stack;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Canvas;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
+import org.eclipse.swt.widgets.ScrollBar;
 
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
 import org.eclipse.jface.internal.text.StickyHoverManager;
@@ -113,18 +115,17 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 		 */
 		protected void layout(Composite composite, boolean flushCache) {
 			Rectangle clArea= composite.getClientArea();
-			Rectangle trim= getTextWidget().computeTrim(0, 0, 0, 0);
+			StyledText textWidget= getTextWidget();
+			Rectangle trim= textWidget.computeTrim(0, 0, 0, 0);
 			int topTrim= - trim.y;
-			int scrollbarHeight= trim.height - topTrim; // scrollbar is only under the client area
+			int scrollbarHeight= trim.height - topTrim; // horizontal scroll bar is only under the client area
 
 			int x= clArea.x;
 			int width= clArea.width;
 
+			int overviewRulerWidth= -1;
 			if (fOverviewRuler != null && fIsOverviewRulerVisible) {
-				int overviewRulerWidth= fOverviewRuler.getWidth();
-				fOverviewRuler.getControl().setBounds(clArea.x + clArea.width - overviewRulerWidth - 1, clArea.y + scrollbarHeight, overviewRulerWidth, clArea.height - 3*scrollbarHeight);
-				fOverviewRuler.getHeaderControl().setBounds(clArea.x + clArea.width - overviewRulerWidth - 1, clArea.y, overviewRulerWidth, scrollbarHeight);
-
+				overviewRulerWidth= fOverviewRuler.getWidth();
 				width -= overviewRulerWidth + fGap;
 			}
 
@@ -140,7 +141,25 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 				width -= verticalRulerWidth + fGap;
 			}
 
-			getTextWidget().setBounds(x, clArea.y, width, clArea.height);
+			textWidget.setBounds(x, clArea.y, width, clArea.height);
+
+			if (overviewRulerWidth != -1) {
+				ScrollBar verticalBar= textWidget.getVerticalBar();
+				Rectangle thumbTrackBounds= verticalBar.getThumbTrackBounds();
+				int topArrowHeight= thumbTrackBounds.y;
+				int bottomArrowHeight= clArea.y + clArea.height - scrollbarHeight - (thumbTrackBounds.y + thumbTrackBounds.height);
+
+				int overviewRulerX= clArea.x + clArea.width - overviewRulerWidth - 1;
+				fOverviewRuler.getControl().setBounds(overviewRulerX, clArea.y + topArrowHeight, overviewRulerWidth, clArea.height - topArrowHeight - bottomArrowHeight - scrollbarHeight);
+				
+				Control headerControl= fOverviewRuler.getHeaderControl();
+				if (topArrowHeight < bottomArrowHeight && topArrowHeight < scrollbarHeight && bottomArrowHeight > scrollbarHeight) {
+					// not enough space for header at top => move to bottom
+					headerControl.setBounds(overviewRulerX, clArea.y + clArea.height - bottomArrowHeight - scrollbarHeight, overviewRulerWidth, bottomArrowHeight);
+				} else {
+					headerControl.setBounds(overviewRulerX, clArea.y, overviewRulerWidth, topArrowHeight);
+				}
+			}
 		}
 	}
 
