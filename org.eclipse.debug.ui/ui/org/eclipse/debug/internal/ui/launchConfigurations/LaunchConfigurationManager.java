@@ -30,6 +30,7 @@ import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.TransformerException;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -571,9 +572,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 					history.setFavorites(favs);
 					// add any favorites that have been added to the workspace before this plug-in
 					// was loaded - @see bug 231600
-					ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
-					for (int j = 0; j < configurations.length; j++) {
-						history.checkFavorites(configurations[j]);
+					try {
+						ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(ILaunchConfiguration.CONFIGURATION);
+						for (int j = 0; j < configurations.length; j++) {
+							history.checkFavorites(configurations[j]);
+						}
+					} catch (CoreException e) {
+						DebugUIPlugin.log(e.getStatus());
 					}
 				}
 			}
@@ -1050,8 +1055,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @return the singleton instance of the launch manager
 	 * @since 3.3
 	 */
-	private LaunchManager getLaunchManager() {
-		return (LaunchManager) DebugPlugin.getDefault().getLaunchManager();
+	private ILaunchManager getLaunchManager() {
+		return DebugPlugin.getDefault().getLaunchManager();
 	}
 	
 	/**
