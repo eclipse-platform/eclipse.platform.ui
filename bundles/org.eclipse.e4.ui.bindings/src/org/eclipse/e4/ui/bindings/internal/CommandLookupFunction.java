@@ -9,7 +9,7 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.core.commands.internal;
+package org.eclipse.e4.ui.bindings.internal;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
@@ -18,7 +18,7 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 /**
  *
  */
-public class HandlerLookupFunction extends ContextFunction {
+public class CommandLookupFunction extends ContextFunction {
 
 	/*
 	 * (non-Javadoc)
@@ -32,15 +32,14 @@ public class HandlerLookupFunction extends ContextFunction {
 		if (arguments == null || arguments.length == 0) {
 			return this;
 		}
-		String handlerId = (String) arguments[0];
-
+		String cmdBindingId = (String) arguments[0];
 		IEclipseContext current = context;
 		IEclipseContext child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
 		while (child != null) {
 			current = child;
 			child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
 		}
-		return current.get(handlerId);
+		return current.get(cmdBindingId);
 	}
 
 }

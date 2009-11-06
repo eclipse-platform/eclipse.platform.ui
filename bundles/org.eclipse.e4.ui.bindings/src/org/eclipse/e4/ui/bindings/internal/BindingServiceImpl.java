@@ -16,7 +16,6 @@ import java.util.Collection;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.bindings.keys.KeySequence;
@@ -28,7 +27,8 @@ import org.eclipse.e4.ui.bindings.keys.ParseException;
 public class BindingServiceImpl implements EBindingService {
 	static final String LOOKUP_BINDING = "binding"; //$NON-NLS-1$
 	static final String LOOKUP_CMD = "cmd"; //$NON-NLS-1$
-	static final BindingLookupFinction LOOKUP_INSTANCE = new BindingLookupFinction();
+	static final String BINDING_LOOKUP = "org.eclipse.e4.ui.bindings.EBindingLookup"; //$NON-NLS-1$
+	static final String CMD_LOOKUP = "org.eclipse.e4.ui.bindings.ECommandLookup"; //$NON-NLS-1$
 	static final String B_ID = "binding::"; //$NON-NLS-1$
 	static final String P_ID = "parmCmd::"; //$NON-NLS-1$
 
@@ -43,13 +43,9 @@ public class BindingServiceImpl implements EBindingService {
 	public void activateBinding(TriggerSequence sequence, ParameterizedCommand command) {
 		String keys = sequence.format();
 		context.set(B_ID + keys, command);
-		if (context.get(keys) == null) {
-			addFunction(keys);
-		}
+
+		// add mapping from command to keys
 		String cmdString = command.serialize();
-		if (context.get(cmdString) == null) {
-			addFunction(cmdString);
-		}
 		ArrayList bindings = new ArrayList(3);
 		String cmdBindingId = P_ID + cmdString;
 		ArrayList tmp = (ArrayList) context.getLocal(cmdBindingId);
@@ -68,16 +64,7 @@ public class BindingServiceImpl implements EBindingService {
 	 */
 	public void deactivateBinding(TriggerSequence sequence, ParameterizedCommand command) {
 		context.remove(B_ID + sequence.format());
-	}
-
-	/**
-	 * @param keys
-	 */
-	private void addFunction(String keys) {
-		IEclipseContext root = (IEclipseContext) context.get(IContextConstants.ROOT_CONTEXT);
-		if (root != null) {
-			root.set(keys, LOOKUP_INSTANCE);
-		}
+		// TODO remove command to key mapping
 	}
 
 	/*
@@ -111,8 +98,7 @@ public class BindingServiceImpl implements EBindingService {
 	 * TriggerSequence)
 	 */
 	public ParameterizedCommand getPerfectMatch(TriggerSequence trigger) {
-		return (ParameterizedCommand) context
-				.get(trigger.format(), lookupBinding(trigger.format()));
+		return (ParameterizedCommand) context.get(BINDING_LOOKUP, lookupBinding(trigger.format()));
 	}
 
 	/*
@@ -133,7 +119,7 @@ public class BindingServiceImpl implements EBindingService {
 	 */
 	public TriggerSequence getBestSequenceFor(ParameterizedCommand command) {
 		String cmdString = command.serialize();
-		ArrayList tmp = (ArrayList) context.get(cmdString, lookupCommand(cmdString));
+		ArrayList tmp = (ArrayList) context.get(CMD_LOOKUP, lookupCommand(cmdString));
 		if (tmp != null && !tmp.isEmpty()) {
 			return (TriggerSequence) tmp.get(0);
 		}
@@ -166,10 +152,10 @@ public class BindingServiceImpl implements EBindingService {
 	}
 
 	private Object[] lookupBinding(String bindingId) {
-		return new Object[] { LOOKUP_BINDING, B_ID + bindingId };
+		return new Object[] { B_ID + bindingId };
 	}
 
 	private Object[] lookupCommand(String cmdString) {
-		return new Object[] { LOOKUP_CMD, P_ID + cmdString };
+		return new Object[] { P_ID + cmdString };
 	}
 }
