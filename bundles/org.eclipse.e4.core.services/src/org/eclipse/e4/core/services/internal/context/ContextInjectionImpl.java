@@ -65,6 +65,6 @@ public class ContextInjectionImpl implements IContextConstants {
 
 	public static Object make(Class clazz, final IEclipseContext context) {
 		ContextInjector injector = new ContextInjector(context, null, null);
-		return injector.make(clazz, context);
+		return injector.make(clazz);
 	}
 }

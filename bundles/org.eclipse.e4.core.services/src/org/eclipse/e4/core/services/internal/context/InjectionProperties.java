@@ -16,6 +16,9 @@ public class InjectionProperties {
 	private boolean inject;
 	private String propertyToInject;
 	private boolean optional;
+	private IContextProvider provider;
+
+	private Class qualifier;
 
 	public InjectionProperties(Object[] properties) {
 		super();
@@ -49,5 +52,21 @@ public class InjectionProperties {
 
 	public void setInject(boolean inject) {
 		this.inject = inject;
+	}
+
+	public void setProvider(IContextProvider provider) {
+		this.provider = provider;
+	}
+
+	public IContextProvider getProvider() {
+		return provider;
+	}
+
+	public void setQualifier(Class qualifier) {
+		this.qualifier = qualifier;
+	}
+
+	public Class getQualifier() {
+		return qualifier;
 	}
 }

@@ -18,10 +18,8 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -44,7 +42,8 @@ public class ContextInjector {
 		protected boolean injectWithNulls = false;
 
 		private List postConstructMethods;
-		protected Set seenMethods = new HashSet(5);
+
+		public ArrayList classHierarchy = new ArrayList(5);
 
 		public Processor(String name, IEclipseContext context, boolean addition, boolean isInDispose) {
 			this.name = name;
@@ -65,16 +64,26 @@ public class ContextInjector {
 		 * The method assumes injection is needed for this field, from the context property named
 		 * injectName.
 		 */
-		public void processField(final Field field, String injectName, boolean optional) {
+		public void processField(final Field field, InjectionProperties properties) {
+			String injectName = properties.getPropertyName();
 			if ((name != null) && !name.equals(injectName)) // filter if name is specified
 				return;
-			if (!context.containsKey(injectName) && addition) {
-				if (!optional)
-					throw new IllegalStateException("Could not set " + field //$NON-NLS-1$
-							+ " because of missing: " + injectName); //$NON-NLS-1$
-				return;
+			Object value = null;
+			if (addition) {
+				IContextProvider provider = properties.getProvider();
+				if (provider != null) {
+					provider.setContext(context);
+					value = provider;
+				} else if (context.containsKey(injectName)) {
+					value = context.get(injectName);
+				} else {
+					if (!properties.isOptional())
+						throw new IllegalStateException("Could not set " + field //$NON-NLS-1$
+								+ " because of missing: " + injectName); //$NON-NLS-1$
+					return;
+				}
 			}
-			setField(userObject, field, addition ? context.get(injectName) : null);
+			setField(userObject, field, value);
 		}
 
 		public void processMethod(final Method method, boolean optional) {
@@ -118,27 +127,16 @@ public class ContextInjector {
 				InjectionProperties[] properties = InjectionPropertyResolver
 						.getInjectionParamProperties(method);
 				Object[] actualParams = processParams(properties, !addition, injectWithNulls);
-				if (actualParams != null)
-					callMethod(userObject, method, actualParams);
-				else
+				if (actualParams == null)
 					logWarning(userObject, new IllegalArgumentException());
+				else
+					callMethod(userObject, method, actualParams);
 			}
-		}
-
-		boolean seen(Method method) {
-			// uniquely identify methods by name+parameter types
-			StringBuffer sig = new StringBuffer();
-			sig.append(method.getName());
-			Class[] parms = method.getParameterTypes();
-			for (int i = 0; i < parms.length; i++) {
-				sig.append(parms[i]);
-				sig.append(',');
-			}
-			return !seenMethods.add(sig.toString());
 		}
 
 	}
 
+	// TBD investigate if this approach to reparenting works with calculated values and providers
 	private class ReparentProcessor extends Processor {
 
 		private EclipseContext oldParent;
@@ -162,9 +160,9 @@ public class ContextInjector {
 			return oldValue != newValue;
 		}
 
-		public void processField(final Field field, String injectName, boolean optional) {
-			if (hasChanged(injectName))
-				super.processField(field, injectName, optional);
+		public void processField(final Field field, InjectionProperties properties) {
+			if (hasChanged(properties.getPropertyName()))
+				super.processField(field, properties);
 		}
 
 		public void processMethod(final Method method, boolean optional) {
@@ -253,7 +251,7 @@ public class ContextInjector {
 				continue;
 			if (!InjectionPropertyResolver.isPreDestory(method))
 				continue;
-			if (!processor.seen(method))
+			if (!isOverridden(method, processor))
 				callMethod(processor.userObject, method, null);
 		}
 		// 2. Try IEclipseContextAware#contextDisposed(IEclipseContext)
@@ -262,7 +260,7 @@ public class ContextInjector {
 					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD,
 					new Class[] { IEclipseContext.class });
 			// only call this method if we haven't found any other dispose methods yet
-			if (!processor.seen(dispose))
+			if (!isOverridden(dispose, processor))
 				callMethod(processor.userObject, dispose, new Object[] { context });
 		} catch (SecurityException e) {
 			// ignore
@@ -274,7 +272,7 @@ public class ContextInjector {
 			Method dispose = objectsClass.getDeclaredMethod(
 					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD, new Class[0]);
 			// only call this method if we haven't found any other dispose methods yet
-			if (!processor.seen(dispose))
+			if (!isOverridden(dispose, processor))
 				callMethod(processor.userObject, dispose, null);
 		} catch (SecurityException e) {
 			// ignore
@@ -286,7 +284,7 @@ public class ContextInjector {
 		try {
 			Method dispose = objectsClass.getDeclaredMethod("dispose", null); //$NON-NLS-1$
 			// only call this method if we haven't found any other dispose methods yet
-			if (!processor.seen(dispose))
+			if (!isOverridden(dispose, processor))
 				callMethod(processor.userObject, dispose, null);
 		} catch (SecurityException e) {
 			// ignore
@@ -312,8 +310,11 @@ public class ContextInjector {
 		if (processor.addition) {
 			// order: superclass, fields, methods
 			Class superClass = objectsClass.getSuperclass();
-			if (!superClass.getName().equals(JAVA_OBJECT))
+			if (!superClass.getName().equals(JAVA_OBJECT)) {
+				processor.classHierarchy.add(objectsClass);
 				processClass(superClass, processor);
+				processor.classHierarchy.remove(objectsClass);
+			}
 			processFields(objectsClass, processor);
 			processMethods(objectsClass, processor);
 		} else {
@@ -321,8 +322,11 @@ public class ContextInjector {
 			processMethods(objectsClass, processor);
 			processFields(objectsClass, processor);
 			Class superClass = objectsClass.getSuperclass();
-			if (!superClass.getName().equals(JAVA_OBJECT))
+			if (!superClass.getName().equals(JAVA_OBJECT)) {
+				processor.classHierarchy.add(objectsClass);
 				processClass(superClass, processor);
+				processor.classHierarchy.remove(objectsClass);
+			}
 		}
 	}
 
@@ -343,8 +347,7 @@ public class ContextInjector {
 			InjectionProperties properties = InjectionPropertyResolver.getInjectionProperties(
 					field, fieldPrefix);
 			if (properties.shouldInject())
-				processor
-						.processField(field, properties.getPropertyName(), properties.isOptional());
+				processor.processField(field, properties);
 		}
 	}
 
@@ -358,9 +361,9 @@ public class ContextInjector {
 		Method[] methods = objectsClass.getDeclaredMethods();
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			// don't process methods already visited in subclasses
-			if (processor.seen(method))
-				continue;
+			// is this method overridden?
+			if (isOverridden(method, processor))
+				continue; // process in the subclass
 			if (processor.shouldProcessPostConstruct) {
 				if (InjectionPropertyResolver.isPostConstruct(method)) {
 					processor.addPostConstructMethod(method);
@@ -371,8 +374,47 @@ public class ContextInjector {
 					method, setMethodPrefix);
 			if (properties.shouldInject())
 				processor.processMethod(method, properties.isOptional());
-
 		}
+	}
+
+	/**
+	 * Checks if a given method is overridden with an injectable method.
+	 */
+	private boolean isOverridden(Method method, Processor processor) {
+		int modifiers = method.getModifiers();
+		if (Modifier.isPrivate(modifiers))
+			return false;
+		if (Modifier.isStatic(modifiers))
+			return false;
+		// method is not private if we reached this line, check not(public OR protected)
+		boolean isDefault = !(Modifier.isPublic(modifiers) || Modifier.isProtected(modifiers));
+
+		for (Iterator i = processor.classHierarchy.iterator(); i.hasNext();) {
+			Class subClass = (Class) i.next();
+			Method override = null;
+			try {
+				override = subClass.getDeclaredMethod(method.getName(), method.getParameterTypes());
+			} catch (SecurityException e) {
+				continue;
+			} catch (NoSuchMethodException e) {
+				continue; // this is the desired outcome
+			}
+			if (override != null) {
+				if (isDefault) { // must be in the same package to override
+					Package originalPackage = method.getDeclaringClass().getPackage();
+					Package overridePackage = subClass.getPackage();
+
+					if (originalPackage == null && overridePackage == null)
+						return true;
+					if (originalPackage == null || overridePackage == null)
+						return false;
+					if (originalPackage.equals(overridePackage))
+						return true;
+				} else
+					return true;
+			}
+		}
+		return false;
 	}
 
 	public Object invoke(Object userObject, String methodName, Object defaultValue) {
@@ -391,9 +433,8 @@ public class ContextInjector {
 		return defaultValue;
 	}
 
-	// TBD code from ReflectionContributionFactory#createObject()
-	public Object make(Class clazz, IEclipseContext context) {
-		Constructor[] constructors = clazz.getConstructors();
+	public Object make(Class clazz) {
+		Constructor[] constructors = clazz.getDeclaredConstructors();
 
 		// Sort the constructors by descending number of constructor arguments
 		ArrayList sortedConstructors = new ArrayList(constructors.length);
@@ -410,8 +451,9 @@ public class ContextInjector {
 		for (Iterator i = sortedConstructors.iterator(); i.hasNext();) {
 			Constructor constructor = (Constructor) i.next();
 
-			// skip non-public constructors
-			if ((constructor.getModifiers() & Modifier.PUBLIC) == 0)
+			// skip private and protected constructors; allow public and package visibility
+			if (((constructor.getModifiers() & Modifier.PRIVATE) != 0)
+					|| ((constructor.getModifiers() & Modifier.PROTECTED) != 0))
 				continue;
 
 			// unless this is the last constructor, it has to be tagged
@@ -427,22 +469,9 @@ public class ContextInjector {
 			Object[] actualParams = processParams(properties, false, false);
 			if (actualParams == null)
 				continue;
-			Object newInstance;
-			try {
-				newInstance = constructor.newInstance(actualParams);
-			} catch (IllegalArgumentException e) {
-				logWarning(clazz, e);
+			Object newInstance = callConstructor(constructor, actualParams);
+			if (newInstance == null)
 				return null;
-			} catch (InstantiationException e) {
-				logWarning(clazz, e);
-				return null;
-			} catch (IllegalAccessException e) {
-				logWarning(clazz, e);
-				return null;
-			} catch (InvocationTargetException e) {
-				logWarning(clazz, e);
-				return null;
-			}
 			ContextInjectionFactory.inject(newInstance, context, null, null);
 			return newInstance;
 		}
@@ -456,12 +485,19 @@ public class ContextInjector {
 			boolean injectWithNulls) {
 		Object[] actualParams = new Object[properties.length];
 		for (int i = 0; i < actualParams.length; i++) {
+			IContextProvider provider = properties[i].getProvider();
+			if (provider != null) {
+				provider.setContext(context);
+				actualParams[i] = provider;
+				continue;
+			}
 			String key = properties[i].getPropertyName();
 			if (key == null)
 				return null;
 			if (context.containsKey(key))
 				actualParams[i] = (injectWithNulls) ? null : context.get(key);
-			else if (key.equals("IEclipseContext")) // TBD constant IEclipseContext.getClass().getName()
+			else if (key.equals("IEclipseContext")) // TBD constant
+				// IEclipseContext.getClass().getName()
 				actualParams[i] = context;
 			else {
 				if (ignoreMissing || properties[i].isOptional())
@@ -535,6 +571,49 @@ public class ContextInjector {
 		} finally {
 			if (!wasAccessible)
 				method.setAccessible(false);
+		}
+		return result;
+	}
+
+	private Object callConstructor(Constructor constructor, Object[] args) {
+		if (args != null) { // make sure args are assignable
+			Class[] parameterTypes = constructor.getParameterTypes();
+			if (parameterTypes.length != args.length) {
+				logWarning(constructor, new IllegalArgumentException());
+				return null;
+			}
+			for (int i = 0; i < args.length; i++) {
+				if ((args[i] != null) && !parameterTypes[i].isAssignableFrom(args[i].getClass())) {
+					// TBD consider when do we need to log
+					// logWarning(method, new IllegalArgumentException());
+					return null;
+				}
+			}
+		}
+
+		Object result = null;
+		boolean wasAccessible = true;
+		if (!constructor.isAccessible()) {
+			constructor.setAccessible(true);
+			wasAccessible = false;
+		}
+		try {
+			result = constructor.newInstance(args);
+		} catch (IllegalArgumentException e) {
+			logWarning(constructor, e);
+			return null;
+		} catch (IllegalAccessException e) {
+			logWarning(constructor, e);
+			return null;
+		} catch (InvocationTargetException e) {
+			logWarning(constructor, e);
+			return null;
+		} catch (InstantiationException e) {
+			logWarning(constructor, e);
+			return null;
+		} finally {
+			if (!wasAccessible)
+				constructor.setAccessible(false);
 		}
 		return result;
 	}
