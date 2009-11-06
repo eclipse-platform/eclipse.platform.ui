@@ -37,12 +37,13 @@ import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 public class DetailComposite extends Composite {
-	
+
 	private MDirtyable dirtyable;
 	private Contact originalContact;
 	private Contact clonedContact;
@@ -57,9 +58,8 @@ public class DetailComposite extends Composite {
 	private final WritableValue contactValue = new WritableValue();
 	private final IObservableValue scaledImage;
 
-	public DetailComposite(MDirtyable dirtyable, final Composite parent, final int style,
-			final boolean isEnabled, final ModifyListener modifyListener,
-			final Contact contact) {
+	public DetailComposite(MDirtyable dirtyable, final Composite parent,
+			final int style) {
 		super(parent, style);
 		this.dirtyable = dirtyable;
 
@@ -83,7 +83,7 @@ public class DetailComposite extends Composite {
 		final Composite composite = createComposite(this);
 
 		createSeparator(composite, "General");
-		
+
 		createText(composite, "Title:", "title");
 		createText(composite, "First Name:", "firstName");
 		createText(composite, "Middle Name:", "middleName");
@@ -157,17 +157,17 @@ public class DetailComposite extends Composite {
 				.bindValue(SWTObservables.observeImage(imageLabel),
 						scaledImage, new UpdateValueStrategy(
 								UpdateValueStrategy.POLICY_NEVER), null);
-		
+
 		addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
 				dummyPortrait.dispose();
-				scaledImage.dispose();	
+				scaledImage.dispose();
 			}
 		});
-		
+
 		commitChanges = true;
 	}
-	
+
 	private void setDirty(boolean dirty) {
 		dirtyable.setDirty(dirty);
 	}
@@ -249,35 +249,51 @@ public class DetailComposite extends Composite {
 					PojoObservables.observeDetailValue(contactValue, property,
 							String.class));
 		}
-		
+
 		text.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				if (commitChanges) {
-					setDirty(true);	
+					setDirty(true);
 				}
 			}
 		});
 
 		return text;
 	}
-	
+
 	public Contact getOriginalContact() {
 		return originalContact;
 	}
-	
+
 	public Contact getModifiedContact() {
 		return clonedContact;
 	}
 
+	private void setTextEnabled(Composite composite, boolean enabled) {
+		for (Control control : composite.getChildren()) {
+			if (control instanceof Composite) {
+				setTextEnabled((Composite) control, enabled);
+			} else if (control instanceof Text) {
+				control.setEnabled(enabled);
+			}
+		}
+	}
+
 	public void update(final Contact contact) {
-		commitChanges = false;
-		try {
-			clonedContact = (Contact) contact.clone();
-			originalContact = contact;
-			contactValue.setValue(clonedContact);
-			commitChanges = true;
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
+		if (contact == null) {
+			setTextEnabled(this, false);
+		} else {
+			setTextEnabled(this, true);
+
+			commitChanges = false;
+			try {
+				clonedContact = (Contact) contact.clone();
+				originalContact = contact;
+				contactValue.setValue(clonedContact);
+				commitChanges = true;
+			} catch (CloneNotSupportedException e) {
+				throw new RuntimeException(e);
+			}
 		}
 	}
 }

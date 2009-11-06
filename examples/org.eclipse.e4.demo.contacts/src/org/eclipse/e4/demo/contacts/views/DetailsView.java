@@ -44,8 +44,7 @@ public class DetailsView {
 	private ECommandService commandService;
 
 	public DetailsView(Composite parent, MDirtyable dirtyable) {
-		detailComposite = new DetailComposite(dirtyable, parent, SWT.NONE,
-				false, null, null);
+		detailComposite = new DetailComposite(dirtyable, parent, SWT.NONE);
 		this.dirtyable = dirtyable;
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
@@ -53,7 +52,7 @@ public class DetailsView {
 
 	public void doSave(IProgressMonitor monitor) throws IOException,
 			InterruptedException {
-		monitor.beginTask("Saving contact details to VCard...", 16);
+		monitor.beginTask("Saving contact details to vCard...", 16);
 
 		Contact originalContact = detailComposite.getOriginalContact();
 		Contact modifiedContact = detailComposite.getModifiedContact();
@@ -133,12 +132,12 @@ public class DetailsView {
 		builder.append(contact.getLastName()).append(';');
 		builder.append(contact.getFirstName()).append(';');
 		builder.append(contact.getMiddleName());
-		
+
 		String title = contact.getTitle();
 		if (title.length() != 0) {
 			builder.append(';').append(title);
 		}
-		
+
 		builder.append('\n');
 		return builder.toString();
 	}
@@ -177,19 +176,16 @@ public class DetailsView {
 
 	@Inject
 	public void setSelection(@Named("selection") Contact selection) {
-		if (selection != null) {
-			if (dirtyable.isDirty()) {
-				if (MessageDialog.openQuestion(detailComposite.getShell(),
-						"Save vCard",
-						"The current vCard has been modified. Save changes?")) {
-					ParameterizedCommand saveCommand = commandService
-							.createCommand("contacts.save",
-									Collections.EMPTY_MAP);
-					handlerService.executeHandler(saveCommand);
-				}
-				dirtyable.setDirty(false);
+		if (dirtyable.isDirty()) {
+			if (MessageDialog.openQuestion(detailComposite.getShell(),
+					"Save vCard",
+					"The current vCard has been modified. Save changes?")) {
+				ParameterizedCommand saveCommand = commandService
+						.createCommand("contacts.save", Collections.EMPTY_MAP);
+				handlerService.executeHandler(saveCommand);
 			}
-			detailComposite.update(selection);
+			dirtyable.setDirty(false);
 		}
+		detailComposite.update(selection);
 	}
 }
