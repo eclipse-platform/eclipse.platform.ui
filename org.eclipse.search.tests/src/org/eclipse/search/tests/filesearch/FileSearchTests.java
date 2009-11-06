@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,17 +28,14 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.ide.IDE;
 
-import org.eclipse.search.ui.text.FileTextSearchScope;
-
-import org.eclipse.search.internal.core.text.PatternConstructor;
-import org.eclipse.search.internal.ui.SearchPlugin;
-
 import org.eclipse.search.core.text.TextSearchEngine;
 import org.eclipse.search.core.text.TextSearchMatchAccess;
 import org.eclipse.search.core.text.TextSearchRequestor;
 import org.eclipse.search.core.text.TextSearchScope;
-
+import org.eclipse.search.internal.core.text.PatternConstructor;
+import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.tests.ResourceHelper;
+import org.eclipse.search.ui.text.FileTextSearchScope;
 
 public class FileSearchTests extends TestCase {
 	
@@ -242,10 +239,10 @@ public class FileSearchTests extends TestCase {
 		IFolder folder1= ResourceHelper.createFolder(fProject.getFolder("folder1"));
 		ResourceHelper.createFile(folder1, "file1", buf.toString());
 		IFile file2= ResourceHelper.createFile(folder1, "file2", buf.toString());
-		file2.setDerived(true);
+		file2.setDerived(true, null);
 		
 		IFolder folder2= ResourceHelper.createFolder(folder1.getFolder("folder2"));
-		folder2.setDerived(true);
+		folder2.setDerived(true, null);
 		ResourceHelper.createFile(folder2, "file3", buf.toString());
 
 		IFolder folder3= ResourceHelper.createFolder(folder2.getFolder("folder3"));
