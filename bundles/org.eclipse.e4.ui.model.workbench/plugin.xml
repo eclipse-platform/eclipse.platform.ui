@@ -11,14 +11,14 @@
  Contributors:
       IBM Corporation - initial API and implementation
 
- $Id: plugin.xml,v 1.4 2009/11/09 19:39:31 tschindl Exp $
+ $Id: plugin.xml,v 1.5 2009/11/09 19:45:11 tschindl Exp $
 -->
 
 <plugin>
 
    <extension point="org.eclipse.emf.ecore.generated_package">
       <package
-            uri="http://www.eclipse.org/ui/2008/Application"
+            uri="http://www.eclipse.org/ui/2008/UIModel"
             class="org.eclipse.e4.ui.model.application.MApplicationPackage"/>
    </extension>
    
