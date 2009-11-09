@@ -13,8 +13,6 @@ package org.eclipse.core.runtime.content;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.eclipse.core.internal.content.TextContentDescriber;
 import org.eclipse.core.internal.content.Util;
 import org.eclipse.core.runtime.QualifiedName;
@@ -51,9 +49,6 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final String XML_DECL_END = "?>"; //$NON-NLS-1$
-	private static final String ENCODING_REGEX = "encoding[\\x20\\x09\\x0D\\x0A]*=[\\x20\\x09\\x0D\\x0A]*[\"\']"; //$NON-NLS-1$
-	private static final Pattern ENCODING_PATTERN = Pattern.compile(ENCODING_REGEX);
-
 	private static final String BOM = "org.eclipse.core.runtime.content.XMLContentDescriber.bom"; //$NON-NLS-1$
 	private static final String CHARSET = "org.eclipse.core.runtime.content.XMLContentDescriber.charset"; //$NON-NLS-1$
 	private static final String FULL_XML_DECL = "org.eclipse.core.runtime.content.XMLContentDescriber.fullXMLDecl"; //$NON-NLS-1$
@@ -187,10 +182,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	}
 
 	private String getCharset(String firstLine) {
-		int encodingPos = -1;
-		Matcher matcher = ENCODING_PATTERN.matcher(firstLine);
-		if (matcher.find())
-			encodingPos = matcher.start();
+		int encodingPos = findEncodingPosition(firstLine);
 		if (encodingPos == -1)
 			return null;
 		char quoteChar = '"';
@@ -199,12 +191,35 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 			quoteChar = '\'';
 			firstQuote = firstLine.indexOf(quoteChar, encodingPos);
 		}
-		if (firstQuote == -1 || firstLine.length() == firstQuote - 1)
+		if (firstQuote == -1 || firstLine.length() == firstQuote + 1)
 			return null;
 		int secondQuote = firstLine.indexOf(quoteChar, firstQuote + 1);
 		if (secondQuote == -1)
 			return isFullXMLDecl(firstLine) ? firstLine.substring(firstQuote + 1, firstLine.lastIndexOf(XML_DECL_END)).trim() : null;
 		return firstLine.substring(firstQuote + 1, secondQuote);
+	}
+
+	private int findEncodingPosition(String line) {
+		String encoding = "encoding"; //$NON-NLS-1$
+		int fromIndex = 0;
+		int position = 0;
+		while ((position = line.indexOf(encoding, fromIndex)) != -1) {
+			boolean equals = false;
+			fromIndex = position + encoding.length();
+			for (int i = fromIndex; i < line.length(); i++) {
+				char c = line.charAt(i);
+				if (c == '=' && !equals) {
+					equals = true;
+				} else if (c == 0x20 || c == 0x09 || c == 0x0D || c == 0x0A) {
+					// white space characters to ignore
+				} else if ((c == '"' || c == '\'') && equals) {
+						return position;
+				} else {
+					break;
+				}
+			}
+		}
+		return -1;
 	}
 
 	private boolean isCharsetValid(String charset) {
