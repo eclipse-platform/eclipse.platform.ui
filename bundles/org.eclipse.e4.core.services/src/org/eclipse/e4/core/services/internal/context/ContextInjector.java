@@ -103,7 +103,8 @@ public class ContextInjector {
 					return;
 			}
 
-			Object[] actualParams = processParams(properties, !addition, injectWithNulls);
+			Object[] actualParams = processParams(properties, method.getParameterTypes(),
+					!addition, injectWithNulls);
 			if (actualParams != null)
 				callMethod(userObject, method, actualParams);
 			else if (!optional)
@@ -126,7 +127,8 @@ public class ContextInjector {
 				Method method = (Method) it.next();
 				InjectionProperties[] properties = InjectionPropertyResolver
 						.getInjectionParamProperties(method);
-				Object[] actualParams = processParams(properties, !addition, injectWithNulls);
+				Object[] actualParams = processParams(properties, method.getParameterTypes(),
+						!addition, injectWithNulls);
 				if (actualParams == null)
 					logWarning(userObject, new IllegalArgumentException());
 				else
@@ -426,7 +428,8 @@ public class ContextInjector {
 
 			InjectionProperties[] properties = InjectionPropertyResolver
 					.getInjectionParamProperties(method);
-			Object[] actualParams = processParams(properties, false, false);
+			Object[] actualParams = processParams(properties, method.getParameterTypes(), false,
+					false);
 			if (actualParams != null)
 				return callMethod(userObject, method, actualParams);
 		}
@@ -466,7 +469,8 @@ public class ContextInjector {
 
 			InjectionProperties[] properties = InjectionPropertyResolver
 					.getInjectionParamsProperties(constructor);
-			Object[] actualParams = processParams(properties, false, false);
+			Object[] actualParams = processParams(properties, constructor.getParameterTypes(),
+					false, false);
 			if (actualParams == null)
 				continue;
 			Object newInstance = callConstructor(constructor, actualParams);
@@ -481,30 +485,46 @@ public class ContextInjector {
 		return null;
 	}
 
-	private Object[] processParams(InjectionProperties[] properties, boolean ignoreMissing,
-			boolean injectWithNulls) {
+	private Object[] processParams(InjectionProperties[] properties, Class[] parameterTypes,
+			boolean ignoreMissing, boolean injectWithNulls) {
 		Object[] actualParams = new Object[properties.length];
 		for (int i = 0; i < actualParams.length; i++) {
+			// 1) if we have a provider, use it
 			IContextProvider provider = properties[i].getProvider();
 			if (provider != null) {
 				provider.setContext(context);
 				actualParams[i] = provider;
 				continue;
 			}
+			// 2) must have a key defined by now
 			String key = properties[i].getPropertyName();
 			if (key == null)
 				return null;
-			if (context.containsKey(key))
-				actualParams[i] = (injectWithNulls) ? null : context.get(key);
-			else if (key.equals("IEclipseContext")) // TBD constant
-				// IEclipseContext.getClass().getName()
-				actualParams[i] = context;
-			else {
-				if (ignoreMissing || properties[i].isOptional())
+			// 3) if we have the key in the context
+			if (context.containsKey(key)) {
+				if (injectWithNulls) {
 					actualParams[i] = null;
-				else
-					return null;
+					continue;
+				} else {
+					Object candidate = context.get(key);
+					if (candidate != null
+							&& parameterTypes[i].isAssignableFrom(candidate.getClass())) {
+						actualParams[i] = candidate;
+						continue;
+					}
+				}
 			}
+			// 4) special case: context as the argument
+			if (key.equals(IEclipseContext.class.getName())) {
+				actualParams[i] = context;
+				continue;
+			}
+			// 5) can we ignore this argument?
+			if (ignoreMissing || properties[i].isOptional()) {
+				actualParams[i] = null;
+				continue;
+			}
+			return null;
 		}
 		return actualParams;
 	}
@@ -536,21 +556,6 @@ public class ContextInjector {
 	}
 
 	private Object callMethod(Object userObject, Method method, Object[] args) {
-		if (args != null) { // make sure args are assignable
-			Class[] parameterTypes = method.getParameterTypes();
-			if (parameterTypes.length != args.length) {
-				logWarning(method, new IllegalArgumentException());
-				return null;
-			}
-			for (int i = 0; i < args.length; i++) {
-				if ((args[i] != null) && !parameterTypes[i].isAssignableFrom(args[i].getClass())) {
-					// TBD consider when do we need to log
-					// logWarning(method, new IllegalArgumentException());
-					return null;
-				}
-			}
-		}
-
 		Object result = null;
 		boolean wasAccessible = true;
 		if (!method.isAccessible()) {
