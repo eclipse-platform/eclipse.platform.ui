@@ -198,7 +198,7 @@ public class DetailsView {
 		}
 	}
 
-	@Inject
+	@Inject @Optional
 	public void setSelection(@Named("selection") Contact selection) {
 		if (selection != null) {
 			if (dirtyable.isDirty()) {

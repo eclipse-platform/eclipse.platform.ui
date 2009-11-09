@@ -65,7 +65,7 @@ public class ExifTable {
 		super();
 	}
 
-	@Inject
+	@Inject @Optional
 	void setSelection(@Named("selection") IResource selection) {
 		if (selection == null)
 			return;

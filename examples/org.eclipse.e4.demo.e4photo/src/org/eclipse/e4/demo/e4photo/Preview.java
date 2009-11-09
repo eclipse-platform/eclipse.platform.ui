@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -151,7 +152,7 @@ public class Preview {
 	}
 
 
-	@Inject
+	@Inject @Optional
 	public void setSelection(@Named("selection") final IFile input) {
 		bgRealm.asyncExec(new Runnable() {
 			public void run() {
