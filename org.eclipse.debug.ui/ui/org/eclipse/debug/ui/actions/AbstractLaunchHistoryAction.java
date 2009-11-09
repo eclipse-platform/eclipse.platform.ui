@@ -29,6 +29,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
@@ -372,15 +373,17 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * @since 3.6
 	 */
 	public void runWithEvent(IAction action, Event event) {
-		if(event.stateMask == SWT.MOD1) {
+		if((event.stateMask & SWT.MOD1) > 0) {
 			ILaunchConfiguration config = getLastLaunch();
-			if(config != null) {
-				DebugUITools.openLaunchConfigurationDialogOnGroup(
+			IStructuredSelection selection = null;
+			if (config != null){
+				selection = new StructuredSelection(config);
+			}
+			DebugUITools.openLaunchConfigurationDialogOnGroup(
 						DebugUIPlugin.getShell(), 
-						new StructuredSelection(config), 
+						selection, 
 						getLaunchGroupIdentifier());
 				return;
-			}
 		}
 		run(action);
 	}
