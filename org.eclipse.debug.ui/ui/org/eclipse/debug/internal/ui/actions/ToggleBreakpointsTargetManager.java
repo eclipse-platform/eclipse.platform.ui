@@ -50,6 +50,8 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Organizes the toggle breakpoints target factories contributed through the 
@@ -155,7 +157,12 @@ public class ToggleBreakpointsTargetManager {
          */
         private boolean evalEnablementExpression(IWorkbenchPart part, ISelection selection, Expression exp) {
             if (exp != null){
-                IEvaluationContext context = new EvaluationContext(null, part);
+        		IEvaluationContext parentContext = null;
+        		IEvaluationService evaluationService = (IEvaluationService)PlatformUI.getWorkbench().getService(IEvaluationService.class);
+        		if (evaluationService != null) {
+        			parentContext = evaluationService.getCurrentState();
+        		}
+                IEvaluationContext context = new EvaluationContext(parentContext, part);
                 
                 List debugContextList = getDebugContext(part).toList();
                 context.addVariable(IConfigurationElementConstants.DEBUG_CONTEXT, debugContextList); 
