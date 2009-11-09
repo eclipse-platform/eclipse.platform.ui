@@ -476,7 +476,6 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 		fProposal= null;
 		fInformation= null;
-		super.hideInformationControl(); // make sure fInformation of superclass gets cleared, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=293176
 
 		if (fProposalTable != null && !fProposalTable.isDisposed()) {
 			fProposalTable.removeSelectionListener(fSelectionListener);
@@ -576,20 +575,19 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 		return sizeConstraint;
 	}
 
-	/**
-	 * Hides the information control and stops the information control closer.
-	 * 
-	 * Similar to {@link AbstractInformationControlManager#hideInformationControl()}
-	 * but does <em>not</em> clear <code>super.fInformation</code>.
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#hideInformationControl()
 	 */
 	protected void hideInformationControl() {
-		// don't call super implementation, see https://bugs.eclipse.org/bugs/show_bug.cgi?id=293176
-		if (fInformationControl != null) {
-			storeInformationControlBounds();
-			fInformationControl.setVisible(false);
-			if (fInformationControlCloser != null)
-				fInformationControlCloser.stop();
-		}
+		super.hideInformationControl();
+	}
+
+	/*
+	 * @see org.eclipse.jface.text.AbstractInformationControlManager#canClearDataOnHide()
+	 * @since 3.6
+	 */
+	protected boolean canClearDataOnHide() {
+		return false; // see https://bugs.eclipse.org/bugs/show_bug.cgi?id=293176
 	}
 
 	/**

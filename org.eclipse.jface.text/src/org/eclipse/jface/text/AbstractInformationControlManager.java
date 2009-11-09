@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1232,8 +1232,21 @@ abstract public class AbstractInformationControlManager {
 			if (fInformationControlCloser != null)
 				fInformationControlCloser.stop();
 		}
-		fSubjectArea= null;
-		fInformation= null; // allow garbage collection of potentially large object
+		if (canClearDataOnHide()) {
+			fSubjectArea= null;
+			fInformation= null; // allow garbage collection of potentially large object
+		}
+	}
+
+	/**
+	 * Tells whether internal data can be cleared on hide.
+	 * 
+	 * @return <code>true</code> if data can be cleared on hide
+	 * @see #hideInformationControl()
+	 * @since 3.6
+	 */
+	protected boolean canClearDataOnHide() {
+		return true;
 	}
 
 	/**
@@ -1246,7 +1259,7 @@ abstract public class AbstractInformationControlManager {
 		fInformationControl.setVisible(true);
 		
 		if (fInformationControl == null)
-			return; // could already be disposed if setVisible(..) runs the display loop 
+			return; // could already be disposed if setVisible(..) runs the display loop
 		
 		if (fTakesFocusWhenVisible)
 			fInformationControl.setFocus();
