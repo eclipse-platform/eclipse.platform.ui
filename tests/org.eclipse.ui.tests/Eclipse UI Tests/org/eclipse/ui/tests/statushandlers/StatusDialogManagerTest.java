@@ -35,6 +35,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
@@ -575,6 +576,9 @@ public class StatusDialogManagerTest extends TestCase {
 
 		assertNotNull(details[0]);
 		assertFalse(details[0].isDisposed());
+		//process all remaining events
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
+		
 		assertEquals(statusAdapter2, passed[0]);
 	}
 
@@ -598,6 +602,9 @@ public class StatusDialogManagerTest extends TestCase {
 		assertEquals(MESSAGE_1, table.getItem(0).getText());
 
 		selectTable(table, 1);
+		
+		// process all remaining events
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
 
 		assertEquals(MESSAGE_2, titleLabel.getText());
 		assertEquals(JOB_NAME, table.getItem(1).getText());
