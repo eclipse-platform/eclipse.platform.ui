@@ -65,7 +65,7 @@ public class KeyDispatcherTest extends TestCase {
 		ParameterizedCommand cmd2 = cs.createCommand(TEST_ID2, null);
 		twoStrokeHandler = new CallHandler();
 		hs.activateHandler(TEST_ID2, twoStrokeHandler);
-		TriggerSequence twoKeys = bs.createSequence("CTRL+5 X");
+		TriggerSequence twoKeys = bs.createSequence("CTRL+5 CTRL+A");
 		bs.activateBinding(twoKeys, cmd2);
 	}
 
@@ -136,7 +136,7 @@ public class KeyDispatcherTest extends TestCase {
 
 		event = new Event();
 		event.type = SWT.KeyDown;
-		event.stateMask = SWT.CTRL; 
+		event.stateMask = SWT.CTRL;
 		event.keyCode = '5';
 		shell.notifyListeners(SWT.KeyDown, event);
 		
@@ -144,10 +144,66 @@ public class KeyDispatcherTest extends TestCase {
 		
 		event = new Event();
 		event.type = SWT.KeyDown;
-		event.keyCode = 'X';
+		event.keyCode = SWT.CTRL;
 		shell.notifyListeners(SWT.KeyDown, event);
 		
+		event = new Event();
+		event.type = SWT.KeyDown;
+		event.stateMask = SWT.CTRL; 
+		event.keyCode = 'A';
+		shell.notifyListeners(SWT.KeyDown, event);
+		
+		processEvents();
+		
 		assertTrue(twoStrokeHandler.q2);
+		assertFalse(handler.q2);
+	}
+	
+	public void testKeyDispatcherReset() throws Exception {
+		KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
+		ContextInjectionFactory.inject(dispatcher, workbenchContext);
+		final Listener listener = dispatcher.getKeyDownFilter();
+		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, listener);
+		
+		assertFalse(twoStrokeHandler.q2);
+		
+		Shell shell = new Shell(display, SWT.NONE);
+		
+		Event event = new Event();
+		event.type = SWT.KeyDown;
+		event.keyCode = SWT.CTRL;
+		shell.notifyListeners(SWT.KeyDown, event);
+
+		event = new Event();
+		event.type = SWT.KeyDown;
+		event.stateMask = SWT.CTRL;
+		event.keyCode = '5';
+		shell.notifyListeners(SWT.KeyDown, event);
+		
+		assertFalse(twoStrokeHandler.q2);
+		Thread.sleep(2000L);
+		processEvents();
+		
+		event = new Event();
+		event.type = SWT.KeyDown;
+		event.keyCode = SWT.CTRL;
+		shell.notifyListeners(SWT.KeyDown, event);
+		
+		event = new Event();
+		event.type = SWT.KeyDown;
+		event.stateMask = SWT.CTRL; 
+		event.keyCode = 'A';
+		shell.notifyListeners(SWT.KeyDown, event);
+		
+		processEvents();
+		
+		assertFalse(twoStrokeHandler.q2);
+		assertTrue(handler.q2);
+	}
+
+	private void processEvents() {
+		while (display.readAndDispatch()) ;
 	}
 	
 	//KEYS >>> Listener.handleEvent(type = KeyDown, stateMask = 0x0, keyCode = 0x40000, time = 2986140, character = 0x0)

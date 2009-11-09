@@ -26,6 +26,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
@@ -173,6 +174,12 @@ public class KeyBindingDispatcher {
 		return false;
 	}
 
+	/**
+	 * The time in milliseconds to wait after pressing a key before displaying the key assist
+	 * dialog.
+	 */
+	private static final int DELAY = 1000;
+
 	private EBindingService bindingService;
 
 	private IEclipseContext context;
@@ -209,6 +216,8 @@ public class KeyBindingDispatcher {
 	 * key bindings, this can be a partially complete key binding.
 	 */
 	private KeySequence state = KeySequence.getInstance();
+
+	private long startTime;
 
 	/**
 	 * Performs the actual execution of the command by looking up the current handler from the
@@ -339,6 +348,10 @@ public class KeyBindingDispatcher {
 		return handlerService;
 	}
 
+	private Display getDisplay() {
+		return Display.getCurrent();
+	}
+
 	/**
 	 * An accessor for the filter that processes key down and traverse events on the display.
 	 * 
@@ -371,6 +384,29 @@ public class KeyBindingDispatcher {
 	 */
 	private void incrementState(KeySequence sequence) {
 		state = sequence;
+		// Record the starting time.
+		startTime = System.currentTimeMillis();
+		final long myStartTime = startTime;
+		final Display display = getDisplay();
+		display.timerExec(DELAY, new Runnable() {
+			public void run() {
+				if ((System.currentTimeMillis() > (myStartTime - DELAY))
+						&& (startTime == myStartTime)) {
+					openMultiKeyAssistShell();
+				}
+			}
+		});
+
+	}
+
+	/**
+	 * Opens a <code>KeyAssistDialog</code> to assist the user in completing a multi-stroke key
+	 * binding. This method lazily creates a <code>keyAssistDialog</code> and shares it between
+	 * executions.
+	 */
+	public final void openMultiKeyAssistShell() {
+		// TODO: we need some kind of multi binding assistence.
+		resetState(true);
 	}
 
 	/**
