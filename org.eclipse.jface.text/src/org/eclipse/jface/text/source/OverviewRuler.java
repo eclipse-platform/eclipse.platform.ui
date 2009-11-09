@@ -274,7 +274,8 @@ public class OverviewRuler implements IOverviewRuler {
 
 			e.gc.setBackground(fIndicatorColor);
 			
-			boolean isOnTop= fHeader.getParent().getClientArea().y == fHeader.getLocation().y;
+			Rectangle headerBounds= fHeader.getBounds();
+			boolean isOnTop= headerBounds.y + headerBounds.height <= fCanvas.getLocation().y;
 			boolean isTall= s.y > s.x + 2*ANNOTATION_HEIGHT;
 			int y;
 			if (!isOnTop) {

@@ -89,6 +89,12 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 
 		/** The gap between the text viewer and the vertical ruler. */
 		protected int fGap;
+		
+		/**
+		 * Cached arrow heights of the vertical scroll bar: An array containing {topArrowHeight, bottomArrowHeight}.
+		 * @since 3.6
+		 */
+		private int[] fScrollArrowHeights;
 
 		/**
 		 * Creates a new ruler layout with the given gap between text viewer and vertical ruler.
@@ -144,22 +150,73 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 			textWidget.setBounds(x, clArea.y, width, clArea.height);
 
 			if (overviewRulerWidth != -1) {
-				ScrollBar verticalBar= textWidget.getVerticalBar();
-				Rectangle thumbTrackBounds= verticalBar.getThumbTrackBounds();
-				int topArrowHeight= thumbTrackBounds.y;
-				int bottomArrowHeight= clArea.y + clArea.height - scrollbarHeight - (thumbTrackBounds.y + thumbTrackBounds.height);
-
+				int bottomOffset= clArea.y + clArea.height - scrollbarHeight;
+				int[] arrowHeights= getVerticalScrollArrowHeights(textWidget, bottomOffset);
+				
 				int overviewRulerX= clArea.x + clArea.width - overviewRulerWidth - 1;
-				fOverviewRuler.getControl().setBounds(overviewRulerX, clArea.y + topArrowHeight, overviewRulerWidth, clArea.height - topArrowHeight - bottomArrowHeight - scrollbarHeight);
+				fOverviewRuler.getControl().setBounds(overviewRulerX, clArea.y + arrowHeights[0], overviewRulerWidth, clArea.height - arrowHeights[0] - arrowHeights[1] - scrollbarHeight);
 				
 				Control headerControl= fOverviewRuler.getHeaderControl();
-				if (topArrowHeight < bottomArrowHeight && topArrowHeight < scrollbarHeight && bottomArrowHeight > scrollbarHeight) {
-					// not enough space for header at top => move to bottom
-					headerControl.setBounds(overviewRulerX, clArea.y + clArea.height - bottomArrowHeight - scrollbarHeight, overviewRulerWidth, bottomArrowHeight);
+				boolean noArrows= arrowHeights[0] == 0 && arrowHeights[1] == 0;
+				if (noArrows || arrowHeights[0] < arrowHeights[1] && arrowHeights[0] < scrollbarHeight && arrowHeights[1] > scrollbarHeight) {
+					// // not enough space for header at top => move to bottom
+					int headerHeight= noArrows ? scrollbarHeight : arrowHeights[1];
+					headerControl.setBounds(overviewRulerX, clArea.y + clArea.height - arrowHeights[1] - scrollbarHeight, overviewRulerWidth, headerHeight);
 				} else {
-					headerControl.setBounds(overviewRulerX, clArea.y, overviewRulerWidth, topArrowHeight);
+					headerControl.setBounds(overviewRulerX, clArea.y, overviewRulerWidth, arrowHeights[0]);
 				}
+				headerControl.redraw();
 			}
+		}
+
+		/**
+		 * Computes and caches the arrow heights of the vertical scroll bar.
+		 * 
+		 * @param textWidget the StyledText
+		 * @param bottomOffset y-coordinate of the bottom of the overview ruler area
+		 * @return an array containing {topArrowHeight, bottomArrowHeight}
+		 * 
+		 * @since 3.6
+		 */
+		private int[] getVerticalScrollArrowHeights(StyledText textWidget, int bottomOffset) {
+			int[] arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
+			if (arrowHeights[0] > 0 || arrowHeights[1] > 0) {
+				fScrollArrowHeights= arrowHeights;
+			} else if (fScrollArrowHeights != null) {
+				return fScrollArrowHeights;
+			} else {
+				// No arrow heights available. Enlarge textWidget and tweak scroll bar to get reasonable values. 
+				Point originalSize= textWidget.getSize();
+				try {
+					int fakeHeight= 1000;
+					bottomOffset= bottomOffset - originalSize.y + fakeHeight;
+					textWidget.setSize(originalSize.x, fakeHeight);
+					textWidget.getVerticalBar().setValues(0, 0, 1 << 30, 1, 10, 10);
+					arrowHeights= computeScrollArrowHeights(textWidget, bottomOffset);
+					fScrollArrowHeights= arrowHeights;
+				} finally {
+					textWidget.setSize(originalSize); // also resets scroll bar values
+				}
+				return arrowHeights;
+			}
+			return arrowHeights;
+		}
+
+		/**
+		 * Computes the arrow heights of the vertical scroll bar.
+		 * 
+		 * @param textWidget the StyledText
+		 * @param bottomOffset y-coordinate of the bottom of the overview ruler area
+		 * @return an array containing {topArrowHeight, bottomArrowHeight}
+		 * 
+		 * @since 3.6
+		 */
+		private int[] computeScrollArrowHeights(StyledText textWidget, int bottomOffset) {
+			ScrollBar verticalBar= textWidget.getVerticalBar();
+			Rectangle thumbTrackBounds= verticalBar.getThumbTrackBounds();
+			int topArrowHeight= thumbTrackBounds.y;
+			int bottomArrowHeight= bottomOffset - (thumbTrackBounds.y + thumbTrackBounds.height);
+			return new int[] { topArrowHeight, bottomArrowHeight };
 		}
 	}
 
