@@ -16,7 +16,8 @@
     <mainMenu>
       <children xsi:type="application:MenuItem" name="File">
         <children xsi:type="application:HandledMenuItem" name="Save" command="//@commands.3"/>
-        <children xsi:type="application:DirectMenuItem" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" name="Exit"/>
+        <children xsi:type="application:DirectMenuItem" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.ExitHandler" name="Direct Exit"/>
+        <children xsi:type="application:HandledMenuItem" name="Exit" command="//@commands.0"/>
       </children>
       <children xsi:type="application:MenuItem" name="Theme">
         <children xsi:type="application:HandledMenuItem" name="Dark Theme" command="//@commands.1"/>
@@ -31,6 +32,7 @@
   <bindings keySequence="CTRL+D" command="//@commands.1"/>
   <bindings keySequence="CTRL+L" command="//@commands.2"/>
   <bindings keySequence="CTRL+S" command="//@commands.3"/>
+  <bindings keySequence="CTRL+5 X" command="//@commands.0"/>
   <commands id="contacts.exit" commandName="Exit" description=""/>
   <commands id="contacts.darkTheme" commandName="Dark Theme"/>
   <commands id="contacts.brightTheme" commandName="Bright Theme" description=""/>
