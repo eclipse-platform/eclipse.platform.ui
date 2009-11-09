@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,17 +23,21 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.contextlaunching.LaunchingResourceManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationManager;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
+import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
 
@@ -49,7 +53,7 @@ import com.ibm.icu.text.MessageFormat;
  * @see ILaunchLabelChangedListener
  * @since 2.1
  */
-public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPulldownDelegate2, ILaunchHistoryChangedListener {
+public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, IWorkbenchWindowPulldownDelegate2, ILaunchHistoryChangedListener {
 
 	/**
 	 * The menu created by this action
@@ -362,7 +366,33 @@ public abstract class AbstractLaunchHistoryAction implements IWorkbenchWindowPul
 	public void run(IAction action) {
 		// do nothing - this is just a menu
 	}
+	
+	/**
+	 * @see org.eclipse.ui.IActionDelegate2#runWithEvent(org.eclipse.jface.action.IAction, org.eclipse.swt.widgets.Event)
+	 * @since 3.6
+	 */
+	public void runWithEvent(IAction action, Event event) {
+		if(event.stateMask == SWT.MOD1) {
+			ILaunchConfiguration config = getLastLaunch();
+			if(config != null) {
+				DebugUITools.openLaunchConfigurationDialogOnGroup(
+						DebugUIPlugin.getShell(), 
+						new StructuredSelection(config), 
+						getLaunchGroupIdentifier());
+				return;
+			}
+		}
+		run(action);
+	}
 
+	/**
+	 * @see org.eclipse.ui.IActionDelegate2#init(org.eclipse.jface.action.IAction)
+	 * @since 3.6
+	 */
+	public void init(IAction action) {
+		// do nothing by default
+	}	
+	
 	/**
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */

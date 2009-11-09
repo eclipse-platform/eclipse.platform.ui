@@ -11,6 +11,17 @@
 
 <h2>Summary of API changes in 3.6</h2>
 
+<h3>AbstractLaunchHistoryAction</h3>
+<p><strong>What is affected:</strong>
+<ul>
+  <li>Method addition: <code>public void runWithEvent(IAction action, Event event)</code> </li>
+  <li>Method addition: <code>public void init(IAction action)</code> </li>
+  <li>Implemented Interface: <code>org.eclipse.ui.IActionDelegate2</code></li>
+</ul>
+<p><strong>Description: </strong>The implementation of <code>org.eclipse.ui.IActionDelegate2</code> and the addition of the two implemented
+methods allows for the Ctrl key modifier to be used to open the last launched launch configuration when clicking on any launch history action.
+<p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
+
 <h3>ILaunchManager and LaunchManager base class</h3>
 <p><strong>What is affected:</strong>
 <ul>
@@ -29,7 +40,7 @@ the method makes an effort to correct the name in one of two ways:
 </p>
 <p>
 <strong>Description:</strong> The <code>isValidLaunchConfigurationName(String configname)</code> method is used to validate the specified configuration name and throws an <code>IllegalArgumentException</code>. This method provides
-the validation forthe <code>generateLaunchConfigurationName(String namePrefix)</code> method.</p>
+the validation for the <code>generateLaunchConfigurationName(String namePrefix)</code> method.</p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
 <p><strong>Description:</strong> The <code>ATTR_PRIVATE</code> constant is a launch configuration attribute key used to identify whether a launch configuration should appear in the debug user interface (launch history, launch dialog, etc.). The value is a boolean. This attribute was previously defined in the debug UI plug-in, but was moved to core for headless plug-is that need to specify a value for this attribute. </p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
