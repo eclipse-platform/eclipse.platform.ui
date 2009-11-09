@@ -69,3 +69,7 @@ ETabItem.active:selected {
 	background-color: #777777 #373737 #101010 50% 50%;
 	color: #f08d00;
 }
+
+Shell {
+    background-color: gradient radial #575757 #101010 60%;
+}
