@@ -28,6 +28,10 @@ public class ThemeUtil {
 
 	public static void switchTheme(MWindow window, final String css) {
 		final Shell shell = (Shell) window.getWidget();
+		if (shell == null) {
+			return;
+		}
+		
 		Display display = shell.getDisplay();
 		final CSSEngine engine = (CSSEngine) display
 				.getData("org.eclipse.e4.ui.css.core.engine");
@@ -46,8 +50,13 @@ public class ThemeUtil {
 					engine.parseStyleSheet(streamReader);
 					stream.close();
 					streamReader.close();
-					engine.applyStyles(shell, true, false);
-					shell.layout(true, true);
+					
+					try {
+						shell.setRedraw(false);
+						engine.applyStyles(shell, true, false);	
+					} finally {
+						shell.setRedraw(true);
+					}
 				} catch (MalformedURLException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
