@@ -11,7 +11,7 @@
  Contributors:
       IBM Corporation - initial API and implementation
 
- $Id: plugin.xml,v 1.2 2009/10/14 18:28:11 emoffatt Exp $
+ $Id: plugin.xml,v 1.3 2009/11/09 19:09:56 tschindl Exp $
 -->
 
 <plugin>
@@ -22,4 +22,17 @@
             class="org.eclipse.e4.ui.model.application.MApplicationPackage"/>
    </extension>
    
+   <extension point="org.eclipse.core.contenttype.contentTypes">
+      <content-type
+            base-type="org.eclipse.emf.ecore.xmi"
+            file-extensions="org.eclipse.e4.ui.model.application,xmi"
+            id="org.eclipse.e4.ui.model.application"
+            name="%_UI_Application_content_type"
+            priority="normal">
+         <describer class="org.eclipse.emf.ecore.xmi.impl.RootXMLContentHandlerImpl$Describer">
+            <parameter name="namespace" value="http://www.eclipse.org/ui/2008/Application"/>
+            <parameter name="kind" value="xmi"/>
+         </describer>
+      </content-type>
+   </extension>
 </plugin>
