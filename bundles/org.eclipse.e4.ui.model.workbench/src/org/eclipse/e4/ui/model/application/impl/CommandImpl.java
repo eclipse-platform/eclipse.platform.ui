@@ -15,14 +15,19 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 
+import org.eclipse.e4.ui.model.application.MCommandParameter;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
+import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
 
 /**
@@ -34,6 +39,7 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.CommandImpl#getCommandName <em>Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.CommandImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.CommandImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  * </p>
  *
@@ -79,6 +85,16 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * @ordered
 	 */
 	protected String description = DESCRIPTION_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getParameters()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MCommandParameter> parameters;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -146,6 +162,32 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MCommandParameter> getParameters() {
+		if (parameters == null) {
+			parameters = new EObjectContainmentEList<MCommandParameter>(MCommandParameter.class, this, MApplicationPackage.COMMAND__PARAMETERS);
+		}
+		return parameters;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MApplicationPackage.COMMAND__PARAMETERS:
+				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -153,6 +195,8 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 				return getCommandName();
 			case MApplicationPackage.COMMAND__DESCRIPTION:
 				return getDescription();
+			case MApplicationPackage.COMMAND__PARAMETERS:
+				return getParameters();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -172,6 +216,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			case MApplicationPackage.COMMAND__DESCRIPTION:
 				setDescription((String)newValue);
 				return;
+			case MApplicationPackage.COMMAND__PARAMETERS:
+				getParameters().clear();
+				getParameters().addAll((Collection<? extends MCommandParameter>)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -190,6 +238,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			case MApplicationPackage.COMMAND__DESCRIPTION:
 				setDescription(DESCRIPTION_EDEFAULT);
 				return;
+			case MApplicationPackage.COMMAND__PARAMETERS:
+				getParameters().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -206,6 +257,8 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 				return COMMAND_NAME_EDEFAULT == null ? commandName != null : !COMMAND_NAME_EDEFAULT.equals(commandName);
 			case MApplicationPackage.COMMAND__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+			case MApplicationPackage.COMMAND__PARAMETERS:
+				return parameters != null && !parameters.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

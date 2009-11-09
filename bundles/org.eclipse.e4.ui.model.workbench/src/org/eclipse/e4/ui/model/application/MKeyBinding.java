@@ -10,6 +10,8 @@
  */
 package org.eclipse.e4.ui.model.application;
 
+import org.eclipse.emf.common.util.EList;
+
 
 /**
  * <!-- begin-user-doc -->
@@ -20,6 +22,7 @@ package org.eclipse.e4.ui.model.application;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MKeyBinding#getCommand <em>Command</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MKeyBinding#getParameters <em>Parameters</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,5 +56,21 @@ public interface MKeyBinding extends MKeySequence {
 	 * @generated
 	 */
 	void setCommand(MCommand value);
+
+	/**
+	 * Returns the value of the '<em><b>Parameters</b></em>' reference list.
+	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MParameter}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Parameters</em>' reference list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Parameters</em>' reference list.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getKeyBinding_Parameters()
+	 * @model
+	 * @generated
+	 */
+	EList<MParameter> getParameters();
 
 } // MKeyBinding

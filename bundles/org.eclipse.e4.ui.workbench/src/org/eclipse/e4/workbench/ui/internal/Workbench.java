@@ -13,10 +13,12 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import java.io.IOException;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
@@ -41,6 +43,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MCommandParameter;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
@@ -308,9 +311,19 @@ public class Workbench implements IWorkbench {
 				.defineCategory(MApplication.class.getName(), "Application Category", null); //$NON-NLS-1$
 		EList<MCommand> commands = workbench.getCommands();
 		for (MCommand cmd : commands) {
+			IParameter[] parms = null;
 			String id = cmd.getId();
 			String name = cmd.getCommandName();
-			cs.defineCommand(id, name, null, cat, null);
+			EList<MCommandParameter> modelParms = cmd.getParameters();
+			if (modelParms != null && !modelParms.isEmpty()) {
+				ArrayList<Parameter> parmList = new ArrayList<Parameter>();
+				for (MCommandParameter cmdParm : modelParms) {
+					parmList.add(new Parameter(cmdParm.getId(), cmdParm.getName(), null, null,
+							cmdParm.isOptional()));
+				}
+				parms = parmList.toArray(new Parameter[parmList.size()]);
+			}
+			cs.defineCommand(id, name, null, cat, parms);
 		}
 
 		// take care of generating the contexts.

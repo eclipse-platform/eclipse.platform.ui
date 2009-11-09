@@ -16,6 +16,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MCommandParameter;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MDirtyable;
@@ -39,6 +40,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.util.InternalEList;
@@ -52,6 +54,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getCommandName <em>Command Name</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getDescription <em>Description</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getVariables <em>Variables</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getURI <em>URI</em>}</li>
@@ -118,6 +121,16 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * @ordered
 	 */
 	protected String description = DESCRIPTION_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getParameters()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MCommandParameter> parameters;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -548,6 +561,18 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		description = newDescription;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__DESCRIPTION, oldDescription, description));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<MCommandParameter> getParameters() {
+		if (parameters == null) {
+			parameters = new EObjectContainmentEList<MCommandParameter>(MCommandParameter.class, this, MApplicationPackage.TEST_HARNESS__PARAMETERS);
+		}
+		return parameters;
 	}
 
 	/**
@@ -1038,6 +1063,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	@Override
 	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
 		switch (featureID) {
+			case MApplicationPackage.TEST_HARNESS__PARAMETERS:
+				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return basicSetParent(null, msgs);
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
@@ -1072,6 +1099,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return getCommandName();
 			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
 				return getDescription();
+			case MApplicationPackage.TEST_HARNESS__PARAMETERS:
+				return getParameters();
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				return getContext();
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
@@ -1133,6 +1162,10 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
 				setDescription((String)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__PARAMETERS:
+				getParameters().clear();
+				getParameters().addAll((Collection<? extends MCommandParameter>)newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -1217,6 +1250,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
 				setDescription(DESCRIPTION_EDEFAULT);
 				return;
+			case MApplicationPackage.TEST_HARNESS__PARAMETERS:
+				getParameters().clear();
+				return;
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
 				return;
@@ -1296,6 +1332,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return COMMAND_NAME_EDEFAULT == null ? commandName != null : !COMMAND_NAME_EDEFAULT.equals(commandName);
 			case MApplicationPackage.TEST_HARNESS__DESCRIPTION:
 				return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
+			case MApplicationPackage.TEST_HARNESS__PARAMETERS:
+				return parameters != null && !parameters.isEmpty();
 			case MApplicationPackage.TEST_HARNESS__CONTEXT:
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.TEST_HARNESS__VARIABLES:
@@ -1353,6 +1391,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			switch (derivedFeatureID) {
 				case MApplicationPackage.TEST_HARNESS__COMMAND_NAME: return MApplicationPackage.COMMAND__COMMAND_NAME;
 				case MApplicationPackage.TEST_HARNESS__DESCRIPTION: return MApplicationPackage.COMMAND__DESCRIPTION;
+				case MApplicationPackage.TEST_HARNESS__PARAMETERS: return MApplicationPackage.COMMAND__PARAMETERS;
 				default: return -1;
 			}
 		}
@@ -1436,6 +1475,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			switch (baseFeatureID) {
 				case MApplicationPackage.COMMAND__COMMAND_NAME: return MApplicationPackage.TEST_HARNESS__COMMAND_NAME;
 				case MApplicationPackage.COMMAND__DESCRIPTION: return MApplicationPackage.TEST_HARNESS__DESCRIPTION;
+				case MApplicationPackage.COMMAND__PARAMETERS: return MApplicationPackage.TEST_HARNESS__PARAMETERS;
 				default: return -1;
 			}
 		}

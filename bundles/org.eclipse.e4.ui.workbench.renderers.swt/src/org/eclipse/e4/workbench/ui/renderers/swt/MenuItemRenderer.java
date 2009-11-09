@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
@@ -22,9 +24,11 @@ import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
+import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -99,11 +103,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 					.get(EBindingService.class.getName());
 			ParameterizedCommand cmd = handledItem.getWbCommand();
 			if (cmd == null) {
-				ECommandService cmdService = (ECommandService) context
-						.get(ECommandService.class.getName());
-				cmd = cmdService.createCommand(
-						handledItem.getCommand().getId(), null);
-				handledItem.setWbCommand(cmd);
+				cmd = generateParameterizedCommand(handledItem, context);
 			}
 			TriggerSequence sequence = bs.getBestSequenceFor(handledItem
 					.getWbCommand());
@@ -157,11 +157,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 							.get(EHandlerService.class.getName());
 					ParameterizedCommand cmd = item.getWbCommand();
 					if (cmd == null) {
-						ECommandService cmdService = (ECommandService) lclContext
-								.get(ECommandService.class.getName());
-						cmd = cmdService.createCommand(item.getCommand()
-								.getId(), null);
-						item.setWbCommand(cmd);
+						cmd = generateParameterizedCommand(item, lclContext);
 					}
 					service.executeHandler(cmd);
 				}
@@ -193,6 +189,23 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		}
 
 		return mi.getMenu();
+	}
 
+	private ParameterizedCommand generateParameterizedCommand(
+			final MHandledItem item, final IEclipseContext lclContext) {
+		ECommandService cmdService = (ECommandService) lclContext
+				.get(ECommandService.class.getName());
+		Map<String, Object> parameters = null;
+		EList<MParameter> modelParms = item.getParameters();
+		if (modelParms != null && !modelParms.isEmpty()) {
+			parameters = new HashMap<String, Object>();
+			for (MParameter mParm : modelParms) {
+				parameters.put(mParm.getTag(), mParm.getValue());
+			}
+		}
+		ParameterizedCommand cmd = cmdService.createCommand(item.getCommand()
+				.getId(), parameters);
+		item.setWbCommand(cmd);
+		return cmd;
 	}
 }

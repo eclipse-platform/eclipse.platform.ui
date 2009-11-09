@@ -117,6 +117,13 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.COMMAND_PARAMETER: {
+				MCommandParameter commandParameter = (MCommandParameter)theEObject;
+				T1 result = caseCommandParameter(commandParameter);
+				if (result == null) result = caseApplicationElement(commandParameter);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.DIRTYABLE: {
 				MDirtyable dirtyable = (MDirtyable)theEObject;
 				T1 result = caseDirtyable(dirtyable);
@@ -660,6 +667,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseCommand(MCommand object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Command Parameter</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Command Parameter</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseCommandParameter(MCommandParameter object) {
 		return null;
 	}
 

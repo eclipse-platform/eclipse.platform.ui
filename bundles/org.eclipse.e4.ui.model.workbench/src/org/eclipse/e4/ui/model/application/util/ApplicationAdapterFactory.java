@@ -92,6 +92,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createCommandAdapter();
 			}
 			@Override
+			public Adapter caseCommandParameter(MCommandParameter object) {
+				return createCommandParameterAdapter();
+			}
+			@Override
 			public Adapter caseDirtyable(MDirtyable object) {
 				return createDirtyableAdapter();
 			}
@@ -356,6 +360,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createCommandAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MCommandParameter <em>Command Parameter</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MCommandParameter
+	 * @generated
+	 */
+	public Adapter createCommandParameterAdapter() {
 		return null;
 	}
 

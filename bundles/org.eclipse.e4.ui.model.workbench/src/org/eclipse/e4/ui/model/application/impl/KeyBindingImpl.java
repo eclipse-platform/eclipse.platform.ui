@@ -10,18 +10,22 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 
+import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.EObjectImpl;
+import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -32,6 +36,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getKeySequence <em>Key Sequence</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getCommand <em>Command</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
  * </p>
  *
@@ -67,6 +72,16 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * @ordered
 	 */
 	protected MCommand command;
+
+	/**
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getParameters()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MParameter> parameters;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -151,6 +166,18 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MParameter> getParameters() {
+		if (parameters == null) {
+			parameters = new EObjectResolvingEList<MParameter>(MParameter.class, this, MApplicationPackage.KEY_BINDING__PARAMETERS);
+		}
+		return parameters;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
@@ -159,6 +186,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				if (resolve) return getCommand();
 				return basicGetCommand();
+			case MApplicationPackage.KEY_BINDING__PARAMETERS:
+				return getParameters();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -168,6 +197,7 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
@@ -176,6 +206,10 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 				return;
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)newValue);
+				return;
+			case MApplicationPackage.KEY_BINDING__PARAMETERS:
+				getParameters().clear();
+				getParameters().addAll((Collection<? extends MParameter>)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -195,6 +229,9 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)null);
 				return;
+			case MApplicationPackage.KEY_BINDING__PARAMETERS:
+				getParameters().clear();
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -211,6 +248,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 				return KEY_SEQUENCE_EDEFAULT == null ? keySequence != null : !KEY_SEQUENCE_EDEFAULT.equals(keySequence);
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				return command != null;
+			case MApplicationPackage.KEY_BINDING__PARAMETERS:
+				return parameters != null && !parameters.isEmpty();
 		}
 		return super.eIsSet(featureID);
 	}

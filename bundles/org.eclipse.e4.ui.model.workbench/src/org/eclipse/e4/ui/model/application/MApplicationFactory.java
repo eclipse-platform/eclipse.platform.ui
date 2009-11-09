@@ -48,6 +48,15 @@ public interface MApplicationFactory extends EFactory {
 	MCommand createCommand();
 
 	/**
+	 * Returns a new object of class '<em>Command Parameter</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Command Parameter</em>'.
+	 * @generated
+	 */
+	MCommandParameter createCommandParameter();
+
+	/**
 	 * Returns a new object of class '<em>Dirtyable</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

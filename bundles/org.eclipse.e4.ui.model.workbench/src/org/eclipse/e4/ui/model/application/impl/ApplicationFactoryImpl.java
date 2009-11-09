@@ -67,6 +67,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 		switch (eClass.getClassifierID()) {
 			case MApplicationPackage.APPLICATION_ELEMENT: return (EObject)createApplicationElement();
 			case MApplicationPackage.COMMAND: return (EObject)createCommand();
+			case MApplicationPackage.COMMAND_PARAMETER: return (EObject)createCommandParameter();
 			case MApplicationPackage.DIRTYABLE: return (EObject)createDirtyable();
 			case MApplicationPackage.HANDLER: return (EObject)createHandler();
 			case MApplicationPackage.INPUT: return (EObject)createInput();
@@ -150,6 +151,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MCommand createCommand() {
 		CommandImpl command = new CommandImpl();
 		return command;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCommandParameter createCommandParameter() {
+		CommandParameterImpl commandParameter = new CommandParameterImpl();
+		return commandParameter;
 	}
 
 	/**
