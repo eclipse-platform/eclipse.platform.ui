@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.ISchedulingExecutor;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -90,7 +91,7 @@ public class Thumbnails {
 		return new Point(newWidth, newHeight);
 	}
 
-	@Inject
+	@Inject @Optional
 	public void setSelection(@Named("selection") IResource selection) {
 		if (selection == null)
 			return;
