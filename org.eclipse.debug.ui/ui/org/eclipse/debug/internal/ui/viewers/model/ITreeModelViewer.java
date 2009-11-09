@@ -165,8 +165,13 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * as it parses the sub-tree.
      * @param path Path where to start saving the state.
      * @param delta The delta where the state is to be saved.
+     * @param flagsToSave The flags to preserve during the state save.  The 
+     * supported flags are <code>IModelDelta.SELECT</code>, 
+     * <code>IModelDelta.EXPAND</code>, <code>IModelDelta.COLLAPSE</code>.
+     *
+     * @since 3.6
      */
-    public void saveElementState(TreePath path, ModelDelta delta);
+    public void saveElementState(TreePath path, ModelDelta delta, int flagsToSave);
     
     /**
      * Causes the viewer to process the given delta as if it came from a

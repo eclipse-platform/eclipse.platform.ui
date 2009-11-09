@@ -30,6 +30,7 @@ class ElementCompareRequest extends MementoUpdate implements IElementCompareRequ
 	private ModelDelta fDelta;
     private boolean fKnowsHasChildren;
     private boolean fKnowsChildCount;
+    private boolean fCheckChildrenRealized;
 	
 	
 	/**
@@ -37,13 +38,17 @@ class ElementCompareRequest extends MementoUpdate implements IElementCompareRequ
 	 * @param element
 	 * @param memento
 	 */
-	public ElementCompareRequest(ModelContentProvider provider, Object viewerInput, Object element, TreePath elementPath, IMemento memento, ModelDelta delta, int modelIndex, boolean hasChildren, boolean knowsChildCount) {
+	public ElementCompareRequest(ModelContentProvider provider, Object viewerInput, Object element, 
+	    TreePath elementPath, IMemento memento, ModelDelta delta, int modelIndex, 
+	    boolean hasChildren, boolean knowsChildCount, boolean checkChildrenRealized) 
+	{
 		super(provider, viewerInput, provider.getPresentationContext(), element, elementPath, memento);
 		fProvider = provider;
 		fDelta = delta;
 		fModelIndex = modelIndex;
 		fKnowsHasChildren = hasChildren;
 		fKnowsChildCount = knowsChildCount;
+		fCheckChildrenRealized = checkChildrenRealized;
 	}
 
 	/* (non-Javadoc)
@@ -96,4 +101,12 @@ class ElementCompareRequest extends MementoUpdate implements IElementCompareRequ
 	boolean knowChildCount() {
 		return fKnowsChildCount;
 	}
+
+    void setCheckChildrenRealized(boolean checkChildrenRealized) {
+        fCheckChildrenRealized = checkChildrenRealized; 
+    }
+    
+    boolean checkChildrenRealized() {
+        return fCheckChildrenRealized;
+    }
 }

@@ -158,9 +158,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	private Object fQueuedRestore = null;
 	
 	/**
+     * Dummy marker element used in the state delta.  The marker indicates
+     * that a given element in the pending state delta has been removed.
+     * It replaces the original element so that it may optionally be 
+     * garbage collected.
+     */
+	private final static String ELEMENT_REMOVED = "ELEMENT_REMOVED";  //$NON-NLS-1$
+
+	/**
 	 * Used to determine when restoration delta has been processed
 	 */
-	class CheckState implements IModelDeltaVisitor {
+	protected class CheckState implements IModelDeltaVisitor {
 		private boolean complete = true;
 		private IModelDelta topDelta = null;
 		/* (non-Javadoc)
@@ -168,6 +176,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		 */
 		public boolean visit(IModelDelta delta, int depth) {
 			if (delta.getFlags() != IModelDelta.NO_CHANGE) {
+			    IModelDelta parentDelta = delta.getParentDelta();
+			    if (parentDelta != null && parentDelta.getFlags() == IModelDelta.NO_CHANGE) {
+			        TreePath deltaPath = getViewerTreePath(delta);
+			        if ( ((delta.getElement() instanceof IMemento) && !areMementoUpdatesPending(deltaPath.getParentPath(), delta)) ||
+			            (!(delta.getElement() instanceof IMemento) && !areElementUpdatesPending(deltaPath)) ) 
+			        {
+			            removeDelta(delta);
+			            return false;
+			        }
+			    }
+
 				if (delta.getFlags() == IModelDelta.REVEAL && !(delta.getElement() instanceof IMemento)) {
 					topDelta = delta;
 				} else {
@@ -185,6 +204,79 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		public IModelDelta getTopItemDelta() {
 			return topDelta;
 		}
+		
+	    private boolean areElementUpdatesPending(TreePath path) {
+	        synchronized (fRequestsInProgress) {
+	            TreePath parentPath = path.getParentPath();
+                List requests = (List)fWaitingRequests.get(path);
+                if (requests != null) {
+                    for (int i = 0; i < requests.size(); i++) {
+                        ViewerUpdateMonitor update = (ViewerUpdateMonitor)requests.get(i);
+                        if (update instanceof ChildrenUpdate) {
+                            return true;
+                        }
+                    }
+                }
+                requests = (List)fWaitingRequests.get(parentPath);
+                if (requests != null) {
+                    for (int i = 0; i < requests.size(); i++) {
+                        ViewerUpdateMonitor update = (ViewerUpdateMonitor)requests.get(i);
+                        if (update.getElement().equals(path.getLastSegment())) {
+                            return true;
+                        }
+                    }
+                }
+                requests = (List)fRequestsInProgress.get(path);
+                if (requests != null) {
+                    for (int i = 0; i < requests.size(); i++) {
+                        ViewerUpdateMonitor update = (ViewerUpdateMonitor)requests.get(i);
+                        if (update instanceof ChildrenUpdate) {
+                            return true;
+                        }
+                    }
+                }
+                requests = (List)fRequestsInProgress.get(parentPath);
+                if (requests != null) {
+                    for (int i = 0; i < requests.size(); i++) {
+                        ViewerUpdateMonitor update = (ViewerUpdateMonitor)requests.get(i);
+                        if (update.getElement().equals(path.getLastSegment())) {
+                            return true;
+                        }
+                    }
+                }
+	        }
+	        return false;
+	    }
+
+	    private boolean areMementoUpdatesPending(TreePath path, IModelDelta delta) {
+	        if (fCompareRequestsInProgress.size() > 10) {
+	            return fCompareRequestsInProgress.containsKey(new CompareRequestKey(path, delta));
+	        } else {
+    	        for (Iterator itr = fCompareRequestsInProgress.keySet().iterator(); itr.hasNext(); ) {
+    	            CompareRequestKey key = (CompareRequestKey)itr.next();
+    	            if (key.fPath.equals(path) && delta.getElement().equals(key.fDelta.getElement())) {
+    	                return true;
+    	            }
+    	        }
+	        }
+            return false;
+        }
+
+	    private void removeDelta(IModelDelta delta) {
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                System.out.println("STATE RESTORE REMOVED: " + delta.getElement()); //$NON-NLS-1$
+            }
+            
+            delta.accept(new IModelDeltaVisitor() {
+                public boolean visit(IModelDelta _visitorDelta, int depth) {
+                    ModelDelta visitorDelta = (ModelDelta)_visitorDelta; 
+                    visitorDelta.setElement(ELEMENT_REMOVED);
+                    visitorDelta.setFlags(IModelDelta.NO_CHANGE);
+                    return true;
+                }
+            });
+
+	    }
 	}
 	
 	/**
@@ -340,7 +432,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 									public IStatus runInUIThread(IProgressMonitor monitor) {
 										if (!isDisposed() && input.equals(getViewer().getInput())) {
 			                                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-			                                    System.out.println("RESTORE: " + stateDelta.toString()); //$NON-NLS-1$
+			                                    System.out.println("STATE RESTORE: " + stateDelta.toString()); //$NON-NLS-1$
 			                                }
 										    fViewerStates.remove(keyMementoString);
 											fPendingState = stateDelta;
@@ -388,14 +480,106 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	/**
      * @param delta
      */
-	abstract void doRestore(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount);
+	abstract void doRestore(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized);
 
+	protected void appendToPendingStateDelta(TreePath path) {
+        if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+            System.out.println("STATE APPEND BEGIN: " + path.getLastSegment()); //$NON-NLS-1$
+        }
+
+        // build a model delta representing expansion and selection state
+        final ModelDelta appendDeltaRoot = new ModelDelta(getViewer().getInput(), IModelDelta.NO_CHANGE);
+        ModelDelta delta = appendDeltaRoot;
+        for (int i = 0; i < path.getSegmentCount(); i++) {
+            delta = delta.addNode(path.getSegment(i), IModelDelta.NO_CHANGE);
+        }
+
+        fViewer.saveElementState(path, delta, IModelDelta.COLLAPSE | IModelDelta.EXPAND | IModelDelta.SELECT);
+        
+        // Append a marker CONTENT flag to all the delta nodes that contain the EXPAND node.  These
+        // markers are used by the restore logic to know when a delta node can be removed.
+        delta.accept(new IModelDeltaVisitor() {
+            public boolean visit(IModelDelta delta, int depth) {
+                if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
+                    ((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.CONTENT);
+                }
+                return true;
+            }
+        });
+        
+        if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+            System.out.println("STATE APPEND DELTA FROM VIEW: " + appendDeltaRoot); //$NON-NLS-1$
+        }
+       
+        if (fPendingState != null) {
+            // If the restore for the current input was never completed, preserve 
+            // that restore along with the restore that was completed.
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                System.out.println("STATE APPEND OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
+            }
+            
+            IModelDeltaVisitor pendingStateVisitor = new IModelDeltaVisitor() {
+                public boolean visit(IModelDelta pendingDeltaNode, int depth) {
+                    // Ignore the top element.
+                    if (pendingDeltaNode.getParentDelta() == null) {
+                        return true;
+                    }
+                    
+                    // Find the node in the save delta which is the parent 
+                    // of to the current pending delta node.
+                    // If the parent node cannot be found, it means that 
+                    // most likely the user collapsed the parent node before
+                    // the children were ever expanded.
+                    // If the pending state node already exists in the parent
+                    // node, it is already processed and we can skip it.
+                    // If the pending state node does not contain any flags, 
+                    // we can also skip it.
+                    ModelDelta saveDeltaNode = findSaveDelta(appendDeltaRoot, pendingDeltaNode);
+                    if (saveDeltaNode != null && 
+                        !isDeltaInParent(pendingDeltaNode, saveDeltaNode) && 
+                        pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) 
+                    {
+                        saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
+                        copyIntoDelta(pendingDeltaNode, saveDeltaNode);
+                    } else {
+                        if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                            System.out.println("STATE Skipping: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
+                        }
+                    }
+                    
+                    // If the pending delta node has a memento element, its 
+                    // children should also be mementos therefore the copy
+                    // delta operation should have added all the children
+                    // of this pending delta node into the save delta. 
+                    if (pendingDeltaNode.getElement() instanceof IMemento) {
+                        return false;
+                    } else {
+                        return pendingDeltaNode.getChildCount() > 0;
+                    }
+                }
+            };
+            fPendingState.accept(pendingStateVisitor);
+        }                   
+
+        if (appendDeltaRoot.getChildDeltas().length > 0) {
+            // Set the new delta root as the pending state delta.
+            fPendingState = appendDeltaRoot;
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                System.out.println("STATE APPEND NEW PENDING STATE DELTA " + fPendingState); //$NON-NLS-1$
+            }
+        } else {
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                System.out.println("STATE APPEND CANCELED, NO DATA"); //$NON-NLS-1$
+            }           
+        }
+	}
+	
 	/**
 	 * Perform any restoration required for the given tree path.
 	 * 
 	 * @param path
 	 */
-	protected synchronized void doRestore(final TreePath path, final int modelIndex, final boolean knowsHasChildren, final boolean knowsChildCount) {
+	protected synchronized void doRestore(final TreePath path, final int modelIndex, final boolean knowsHasChildren, final boolean knowsChildCount, final boolean checkChildrenRealized) {
 		if (fPendingState == null) { 
 			return;
 		}
@@ -420,10 +604,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								// If found, just update the flags.  
 								existingRequest.setKnowsHasChildren(knowsHasChildren);
 								existingRequest.setKnowsChildCount(knowsChildCount);								
+                                existingRequest.setCheckChildrenRealized(checkChildrenRealized);                                
 							} else {
 								// Start a new compare request
 								ElementCompareRequest compareRequest = new ElementCompareRequest(
-										ModelContentProvider.this, getViewer().getInput(), potentialMatch, path, (IMemento) element, (ModelDelta)delta, modelIndex, knowsHasChildren, knowsChildCount);
+										ModelContentProvider.this, getViewer().getInput(), potentialMatch, path, 
+										(IMemento) element, (ModelDelta)delta, modelIndex, 
+										knowsHasChildren, knowsChildCount, checkChildrenRealized);
 								fCompareRequestsInProgress.put(key, compareRequest);
 								provider.compareElements(new IElementCompareRequest[]{ compareRequest });
 							}
@@ -431,7 +618,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 					} else if (element.equals(potentialMatch)) {
 						// Element comparison already succeeded, and it matches our element.
 						// Call restore with delta to process the delta flags.
-						doRestore((ModelDelta)delta, knowsHasChildren, knowsChildCount);
+						doRestore((ModelDelta)delta, knowsHasChildren, knowsChildCount, checkChildrenRealized);
 					}
 					return false;
 				} 
@@ -447,7 +634,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		if (!request.isCanceled()) {
 			if (request.isEqual()) {
 				delta.setElement(request.getElement());
-				doRestore(delta, request.knowsHasChildren(), request.knowChildCount());
+				doRestore(delta, request.knowsHasChildren(), request.knowChildCount(), request.checkChildrenRealized());
 			} else if (request.getModelIndex() != -1){
 				// Comparison failed. 
 				// Check if the delta has a reveal flag, and if its index matches the index
@@ -469,21 +656,21 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		IElementMementoProvider stateProvider = ViewerAdapterService.getMementoProvider(input);
 		if (stateProvider != null) {
             if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                System.out.println("SAVE BEGIN: " + input); //$NON-NLS-1$
+                System.out.println("STATE SAVE BEGIN: " + input); //$NON-NLS-1$
             }
 
 			// build a model delta representing expansion and selection state
 			final ModelDelta saveDeltaRoot = new ModelDelta(input, IModelDelta.NO_CHANGE);
             buildViewerState(saveDeltaRoot);
             if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                System.out.println("SAVE DELTA FROM VIEW: " + saveDeltaRoot); //$NON-NLS-1$
+                System.out.println("STATE SAVE DELTA FROM VIEW: " + saveDeltaRoot); //$NON-NLS-1$
             }
 		   
 			if (fPendingState != null) {
 			    // If the restore for the current input was never completed, preserve 
 			    // that restore along with the restore that was completed.
                 if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                    System.out.println("SAVE OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
+                    System.out.println("STATE SAVE OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
                 }
                 
                 IModelDeltaVisitor pendingStateVisitor = new IModelDeltaVisitor() {
@@ -520,7 +707,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                             copyIntoDelta(pendingDeltaNode, saveDeltaNode);
                         } else {
                             if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                                System.out.println(" Skipping: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
+                                System.out.println("STATE Skipping: " + pendingDeltaNode.getElement()); //$NON-NLS-1$
                             }
                         }
                         
@@ -543,7 +730,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 				encodeDelta(saveDeltaRoot, stateProvider);
 			} else {
 	            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-	                System.out.println("SAVE CANCELED, NO DATA"); //$NON-NLS-1$
+	                System.out.println("STATE SAVE CANCELED, NO DATA"); //$NON-NLS-1$
 	            }			
 			}
 		}
@@ -570,7 +757,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 	        deltaPath.addFirst(delta);
 	    }
 	    
-	    // For each element in the patch of the pendingStateDelta, find the corresponding
+	    // For each element in the path of the pendingStateDelta, find the corresponding
 	    // element in the partially restored delta being saved.  
 	    Iterator itr = deltaPath.iterator();
 	    // Skip the root element
@@ -649,7 +836,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 								DebugUIPlugin.log(e);
 							}
 	                        if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-	                            System.out.println("SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
+	                            System.out.println("STATE SAVE COMPLETED: " + rootDelta); //$NON-NLS-1$
 	                        }
 							stateSaveComplete(this);
 						}
@@ -662,7 +849,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 						}
 						requests.clear();
 		                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-		                    System.out.println("SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
+		                    System.out.println("STATE SAVE ABORTED: " + rootDelta.getElement()); //$NON-NLS-1$
 		                }
 						stateSaveComplete(this);
 					}
@@ -1237,7 +1424,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 		fPendingState.accept(state);
 		if (state.isComplete()) {
             if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                System.out.println("RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
+                System.out.println("STATE RESTORE COMPELTE: " + fPendingState); //$NON-NLS-1$
             }
 			fPendingState = null;
 		}
@@ -1375,6 +1562,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			}
 		}
 	}
+
+
 	
 	/**
 	 * Returns whether this given request should be run, or should wait for parent
@@ -1418,6 +1607,34 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 			}
 		}
 	}
+	
+	protected boolean getElementChildrenRealized(TreePath path) {
+	    synchronized (fRequestsInProgress) {
+            List requests = (List)fWaitingRequests.get(path);
+            if (requests != null) {
+                for (int i = 0; i < requests.size(); i++) {
+                    if (requests.get(i) instanceof ChildrenUpdate) {
+                        return false;
+                    }
+                }
+            }
+	        requests = (List)fRequestsInProgress.get(path);
+	        if (requests != null) {
+	            int numChildrenUpdateRequests = 0;
+	            for (int i = 0; i < requests.size(); i++) {
+	                if (requests.get(i) instanceof ChildrenUpdate) {
+	                    if (++numChildrenUpdateRequests > 1) {
+	                        return false;
+	                    }
+	                }
+	            }
+	        }
+	    }
+	    
+        return getViewer().getElementChildrenRealized(path);
+    }
+    
+
 	
 	/**
 	 * Triggers waiting requests based on the given request that just completed.

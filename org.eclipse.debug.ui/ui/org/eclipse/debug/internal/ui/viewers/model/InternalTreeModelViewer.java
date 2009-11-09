@@ -1948,6 +1948,54 @@ public class InternalTreeModelViewer extends TreeViewer
 				.updateElement(treePath, index);
 	}	
 	
+//**************************************************************************    
+// Another couple of methods copied from TreeViewer to workaround the UI bug 266189.
+// 	
+    protected void createChildren(Widget widget) {
+        Object element = widget.getData();
+        if (element == null && widget instanceof TreeItem) {
+            // parent has not been materialized
+            virtualMaterializeItem((TreeItem) widget);
+            // try getting the element now that updateElement was called
+            element = widget.getData();
+        }
+        if (element ==  null) {
+            // give up because the parent is still not materialized
+            return;
+        }
+        Item[] children = getChildren(widget);
+        if (children.length == 1 && children[0].getData() == null) {
+            // found a dummy node
+            virtualLazyUpdateChildCount(widget, children.length);
+            children = getChildren(widget);
+        }
+        // DO NOT touch all children
+        return;
+    }
+
+    private void virtualMaterializeItem(TreeItem treeItem) {
+        if (treeItem.getData() != null) {
+            // already materialized
+            return;
+        }
+
+        int index;
+        Widget parent = treeItem.getParentItem();
+        if (parent == null) {
+            parent = treeItem.getParent();
+        }
+        Object parentElement = parent.getData();
+        if (parentElement != null) {
+            if (parent instanceof Tree) {
+                index = ((Tree) parent).indexOf(treeItem);
+            } else {
+                index = ((TreeItem) parent).indexOf(treeItem);
+            }
+            virtualLazyUpdateWidget(parent, index);
+        }
+    }
+
+
 	/**
 	 * Performs auto expand on an element at the specified path if the auto expand
 	 * level dictates the element should be expanded.
@@ -1978,6 +2026,19 @@ public class InternalTreeModelViewer extends TreeViewer
         return -1;
     }
 
+    public boolean getElementChildrenRealized(TreePath parentPath) {
+        Widget parentItem = findItem(parentPath);
+        if (parentItem != null) {
+            Item[] children = getChildren(parentItem);
+            for (int i = 0; i < children.length; i++) {
+                if (children[i].getData() == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+    
     public Display getDisplay() {
         Control control = getControl();
         if (control != null) {
@@ -2193,7 +2254,7 @@ public class InternalTreeModelViewer extends TreeViewer
         return null;
     }
     
-    public void saveElementState(TreePath path, ModelDelta delta) {
+    public void saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         Tree tree = (Tree) getControl();
         TreeItem[] selection = tree.getSelection();
         Set set = new HashSet();
@@ -2206,49 +2267,59 @@ public class InternalTreeModelViewer extends TreeViewer
         if (w instanceof Tree) {
             delta.setChildCount(
                 ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, tree.getItemCount()));
-            delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+            if ((flagsToSave & IModelDelta.EXPAND) != 0) {
+                delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+            }
             items = tree.getItems(); 
         } else if (w instanceof TreeItem) {
             TreeItem item = (TreeItem)w;
-            delta.setChildCount(
-                ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, item.getItemCount()));
+            int itemCount = item.getItemCount();
+            delta.setChildCount(((ITreeModelContentProvider)getContentProvider()).viewToModelCount(path, itemCount));
             if (item.getExpanded()) {
-                delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+                if ((flagsToSave & IModelDelta.EXPAND) != 0) {
+                    delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+                }
+            } else if ((flagsToSave & IModelDelta.COLLAPSE) != 0 && itemCount > 0){
+                delta.setFlags(delta.getFlags() | IModelDelta.COLLAPSE);
             }
-            if (set.contains(item)) {
+            
+            if (set.contains(item) && (flagsToSave & IModelDelta.SELECT) != 0) {
                 delta.setFlags(delta.getFlags() | IModelDelta.SELECT);
             }
             items = ((TreeItem)w).getItems();
         }
         if (items != null) {
             for (int i = 0; i < items.length; i++) {
-                doSaveElementState(path, delta, items[i], set, i);
+                doSaveElementState(path, delta, items[i], set, i, flagsToSave);
             }
         }
     }
     
-    private void doSaveElementState(TreePath parentPath, ModelDelta delta, TreeItem item, Collection set, int index) {
+    private void doSaveElementState(TreePath parentPath, ModelDelta delta, TreeItem item, Collection set, int index, int flagsToSave) {
         Object element = item.getData();
         if (element != null) {
             boolean expanded = item.getExpanded();
             boolean selected = set.contains(item);
-            if (expanded || selected) {
-                int flags = IModelDelta.NO_CHANGE;
-                if (expanded) {
-                    flags = flags | IModelDelta.EXPAND;
-                }
-                if (selected) {
-                    flags = flags | IModelDelta.SELECT;
-                }
+            int itemCount = item.getItemCount();
+            int flags = IModelDelta.NO_CHANGE;
+            if (expanded && (flagsToSave & IModelDelta.EXPAND) != 0) {
+                flags = flags | IModelDelta.EXPAND;
+            } 
+            if (!expanded && (flagsToSave & IModelDelta.COLLAPSE) != 0 && itemCount > 0) {
+                flags = flags | IModelDelta.COLLAPSE;
+            }
+            if (selected && (flagsToSave & IModelDelta.SELECT) != 0) {
+                flags = flags | IModelDelta.SELECT;
+            }
+            if (expanded || flags != IModelDelta.NO_CHANGE) {
                 int modelIndex = ((ITreeModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, index);
                 TreePath elementPath = parentPath.createChildPath(element);
-                int numChildren = ((ITreeModelContentProvider)getContentProvider()).
-                    viewToModelCount(elementPath, item.getItemCount());
+                int numChildren = ((ITreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, itemCount);
                 ModelDelta childDelta = delta.addNode(element, modelIndex, flags, numChildren);
                 if (expanded) {
                     TreeItem[] items = item.getItems();
                     for (int i = 0; i < items.length; i++) {
-                        doSaveElementState(elementPath, childDelta, items[i], set, i);
+                        doSaveElementState(elementPath, childDelta, items[i], set, i, flagsToSave);
                     }
                 }
             }
@@ -2302,6 +2373,25 @@ public class InternalTreeModelViewer extends TreeViewer
         return false;
     }
 
+    public boolean getHasChildren(Object elementOrTreePath) {
+        if (elementOrTreePath instanceof TreePath && 
+            ((TreePath)elementOrTreePath).getSegmentCount() == 0) 
+        {
+            return getTree().getItemCount() > 0;
+        }
+        
+        Widget[] items = internalFindItems(elementOrTreePath);
+        if (items != null && items.length > 0) {
+            if (items[0] instanceof TreeItem) {
+                return ((TreeItem)items[0]).getItemCount() > 0;
+            } else {
+                return ((Tree)items[0]).getItemCount() > 0;
+            }
+        }
+        
+        return false;
+    }
+    
 	/*
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)

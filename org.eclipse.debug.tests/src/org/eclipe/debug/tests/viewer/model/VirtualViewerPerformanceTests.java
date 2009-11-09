@@ -12,27 +12,24 @@ package org.eclipe.debug.tests.viewer.model;
 
 import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
-import org.eclipse.swt.SWT;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 /**
  * @since 3.6
  */
-public class JFaceViewerDeltaTests extends DeltaTests {
+public class VirtualViewerPerformanceTests extends PerformanceTests {
     
-    public JFaceViewerDeltaTests(String name) {
+    public VirtualViewerPerformanceTests(String name) {
         super(name);
     }
 
     protected ITreeModelContentProviderTarget createViewer(Display display, Shell shell) {
-        return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
+        return new VirtualTreeModelViewer(fDisplay, 0, new PresentationContext("TestViewer"));
     }
     
-    /**
-     * TODO: remove this method when bug 292322 gets fixed in TreeViewer
-     */
-    public void testBug292322() {
+    protected int getTestModelDepth() {
+        return 7;
     }
 }

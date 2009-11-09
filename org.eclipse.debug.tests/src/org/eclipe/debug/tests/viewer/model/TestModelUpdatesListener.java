@@ -20,6 +20,7 @@ import junit.framework.Assert;
 
 import org.eclipe.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.debug.internal.ui.viewers.model.ILabelUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.ITreeModelContentProviderTarget;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
@@ -31,27 +32,9 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.jface.viewers.TreePath;
 
-public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener {
-
-    public static final int LABEL_UPDATES_COMPLETE = 0X0001;
-    public static final int CONTENT_UPDATES_COMPLETE = 0X0002;
-    public static final int LABEL_UPDATES = 0X0004;
-    public static final int HAS_CHILDREN_UPDATES = 0X0008;
-    public static final int CHILDREN_COUNT_UPDATES = 0X0010;
-    public static final int CHILDREN_UPDATES = 0X0020;
-    public static final int MODEL_CHANGED_COMPLETE = 0X0040; 
-    public static final int MODEL_PROXIES_INSTALLED = 0X0080;
-    
-    public static final int VIEWER_UPDATES_RUNNING = 0X0100; 
-    public static final int LABEL_UPDATES_RUNNING = 0X0200;
-    
-    public static final int LABEL_COMPLETE = LABEL_UPDATES_COMPLETE | LABEL_UPDATES;
-    public static final int CONTENT_COMPLETE = 
-        CONTENT_UPDATES_COMPLETE | HAS_CHILDREN_UPDATES | CHILDREN_COUNT_UPDATES | CHILDREN_UPDATES;
-    
-    
-    public static final int ALL_UPDATES_COMPLETE = LABEL_COMPLETE | CONTENT_COMPLETE | MODEL_PROXIES_INSTALLED | LABEL_UPDATES_RUNNING | VIEWER_UPDATES_RUNNING;
-    
+public class TestModelUpdatesListener 
+    implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener, ITestModelUpdatesListenerConstants 
+{
     private boolean fFailOnRedundantUpdates;
     private boolean fFailOnMultipleUpdateSequences;
     
@@ -87,7 +70,13 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
         setFailOnRedundantUpdates(failOnRedundantUpdates);
         setFailOnMultipleUpdateSequences(failOnMultipleUpdateSequences);
     }
-    
+
+    public void reset(boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
+        reset();
+        setFailOnRedundantUpdates(failOnRedundantUpdates);
+        setFailOnMultipleUpdateSequences(failOnMultipleUpdateSequences);
+    }
+
     public void reset() {
         fHasChildrenUpdates.clear();
         fChildrenUpdates.clear();
@@ -124,7 +113,7 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
         childrenIndexes.add(new Integer(index));
     }
 
-    public void recurseremoveChildreUpdate(TreePath path, int index) {
+    public void removeChildrenUpdate(TreePath path, int index) {
         Set childrenIndexes = (Set)fChildrenUpdates.get(path);
         if (childrenIndexes != null) {
             childrenIndexes.remove(new Integer(index));
@@ -143,27 +132,42 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
     }
 
     public void addUpdates(TreePath path, TestElement element, int levels) {
-        TestElement[] children = element.getChildren();
-        
+        addUpdates(path, element, levels, ALL_UPDATES_COMPLETE);
+    }
+
+    public void addUpdates(TreePath path, TestElement element, int levels, int flags) {
+        addUpdates(null, path, element, levels, flags);
+    }
+    
+    public void addUpdates(ITreeModelContentProviderTarget viewer, TreePath path, TestElement element, int levels, int flags) {
         if (!path.equals(TreePath.EMPTY)) {
-            fLabelUpdates.add(path);
-            fHasChildrenUpdates.add(path);
+            if ((flags & LABEL_UPDATES) != 0) {
+                fLabelUpdates.add(path);
+            }
+            if ((flags & HAS_CHILDREN_UPDATES) != 0) {
+                fHasChildrenUpdates.add(path);
+            }
         }
 
-        if (levels != 0) {
-            levels--;
-            if (children.length > 0) {
-                fChildCountUpdates.add(path);
-                Set childrenIndexes = new HashSet();
-                for (int i = 0; i < children.length; i++) {
-                    childrenIndexes.add(new Integer(i));
+        if (levels-- != 0) {
+            TestElement[] children = element.getChildren();
+            if (children.length > 0 && (viewer == null || path.getSegmentCount() == 0 || viewer.getExpandedState(path))) {
+                if ((flags & CHILDREN_COUNT_UPDATES) != 0) {
+                    fChildCountUpdates.add(path);
                 }
-                fChildrenUpdates.put(path, childrenIndexes);
+                if ((flags & CHILDREN_UPDATES) != 0) {
+                    Set childrenIndexes = new HashSet();
+                    for (int i = 0; i < children.length; i++) {
+                        childrenIndexes.add(new Integer(i));
+                    }
+                    fChildrenUpdates.put(path, childrenIndexes);
+                }
+
+                for (int i = 0; i < children.length; i++) {
+                    addUpdates(viewer, path.createChildPath(children[i]), children[i], levels, flags);
+                }
             }
         
-            for (int i = 0; i < children.length; i++) {
-                addUpdates(path.createChildPath(children[i]), children[i], levels);
-            }
         }
     }
 
@@ -224,11 +228,9 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
         synchronized (this) {
         	fViewerUpdatesRunning++;
         }
-        System.out.println("started: " + update);
     }
     
     public void updateComplete(IViewerUpdate update) {
-        System.out.println("completed: " + update);
         synchronized (this) {
         	fViewerUpdatesRunning--;
         }
@@ -285,7 +287,6 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
         synchronized (this) {
         	fLabelUpdatesRunning++;
         }
-        System.out.println("started: " + update);
     }
 
     public void labelUpdatesBegin() {

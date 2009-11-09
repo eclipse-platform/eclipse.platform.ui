@@ -152,7 +152,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     /**
      * Constructor private.  Use static factory methods instead. 
      */
-    private TestModel() {}
+    public TestModel() {}
     
     public TestElement getRootElement() {
         return fRoot;
@@ -264,7 +264,18 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             doSetExpanded(element.fChildren[i]);
         }
     }
+
+    public void setAllAppendix(String appendix) {
+        doSetAllAppendix(fRoot, appendix);
+    }
     
+    private void doSetAllAppendix(TestElement element, String appendix) {
+        element.setLabelAppendix(appendix);
+        for (int i = 0; i < element.fChildren.length; i++) {
+            doSetAllAppendix(element.fChildren[i], appendix);
+        }
+    }
+
     public void validateData(ITreeModelViewer viewer, TreePath path) {
         
         validateData(viewer, path, false);
@@ -287,10 +298,13 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
                 Assert.assertEquals(children[i], viewer.getChildElement(path, i));
                 validateData(viewer, path.createChildPath(children[i]), expandedElementsOnly);
             }
+        } else if (!viewer.getExpandedState(path)) {
+            // If element not expanded, verify the plus sign.
+            Assert.assertEquals(viewer.getHasChildren(path), element.getChildren().length > 0);
         }
     }
 
-    private void setRoot(TestElement root) {
+    public void setRoot(TestElement root) {
         fRoot = root;
     }
     
@@ -557,7 +571,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         }) );
         return model;
     }
-    
+
     public static TestModel compositeMultiLevel() {
         TestModel m2 = new TestModel();
         m2.setRoot( new TestElement(m2, "m2.root", new TestElement[] {

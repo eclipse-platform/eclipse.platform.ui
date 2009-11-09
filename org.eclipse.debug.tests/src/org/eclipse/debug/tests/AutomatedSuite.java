@@ -36,7 +36,7 @@ import org.eclipe.debug.tests.viewer.model.VirtualViewerUpdateTests;
 import org.eclipse.debug.tests.statushandlers.StatusHandlerTests;
 
 /**
- * Tests for integration and nightly builds.
+  * Tests for integration and nightly builds.
  * 
  * @since 3.6 
  */

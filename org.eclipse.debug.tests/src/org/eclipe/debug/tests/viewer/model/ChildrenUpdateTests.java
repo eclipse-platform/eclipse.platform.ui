@@ -65,7 +65,7 @@ public class ChildrenUpdateTests extends TestCase {
 				public void setAutoExpandLevel(int level) {
 				}
 			
-				public void saveElementState(TreePath path, ModelDelta delta) {					
+				public void saveElementState(TreePath path, ModelDelta delta, int flags) {					
 				}
 			
 				public void removeViewerUpdateListener(IViewerUpdateListener listener) {
@@ -163,6 +163,10 @@ public class ChildrenUpdateTests extends TestCase {
 					return null;
 				}
 			
+                public boolean getHasChildren(Object elementOrTreePath) {
+                    return false;
+                }
+            
 				public int getChildCount(TreePath path) {
 					return 0;
 				}
@@ -176,6 +180,10 @@ public class ChildrenUpdateTests extends TestCase {
 			
 				public void autoExpand(TreePath elementPath) {
 				}
+
+                public boolean getElementChildrenRealized(TreePath parentPath) {
+                    return false;
+                }
 			};
 		}
 	}

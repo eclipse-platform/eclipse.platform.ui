@@ -22,6 +22,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualItem.Index;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -51,6 +54,7 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
+import org.eclipse.ui.progress.UIJob;
 
 /**
  * A tree model viewer without a UI component.
@@ -170,6 +174,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
      */
     private Map fShowColumns = new HashMap();    
 
+    private UIJob fValidateJob;
+    
     public InternalVirtualTreeModelViewer(Display display, int style, IPresentationContext context) {        
         fDisplay = display;
         fContext = context;        
@@ -237,6 +243,10 @@ public class InternalVirtualTreeModelViewer extends Viewer
                 //Object oldData = item.getData();
                 associate(element, item);
                 doUpdate(item);
+                VirtualItem[] children = item.getItems();
+                for (int j = 0; j < children.length; j++) {
+                    children[j].setNeedsDataUpdate();
+                }
             }
         }
         // Restore the selection if we are not already in a nested
@@ -249,7 +259,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
                 handleInvalidSelection(selection, newSelection);
             }
         }
-        fTree.validate();
+        validate();
     }
 
     VirtualTree getTree() {
@@ -268,7 +278,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         } else {
             // TODO: Implement insert() for element
         }
-        fTree.validate();
+        validate();
     }
 
     public void remove(final Object parentOrTreePath, final int index) {
@@ -282,9 +292,18 @@ public class InternalVirtualTreeModelViewer extends Viewer
                     VirtualItem parentItem = parentItems[i];
                     if (parentItem.isDisposed())
                         continue;
+                    
+                    // Parent item is not expanded so just update its contents so that 
+                    // the plus sign gets refreshed.
+                    if (!parentItem.getExpanded()) {
+                        parentItem.setNeedsCountUpdate();
+                        parentItem.setItemCount(-1);
+                        virtualLazyUpdateHasChildren(parentItem);
+                    }
+                    
                     if (index < parentItem.getItemCount()) {
-                        
                         VirtualItem item =parentItem.getItem(new VirtualItem.Index(index));
+                        
                         if (item.getData() != null) {
                             removedPath = getTreePathFromItem(item);
                             disassociate(item);
@@ -369,6 +388,15 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
         return -1;
     }
+    
+    public boolean getElementChildrenRealized(TreePath parentPath) {
+        VirtualItem parentItem = findItem(parentPath);
+        if (parentItem != null) {
+            return !parentItem.childrenNeedDataUpdate();
+        }
+        return true;
+    }
+
 
     private ITreeModelLabelProvider getLabelProvider() {
         return fLabelProvider;
@@ -382,36 +410,72 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
     public void refresh() {
         refresh(fTree);
-        getTree().validate();
+        validate();
     }
 
     public void refresh(Object element) {
         VirtualItem[] items = findItems(element);
         for (int i = 0; i < items.length; i++) {
             refresh(items[i]);
-            getTree().validate(items[i]);
+            validate();
         }
     }
 
     private void refresh(VirtualItem item) {
-        item.setNeedsCountUpdate();
-        item.setNeedsLabelUpdate();
-        if (item.getParent() == null) {
-            virtualLazyUpdateChildCount(item);
-        } else if (item.getExpanded()) {
-            virtualLazyUpdateChildCount(item);
-        } else if (item.getData() != null) {
-            virtualLazyUpdateHasChildren(item);
+        if (!item.needsDataUpdate()) {
+            if (item.getParent() != null) {
+                item.setNeedsLabelUpdate();
+                virtualLazyUpdateHasChildren(item);
+            }
+            
+            VirtualItem[] items = item.getItems();
+            for (int i = 0; i < items.length; i++) {
+                items[i].setNeedsDataUpdate();
+            }
         } 
-        
-        VirtualItem[] items = item.getItems();
-        for (int i = 0; i < items.length; i++) {
-            items[i].setNeedsDataUpdate();
-            refresh(items[i]);
-        }
+        refreshStruct(item);
     }
 
+    private void refreshStruct(VirtualItem item) {
+        boolean expanded = false;
+        if (item.getParent() == null) {
+            // root item
+            virtualLazyUpdateChildCount(item);
+            expanded = true;
+        } else {
+            if (item.getExpanded()) {
+                virtualLazyUpdateData(item);
+                expanded = true;
+            } 
+        } 
 
+        VirtualItem[] items = item.getItems();
+        for (int i = 0; i < items.length; i++) {
+            if (expanded) {
+                refreshStruct(items[i]);
+            } else {
+                item.clear(new VirtualItem.Index(i));
+            }
+        }
+    }
+    
+    private void validate() {
+        if (fValidateJob == null) {
+            fValidateJob = new UIJob(getDisplay(), "Virtual viewer validate job") {
+                {
+                    setSystem(true);
+                }
+                
+                public IStatus runInUIThread(IProgressMonitor monitor) {
+                    fValidateJob = null;
+                    fTree.validate();
+                    return Status.OK_STATUS;
+                }
+            };
+            fValidateJob.schedule();
+        }
+    }
+    
     protected void inputChanged(Object input, Object oldInput) {
         resetColumns(input);
     }
@@ -483,7 +547,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
                 }
             }
         });
-        fTree.validate();
+        validate();
     }
 
     public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
@@ -506,7 +570,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
                     if (hasChildren) {
                         if (!item.getExpanded()) {
                             item.setItemCount(-1);
-                        } else if (item.needsCountUpdate()) {
+                        } else {
                             virtualLazyUpdateChildCount(item);
                         }
                     }
@@ -514,10 +578,19 @@ public class InternalVirtualTreeModelViewer extends Viewer
             }
         });
     }
+    
+    public boolean getHasChildren(Object elementOrTreePath) {
+        VirtualItem[] items = findItems(elementOrTreePath);
+        if (items.length > 0) {
+            return items[0].hasItems();
+        }
+        return false;
+    }
 
     private void virtualLazyUpdateHasChildren(VirtualItem item) {
         TreePath treePath;
         treePath = getTreePathFromItem(item);
+        item.clearNeedsCountUpdate();
         getContentProvider().updateHasChildren(treePath);
     }
 
@@ -595,7 +668,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
             if (item.needsLabelUpdate()) {
                 virtualLazyUpdateLabel(item);
             } 
-            if (item.getExpanded() && item.hasItems() && item.needsCountUpdate()) {
+            if (item.needsCountUpdate() && item.getExpanded()) {
                 virtualLazyUpdateChildCount(item);
             }
         } 
@@ -723,7 +796,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
         
         // Make sure that the new selection is properly revealed.
-        fTree.validate();
+        validate();
     }
 
     public void update(Object element) {
@@ -735,7 +808,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     
     public void doUpdate(VirtualItem item) {
         item.setNeedsLabelUpdate();
-        fTree.validate(item);
+        validate();
     }
 
     public ISelection getSelection() {
@@ -784,14 +857,15 @@ public class InternalVirtualTreeModelViewer extends Viewer
         if (items.length > 0) {
             expandToLevel(items[0], level);
         }
-        fTree.validate();
+        validate();
     }
 
     public void setExpandedState(Object elementOrTreePath, boolean expanded) {
         VirtualItem[] items = findItems(elementOrTreePath);
-        if (items.length > 0) {
-            items[0].setExpanded(expanded);
+        for (int i = 0; i < items.length; i++) {
+            items[i].setExpanded(expanded);
         }
+        validate();
     }
 
     public boolean getExpandedState(Object elementOrTreePath) {
@@ -808,10 +882,6 @@ public class InternalVirtualTreeModelViewer extends Viewer
                 return;
             }
             
-            if (item.getItemCount() < 0) {
-                virtualLazyUpdateChildCount(item);
-                item.clearNeedsCountUpdate();
-            }
             item.setExpanded(true);
 
             if (item.getData() == null) {
@@ -1220,11 +1290,17 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     public int getChildCount(TreePath path) {
+        int childCount = -1;
         VirtualItem[] items = findItems(path);
         if (items.length > 0) {
-            return items[0].getItemCount();
+            childCount = items[0].getItemCount();
+            // Mimic the jface viewer behavior which returns 1 for child count
+            // for an item that has children but is not yet expanded.
+            if (childCount == -1 && items[0].hasItems()) {
+                childCount = 1;
+            } 
         }   
-        return -1;
+        return childCount;
     }
     
     public Object getChildElement(TreePath path, int index) {
@@ -1241,7 +1317,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    public void saveElementState(TreePath path, ModelDelta delta) {
+    public void saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         VirtualTree tree = getTree();
         VirtualItem[] selection = tree.getSelection();
         Set set = new HashSet();
@@ -1255,32 +1331,40 @@ public class InternalVirtualTreeModelViewer extends Viewer
         if (parent != null) {
             delta.setChildCount(((ModelContentProvider)getContentProvider()).viewToModelCount(path, parent.getItemCount()));
             if (parent.getExpanded()) {
-                delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+                if ((flagsToSave & IModelDelta.EXPAND) != 0) {
+                    delta.setFlags(delta.getFlags() | IModelDelta.EXPAND);
+                }
+            } else if ((flagsToSave & IModelDelta.COLLAPSE) != 0 && parent.hasItems()){
+                delta.setFlags(delta.getFlags() | IModelDelta.COLLAPSE);
             }
-            if (set.contains(parent)) {
+            
+            if (set.contains(parent) && (flagsToSave & IModelDelta.SELECT) != 0) {
                 delta.setFlags(delta.getFlags() | IModelDelta.SELECT);
             }
             
             items = parent.getItems();
             for (int i = 0; i < items.length; i++) {
-                doSaveElementState(path, delta, items[i], set);
+                doSaveElementState(path, delta, items[i], set, flagsToSave);
             }
         }
     }
     
-    private void doSaveElementState(TreePath parentPath, ModelDelta delta, VirtualItem item, Collection set) {
+    private void doSaveElementState(TreePath parentPath, ModelDelta delta, VirtualItem item, Collection set, int flagsToSave) {
         Object element = item.getData();
         if (element != null) {
             boolean expanded = item.getExpanded();
             boolean selected = set.contains(item);
-            if (expanded || selected) {
-                int flags = IModelDelta.NO_CHANGE;
-                if (expanded) {
-                    flags = flags | IModelDelta.EXPAND;
-                }
-                if (selected) {
-                    flags = flags | IModelDelta.SELECT;
-                }
+            int flags = IModelDelta.NO_CHANGE;
+            if (expanded && (flagsToSave & IModelDelta.EXPAND) != 0) {
+                flags = flags | IModelDelta.EXPAND;
+            } 
+            if (!expanded && (flagsToSave & IModelDelta.COLLAPSE) != 0 && item.hasItems()){
+                flags = flags | IModelDelta.COLLAPSE;
+            }
+            if (selected && (flagsToSave & IModelDelta.SELECT) != 0) {
+                flags = flags | IModelDelta.SELECT;
+            }
+            if (expanded || flags != IModelDelta.NO_CHANGE) {
                 int modelIndex = ((ModelContentProvider)getContentProvider()).viewToModelIndex(parentPath, item.getIndex().intValue());
                 TreePath elementPath = parentPath.createChildPath(element);
                 int numChildren = ((ModelContentProvider)getContentProvider()).viewToModelCount(elementPath, item.getItemCount());
@@ -1288,7 +1372,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
                 if (expanded) {
                     VirtualItem[] items = item.getItems();
                     for (int i = 0; i < items.length; i++) {
-                        doSaveElementState(elementPath, childDelta, items[i], set);
+                        doSaveElementState(elementPath, childDelta, items[i], set, flagsToSave);
                     }
                 }
             }

@@ -112,7 +112,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 				getViewer().replace(parentPath, viewIndex, element);
 				TreePath childPath = parentPath.createChildPath(element);
 				updateHasChildren(childPath);
-				doRestore(childPath, modelIndex, false, false);
+				doRestore(childPath, modelIndex, false, false, false);
 			}	        
 		} else {
 			if (DEBUG_CONTENT_PROVIDER && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
@@ -134,6 +134,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		}
 		TreePath treePath = getViewerTreePath(delta);
 		cancelSubtreeUpdates(treePath);
+		appendToPendingStateDelta(treePath);
 		getViewer().refresh(getElement(treePath));
 	}
 	
@@ -413,7 +414,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	 */
 	protected void buildViewerState(ModelDelta delta) {
         ITreeModelContentProviderTarget viewer = getViewer();
-        viewer.saveElementState(EMPTY_TREE_PATH, delta);
+        viewer.saveElementState(EMPTY_TREE_PATH, delta, IModelDelta.SELECT | IModelDelta.EXPAND);
 		
 		// Add memento for top item if it is mapped to an element.  The reveal memento
 		// is in its own path to avoid requesting unnecessary data when restoring it.
@@ -455,7 +456,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
         for (int i = 0; i < count; i++) {
             Object data = getViewer().getChildElement(TreePath.EMPTY, i);
             if (data != null) {
-                doRestore(new TreePath(new Object[]{data}), i, false, false);
+                doRestore(new TreePath(new Object[]{data}), i, false, false, false);
             }
         }
         
@@ -538,13 +539,26 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	/**
 	 * @param delta
 	 */
-	void doRestore(ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount) {
+	void doRestore(ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount, boolean checkChildrenRealized) {
 		TreePath treePath = getViewerTreePath(delta);
 		ITreeModelContentProviderTarget viewer = getViewer();
-		// Attempt to expand the node only if the children are known.
-		if (knowsHasChildren && (delta.getFlags() & IModelDelta.EXPAND) != 0) {
-			viewer.expandToLevel(treePath, 1);
-            delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
+
+        // Attempt to expand the node only if the children are known.
+		if (knowsHasChildren) {
+		    if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
+	            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+	                System.out.println("STATE RESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
+	            }
+    			viewer.expandToLevel(treePath, 1);
+                delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
+		    }
+            if ((delta.getFlags() & IModelDelta.COLLAPSE) != 0) {
+                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                    System.out.println("STATE RESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
+                }
+                getViewer().setExpandedState(treePath, false);
+                delta.setFlags(delta.getFlags() & ~IModelDelta.COLLAPSE);
+            }
 		}
 		if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
 			viewer.setSelection(new TreeSelection(treePath), false, false);
@@ -569,6 +583,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
                 TreePath parentPath = treePath.getParentPath();
                 int index = viewer.findElementIndex(parentPath, treePath.getLastSegment());
                 if (index >= 0) { 
+                    if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                        System.out.println("STATE RESTORE REVEAL: " + treePath.getLastSegment()); //$NON-NLS-1$
+                    }
                     viewer.reveal(parentPath, index);
                 }
             }
@@ -597,6 +614,19 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
             }
         }
         
+        // Some children of this element were just updated.  If all its 
+        // children are now realized, clear out any elements that still 
+        // have flags, because they represent elements that were removed.
+        if ((checkChildrenRealized && getElementChildrenRealized(treePath)) ||
+             (knowsHasChildren && !viewer.getHasChildren(treePath)) ) 
+        {
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                System.out.println("STATE RESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
+            }
+            delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            
+        }
+        
         checkIfRestoreComplete();
 	}
+
 }

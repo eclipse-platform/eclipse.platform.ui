@@ -121,15 +121,65 @@ abstract public class DeltaTests extends TestCase {
         TestElement element = model.getRootElement().getChildren()[0];
         TreePath elementPath = new TreePath(new Object[] { element });
         TestElement[] newChildren = new TestElement[] {
-            new TestElement(model, "1.1", new TestElement[0]),
-            new TestElement(model, "1.2", new TestElement[0]),
-            new TestElement(model, "1.3", new TestElement[0]),
+            new TestElement(model, "1.1 - new", new TestElement[0]),
+            new TestElement(model, "1.2 - new", new TestElement[0]),
+            new TestElement(model, "1.3 - new", new TestElement[0]),
         };
         ModelDelta delta = model.setElementChildren(elementPath, newChildren);
         
         fListener.reset(elementPath, element, -1, true, false); 
         model.postDelta(delta);
         while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY);
+    }
+
+    public void testRefreshStruct2() {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        
+        TestModel model = TestModel.simpleMultiLevel();
+        fViewer.setAutoExpandLevel(-1);
+
+        // Create the listener
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY);
+
+        String prefix = "new - ";
+        model.setElementChildren(TreePath.EMPTY, new TestElement[] {
+            new TestElement(model, prefix + "1", new TestElement[0]),
+            new TestElement(model, prefix + "2", true, false, new TestElement[] {
+                new TestElement(model, prefix + "2.1", true, true, new TestElement[0]),
+                new TestElement(model, prefix + "2.2", false, true, new TestElement[0]),
+                new TestElement(model, prefix + "2.3", true, false, new TestElement[0]),
+            }),
+            new TestElement(model, prefix + "3", new TestElement[] {
+                new TestElement(model, prefix + "3.1", new TestElement[] {
+                    new TestElement(model, prefix + "3.1.1", new TestElement[0]),
+                    new TestElement(model, prefix + "3.1.2", new TestElement[0]),
+                    new TestElement(model, prefix + "3.1.3", new TestElement[0]),
+                }),
+                new TestElement(model, prefix + "3.2", new TestElement[] {
+                    new TestElement(model, prefix + "3.2.1", new TestElement[0]),
+                    new TestElement(model, prefix + "3.2.2", new TestElement[0]),
+                    new TestElement(model, prefix + "3.2.3", new TestElement[0]),
+                }),
+                new TestElement(model, prefix + "3.3", new TestElement[] {
+                    new TestElement(model, prefix + "3.3.1", new TestElement[0]),
+                    new TestElement(model, prefix + "3.3.2", new TestElement[0]),
+                    new TestElement(model, prefix + "3.3.3", new TestElement[0]),
+                }),
+            })
+        });
+        
+        TestElement element = model.getRootElement();
+        fListener.reset(TreePath.EMPTY, element, -1, false, false);
+        
+        model.postDelta(new ModelDelta(element, IModelDelta.CONTENT));
+        while (!fListener.isFinished(TestModelUpdatesListener.ALL_UPDATES_COMPLETE | TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
         model.validateData(fViewer, TreePath.EMPTY);
     }
 
@@ -160,7 +210,7 @@ abstract public class DeltaTests extends TestCase {
         fListener.addChildreUpdate(TreePath.EMPTY, 6);
         fListener.addHasChildrenUpdate(elementPath);
         fListener.addLabelUpdate(elementPath);
-        // TODO: redundant updates on insert!
+        // TODO: redundant label updates on insert!
         fListener.setFailOnRedundantUpdates(false);
         model.postDelta(delta);
         while (!fListener.isFinished(TestModelUpdatesListener.ALL_UPDATES_COMPLETE | TestModelUpdatesListener.MODEL_CHANGED_COMPLETE)) 
@@ -296,7 +346,7 @@ abstract public class DeltaTests extends TestCase {
     }
 
     
-    public void testRemoveElement() {
+    public void testRemove() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         TestModel model = TestModel.simpleSingleLevel();
@@ -465,4 +515,58 @@ abstract public class DeltaTests extends TestCase {
         
         model.validateData(fViewer, TreePath.EMPTY);
     }
+    
+    public void testBug292322() {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = TestModel.simpleMultiLevel();
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY, true);
+        
+        // Update the model: remove one child of an un-expanded element, then
+        // make sure that the number of children is correct.
+        TreePath parentPath = model.findElement("2");
+        TestElement parentElement = model.getElement(parentPath);
+        ModelDelta delta = model.removeElementChild(parentPath, 0);
+        
+        // Update the viewer
+        fListener.reset(parentPath, parentElement, 0, false, false);
+        //fListener.addChildreCountUpdate(parentPath);
+        model.postDelta(delta);
+        while (!fListener.isFinished(TestModelUpdatesListener.MODEL_CHANGED_COMPLETE | TestModelUpdatesListener.CONTENT_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Validate the viewer data.
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        // Update the model: remove the remaining children and make sure that 
+        // the element children are updated to false.
+        model.removeElementChild(parentPath, 0);
+        
+        // Update the viewer
+        fListener.reset(parentPath, parentElement, 0, false, false);
+        model.postDelta(delta);
+        while (!fListener.isFinished(TestModelUpdatesListener.MODEL_CHANGED_COMPLETE | TestModelUpdatesListener.CONTENT_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Validate the viewer data.
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        // Update the model: remove the remaining children and make sure that 
+        // the element children are updated to false.
+        model.removeElementChild(parentPath, 0);
+        
+        // Update the viewer
+        fListener.reset(parentPath, parentElement, 0, false, false);
+        model.postDelta(delta);
+        while (!fListener.isFinished(TestModelUpdatesListener.MODEL_CHANGED_COMPLETE | TestModelUpdatesListener.CONTENT_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Validate the viewer data.
+        model.validateData(fViewer, TreePath.EMPTY, true);
+    }
+
 }

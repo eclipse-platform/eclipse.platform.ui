@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.core.runtime.Assert;
+
 /**
  * Virtual item, which is analogous to the SWT's tree item.
  * 
@@ -63,7 +65,7 @@ class VirtualItem {
         }
         
         public int compareTo(Object obj) {
-            return obj instanceof Index ? ((Index)obj).fIndexValue.compareTo(fIndexValue) : 0; 
+            return obj instanceof Index ? fIndexValue.compareTo(((Index)obj).fIndexValue) : 0; 
         }
         
         public String toString() {
@@ -226,9 +228,6 @@ class VirtualItem {
 
     void setData(Object data) {
         fData.put(ELEMENT_DATA_KEY, data);
-        if (data == null) {
-            fNeedsDataUpdate = true;
-        }
     }
     
     Object getData () {
@@ -236,10 +235,18 @@ class VirtualItem {
     }
     
     void setExpanded(boolean expanded) {
+        if (fExpanded == expanded) {
+            return;
+        }
         fExpanded = expanded;
+
+        if (fExpanded && getItemCount() == -1) {
+            setNeedsCountUpdate();
+        }
+
         
-        //Assert.assrt(!fExpanded || hasItems());
-        
+        Assert.isTrue(!fExpanded || hasItems());        
+
         // If collapsed, make sure that all the children are collapsed as well.
         if (!fExpanded) {
             for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
@@ -305,6 +312,22 @@ class VirtualItem {
             fItems.put(index, item);
         }
         return item;
+    }
+    
+    boolean childrenNeedDataUpdate() {
+        if (getItemCount() == 0) {
+            return false;
+        }
+        if (fItems == null || fItems.size() != fItemCount) {
+            return true;
+        }
+        for (Iterator itr = fItems.values().iterator(); itr.hasNext();) {
+            VirtualItem child = (VirtualItem)itr.next();
+            if (child.needsDataUpdate()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     VirtualItem[] getItems() {

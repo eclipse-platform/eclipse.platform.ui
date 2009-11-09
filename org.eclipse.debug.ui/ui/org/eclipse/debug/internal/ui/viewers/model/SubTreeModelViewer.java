@@ -197,6 +197,18 @@ public class SubTreeModelViewer extends TreeModelViewer {
             return -1;
         }
 
+        public boolean getHasChildren(Object elementOrTreePath) {
+            if (elementOrTreePath instanceof TreePath) {
+                TreePath path = (TreePath)elementOrTreePath;
+                if (path.startsWith(fRootPath, null)) {
+                    return SubTreeModelViewer.this.getHasChildren(createSubPath(path));
+                }
+            } else {
+                return SubTreeModelViewer.this.getHasChildren(elementOrTreePath);
+            }
+            return false;
+        }
+
         public Object getChildElement(TreePath path, int index) {
             if (path.startsWith(fRootPath, null)) {
                 return SubTreeModelViewer.this.getChildElement(createSubPath(path), index);
@@ -213,6 +225,13 @@ public class SubTreeModelViewer extends TreeModelViewer {
                 return SubTreeModelViewer.this.findElementIndex(createSubPath(parentPath), element);
             }        
             return -1;
+        }
+
+        public boolean getElementChildrenRealized(TreePath parentPath) {
+            if (parentPath.startsWith(fRootPath, null)) {
+                return SubTreeModelViewer.this.getElementChildrenRealized(createSubPath(parentPath));
+            }        
+            return true;
         }
         
         public void setElementData(TreePath path, int numColumns, String[] labels, ImageDescriptor[] images, FontData[] fontDatas, RGB[] foregrounds, RGB[] backgrounds) {
@@ -289,8 +308,8 @@ public class SubTreeModelViewer extends TreeModelViewer {
             SubTreeModelViewer.this.removeViewerUpdateListener(listener);
         }
 
-        public void saveElementState(TreePath path, ModelDelta delta) {
-            SubTreeModelViewer.this.saveElementState(path, delta);
+        public void saveElementState(TreePath path, ModelDelta delta, int deltaFlags) {
+            SubTreeModelViewer.this.saveElementState(path, delta, deltaFlags);
         }
 
         public void setAutoExpandLevel(int level) {

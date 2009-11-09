@@ -116,6 +116,7 @@ public interface IModelDelta {
 	 * SELECT and REVEAL flags. 
 	 * 
 	 * @see IModelSelectionPolicy
+=	 * @since 3.5
 	 */
 	public static int FORCE = 1 << 26;
 	

@@ -20,9 +20,9 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * @since 3.6
  */
-public class JFaceViewerDeltaTests extends DeltaTests {
+public class JFaceViewerPerformanceTests extends PerformanceTests {
     
-    public JFaceViewerDeltaTests(String name) {
+    public JFaceViewerPerformanceTests(String name) {
         super(name);
     }
 
@@ -30,9 +30,7 @@ public class JFaceViewerDeltaTests extends DeltaTests {
         return new TreeModelViewer(fShell, SWT.VIRTUAL, new PresentationContext("TestViewer"));
     }
     
-    /**
-     * TODO: remove this method when bug 292322 gets fixed in TreeViewer
-     */
-    public void testBug292322() {
+    protected int getTestModelDepth() {
+        return 5;
     }
 }

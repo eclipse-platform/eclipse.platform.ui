@@ -258,6 +258,9 @@ public class ModelDelta implements IModelDelta {
 			if ((flags & IModelDelta.CONTENT) > 0) {
 				buf.append("CONTENT | "); //$NON-NLS-1$
 			}
+            if ((flags & IModelDelta.COLLAPSE) > 0) {
+                buf.append("COLLAPSE | "); //$NON-NLS-1$
+            }
 			if ((flags & IModelDelta.EXPAND) > 0) {
 				buf.append("EXPAND | "); //$NON-NLS-1$
 			}

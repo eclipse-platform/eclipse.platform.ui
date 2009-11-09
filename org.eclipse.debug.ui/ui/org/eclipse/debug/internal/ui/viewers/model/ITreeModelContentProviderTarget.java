@@ -206,7 +206,16 @@ public interface ITreeModelContentProviderTarget extends ITreeModelViewer {
     public boolean getExpandedState(Object elementOrTreePath);
     
     /**
-     * Returns the child count of the element at the given path.
+     * Returns whether the given element has children.
+     * 
+     * @since 3.6
+     */
+    public boolean getHasChildren(Object elementOrTreePath);
+    
+    /**
+     * Returns the child count of the element at the given path. <br>
+     * Note: The child count may be incorrect if the element is not
+     * expanded in the tree.
      */
     public int getChildCount(TreePath path);
 
@@ -229,4 +238,14 @@ public interface ITreeModelContentProviderTarget extends ITreeModelViewer {
      */
     public int findElementIndex(TreePath parentPath, Object element);
 
+    /**
+     * Returns a boolean indicating whether all the child elements of the 
+     * given parent have been realized already.
+     * 
+     * @param parentPath
+     * @return
+     *
+     * @since 3.6
+     */
+    public boolean getElementChildrenRealized(TreePath parentPath);
 }

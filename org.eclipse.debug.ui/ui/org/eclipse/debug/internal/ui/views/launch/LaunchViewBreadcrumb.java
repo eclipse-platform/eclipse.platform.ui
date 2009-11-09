@@ -390,7 +390,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                 fDropDownViewer.setFilters(filters);
                 
                 ModelDelta stateDelta = new ModelDelta(launchViewInput, IModelDelta.NO_CHANGE);
-                fTreeViewer.saveElementState(TreePath.EMPTY, stateDelta);
+                fTreeViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.EXPAND | IModelDelta.SELECT);
                 
                 // If we do not want to expand the elements in the drop-down.
                 // Prune the delta to only select the element in the 
@@ -483,7 +483,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                     }
                     
                     // Create the delta and save the drop-down viewer's state to it.
-                    fDropDownViewer.saveElementState(TreePath.EMPTY, delta);
+                    fDropDownViewer.saveElementState(TreePath.EMPTY, delta, IModelDelta.EXPAND | IModelDelta.SELECT);
                     
                     // Add the IModelDelta.FORCE flag to override the current selection in view.
                     rootDelta.accept(new IModelDeltaVisitor(){
