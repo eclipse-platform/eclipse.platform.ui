@@ -21,4 +21,6 @@ public interface EBindingService {
 	TriggerSequence getBestSequenceFor(ParameterizedCommand command);
 
 	Collection<TriggerSequence> getSequencesFor(ParameterizedCommand command);
+
+	Collection<ParameterizedCommand> getPartialMatches(TriggerSequence sequence);
 }

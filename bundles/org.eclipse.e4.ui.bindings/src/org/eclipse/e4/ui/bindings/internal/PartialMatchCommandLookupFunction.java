@@ -13,16 +13,16 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.bindings.internal.BindingServiceImpl.Binding;
 
 /**
  *
  */
-public class CommandSequencesLookupFunction extends ContextFunction {
+public class PartialMatchCommandLookupFunction extends ContextFunction {
 
 	/*
 	 * (non-Javadoc)
@@ -36,19 +36,20 @@ public class CommandSequencesLookupFunction extends ContextFunction {
 		if (arguments == null || arguments.length == 0) {
 			return this;
 		}
-		String cmdBindingId = (String) arguments[0];
+		String bindingPrefixId = (String) arguments[0];
 		IEclipseContext current = context;
 		IEclipseContext child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
 		while (child != null) {
 			current = child;
 			child = (IEclipseContext) current.getLocal(IContextConstants.ACTIVE_CHILD);
 		}
-		HashSet<TriggerSequence> set = new HashSet<TriggerSequence>();
+
+		HashSet<ParameterizedCommand> set = new HashSet<ParameterizedCommand>();
 		while (current != null) {
-			ArrayList<Binding> tmp = (ArrayList<Binding>) current.getLocal(cmdBindingId);
+			ArrayList<Binding> tmp = (ArrayList<Binding>) current.getLocal(bindingPrefixId);
 			if (tmp != null) {
 				for (Binding binding : tmp) {
-					set.add(binding.sequence);
+					set.add(binding.command);
 				}
 			}
 			current = (IEclipseContext) current.getLocal(IContextConstants.PARENT);

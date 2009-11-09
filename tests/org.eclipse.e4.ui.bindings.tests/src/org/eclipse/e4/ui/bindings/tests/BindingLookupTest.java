@@ -1,5 +1,6 @@
 package org.eclipse.e4.ui.bindings.tests;
 
+import java.util.Collection;
 import java.util.HashSet;
 
 import junit.framework.TestCase;
@@ -336,10 +337,43 @@ public class BindingLookupTest extends TestCase {
 
 		TriggerSequence seq = bs1.createSequence("CTRL+5 T");
 		bs1.activateBinding(seq, cmd);
+
+		TriggerSequence partialMatch = bs1.createSequence("CTRL+5");
+		TriggerSequence partialNoMatch = bs1.createSequence("CTRL+8");
+		assertFalse(bs1.isPartialMatch(partialNoMatch));
+		assertTrue(bs1.isPartialMatch(partialMatch));
+	}
+
+	public void testGetPartialMatches() throws Exception {
+		ECommandService cs = (ECommandService) workbenchContext
+				.get(ECommandService.class.getName());
+		ParameterizedCommand cmd = cs.createCommand(TEST_ID1, null);
+		ParameterizedCommand cmd2 = cs.createCommand(TEST_ID2, null);
+
+		EBindingService wBS = (EBindingService) workbenchContext
+				.get(EBindingService.class.getName());
+		TriggerSequence seq2 = wBS.createSequence("ALT+5 X");
+		wBS.activateBinding(seq2, cmd);
+
+		IEclipseContext c1 = TestUtil.createContext(workbenchContext, "c1");
+		workbenchContext.set(IContextConstants.ACTIVE_CHILD, c1);
+		EBindingService bs1 = (EBindingService) c1.get(EBindingService.class
+				.getName());
+
+		TriggerSequence seq = bs1.createSequence("CTRL+5 T");
+		bs1.activateBinding(seq, cmd);
+		TriggerSequence sseq = bs1.createSequence("CTRL+5 Y");
+		bs1.activateBinding(sseq, cmd2);
+		HashSet<ParameterizedCommand> commandMatches = new HashSet<ParameterizedCommand>();
+		commandMatches.add(cmd2);
+		commandMatches.add(cmd);
 		
 		TriggerSequence partialMatch = bs1.createSequence("CTRL+5");
 		TriggerSequence partialNoMatch = bs1.createSequence("CTRL+8");
 		assertFalse(bs1.isPartialMatch(partialNoMatch));
 		assertTrue(bs1.isPartialMatch(partialMatch));
+		
+		Collection<ParameterizedCommand> matches = bs1.getPartialMatches(partialMatch);
+		assertEquals(commandMatches, matches);
 	}
 }

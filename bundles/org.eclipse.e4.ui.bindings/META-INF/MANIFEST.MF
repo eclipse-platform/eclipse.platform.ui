@@ -19,6 +19,4 @@ Export-Package: org.eclipse.e4.ui.bindings,
  org.eclipse.e4.ui.bindings.internal,
  org.eclipse.e4.ui.bindings.keys,
  org.eclipse.e4.ui.bindings.keys.formatting
-Service-Component: OSGI-INF/bindings.xml, OSGI-INF/bindingLookup.xml,
- OSGI-INF/cmdLookup.xml, OSGI-INF/cmdSequenceLookup.xml,
- OSGI-INF/bindingPrefixLookup.xml
+Service-Component: OSGI-INF/bindings.xml, OSGI-INF/bindingLookup.xml,OSGI-INF/cmdLookup.xml, OSGI-INF/cmdSequenceLookup.xml,OSGI-INF/bindingPrefixLookup.xml, OSGI-INF/partialMatchCommand.xml

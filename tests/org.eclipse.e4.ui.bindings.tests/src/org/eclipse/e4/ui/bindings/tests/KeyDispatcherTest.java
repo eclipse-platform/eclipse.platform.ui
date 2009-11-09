@@ -44,6 +44,7 @@ public class KeyDispatcherTest extends TestCase {
 	private Display display;
 	private IEclipseContext workbenchContext;
 	private CallHandler handler;
+	private CallHandler twoStrokeHandler;
 
 	private void defineCommands(IEclipseContext context) {
 		ECommandService cs = (ECommandService) workbenchContext
@@ -60,6 +61,12 @@ public class KeyDispatcherTest extends TestCase {
 				.get(EBindingService.class.getName());
 		TriggerSequence seq = bs.createSequence("CTRL+A");
 		bs.activateBinding(seq, cmd);
+		
+		ParameterizedCommand cmd2 = cs.createCommand(TEST_ID2, null);
+		twoStrokeHandler = new CallHandler();
+		hs.activateHandler(TEST_ID2, twoStrokeHandler);
+		TriggerSequence twoKeys = bs.createSequence("CTRL+5 X");
+		bs.activateBinding(twoKeys, cmd2);
 	}
 
 	private IEclipseContext createWorkbenchContext(IEclipseContext globalContext) {
@@ -110,6 +117,39 @@ public class KeyDispatcherTest extends TestCase {
 		
 		assertTrue(handler.q2);
 	}
+	
+	public void testExecuteMultiStrokeBinding() throws Exception {
+		KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
+		ContextInjectionFactory.inject(dispatcher, workbenchContext);
+		final Listener listener = dispatcher.getKeyDownFilter();
+		display.addFilter(SWT.KeyDown, listener);
+		display.addFilter(SWT.Traverse, listener);
+		
+		assertFalse(twoStrokeHandler.q2);
+		
+		Shell shell = new Shell(display, SWT.NONE);
+		
+		Event event = new Event();
+		event.type = SWT.KeyDown;
+		event.keyCode = SWT.CTRL;
+		shell.notifyListeners(SWT.KeyDown, event);
+
+		event = new Event();
+		event.type = SWT.KeyDown;
+		event.stateMask = SWT.CTRL; 
+		event.keyCode = '5';
+		shell.notifyListeners(SWT.KeyDown, event);
+		
+		assertFalse(twoStrokeHandler.q2);
+		
+		event = new Event();
+		event.type = SWT.KeyDown;
+		event.keyCode = 'X';
+		shell.notifyListeners(SWT.KeyDown, event);
+		
+		assertTrue(twoStrokeHandler.q2);
+	}
+	
 	//KEYS >>> Listener.handleEvent(type = KeyDown, stateMask = 0x0, keyCode = 0x40000, time = 2986140, character = 0x0)
 	//KEYS >>> Listener.handleEvent(type = KeyDown, stateMask = 0x40000, keyCode = 0x10000, time = 2986218, character = 0x0)
 	//KEYS >>> Listener.handleEvent(type = KeyDown, stateMask = 0x50000, keyCode = 0x6c, time = 2986515, character = 0xc)
