@@ -71,3 +71,7 @@ ETabItem.active:selected {
 	color: #1d659f;
 	font: bold;
 }
+
+Shell {
+    background-color: #e8e8e8 #cccccc 60%;
+}
