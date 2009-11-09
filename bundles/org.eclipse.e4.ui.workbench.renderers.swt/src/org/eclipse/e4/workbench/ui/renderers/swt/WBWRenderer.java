@@ -239,7 +239,16 @@ public class WBWRenderer extends SWTPartRenderer {
 			if (element instanceof MSaveablePart) {
 				MSaveablePart part = (MSaveablePart) element;
 				if (part.isDirty()) {
-					saveableParts.add(part);
+					Object clientObject = part.getObject();
+					if (clientObject != null) {
+						Boolean saveOnCloseNeeded = (Boolean) ContextInjectionFactory
+								.invoke(
+										clientObject,
+										"isSaveOnCloseNeeded", null, Boolean.TRUE); //$NON-NLS-1$
+						if (saveOnCloseNeeded.booleanValue()) {
+							saveableParts.add(part);
+						}
+					}
 				}
 			}
 

@@ -51,6 +51,10 @@ public class DetailsView {
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
+	
+	public boolean isSaveOnCloseNeeded() {
+		return true;
+	}
 
 	public void doSave(@Optional IProgressMonitor monitor) throws IOException,
 			InterruptedException {
