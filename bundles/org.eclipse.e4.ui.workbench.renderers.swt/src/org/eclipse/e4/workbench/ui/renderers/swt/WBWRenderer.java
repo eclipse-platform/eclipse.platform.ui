@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.IUIEvents;
@@ -284,6 +285,19 @@ public class WBWRenderer extends SWTPartRenderer {
 	@Inject
 	private IEclipseContext context;
 
+	private void applyDialogStyles(Control control) {
+		IStylingEngine engine = (IStylingEngine) context
+				.get(IStylingEngine.SERVICE_NAME);
+		if (engine != null) {
+			Shell shell = control.getShell();
+			if (shell.getBackgroundMode() == SWT.INHERIT_NONE) {
+				shell.setBackgroundMode(SWT.INHERIT_DEFAULT);
+			}
+
+			engine.style(shell);
+		}
+	}
+
 	class SaveablePartPromptDialog extends Dialog {
 
 		private Collection<?> collection;
@@ -302,9 +316,13 @@ public class WBWRenderer extends SWTPartRenderer {
 			parent = (Composite) super.createDialogArea(parent);
 
 			Label label = new Label(parent, SWT.LEAD);
+			label
+					.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true,
+							false));
 			label.setText("Select the parts to save:"); //$NON-NLS-1$
 
-			tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.SINGLE);
+			tableViewer = CheckboxTableViewer.newCheckList(parent, SWT.SINGLE
+					| SWT.BORDER);
 			GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 			data.heightHint = 250;
 			data.widthHint = 300;
@@ -320,6 +338,12 @@ public class WBWRenderer extends SWTPartRenderer {
 			tableViewer.setAllChecked(true);
 
 			return parent;
+		}
+
+		@Override
+		public void create() {
+			super.create();
+			applyDialogStyles(getShell());
 		}
 
 		@Override

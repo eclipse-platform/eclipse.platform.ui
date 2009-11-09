@@ -28,10 +28,15 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.ui.model.application.MDirtyable;
+import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Shell;
 
 public class DetailsView {
 
@@ -178,20 +183,37 @@ public class DetailsView {
 		out.println(vCard);
 		out.close();
 	}
+	
+	@Inject
+	IStylingEngine engine;
 
-	public Class<Contact> getInputType() {
-		return Contact.class;
+	private void applyDialogStyles(Control control) {
+		if (engine != null) {
+			Shell shell = control.getShell();
+			if (shell.getBackgroundMode() == SWT.INHERIT_NONE) {
+				shell.setBackgroundMode(SWT.INHERIT_DEFAULT);
+			}
+
+			engine.style(shell);
+		}
 	}
 
 	@Inject
 	public void setSelection(@Named("selection") Contact selection) {
 		if (selection != null) {
 			if (dirtyable.isDirty()) {
-				if (MessageDialog.openQuestion(detailComposite.getShell(),
-						"Save vCard",
-						"The current vCard has been modified. Save changes?")) {
+				MessageDialog dialog = new MessageDialog(detailComposite
+						.getShell(), "Save vCard", null,
+						"The current vCard has been modified. Save changes?",
+						MessageDialog.CONFIRM, new String[] {
+								IDialogConstants.YES_LABEL,
+								IDialogConstants.NO_LABEL }, 0);
+				dialog.create();
+				applyDialogStyles(dialog.getShell());
+				if (dialog.open() == Window.OK) {
 					ParameterizedCommand saveCommand = commandService
-							.createCommand("contacts.save", Collections.EMPTY_MAP);
+							.createCommand("contacts.save",
+									Collections.EMPTY_MAP);
 					handlerService.executeHandler(saveCommand);
 				}
 				dirtyable.setDirty(false);
