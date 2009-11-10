@@ -44,7 +44,7 @@ public class SaveHandler {
 		final IEclipseContext pmContext = EclipseContextFactory.create(context,
 				null);
 
-		ProgressMonitorDialog dialog = new ProgressMonitorDialog(null);
+		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
 		dialog.create();
 		dialog.getShell().setBackgroundMode(SWT.INHERIT_DEFAULT);
 

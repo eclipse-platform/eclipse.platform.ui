@@ -28,6 +28,8 @@ import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.ui.model.application.MDirtyable;
+import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -50,13 +52,19 @@ public class DetailsView {
 	@Inject
 	private ECommandService commandService;
 
+	@Inject
+	private IStylingEngine engine;
+
+	@Inject
+	private MUIItem uiItem;
+
 	public DetailsView(Composite parent, MDirtyable dirtyable) {
 		detailComposite = new DetailComposite(dirtyable, parent, SWT.NONE);
 		this.dirtyable = dirtyable;
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
-	
+
 	public boolean isSaveOnCloseNeeded() {
 		return true;
 	}
@@ -136,7 +144,9 @@ public class DetailsView {
 		Thread.sleep(50);
 		monitor.worked(1);
 
+		updatePartTitle(originalContact);
 		monitor.done();
+		
 		dirtyable.setDirty(false);
 	}
 
@@ -183,9 +193,6 @@ public class DetailsView {
 		out.println(vCard);
 		out.close();
 	}
-	
-	@Inject
-	IStylingEngine engine;
 
 	private void applyDialogStyles(Control control) {
 		if (engine != null) {
@@ -198,9 +205,17 @@ public class DetailsView {
 		}
 	}
 
-	@Inject @Optional
-	public void setSelection(@Named("selection") Contact selection) {
-		if (selection != null) {
+	private void updatePartTitle(Contact contact) {
+		StringBuffer title = new StringBuffer("Details of ");
+		title.append(contact.getFirstName()).append(' ').append(
+				contact.getLastName());
+		uiItem.setName(title.toString());
+	}
+
+	@Inject
+	@Optional
+	public void setSelection(@Named(IServiceConstants.SELECTION) Contact contact) {
+		if (contact != null) {
 			if (dirtyable.isDirty()) {
 				MessageDialog dialog = new MessageDialog(detailComposite
 						.getShell(), "Save vCard", null,
@@ -218,7 +233,11 @@ public class DetailsView {
 				}
 				dirtyable.setDirty(false);
 			}
+
+			updatePartTitle(contact);
+		} else {
+			uiItem.setName("Details");
 		}
-		detailComposite.update(selection);
+		detailComposite.update(contact);
 	}
 }
