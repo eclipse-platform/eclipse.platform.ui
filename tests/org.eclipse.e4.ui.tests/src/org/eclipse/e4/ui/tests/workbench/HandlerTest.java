@@ -18,11 +18,10 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 
 /**
@@ -53,7 +52,7 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testOneCommand() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
@@ -76,7 +75,7 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testTwoCommands() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
@@ -99,7 +98,7 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testTwoHandlers() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineCommands(appContext);
 
@@ -142,7 +141,7 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testCanExecute() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
@@ -171,7 +170,7 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testThreeContexts() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
@@ -200,7 +199,7 @@ public class HandlerTest extends TestCase {
 	}
 
 	public void testDifferentExecutionContexts() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineCommands(appContext);
 		final ParameterizedCommand helpCommand = getCommand(appContext,
@@ -236,19 +235,6 @@ public class HandlerTest extends TestCase {
 				category, null);
 		cmdService.defineCommand(HELP_COMMAND1_ID, "Help 1 Command", null,
 				category, null);
-	}
-
-	private IEclipseContext createGlobalContext() {
-		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(Activator.getDefault().getBundle()
-						.getBundleContext());
-		// global initialization and setup, usually done by workbench
-		IEclipseContext appContext = createContext(serviceContext,
-				"globalContext");
-		appContext.set(IContributionFactory.class.getName(), MWindowTest
-				.getCFactory());
-
-		return appContext;
 	}
 
 	private IEclipseContext createContext(IEclipseContext parentContext,

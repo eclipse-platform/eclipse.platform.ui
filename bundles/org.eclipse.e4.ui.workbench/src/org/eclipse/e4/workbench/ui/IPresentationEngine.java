@@ -57,8 +57,14 @@ public interface IPresentationEngine {
 	 * spinning the event loop for the life of the application.
 	 * 
 	 * @param uiRoot
+	 * @param appContext
 	 * 
 	 * @return The application's return value
 	 */
 	public Object run(MApplicationElement uiRoot, IEclipseContext appContext);
+
+	/**
+	 * Shuts down the rendering engine
+	 */
+	public void stop();
 }

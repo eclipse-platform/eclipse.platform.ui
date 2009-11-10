@@ -166,4 +166,12 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 	public Object run(MApplicationElement uiRoot, IEclipseContext appContext) {
 		return 0;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.workbench.ui.IPresentationEngine#stop()
+	 */
+	public void stop() {
+	}
 }

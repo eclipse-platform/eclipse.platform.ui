@@ -12,29 +12,18 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.io.IOException;
-import java.net.URLConnection;
-import java.util.Collections;
-import java.util.Map;
-import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.e4.core.commands.ECommandService;
-import org.eclipse.e4.core.commands.EHandlerService;
-import org.eclipse.e4.core.commands.internal.CommandServiceImpl;
-import org.eclipse.e4.core.commands.internal.HandlerServiceCreationFunction;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.bindings.EBindingService;
-import org.eclipse.e4.ui.bindings.internal.BindingServiceCreationFunction;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -54,12 +43,9 @@ import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.internal.WorkbenchLogger;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
-import org.eclipse.emf.ecore.resource.URIConverter;
-import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.service.datalocation.Location;
-import org.osgi.framework.Bundle;
 
 /**
  *
@@ -92,6 +78,13 @@ public class E4Application implements IApplication {
 		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG);
 		appContext.set(E4Workbench.CSS_RESOURCE_URI_ARG, cssResourcesURI);
 
+		// This is a default arg, if missing we use the default rendering engine
+		String presentationURI = getArgValue(E4Workbench.PRESENTATION_URI_ARG);
+		if (presentationURI == null) {
+			presentationURI = PartRenderingEngine.engineURI;
+			appContext.set(E4Workbench.PRESENTATION_URI_ARG, presentationURI);
+		}
+
 		// Instantiate the Workbench (which is responsible for
 		// 'running' the UI (if any)...
 		E4Workbench workbench = new E4Workbench(appModel, appContext);
@@ -99,7 +92,9 @@ public class E4Application implements IApplication {
 		// Save the model into the targetURI
 		saveModel();
 
-		return workbench.getReturnValue();
+		workbench.close();
+
+		return 0;
 	}
 
 	private void saveModel() {
@@ -126,65 +121,10 @@ public class E4Application implements IApplication {
 		boolean saveAndRestore = true;
 		handler = new ResourceHandler(instanceLocation,
 				initialWorkbenchDefinitionInstance, saveAndRestore);
-
-		long restoreLastModified = handler.getLastStoreDatetime();
-		long lastApplicationModification = getLastApplicationModification(initialWorkbenchDefinitionInstance);
-
-		boolean restore = restoreLastModified > lastApplicationModification;
-
-		Resource resource;
-		if (restore) {
-			resource = handler.loadRestoredModel();
-			theApp = (MApplication) resource.getContents().get(0);
-		} else {
-			resource = handler.loadBaseModel();
-			theApp = (MApplication) resource.getContents().get(0);
-
-			// final EList<MWindow> windows = app.getChildren();
-			// for (MWindow window : windows) {
-			// processPartContributions(resource, window);
-			// }
-		}
-
-		// init();
+		Resource resource = handler.loadMostRecentModel();
+		theApp = (MApplication) resource.getContents().get(0);
 
 		return theApp;
-	}
-
-	private long getLastApplicationModification(
-			URI applicationDefinitionInstance) {
-		long appLastModified = 0L;
-		ResourceSetImpl resourceSetImpl = new ResourceSetImpl();
-
-		Map<String, ?> attributes = resourceSetImpl
-				.getURIConverter()
-				.getAttributes(
-						applicationDefinitionInstance,
-						Collections
-								.singletonMap(
-										URIConverter.OPTION_REQUESTED_ATTRIBUTES,
-										Collections
-												.singleton(URIConverter.ATTRIBUTE_TIME_STAMP)));
-
-		Object timestamp = attributes.get(URIConverter.ATTRIBUTE_TIME_STAMP);
-		if (timestamp instanceof Long) {
-			appLastModified = ((Long) timestamp).longValue();
-		} else if (applicationDefinitionInstance.isPlatformPlugin()) {
-			try {
-				java.net.URL url = new java.net.URL(
-						applicationDefinitionInstance.toString());
-				Object[] obj = PlatformURLPluginConnection.parse(url.getFile()
-						.trim(), url);
-				Bundle b = (Bundle) obj[0];
-				URLConnection openConnection = b.getResource((String) obj[1])
-						.openConnection();
-				appLastModified = openConnection.getLastModified();
-			} catch (Exception e) {
-				// ignore
-			}
-		}
-
-		return appLastModified;
 	}
 
 	private String getArgValue(String argName) {
@@ -226,35 +166,15 @@ public class E4Application implements IApplication {
 		ExceptionHandler exceptionHandler = new ExceptionHandler();
 		ReflectionContributionFactory contributionFactory = new ReflectionContributionFactory(
 				registry);
+		appContext.set(IContributionFactory.class.getName(),
+				contributionFactory);
 
 		appContext.set(Logger.class.getName(), ContextInjectionFactory.inject(
 				new WorkbenchLogger(), appContext));
 		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchContext"); //$NON-NLS-1$
 
 		// setup for commands and handlers
-		if (contributionFactory != null) {
-			appContext.set(IContributionFactory.class.getName(),
-					contributionFactory);
-		}
 		appContext.set(ContextManager.class.getName(), new ContextManager());
-
-		// FROM: ContextUtil
-		// ContextUtil.commandSetup(mainContext);
-		CommandManager commandManager = new CommandManager();
-		appContext.set(CommandManager.class.getName(), commandManager);
-		CommandServiceImpl csi = new CommandServiceImpl();
-		ContextInjectionFactory.inject(csi, appContext);
-		appContext.set(ECommandService.class.getName(), csi);
-
-		// ContextUtil.handlerSetup(mainContext);
-		appContext.set(IContextConstants.ROOT_CONTEXT, appContext);
-		appContext.set(EHandlerService.class.getName(),
-				new HandlerServiceCreationFunction());
-
-		// bindings.ContextUtil
-		appContext.set(IContextConstants.ROOT_CONTEXT, appContext);
-		appContext.set(EBindingService.class.getName(),
-				new BindingServiceCreationFunction());
 
 		// FROM: Workbench#createWorkbenchContext
 		appContext.set(IServiceConstants.ACTIVE_CONTEXTS,

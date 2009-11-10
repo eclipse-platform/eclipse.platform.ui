@@ -127,6 +127,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	private IEclipseContext appContext;
 
+	protected Shell hackShell;
+
+	protected MApplication theApp;
+
 	public PartRenderingEngine(IEclipseContext context) {
 		initialize(context);
 	}
@@ -201,9 +205,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			// Assert.isTrue(ctxt.getContext() == null,
 			// "Before rendering Context should be null");
 			if (ctxt.getContext() == null) {
+				IEclipseContext parentContext = element.getParent() == null ? appContext
+						: getContext(element.getParent());
 				IEclipseContext lclContext = EclipseContextFactory.create(
-						getContext(element.getParent()), UISchedulerStrategy
-								.getInstance());
+						parentContext, UISchedulerStrategy.getInstance());
 				populateModelInterfaces(ctxt, lclContext, element.getClass()
 						.getInterfaces());
 				ctxt.setContext(lclContext);
@@ -297,7 +302,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 			parentFactory.hideChild(element.getParent(), element);
 		}
 
-		factory.disposeWidget(element);
+		if (factory != null)
+			factory.disposeWidget(element);
+		else
+			System.out.println("Null factory in removeGui");
 
 		// dispose the context
 		if (element instanceof MContext) {
@@ -356,7 +364,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public Object run(final MApplicationElement uiRoot,
 			final IEclipseContext appContext) {
-		final Display display = new Display();
+		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				String cssURI = (String) appContext
@@ -388,15 +396,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// HACK!! we should loop until the display gets disposed...
 				// ...then we listen for the last 'main' window to get disposed
 				// and dispose the Display
-				Shell hackShell = null;
+				hackShell = null;
+				theApp = null;
+				boolean spinOnce = true;
 				if (uiRoot instanceof MApplication) {
-					MApplication app = (MApplication) uiRoot;
-					for (MWindow window : app.getChildren()) {
+					spinOnce = false; // loop until the app closes
+					theApp = (MApplication) uiRoot;
+					for (MWindow window : theApp.getChildren()) {
 						hackShell = (Shell) createGui(window);
 					}
 				} else if (uiRoot instanceof MUIElement) {
 					if (uiRoot instanceof MWindow) {
-						createGui((MUIElement) uiRoot);
+						hackShell = (Shell) createGui((MUIElement) uiRoot);
 					} else {
 						// Special handling for partial models (for testing...)
 						hackShell = new Shell(display, SWT.SHELL_TRIM);
@@ -408,6 +419,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				while (!hackShell.isDisposed() && !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
+							if (spinOnce)
+								return;
 							display.sleep();
 						}
 					} catch (ThreadDeath th) {
@@ -422,5 +435,16 @@ public class PartRenderingEngine implements IPresentationEngine {
 		});
 
 		return IApplication.EXIT_OK;
+	}
+
+	public void stop() {
+		if (theApp == null)
+			return;
+
+		for (MWindow window : theApp.getChildren()) {
+			if (window.getWidget() != null) {
+				((Shell) window.getWidget()).close();
+			}
+		}
 	}
 }

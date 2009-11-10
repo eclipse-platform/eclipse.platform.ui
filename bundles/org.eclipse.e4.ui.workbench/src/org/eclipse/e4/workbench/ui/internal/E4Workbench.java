@@ -14,15 +14,17 @@ package org.eclipse.e4.workbench.ui.internal;
 import org.eclipse.core.commands.Category;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.emf.common.notify.Notifier;
 import org.eclipse.emf.common.util.EList;
 
-public class E4Workbench {
+public class E4Workbench implements IWorkbench {
 	public static final String LOCAL_ACTIVE_SHELL = "localActiveShell"; //$NON-NLS-1$
 	public static final String XMI_URI_ARG = "applicationXMI"; //$NON-NLS-1$
 	public static final String CSS_URI_ARG = "applicationCSS"; //$NON-NLS-1$
@@ -30,6 +32,7 @@ public class E4Workbench {
 	public static final String PRESENTATION_URI_ARG = "presentationURI"; //$NON-NLS-1$
 
 	IEclipseContext appContext;
+	IPresentationEngine renderer;
 
 	public IEclipseContext getContext() {
 		return appContext;
@@ -37,6 +40,7 @@ public class E4Workbench {
 
 	public E4Workbench(MApplicationElement uiRoot, IEclipseContext applicationContext) {
 		appContext = applicationContext;
+		appContext.set(IWorkbench.class.getName(), this);
 
 		if (uiRoot instanceof MApplication) {
 			init((MApplication) uiRoot);
@@ -46,15 +50,7 @@ public class E4Workbench {
 		((Notifier) uiRoot).eAdapters().add(new UIEventPublisher(appContext));
 
 		// Create and run the UI (if any)
-		String presentationURI = (String) appContext.get(PRESENTATION_URI_ARG);
-
-		// HACK!!
-		presentationURI = "platform:/plugin/org.eclipse.e4.ui.workbench.swt/" //$NON-NLS-1$
-				+ "org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine"; //$NON-NLS-1$
-		appContext.set(PRESENTATION_URI_ARG, presentationURI);
-		if (presentationURI != null) {
-			createAndRunUI(uiRoot, appContext);
-		}
+		createAndRunUI(uiRoot, appContext);
 	}
 
 	/**
@@ -63,8 +59,8 @@ public class E4Workbench {
 	 * @param cssResourcesURI
 	 */
 	private void createAndRunUI(MApplicationElement uiRoot, IEclipseContext appContext) {
-		IPresentationEngine renderer = (IPresentationEngine) appContext
-				.get(IPresentationEngine.class.getName());
+		// Has someone already created one ?
+		renderer = (IPresentationEngine) appContext.get(IPresentationEngine.class.getName());
 		if (renderer == null) {
 			String presentationURI = (String) appContext.get(PRESENTATION_URI_ARG);
 			if (presentationURI != null) {
@@ -72,6 +68,11 @@ public class E4Workbench {
 						.get(IContributionFactory.class.getName());
 				renderer = (IPresentationEngine) factory.create(presentationURI, appContext);
 				appContext.set(IPresentationEngine.class.getName(), renderer);
+			}
+			if (renderer == null) {
+				Logger logger = (Logger) appContext.get(Logger.class.getName());
+				logger
+						.error("Failed to create the presentation engine for URI: " + presentationURI); //$NON-NLS-1$
 			}
 		}
 
@@ -102,7 +103,19 @@ public class E4Workbench {
 	/**
 	 * @return
 	 */
-	public Object getReturnValue() {
+	public void close() {
+		if (renderer != null) {
+			renderer.stop();
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.e4.workbench.ui.IWorkbench#run()
+	 */
+	public int run() {
+		// TODO Auto-generated method stub
 		return 0;
 	}
 }

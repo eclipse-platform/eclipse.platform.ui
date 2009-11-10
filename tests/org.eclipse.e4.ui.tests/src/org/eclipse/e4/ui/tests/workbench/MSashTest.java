@@ -11,15 +11,23 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import junit.framework.TestCase;
+
+import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
+import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
+import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
 
 /**
  * This test validates the UI Model <-> SWT Widget interactions specifically
@@ -46,11 +54,44 @@ import org.eclipse.swt.widgets.Shell;
  * equally divisible amongst its children.
  * 
  */
-public class MSashTest extends RenderingTestCase {
+public class MSashTest extends TestCase {
+	protected IEclipseContext appContext;
+	protected E4Workbench wb;
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#setUp()
+	 */
+	@Override
+	protected void setUp() throws Exception {
+		appContext = E4Application.createDefaultContext();
+		appContext.set(E4Workbench.PRESENTATION_URI_ARG,
+				PartRenderingEngine.engineURI);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see junit.framework.TestCase#tearDown()
+	 */
+	@Override
+	protected void tearDown() throws Exception {
+		if (wb != null) {
+			wb.close();
+		}
+
+		if (appContext instanceof IDisposable) {
+			((IDisposable) appContext).dispose();
+		}
+	}
+
 	public void testSashWeights() {
 		MWindow window = createSashWithNViews(2);
 
-		topWidget = createModel(window);
+		wb = new E4Workbench(window, appContext);
+
+		Widget topWidget = (Widget) window.getWidget();
 		((Shell) topWidget).layout(true);
 		MPartSashContainer sash = (MPartSashContainer) window.getChildren()
 				.get(0);

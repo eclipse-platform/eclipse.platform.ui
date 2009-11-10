@@ -14,16 +14,11 @@ package org.eclipse.e4.ui.tests.workbench;
 import junit.framework.TestCase;
 
 import org.eclipse.core.commands.contexts.Context;
-import org.eclipse.core.commands.contexts.ContextManager;
-import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
-import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
-import org.eclipse.e4.ui.internal.services.ContextContextFunction;
 import org.eclipse.e4.ui.services.EContextService;
-import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.tests.Activator;
+import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 
 /**
@@ -35,7 +30,7 @@ public class ContextTest extends TestCase {
 	private static final String DIALOG_AND_WINDOW_ID = "org.eclipse.ui.contexts.dialogAndWindow";
 
 	public void testOneContext() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
@@ -48,7 +43,7 @@ public class ContextTest extends TestCase {
 	}
 
 	public void testTwoContexts() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
@@ -72,7 +67,7 @@ public class ContextTest extends TestCase {
 	}
 
 	public void testTwoContextsBottom() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
@@ -104,7 +99,7 @@ public class ContextTest extends TestCase {
 	}
 
 	public void testThreeContexts() throws Exception {
-		IEclipseContext appContext = createGlobalContext();
+		IEclipseContext appContext = E4Application.createDefaultContext();
 
 		defineContexts(appContext);
 
@@ -205,26 +200,6 @@ public class ContextTest extends TestCase {
 		d.define("Dialog", null, DIALOG_AND_WINDOW_ID);
 		Context w = cs.getContext(WINDOW_ID);
 		w.define("Window", null, DIALOG_AND_WINDOW_ID);
-	}
-
-	private IEclipseContext createGlobalContext() {
-		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(Activator.getDefault().getBundle()
-						.getBundleContext());
-		// global initialization and setup, usually done by workbench
-		IEclipseContext appContext = createContext(serviceContext,
-				"globalContext");
-		appContext.set("globalContext", appContext);
-		appContext.set(IContributionFactory.class.getName(), MWindowTest
-				.getCFactory());
-		appContext.set(ContextManager.class.getName(), new ContextManager());
-
-		// supply the services
-		appContext.set(EContextService.class.getName(),
-				new ContextContextFunction());
-		appContext.set(IServiceConstants.ACTIVE_CONTEXTS,
-				new ActiveContextsFunction());
-		return appContext;
 	}
 
 	private IEclipseContext createContext(IEclipseContext parentContext,

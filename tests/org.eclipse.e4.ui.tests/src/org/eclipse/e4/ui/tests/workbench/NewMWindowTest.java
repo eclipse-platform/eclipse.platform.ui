@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Widget;
 /**
  *
  */
-public class MWindowTest extends TestCase {
+public class NewMWindowTest extends TestCase {
 	protected IEclipseContext appContext;
 	protected E4Workbench wb;
 

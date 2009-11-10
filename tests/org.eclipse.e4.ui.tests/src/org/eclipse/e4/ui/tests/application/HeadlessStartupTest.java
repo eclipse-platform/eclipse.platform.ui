@@ -60,9 +60,9 @@ public abstract class HeadlessStartupTest extends TestCase {
 			((IDisposable) applicationContext).dispose();
 		}
 
-		if (osgiContext instanceof IDisposable) {
-			((IDisposable) osgiContext).dispose();
-		}
+		// if (osgiContext instanceof IDisposable) {
+		// ((IDisposable) osgiContext).dispose();
+		// }
 	}
 
 	private IEclipseContext createOSGiContext() {

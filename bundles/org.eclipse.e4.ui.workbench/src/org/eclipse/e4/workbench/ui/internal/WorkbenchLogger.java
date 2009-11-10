@@ -121,7 +121,9 @@ public final class WorkbenchLogger extends Logger {
 	 */
 	@Inject
 	public void setDebugOptions(DebugOptions options) {
-		this.trace = options.newDebugTrace(Activator.PI_WORKBENCH, WorkbenchLogger.class);
+		if (options != null) {
+			this.trace = options.newDebugTrace(Activator.PI_WORKBENCH, WorkbenchLogger.class);
+		}
 	}
 
 	/**
