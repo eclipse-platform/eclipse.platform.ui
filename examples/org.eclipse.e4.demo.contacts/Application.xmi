@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
-  <children xsi:type="application:Window">
+  <children xsi:type="application:Window" name="e4 Contacts Demo">
     <children xsi:type="application:PartSashContainer" horizontal="true">
       <children xsi:type="application:PartStack">
         <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
