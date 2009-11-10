@@ -10,7 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
-import javax.inject.Inject;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -40,7 +39,6 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		super();
 	}
 
-	@Inject
 	public void init(IEventBroker eventBroker) {
 		EventHandler lazyLoader = new EventHandler() {
 			public void handleEvent(Event event) {

@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -64,7 +65,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		super();
 	}
 
-	@Inject
+	@PostConstruct
 	public void init(IEventBroker eventBroker) {
 		EventHandler shellUpdater = new EventHandler() {
 			public void handleEvent(Event event) {

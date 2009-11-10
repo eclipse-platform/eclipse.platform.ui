@@ -11,6 +11,7 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import javax.inject.Inject;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MEditor;
@@ -62,7 +63,7 @@ public class StackRenderer extends LazyStackRenderer {
 		super();
 	}
 
-	@Inject
+	@PostConstruct
 	public void init(IEventBroker eventBroker) {
 		super.init(eventBroker);
 

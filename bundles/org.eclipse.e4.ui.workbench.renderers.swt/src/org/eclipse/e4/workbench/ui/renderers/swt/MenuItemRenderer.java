@@ -12,11 +12,11 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import java.util.HashMap;
 import java.util.Map;
-import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.bindings.EBindingService;
@@ -42,7 +42,7 @@ import org.osgi.service.event.EventHandler;
  */
 public class MenuItemRenderer extends SWTPartRenderer {
 
-	@Inject
+	@PostConstruct
 	public void init(IEventBroker eventBroker) {
 		EventHandler itemUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
