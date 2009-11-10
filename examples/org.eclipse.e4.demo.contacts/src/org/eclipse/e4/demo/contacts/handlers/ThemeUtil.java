@@ -21,6 +21,9 @@ import java.net.URL;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IStylingEngine;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
@@ -66,5 +69,16 @@ public class ThemeUtil {
 				}
 			}
 		});
+	}
+
+	public static void applyDialogStyles(IStylingEngine engine, Control control) {
+		if (engine != null) {
+			Shell shell = control.getShell();
+			if (shell.getBackgroundMode() == SWT.INHERIT_NONE) {
+				shell.setBackgroundMode(SWT.INHERIT_DEFAULT);
+			}
+
+			engine.style(shell);
+		}
 	}
 }

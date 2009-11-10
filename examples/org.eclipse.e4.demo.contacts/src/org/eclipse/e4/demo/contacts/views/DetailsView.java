@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.demo.contacts.handlers.ThemeUtil;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MUIItem;
@@ -194,17 +195,6 @@ public class DetailsView {
 		out.close();
 	}
 
-	private void applyDialogStyles(Control control) {
-		if (engine != null) {
-			Shell shell = control.getShell();
-			if (shell.getBackgroundMode() == SWT.INHERIT_NONE) {
-				shell.setBackgroundMode(SWT.INHERIT_DEFAULT);
-			}
-
-			engine.style(shell);
-		}
-	}
-
 	private void updatePartTitle(Contact contact) {
 		StringBuffer title = new StringBuffer("Details of ");
 		title.append(contact.getFirstName()).append(' ').append(
@@ -224,7 +214,7 @@ public class DetailsView {
 								IDialogConstants.YES_LABEL,
 								IDialogConstants.NO_LABEL }, 0);
 				dialog.create();
-				applyDialogStyles(dialog.getShell());
+				ThemeUtil.applyDialogStyles(engine, dialog.getShell());
 				if (dialog.open() == Window.OK) {
 					ParameterizedCommand saveCommand = commandService
 							.createCommand("contacts.save",

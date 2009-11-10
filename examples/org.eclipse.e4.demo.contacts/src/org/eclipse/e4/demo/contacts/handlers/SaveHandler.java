@@ -16,17 +16,16 @@ import javax.inject.Named;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class SaveHandler {
@@ -37,7 +36,7 @@ public class SaveHandler {
 	}
 
 	public void execute(
-			IEclipseContext context,
+			IEclipseContext context, @Optional IStylingEngine engine,
 			@Named(IServiceConstants.ACTIVE_SHELL) Shell shell,
 			@Named(IServiceConstants.ACTIVE_PART) final MContribution contribution)
 			throws InvocationTargetException, InterruptedException {
@@ -45,15 +44,10 @@ public class SaveHandler {
 				null);
 
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(shell);
-		dialog.create();
-		dialog.getShell().setBackgroundMode(SWT.INHERIT_DEFAULT);
-
-		Display display = shell.getDisplay();
-		final CSSEngine engine = (CSSEngine) display
-				.getData("org.eclipse.e4.ui.css.core.engine");
-		engine.applyStyles(dialog.getShell(), true);
-
 		dialog.open();
+		
+		ThemeUtil.applyDialogStyles(engine, dialog.getShell());
+		
 		dialog.run(true, true, new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor)
 					throws InvocationTargetException, InterruptedException {
