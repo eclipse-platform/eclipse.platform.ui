@@ -189,7 +189,7 @@ public class DetailsView {
 
 		vCard += "END:VCARD\n";
 
-		PrintWriter out = new PrintWriter(fileName);
+		PrintWriter out = new PrintWriter(fileName, "Cp1252");
 		out.println(vCard);
 		out.close();
 	}
