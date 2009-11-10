@@ -10,14 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IEclipseContextAware;
-
 
 /**
  * Test class to check injection mechanism
  */
-public class ObjectContextAware implements IEclipseContextAware {
+public class ObjectContextAware implements IEclipseContextAware, IDisposable {
 	protected IEclipseContext equinoxContext;
 
 	private boolean finalized;
@@ -33,7 +33,7 @@ public class ObjectContextAware implements IEclipseContextAware {
 		finalized = true;
 	}
 
-	public void contextDisposed(IEclipseContext context) {
+	public void dispose() {
 		equinoxContext = null;
 		disposed = true;
 	}

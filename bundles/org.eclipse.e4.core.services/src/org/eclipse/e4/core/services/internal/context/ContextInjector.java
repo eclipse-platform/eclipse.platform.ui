@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -231,6 +232,9 @@ public class ContextInjector {
 	}
 
 	public void dispose(Object userObject) {
+		if (userObject instanceof IDisposable)
+			((IDisposable) userObject).dispose();
+
 		Processor processor = new Processor(null, context, false, true);
 		processor.setInjectNulls(true);
 		processClassHierarchy(userObject, processor);
@@ -241,58 +245,6 @@ public class ContextInjector {
 			return;
 		Processor processor = new ReparentProcessor(oldParent, newParent);
 		processClassHierarchy(userObject, processor);
-	}
-
-	// TBD this is way to many ways; leave one annotation and one non-annotation
-	private void findAndCallDispose(Class objectsClass, Processor processor) {
-		// 1. Try a method with dispose annotation
-		Method[] methods = objectsClass.getDeclaredMethods();
-		for (int i = 0; i < methods.length; i++) {
-			Method method = methods[i];
-			if (method.getParameterTypes().length > 0)
-				continue;
-			if (!InjectionPropertyResolver.isPreDestory(method))
-				continue;
-			if (!isOverridden(method, processor))
-				callMethod(processor.userObject, method, null);
-		}
-		// 2. Try IEclipseContextAware#contextDisposed(IEclipseContext)
-		try {
-			Method dispose = objectsClass.getDeclaredMethod(
-					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD,
-					new Class[] { IEclipseContext.class });
-			// only call this method if we haven't found any other dispose methods yet
-			if (!isOverridden(dispose, processor))
-				callMethod(processor.userObject, dispose, new Object[] { context });
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
-		}
-		// 3. Try contextDisposed()
-		try {
-			Method dispose = objectsClass.getDeclaredMethod(
-					IContextConstants.INJECTION_DISPOSE_CONTEXT_METHOD, new Class[0]);
-			// only call this method if we haven't found any other dispose methods yet
-			if (!isOverridden(dispose, processor))
-				callMethod(processor.userObject, dispose, null);
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
-		}
-
-		// 4. Try dispose()
-		try {
-			Method dispose = objectsClass.getDeclaredMethod("dispose", null); //$NON-NLS-1$
-			// only call this method if we haven't found any other dispose methods yet
-			if (!isOverridden(dispose, processor))
-				callMethod(processor.userObject, dispose, null);
-		} catch (SecurityException e) {
-			// ignore
-		} catch (NoSuchMethodException e) {
-			// ignore
-		}
 	}
 
 	static void logWarning(Object destination, Exception e) {
@@ -357,13 +309,20 @@ public class ContextInjector {
 	 * Make the processor visit all declared methods on the given class.
 	 */
 	private void processMethods(Class objectsClass, Processor processor) {
-		if (processor.isInDispose) {
-			findAndCallDispose(objectsClass, processor);
-		}
 		Method[] methods = objectsClass.getDeclaredMethods();
+		if (processor.isInDispose) {
+			for (int i = 0; i < methods.length; i++) {
+				Method method = methods[i];
+				if (method.getParameterTypes().length > 0) // TBD why?
+					continue;
+				if (!InjectionPropertyResolver.isPreDestory(method))
+					continue;
+				if (!isOverridden(method, processor))
+					callMethod(processor.userObject, method, null);
+			}
+		}
 		for (int i = 0; i < methods.length; i++) {
 			Method method = methods[i];
-			// is this method overridden?
 			if (isOverridden(method, processor))
 				continue; // process in the subclass
 			if (processor.shouldProcessPostConstruct) {

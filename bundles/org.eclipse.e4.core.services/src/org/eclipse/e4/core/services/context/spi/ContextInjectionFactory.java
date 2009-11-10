@@ -11,7 +11,9 @@
 
 package org.eclipse.e4.core.services.context.spi;
 
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.IEclipseContextAware;
 import org.eclipse.e4.core.services.internal.context.ContextInjectionImpl;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
 
@@ -69,20 +71,14 @@ import org.eclipse.e4.core.services.internal.context.EclipseContext;
  * </p>
  * <p>
  * When a context is disposed, the injection factory will attempt to notify all injected objects by
- * calling a disposal method. Disposal methods are identified by the
- * <code>org.eclipse.e4.core.services.annotations.PreDestroy</code> annotation. If no annotated
- * methods are found on the class or its superclasses, at most one non-annotated disposal method
- * will be invoked, according to the following lookup order:
+ * calling a disposal method. Disposal methods are:
  * <ul>
- * <li>The method with signature void contextDisposed(IEclipseContext context);</li>
- * <li>The method with signature void contextDisposed();</li>
- * <li>The method with signature void dispose();</li>
- * <li>The same lookup is then repeated on the superclass</li>
+ * <li>Methods identified by the "@PreDestory" annotations, and</li>
+ * <li>Methods implementing {@link IDisposable#dispose()}.</li>
  * </ul>
  * 
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
- * @since 0.9
  */
 final public class ContextInjectionFactory {
 

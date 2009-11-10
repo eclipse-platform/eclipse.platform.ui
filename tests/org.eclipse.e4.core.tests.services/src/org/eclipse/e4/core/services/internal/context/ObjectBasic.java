@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
 /**
  * Test class to check injection mechanism
  */
-public class ObjectBasic {
+public class ObjectBasic implements IDisposable {
 
 	// Injected directly
 	public String inject_String;
@@ -53,9 +54,7 @@ public class ObjectBasic {
 		finalized = true;
 	}
 
-	public void contextDisposed(IEclipseContext context) {
-		if (this.context != context)
-			throw new IllegalArgumentException("Unexpected context");
+	public void dispose() {
 		this.context = null;
 		disposed = true;
 	}

@@ -46,22 +46,6 @@ public interface IContextConstants {
 	public static final String INJECTION_SET_CONTEXT_METHOD = "contextSet"; //$NON-NLS-1$
 
 	/**
-	 * The name of the method to be called when a context that was injected into an object is
-	 * disposed (value "contextDisposed").
-	 * <p>
-	 * This method will be called during disposal of the context that the user object was injected
-	 * into.
-	 * </p>
-	 * <p>
-	 * For convenience the definition of this method is present in the {@link IEclipseContextAware}
-	 * interface.
-	 * </p>
-	 * 
-	 * @see IEclipseContextAware#contextDisposed(IEclipseContext)
-	 */
-	public static final String INJECTION_DISPOSE_CONTEXT_METHOD = "contextDisposed"; //$NON-NLS-1$
-
-	/**
 	 * Default prefix for the methods to be injected (value "inject_").
 	 * <p>
 	 * For example, if the context has an object under the name "log", the object will be injected

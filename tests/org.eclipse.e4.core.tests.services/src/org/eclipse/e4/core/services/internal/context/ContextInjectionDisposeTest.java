@@ -35,19 +35,11 @@ public class ContextInjectionDisposeTest extends TestCase {
 		super(name);
 	}
 
-	/**
-	 * Should prefer contextDisposed() over dispose().
-	 */
-	public void testContextDisposedOneArg() {
-		class Injected {
-			boolean contextDisposedInvoked = false;
+	public void testContextDisposedNoArg() {
+		class Injected implements IDisposable {
 
 			boolean disposeInvoked = false;
 			private String inject_Field;
-
-			public void contextDisposed(IEclipseContext context) {
-				contextDisposedInvoked = true;
-			}
 
 			public void dispose() {
 				disposeInvoked = true;
@@ -58,49 +50,17 @@ public class ContextInjectionDisposeTest extends TestCase {
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		((IDisposable) context).dispose();
-		assertTrue(object.contextDisposedInvoked);
-		assertTrue(object.disposeInvoked);
-	}
-
-	/**
-	 * Should prefer contextDisposed() over dispose().
-	 */
-	public void testContextDisposedZeroArgs() {
-		class Injected {
-			boolean contextDisposedInvoked = false;
-			boolean disposeInvoked = false;
-			private String inject_Field;
-
-			public void contextDisposed() {
-				contextDisposedInvoked = true;
-			}
-
-			public void dispose() {
-				disposeInvoked = true;
-			}
-		}
-		IEclipseContext context = EclipseContextFactory.create();
-		context.set("Field", "hello");
-		Injected object = new Injected();
-		ContextInjectionFactory.inject(object, context);
-		((IDisposable) context).dispose();
-		assertTrue(object.contextDisposedInvoked);
 		assertTrue(object.disposeInvoked);
 	}
 
 	public void testDisposeContext() {
-		class Injected {
-			boolean contextDisposedInvoked = false;
+		class Injected implements IDisposable {
 			boolean disposeInvoked = false;
 			Object inject_Field;
 			String methodValue;
 
 			public void dispose() {
 				disposeInvoked = true;
-			}
-
-			public void contextDisposed(IEclipseContext context) {
-				contextDisposedInvoked = true;
 			}
 
 			public void inject_InjectedMethod(String arg) {
@@ -123,12 +83,10 @@ public class ContextInjectionDisposeTest extends TestCase {
 		assertNull(object.inject_Field);
 		assertNull(object.methodValue);
 		assertTrue(object.disposeInvoked);
-		assertTrue(object.contextDisposedInvoked);
 	}
 
 	public void testReleaseObject() {
-		class Injected {
-			boolean contextDisposedInvoked = false;
+		class Injected implements IDisposable {
 			boolean disposeInvoked = false;
 			boolean destroyInvoked = false;
 
@@ -141,10 +99,6 @@ public class ContextInjectionDisposeTest extends TestCase {
 
 			public void dispose() {
 				disposeInvoked = true;
-			}
-
-			public void contextDisposed(IEclipseContext context) {
-				contextDisposedInvoked = true;
 			}
 
 			public void inject_InjectedMethod(String arg) {
@@ -170,7 +124,6 @@ public class ContextInjectionDisposeTest extends TestCase {
 		assertNull(object.methodValue);
 		assertFalse(object.disposeInvoked);
 		assertFalse(object.destroyInvoked);
-		assertFalse(object.contextDisposedInvoked);
 	}
 
 }
