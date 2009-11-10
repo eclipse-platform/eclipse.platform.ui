@@ -12,6 +12,8 @@
 <listAttribute key="com.mountainminds.eclemma.core.INSTRUMENTATION_PATHS">
 <listEntry value="/org.eclipse.jface.databinding/bin"/>
 <listEntry value="/org.eclipse.core.databinding.beans/bin"/>
+<listEntry value="/org.eclipse.core.databinding.observable/bin"/>
+<listEntry value="/org.eclipse.core.databinding.property/bin"/>
 <listEntry value="/org.eclipse.core.databinding/bin"/>
 </listAttribute>
 <stringAttribute key="configLocation" value="${workspace_loc}/.metadata/.plugins/org.eclipse.pde.core/pde-junit"/>
