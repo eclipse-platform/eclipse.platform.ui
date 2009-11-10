@@ -18,7 +18,8 @@ import org.eclipse.swt.widgets.Table;
  * @since 3.3
  * 
  */
-public class TableSingleSelectionIndexProperty extends WidgetIntValueProperty {
+public class TableSingleSelectionIndexProperty extends
+		SingleSelectionIndexProperty {
 	/**
 	 * 
 	 */
@@ -31,7 +32,10 @@ public class TableSingleSelectionIndexProperty extends WidgetIntValueProperty {
 	}
 
 	void doSetIntValue(Object source, int value) {
-		((Table) source).setSelection(value);
+		if (value == -1)
+			((Table) source).deselectAll();
+		else
+			((Table) source).setSelection(value);
 	}
 
 	public String toString() {

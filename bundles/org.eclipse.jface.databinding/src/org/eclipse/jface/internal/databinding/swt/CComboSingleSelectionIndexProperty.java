@@ -18,7 +18,7 @@ import org.eclipse.swt.custom.CCombo;
  * @since 3.3
  * 
  */
-public class CComboSingleSelectionIndexProperty extends WidgetIntValueProperty {
+public class CComboSingleSelectionIndexProperty extends SingleSelectionIndexProperty {
 	/**
 	 * 
 	 */
@@ -31,7 +31,10 @@ public class CComboSingleSelectionIndexProperty extends WidgetIntValueProperty {
 	}
 
 	void doSetIntValue(Object source, int value) {
-		((CCombo) source).select(value);
+		if (value == -1)
+			((CCombo) source).deselectAll();
+		else
+			((CCombo) source).select(value);
 	}
 
 	public String toString() {

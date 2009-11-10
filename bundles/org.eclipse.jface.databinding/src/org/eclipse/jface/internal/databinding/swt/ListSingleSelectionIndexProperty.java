@@ -18,7 +18,8 @@ import org.eclipse.swt.widgets.List;
  * @since 3.3
  * 
  */
-public class ListSingleSelectionIndexProperty extends WidgetIntValueProperty {
+public class ListSingleSelectionIndexProperty extends
+		SingleSelectionIndexProperty {
 	/**
 	 * 
 	 */
@@ -31,7 +32,10 @@ public class ListSingleSelectionIndexProperty extends WidgetIntValueProperty {
 	}
 
 	void doSetIntValue(Object source, int value) {
-		((List) source).setSelection(value);
+		if (value == -1)
+			((List) source).deselectAll();
+		else
+			((List) source).setSelection(value);
 	}
 
 	public String toString() {

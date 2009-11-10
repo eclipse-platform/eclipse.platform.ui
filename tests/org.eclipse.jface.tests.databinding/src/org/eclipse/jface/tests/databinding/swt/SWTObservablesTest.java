@@ -21,6 +21,7 @@ import org.eclipse.jface.databinding.conformance.util.RealmTester;
 import org.eclipse.jface.databinding.swt.ISWTObservable;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.internal.databinding.swt.ButtonImageProperty;
 import org.eclipse.jface.internal.databinding.swt.ButtonTextProperty;
 import org.eclipse.jface.internal.databinding.swt.CComboSelectionProperty;
@@ -65,6 +66,7 @@ import org.eclipse.swt.widgets.Scale;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.Tree;
@@ -435,6 +437,110 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 		assertTrue(value.getWidget() == table);
 		IPropertyObservable propertyObservable = getPropertyObservable(value);
 		assertTrue(propertyObservable.getProperty() instanceof TableSingleSelectionIndexProperty);
+	}
+
+	public void testObserveSingleSelectionIndexOfCCombo_DeselectAll()
+			throws Exception {
+		CCombo cCombo = new CCombo(shell, SWT.NONE);
+		cCombo.add("item");
+		cCombo.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(cCombo);
+		assertEquals(0, cCombo.getSelectionIndex());
+		value.setValue(new Integer(-1));
+		assertEquals(-1, cCombo.getSelectionIndex());
+	}
+
+	public void testObserveSingleSelectionIndexOfCCombo_SetValueNull()
+			throws Exception {
+		CCombo cCombo = new CCombo(shell, SWT.NONE);
+		cCombo.add("item");
+		cCombo.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(cCombo);
+		assertEquals(0, cCombo.getSelectionIndex());
+		value.setValue(null);
+		assertEquals(-1, cCombo.getSelectionIndex());
+	}
+
+	public void testObserveSingleSelectionIndexOfCombo_DeselectAll()
+			throws Exception {
+		Combo combo = new Combo(shell, SWT.NONE);
+		combo.add("item");
+		combo.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(combo);
+		assertEquals(0, combo.getSelectionIndex());
+		value.setValue(new Integer(-1));
+		assertEquals(-1, combo.getSelectionIndex());
+	}
+
+	public void testObserveSingleSelectionIndexOfCombo_SetValueNull()
+			throws Exception {
+		Combo combo = new Combo(shell, SWT.NONE);
+		combo.add("item");
+		combo.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(combo);
+		assertEquals(0, combo.getSelectionIndex());
+		value.setValue(null);
+		assertEquals(-1, combo.getSelectionIndex());
+	}
+
+	public void testObserveSingleSelectionIndexOfList_DeselectAll()
+			throws Exception {
+		List list = new List(shell, SWT.NONE);
+		list.add("item");
+		list.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(list);
+		assertEquals(0, list.getSelectionIndex());
+		value.setValue(new Integer(-1));
+		assertEquals(-1, list.getSelectionIndex());
+	}
+
+	public void testObserveSingleSelectionIndexOfList_SetValueNull()
+			throws Exception {
+		List list = new List(shell, SWT.NONE);
+		list.add("item");
+		list.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(list);
+		assertEquals(0, list.getSelectionIndex());
+		value.setValue(null);
+		assertEquals(-1, list.getSelectionIndex());
+	}
+
+	public void testObserveSingleSelectionIndexOfTable_DeselectAll()
+			throws Exception {
+		Table table = new Table(shell, SWT.NONE);
+		new TableItem(table, SWT.NONE);
+		table.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(table);
+		assertEquals(0, table.getSelectionIndex());
+		value.setValue(new Integer(-1));
+		assertEquals(-1, table.getSelectionIndex());
+	}
+
+	public void testObserveSingleSelectionIndexOfTable_SetValueNull()
+			throws Exception {
+		Table table = new Table(shell, SWT.NONE);
+		new TableItem(table, SWT.NONE);
+		table.select(0);
+
+		ISWTObservableValue value = WidgetProperties.singleSelectionIndex()
+				.observe(table);
+		assertEquals(0, table.getSelectionIndex());
+		value.setValue(null);
+		assertEquals(-1, table.getSelectionIndex());
 	}
 
 	public void testObserveSingleSelectionIndexOfUnsupportedControl()
