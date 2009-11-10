@@ -1,6 +1,15 @@
+/*******************************************************************************
+ *  Copyright (c) 2009 IBM Corporation and others.
+ *  All rights reserved. This program and the accompanying materials
+ *  are made available under the terms of the Eclipse Public License v1.0
+ *  which accompanies this distribution, and is available at
+ *  http://www.eclipse.org/legal/epl-v10.html
+ * 
+ *  Contributors:
+ *      IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.e4.core.services;
 
-import java.awt.Dialog;
 import org.eclipse.core.runtime.IStatus;
 
 /**
@@ -25,7 +34,7 @@ public interface IStatusHandler {
 	/**
 	 * A style indicating that handlers should show a problem to an user without
 	 * blocking the calling method while awaiting user response. This is
-	 * generally done using a non modal {@link Dialog}.
+	 * generally done using a non modal Dialog.
 	 */
 	public static final int SHOW = 0x02;
 
