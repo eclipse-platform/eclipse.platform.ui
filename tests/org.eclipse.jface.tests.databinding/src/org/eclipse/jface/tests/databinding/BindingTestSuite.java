@@ -35,6 +35,8 @@ import org.eclipse.core.tests.databinding.UpdateSetStrategyTest;
 import org.eclipse.core.tests.databinding.UpdateStrategyTest;
 import org.eclipse.core.tests.databinding.UpdateValueStrategyTest;
 import org.eclipse.core.tests.databinding.ValueBindingTest;
+import org.eclipse.core.tests.databinding.beans.AnonymousBeanValuePropertyTest;
+import org.eclipse.core.tests.databinding.beans.AnonymousPojoValuePropertyTest;
 import org.eclipse.core.tests.databinding.beans.BeansObservablesTest;
 import org.eclipse.core.tests.databinding.beans.PojoObservablesTest;
 import org.eclipse.core.tests.databinding.conversion.NumberToStringConverterTest;
@@ -243,6 +245,8 @@ public class BindingTestSuite extends TestSuite {
 		addTestSuite(PolicyTest.class);
 
 		// org.eclipse.core.tests.databinding.beans
+		addTestSuite(AnonymousBeanValuePropertyTest.class);
+		addTestSuite(AnonymousPojoValuePropertyTest.class);
 		addTestSuite(BeansObservablesTest.class);
 		addTestSuite(PojoObservablesTest.class);
 

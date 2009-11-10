@@ -60,8 +60,11 @@ public class AnonymousBeanValueProperty extends DelegatingValueProperty {
 	}
 
 	public IObservableValue observeDetail(IObservableValue master) {
+		Object valueType = getValueType();
+		if (valueType == null)
+			valueType = inferValueType(master.getValueType());
 		return MasterDetailObservables.detailValue(master, valueFactory(master
-				.getRealm()), inferValueType(master.getValueType()));
+				.getRealm()), valueType);
 	}
 
 	private Object inferValueType(Object masterObservableValueType) {
