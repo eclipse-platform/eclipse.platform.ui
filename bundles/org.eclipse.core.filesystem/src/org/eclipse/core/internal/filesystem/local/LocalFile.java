@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Martin Oberhuber (Wind River) - [294429] Avoid substring baggage in FileInfo
  *******************************************************************************/
 package org.eclipse.core.internal.filesystem.local;
 
@@ -142,8 +143,11 @@ public class LocalFile extends FileStore {
 		if (LocalFileNatives.usingNatives()) {
 			FileInfo info = LocalFileNatives.fetchFileInfo(filePath);
 			//natives don't set the file name on all platforms
-			if (info.getName().length() == 0)
-				info.setName(file.getName());
+			if (info.getName().length() == 0) {
+				String name = file.getName();
+				//Bug 294429: make sure that substring baggage is removed
+				info.setName(new String(name.toCharArray()));
+			}
 			return info;
 		}
 		//in-lined non-native implementation
