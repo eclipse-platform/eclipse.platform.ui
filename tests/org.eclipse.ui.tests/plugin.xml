@@ -3700,6 +3700,12 @@
                optional="false">
          </commandParameter>
       </command>
+      <command
+            categoryId="org.eclipse.ui.category.window"
+            id="tests.commands.CCT.cmd3"
+            defaultHandler="org.eclipse.ui.tests.commands.DefaultHandler"
+            name="cmd3">
+      </command>
    </extension>
    <extension
          point="org.eclipse.ui.handlers">
@@ -4134,7 +4140,7 @@
       <menuContribution
             locationURI="menu:org.eclipse.ui.tests.Bug275126">
          <command
-               commandId="tests.commands.CCT.cmd1"
+               commandId="tests.commands.CCT.cmd3"
                label="Contributed Label"
                style="push">
          </command>

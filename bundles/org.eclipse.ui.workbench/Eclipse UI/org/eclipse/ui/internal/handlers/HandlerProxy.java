@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandlerWithState;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -493,5 +492,12 @@ public final class HandlerProxy extends AbstractHandlerWithState implements
 	
 	public String getAttributeName() {
 		return handlerAttributeName;
+	}
+
+	/**
+	 * @return Returns the handler.
+	 */
+	public IHandler getHandler() {
+		return handler;
 	}
 }

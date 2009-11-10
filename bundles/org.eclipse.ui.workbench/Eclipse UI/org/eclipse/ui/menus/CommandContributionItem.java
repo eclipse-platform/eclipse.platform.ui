@@ -15,6 +15,7 @@ import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.ICommandListener;
+import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -52,9 +53,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IElementReference;
+import org.eclipse.ui.commands.IElementUpdater;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.handlers.HandlerProxy;
 import org.eclipse.ui.internal.menus.CommandMessages;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -361,8 +364,8 @@ public class CommandContributionItem extends ContributionItem {
 							parent.update(true);
 						}
 					}
-					if(commandEvent.getCommand().getHandler() == null) {
-						// no handlers. Reset the appearance
+					IHandler handler = commandEvent.getCommand().getHandler();
+					if (shouldRestoreAppearance(handler)) {
 						label = contributedLabel;
 						icon = contributedIcon;
 						disabledIcon = contributedDisabledIcon;
@@ -381,13 +384,33 @@ public class CommandContributionItem extends ContributionItem {
 		}
 	}
 
+	private boolean shouldRestoreAppearance(IHandler handler) {
+
+		// if no handler or handler doesn't implement IElementUpdater,
+		// restore the contributed elements
+		if (handler == null)
+			return true;
+
+		if (!(handler instanceof IElementUpdater))
+			return true;
+
+		// special case, if its HandlerProxy, then check the actual handler
+		if (handler instanceof HandlerProxy) {
+			HandlerProxy handlerProxy = (HandlerProxy) handler;
+			IHandler actualHandler = handlerProxy.getHandler();
+			return shouldRestoreAppearance(actualHandler);
+		}
+		return false;
+	}
+
 	/**
 	 * Returns the ParameterizedCommand for this contribution.
 	 * <p>
-	 * <strong>NOTE:</strong> The returned object should be treated
-	 * as 'read-only', do <b>not</b> execute this instance or attempt
-	 * to modify its state.
+	 * <strong>NOTE:</strong> The returned object should be treated as
+	 * 'read-only', do <b>not</b> execute this instance or attempt to modify its
+	 * state.
 	 * </p>
+	 * 
 	 * @return The parameterized command for this contribution.
 	 * 
 	 * @since 3.5

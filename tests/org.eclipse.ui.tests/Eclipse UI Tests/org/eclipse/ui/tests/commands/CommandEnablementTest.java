@@ -63,12 +63,14 @@ public class CommandEnablementTest extends UITestCase {
 	private static final String CONTEXT_TEST1 = "org.eclipse.ui.command.contexts.enablement_test1";
 	private static final String PREFIX = "tests.commands.CCT.";
 	private static final String CMD1_ID = PREFIX + "cmd1";
+	private static final String CMD3_ID = PREFIX + "cmd3";
 
 	private ICommandService commandService;
 	private IHandlerService handlerService;
 	private IContextService contextService;
 
 	private Command cmd1;
+	private Command cmd3;
 	private DefaultHandler normalHandler1;
 	private IHandlerActivation activation1;
 	private DefaultHandler normalHandler2;
@@ -105,6 +107,7 @@ public class CommandEnablementTest extends UITestCase {
 		evalService = (IEvaluationService) fWorkbench
 				.getService(IEvaluationService.class);
 		cmd1 = commandService.getCommand(CMD1_ID);
+		cmd3 = commandService.getCommand(CMD3_ID);
 		normalHandler1 = new DefaultHandler();
 		normalHandler2 = new DefaultHandler();
 		disabledHandler1 = new DisabledHandler();
@@ -276,38 +279,42 @@ public class CommandEnablementTest extends UITestCase {
 		// contributed from plugin.xml
 		String contributedLabel = "Contributed Label";
 		
-		// no handler yet
-		assertNull(cmd1.getHandler());
+		// default handler 
+		assertTrue(cmd3.getHandler() instanceof HandlerProxy);
 		assertEquals(contributedLabel, labelField.get(item)); 
 
 		UpdatingHandler handler1 = new UpdatingHandler(text1);
-		activation1 = handlerService.activateHandler(CMD1_ID, handler1, new ActiveContextExpression(CONTEXT_TEST1,
+		activation1 = handlerService.activateHandler(CMD3_ID, handler1, new ActiveContextExpression(CONTEXT_TEST1,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME }));
 		UpdatingHandler handler2 = new UpdatingHandler(text2);
-		activation2 = handlerService.activateHandler(CMD1_ID, handler2, new ActiveContextExpression(CONTEXT_TEST2,
+		activation2 = handlerService.activateHandler(CMD3_ID, handler2, new ActiveContextExpression(CONTEXT_TEST2,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME }));
 
 		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
-		assertEquals(handler1, cmd1.getHandler());
+		assertEquals(handler1, cmd3.getHandler());
 		assertEquals(text1, labelField.get(item));
 		
 		contextService.deactivateContext(contextActivation1);
-		// back to no handler state
-		assertNull(cmd1.getHandler());
+		// back to default handler state
+		assertTrue(cmd3.getHandler() instanceof HandlerProxy);
 		assertEquals(contributedLabel, labelField.get(item)); 
 
 		contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
-		assertEquals(handler2, cmd1.getHandler());
+		assertEquals(handler2, cmd3.getHandler());
 		assertEquals(text2, labelField.get(item));
 
 		// activate both context
 		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 
 		// both handler activations eval to true, no handler set
-		assertNull(cmd1.getHandler());
-		assertEquals(contributedLabel, labelField.get(item)); 
-
+		assertNull(cmd3.getHandler());
+		assertEquals(contributedLabel, labelField.get(item));
+		
+		contextService.deactivateContext(contextActivation1);
+		contextService.deactivateContext(contextActivation2);
+				
 	}
+	
 	
 	public void testEnablementForNormalHandlers() throws Exception {
 		activation1 = handlerService.activateHandler(CMD1_ID, normalHandler1,
