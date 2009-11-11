@@ -116,7 +116,87 @@ public class MPartTest extends TestCase {
 		assertNotNull(item.getImage());
 	}
 
+	private void testDeclaredTooltip(String partToolTip, String expectedToolTip) {
+		final MWindow window = createWindowWithOneView("Part Name", partToolTip);
+		wb = new E4Workbench(window, appContext);
+
+		Widget topWidget = (Widget) window.getWidget();
+		assertTrue(topWidget instanceof Shell);
+		Shell shell = (Shell) topWidget;
+		Control[] controls = shell.getChildren();
+		assertEquals(1, controls.length);
+		SashForm sash = (SashForm) controls[0];
+		Control[] sashChildren = sash.getChildren();
+		assertEquals(1, sashChildren.length);
+
+		// HACK: see bug #280632 - always a composite around
+		// CTabFolder so can implement margins
+		Composite marginHolder = (Composite) sashChildren[0];
+		assertEquals(1, marginHolder.getChildren().length);
+		CTabFolder folder = (CTabFolder) marginHolder.getChildren()[0];
+		CTabItem item = folder.getItem(0);
+		assertEquals(expectedToolTip, item.getToolTipText());
+	}
+
+	public void testDeclaredTooltipNull() {
+		testDeclaredTooltip(null, null);
+	}
+
+	public void testDeclaredTooltipEmptyString() {
+		testDeclaredTooltip("", "");
+	}
+
+	public void testDeclaredTooltipDefined() {
+		testDeclaredTooltip("partToolTip", "partToolTip");
+	}
+
+	private void testMPart_setTooltip(String partToolTip, String expectedToolTip) {
+		final MWindow window = createWindowWithOneView("Part Name");
+		wb = new E4Workbench(window, appContext);
+
+		Widget topWidget = (Widget) window.getWidget();
+		assertTrue(topWidget instanceof Shell);
+		Shell shell = (Shell) topWidget;
+		Control[] controls = shell.getChildren();
+		assertEquals(1, controls.length);
+		SashForm sash = (SashForm) controls[0];
+		Control[] sashChildren = sash.getChildren();
+		assertEquals(1, sashChildren.length);
+
+		// HACK: see bug #280632 - always a composite around
+		// CTabFolder so can implement margins
+		Composite marginHolder = (Composite) sashChildren[0];
+		assertEquals(1, marginHolder.getChildren().length);
+		CTabFolder folder = (CTabFolder) marginHolder.getChildren()[0];
+		CTabItem item = folder.getItem(0);
+		assertEquals(null, item.getToolTipText());
+
+		MPartSashContainer container = (MPartSashContainer) window
+				.getChildren().get(0);
+		MPartStack stack = (MPartStack) container.getChildren().get(0);
+		MPart part = stack.getChildren().get(0);
+
+		part.setTooltip(partToolTip);
+		assertEquals(expectedToolTip, item.getToolTipText());
+	}
+
+	public void testMPart_setTooltipNull() {
+		testMPart_setTooltip(null, null);
+	}
+
+	public void testMPart_setTooltipEmptyString() {
+		testMPart_setTooltip("", "");
+	}
+
+	public void testMPart_setTooltipDefined() {
+		testMPart_setTooltip("partToolTip", "partToolTip");
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
+		return createWindowWithOneView(partName, null);
+	}
+
+	private MWindow createWindowWithOneView(String partName, String toolTip) {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
@@ -129,6 +209,7 @@ public class MPartTest extends TestCase {
 		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
 		contributedPart.setName(partName);
+		contributedPart.setTooltip(toolTip);
 		contributedPart
 				.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.gif");
 		contributedPart
