@@ -16,8 +16,8 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.jface.util.IOpenEventListener;
 import org.eclipse.jface.util.OpenStrategy;
 import org.eclipse.jface.util.SafeRunnable;
@@ -773,7 +773,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * done by calling <code>doFindInputItem</code>. If it is not found
 	 * there, the widgets are looked up in the internal element map provided
 	 * that this feature has been enabled. If the element map is disabled, the
-	 * widget is found via <code>doFindInputItem</code>.
+	 * widget is found via <code>doFindItem</code>.
 	 * </p>
 	 * 
 	 * @param element
