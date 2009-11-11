@@ -46,4 +46,10 @@ class ElementMementoRequest extends MementoUpdate implements IElementMementoRequ
 		fManager.requestComplete(this);
 	}
 
+	public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("IElementMementoRequest: "); //$NON-NLS-1$
+        buf.append(getElement());
+        return buf.toString();
+	}
 }

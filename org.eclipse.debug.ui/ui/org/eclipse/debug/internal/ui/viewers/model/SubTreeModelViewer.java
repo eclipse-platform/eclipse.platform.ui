@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -276,6 +277,10 @@ public class SubTreeModelViewer extends TreeModelViewer {
             SubTreeModelViewer.this.addModelChangedListener(listener);
         }
 
+        public void addStateUpdateListener(IStateUpdateListener listener) {
+            SubTreeModelViewer.this.addStateUpdateListener(listener);
+        }
+
         public void addViewerUpdateListener(IViewerUpdateListener listener) {
             SubTreeModelViewer.this.addViewerUpdateListener(listener);
         }
@@ -302,6 +307,10 @@ public class SubTreeModelViewer extends TreeModelViewer {
 
         public void removeModelChangedListener(IModelChangedListener listener) {
             SubTreeModelViewer.this.removeModelChangedListener(listener);
+        }
+
+        public void removeStateUpdateListener(IStateUpdateListener listener) {
+            SubTreeModelViewer.this.removeStateUpdateListener(listener);
         }
 
         public void removeViewerUpdateListener(IViewerUpdateListener listener) {
@@ -378,6 +387,10 @@ public class SubTreeModelViewer extends TreeModelViewer {
             fBaseProvider.addModelChangedListener(listener);
         }
 
+        public void addStateUpdateListener(IStateUpdateListener listener) {
+            fBaseProvider.addStateUpdateListener(listener);
+        }
+
         public void addViewerUpdateListener(IViewerUpdateListener listener) {
             fBaseProvider.addViewerUpdateListener(listener);
         }
@@ -396,6 +409,10 @@ public class SubTreeModelViewer extends TreeModelViewer {
 
         public void removeModelChangedListener(IModelChangedListener listener) {
             fBaseProvider.removeModelChangedListener(listener);
+        }
+
+        public void removeStateUpdateListener(IStateUpdateListener listener) {
+            fBaseProvider.removeStateUpdateListener(listener);
         }
 
         public void removeViewerUpdateListener(IViewerUpdateListener listener) {

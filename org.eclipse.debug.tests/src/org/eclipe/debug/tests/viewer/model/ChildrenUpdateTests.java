@@ -20,6 +20,7 @@ import org.eclipse.debug.internal.ui.viewers.model.TreeModelContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.jface.viewers.ISelection;
@@ -44,38 +45,32 @@ public class ChildrenUpdateTests extends TestCase {
 		protected ITreeModelContentProviderTarget getViewer() {
 			return new ITreeModelContentProviderTarget(){
 			
-				public void setSelection(ISelection selection) {
-				}
-			
-				public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-				}
-			
-				public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				}
-			
-				public void updateViewer(IModelDelta delta) {
-				}
-			
-				public void setSelection(ISelection selection, boolean reveal, boolean force) {
-				}
-			
-				public void setInput(Object object) {
-				}
-			
-				public void setAutoExpandLevel(int level) {
-				}
-			
-				public void saveElementState(TreePath path, ModelDelta delta, int flags) {					
-				}
-			
-				public void removeViewerUpdateListener(IViewerUpdateListener listener) {
-				}
-			
-				public void removeModelChangedListener(IModelChangedListener listener) {
-				}
-			
-				public void removeLabelUpdateListener(ILabelUpdateListener listener) {
-				}
+				public void setSelection(ISelection selection) {}
+				public void removeSelectionChangedListener(ISelectionChangedListener listener) {}
+				public void addSelectionChangedListener(ISelectionChangedListener listener) {}
+				public void updateViewer(IModelDelta delta) {}
+				public void setSelection(ISelection selection, boolean reveal, boolean force) {}
+				public void setInput(Object object) {}
+				public void setAutoExpandLevel(int level) {}
+				public void saveElementState(TreePath path, ModelDelta delta, int flags) {}
+				public void removeStateUpdateListener(IStateUpdateListener listener) {}
+				public void removeViewerUpdateListener(IViewerUpdateListener listener) {}
+				public void removeModelChangedListener(IModelChangedListener listener) {}
+				public void removeLabelUpdateListener(ILabelUpdateListener listener) {}
+                public void addViewerUpdateListener(IViewerUpdateListener listener) {}
+                public void addStateUpdateListener(IStateUpdateListener listener) {}
+                public void addModelChangedListener(IModelChangedListener listener) {}
+                public void addLabelUpdateListener(ILabelUpdateListener listener) {}
+                public void update(Object element) {}
+                public void setHasChildren(Object elementOrTreePath, boolean hasChildren) {}
+                public void setExpandedState(Object elementOrTreePath, boolean expanded) {}
+                public void setChildCount(Object elementOrTreePath, int count) {}
+                public void reveal(TreePath path, int index) {}
+                public void replace(Object parentOrTreePath, int index, Object element) {}
+                public void remove(Object parentOrTreePath, int index) {}
+                public void remove(Object elementOrTreePath) {}
+                public void refresh() {}
+                public void refresh(Object element) {}
 			
 				public ISelection getSelection() {
 					return null;
@@ -101,44 +96,6 @@ public class ChildrenUpdateTests extends TestCase {
 					return 0;
 				}
 			
-				public void addViewerUpdateListener(IViewerUpdateListener listener) {
-				}
-			
-				public void addModelChangedListener(IModelChangedListener listener) {
-				}
-			
-				public void addLabelUpdateListener(ILabelUpdateListener listener) {
-				}
-			
-				public void update(Object element) {
-				}
-			
-				public void setHasChildren(Object elementOrTreePath, boolean hasChildren) {
-				}
-			
-				public void setExpandedState(Object elementOrTreePath, boolean expanded) {
-				}
-			
-				public void setChildCount(Object elementOrTreePath, int count) {
-				}
-			
-				public void reveal(TreePath path, int index) {
-				}
-			
-				public void replace(Object parentOrTreePath, int index, Object element) {
-				}
-			
-				public void remove(Object parentOrTreePath, int index) {
-				}
-			
-				public void remove(Object elementOrTreePath) {
-				}
-			
-				public void refresh() {
-				}
-			
-				public void refresh(Object element) {
-				}
 			
 				public boolean overrideSelection(ISelection current, ISelection candidate) {
 					return false;

@@ -12,7 +12,9 @@ package org.eclipse.debug.internal.ui.viewers.model;
 
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.jface.viewers.ILazyTreePathContentProvider;
 import org.eclipse.jface.viewers.TreePath;
 
@@ -152,6 +154,19 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      */
     public void removeModelChangedListener(IModelChangedListener listener);
     
+
+    /**
+     * Registers the specified listener for state update notifications.
+     * @since 3.6
+     */
+    public void addStateUpdateListener(IStateUpdateListener listener);
+
+    /**
+     * Removes the specified listener from state update notifications.
+     * @since 3.6
+     */
+    public void removeStateUpdateListener(IStateUpdateListener listener);
+
     /**
      * Instructs the content provider to process the given model delta.  This
      * mechanism can be used to control the view's layout (expanding, selecting

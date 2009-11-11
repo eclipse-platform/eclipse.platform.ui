@@ -25,9 +25,12 @@ public interface ITestModelUpdatesListenerConstants {
     public static final int CHILDREN_UPDATES = 0X0020;
     public static final int MODEL_CHANGED_COMPLETE = 0X0040; 
     public static final int MODEL_PROXIES_INSTALLED = 0X0080;
+    public static final int STATE_SAVE_COMPLETE = 0X0100;
+    public static final int STATE_RESTORE_COMPLETE = 0X0200;
+    public static final int STATE_UPDATES = 0X0400;
     
-    public static final int VIEWER_UPDATES_RUNNING = 0X0100; 
-    public static final int LABEL_UPDATES_RUNNING = 0X0200;
+    public static final int VIEWER_UPDATES_RUNNING = 0X0800; 
+    public static final int LABEL_UPDATES_RUNNING = 0X1000;
     
     public static final int LABEL_COMPLETE = LABEL_UPDATES_COMPLETE | LABEL_UPDATES;
     public static final int CONTENT_COMPLETE = 

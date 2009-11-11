@@ -109,4 +109,12 @@ class ElementCompareRequest extends MementoUpdate implements IElementCompareRequ
     boolean checkChildrenRealized() {
         return fCheckChildrenRealized;
     }
+    
+    public String toString() {
+        StringBuffer buf = new StringBuffer();
+        buf.append("IElementCompareRequest: "); //$NON-NLS-1$
+        buf.append(getElement());
+        return buf.toString();
+    }
+
 }

@@ -28,12 +28,14 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.jface.viewers.TreePath;
 
 public class TestModelUpdatesListener 
-    implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener, ITestModelUpdatesListenerConstants 
+    implements IViewerUpdateListener, ILabelUpdateListener, IModelChangedListener, ITestModelUpdatesListenerConstants,
+        IStateUpdateListener
 {
     private boolean fFailOnRedundantUpdates;
     private boolean fFailOnMultipleUpdateSequences;
@@ -43,9 +45,12 @@ public class TestModelUpdatesListener
     private Set fChildCountUpdates = new HashSet();
     private Set fLabelUpdates = new HashSet();
     private Set fProxyModels = new HashSet();
+    private Set fStateUpdates = new HashSet();
     private boolean fViewerUpdatesComplete;
     private boolean fLabelUpdatesComplete;
     private boolean fModelChangedComplete;
+    private boolean fStateSaveComplete;
+    private boolean fStateRestoreComplete;
 	private int fViewerUpdatesRunning;
 	private int fLabelUpdatesRunning;
     
@@ -86,6 +91,8 @@ public class TestModelUpdatesListener
         fViewerUpdatesComplete = false;
         fLabelUpdatesComplete = false;
         fModelChangedComplete = false;
+        fStateSaveComplete = false;
+        fStateRestoreComplete = false;
     }
     
     public void addHasChildrenUpdate(TreePath path) {
@@ -135,10 +142,14 @@ public class TestModelUpdatesListener
         addUpdates(path, element, levels, ALL_UPDATES_COMPLETE);
     }
 
+    public void addStateUpdates(ITreeModelContentProviderTarget viewer, TreePath path, TestElement element) {
+        addUpdates(viewer, path, element, -1, STATE_UPDATES);
+    }
+    
     public void addUpdates(TreePath path, TestElement element, int levels, int flags) {
         addUpdates(null, path, element, levels, flags);
     }
-    
+
     public void addUpdates(ITreeModelContentProviderTarget viewer, TreePath path, TestElement element, int levels, int flags) {
         if (!path.equals(TreePath.EMPTY)) {
             if ((flags & LABEL_UPDATES) != 0) {
@@ -161,6 +172,10 @@ public class TestModelUpdatesListener
                         childrenIndexes.add(new Integer(i));
                     }
                     fChildrenUpdates.put(path, childrenIndexes);
+                }
+
+                if ((flags & STATE_UPDATES) != 0 && viewer != null) {
+                    fStateUpdates.add(path);
                 }
 
                 for (int i = 0; i < children.length; i++) {
@@ -207,6 +222,12 @@ public class TestModelUpdatesListener
         }
         if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
             if (!fModelChangedComplete) return false;
+        }
+        if ( (flags & STATE_SAVE_COMPLETE) != 0) {
+            if (!fStateSaveComplete) return false;
+        }
+        if ( (flags & STATE_RESTORE_COMPLETE) != 0) {
+            if (!fStateRestoreComplete) return false;
         }
         if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
             if (fProxyModels.size() != 0) return false;
@@ -312,6 +333,26 @@ public class TestModelUpdatesListener
                 break;
             }
         }
+    }
+    
+    public void stateRestoreUpdatesBegin(Object input) {
+    }
+    
+    public void stateRestoreUpdatesComplete(Object input) {
+        fStateRestoreComplete = true;
+    }
+    
+    public void stateSaveUpdatesBegin(Object input) {
+    }
+
+    public void stateSaveUpdatesComplete(Object input) {
+        fStateSaveComplete = true;
+    }
+    
+    public void stateUpdateComplete(Object input, IViewerUpdate update) {
+    }
+    
+    public void stateUpdateStarted(Object input, IViewerUpdate update) {
     }
 }
 

@@ -32,6 +32,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
@@ -1244,7 +1245,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
 
     public void addViewerUpdateListener(IViewerUpdateListener listener) {
-        ((ModelContentProvider)getContentProvider()).addViewerUpdateListener(listener);
+        getContentProvider().addViewerUpdateListener(listener);
     }
     
     public void removeViewerUpdateListener(IViewerUpdateListener listener) {
@@ -1255,7 +1256,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     public void addModelChangedListener(IModelChangedListener listener) {
-        ((ModelContentProvider)getContentProvider()).addModelChangedListener(listener); 
+        getContentProvider().addModelChangedListener(listener); 
     }
     
     public void removeModelChangedListener(IModelChangedListener listener) {
@@ -1265,6 +1266,16 @@ public class InternalVirtualTreeModelViewer extends Viewer
         }
     }
     
+    public void addStateUpdateListener(IStateUpdateListener listener) {
+        getContentProvider().addStateUpdateListener(listener);
+    }
+    
+    public void removeStateUpdateListener(IStateUpdateListener listener) {
+        ITreeModelContentProvider cp = getContentProvider();
+        if (cp !=  null) {
+            cp.removeStateUpdateListener(listener);
+        }
+    }
         
     public void addLabelUpdateListener(ILabelUpdateListener listener) {
         getLabelProvider().addLabelUpdateListener(listener);

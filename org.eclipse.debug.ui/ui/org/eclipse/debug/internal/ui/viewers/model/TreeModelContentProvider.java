@@ -547,14 +547,14 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		if (knowsHasChildren) {
 		    if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
 	            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-	                System.out.println("STATE RESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
+	                System.out.println("\tRESTORE EXPAND: " + treePath.getLastSegment()); //$NON-NLS-1$
 	            }
     			viewer.expandToLevel(treePath, 1);
                 delta.setFlags(delta.getFlags() & ~IModelDelta.EXPAND);
 		    }
             if ((delta.getFlags() & IModelDelta.COLLAPSE) != 0) {
                 if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                    System.out.println("STATE RESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
+                    System.out.println("\tRESTORE COLLAPSE: " + treePath.getLastSegment()); //$NON-NLS-1$
                 }
                 getViewer().setExpandedState(treePath, false);
                 delta.setFlags(delta.getFlags() & ~IModelDelta.COLLAPSE);
@@ -584,7 +584,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
                 int index = viewer.findElementIndex(parentPath, treePath.getLastSegment());
                 if (index >= 0) { 
                     if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                        System.out.println("STATE RESTORE REVEAL: " + treePath.getLastSegment()); //$NON-NLS-1$
+                        System.out.println("\tRESTORE REVEAL: " + treePath.getLastSegment()); //$NON-NLS-1$
                     }
                     viewer.reveal(parentPath, index);
                 }
@@ -621,7 +621,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
              (knowsHasChildren && !viewer.getHasChildren(treePath)) ) 
         {
             if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                System.out.println("STATE RESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
+                System.out.println("\tRESTORE CONTENT: " + treePath.getLastSegment()); //$NON-NLS-1$
             }
             delta.setFlags(delta.getFlags() & ~IModelDelta.CONTENT);            
         }

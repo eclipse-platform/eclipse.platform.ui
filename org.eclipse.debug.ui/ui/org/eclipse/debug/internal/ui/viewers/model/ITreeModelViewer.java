@@ -13,8 +13,11 @@ package org.eclipse.debug.internal.ui.viewers.model;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.TreePath;
@@ -136,6 +139,18 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * Removes the specified listener from update notifications.
      */
     public void removeViewerUpdateListener(IViewerUpdateListener listener);
+    
+    /**
+     * Registers the specified listener for state update notifications.
+     * @since 3.6
+     */
+    public void addStateUpdateListener(IStateUpdateListener listener);
+    
+    /**
+     * Removes the specified listener from state update notifications.
+     * @since 3.6
+     */
+    public void removeStateUpdateListener(IStateUpdateListener listener);
     
     /**
      * Registers the specified listener for view label update notifications.

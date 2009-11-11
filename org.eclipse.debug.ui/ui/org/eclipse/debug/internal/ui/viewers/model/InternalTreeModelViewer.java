@@ -39,6 +39,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelSelectionPolicy;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IStateUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -1701,7 +1702,7 @@ public class InternalTreeModelViewer extends TreeViewer
 	}
 	
 	/**
-	 * Registers the specified listener for view update notifications.
+ 	 * Registers the specified listener for view update notifications.
 	 * 
 	 * @param listener listener
 	 */
@@ -1741,7 +1742,18 @@ public class InternalTreeModelViewer extends TreeViewer
 			cp.removeModelChangedListener(listener);
 		}
 	}
-	
+
+    public void addStateUpdateListener(IStateUpdateListener listener) {
+        ((ITreeModelContentProvider)getContentProvider()).addStateUpdateListener(listener);
+    }
+    
+    public void removeStateUpdateListener(IStateUpdateListener listener) {
+        ITreeModelContentProvider cp = (ITreeModelContentProvider)getContentProvider();
+        if (cp !=  null) {
+            cp.removeStateUpdateListener(listener);
+        }
+    }
+    
 	/*
 	 * (non-Javadoc) Method declared in AbstractTreeViewer.
 	 */

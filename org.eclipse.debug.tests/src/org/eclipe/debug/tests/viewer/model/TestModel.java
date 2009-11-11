@@ -21,8 +21,11 @@ import org.eclipse.debug.internal.ui.viewers.model.ITreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ICheckUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementCompareRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoRequest;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -41,7 +44,7 @@ import org.eclipse.jface.viewers.Viewer;
  * 
  * @since 3.6
  */
-public class TestModel implements IElementContentProvider, IElementLabelProvider, IModelProxyFactory2 /*, IElementCheckReceiver */ {
+public class TestModel implements IElementContentProvider, IElementLabelProvider, IModelProxyFactory2 , IElementMementoProvider {
     
     public static class TestElement extends PlatformObject {
         private final TestModel fModel;
@@ -73,6 +76,10 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
                 return fModel;
             }
             return null;
+        }
+        
+        public String getID() {
+            return fID;
         }
         
         public void setLabelAppendix(String appendix) {
@@ -228,6 +235,27 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
             updates[i].done();
         }        
     }
+    
+    public final static String ELEMENT_MEMENTO_ID = "id";
+    
+    public void compareElements(IElementCompareRequest[] updates) {
+        for (int i = 0; i < updates.length; i++) {
+            String elementID = ((TestElement)updates[i].getElement()).getID();
+            String mementoID = updates[i].getMemento().getString(ELEMENT_MEMENTO_ID);
+            updates[i].setEqual( elementID.equals(mementoID) );
+            updates[i].done();
+        }        
+        
+    }
+    
+    public void encodeElements(IElementMementoRequest[] updates) {
+        for (int i = 0; i < updates.length; i++) {
+            String elementID = ((TestElement)updates[i].getElement()).getID();
+            updates[i].getMemento().putString(ELEMENT_MEMENTO_ID, elementID);
+            updates[i].done();
+        }        
+    }
+    
     
     public void elementChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
         TestElement element = getElement(path); 
@@ -616,5 +644,6 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
 
         return m1;
     }
+
     
 }
