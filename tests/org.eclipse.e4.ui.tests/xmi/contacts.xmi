@@ -6,7 +6,7 @@
         <children xsi:type="application:Part" id="ContactsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
       <children xsi:type="application:PartStack">
-        <children xsi:type="application:Part" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+        <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
       <weights>30</weights>
       <weights>70</weights>
