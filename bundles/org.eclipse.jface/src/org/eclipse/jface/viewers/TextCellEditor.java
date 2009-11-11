@@ -35,9 +35,8 @@ import org.eclipse.swt.widgets.Text;
  * A cell editor that manages a text entry field.
  * The cell editor's value is the text string itself.
  * <p>
- * This class may be instantiated; it is not intended to be subclassed.
+ * This class may be instantiated or subclassed.
  * </p>
- * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextCellEditor extends CellEditor {
 
