@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     John Cortell, Freescale - bug 289409
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -26,7 +27,11 @@ public interface ILazyTreePathContentProvider extends IContentProvider {
 	 * should also update the child count for any replaced element by calling
 	 * {@link TreeViewer#setChildCount(Object, int)}. If the given current child
 	 * count is already correct, setChildCount does not have to be called since
-	 * a call to replace will not change the child count.
+	 * a call to replace will not change the child count. If the content
+	 * provider doesn't know the child count at this point, and can more
+	 * efficiently determine if the element has <i>any</i> children, then it can
+	 * instead call {@link TreeViewer#setHasChildren(Object, boolean)}.
+	 * <p>
 	 * 
 	 * <strong>NOTE</strong> #updateElement(int index) can be used to determine
 	 * selection values. If TableViewer#replace(Object, int) is not called
@@ -35,8 +40,8 @@ public interface ILazyTreePathContentProvider extends IContentProvider {
 	 * for again after replace() has been called.
 	 * 
 	 * @param parentPath
-	 *            The tree path of parent of the element, or if the
-	 *            element to update is a root element, an empty tree path
+	 *            The tree path of parent of the element, or if the element to
+	 *            update is a root element, an empty tree path
 	 * @param index
 	 *            The index of the element to update in the tree
 	 */
