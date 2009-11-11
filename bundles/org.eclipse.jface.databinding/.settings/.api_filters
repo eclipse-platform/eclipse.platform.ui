@@ -1,33 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.databinding" version="2">
-    <resource path="src/org/eclipse/jface/databinding/viewers/ObservableSetTreeContentProvider.java" type="org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider">
-        <filter id="336744520">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.databinding.viewers.ObservableSetTreeContentProvider"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/databinding/viewers/ObservableListContentProvider.java" type="org.eclipse.jface.databinding.viewers.ObservableListContentProvider">
-        <filter id="336744520">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.databinding.viewers.ObservableListContentProvider"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/databinding/viewers/ObservableSetContentProvider.java" type="org.eclipse.jface.databinding.viewers.ObservableSetContentProvider">
-        <filter id="336744520">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.databinding.viewers.ObservableSetContentProvider"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/databinding/viewers/ObservableListTreeContentProvider.java" type="org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider">
-        <filter id="336744520">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.databinding.viewers.ObservableListTreeContentProvider"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/jface/databinding/viewers/ListeningLabelProvider.java" type="org.eclipse.jface.databinding.viewers.ListeningLabelProvider">
         <filter id="576720909">
             <message_arguments>
