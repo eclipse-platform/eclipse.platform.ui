@@ -106,6 +106,20 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		}
 	}
 
+	boolean containsUpdate(TreePath path) {
+        if (getElementPath().equals(path)) {
+            return true;
+        } else if (fBatchedRequests != null) {
+            for (int i = 0; i < fBatchedRequests.size(); i++) {
+                if (((ViewerUpdateMonitor)fBatchedRequests.get(i)).getElementPath().equals(path)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ViewerUpdateMonitor#getPriority()
 	 */

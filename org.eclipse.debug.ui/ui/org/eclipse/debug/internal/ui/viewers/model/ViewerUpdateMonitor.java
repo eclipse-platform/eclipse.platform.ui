@@ -201,6 +201,13 @@ public abstract class ViewerUpdateMonitor extends Request implements IViewerUpda
 	 * @return whether it worked
 	 */
 	abstract boolean coalesce(ViewerUpdateMonitor update);
+
+	/**
+	 * Returns whether this update or any coalesced updates is for an 
+	 * element at the given path.
+     * @since 3.6
+	 */
+	abstract boolean containsUpdate(TreePath path);
 	
 	/**
 	 * Starts this request. Subclasses must override startRequest().

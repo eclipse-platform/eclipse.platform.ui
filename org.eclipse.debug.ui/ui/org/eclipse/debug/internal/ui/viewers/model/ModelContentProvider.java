@@ -191,10 +191,16 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
          * int)
          */
         public boolean visit(IModelDelta delta, int depth) {
-            if (delta.getFlags() != IModelDelta.NO_CHANGE) {
+            // Filster out the CONTENT flags from the delta flags, the content
+            // flag is only used as a marker indicating that all the sub-elements
+            // of a given delta have been retrieved.  
+            int flags = (delta.getFlags() & ~IModelDelta.CONTENT);
+            
+            if (flags != IModelDelta.NO_CHANGE) {
                 IModelDelta parentDelta = delta.getParentDelta();
                 // Remove the delta if :
-                // - The parent delta has no more flags on it.
+                // - The parent delta has no more flags on it (the content flag is removed as well), 
+                // which means that parent element's children have been completely exposed.
                 // - There are no more pending updates for the element.
                 // - If element is a memento, there are no state requests pending.
                 if (parentDelta != null && parentDelta.getFlags() == IModelDelta.NO_CHANGE) {
@@ -207,7 +213,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                     }
                 }
 
-                if (delta.getFlags() == IModelDelta.REVEAL && !(delta.getElement() instanceof IMemento)) {
+                if (flags == IModelDelta.REVEAL && !(delta.getElement() instanceof IMemento)) {
                     topDelta = delta;
                 } else {
                     complete = false;
@@ -241,7 +247,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 if (requests != null) {
                     for (int i = 0; i < requests.size(); i++) {
                         ViewerUpdateMonitor update = (ViewerUpdateMonitor) requests.get(i);
-                        if (update.getElement().equals(path.getLastSegment())) {
+                        if (update.containsUpdate(path)) {
                             return true;
                         }
                     }

@@ -126,7 +126,13 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 		}
 		return false;
 	}
+	
+	boolean containsUpdate(TreePath path) {
+        return getElementPath().equals(path);
+    }
 
+
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate#getLength()
 	 */

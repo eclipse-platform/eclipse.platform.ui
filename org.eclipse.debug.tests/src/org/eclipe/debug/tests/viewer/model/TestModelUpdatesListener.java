@@ -53,7 +53,10 @@ public class TestModelUpdatesListener
     private boolean fStateRestoreComplete;
 	private int fViewerUpdatesRunning;
 	private int fLabelUpdatesRunning;
-    
+	private int fTimeoutInterval = 60000;
+	private long fTimeoutTime;
+	
+	
     public TestModelUpdatesListener(boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
         setFailOnRedundantUpdates(failOnRedundantUpdates);
         setFailOnMultipleUpdateSequences(failOnMultipleUpdateSequences);
@@ -66,8 +69,15 @@ public class TestModelUpdatesListener
     public void setFailOnMultipleUpdateSequences(boolean failOnMultipleUpdateSequences) {
         fFailOnMultipleUpdateSequences = failOnMultipleUpdateSequences;
     }
-
-
+    
+    /**
+     * Sets the the maximum amount of time (in milliseconds) that the update listener 
+     * is going to wait. If set to -1, the listener will wait indefinitely. 
+     */
+    public void setTimeoutInterval(int milis) {
+        fTimeoutInterval = milis;
+    }
+    
     public void reset(TreePath path, TestElement element, int levels, boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
         reset();
         addUpdates(path, element, levels);
@@ -93,6 +103,7 @@ public class TestModelUpdatesListener
         fModelChangedComplete = false;
         fStateSaveComplete = false;
         fStateRestoreComplete = false;
+        fTimeoutTime = System.currentTimeMillis() + fTimeoutInterval;
     }
     
     public void addHasChildrenUpdate(TreePath path) {
@@ -202,6 +213,10 @@ public class TestModelUpdatesListener
     }
     
     public boolean isFinished(int flags) {
+        if (fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis()) {
+            throw new RuntimeException("Test timed out");
+        }
+        
         if ( (flags & LABEL_UPDATES_COMPLETE) != 0) {
             if (!fLabelUpdatesComplete) return false;
         }

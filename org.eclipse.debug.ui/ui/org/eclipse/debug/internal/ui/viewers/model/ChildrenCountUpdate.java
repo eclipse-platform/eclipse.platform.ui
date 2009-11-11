@@ -76,7 +76,7 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 				return true;
 			} else if (getElementContentProvider().equals(request.getElementContentProvider())) {
 				if (fBatchedRequests == null) {
-					fBatchedRequests = new ArrayList();
+					fBatchedRequests = new ArrayList(4);
 					fBatchedRequests.add(this);
 				}
 				fBatchedRequests.add(request);
@@ -102,6 +102,19 @@ class ChildrenCountUpdate extends ViewerUpdateMonitor implements IChildrenCountU
 			}
 			getElementContentProvider().update(updates);
 		}
+	}
+	
+	boolean containsUpdate(TreePath path) {
+	    if (getElementPath().equals(path)) {
+	        return true;
+	    } else if (fBatchedRequests != null) {
+	        for (int i = 0; i < fBatchedRequests.size(); i++) {
+	            if (((ViewerUpdateMonitor)fBatchedRequests.get(i)).getElementPath().equals(path)) {
+	                return true;
+	            }
+	        }
+	    }
+	    return false;
 	}
 
 	/* (non-Javadoc)
