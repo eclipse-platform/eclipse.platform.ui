@@ -298,6 +298,8 @@ public class StackRenderer extends LazyStackRenderer {
 			cti.setData(OWNING_ME, part);
 			cti.setText(getLabel(part, itemPart.getName()));
 			cti.setImage(getImage(part));
+			cti.setToolTipText(itemPart.getTooltip());
+
 			Control widget = (Control) part.getWidget();
 			if (widget != null)
 				cti.setControl(widget);
