@@ -38,8 +38,6 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 
 public class DetailsView {
 
@@ -204,7 +202,7 @@ public class DetailsView {
 
 	@Inject
 	@Optional
-	public void setSelection(@Named(IServiceConstants.SELECTION) Contact contact) {
+	public void setSelection(@Optional @Named(IServiceConstants.SELECTION) Contact contact) {
 		if (contact != null) {
 			if (dirtyable.isDirty()) {
 				MessageDialog dialog = new MessageDialog(detailComposite
@@ -221,13 +219,13 @@ public class DetailsView {
 									Collections.EMPTY_MAP);
 					handlerService.executeHandler(saveCommand);
 				}
-				dirtyable.setDirty(false);
 			}
 
 			updatePartTitle(contact);
 		} else {
 			uiItem.setName("Details");
 		}
+		dirtyable.setDirty(false);
 		detailComposite.update(contact);
 	}
 }

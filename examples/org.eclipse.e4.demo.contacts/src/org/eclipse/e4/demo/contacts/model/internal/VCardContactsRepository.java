@@ -23,9 +23,10 @@ import java.io.PrintWriter;
 import java.net.URI;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.List;
 
+import org.eclipse.core.databinding.observable.list.IObservableList;
+import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
@@ -38,8 +39,7 @@ import org.eclipse.swt.widgets.Display;
 
 public class VCardContactsRepository implements IContactsRepository {
 
-	private final Collection<Contact> contacts = Collections
-			.synchronizedCollection(new ArrayList<Contact>());
+	private IObservableList contacts;
 
 	public VCardContactsRepository() {
 
@@ -47,6 +47,7 @@ public class VCardContactsRepository implements IContactsRepository {
 				.getBundle("org.eclipse.e4.demo.contacts"), new Path("vcards"),
 				null);
 
+		List<Contact> contacts = new ArrayList<Contact>();
 		try {
 			URI uri = FileLocator.toFileURL(url).toURI();
 			File directory = new File(uri);
@@ -61,14 +62,16 @@ public class VCardContactsRepository implements IContactsRepository {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
+		this.contacts = new WritableList(contacts, null);
 	}
 
 	public void addContact(final Contact contact) {
 		contacts.add(contact);
 	}
 
-	public Collection<Contact> getAllContacts() {
-		return Collections.unmodifiableCollection(contacts);
+	public IObservableList getAllContacts() {
+		return contacts;
 	}
 
 	public void removeContact(final Contact contact) {

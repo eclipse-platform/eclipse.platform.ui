@@ -12,15 +12,24 @@
 
 package org.eclipse.e4.demo.contacts.handlers;
 
-import org.eclipse.core.runtime.IProgressMonitor;
+import javax.inject.Named;
+
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.ContactsRepositoryFactory;
-import org.eclipse.e4.workbench.ui.IExceptionHandler;
+import org.eclipse.e4.ui.model.application.MContext;
+import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class DeleteContactHandler {
+	
+	boolean canExecute(@Named(IServiceConstants.ACTIVE_PART) MContext context) {
+		Contact contact = (Contact) context.getContext().get(
+				IServiceConstants.SELECTION);
+		return contact != null;
+	}
 
-	public void execute(Contact contact, IProgressMonitor monitor,
-			IExceptionHandler exceptionHandler) {
+	void execute(@Named(IServiceConstants.ACTIVE_PART) MContext context) {
+		Contact contact = (Contact) context.getContext().get(
+				IServiceConstants.SELECTION);
 		ContactsRepositoryFactory.getContactsRepository()
 				.removeContact(contact);
 	}

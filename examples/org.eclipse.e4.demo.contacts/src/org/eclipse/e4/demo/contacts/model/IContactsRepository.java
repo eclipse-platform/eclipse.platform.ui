@@ -12,10 +12,10 @@
 
 package org.eclipse.e4.demo.contacts.model;
 
-import java.util.Collection;
+import org.eclipse.core.databinding.observable.list.IObservableList;
 
 public interface IContactsRepository {
-	Collection<Contact> getAllContacts();
+	IObservableList getAllContacts();
 
 	void addContact(Contact contact);
 

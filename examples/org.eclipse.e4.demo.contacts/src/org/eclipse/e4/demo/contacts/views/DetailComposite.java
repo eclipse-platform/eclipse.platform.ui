@@ -281,7 +281,9 @@ public class DetailComposite extends Composite {
 
 	public void update(final Contact contact) {
 		if (contact == null) {
+			commitChanges = false;
 			setTextEnabled(this, false);
+			contactValue.setValue(null);
 		} else {
 			setTextEnabled(this, true);
 

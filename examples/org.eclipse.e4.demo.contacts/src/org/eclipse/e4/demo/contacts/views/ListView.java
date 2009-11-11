@@ -12,14 +12,9 @@
 
 package org.eclipse.e4.demo.contacts.views;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.beans.BeansObservables;
-import org.eclipse.core.databinding.observable.Observables;
-import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -32,8 +27,8 @@ import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
+import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.swt.SWT;
@@ -65,11 +60,9 @@ public class ListView {
 		contactsViewer
 				.addSelectionChangedListener(new ISelectionChangedListener() {
 					public void selectionChanged(SelectionChangedEvent event) {
-						StructuredSelection selection = (StructuredSelection) event
+						IStructuredSelection selection = (IStructuredSelection) event
 								.getSelection();
-						context.modify(IServiceConstants.SELECTION, selection
-								.size() == 1 ? selection.getFirstElement()
-								: selection.toArray());
+						context.modify(IServiceConstants.SELECTION, selection.getFirstElement());
 					}
 				});
 
@@ -87,11 +80,6 @@ public class ListView {
 		tableColumnLayout.setColumnData(lastNameColumn.getColumn(),
 				new ColumnWeightData(60));
 
-		List<Contact> contactList = new ArrayList<Contact>(
-				ContactsRepositoryFactory.getContactsRepository()
-						.getAllContacts());
-		IObservableList observableList = Observables
-				.staticObservableList(contactList);
 		ObservableListContentProvider contentProvider = new ObservableListContentProvider();
 
 		contactsViewer.setContentProvider(contentProvider);
@@ -102,15 +90,16 @@ public class ListView {
 		contactsViewer.setLabelProvider(new ObservableMapLabelProvider(
 				attributes));
 
-		contactsViewer.setInput(observableList);
+		contactsViewer.setInput(ContactsRepositoryFactory.getContactsRepository().getAllContacts());
 
 		GridLayoutFactory.fillDefaults().generateLayout(parent);
 	}
 
 	@PreDestroy
 	void preDestroy() {
-		for (Contact contact : ContactsRepositoryFactory
+		for (Object object : ContactsRepositoryFactory
 				.getContactsRepository().getAllContacts()) {
+			Contact contact = (Contact) object;
 			Image image = contact.getImage();
 			if (image != null) {
 				image.dispose();
