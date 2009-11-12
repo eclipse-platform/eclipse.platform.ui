@@ -21,13 +21,13 @@ import org.eclipse.e4.core.services.context.IEclipseContextAware;
  */
 public interface IContextConstants {
 	/**
-	 * Default prefix for the fields to be injected (value "inject_").
+	 * Default prefix for the fields and methods to be injected (value "inject__").
 	 * <p>
 	 * For example, if the context has an object under the name "log", the object will be injected
-	 * into the field named "diLog".
+	 * into the field named "inject__log".
 	 * </p>
 	 */
-	public static final String INJECTION_FIELD_PREFIX = "inject_"; //$NON-NLS-1$
+	public static final String INJECTION_PREFIX = "inject__"; //$NON-NLS-1$
 
 	/**
 	 * The name of the method to be called when a context is injected into the object (value
@@ -46,26 +46,10 @@ public interface IContextConstants {
 	public static final String INJECTION_SET_CONTEXT_METHOD = "contextSet"; //$NON-NLS-1$
 
 	/**
-	 * Default prefix for the methods to be injected (value "inject_").
-	 * <p>
-	 * For example, if the context has an object under the name "log", the object will be injected
-	 * into the method named "inject_log".
-	 * </p>
-	 */
-	public static final String INJECTION_SET_METHOD_PREFIX = "inject_"; //$NON-NLS-1$
-
-	/**
 	 * A context key (value "debugString") identifying a value to use in debug statements for a
 	 * context. A computed value can be used to embed more complex information in debug statements.
 	 */
 	public static final String DEBUG_STRING = "debugString"; //$NON-NLS-1$
-
-	/**
-	 * A context key (value "outputs") identifying a value that stores an output context for a given
-	 * context. An output context is used by the dependency injection system for storing values
-	 * injected "out" of a user object back into its surrounding context.
-	 */
-	public static final String OUTPUTS = "outputs"; //$NON-NLS-1$
 
 	/**
 	 * A context key (value "parentContext") identifying the parent context, which can be retrieved

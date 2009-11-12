@@ -46,7 +46,7 @@ public class ComputedValueLimitationTest extends TestCase {
 
 		private String txt;
 
-		public void inject_Computed(String txt) {
+		public void inject__Computed(String txt) {
 			this.txt = txt;
 		}
 

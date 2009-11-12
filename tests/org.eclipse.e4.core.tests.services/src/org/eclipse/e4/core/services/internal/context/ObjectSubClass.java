@@ -16,7 +16,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
  * Test class to check injection mechanism into classes with inheritance
  */
 public class ObjectSubClass extends ObjectSuperClass {
-	/* package */Integer inject_Integer;
+	/* package */Integer inject__Integer;
 
 	private Object myObject;
 
@@ -32,12 +32,12 @@ public class ObjectSubClass extends ObjectSuperClass {
 		super();
 	}
 
-	public void inject_ObjectViaMethod(Float f) {
+	public void inject__ObjectViaMethod(Float f) {
 		myObject = f;
 		setObjectCalled++;
 	}
 
-	public void inject_OverriddenMethod(Float f) {
+	public void inject__OverriddenMethod(Float f) {
 		setOverriddenCalled++;
 	}
 
@@ -47,7 +47,7 @@ public class ObjectSubClass extends ObjectSuperClass {
 	}
 
 	public Integer getInteger() {
-		return inject_Integer;
+		return inject__Integer;
 	}
 
 	public Object getObjectViaMethod() {

@@ -50,7 +50,7 @@ public class ContextInjectionTest extends TestCase {
 				contextSetCalled++;
 			}
 
-			public void inject_InjectedMethod(TestData arg) {
+			public void inject__InjectedMethod(TestData arg) {
 				setMethodCalled++;
 				value = arg;
 			}
@@ -86,7 +86,7 @@ public class ContextInjectionTest extends TestCase {
 				contextSetCalled++;
 			}
 
-			public void inject_InjectedMethod(TestData arg) {
+			public void inject__InjectedMethod(TestData arg) {
 				setMethodCalled++;
 				value = arg;
 			}
@@ -128,7 +128,7 @@ public class ContextInjectionTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check field injection
-		assertEquals(testString, userObject.inject_String);
+		assertEquals(testString, userObject.inject__String);
 		assertEquals(testInt, userObject.getInt());
 		assertEquals(context, userObject.context);
 
@@ -168,7 +168,7 @@ public class ContextInjectionTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check field injection
-		assertEquals(testString, userObject.inject_String);
+		assertEquals(testString, userObject.inject__String);
 		assertEquals(testInt, userObject.getInt());
 		assertEquals(context, userObject.context);
 

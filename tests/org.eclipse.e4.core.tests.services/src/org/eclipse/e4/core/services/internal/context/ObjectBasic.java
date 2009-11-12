@@ -19,8 +19,8 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 public class ObjectBasic implements IDisposable {
 
 	// Injected directly
-	public String inject_String;
-	private Integer inject_Integer;
+	public String inject__String;
+	private Integer inject__Integer;
 
 	// Injected indirectly
 	public Double d;
@@ -38,12 +38,12 @@ public class ObjectBasic implements IDisposable {
 		// placeholder
 	}
 
-	public void inject_ObjectViaMethod(Double d) {
+	public void inject__ObjectViaMethod(Double d) {
 		setMethodCalled++;
 		this.d = d;
 	}
 
-	public void inject_Arguments(Float f, Character c) {
+	public void inject__Arguments(Float f, Character c) {
 		setMethodCalled2++;
 		this.f = f;
 		this.c = c;
@@ -60,7 +60,7 @@ public class ObjectBasic implements IDisposable {
 	}
 
 	public Integer getInt() {
-		return inject_Integer;
+		return inject__Integer;
 	}
 
 }

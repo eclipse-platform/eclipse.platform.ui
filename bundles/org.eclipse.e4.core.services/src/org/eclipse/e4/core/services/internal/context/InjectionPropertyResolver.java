@@ -18,15 +18,15 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
 
-public class InjectionPropertyResolver {
+public class InjectionPropertyResolver implements IContextConstants {
 
-	static public InjectionProperties getInjectionProperties(Field field, String fieldPrefix) {
+	static public InjectionProperties getInjectionProperties(Field field) {
 		InjectionProperties properties = AnnotationsSupport.getInjectProperties(field);
 
 		// see if we should augment annotations injection properties
-		if (field.getName().startsWith(fieldPrefix)) {
+		if (field.getName().startsWith(INJECTION_PREFIX)) {
 			properties.setInject(true);
-			properties.setPropertyName(field.getName().substring(fieldPrefix.length()));
+			properties.setPropertyName(field.getName().substring(INJECTION_PREFIX.length()));
 		}
 		if (properties.getPropertyName() == null)
 			properties.setPropertyName(field.getType().getName());
@@ -59,10 +59,10 @@ public class InjectionPropertyResolver {
 		return properties;
 	}
 
-	static public InjectionProperties getInjectionProperties(Method method, String methodPrefix) {
+	static public InjectionProperties getInjectionProperties(Method method) {
 		InjectionProperties properties = AnnotationsSupport.getInjectProperties(method);
 		// see if we should augment annotations injection properties
-		if (method.getName().startsWith(methodPrefix))
+		if (method.getName().startsWith(INJECTION_PREFIX))
 			properties.setInject(true);
 		return properties;
 	}
@@ -76,7 +76,7 @@ public class InjectionPropertyResolver {
 		boolean isPostConstruct = AnnotationsSupport.isPostConstruct(method);
 		if (isPostConstruct)
 			return true;
-		if (!method.getName().equals(IContextConstants.INJECTION_SET_CONTEXT_METHOD))
+		if (!method.getName().equals(INJECTION_SET_CONTEXT_METHOD))
 			return false;
 		Class[] parms = method.getParameterTypes();
 		if (parms.length == 0)

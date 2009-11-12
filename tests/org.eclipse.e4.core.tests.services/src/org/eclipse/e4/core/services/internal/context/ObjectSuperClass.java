@@ -18,7 +18,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 public class ObjectSuperClass {
 
 	protected IEclipseContext context;
-	private String inject_String;
+	private String inject__String;
 	private String myString;
 
 	public int postConstructSetStringCalled;
@@ -46,18 +46,18 @@ public class ObjectSuperClass {
 	}
 
 	public String getString() {
-		return inject_String;
+		return inject__String;
 	}
 
 	public String getStringViaMethod() {
 		return myString;
 	}
 
-	public void inject_OverriddenMethod(Float f) {
+	public void inject__OverriddenMethod(Float f) {
 		setOverriddenCalled++;
 	}
 
-	public void inject_StringViaMethod(String string) {
+	public void inject__StringViaMethod(String string) {
 		myString = string;
 		setStringCalled++;
 	}

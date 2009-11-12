@@ -23,7 +23,6 @@ import java.util.List;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 
 /**
  * Reflection-based context injector.
@@ -191,20 +190,8 @@ public class ContextInjector {
 
 	final protected IEclipseContext context;
 
-	final protected String fieldPrefix;
-
-	final protected int fieldPrefixLength;
-
-	final protected String setMethodPrefix;
-
-	public ContextInjector(IEclipseContext context, String fieldPrefix, String setMethodPrefix) {
+	public ContextInjector(IEclipseContext context) {
 		this.context = context;
-		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix
-				: IContextConstants.INJECTION_FIELD_PREFIX;
-		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix
-				: IContextConstants.INJECTION_SET_METHOD_PREFIX;
-
-		fieldPrefixLength = this.fieldPrefix.length();
 	}
 
 	public void inject(String name, Object userObject) {
@@ -298,8 +285,8 @@ public class ContextInjector {
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 
-			InjectionProperties properties = InjectionPropertyResolver.getInjectionProperties(
-					field, fieldPrefix);
+			InjectionProperties properties = InjectionPropertyResolver
+					.getInjectionProperties(field);
 			if (properties.shouldInject())
 				processor.processField(field, properties);
 		}
@@ -331,8 +318,8 @@ public class ContextInjector {
 					continue;
 				}
 			}
-			InjectionProperties properties = InjectionPropertyResolver.getInjectionProperties(
-					method, setMethodPrefix);
+			InjectionProperties properties = InjectionPropertyResolver
+					.getInjectionProperties(method);
 			if (properties.shouldInject())
 				processor.processMethod(method, properties.isOptional());
 		}
@@ -435,7 +422,7 @@ public class ContextInjector {
 			Object newInstance = callConstructor(constructor, actualParams);
 			if (newInstance == null)
 				return null;
-			ContextInjectionFactory.inject(newInstance, context, null, null);
+			ContextInjectionFactory.inject(newInstance, context);
 			return newInstance;
 		}
 

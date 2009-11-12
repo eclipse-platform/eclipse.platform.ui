@@ -30,21 +30,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 	// annotation names
 	protected IEclipseContext context;
 
-	final protected String fieldPrefix;
-
-	final protected int fieldPrefixLength;
-
-	final protected String setMethodPrefix;
-
 	protected List userObjects = new ArrayList(3); // start small
 
-	public ContextToObjectLink(IEclipseContext context, String fieldPrefix, String setMethodPrefix) {
+	public ContextToObjectLink(IEclipseContext context) {
 		this.context = context;
-		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : INJECTION_FIELD_PREFIX;
-		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix
-				: INJECTION_SET_METHOD_PREFIX;
-
-		fieldPrefixLength = this.fieldPrefix.length();
 	}
 
 	private void handleAdd(final ContextChangeEvent event) {
@@ -53,7 +42,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			handleParentChange(event);
 			return;
 		}
-		ContextInjector injector = new ContextInjector(context, fieldPrefix, setMethodPrefix);
+		ContextInjector injector = new ContextInjector(context);
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
 			injector.inject(name, objectsCopy[i]);
@@ -68,7 +57,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		if (oldParent == newParent)
 			return;
 
-		ContextInjector injector = new ContextInjector(context, fieldPrefix, setMethodPrefix);
+		ContextInjector injector = new ContextInjector(context);
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
 			injector.reparent(objectsCopy[i], oldParent, newParent);
@@ -94,12 +83,12 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				return;
 		}
 
-		ContextInjector injector = new ContextInjector(context, fieldPrefix, setMethodPrefix);
+		ContextInjector injector = new ContextInjector(context);
 		injector.uninject(releasedObject);
 	}
 
 	private void handleDispose(ContextChangeEvent event) {
-		ContextInjector injector = new ContextInjector(context, fieldPrefix, setMethodPrefix);
+		ContextInjector injector = new ContextInjector(context);
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
 			injector.dispose(objectsCopy[i]);
@@ -111,7 +100,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				|| event.getArguments()[0] == null)
 			throw new IllegalArgumentException();
 
-		ContextInjector injector = new ContextInjector(context, fieldPrefix, setMethodPrefix);
+		ContextInjector injector = new ContextInjector(context);
 		injector.inject(event.getArguments()[0]);
 
 		WeakReference ref = new WeakReference(event.getArguments()[0]);
@@ -126,7 +115,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			handleParentChange(event);
 			return;
 		}
-		ContextInjector injector = new ContextInjector(context, fieldPrefix, setMethodPrefix);
+		ContextInjector injector = new ContextInjector(context);
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
 			injector.uninject(name, objectsCopy[i]);

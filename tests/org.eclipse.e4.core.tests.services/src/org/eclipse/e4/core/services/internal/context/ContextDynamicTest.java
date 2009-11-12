@@ -69,7 +69,7 @@ public class ContextDynamicTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check basic injection
-		assertEquals(testString, userObject.inject_String);
+		assertEquals(testString, userObject.inject__String);
 		assertEquals(testInt, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(1, userObject.setMethodCalled);
@@ -85,7 +85,7 @@ public class ContextDynamicTest extends TestCase {
 		context.set("Integer", testInt2);
 
 		// and check
-		assertEquals(testString, userObject.inject_String);
+		assertEquals(testString, userObject.inject__String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);
@@ -99,7 +99,7 @@ public class ContextDynamicTest extends TestCase {
 		context.remove(Character.class.getName());
 
 		// and check
-		assertNull(userObject.inject_String);
+		assertNull(userObject.inject__String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);
@@ -132,7 +132,7 @@ public class ContextDynamicTest extends TestCase {
 		ContextInjectionFactory.inject(userObject, context);
 
 		// check basic injection
-		assertEquals(testString, userObject.inject_String);
+		assertEquals(testString, userObject.inject__String);
 		assertEquals(testInt, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(1, userObject.setMethodCalled);
@@ -148,7 +148,7 @@ public class ContextDynamicTest extends TestCase {
 		context.set("Integer", testInt2);
 
 		// and check
-		assertEquals(testString, userObject.inject_String);
+		assertEquals(testString, userObject.inject__String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);
@@ -162,7 +162,7 @@ public class ContextDynamicTest extends TestCase {
 		parentContext.remove(Character.class.getName());
 
 		// and check
-		assertNull(userObject.inject_String);
+		assertNull(userObject.inject__String);
 		assertEquals(testInt2, userObject.getInt());
 		assertEquals(context, userObject.context);
 		assertEquals(2, userObject.setMethodCalled);

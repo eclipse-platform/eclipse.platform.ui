@@ -23,25 +23,13 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
  */
 public class ContextInjectionImpl implements IContextConstants {
 
-	final protected String fieldPrefix;
-	final protected int fieldPrefixLength;
 	/**
 	 * We keep one injector per context.
 	 */
 	private Map injectors = new HashMap(); // IEclipseContext -> injector
 
-	final protected String setMethodPrefix;
-
 	public ContextInjectionImpl() {
-		this(INJECTION_FIELD_PREFIX, INJECTION_SET_METHOD_PREFIX);
-	}
-
-	public ContextInjectionImpl(String fieldPrefix, String setMethodPrefix) {
-		this.fieldPrefix = (fieldPrefix != null) ? fieldPrefix : INJECTION_FIELD_PREFIX;
-		this.setMethodPrefix = (setMethodPrefix != null) ? setMethodPrefix
-				: INJECTION_SET_METHOD_PREFIX;
-
-		fieldPrefixLength = this.fieldPrefix.length();
+		// placeholder
 	}
 
 	synchronized public void injectInto(final Object userObject, final IEclipseContext context) {
@@ -50,7 +38,7 @@ public class ContextInjectionImpl implements IContextConstants {
 			if (injectors.containsKey(context))
 				link = (ContextToObjectLink) injectors.get(context);
 			else {
-				link = new ContextToObjectLink(context, fieldPrefix, setMethodPrefix);
+				link = new ContextToObjectLink(context);
 				injectors.put(context, link);
 			}
 		}
@@ -59,12 +47,12 @@ public class ContextInjectionImpl implements IContextConstants {
 
 	public static Object invoke(final Object userObject, final String methodName,
 			final IEclipseContext context, final Object defaultValue) {
-		ContextInjector injector = new ContextInjector(context, null, null);
+		ContextInjector injector = new ContextInjector(context);
 		return injector.invoke(userObject, methodName, defaultValue);
 	}
 
 	public static Object make(Class clazz, final IEclipseContext context) {
-		ContextInjector injector = new ContextInjector(context, null, null);
+		ContextInjector injector = new ContextInjector(context);
 		return injector.make(clazz);
 	}
 }

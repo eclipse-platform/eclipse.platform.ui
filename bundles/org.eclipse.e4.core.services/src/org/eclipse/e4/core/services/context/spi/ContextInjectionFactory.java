@@ -24,26 +24,15 @@ import org.eclipse.e4.core.services.internal.context.EclipseContext;
  * the affected items to be re-injected into the object. Thus the object will remain synchronized
  * with the context once it has been injected.
  * <p>
- * The matching is done using {@link IContextConstants#INJECTION_FIELD_PREFIX} for fields,
- * {@link IContextConstants#INJECTION_SET_METHOD_PREFIX} for methods. For a context key called
- * "log", injection will attempt to find field "di_Log" or method "setLog()" that will accept the
- * associated service. The field's prefix can be overridden by the context. For field injection,
- * matching is also performed on the field type. A field of type {@link String} will be injected
- * with a context value stored under key "java.lang.String".
- * </p>
- * <p>
- * Generally speaking, name matching is case-sensitive. However, for convenience, when matching
- * service names to fields or methods:
- * <ul>
- * <li>Capitalization of the first character of the service name is ignored. For instance, the "log"
- * name will match both "di_Log" and "di_log" fields.</li>
- * <li>Dashes in the names ("-") are removed, and the next character is capitalized. For instance,
- * "log-general" will match "di_LogGeneral"</li>
- * </ul>
+ * The matching is done using {@link IContextConstants#INJECTION_PREFIX} for fields and methods. For
+ * a context key called "Log", injection will attempt to find field "inject_Log" or method
+ * "inject__method_name(Log log)" that will accept the associated service. Name matching is
+ * case-sensitive.
  * </p>
  * <p>
  * If annotations are supported by the runtime, matching of methods and fields to be injected is
- * also performed using the annotations defined in package org.eclipse.e4.core.services.annotations.
+ * also performed using the annotations defined in packages javax.inject and
+ * org.eclipse.e4.core.services.annotations.
  * </p>
  * <p>
  * The injection of values is generally done as a number of calls. User objects that want to
@@ -52,8 +41,8 @@ import org.eclipse.e4.core.services.internal.context.EclipseContext;
  * <ul>
  * <li><code>public void contextSet(IEquinoxContext context);</code></li>
  * <li><code>public void contextSet();</code></li>
- * <li>Any zero-argument method with the
- * <code>org.eclipse.e4.core.services.annotations.PostConstruct</code> annotation</li>
+ * <li>A method with the <code>org.eclipse.e4.core.services.annotations.PostConstruct</code>
+ * annotation.</li>
  * </ul>
  * </p>
  * <p>
@@ -77,8 +66,8 @@ import org.eclipse.e4.core.services.internal.context.EclipseContext;
  * <li>Methods implementing {@link IDisposable#dispose()}.</li>
  * </ul>
  * 
- * @noextend This interface is not intended to be extended by clients.
- * @noimplement This interface is not intended to be implemented by clients.
+ * @noextend This class is not intended to be extended by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
  */
 final public class ContextInjectionFactory {
 
@@ -97,26 +86,7 @@ final public class ContextInjectionFactory {
 	 * @return Returns the injected object
 	 */
 	static public Object inject(Object object, IEclipseContext context) {
-		return inject(object, context, null, null);
-	}
-
-	/**
-	 * Injects a context into a domain object. See the class comment for details on the injection
-	 * algorithm that is used.
-	 * 
-	 * @param object
-	 *            The object to perform injection on
-	 * @param context
-	 *            The context to obtain injected values from
-	 * @param fieldPrefix
-	 *            The prefix used to identify injected fields
-	 * @param setMethodPrefix
-	 *            The prefix used to identify setter injection methods
-	 * @return Returns the injected object
-	 */
-	static public Object inject(Object object, IEclipseContext context, String fieldPrefix,
-			String setMethodPrefix) {
-		ContextInjectionImpl injector = new ContextInjectionImpl(fieldPrefix, setMethodPrefix);
+		ContextInjectionImpl injector = new ContextInjectionImpl();
 		injector.injectInto(object, context);
 		return object;
 	}
