@@ -23,7 +23,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -287,14 +289,27 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 		descriptionData.heightHint = convertHeightInCharsToPixels(3);
 		descText.setLayoutData(descriptionData);
 		
-		SelectionListener selectionListener = createSelectionListener();
-
-		transferAllButton.addSelectionListener(selectionListener);
+		transferAllButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				if (transferAllButton.getSelection()) {
+					viewer.setAllChecked(false);
+				}
+				updateEnablement();
+				updatePageCompletion();
+			}
+		});
 
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 
 			public void selectionChanged(SelectionChangedEvent event) {
 				updateDescription();
+			}
+		});
+
+		viewer.addCheckStateListener(new ICheckStateListener() {
+			public void checkStateChanged(CheckStateChangedEvent event) {
+				transferAllButton.setSelection(false);
+				updateEnablement();
 				updatePageCompletion();
 			}
 		});
@@ -314,24 +329,6 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 			}
 		}
 		descText.setText(desc);
-	}
-
-	private SelectionListener createSelectionListener() {
-		SelectionListener selectionListener = new SelectionAdapter() {
-
-			public void widgetSelected(SelectionEvent e) {
-				// Selecting an item in the list forces 
-				// the radio buttons to get selected 
-				if (e.widget == transfersTree) {
-					updateDescription();
-				} else if (e.widget == transferAllButton) {
-					updateEnablement();
-				}
-				updatePageCompletion();
-			}
-
-		};
-		return selectionListener;
 	}
 
 	private FilteredTree createFilteredTree(Group group) {
@@ -1012,11 +1009,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements
 
 	private void updateEnablement() {
 		boolean transferAll = getTransferAll();
-		group.setEnabled(!transferAll);
 		selectAllButton.setEnabled(!transferAll);
 		deselectAllButton.setEnabled(!transferAll);
-		viewer.getTree().setEnabled(!transferAll);
-		transfersTree.setEnabled(!transferAll);
-		descText.setEnabled(!transferAll);
 	}
 }
