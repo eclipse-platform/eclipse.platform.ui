@@ -17,10 +17,13 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -1016,6 +1019,26 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			return TEMPLATE;
 		}
 		return CONFIGURATION;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.debug.core.ILaunchConfiguration#findDifferences(java.util.Map)
+	 */
+	public Map findDifferences(Map attributes) throws CoreException {
+		Map result = new HashMap();
+		Set entries = attributes.entrySet();
+		Iterator iterator = entries.iterator();
+		LaunchConfigurationInfo info = getInfo();
+		while (iterator.hasNext()) {
+			Entry entry = (Entry) iterator.next();
+			String key = (String) entry.getKey();
+			Object attr1 = entry.getValue();
+			Object attr2 = info.getObjectAttribute(key);
+			if (!LaunchConfigurationInfo.compareAttribute(key, attr1, attr2)) {
+				result.put(key, attr2);
+			}
+		}
+		return result;
 	}
 	
 }

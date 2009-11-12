@@ -663,6 +663,20 @@ public interface ILaunchConfiguration extends IAdaptable {
 	public ILaunchConfiguration getTemplate() throws CoreException;
 	
 	/**
+	 * Returns a map of attributes in this launch configuration that are
+	 * different from the specified attributes. Returns an empty map if
+	 * this launch configuration contains equivalent attributes. A <code>null</code>
+	 * value is returned for attributes not contained in this launch configuration.
+	 * 
+	 * @param attributes to compare to
+	 * @return a map of attributes in this launch configuration that 
+	 *  are different from the specified attributes
+	 * @throws CoreException if an exception occurs while comparing
+	 * @since 3.6
+	 */
+	public Map findDifferences(Map attributes) throws CoreException;
+	
+	/**
 	 * Returns whether this configuration is a template.
 	 * 
 	 * @return whether this configuration is a template

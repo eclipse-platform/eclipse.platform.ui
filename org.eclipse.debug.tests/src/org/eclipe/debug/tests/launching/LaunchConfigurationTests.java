@@ -1250,6 +1250,55 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertTrue(t2.isTemplate());
 	}
 	
+	/**
+	 * Tests that a template that adds an attribute is not considered to override any template
+	 * values.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testTemplateNoOverride() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newTemplate(null, "2-b-the-same");
+		ILaunchConfiguration template = t1.doSave();
+		ILaunchConfigurationWorkingCopy wc = template.getType().newInstance(null, "will-b-the-same", template);
+		wc.setAttribute("EXTEND-ATTRIBUTES", "EXTEND-ATTRIBUTES");
+		Map dif = wc.findDifferences(template.getAttributes());
+		assertTrue("Should not override any values", dif.isEmpty());
+	}
+	
+	/**
+	 * Tests that a template that changes an attribute is considered to override its template
+	 * values.
+	 * 
+	 * @throws CoreException
+	 */
+	public void testTemplateOverride() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newTemplate(null, "2-b-diff");
+		ILaunchConfiguration template = t1.doSave();
+		ILaunchConfigurationWorkingCopy wc = template.getType().newInstance(null, "will-b-diff", template);
+		wc.setAttribute("String1", "String2"); 
+		Map dif = wc.findDifferences(template.getAttributes());
+		assertEquals("Should override String1 value", 1, dif.size());
+		assertTrue("Should override String1 value", dif.containsKey("String1"));
+		assertEquals("Should override String1 value with String2", "String2", dif.get("String1"));
+	}
+	
+	/**
+	 * Test that a configuration that omits a template value shows the difference with
+	 * a <code>null</code> entry in the difference map.
+	 *  
+	 * @throws CoreException
+	 */
+	public void testMissingTemaplteValue() throws CoreException {
+		ILaunchConfigurationWorkingCopy t1 = newTemplate(null, "2-b-missing");
+		ILaunchConfiguration template = t1.doSave();
+		ILaunchConfigurationWorkingCopy wc = template.getType().newInstance(null, "will-b-diff", template);
+		wc.removeAttribute("String1"); 
+		Map dif = wc.findDifferences(template.getAttributes());
+		assertEquals("Should be missing String1 value", 1, dif.size());
+		assertTrue("Should be missing String1 value", dif.containsKey("String1"));
+		assertNull("Should be null value", dif.get("String1"));
+	}
+	
 }
 
 

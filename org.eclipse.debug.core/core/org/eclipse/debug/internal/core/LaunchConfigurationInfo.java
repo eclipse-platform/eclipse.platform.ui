@@ -79,6 +79,11 @@ public class LaunchConfigurationInfo {
 	private boolean fIsTemplate = false;
 	
 	/**
+	 * Static access to the launch manager.
+	 */
+	private static LaunchManager fgLaunchManager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager(); 
+	
+	/**
 	 * Whether running on Sun 1.4 VM - see bug 110215
 	 */
 	private static boolean fgIsSun14x = false;
@@ -257,6 +262,16 @@ public class LaunchConfigurationInfo {
 			);
 		}
 		return defaultValue;
+	}
+	
+	/**
+	 * Returns the raw object from the attribute table or <code>null</code> if none.
+	 * 
+	 * @param key attribute key
+	 * @return raw attribute value 
+	 */
+	protected Object getObjectAttribute(String key) {
+		return getAttributeTable().get(key);
 	}
 	
 	/**
@@ -736,42 +751,56 @@ public class LaunchConfigurationInfo {
 	 * @return whether the two attribute maps are equal
 	 */
 	protected boolean compareAttributes(TreeMap map1, TreeMap map2) {
-		LaunchManager manager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 		if (map1.size() == map2.size()) {
 			Iterator attributes = map1.keySet().iterator();
 			while (attributes.hasNext()) {
 				String key = (String)attributes.next();
 				Object attr1 = map1.get(key);
 				Object attr2 = map2.get(key);
-				if (attr2 == null) {
+				if (!compareAttribute(key, attr1, attr2)) {
 					return false;
-				}
-				Comparator comp = manager.getComparator(key);
-				if (comp == null) {
-					if (fgIsSun14x) {
-						if(attr2 instanceof String & attr1 instanceof String) {
-							// this is a hack for bug 110215, on SUN 1.4.x, \r
-							// is stripped off when the stream is written to the
-							// DOM
-							// this is not the case for 1.5.x, so to be safe we
-							// are stripping \r off all strings before we
-							// compare for equality
-							attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-							attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					}
-					if (!attr1.equals(attr2)) {
-						return false;
-					}
-				} else {
-					if (comp.compare(attr1, attr2) != 0) {
-						return false;
-					}
 				}
 			}
 			return true;	
 		}
 		return false;
+	}
+	
+	/**
+	 * Returns whether the two attributes are equal, considering comparator extensions.
+	 * 
+	 * @param key attribute key
+	 * @param attr1 attribute value
+	 * @param attr2 attribute value to compare to, possibly <code>null</code>
+	 * @return whether equivalent
+	 */
+	protected static boolean compareAttribute(String key, Object attr1, Object attr2) {
+		if (attr2 == null) {
+			return false;
+		}
+		Comparator comp = fgLaunchManager.getComparator(key);
+		if (comp == null) {
+			if (fgIsSun14x) {
+				if(attr2 instanceof String & attr1 instanceof String) {
+					// this is a hack for bug 110215, on SUN 1.4.x, \r
+					// is stripped off when the stream is written to the
+					// DOM
+					// this is not the case for 1.5.x, so to be safe we
+					// are stripping \r off all strings before we
+					// compare for equality
+					attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+					attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+				}
+			}
+			if (!attr1.equals(attr2)) {
+				return false;
+			}
+		} else {
+			if (comp.compare(attr1, attr2) != 0) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 	/**
