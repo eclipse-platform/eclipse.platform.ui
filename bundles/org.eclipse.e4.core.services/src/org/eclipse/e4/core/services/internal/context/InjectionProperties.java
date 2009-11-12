@@ -20,13 +20,6 @@ public class InjectionProperties {
 
 	private Class qualifier;
 
-	public InjectionProperties(Object[] properties) {
-		super();
-		this.inject = ((Boolean) properties[0]).booleanValue();
-		this.propertyToInject = (String) properties[1];
-		this.optional = ((Boolean) properties[2]).booleanValue();
-	}
-
 	public InjectionProperties(boolean inject, String propertyToInject, boolean optional) {
 		super();
 		this.inject = inject;
