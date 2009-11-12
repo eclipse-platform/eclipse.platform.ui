@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -64,40 +64,11 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * saved to the parent working copy and the parent working copy is returned without
 	 * effecting the original launch configuration.
 	 * </p>
-	 * <p>
-	 * Equivalent to #doSave(UPDATE_NONE).
-	 * </p>
 	 * @return handle to saved launch configuration
 	 * @exception CoreException if an exception occurs while 
 	 *  writing this configuration to its underlying file.
-	 * @see #doSave(int)
 	 */
 	public ILaunchConfiguration doSave() throws CoreException;
-	
-	/**
-	 * Saves this working copy to its underlying file and returns
-	 * a handle to the resulting launch configuration.
-	 * Has no effect if this configuration does not need saving.
-	 * Creates the underlying file if not yet created.
-	 * <p>
-	 * Since 3.3, if this is a nested working copy, the contents of this working copy are
-	 * saved to the parent working copy and the parent working copy is returned without
-	 * effecting the original launch configuration.
-	 * </p>
-	 * <p>
-	 * Updates any affected template children based on the given flag. When a working
-	 * copy is renamed or moved to a new location, template children's back pointers
-	 * will be updated to refer the proper configuration.
-	 * </p>
-	 * @param flag one of {@link ILaunchConfiguration#UPDATE_NONE} or
-	 *  {@link ILaunchConfiguration#UPDATE_TEMPLATE_CHILDREN}
-	 * @return handle to saved launch configuration
-	 * @exception CoreException if an exception occurs while 
-	 *  writing this configuration or any of its affected template children
-	 *  to underlying storage
-	 * @since 3.6
-	 */
-	public ILaunchConfiguration doSave(int flag) throws CoreException;	
 			
 	/**
 	 * Sets the integer-valued attribute with the given name.  
@@ -292,35 +263,4 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * @since 3.3
 	 */
 	public ILaunchConfigurationWorkingCopy getParent();
-	
-	/**
-	 * Copies all attributes from the given template to this working.
-	 * Overwrites any existing attributes with the same key.
-	 * 
-	 * @param template configuration template
-	 * @exception CoreException if unable to retrieve attributes from the template
-	 * @since 3.6
-	 */
-	public void copyAttributes(ILaunchConfiguration template) throws CoreException;
-	
-	/**
-	 * Sets the template that this configuration is based on, possibly <code>null</code>,
-	 * and optionally copies attributes from the template to this working copy.
-	 * <p>
-	 * When the specified template is <code>null</code>, this working copy is no longer
-	 * associated with any template.
-	 * </p>
-	 * @param template template or <code>null</code>
-	 * @param copy whether to copy attributes from the template to this working copy. Has
-	 *  no effect when template is <code>null</code>
-	 * @exception CoreException if
-	 * 	<ul>
-	 *  <li>unable to generate a memento for the given configuration
-	 * 	 or copy its attributes</li>
-	 *  <li>if attempting to set a template attribute on an existing template - templates
-	 *   cannot be nested</li>
-	 *  </ul>
-	 * @since 3.6
-	 */
-	public void setTemplate(ILaunchConfiguration template, boolean copy) throws CoreException;
 }

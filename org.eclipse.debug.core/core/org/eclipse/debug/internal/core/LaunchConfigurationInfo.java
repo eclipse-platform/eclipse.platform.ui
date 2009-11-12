@@ -59,7 +59,6 @@ public class LaunchConfigurationInfo {
 	private static final String INT_ATTRIBUTE = "intAttribute"; //$NON-NLS-1$
 	private static final String STRING_ATTRIBUTE = "stringAttribute"; //$NON-NLS-1$
 	private static final String TYPE = "type"; //$NON-NLS-1$
-	private static final String TEMPLATE = "template"; //$NON-NLS-1$
 	
 	/**
 	 * This configurations attribute table. Keys are <code>String</code>s and
@@ -72,16 +71,6 @@ public class LaunchConfigurationInfo {
 	 * This launch configuration's type
 	 */
 	private ILaunchConfigurationType fType;
-	
-	/**
-	 * Whether this configuration is a template
-	 */
-	private boolean fIsTemplate = false;
-	
-	/**
-	 * Static access to the launch manager.
-	 */
-	private static LaunchManager fgLaunchManager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager(); 
 	
 	/**
 	 * Whether running on Sun 1.4 VM - see bug 110215
@@ -265,16 +254,6 @@ public class LaunchConfigurationInfo {
 	}
 	
 	/**
-	 * Returns the raw object from the attribute table or <code>null</code> if none.
-	 * 
-	 * @param key attribute key
-	 * @return raw attribute value 
-	 */
-	protected Object getObjectAttribute(String key) {
-		return getAttributeTable().get(key);
-	}
-	
-	/**
 	 * Returns the <code>java.util.Map</code> attribute with the given key or
 	 * the given default value if undefined.
 	 * 
@@ -328,7 +307,6 @@ public class LaunchConfigurationInfo {
 		LaunchConfigurationInfo copy = new LaunchConfigurationInfo();
 		copy.setType(getType());
 		copy.setAttributeTable(getAttributes());
-		copy.setTemplate(isTemplate());
 		return copy;
 	}
 	
@@ -378,9 +356,6 @@ public class LaunchConfigurationInfo {
 		doc.appendChild(configRootElement);
 		
 		configRootElement.setAttribute(TYPE, getType().getIdentifier()); 
-		if (isTemplate()) {
-			configRootElement.setAttribute(TEMPLATE, Boolean.TRUE.toString());
-		}
 		
 		Iterator keys = getAttributeTable().keySet().iterator();
 		while (keys.hasNext()) {
@@ -531,13 +506,6 @@ public class LaunchConfigurationInfo {
 				);
 		}
 		setType(type);
-		
-		String template = root.getAttribute(TEMPLATE);
-		boolean is = false;
-		if (template != null && template.length() > 0) {
-			is = Boolean.valueOf(template).booleanValue();
-		}
-		setTemplate(is);
 		
 		NodeList list = root.getChildNodes();
 		Node node = null;
@@ -751,56 +719,42 @@ public class LaunchConfigurationInfo {
 	 * @return whether the two attribute maps are equal
 	 */
 	protected boolean compareAttributes(TreeMap map1, TreeMap map2) {
+		LaunchManager manager = (LaunchManager)DebugPlugin.getDefault().getLaunchManager();
 		if (map1.size() == map2.size()) {
 			Iterator attributes = map1.keySet().iterator();
 			while (attributes.hasNext()) {
 				String key = (String)attributes.next();
 				Object attr1 = map1.get(key);
 				Object attr2 = map2.get(key);
-				if (!compareAttribute(key, attr1, attr2)) {
+				if (attr2 == null) {
 					return false;
+				}
+				Comparator comp = manager.getComparator(key);
+				if (comp == null) {
+					if (fgIsSun14x) {
+						if(attr2 instanceof String & attr1 instanceof String) {
+							// this is a hack for bug 110215, on SUN 1.4.x, \r
+							// is stripped off when the stream is written to the
+							// DOM
+							// this is not the case for 1.5.x, so to be safe we
+							// are stripping \r off all strings before we
+							// compare for equality
+							attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+							attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
+						}
+					}
+					if (!attr1.equals(attr2)) {
+						return false;
+					}
+				} else {
+					if (comp.compare(attr1, attr2) != 0) {
+						return false;
+					}
 				}
 			}
 			return true;	
 		}
 		return false;
-	}
-	
-	/**
-	 * Returns whether the two attributes are equal, considering comparator extensions.
-	 * 
-	 * @param key attribute key
-	 * @param attr1 attribute value
-	 * @param attr2 attribute value to compare to, possibly <code>null</code>
-	 * @return whether equivalent
-	 */
-	protected static boolean compareAttribute(String key, Object attr1, Object attr2) {
-		if (attr2 == null) {
-			return false;
-		}
-		Comparator comp = fgLaunchManager.getComparator(key);
-		if (comp == null) {
-			if (fgIsSun14x) {
-				if(attr2 instanceof String & attr1 instanceof String) {
-					// this is a hack for bug 110215, on SUN 1.4.x, \r
-					// is stripped off when the stream is written to the
-					// DOM
-					// this is not the case for 1.5.x, so to be safe we
-					// are stripping \r off all strings before we
-					// compare for equality
-					attr1 = ((String)attr1).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-					attr2 = ((String)attr2).replaceAll("\\r", ""); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-			}
-			if (!attr1.equals(attr2)) {
-				return false;
-			}
-		} else {
-			if (comp.compare(attr1, attr2) != 0) {
-				return false;
-			}
-		}
-		return true;
 	}
 	
 	/**
@@ -835,25 +789,6 @@ public class LaunchConfigurationInfo {
 			return fAttributes.remove(attributeName);
 		}
 		return null;
-	}
-	
-	/**
-	 * Sets whether this info is a template.
-	 * 
-	 * @param isTemplate
-	 * @throws CoreException
-	 */
-	void setTemplate(boolean isTemplate) {
-		fIsTemplate = isTemplate;
-	}	
-	
-	/**
-	 * Returns whether this info is a template.
-	 * 
-	 * @return whether a template
-	 */
-	boolean isTemplate() {
-		return fIsTemplate;
 	}
 }
 

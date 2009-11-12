@@ -17,11 +17,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
@@ -716,74 +714,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 	 */
 	public Object removeAttribute(String attributeName) {
 		return getInfo().removeAttribute(attributeName);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#copyAttributes(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public void copyAttributes(ILaunchConfiguration template) throws CoreException {
-		Map map = template.getAttributes();
-		Iterator iterator = map.entrySet().iterator();
-		LaunchConfigurationInfo info = getInfo();
-		while (iterator.hasNext()) {
-			Entry entry = (Entry) iterator.next();
-			String attr = (String) entry.getKey();
-			info.setAttribute(attr, entry.getValue());
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#setTemplate(org.eclipse.debug.core.ILaunchConfiguration, boolean)
-	 */
-	public void setTemplate(ILaunchConfiguration template, boolean copy) throws CoreException {
-		if (template != null && !template.isTemplate()) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_8));
-		}
-		if (template != null && template.isWorkingCopy()) {
-			throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_6));
-		}
-		if (template == null) {
-			removeAttribute(ATTR_TEMPLATE);
-		} else {
-			if (isTemplate()) {
-				throw new CoreException(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugCoreMessages.LaunchConfigurationWorkingCopy_7));
-			}
-			if (copy) {
-				copyAttributes(template);
-			}
-			setAttribute(ATTR_TEMPLATE, template.getMemento());
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationWorkingCopy#doSave(int)
-	 */
-	public ILaunchConfiguration doSave(int flag) throws CoreException {
-		ILaunchConfiguration[] children = null;
-		if (UPDATE_TEMPLATE_CHILDREN == flag) {
-			if (!isNew() && isMoved() && getParent() == null) {
-				children = getOriginal().getTemplateChildren();
-			}
-		}
-		ILaunchConfiguration saved = doSave();
-		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				ILaunchConfigurationWorkingCopy wc = children[i].getWorkingCopy();
-				wc.setTemplate(saved, false);
-				wc.doSave();
-			}
-		}
-		return saved;
-	}
-	
-	/**
-	 * Sets whether this working copy is a template.
-	 * 
-	 * @param template whether a template
-	 * @since 3.6
-	 */
-	void setTemplate(boolean template) {
-		getInfo().setTemplate(template);
 	}
 }
 

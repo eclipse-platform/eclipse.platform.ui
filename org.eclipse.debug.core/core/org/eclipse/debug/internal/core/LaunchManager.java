@@ -1108,8 +1108,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 */
 	protected synchronized String[] getAllSortedConfigNames() {
 		if (fSortedConfigNames == null) {
-			List collection = getAllLaunchConfigurations();
-			ILaunchConfiguration[] configs = (ILaunchConfiguration[]) collection.toArray(new ILaunchConfiguration[collection.size()]);
+			ILaunchConfiguration[] configs = getLaunchConfigurations();
 			fSortedConfigNames = new String[configs.length];
 			for (int i = 0; i < configs.length; i++) {
 				fSortedConfigNames[i] = configs[i].getName();
@@ -1377,53 +1376,26 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	/**
 	 * @see ILaunchManager#getLaunchConfigurations()
 	 */
-	public synchronized ILaunchConfiguration[] getLaunchConfigurations() throws CoreException {
-		return getLaunchConfigurations(ILaunchConfiguration.CONFIGURATION);
-	}	
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchConfigurations(int)
-	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(int kinds) throws CoreException {
+	public synchronized ILaunchConfiguration[] getLaunchConfigurations() {
 		List allConfigs = getAllLaunchConfigurations();
-		if (((kinds & ILaunchConfiguration.CONFIGURATION) > 0) && ((kinds & ILaunchConfiguration.TEMPLATE) > 0)) {
-			// all kinds
-			return (ILaunchConfiguration[])allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
-		} else {
-			List select = new ArrayList(allConfigs.size());
-			Iterator iterator = allConfigs.iterator();
-			while (iterator.hasNext()) {
-				ILaunchConfiguration config = (ILaunchConfiguration) iterator.next();
-				if ((config.getKind() & kinds) > 0) {
-					select.add(config);
-				}
-			}
-			return (ILaunchConfiguration[]) select.toArray(new ILaunchConfiguration[select.size()]);
-		}
-	}
+		return (ILaunchConfiguration[])allConfigs.toArray(new ILaunchConfiguration[allConfigs.size()]);
+	}	
 	
 	/**
 	 * @see ILaunchManager#getLaunchConfigurations(ILaunchConfigurationType)
 	 */
 	public synchronized ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException {
-		return getLaunchConfigurations(type, ILaunchConfiguration.CONFIGURATION);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchManager#getLaunchConfigurations(org.eclipse.debug.core.ILaunchConfigurationType, int)
-	 */
-	public synchronized ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type, int kinds) throws CoreException {
 		Iterator iter = getAllLaunchConfigurations().iterator();
 		List configs = new ArrayList();
 		ILaunchConfiguration config = null;
 		while (iter.hasNext()) {
 			config = (ILaunchConfiguration)iter.next();
-			if (config.getType().equals(type) && ((config.getKind() & kinds) > 0)) {
+			if (config.getType().equals(type)) {
 				configs.add(config);
 			}
 		}
 		return (ILaunchConfiguration[])configs.toArray(new ILaunchConfiguration[configs.size()]);
-	}	
+	}
 	
 	/**
 	 * Returns all launch configurations that are stored as resources

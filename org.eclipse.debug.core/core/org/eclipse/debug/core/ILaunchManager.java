@@ -128,7 +128,7 @@ public interface ILaunchManager {
 	 * @param namePrefix the String that the returned name must begin with
 	 * @return launch configuration name
 	 * @since 2.0
-	 * @deprecated since 3.6 clients should use the {@link #generateLaunchConfigurationName(String)} method which
+	 * @deprecated since 3.5 clients should use the {@link #generateLaunchConfigurationName(String)} method which
 	 * will perform validation of the name and correct unsupported name parts. 
 	 */
 	public String generateUniqueLaunchConfigurationNameFrom(String namePrefix);
@@ -207,9 +207,7 @@ public interface ILaunchManager {
 	 * in the specified file. This method does not check if the specified <code>IFile</code> is 
 	 * a launch configuration file or that it exists in the local or
 	 * remote file system.
-	 * <p>
-	 * Since 3.6, the returned configuration may be a launch configuration template.
-	 * </p>
+	 * 
 	 * @param file launch configuration file
 	 * @return a handle to the launch configuration contained
 	 *  in the specified file
@@ -219,9 +217,7 @@ public interface ILaunchManager {
 	/**
 	 * Returns a handle to the launch configuration specified by
 	 * the given memento. The configuration may not exist.
-	 * <p>
-	 * Since 3.6, the returned configuration may be a launch configuration template.
-	 * </p>
+	 * 
 	 * @param memento launch configuration memento
 	 * @return a handle to the launch configuration specified by
 	 *  the given memento
@@ -233,62 +229,22 @@ public interface ILaunchManager {
 	public ILaunchConfiguration getLaunchConfiguration(String memento) throws CoreException;
 	/**
 	 * Returns all launch configurations defined in the workspace.
-	 * <p>
-	 * Does not include launch configuration templates. Equivalent to
-	 * #getLaunchConfigurations(ILaunchConfiguration.CONFIGURATION).
-	 * </p>
+	 * 
 	 * @return all launch configurations defined in the workspace
 	 * @exception CoreException if an exception occurs retrieving configurations
 	 * @since 2.0
-	 * @see ILaunchConfigurationType#getTemplates()
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations() throws CoreException;	
-	
-	/**
-	 * Returns all launch configurations defined in the workspace of the specified
-	 * kind(s) (configurations and/or templates).
-	 * 
-	 * @param kinds bit mask of kinds of configurations to consider
-	 * @return all launch configurations defined in the workspace
-	 * @exception CoreException if an exception occurs retrieving configurations
-	 * @since 3.6
-	 * @see ILaunchConfiguration#CONFIGURATION
-	 * @see ILaunchConfiguration#TEMPLATE
-	 * @see ILaunchConfiguration#getKind()
-	 * @see ILaunchConfigurationType#getTemplates()
-	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(int kinds) throws CoreException;	
-	
 	/**
 	 * Returns all launch configurations of the specified type defined in the workspace
-	 * <p>
-	 * Does not include launch configuration templates.
-	 * </p>
+	 * 
 	 * @param type a launch configuration type
 	 * @return all launch configurations of the specified type defined in the workspace
 	 * @exception CoreException if an error occurs while retrieving
 	 *  a launch configuration
 	 * @since 2.0
-	 * @see ILaunchConfigurationType#getTemplates()
 	 */
 	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type) throws CoreException;
-	
-	/**
-	 * Returns all launch configurations of the specified type defined in the workspace
-	 * of the specified kind(s) (configurations and/or templates).
-	 * 
-	 * @param type a launch configuration type
-	 * @param kinds bit mask of kinds of configurations to consider
-	 * @return all launch configurations of the specified type defined in the workspace
-	 * @exception CoreException if an error occurs while retrieving
-	 *  a launch configuration
-	 * @since 3.6
-	 * @see ILaunchConfiguration#CONFIGURATION
-	 * @see ILaunchConfiguration#TEMPLATE
-	 * @see ILaunchConfiguration#getKind()
-	 * @see ILaunchConfigurationType#getTemplates()
-	 */
-	public ILaunchConfiguration[] getLaunchConfigurations(ILaunchConfigurationType type, int kinds) throws CoreException;	
 	
 	/**
 	 * Returns the launch configuration type extension with the specified

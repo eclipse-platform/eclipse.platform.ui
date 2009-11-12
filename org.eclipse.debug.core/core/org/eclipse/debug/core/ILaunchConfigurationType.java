@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,7 +276,7 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * When <code>container</code> is </code>null</code>, the configuration
 	 * will reside locally in the metadata area.
 	 * Note: a launch configuration is not actually created until the working copy is saved.
-	 *
+	 * 
 	 * @param container the container in which the new configuration will
 	 *  reside, or <code>null</code> if the configuration should reside
 	 *  locally with the metadata.
@@ -287,25 +287,6 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 *  reason
 	 */
 	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name) throws CoreException;
-	
-	/**
-	 * Returns a new launch configuration template working copy of this type,
-	 * that resides in the specified container, with the given name.
-	 * When <code>container</code> is </code>null</code>, the configuration
-	 * will reside locally in the metadata area.
-	 * Note: a launch configuration is not actually created until the working copy is saved.
-	 *
-	 * @param container the container in which the new configuration will
-	 *  reside, or <code>null</code> if the configuration should reside
-	 *  locally with the metadata.
-	 * @param name name for the launch configuration
-	 * @return a new launch configuration working copy template of this type
-	 * @exception CoreException if an instance of this type
-	 *  of launch configuration could not be created for any
-	 *  reason
-	 * @since 3.6
-	 */
-	public ILaunchConfigurationWorkingCopy newTemplate(IContainer container, String name) throws CoreException;	
 	
 	/**
 	 * Returns whether this type of launch configuration supports
@@ -325,36 +306,6 @@ public interface ILaunchConfigurationType extends IAdaptable {
 	 * @return name of contributing plug-in
 	 * @since 3.3
 	 */
-	public String getContributorName();	
-	
-	/**
-	 * Returns all launch configuration templates of the this type, possibly
-	 * an empty collection.
-	 * 
-	 * @return all launch configuration templates of the this type
-	 * @throws CoreException if unable to retrieve the templates 
-	 * @since 3.6
-	 */
-	public ILaunchConfiguration[] getTemplates() throws CoreException;	
-	
-	/**
-	 * Returns a new launch configuration working copy of this type,
-	 * that resides in the specified container, with the given name, initialized
-	 * with values from the given template.
-	 * When <code>container</code> is </code>null</code>, the configuration
-	 * will reside locally in the metadata area.
-	 * Note: a launch configuration is not actually created until the working copy is saved.
-	 * 
-	 * @param container the container in which the new configuration will
-	 *  reside, or <code>null</code> if the configuration should reside
-	 *  locally with the metadata.
-	 * @param name name for the launch configuration
-	 * @param template launch configuration template, or <code>null</code>
-	 * @return a new launch configuration working copy instance of this type
-	 * @exception CoreException if an instance of this type
-	 *  of launch configuration could not be created for any
-	 *  reason
-	 * @since 3.6
-	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, ILaunchConfiguration template) throws CoreException;	
+	public String getContributorName();
+
 }

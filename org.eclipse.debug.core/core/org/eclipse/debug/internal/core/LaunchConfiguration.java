@@ -17,13 +17,10 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Map.Entry;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -110,14 +107,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 * @since 3.3
 	 */
 	public static final String ATTR_PREFERRED_LAUNCHERS = DebugPlugin.getUniqueIdentifier() + ".preferred_launchers"; //$NON-NLS-1$	
-		
-	/**
-	 * Launch configuration attribute storing a memento identifying the template
-	 * this configuration was made from, possibly <code>null</code>.
-	 * 
-	 *  @since 3.6
-	 */
-	public static final String ATTR_TEMPLATE = DebugPlugin.getUniqueIdentifier() + ".ATTR_TEMPLATE"; //$NON-NLS-1$
 	
 	/**
 	 * Status handler to prompt in the UI thread
@@ -312,22 +301,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#delete(int)
-	 */
-	public void delete(int flag) throws CoreException {
-		if (flag == UPDATE_TEMPLATE_CHILDREN && isTemplate()) {
-			// clear back pointers to this configuration
-			ILaunchConfiguration[] children = getTemplateChildren();
-			for (int i = 0; i < children.length; i++) {
-				ILaunchConfigurationWorkingCopy child = children[i].getWorkingCopy();
-				child.setTemplate(null, false);
-				child.doSave();
-			}
-		}
-		delete();
-	}
-	
 	/**
 	 * Returns whether this configuration is equal to the
 	 * given configuration. Two configurations are equal if
@@ -976,69 +949,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 	 */
 	public String toString() {
 		return getName();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getTemplate()
-	 */
-	public ILaunchConfiguration getTemplate() throws CoreException {
-		String memento = getAttribute(ATTR_TEMPLATE, (String)null);
-		if (memento != null) {
-			return new LaunchConfiguration(memento);
-		}
-		return null;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getTemplateChildren()
-	 */
-	public ILaunchConfiguration[] getTemplateChildren() throws CoreException {
-		ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations(getType());
-		List proteges = new ArrayList();
-		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration config = configurations[i];
-			if (this.equals(config.getTemplate())) {
-				proteges.add(config);
-			}
-		}
-		return (ILaunchConfiguration[]) proteges.toArray(new ILaunchConfiguration[proteges.size()]);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#isTemplate()
-	 */
-	public boolean isTemplate() throws CoreException {
-		return getInfo().isTemplate();
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#getKind()
-	 */
-	public int getKind() throws CoreException {
-		if (isTemplate()) {
-			return TEMPLATE;
-		}
-		return CONFIGURATION;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfiguration#findDifferences(java.util.Map)
-	 */
-	public Map findDifferences(Map attributes) throws CoreException {
-		Map result = new HashMap();
-		Set entries = attributes.entrySet();
-		Iterator iterator = entries.iterator();
-		LaunchConfigurationInfo info = getInfo();
-		while (iterator.hasNext()) {
-			Entry entry = (Entry) iterator.next();
-			String key = (String) entry.getKey();
-			Object attr1 = entry.getValue();
-			Object attr2 = info.getObjectAttribute(key);
-			if (!LaunchConfigurationInfo.compareAttribute(key, attr1, attr2)) {
-				result.put(key, attr2);
-			}
-		}
-		return result;
 	}
 	
 }

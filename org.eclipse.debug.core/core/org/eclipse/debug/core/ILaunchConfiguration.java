@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2008 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -90,39 +90,6 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 */
 	public static final String ATTR_SOURCE_LOCATOR_MEMENTO = DebugPlugin.getUniqueIdentifier() + ".source_locator_memento"; //$NON-NLS-1$
 	
-	
-	/**
-	 * Flag indicating that only this configuration is to be modified by an operation.
-	 * Any template children referring to this configuration will not be modified.
-	 * 
-	 * @since 3.6
-	 */
-	public static final int UPDATE_NONE = 0;
-	
-	/**
-	 * Flag indicating that this configuration and any effected template children of this template
-	 * should be updated when this configuration is modified.
-	 * 
-	 * @since 3.6
-	 */
-	public static final int UPDATE_TEMPLATE_CHILDREN = 1;
-	
-	/** 
-	 * Type constant (bit mask value 1) which identifies a launch configuration.
-	 * 
-	 * @see #getKind()
-	 * @since 3.6
-	 */
-	public static final int CONFIGURATION = 0x1;
-
-	/**
-	 * Type constant (bit mask value 2) which identifies a template.
-	 * 
-	 * @see #getKind()
-	 * @since 3.6
-	 */
-	public static final int TEMPLATE = 0x2;	
-	
 	/**
 	 * Returns whether the contents of this launch configuration are 
 	 * equal to the contents of the given launch configuration.
@@ -157,9 +124,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * Deletes this launch configuration. This configuration's underlying
 	 * storage is deleted. Has no effect if this configuration
 	 * does not exist.
-	 * <p>
-	 * Equivalent to #delete(UPDATE_NONE)
-	 * </p>
+	 * 
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
 	 * <li>An exception occurs while deleting this configuration's
@@ -167,24 +132,6 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * </ul>
 	 */
 	public void delete() throws CoreException;
-	
-	/**
-	 * Deletes this launch configuration. This configuration's underlying
-	 * storage is deleted. Has no effect if this configuration
-	 * does not exist.
-	 * <p>
-	 * When UPDATE_TEMPLATE_CHILDREN is specified, back pointers to this template
-	 * are cleared in any template children.
-	 * </p>
-	 * @param flag one of UPDATE_NONE or UPDATE_TEMPLATE_CHILDREN
-	 * @exception CoreException if this method fails. Reasons include:
-	 * <ul>
-	 * <li>An exception occurs while deleting this configuration's
-	 *  underlying storage or updating any template children.</li>
-	 * </ul>
-	 * @since 3.6
-	 */
-	public void delete(int flag) throws CoreException;
 	
 	/**
 	 * Returns whether this launch configuration's underlying
@@ -649,62 +596,4 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * @since 3.3
 	 */
 	public boolean isReadOnly();	
-	
-	/**
-	 * Returns the template this launch configuration was created from
-	 * or <code>null</code> if none.
-	 * 
-	 * @return the template this launch configuration was created from
-	 *  or <code>null</code> if none
-	 * @throws CoreException if the template could not be retrieved
-	 *  or no longer exists
-	 * @since 3.6
-	 */
-	public ILaunchConfiguration getTemplate() throws CoreException;
-	
-	/**
-	 * Returns a map of attributes in this launch configuration that are
-	 * different from the specified attributes. Returns an empty map if
-	 * this launch configuration contains equivalent attributes. A <code>null</code>
-	 * value is returned for attributes not contained in this launch configuration.
-	 * 
-	 * @param attributes to compare to
-	 * @return a map of attributes in this launch configuration that 
-	 *  are different from the specified attributes
-	 * @throws CoreException if an exception occurs while comparing
-	 * @since 3.6
-	 */
-	public Map findDifferences(Map attributes) throws CoreException;
-	
-	/**
-	 * Returns whether this configuration is a template.
-	 * 
-	 * @return whether this configuration is a template
-	 * @throws CoreException if unable to determine if this configuration is a template
-	 * 	or if this configuration does not exist
-	 * @since 3.6
-	 */
-	public boolean isTemplate() throws CoreException;
-	
-	/**
-	 * Returns all configurations made from this template, possibly an
-	 * empty collection.
-	 * 
-	 * @return all configurations made from this template
-	 * @throws CoreException
-	 * @since 3.6
-	 */
-	public ILaunchConfiguration[] getTemplateChildren() throws CoreException;
-	
-	/**
-	 * Returns this configuration's kind. One of CONFIGURATION or TEMPLATE.
-	 * 
-	 * @see #CONFIGURATION
-	 * @see #TEMPLATE
-	 * 
-	 * @return this configuration's kind
-	 * @throws CoreException if unable to retrieve this configuration's kind
-	 * @since 3.6
-	 */
-	public int getKind() throws CoreException;
 }

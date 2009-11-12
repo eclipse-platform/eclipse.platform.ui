@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2007 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -487,31 +487,5 @@ public class LaunchConfigurationType extends PlatformObject implements ILaunchCo
 		return fModeCombinations.contains(modes);
 	}
 
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#getTemplates()
-	 */
-	public ILaunchConfiguration[] getTemplates() throws CoreException {
-		return DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(this, ILaunchConfiguration.TEMPLATE);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newTemplate(org.eclipse.core.resources.IContainer, java.lang.String)
-	 */
-	public ILaunchConfigurationWorkingCopy newTemplate(IContainer container, String name) throws CoreException {
-		LaunchConfigurationWorkingCopy wc = new LaunchConfigurationWorkingCopy(container, name, this);
-		wc.setTemplate(true);
-		return wc;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.ILaunchConfigurationType#newInstance(org.eclipse.core.resources.IContainer, java.lang.String, org.eclipse.debug.core.ILaunchConfiguration)
-	 */
-	public ILaunchConfigurationWorkingCopy newInstance(IContainer container, String name, ILaunchConfiguration template) throws CoreException {
-		ILaunchConfigurationWorkingCopy wc = newInstance(container, name);
-		if (template != null) {
-			wc.setTemplate(template, true);
-		}
-		return wc;
-	}
 }
 
