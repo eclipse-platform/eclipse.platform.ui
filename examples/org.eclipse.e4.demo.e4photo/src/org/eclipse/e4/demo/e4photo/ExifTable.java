@@ -106,7 +106,7 @@ public class ExifTable {
 		}
 	}
 
-	@Inject @Optional(true)
+	@Inject @Optional
 	void setPersistedState(@Named("persistedState") String persistedState) {
 		changeSupport.firePropertyChange("persistedState", this.persistedState,
 				this.persistedState = persistedState);

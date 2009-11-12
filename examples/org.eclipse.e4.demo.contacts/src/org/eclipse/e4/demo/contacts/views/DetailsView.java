@@ -201,7 +201,6 @@ public class DetailsView {
 	}
 
 	@Inject
-	@Optional
 	public void setSelection(@Optional @Named(IServiceConstants.SELECTION) Contact contact) {
 		if (contact != null) {
 			if (dirtyable.isDirty()) {
