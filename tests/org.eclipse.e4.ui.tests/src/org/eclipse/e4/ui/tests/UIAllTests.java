@@ -31,13 +31,12 @@ public class UIAllTests extends TestSuite {
 	}
 
 	public UIAllTests() {
+		addTest(StartupTestSuite.suite());
 		addTestSuite(MPartTest.class);
 		addTestSuite(MSaveablePartTest.class);
 		addTestSuite(MWindowTest.class);
 		addTestSuite(MSashTest.class);
 		addTestSuite(HandlerTest.class);
 		addTestSuite(ContextTest.class);
-
-		addTest(StartupTestSuite.suite());
 	}
 }
