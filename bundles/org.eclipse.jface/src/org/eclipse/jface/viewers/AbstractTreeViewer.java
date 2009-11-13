@@ -1544,10 +1544,13 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		Item[] items = getChildren(widget);
 		for (int i = 0; i < items.length; i++) {
 			Item item = items[i];
-			if (getExpanded(item)) {
-				result.add(item);
+			// Disregard dummy nodes (see bug 287765)
+			if (item.getData() != null) {
+				if (getExpanded(item)) {
+					result.add(item);
+				}
+				internalCollectExpandedItems(result, item);
 			}
-			internalCollectExpandedItems(result, item);
 		}
 	}
 
