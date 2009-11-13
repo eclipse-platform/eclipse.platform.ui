@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.2"?>
+<plugin>
+   <extension-point id="org.eclipse.test.registryMulti.FragmentPointA" 
+         name="Multi language registry test FragmentPointA" 
+         schema="schema/FragmentPointA.exsd"/>
+   <extension id="org.eclipse.test.registryMulti.FragmentExtA"
+         name="Multi language registry test Extension A"
+         point="org.eclipse.test.registryMulti.FragmentPointA">
+      <product
+            name="%baseTest"
+            application="Application">
+      </product>
+   </extension>
+</plugin>

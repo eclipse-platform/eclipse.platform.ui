@@ -120,6 +120,28 @@ public interface IExtensionPoint {
 	public String getLabel() throws InvalidRegistryObjectException;
 
 	/**
+	 * When multi-language support is enabled, this method returns a displayable label 
+	 * for this extension point in the specified locale.
+	 * Returns the empty string if no label for this extension point
+	 * is specified in the plug-in manifest file.
+	 * <p> 
+	 * The locale matching tries to find the best match between available translations and 
+	 * the requested locale, falling back to a more generic locale ("en") when the specific 
+	 * locale ("en_US") is not available. 
+	 * </p><p>
+	 * If multi-language support is not enabled, this method is equivalent to the method 
+	 * {@link #getLabel()}.
+	 * </p>
+	 * @param locale the requested locale
+	 * @return a displayable string label for this extension point,
+	 *    possibly the empty string
+	 * @throws InvalidRegistryObjectException if this extension point is no longer valid
+	 * @see IExtensionRegistry#isMultiLanguage()
+	 * @since 3.5
+	 */
+	public String getLabel(String locale) throws InvalidRegistryObjectException;
+
+	/**
 	 * Returns reference to the extension point schema. The schema 
 	 * reference is returned as a URL path relative to the plug-in 
 	 * installation URL. 

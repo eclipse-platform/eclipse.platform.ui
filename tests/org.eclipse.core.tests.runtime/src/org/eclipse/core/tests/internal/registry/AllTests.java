@@ -33,6 +33,7 @@ public class AllTests extends TestCase {
 		suite.addTest(ExtensionRegistryStaticTest.suite()); // test again
 		suite.addTest(RegistryListenerTest.suite());
 		suite.addTest(InputErrorTest.suite());
+		suite.addTest(MultiLanguageTest.suite());
 		return suite;
 	}
 }

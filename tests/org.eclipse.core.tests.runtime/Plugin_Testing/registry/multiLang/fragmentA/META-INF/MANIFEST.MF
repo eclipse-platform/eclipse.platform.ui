@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Multi-language fragment registry test
+Bundle-SymbolicName: org.eclipse.equinox.registry.tests.multilang.fragment; singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Fragment-Host: org.eclipse.equinox.registry.tests.multilang;bundle-version="[1.0.0,2.0.0)"
+Bundle-Vendor: Eclipse.org
+Bundle-Localization: fragment
