@@ -168,6 +168,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				IDocument document= fCachedTextViewer.getDocument();
 				int lineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
 				final StyledText textWidget= fCachedTextViewer.getTextWidget();
+				if (textWidget != null && !textWidget.isFocusControl())
+					textWidget.setFocus();
 				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5 && textWidget != null) {
 					ITextViewerExtension5 extension5= ((ITextViewerExtension5)fCachedTextViewer);
 					// Find model cursor position
@@ -185,8 +187,6 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				} else {
 					fStartLineNumber= lineNumber;
 					fStartLineOffset= document.getLineInformation(fStartLineNumber).getOffset();
-					if (textWidget != null && !textWidget.isFocusControl())
-						textWidget.setFocus();
 					fCachedTextViewer.setSelectedRange(fStartLineOffset, 0);
 				}
 				fCachedViewportSize= getVisibleLinesInViewport();
