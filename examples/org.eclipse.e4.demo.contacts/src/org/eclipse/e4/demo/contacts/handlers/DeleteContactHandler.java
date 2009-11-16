@@ -23,13 +23,13 @@ public class DeleteContactHandler {
 	
 	boolean canExecute(@Named(IServiceConstants.ACTIVE_PART) MContext context) {
 		Contact contact = (Contact) context.getContext().get(
-				IServiceConstants.INPUT);
+				IServiceConstants.SELECTION);
 		return contact != null;
 	}
 
 	void execute(@Named(IServiceConstants.ACTIVE_PART) MContext context) {
 		Contact contact = (Contact) context.getContext().get(
-				IServiceConstants.INPUT);
+				IServiceConstants.SELECTION);
 		ContactsRepositoryFactory.getContactsRepository()
 				.removeContact(contact);
 	}

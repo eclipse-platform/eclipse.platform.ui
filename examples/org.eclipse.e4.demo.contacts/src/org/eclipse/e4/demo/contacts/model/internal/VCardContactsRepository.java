@@ -17,6 +17,8 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -28,8 +30,10 @@ import java.util.List;
 import org.eclipse.core.databinding.observable.list.IObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.runtime.FileLocator;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.demo.contacts.BundleActivatorImpl;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.demo.contacts.model.IContactsRepository;
 import org.eclipse.osgi.internal.signedcontent.Base64;
@@ -42,21 +46,11 @@ public class VCardContactsRepository implements IContactsRepository {
 	private IObservableList contacts;
 
 	public VCardContactsRepository() {
-
-		URL url = FileLocator.find(Platform
-				.getBundle("org.eclipse.e4.demo.contacts"), new Path("vcards"),
-				null);
-
 		List<Contact> contacts = new ArrayList<Contact>();
 		try {
-			URI uri = FileLocator.toFileURL(url).toURI();
-			File directory = new File(uri);
-			for (String file : directory.list()) {
-				if (file.endsWith(".vcf")) {
-					Contact contact = readFromVCard(directory.getAbsolutePath()
-							+ File.separator + file);
-					contacts.add(contact);
-				}
+			for (File file : getContacts()) {
+				Contact contact = readFromVCard(file.getAbsolutePath());
+				contacts.add(contact);
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
@@ -64,6 +58,58 @@ public class VCardContactsRepository implements IContactsRepository {
 		}
 		
 		this.contacts = new WritableList(contacts, null);
+	}
+
+	private File[] getContacts() throws Exception {
+		File[] localContacts = getLocalContacts();
+		if (localContacts.length == 0) {
+			IPath path = BundleActivatorImpl.getInstance().getStateLocation();
+			byte[] buffer = new byte[8192];
+			for (File contact : getStoredContacts()) {
+				FileInputStream inputStream = new FileInputStream(contact);
+				FileOutputStream outputStream = new FileOutputStream(path
+						.append(contact.getName()).toFile());
+				
+				int read = inputStream.read(buffer);
+				while (read != -1) {
+					outputStream.write(buffer, 0, read);
+					read = inputStream.read(buffer);
+				}
+				
+				inputStream.close();
+				outputStream.close();
+			}
+			
+			return getLocalContacts();
+		}
+		return localContacts;
+	}
+
+	private File[] getLocalContacts() {
+		IPath path = BundleActivatorImpl.getInstance().getStateLocation();
+		File directory = path.toFile();
+		return directory.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".vcf");
+			}
+		});
+	}
+
+	private File[] getStoredContacts() throws Exception {
+		URL url = FileLocator.find(Platform
+				.getBundle("org.eclipse.e4.demo.contacts"), new Path("vcards"),
+				null);
+		URI uri = FileLocator.toFileURL(url).toURI();
+		File directory = new File(uri);
+		return directory.listFiles(new FilenameFilter() {
+			public boolean accept(File dir, String name) {
+				return name.endsWith(".vcf");
+			}
+		});
+	}
+
+	private void readContacts() {
+
 	}
 
 	public void addContact(final Contact contact) {
