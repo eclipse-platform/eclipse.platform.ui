@@ -24,6 +24,7 @@ import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
@@ -190,6 +191,21 @@ public class MPartTest extends TestCase {
 
 	public void testMPart_setTooltipDefined() {
 		testMPart_setTooltip("partToolTip", "partToolTip");
+	}
+
+	public void testMPart_getContext() {
+		final MWindow window = createWindowWithOneView("Part Name");
+		wb = new E4Workbench(window, appContext);
+
+		MPartSashContainer container = (MPartSashContainer) window
+				.getChildren().get(0);
+		MPartStack stack = (MPartStack) container.getChildren().get(0);
+		MPart part = stack.getChildren().get(0);
+
+		IPresentationEngine renderer = (IPresentationEngine) appContext
+				.get(IPresentationEngine.class.getName());
+		renderer.removeGui(part);
+		assertNull(part.getContext());
 	}
 
 	private MWindow createWindowWithOneView(String partName) {

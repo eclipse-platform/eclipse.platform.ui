@@ -311,6 +311,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (element instanceof MContext) {
 			MContext ctxt = (MContext) element;
 			IEclipseContext lclContext = ctxt.getContext();
+			ctxt.setContext(null);
 			if (lclContext instanceof IDisposable) {
 				((IDisposable) lclContext).dispose();
 			}
