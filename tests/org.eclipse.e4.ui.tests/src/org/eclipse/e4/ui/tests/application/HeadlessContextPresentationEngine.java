@@ -148,11 +148,11 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		if (element instanceof MContext) {
 			MContext mcontext = (MContext) element;
 			IEclipseContext context = mcontext.getContext();
+
+			mcontext.setContext(null);
 			if (context instanceof IDisposable) {
 				((IDisposable) context).dispose();
 			}
-
-			mcontext.setContext(null);
 		}
 	}
 
