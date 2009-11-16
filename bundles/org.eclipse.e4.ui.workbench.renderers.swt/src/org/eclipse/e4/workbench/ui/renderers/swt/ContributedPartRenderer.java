@@ -11,15 +11,12 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.core.services.IContributionFactory;
-import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
@@ -62,13 +59,6 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 		Object newPart = contributionFactory
 				.create(part.getURI(), localContext);
 		part.setObject(newPart);
-		final IEclipseContext eventLclContext = localContext;
-		newWidget.addDisposeListener(new DisposeListener() {
-			public void widgetDisposed(DisposeEvent e) {
-				if (eventLclContext instanceof IDisposable)
-					((IDisposable) eventLclContext).dispose();
-			}
-		});
 
 		activate(element);
 		return newWidget;
