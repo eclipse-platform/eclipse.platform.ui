@@ -1296,6 +1296,7 @@ class FilterTypeUtil {
 	private Image fileFolderIcon = null;
 	private Image includeIcon = null;
 	private Image excludeIcon = null;
+	private Image inheritableIcon = null;
 
 	FilterTypeUtil() {
 		ImageDescriptor descriptor = AbstractUIPlugin
@@ -1327,11 +1328,17 @@ class FilterTypeUtil {
 				"$nl$/icons/full/obj16/excludeMode_filter.gif"); //$NON-NLS-1$
 		if (descriptor != null)
 			excludeIcon = descriptor.createImage();
+		
+		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
+				IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/obj16/inheritable_filter.gif"); //$NON-NLS-1$
+		if (descriptor != null)
+			inheritableIcon = descriptor.createImage();
 	}
 
 	Image getImage(String string, int i) {
 		if (string.equals(MODE))
-			return new Image[] { includeIcon, excludeIcon }[i];
+			return new Image[] { includeIcon, excludeIcon, inheritableIcon }[i];
 		if (string.equals(TARGET))
 			return new Image[] { fileIcon, folderIcon, fileFolderIcon }[i];
 		return null;
@@ -1714,6 +1721,7 @@ class FilterEditDialog extends TrayDialog {
 						.bind(
 								IDEWorkbenchMessages.ResourceFilterPage_columnFilterInheritable,
 								null));
+		inherited.setImage(util.getImage(FilterTypeUtil.MODE, 2));
 		data = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		data.horizontalSpan = 1;
 		inherited.setLayoutData(data);
