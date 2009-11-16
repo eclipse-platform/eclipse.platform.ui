@@ -68,8 +68,6 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String DeleteResourcesWizard_label_single_project;
 
-	public static String DeleteResourcesWizard_outOfSync;
-
 	public static String DeleteResourcesWizard_page_title;
 
 	public static String DeleteResourcesWizard_project_deleteContents;
@@ -218,8 +216,6 @@ public final class RefactoringUIMessages extends NLS {
 
 	public static String RefactoringHistoryMerger_error_auto_merge;
 
-	public static String RefactoringHistoryOverviewPage_description;
-
 	public static String RefactoringHistoryOverviewPage_title;
 
 	public static String RefactoringHistoryPreviewPage_apply_error;
@@ -251,10 +247,6 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringHistoryWizard_internal_error_description;
 
 	public static String RefactoringHistoryWizard_internal_error_title;
-
-	public static String RefactoringHistoryWizard_no_refactorings_error;
-
-	public static String RefactoringHistoryWizard_no_refactorings_message;
 
 	public static String RefactoringHistoryWizard_one_refactoring_undone;
 
@@ -293,10 +285,6 @@ public final class RefactoringUIMessages extends NLS {
 	public static String RefactoringPropertyPage_confirm_delete_pattern_singular;
 
 	public static String RefactoringPropertyPage_confirm_delete_pattern_plural;
-
-	public static String RefactoringPropertyPage_edit_caption;
-
-	public static String RefactoringPropertyPage_edit_message;
 
 	public static String RefactoringPropertyPage_project_pattern;
 
@@ -359,8 +347,6 @@ public final class RefactoringUIMessages extends NLS {
 	public static String ShowRefactoringHistoryControl_delete_all_label;
 
 	public static String ShowRefactoringHistoryControl_delete_label;
-
-	public static String ShowRefactoringHistoryControl_edit_label;
 
 	public static String UndoManagerAction_internal_error_message;
 

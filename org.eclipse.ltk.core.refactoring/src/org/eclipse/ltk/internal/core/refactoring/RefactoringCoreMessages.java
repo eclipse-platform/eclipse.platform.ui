@@ -32,8 +32,6 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String DefaultRefactoringDescriptor_cannot_create_refactoring;
 
-	public static String MoveResourceChange_error_destination_already_exists;
-
 	public static String MoveResourceChange_name;
 
 	public static String MoveResourceChange_progress_delete_destination;
@@ -73,10 +71,6 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String MoveResourcesDescriptor_unnamed_descriptor;
 
 	public static String MoveResourcesProcessor_warning_destination_already_exists;
-
-	public static String DeleteFileOrFolderChange_deleting;
-
-	public static String DeleteFileOrFolderChange_name;
 
 	public static String DeleteResourceChange_deleting;
 
@@ -246,8 +240,6 @@ public final class RefactoringCoreMessages extends NLS {
 
 	public static String TextChanges_error_read_only;
 
-	public static String TextChanges_error_unsaved_changes;
-
 	public static String UndoDeleteResourceChange_already_exists;
 
 	public static String UndoDeleteResourceChange_cannot_restore;
@@ -265,8 +257,6 @@ public final class RefactoringCoreMessages extends NLS {
 	public static String UndoManager2_no_change;
 
 	public static String UnknownRefactoringDescriptor_cannot_create_refactoring;
-
-	public static String UnknownRefactoringDescriptor_initialization_error;
 
 	public static String ValidateEditChecker_failed;
 
