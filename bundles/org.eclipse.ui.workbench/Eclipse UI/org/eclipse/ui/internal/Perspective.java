@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -2110,6 +2109,10 @@ public class Perspective {
 		// Whatever we're doing, make the current editor stack match it
 		editorStack.setStateLocal(editorAreaState);
 		
+		// Override the visibility of the EA's min.max buttons based on the
+		// 'fixed' state
+		editorStack.showMinMax(!isFixedLayout());
+
 		// If it's minimized then it's in the trim
 		if (editorAreaState == IStackPresentationSite.STATE_MINIMIZED) {
 			// Hide the editor area and show its trim 
