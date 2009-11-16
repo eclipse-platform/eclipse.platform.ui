@@ -308,7 +308,7 @@ public final class AntLaunchingUtil {
 		StringTokenizer tokenizer = new StringTokenizer(delimString, delim);
 		String[] results = new String[tokenizer.countTokens()];
 		for (int i = 0; i < results.length; i++) {
-			results[i] = tokenizer.nextToken();
+			results[i] = tokenizer.nextToken().trim();
 		}
 
 		return results;

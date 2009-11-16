@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,20 +61,32 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	 */
 	private void processString(String buildFileName) {
 		IFile buildFile = AntUtil.getFileForLocation(buildFileName, null);
-		if (buildFile == null || !buildFileName.toLowerCase().endsWith(".xml")) { //$NON-NLS-1$
+		if (!acceptBuildFile(buildFile.getName())) {
 			return;
 		}
-		buildFileName = buildFile.getFullPath().toString();
+		String name = buildFile.getFullPath().toString();
 		AntProjectNode[] existingProjects = view.getProjects();
 		for (int j = 0; j < existingProjects.length; j++) {
 			AntProjectNodeProxy existingProject = (AntProjectNodeProxy)existingProjects[j];
-			if (existingProject.getBuildFileName().equals(buildFileName)) {
+			if (existingProject.getBuildFileName().equals(name)) {
 				// Don't parse projects that have already been added.
 				return;
 			}
 		}
-		AntProjectNode project = new AntProjectNodeProxy(buildFileName);
+		AntProjectNode project = new AntProjectNodeProxy(name);
 		view.addProject(project);
+	}
+	
+	/**
+	 * Returns if the given build file name is known as a build file
+	 * @param name
+	 * @return true if the name of the build file is known as a build file, false otherwise
+	 */
+	boolean acceptBuildFile(String name) {
+		if(name != null) {
+			return name.toLowerCase().endsWith(".xml") || AntUtil.isKnownBuildfileName(name); //$NON-NLS-1$
+		}
+		return false;
 	}
 	
 	/* (non-Javadoc)

@@ -17,14 +17,12 @@ import java.util.List;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.ant.internal.ui.AntUtil;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
-import org.eclipse.ant.internal.ui.IAntUIPreferenceConstants;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
-import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -45,7 +43,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.ILaunchShortcut2;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.jface.dialogs.ErrorDialog;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -85,10 +82,9 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
 					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
-						if (resource.getType() == IResource.FILE) {
-							resource = resource.getParent();
+						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
+							resource = null;
 						}
-						resource = findBuildFile((IContainer)resource);
 					} 
 					if (resource != null) {
 						IFile file = (IFile) resource;
@@ -222,7 +218,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			buffer.append(']');
 		}
 		
-		String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(buffer.toString());
+		String name= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(buffer.toString());
 		return name;
 	}
 	
@@ -304,48 +300,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			DebugUITools.launch(configuration, mode);
 		}
     }
-
-    /**
-	 * Walks the file hierarchy looking for a build file.
-	 * Returns the first build file found that matches the 
-	 * search criteria.
-	 */
-	private IFile findBuildFile(IContainer parent) {
-		String[] names= getBuildFileNames();
-		if (names == null) {
-			return null;
-		}
-		IContainer lparent = parent;
-		IResource file= null;
-		while (file == null || file.getType() != IResource.FILE) {		
-			for (int i = 0; i < names.length; i++) {
-				String string = names[i];
-				file= lparent.findMember(string);
-				if (file != null && file.getType() == IResource.FILE) {
-					break;
-				}
-			}
-			lparent = lparent.getParent();
-			if (lparent == null) {
-				return null;
-			}
-		}
-		return (IFile)file;
-	}
-	
-	/**
-	 * Returns an array of build file names from the ant preference store
-	 * @return an array of build file names
-	 */
-	private String[] getBuildFileNames() {
-		IPreferenceStore prefs= AntUIPlugin.getDefault().getPreferenceStore();
-		String buildFileNames= prefs.getString(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES);
-		if (buildFileNames.length() == 0) {
-			//the user has not specified any names to look for
-			return null;
-		}
-		return AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
-	}
 	
 	/**
 	 * Creates and returns a default launch configuration for the given file.
@@ -481,8 +435,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			return;
 		}
 		if (file != null) {
-			file = findBuildFile(file.getParent());
-			if (file != null) {
+			if(AntUtil.isKnownBuildfileName(file.getName())) {
 				launch(file.getFullPath(), file.getProject(), mode, null);
 				return;
 			}
@@ -531,17 +484,14 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
 					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
-						if (resource.getType() == IResource.FILE) {
-							resource = resource.getParent();
+						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
+							return null;
 						}
-						resource = findBuildFile((IContainer)resource);
 					} 
-					if (resource != null) {
-						IPath location = ((IFile) resource).getLocation();
-						if (location != null) {
-							List list = collectConfigurations(location);
-							return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
-						}
+					IPath location = ((IFile) resource).getLocation();
+					if (location != null) {
+						List list = collectConfigurations(location);
+						return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
 					}
 				}
 			}
@@ -583,10 +533,9 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
 					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
-						if (resource.getType() == IResource.FILE) {
-							resource = resource.getParent();
+						if(AntUtil.isKnownBuildfileName(resource.getName())) {
+							return resource;
 						}
-						resource = findBuildFile((IContainer)resource);
 					} 
 					return resource;
 				}

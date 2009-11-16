@@ -50,6 +50,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.ui.console.FileLink;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.swt.SWT;
@@ -576,4 +577,36 @@ public final class AntUtil {
     public static boolean isSeparateJREAntBuild(ILaunchConfiguration configuration) {
     	return AntLaunchingUtil.isSeparateJREAntBuild(configuration);
     }
+
+	/**
+	 * Returns an array of build file names from the ant preference store
+	 * @return an array of build file names
+	 * @since 3.6
+	 */
+	public static String[] getKnownBuildfileNames() {
+		IPreferenceStore prefs = AntUIPlugin.getDefault().getPreferenceStore();
+		String buildFileNames = prefs.getString(IAntUIPreferenceConstants.ANT_FIND_BUILD_FILE_NAMES);
+		if (buildFileNames.length() == 0) {
+			//the user has not specified any names to look for
+			return null;
+		}
+		return parseString(buildFileNames, ","); //$NON-NLS-1$
+	}
+
+	/**
+	 * Returns if the given file is a known build file name,
+	 * based on the given names from the Ant &gt; Names preference 
+	 * @param filename
+	 * @return true if the name of the file is given in the Ant &gt; Names preference, false otherwise
+	 * @since 3.6 
+	 */
+	public static boolean isKnownBuildfileName(String filename) {
+		String[] names = getKnownBuildfileNames();
+		for (int i = 0; i < names.length; i++) {
+			if(names[i].equalsIgnoreCase(filename)) {
+				return true;
+			}
+		}
+		return false;
+	}
 }
