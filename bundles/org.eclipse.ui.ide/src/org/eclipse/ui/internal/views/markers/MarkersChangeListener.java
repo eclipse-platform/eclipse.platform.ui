@@ -553,6 +553,10 @@ class MarkersChangeListener implements IResourceChangeListener {
 		preBuildTime = -1;
 		//we want to update immediately
 		lastUpdateTime=-1;
+		//Fix for Bug 294959, if there no changes for a while before
+		//or after the post build,assume we have changed, and schedule a
+		//build.//leave room for cancellation though:short-delay*5
+		scheduleUpdate(SHORT_DELAY*5, new boolean[]{true,true,true});
 	}
 
 	/**
