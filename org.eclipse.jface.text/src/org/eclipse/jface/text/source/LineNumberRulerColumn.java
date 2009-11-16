@@ -167,11 +167,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				// select line
 				IDocument document= fCachedTextViewer.getDocument();
 				int lineNumber= fParentRuler.getLineOfLastMouseButtonActivity();
-				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5
-						&& fCachedTextViewer.getTextWidget() != null) {
+				final StyledText textWidget= fCachedTextViewer.getTextWidget();
+				if (expandExistingSelection && fCachedTextViewer instanceof ITextViewerExtension5 && textWidget != null) {
 					ITextViewerExtension5 extension5= ((ITextViewerExtension5)fCachedTextViewer);
 					// Find model cursor position
-					int widgetCaret= fCachedTextViewer.getTextWidget().getCaretOffset();
+					int widgetCaret= textWidget.getCaretOffset();
 					int modelCaret= extension5.widgetOffset2ModelOffset(widgetCaret);
 					// Find model selection range
 					Point selection= fCachedTextViewer.getSelectedRange();
@@ -185,6 +185,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				} else {
 					fStartLineNumber= lineNumber;
 					fStartLineOffset= document.getLineInformation(fStartLineNumber).getOffset();
+					if (textWidget != null && !textWidget.isFocusControl())
+						textWidget.setFocus();
 					fCachedTextViewer.setSelectedRange(fStartLineOffset, 0);
 				}
 				fCachedViewportSize= getVisibleLinesInViewport();
