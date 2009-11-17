@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,18 +11,39 @@
 package org.eclipse.team.tests.ccvs.core.cvsresources;
 
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
-import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IContainer;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.team.core.RepositoryProvider;
+import org.eclipse.team.core.Team;
 import org.eclipse.team.core.TeamException;
-import org.eclipse.team.internal.ccvs.core.*;
+import org.eclipse.team.internal.ccvs.core.CVSException;
+import org.eclipse.team.internal.ccvs.core.CVSProviderPlugin;
+import org.eclipse.team.internal.ccvs.core.CVSTag;
+import org.eclipse.team.internal.ccvs.core.CVSTeamProvider;
+import org.eclipse.team.internal.ccvs.core.ICVSRunnable;
 import org.eclipse.team.internal.ccvs.core.resources.EclipseSynchronizer;
-import org.eclipse.team.internal.ccvs.core.syncinfo.*;
+import org.eclipse.team.internal.ccvs.core.syncinfo.FolderSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.MutableResourceSyncInfo;
+import org.eclipse.team.internal.ccvs.core.syncinfo.ResourceSyncInfo;
 import org.eclipse.team.internal.ccvs.core.util.SyncFileWriter;
 import org.eclipse.team.tests.ccvs.core.CVSTestSetup;
 import org.eclipse.team.tests.ccvs.core.EclipseTest;
@@ -364,7 +385,7 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	}
 
 	/**
-	 * TODO: should use chached ignores somehow
+	 * TODO: should use cached ignores somehow
 	 * @param container
 	 * @return String[]
 	 * @throws CVSException
@@ -380,12 +401,180 @@ public class EclipseSynchronizerTest extends EclipseTest {
 	 * Test get/set ignores for things that should not support it.
 	 * Assumes resource does not already have ignores.
 	 */
-	private void _testIgnoresInvalid(IContainer container) throws CVSException {
+	private void _testIgnoresInvalid(IContainer container) {
 		try {
 			sync.addIgnored(container, "*.xyz");
 			fail("Expected CVSException");
 		} catch (CVSException e) {
 		}
+	}
+	
+	public void testIgnorePatterns() throws CoreException {
+		IProject project = getUniqueTestProject(getName());
+		shareProject(project);
+		// a
+		// a.doc
+		// a.txt
+		// -b
+		// -b.doc
+		// -b.txt
+		// --c
+		// --c.doc
+		// --c.txt
+		// ---d
+		// ---d.doc
+		// ---d.txt
+		// -c
+		// -c.doc
+		// -c.txt
+		// --d
+		// --d.doc
+		// --d.txt
+		buildResources(project, new String[] { "a/", "a.txt", "a.doc", "a/b/",
+				"a/b.txt", "a/b.doc", "a/b/c/", "a/b/c.txt", "a/b/c.doc",
+				"a/b/c/d/", "a/b/c/d.txt", "a/b/c/d.doc", "a/c/", "a/c/c.txt",
+				"a/c/c.doc", "a/c/d/", "a/c/d.txt", "a/c/d.doc" }, false);
+
+		// don't forget about project name in pattern e.g. '/{unique-project-name}/a/b/c/*.txt'
+		
+		Team.setAllIgnores(new String[] { "/*/c/*" }, new boolean[] { true });
+		assertFalse(getCVSResource(project.getFolder("a/b/c")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("a/b/c.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("a/b/c/d")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("a/b/c/d.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("a/c/d")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("a/c/d.txt")).isIgnored());
+		
+		Team.setAllIgnores(new String[] { "/" + project.getName() + "/?/c/*" },
+				new boolean[] { true });
+		assertFalse(getCVSResource(project.getFolder("a/b/c/d")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("a/b/c/d.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("a/c/d")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("a/c/d.txt")).isIgnored());
+
+		Team.setAllIgnores(new String[] { "/" + project.getName()
+				+ "/?/c/*.doc" }, new boolean[] { true });
+		assertFalse(getCVSResource(project.getFolder("a/c/d")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("a/c/c.doc")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("a/c/c.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("a/c/d.doc")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("a/c/d.txt")).isIgnored());
+	}
+	
+	public void testBug279111() throws CoreException {
+		IProject project = getUniqueTestProject(getName());
+		shareProject(project);
+		// folder
+		// -aaaa
+		// -aaaa.txt
+		// --bbbb
+		// --bbbb.txt
+		// -aaaa1
+		// -aaaa1.txt
+		// --bbbb1
+		// --bbbb1.txt
+		buildResources(project, new String[] { "folder/", "folder/aaaa/",
+				"folder/aaaa/aaaa.txt", "folder/aaaa/bbbb/",
+				"folder/aaaa/bbbb/bbbb.txt", "folder/aaaa1/",
+				"folder/aaaa1/aaaa1.txt", "folder/aaaa1/bbbb1/",
+				"folder/aaaa1/bbbb1/bbbb1.txt" }, false);
+
+		Team.setAllIgnores(new String[] { "/*/aaaa/*" }, new boolean[] { true });
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa/bbbb")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/bbbb/bbbb.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa1/aaaa.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1/bbbb1")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa1/bbbb1/bbbb1.txt")).isIgnored());	
+		
+		Team.setAllIgnores(new String[] { "/*/aaaa*/*" },
+				new boolean[] { true });
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa/bbbb")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/bbbb/bbbb.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa1/bbbb1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/bbbb1/bbbb1.txt")).isIgnored());
+		
+		
+		// '?' stands for exactly one character, so 'aaaa?' doesn't match 'aaaa'
+		Team.setAllIgnores(new String[] { "/*/aaaa?/*" },
+				new boolean[] { true });
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa/aaaa.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa/bbbb")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa/bbbb/bbbb.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa1/bbbb1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/bbbb1/bbbb1.txt")).isIgnored());
+	}
+	
+	public void testBug279111_comment11() throws CoreException {
+		IProject project = getUniqueTestProject(getName());
+		shareProject(project);
+		// folder
+		// -aaaa
+		// -aaaa.txt
+		// --bbbb
+		// --bbbb.txt
+		// -aaaa1
+		// -aaaa1.txt
+		// --bbbb1
+		// --bbbb1.txt
+		buildResources(project, new String[] { "folder/", "folder/aaaa/",
+				"folder/aaaa/aaaa.txt", "folder/aaaa/bbbb/",
+				"folder/aaaa/bbbb/bbbb.txt", "folder/aaaa1/",
+				"folder/aaaa1/aaaa1.txt", "folder/aaaa1/bbbb1/",
+				"folder/aaaa1/bbbb1/bbbb1.txt" }, false);
+		
+		// Setting two patterns works like desired (ignoring a folder, subfolders and files)...
+		Team.setAllIgnores(new String[] { "*/aaaa", "*/aaaa/*" }, new boolean[] { true, true });
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa/bbbb")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/bbbb/bbbb.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa1/aaaa.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1/bbbb1")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa1/bbbb1/bbbb1.txt")).isIgnored());		
+		
+		Team.setAllIgnores(new String[] { "*/aaaa*", "*/aaaa*/*" }, new boolean[] { true, true });
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa/bbbb")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/bbbb/bbbb.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa1/bbbb1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/bbbb1/bbbb1.txt")).isIgnored());
+		
+		
+		// ... but ignoring only the folder affects all subfolders and files as well
+		Team.setAllIgnores(new String[] { "/*/aaaa" }, new boolean[] { true });
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa/bbbb")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/bbbb/bbbb.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa1/aaaa.txt")).isIgnored());
+		assertFalse(getCVSResource(project.getFolder("folder/aaaa1/bbbb1")).isIgnored());
+		assertFalse(getCVSResource(project.getFile("folder/aaaa1/bbbb1/bbbb1.txt")).isIgnored());
+		
+		Team.setAllIgnores(new String[] { "/*/aaaa*" }, new boolean[] { true });
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa/bbbb")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa/bbbb/bbbb.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/aaaa.txt")).isIgnored());
+		assertTrue(getCVSResource(project.getFolder("folder/aaaa1/bbbb1")).isIgnored());
+		assertTrue(getCVSResource(project.getFile("folder/aaaa1/bbbb1/bbbb1.txt")).isIgnored());
+
 	}
 	
 	public void testMembers() throws CoreException, CVSException {
@@ -558,9 +747,9 @@ public class EclipseSynchronizerTest extends EclipseTest {
 		IResource resource = project.findMember(path);
 		if (resource == null) {
 			if (path.charAt(path.length()-1) == Path.SEPARATOR)
-				resource = (IResource) project.getFolder(path);
+				resource = project.getFolder(path);
 			else
-				resource = (IResource) project.getFile(path);
+				resource = project.getFile(path);
 		}
 		return resource;
 	}
