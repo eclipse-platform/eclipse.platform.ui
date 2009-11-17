@@ -10,11 +10,15 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import javax.inject.Inject;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -131,8 +135,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	protected MApplication theApp;
 
-	public PartRenderingEngine(IEclipseContext context) {
-		initialize(context);
+	public PartRenderingEngine() {
 	}
 
 	/**
@@ -147,7 +150,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 	 * @param f
 	 *            the IContributionFactory already provided to <code>r</code>
 	 */
-	public void initialize(IEclipseContext context) {
+	@PostConstruct
+	private void initialize(IEclipseContext context) {
 		this.appContext = context;
 
 		IExtensionRegistry registry = (IExtensionRegistry) context
@@ -182,6 +186,18 @@ public class PartRenderingEngine implements IPresentationEngine {
 		eventBroker.subscribe(IUIEvents.UIElement.Topic, visibilityHandler);
 		eventBroker
 				.subscribe(IUIEvents.ElementContainer.Topic, childrenHandler);
+	}
+
+	@Inject
+	@Optional
+	protected IEventBroker eventBroker;
+
+	@PreDestroy
+	private void contextDisposed() {
+		if (eventBroker == null)
+			return;
+		eventBroker.unsubscribe(visibilityHandler);
+		eventBroker.unsubscribe(childrenHandler);
 	}
 
 	private static void populateModelInterfaces(MContext contextModel,
