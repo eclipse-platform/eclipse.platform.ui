@@ -1079,7 +1079,9 @@ public class ControlDecoration {
 		}
 		hover.setText(text, getDecorationRectangle(control.getParent()),
 				control);
-		hover.setVisible(true);
+		if (control.isVisible()) {
+			  hover.setVisible(true);
+		}
 	}
 
 	/*
