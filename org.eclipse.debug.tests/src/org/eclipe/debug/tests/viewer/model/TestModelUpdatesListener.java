@@ -15,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import junit.framework.Assert;
 
@@ -125,7 +126,7 @@ public class TestModelUpdatesListener
     public void addChildreUpdate(TreePath path, int index) {
         Set childrenIndexes = (Set)fChildrenUpdates.get(path);
         if (childrenIndexes == null) {
-            childrenIndexes = new HashSet(1);
+            childrenIndexes = new TreeSet();
             fChildrenUpdates.put(path, childrenIndexes);
         }
         childrenIndexes.add(new Integer(index));
@@ -214,7 +215,7 @@ public class TestModelUpdatesListener
     
     public boolean isFinished(int flags) {
         if (fTimeoutInterval > 0 && fTimeoutTime < System.currentTimeMillis()) {
-            throw new RuntimeException("Test timed out");
+            throw new RuntimeException("Timed Out: " + toString(flags));
         }
         
         if ( (flags & LABEL_UPDATES_COMPLETE) != 0) {
@@ -257,6 +258,7 @@ public class TestModelUpdatesListener
             	return false;
             }
         }
+        
         return true;
     }
     
@@ -368,6 +370,112 @@ public class TestModelUpdatesListener
     }
     
     public void stateUpdateStarted(Object input, IViewerUpdate update) {
+    }
+    
+    private String toString(int flags) {
+        StringBuffer buf = new StringBuffer("Viewer Update Listener");
+        
+        if ( (flags & LABEL_UPDATES_COMPLETE) != 0) {
+            buf.append("\n\t");
+            buf.append("fLabelUpdatesComplete = " + fLabelUpdatesComplete);
+        }
+        if ( (flags & LABEL_UPDATES_RUNNING) != 0) {
+            buf.append("\n\t");
+            buf.append("fLabelUpdatesRunning = " + fLabelUpdatesRunning);
+        }
+        if ( (flags & LABEL_UPDATES) != 0) {
+            buf.append("\n\t");
+            buf.append("fLabelUpdates = ");
+            buf.append( toString(fLabelUpdates) );
+        }
+        if ( (flags & CONTENT_UPDATES_COMPLETE) != 0) {
+            buf.append("\n\t");
+            buf.append("fViewerUpdatesComplete = " + fViewerUpdatesComplete);
+        }
+        if ( (flags & VIEWER_UPDATES_RUNNING) != 0) {
+            buf.append("\n\t");
+            buf.append("fViewerUpdatesRunning = " + fViewerUpdatesRunning);
+        }
+        if ( (flags & HAS_CHILDREN_UPDATES) != 0) {
+            buf.append("\n\t");
+            buf.append("fHasChildrenUpdates = ");
+            buf.append( toString(fHasChildrenUpdates) );
+        }
+        if ( (flags & CHILDREN_COUNT_UPDATES) != 0) {
+            buf.append("\n\t");
+            buf.append("fChildCountUpdates = ");
+            buf.append( toString(fChildCountUpdates) );
+        }
+        if ( (flags & CHILDREN_UPDATES) != 0) {
+            buf.append("\n\t");
+            buf.append("fChildrenUpdates = ");
+            buf.append( toString(fChildrenUpdates) );
+        }
+        if ( (flags & MODEL_CHANGED_COMPLETE) != 0) {
+            buf.append("\n\t");
+            buf.append("fModelChangedComplete = " + fModelChangedComplete);
+        }
+        if ( (flags & STATE_SAVE_COMPLETE) != 0) {
+            buf.append("\n\t");
+            buf.append("fStateSaveComplete = " + fStateSaveComplete);
+        }
+        if ( (flags & STATE_RESTORE_COMPLETE) != 0) {
+            buf.append("\n\t");
+            buf.append("fStateRestoreComplete = " + fStateRestoreComplete);
+        }
+        if ( (flags & MODEL_PROXIES_INSTALLED) != 0) {
+            buf.append("\n\t");
+            buf.append("fProxyModels = " + fProxyModels);
+        }
+        if (fTimeoutInterval > 0) {
+            buf.append("\n\t");
+            buf.append("fTimeoutInterval = " + fTimeoutInterval);
+        }
+        return buf.toString();
+    }
+
+    private String toString(Set set) {
+        if (set.isEmpty()) {
+            return "(EMPTY)";
+        }
+        StringBuffer buf = new StringBuffer();
+        for (Iterator itr = set.iterator(); itr.hasNext(); ) {
+            buf.append("\n\t\t");
+            buf.append(toString((TreePath)itr.next()));
+        }
+        return buf.toString();
+    }
+    
+    private String toString(Map map) {
+        if (map.isEmpty()) {
+            return "(EMPTY)";
+        }
+        StringBuffer buf = new StringBuffer();
+        for (Iterator itr = map.keySet().iterator(); itr.hasNext(); ) {
+            buf.append("\n\t\t");
+            TreePath path = (TreePath)itr.next();
+            buf.append(toString(path));
+            Set updates = (Set)map.get(path);
+            buf.append(" = ");
+            buf.append(updates.toString());
+        }
+        return buf.toString();
+    }
+    
+    private String toString(TreePath path) {
+        if (path.getSegmentCount() == 0) {
+            return "/";
+        }
+        StringBuffer buf = new StringBuffer();
+        for (int i = 0; i < path.getSegmentCount(); i++) {
+            buf.append("/");
+            buf.append(path.getSegment(i));
+        }
+        return buf.toString();
+    }
+    
+    public String toString() {
+        return toString(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE | STATE_RESTORE_COMPLETE);
     }
 }
 
