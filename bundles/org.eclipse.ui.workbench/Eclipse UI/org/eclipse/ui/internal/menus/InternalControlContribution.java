@@ -49,7 +49,7 @@ public abstract class InternalControlContribution extends ControlContribution {
 	/**
 	 * @param wbw The wbw to set.
 	 */
-	/*package*/ void setWorkbenchWindow(IWorkbenchWindow wbw) {
+	public void setWorkbenchWindow(IWorkbenchWindow wbw) {
 		this.wbw = wbw;
 	}
 
@@ -63,7 +63,7 @@ public abstract class InternalControlContribution extends ControlContribution {
 	/**
 	 * @param curSide The curSide to set.
 	 */
-	/*package*/ void setCurSide(int curSide) {
+	public void setCurSide(int curSide) {
 		this.curSide = curSide;
 	}
 	

@@ -17,6 +17,7 @@ import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.CoolBar;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IWorkbenchContribution;
@@ -118,6 +119,8 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 
 		loadedDynamicContribution.setId(getId());
 		loadedDynamicContribution.setParent(getParent());
+		loadedDynamicContribution.setWorkbenchWindow(getWorkbenchWindow());
+		loadedDynamicContribution.setCurSide(getCurSide());
 		if (loadedDynamicContribution instanceof IWorkbenchContribution) {
 			((IWorkbenchContribution) loadedDynamicContribution)
 					.initialize(locator);
@@ -168,6 +171,32 @@ public class DynamicToolBarContributionItem extends WorkbenchWindowControlContri
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.menus.InternalControlContribution#setWorkbenchWindow
+	 * (org.eclipse.ui.IWorkbenchWindow)
+	 */
+	public void setWorkbenchWindow(IWorkbenchWindow wbw) {
+		super.setWorkbenchWindow(wbw);
+		if (loadedDynamicContribution != null) {
+			loadedDynamicContribution.setWorkbenchWindow(wbw);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.menus.InternalControlContribution#setCurSide(int)
+	 */
+	public void setCurSide(int curSide) {
+		super.setCurSide(curSide);
+		if (loadedDynamicContribution != null) {
+			loadedDynamicContribution.setCurSide(curSide);
+		}
+	}
 	/* 
 	 * (non-Javadoc)
 	 * @see org.eclipse.jface.action.ControlContribution#createControl(org.eclipse.swt.widgets.Composite)
