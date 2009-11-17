@@ -353,6 +353,8 @@ public class PreviewPatchPage2 extends WizardPage {
 			addedRemovedLines.setText(countLines());
 			// expand the first tree item i.e. change
 			getCompareConfiguration().getContainer().getNavigator().selectChange(true);
+			getContainer().updateButtons();
+			getShell().getDefaultButton().setFocus();
 		}
 	}
 	
