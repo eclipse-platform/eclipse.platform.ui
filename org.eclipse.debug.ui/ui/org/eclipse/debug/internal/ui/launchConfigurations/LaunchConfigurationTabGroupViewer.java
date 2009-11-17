@@ -47,6 +47,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -82,11 +83,6 @@ public class LaunchConfigurationTabGroupViewer {
 	private ILaunchConfigurationDialog fDialog;
 	
 	/**
-	 * The this viewer's input
-	 */
-	private Object fInput;
-	
-	/**
 	 * The launch configuration (original) being edited
 	 */
 	private ILaunchConfiguration fOriginal;
@@ -102,16 +98,6 @@ public class LaunchConfigurationTabGroupViewer {
 	private Composite fViewerControl;
 	
 	/**
-	 * The composite which is hidden/displayed as tabs are required.
-	 */
-	private Composite fVisibleArea;
-	
-	/**
-	 * Name label widget
-	 */
-	private Label fNameLabel;
-	
-	/**
 	 * Name text widget
 	 */
 	private Text fNameWidget;
@@ -119,7 +105,7 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Composite containing the launch config tab widgets
 	 */
-	private Composite fTabComposite;
+	private ScrolledComposite fTabComposite;
 	
 	/**
 	 * Tab folder
@@ -130,12 +116,6 @@ public class LaunchConfigurationTabGroupViewer {
 	 * The current tab group being displayed
 	 */
 	private ILaunchConfigurationTabGroup fTabGroup;
-
-	/**
-	 * The type of config tabs are currently displayed
-	 * for
-	 */
-	private ILaunchConfigurationType fTabType;	
 	
 	/**
 	 * Index of the active tab
@@ -213,7 +193,6 @@ public class LaunchConfigurationTabGroupViewer {
 		if (fTabGroup != null) {
 			fTabGroup.dispose();
 			fTabGroup = null;
-			fTabType = null;
 		}
 	}	
 	
@@ -225,59 +204,32 @@ public class LaunchConfigurationTabGroupViewer {
 	 * @return the composite used for launch configuration editing
 	 */
 	private void createControl(Composite parent) {
-		fViewerControl = new Composite(parent, SWT.NONE);
-		GridLayout layout = new GridLayout();
-		layout.numColumns = 1;
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		fViewerControl.setLayout(layout);
-		GridData gd = new GridData(GridData.FILL_BOTH);
-		fViewerControl.setLayoutData(gd);
-		
-        fViewform = new ViewForm(fViewerControl, SWT.FLAT | SWT.BORDER);
-        layout = new GridLayout(1, false);
+		fViewerControl = parent;
+        fViewform = new ViewForm(parent, SWT.FLAT | SWT.BORDER);
+        GridLayout layout = new GridLayout(1, false);
         layout.horizontalSpacing = 0;
         layout.verticalSpacing = 0;
         fViewform.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
+		GridData gd = new GridData(GridData.FILL_BOTH);
 		fViewform.setLayoutData(gd);
-		fVisibleArea = fViewform;
         fViewform.setTopLeft(null);
         
-        Composite mainComp = new Composite(fViewform, SWT.FLAT);
-        layout = new GridLayout(1, false);
-        layout.verticalSpacing = 0;
-        layout.horizontalSpacing = 0;
-        mainComp.setLayout(layout);
+        Composite mainComp = SWTFactory.createComposite(fViewform, fViewform.getFont(), 1, 1, 1, 0, 0);
         fViewform.setContent(mainComp);
 
-		fTabPlaceHolder = new Composite(mainComp, SWT.NONE);
+		fTabPlaceHolder = SWTFactory.createComposite(mainComp, 1, 1, GridData.FILL_BOTH);
 		fTabPlaceHolder.setLayout(new StackLayout());
-		gd = new GridData(GridData.FILL_BOTH);
-		fTabPlaceHolder.setLayoutData(gd);
-        
-		fGettingStarted = new Composite(fTabPlaceHolder, SWT.NONE);
-		fGettingStarted.setLayout(new GridLayout());
-		gd = new GridData(GridData.FILL_BOTH);
-		fGettingStarted.setLayoutData(gd);
+		fGettingStarted = SWTFactory.createComposite(fTabPlaceHolder, 1, 1, GridData.FILL_BOTH);
 		
 		createGettingStarted(fGettingStarted);
 		
-		fTabComposite = new Composite(fTabPlaceHolder, SWT.NONE);
-		layout = new GridLayout(2, false);
-		layout.verticalSpacing = 10;
-		layout.horizontalSpacing = 5;
-		fTabComposite.setLayout(layout);
-		gd = new GridData(GridData.FILL_BOTH);
-		fTabComposite.setLayoutData(gd);
-		
-		fNameLabel = new Label(fTabComposite, SWT.HORIZONTAL | SWT.LEFT);
-		fNameLabel.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16); 
-        fNameLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING));
+		fTabComposite = SWTFactory.createScrolledComposite(fTabPlaceHolder, 2, GridData.FILL_BOTH, 0, 0);
+		fTabComposite.setAlwaysShowScrollBars(false);
+		Composite comp = SWTFactory.createComposite(fTabComposite, fTabComposite.getFont(), 2, 2, GridData.FILL_BOTH, 5, 5);
+		fTabComposite.setContent(comp);
+		SWTFactory.createLabel(comp, LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16, 1);
        
-		fNameWidget = new Text(fTabComposite, SWT.SINGLE | SWT.BORDER);
+		fNameWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
         fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fNameWidget.addModifyListener(new ModifyListener() {
     				public void modifyText(ModifyEvent e) {
@@ -288,7 +240,7 @@ public class LaunchConfigurationTabGroupViewer {
     			}
     		);
     		
-		createTabFolder(fTabComposite);
+		createTabFolder(comp);
 		
 		Composite blComp = SWTFactory.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		Composite linkComp = SWTFactory.createComposite(blComp, blComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
@@ -337,17 +289,8 @@ public class LaunchConfigurationTabGroupViewer {
 		});
 		fOptionsLink.setVisible(false);
 		
-		Composite buttonComp = new Composite(blComp, SWT.NONE);
-		GridLayout buttonCompLayout = new GridLayout();
-		buttonCompLayout.numColumns = 2;
-		buttonComp.setLayout(buttonCompLayout);
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		buttonComp.setLayoutData(gd);
-		
-		fApplyButton = new Button(buttonComp, SWT.PUSH);
-		fApplyButton.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17); 
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		fApplyButton.setLayoutData(gd);
+		Composite buttonComp = SWTFactory.createComposite(blComp, 2, 1, GridData.HORIZONTAL_ALIGN_END);
+		fApplyButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog__Apply_17, null,GridData.HORIZONTAL_ALIGN_END);
 		SWTFactory.setButtonDimensionHint(fApplyButton);
 		fApplyButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -355,10 +298,7 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 		});
 
-		fRevertButton = new Button(buttonComp, SWT.PUSH);
-		fRevertButton.setText(LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2);   
-		gd = new GridData(GridData.HORIZONTAL_ALIGN_END);
-		fRevertButton.setLayoutData(gd);
+		fRevertButton = SWTFactory.createPushButton(buttonComp, LaunchConfigurationsMessages.LaunchConfigurationDialog_Revert_2, null, GridData.HORIZONTAL_ALIGN_END);
 		SWTFactory.setButtonDimensionHint(fRevertButton);
 		fRevertButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent evt) {
@@ -407,14 +347,14 @@ public class LaunchConfigurationTabGroupViewer {
 			ColorRegistry reg = JFaceResources.getColorRegistry();
 			Color c1 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"), //$NON-NLS-1$
 				  c2 = reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"); //$NON-NLS-1$
-			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.NO_TRIM | SWT.FLAT);
-			GridData gd = new GridData(GridData.FILL_BOTH);
-			gd.horizontalSpan = 2;
+			fTabFolder = new CTabFolder(parent, SWT.NO_REDRAW_RESIZE | SWT.FLAT);
 			fTabFolder.setSelectionBackground(new Color[] {c1, c2},	new int[] {100}, true);
 			fTabFolder.setSelectionForeground(reg.get("org.eclipse.ui.workbench.ACTIVE_TAB_TEXT_COLOR")); //$NON-NLS-1$
 			fTabFolder.setSimple(PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS));
+			fTabFolder.setBorderVisible(true);
+			GridData gd = new GridData(GridData.FILL_BOTH);
+			gd.horizontalSpan = 2;
 			fTabFolder.setLayoutData(gd);
-	        fTabFolder.setBorderVisible(true);
 			fTabFolder.setFont(parent.getFont());
 			fTabFolder.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent event) {
@@ -477,7 +417,7 @@ public class LaunchConfigurationTabGroupViewer {
 	 * @return returns the current input 
 	 */
 	public Object getInput() {
-		return fInput;
+		return getConfiguration();
 	}
 
 	/* (non-Javadoc)
@@ -603,6 +543,18 @@ public class LaunchConfigurationTabGroupViewer {
 	}
 	
 	/**
+	 * @return returns the configuration input
+	 * 
+	 * @since 3.6
+	 */
+	ILaunchConfiguration getConfiguration() {
+		if(fOriginal == null) {
+			return getWorkingCopy();
+		}
+		return fOriginal;
+	}
+	
+	/**
 	 * updates the button states
 	 */
 	private void updateButtons() {
@@ -634,12 +586,12 @@ public class LaunchConfigurationTabGroupViewer {
 	 */
 	private void setInput0(Object input) {
 		if (input == null) {
-			if (fInput == null) {
+			if (getConfiguration() == null) {
 				return;
 			}
 			inputChanged(input);
 		} else {
-			if (!input.equals(fInput)) {
+			if (!input.equals(getConfiguration())) {
 				inputChanged(input);
 			}
 		}
@@ -651,19 +603,19 @@ public class LaunchConfigurationTabGroupViewer {
 	 * @param input the new input, possibly <code>null</code>
 	 */
 	protected void inputChanged(Object input) {
-		fInput = input;
+		final Object finput = input;
 		Runnable r = new Runnable() {
 			public void run() {
 				try {
-					fVisibleArea.setRedraw(false);
-					if (fInput instanceof ILaunchConfiguration) {
-						ILaunchConfiguration configuration = (ILaunchConfiguration)fInput;
+					fViewform.setRedraw(false);
+					if (finput instanceof ILaunchConfiguration) {
+						ILaunchConfiguration configuration = (ILaunchConfiguration)finput;
 						boolean refreshtabs = !delegatesEqual(fWorkingCopy, configuration);
 						fOriginal = configuration;
 						fWorkingCopy = configuration.getWorkingCopy();
 						displayInstanceTabs(refreshtabs);
-					} else if (fInput instanceof ILaunchConfigurationType) {
-						fDescription = getDescription((ILaunchConfigurationType)fInput);
+					} else if (finput instanceof ILaunchConfigurationType) {
+						fDescription = getDescription((ILaunchConfigurationType)finput);
 						setNoInput();
 					} else {
 						setNoInput();
@@ -674,7 +626,7 @@ public class LaunchConfigurationTabGroupViewer {
 				}
 				finally {
 					refreshStatus();
-					fVisibleArea.setRedraw(true);
+					fViewform.setRedraw(true);
 				}
 			}
 		};
@@ -795,8 +747,8 @@ public class LaunchConfigurationTabGroupViewer {
 		// Turn off initializing flag to update message
 		fInitializingTabs = false;
 		
-		if (!fVisibleArea.isVisible()) {
-			fVisibleArea.setVisible(true);
+		if (!fViewform.isVisible()) {
+			fViewform.setVisible(true);
 		}	
 	}
 	
@@ -820,7 +772,6 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 		disposeExistingTabs();
 		fTabGroup = group;
-		fTabType = configType;
 		ILaunchConfigurationTab[] tabs = getTabs();
 		CTabItem tab = null;
 		String name = IInternalDebugCoreConstants.EMPTY_STRING;
@@ -850,6 +801,8 @@ public class LaunchConfigurationTabGroupViewer {
 				break;
 			}
 		}
+		
+		fTabComposite.setMinSize(fTabComposite.getContent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		fDescription = getDescription(configType);
 	}	
 
@@ -1116,7 +1069,7 @@ public class LaunchConfigurationTabGroupViewer {
 		if(config != null) {
 			try {
 				Set modes = getCurrentModeSet();
-				ILaunchDelegate[] delegates = LaunchConfigurationManager.filterLaunchDelegates(fTabType, modes);
+				ILaunchDelegate[] delegates = LaunchConfigurationManager.filterLaunchDelegates(config.getType(), modes);
 				return delegates.length > 1;
 			}
 			catch (CoreException ce) {DebugUIPlugin.log(ce);}
@@ -1252,7 +1205,7 @@ public class LaunchConfigurationTabGroupViewer {
 		fDisposingTabs = true;
         fTabFolder.dispose();
         fTabFolder = null;
-		createTabFolder(fTabComposite);
+		createTabFolder((Composite) fTabComposite.getContent());
 		disposeTabGroup();
 		fDisposingTabs = false;
 	}	

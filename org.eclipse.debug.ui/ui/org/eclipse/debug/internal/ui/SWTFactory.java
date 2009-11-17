@@ -17,6 +17,7 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
+import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -281,6 +282,31 @@ public class SWTFactory {
     	return t;
     }
 	
+	
+	/**
+	 * Creates a scrolled composite 
+	 * 
+	 * @param parent the parent to add to
+	 * @param columns the number of columns for the composite
+	 * @param hspan the horizontal span to take up in the parent
+	 * @param marginwidth the width of the margins
+	 * @param marginheight the height of the margins
+	 * @return a new scrolled composite
+	 * @since 3.6
+	 */
+	public static ScrolledComposite createScrolledComposite(Composite parent, int columns, int hspan, int marginwidth, int marginheight) {
+		ScrolledComposite comp = new ScrolledComposite(parent, SWT.V_SCROLL | SWT.H_SCROLL) {};
+		GridLayout layout = new GridLayout(columns, false);
+		layout.marginHeight = marginheight;
+		layout.marginWidth = marginwidth;
+		comp.setLayout(layout);
+		GridData gd = new GridData(GridData.FILL_BOTH);
+		gd.horizontalSpan = hspan;
+		comp.setLayoutData(gd);
+		comp.setExpandHorizontal(true);
+		comp.setExpandVertical(true);
+		return comp;
+	}
 	/**
 	 * Creates a new text widget 
 	 * @param parent the parent composite to add this text widget to

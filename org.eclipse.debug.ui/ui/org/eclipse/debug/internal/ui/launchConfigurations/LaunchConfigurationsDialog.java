@@ -666,6 +666,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
     	return getDialogSettings();
     }
     
+    /* (non-Javadoc)
+     * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsStrategy()
+     */
+    protected int getDialogBoundsStrategy() {
+    	return DIALOG_PERSISTSIZE;
+    }
+    
 	/**
 	 * Returns the dialog settings for this dialog. Subclasses should override
 	 * <code>getDialogSettingsSectionName()</code>.
@@ -917,9 +924,6 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  				if(fTabViewer.isDirty()) {
  					fTabViewer.handleApplyPressed();
  				}
- 				if (getShell() != null && getShell().isVisible()) {
-					resize();
- 				}
  			}
  		}
   	}
@@ -1002,11 +1006,13 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#getInitialSize()
 	 */
 	protected Point getInitialSize() {
-		IDialogSettings settings = getDialogSettings();
-		if(settings.get(DIALOG_SASH_WEIGHTS_1) != null) {
+		try {
+			getDialogSettings().getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
 			return super.getInitialSize();
 		}
-		return DEFAULT_INITIAL_DIALOG_SIZE;
+		catch(NumberFormatException nfe) {
+			return DEFAULT_INITIAL_DIALOG_SIZE;
+		}
 	}
 
 	/**
@@ -1167,22 +1173,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		updateButtons();
 	}
 
-	/**
-	 * resize the dialog to show all relevant content, maintains aspect in all resolutions down to 1024x768
-	 */
-	protected void resize() {
- 		if(getTabGroup() != null) {
- 			Point shell = getShell().getSize();
- 			int maxx = (int)(getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT),
-				maxy = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
- 			maxx = (maxx < DEFAULT_INITIAL_DIALOG_SIZE.x ? DEFAULT_INITIAL_DIALOG_SIZE.x : maxx);
- 			maxy = (maxy < DEFAULT_INITIAL_DIALOG_SIZE.y ? DEFAULT_INITIAL_DIALOG_SIZE.y : maxy);
- 			Point psize = getShell().computeSize(SWT.DEFAULT, maxy);
- 			if((psize.x > maxx ? maxx : psize.x) > shell.x || (psize.y > maxy ? maxy : psize.y) > shell.y) {
-				setShellSize(Math.min(psize.x, maxx), Math.min(psize.y, maxy));
- 			}
-		}
-	}
+	
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)

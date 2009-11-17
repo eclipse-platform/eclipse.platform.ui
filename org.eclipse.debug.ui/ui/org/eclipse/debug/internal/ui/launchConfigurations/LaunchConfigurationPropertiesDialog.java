@@ -94,14 +94,6 @@ public class LaunchConfigurationPropertiesDialog extends LaunchConfigurationsDia
 	}
 
 	/* (non-Javadoc)
-	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#initializeBounds()
-	 */
-	protected void initializeBounds() {
-		super.initializeBounds();
-		resize();
-	}
-
-	/* (non-Javadoc)
 	 * @see org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDialog#initializeContent()
 	 */
 	protected void initializeContent() {
