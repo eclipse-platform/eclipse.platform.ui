@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,13 @@
 package org.eclipse.team.internal.core;
 
 
-import java.util.*;
+import java.util.Vector;
 
 /**
- * A string pattern matcher, suppporting * and ? wildcards.
+ * A string pattern matcher. Supports '*' and '?' wildcards.
  * Note: code copied from org.eclipse.jdt.internal.core.util.StringMatcher on April 3, 2001
- * (version 0.1 - 010901H18 [rename jbl]).
+ * (version 0.1 - 010901H18 [rename jbl]). Sync'ed on November 4, 2009 (revision 1.17).
+ * 
  */
 public class StringMatcher {
 	protected String fPattern;
@@ -29,7 +30,7 @@ public class StringMatcher {
 
 	/* boundary value beyond which we don't need to search in the text */
 	protected int fBound = 0;
-	private boolean pathPattern;
+	private boolean fPathPattern;
 	
 
 	protected static final char fSingleWildCard = '\u0000';
@@ -48,6 +49,43 @@ public class StringMatcher {
 			return end;
 		}
 	}
+
+	/**
+	 * StringMatcher constructor takes in a String object that is a simple 
+	 * pattern. The pattern may contain '*' for 0 and many characters and
+	 * '?' for exactly one character.  
+	 *
+	 * Literal '*' and '?' characters must be escaped in the pattern 
+	 * e.g., "\*" means literal "*", etc.
+	 *
+	 * Escaping any other character (including the escape character itself), 
+	 * just results in that character in the pattern.
+	 * e.g., "\a" means "a" and "\\" means "\"
+	 *
+	 * If invoking the StringMatcher with string literals in Java, don't forget
+	 * escape characters are represented by "\\".
+	 *
+	 * @param pattern the pattern to match text against
+	 * @param ignoreCase if true, case is ignored
+	 * @param ignoreWildCards if true, wild cards and their escape sequences are ignored
+	 * 		  (everything is taken literally).
+	 */
+	public StringMatcher(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
+		if (pattern == null)
+			throw new IllegalArgumentException();
+		fIgnoreCase = ignoreCase;
+		fIgnoreWildCards = ignoreWildCards;
+		fPattern= pattern;
+		fLength = pattern.length();
+		fPathPattern = pattern.indexOf('/') != -1;
+		
+		if (fIgnoreWildCards) {
+			parseNoWildCards();
+		} else {
+			parseWildCards();
+		}
+	}
+	
 	/**
 	 * Find the first occurrence of the pattern between <code>start</code)(inclusive) 
 	 * and <code>end</code>(exclusive).  
@@ -102,48 +140,17 @@ public class StringMatcher {
 			return null;
 		return new Position(matchStart, curPos);
 	}
-	/**
-	 * StringMatcher constructor takes in a String object that is a simple 
-	 * pattern which may contain  '*' for 0 and many characters and
-	 * '?' for exactly one character.  
-	 *
-	 * Literal '*' and '?' characters must be escaped in the pattern 
-	 * e.g., "\*" means literal "*", etc.
-	 *
-	 * Escaping any other character (including the escape character itself), 
-	 * just results in that character in the pattern.
-	 * e.g., "\a" means "a" and "\\" means "\"
-	 *
-	 * If invoking the StringMatcher with string literals in Java, don't forget
-	 * escape characters are represented by "\\".
-	 *
-	 * @param aPattern the pattern to match text with
-	 * @param ignoreCase if true, case is ignored
-	 * @param ignoreWildCards if true, wild cards and their escape sequences are ignored
-	 * 		  (everything is taken literally).
-	 */
-	public StringMatcher(String aPattern, boolean ignoreCase, boolean ignoreWildCards) {
-		fIgnoreCase = ignoreCase;
-		fIgnoreWildCards = ignoreWildCards;
-		fLength = aPattern.length();
 
-		pathPattern = aPattern.indexOf('/') != -1;
-		
-		/* convert case */
-		if (fIgnoreCase) {
-			fPattern = aPattern.toUpperCase();
-		} else {
-			fPattern = aPattern;
-		}
-		
-		if (fIgnoreWildCards) {
-			parseNoWildCards();
-		} else {
-			parseWildCards();
-		}
+	/**
+	 * match the given <code>text</code> with the pattern
+	 * @return <code>true</code> if matched otherwise <code>false</code>
+	 * @param text a String object
+	 */
+	public boolean match(String text) {
+		return match(text, 0, text.length());
 	}
 	/**
-	 * Given the starting (inclusive) and the ending (exclusive) poisitions in the   
+	 * Given the starting (inclusive) and the ending (exclusive) positions in the
 	 * <code>text</code>, determine if the given substring matches with aPattern  
 	 * @return true if the specified portion of the text matches the pattern
 	 * @param text a String object that contains the substring to match 
@@ -219,21 +226,13 @@ public class StringMatcher {
 		}
 		return i == segCount ;
 	}
-	/**
-	 * match the given <code>text</code> with the pattern 
-	 * @return true if matched eitherwise false
-	 * @param text a String object 
-	 */
-	public boolean  match(String text) {
-		return match(text, 0, text.length());
-	}
 	
 	/**
 	 * check existence of '/' in the pattern. 
 	 * @return <b>true</b> if pattern contains '/' 
 	 */
 	public boolean isPathPattern() {
-		return pathPattern;
+		return fPathPattern;
 	}
 	
 	/**
@@ -246,8 +245,7 @@ public class StringMatcher {
 		fBound = fLength;
 	}
 	/**
-	 * This method parses the given pattern into segments seperated by wildcard '*' characters.
-	 * @param p a String object that is a simple regular expression with  '*' and/or  '?'
+	 * Parses the given pattern into segments seperated by wildcard '*' characters.
 	 */
 	private void parseWildCards() {
 		if(fPattern.startsWith("*"))//$NON-NLS-1$
@@ -372,8 +370,11 @@ public class StringMatcher {
 			if (pchar == tchar)
 				continue;
 			if (fIgnoreCase) {
-				char tc = Character.toUpperCase(tchar);
-				if (tc == pchar)
+				if (Character.toUpperCase(tchar) == Character.toUpperCase(pchar))
+					continue;
+				// comparing after converting to upper case doesn't handle all cases;
+				// also compare after converting to lower case
+				if (Character.toLowerCase(tchar) == Character.toLowerCase(pchar))
 					continue;
 			}
 			return false;

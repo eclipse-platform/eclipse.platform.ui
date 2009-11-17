@@ -103,6 +103,8 @@ public final class Team {
 	
 	/**
 	 * Returns whether the given file should be ignored.
+	 * @param file file to check
+	 * @return <code>true</code> if this file should be ignored, and <code>false</code> otherwise
 	 * @deprecated use isIgnoredHint(IResource) instead
 	 */
 	public static boolean isIgnoredHint(IFile file) {
@@ -124,6 +126,8 @@ public final class Team {
 	
 	/**
 	 * Returns whether the given file should be ignored.
+	 * @param file file to check
+	 * @return <code>true</code> if this file should be ignored, and <code>false</code> otherwise
 	 * @deprecated use isIgnoredHint instead
 	 */
 	public static boolean isIgnored(IFile file) {
@@ -148,6 +152,7 @@ public final class Team {
     
 	/**
 	 * Returns the list of global ignores.
+	 * @return all ignore infos representing globally ignored patterns
 	 */
 	public synchronized static IIgnoreInfo[] getAllIgnores() {
 		// The ignores are cached and when the preferences change the
