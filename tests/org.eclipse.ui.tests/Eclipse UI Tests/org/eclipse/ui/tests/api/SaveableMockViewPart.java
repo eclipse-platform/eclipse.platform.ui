@@ -10,6 +10,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.IResourceVisitor;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -17,6 +22,9 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISaveablePart;
+import org.eclipse.ui.ISaveablesSource;
+import org.eclipse.ui.Saveable;
+import org.eclipse.ui.internal.DefaultSaveable;
 
 /**
  * Mock view part that implements ISaveablePart.
@@ -25,7 +33,7 @@ import org.eclipse.ui.ISaveablePart;
  * @since 3.0.1
  */
 public class SaveableMockViewPart extends MockViewPart implements
-		ISaveablePart {
+		ISaveablePart, ISaveablesSource {
 	
 	public static String ID = "org.eclipse.ui.tests.api.SaveableMockViewPart";
 
@@ -34,6 +42,8 @@ public class SaveableMockViewPart extends MockViewPart implements
     private boolean saveAsAllowed = false;
 
     private boolean saveNeeded = true;
+
+	private boolean adapt;
 
     public void createPartControl(Composite parent) {
         super.createPartControl(parent);
@@ -47,6 +57,14 @@ public class SaveableMockViewPart extends MockViewPart implements
         });
         dirtyToggle.setSelection(isDirty());
 
+        final Button adaptToggle = new Button(parent, SWT.CHECK);
+        adaptToggle.setText("Adapt to resource");
+        adaptToggle.addSelectionListener(new SelectionAdapter() {
+        	public void widgetSelected(SelectionEvent e) {
+        		setAdapt(adaptToggle.getSelection());
+        	}
+        });
+        
         final Button saveNeededToggle = new Button(parent, SWT.CHECK);
         saveNeededToggle.setText("Save on close");
         saveNeededToggle.addSelectionListener(new SelectionAdapter() {
@@ -66,6 +84,13 @@ public class SaveableMockViewPart extends MockViewPart implements
         saveAsToggle.setSelection(saveAsAllowed);
     }
     
+	/**
+	 * @param selection
+	 */
+	protected void setAdapt(boolean selection) {
+		this.adapt = selection;
+	}
+	
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
 	 */
@@ -116,4 +141,46 @@ public class SaveableMockViewPart extends MockViewPart implements
     public void setSaveNeeded(boolean isSaveOnCloseNeeded) {
         this.saveNeeded = isSaveOnCloseNeeded;
     }
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablesSource#getActiveSaveables()
+	 */
+	public Saveable[] getActiveSaveables() {
+		// TODO Auto-generated method stub
+		return getSaveables();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablesSource#getSaveables()
+	 */
+	public Saveable[] getSaveables() {
+		Saveable[] result = new Saveable[1];
+		result[0] = new DefaultSaveable(this){
+			public Object getAdapter(Class c) {
+				final IFile[] someFile = {null};
+				try {
+					ResourcesPlugin.getWorkspace().getRoot().accept(new IResourceVisitor() {
+						
+						public boolean visit(IResource resource) throws CoreException {
+							if (someFile[0] != null) {
+								return false;
+							}
+							if (resource.getType() == IResource.FILE) {
+								someFile[0] = (IFile) resource;
+								return false;
+							}
+							return true;
+						}
+					});
+				} catch (CoreException e) {
+					throw new RuntimeException(e);
+				}
+				if (adapt && someFile[0] != null && c.equals(IFile.class)) {
+					return someFile[0];
+				}
+				return super.getAdapter(c);
+			};
+		};
+		return result ;
+	}
 }
