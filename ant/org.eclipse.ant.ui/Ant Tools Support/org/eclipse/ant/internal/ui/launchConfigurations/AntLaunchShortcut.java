@@ -23,6 +23,7 @@ import org.eclipse.ant.internal.ui.model.AntTargetNode;
 import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -81,9 +82,12 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				}
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
-					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
+					if (!(AntUtil.isKnownAntExtension(resource.getFileExtension()))) {
 						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
-							resource = null;
+							if (resource.getType() == IResource.FILE) {
+								resource = resource.getParent();
+							}
+							resource = findBuildFile((IContainer)resource);
 						}
 					} 
 					if (resource != null) {
@@ -153,6 +157,34 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		reportError(AntLaunchConfigurationMessages.AntLaunchShortcut_Unable, null);	
 	}
 
+	/**
+	 * Walks the file hierarchy looking for a build file.
+	 * Returns the first build file found that matches the 
+	 * search criteria.
+	 */
+	private IFile findBuildFile(IContainer parent) {
+		String[] names= AntUtil.getKnownBuildfileNames();
+		if (names == null) {
+			return null;
+		}
+		IContainer lparent = parent;
+		IResource file= null;
+		while (file == null || file.getType() != IResource.FILE) {		
+			for (int i = 0; i < names.length; i++) {
+				String string = names[i];
+				file= lparent.findMember(string);
+				if (file != null && file.getType() == IResource.FILE) {
+					break;
+				}
+			}
+			lparent = lparent.getParent();
+			if (lparent == null) {
+				return null;
+			}
+		}
+		return (IFile)file;
+	}
+	
 	/**
 	 * Returns a listing of <code>ILaunchConfiguration</code>s that correspond to the specified build file.
 	 * 
@@ -430,12 +462,15 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				filepath = locationProvider.getPath(input);
 			}
 		}
-		if(filepath != null && "xml".equals(filepath.getFileExtension())) { //$NON-NLS-1$
+		if(filepath != null && AntUtil.isKnownAntExtension(filepath.getFileExtension())) {
 			launch(filepath, (file == null ? null : file.getProject()), mode, null);
 			return;
 		}
 		if (file != null) {
-			if(AntUtil.isKnownBuildfileName(file.getName())) {
+			if(!AntUtil.isKnownBuildfileName(file.getName())) {
+				file = findBuildFile(file.getParent());
+			}
+			if (file != null) {
 				launch(file.getFullPath(), file.getProject(), mode, null);
 				return;
 			}
@@ -483,15 +518,20 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				}
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
-					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
+					if (!(AntUtil.isKnownAntExtension(resource.getFileExtension()))) {
 						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
-							return null;
+							if (resource.getType() == IResource.FILE) {
+								resource = resource.getParent();
+							}
+							resource = findBuildFile((IContainer)resource);
 						}
 					} 
-					IPath location = ((IFile) resource).getLocation();
-					if (location != null) {
-						List list = collectConfigurations(location);
-						return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
+					if (resource != null) {
+						IPath location = ((IFile) resource).getLocation();
+						if (location != null) {
+							List list = collectConfigurations(location);
+							return (ILaunchConfiguration[]) list.toArray(new ILaunchConfiguration[list.size()]);
+						}
 					}
 				}
 			}
@@ -532,10 +572,14 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			if (object instanceof IAdaptable) {
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
-					if (!("xml".equalsIgnoreCase(resource.getFileExtension()))) { //$NON-NLS-1$
+					if (!(AntUtil.isKnownAntExtension(resource.getFileExtension()))) {
 						if(AntUtil.isKnownBuildfileName(resource.getName())) {
 							return resource;
 						}
+						if (resource.getType() == IResource.FILE) {
+							resource = resource.getParent();
+						}
+						resource = findBuildFile((IContainer)resource);
 					} 
 					return resource;
 				}

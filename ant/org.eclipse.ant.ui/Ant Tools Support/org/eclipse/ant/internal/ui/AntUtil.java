@@ -82,7 +82,7 @@ public final class AntUtil {
 	public static final char ANT_CLASSPATH_DELIMITER= '*';
 	public static final String ANT_HOME_CLASSPATH_PLACEHOLDER= "G"; //$NON-NLS-1$
 	public static final String ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER= "UG"; //$NON-NLS-1$
-	
+	public static final String[] ANT_EXTENSIONS = {"xml", "ant", "ent", "macrodef"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private static String fgBrowserId;
 	
 	/**
@@ -578,6 +578,23 @@ public final class AntUtil {
     	return AntLaunchingUtil.isSeparateJREAntBuild(configuration);
     }
 
+    /**
+     * Returns if the given extension is a known extension to Ant
+     * i.e. a supported content type extension.
+     * @param extension
+     * @return true if the file extension is supported false otherwise
+     * 
+     * @since 3.6
+     */
+    public static boolean isKnownAntExtension(String extension) {
+    	for (int i = 0; i < ANT_EXTENSIONS.length; i++) {
+			if(ANT_EXTENSIONS[i].equals(extension)) {
+				return true;
+			}
+		}
+    	return false;
+    }
+    
 	/**
 	 * Returns an array of build file names from the ant preference store
 	 * @return an array of build file names
