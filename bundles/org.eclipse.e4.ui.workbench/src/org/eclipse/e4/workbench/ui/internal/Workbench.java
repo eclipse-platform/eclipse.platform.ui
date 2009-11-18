@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.Category;
@@ -50,6 +51,7 @@ import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MPSCElement;
+import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -435,7 +437,16 @@ public class Workbench implements IWorkbench {
 				EBindingService bs = (EBindingService) context.get(EBindingService.class.getName());
 				EList<MKeyBinding> bindings = container.getBindings();
 				for (MKeyBinding binding : bindings) {
-					ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getId(), null);
+					Map<String, Object> parameters = null;
+					EList<MParameter> modelParms = binding.getParameters();
+					if (modelParms != null && !modelParms.isEmpty()) {
+						parameters = new HashMap<String, Object>();
+						for (MParameter mParm : modelParms) {
+							parameters.put(mParm.getTag(), mParm.getValue());
+						}
+					}
+					ParameterizedCommand cmd = cs.createCommand(binding.getCommand().getId(),
+							parameters);
 					TriggerSequence sequence = bs.createSequence(binding.getKeySequence());
 					if (cmd == null || sequence == null) {
 						System.err.println("Failed to handle binding: " + binding); //$NON-NLS-1$

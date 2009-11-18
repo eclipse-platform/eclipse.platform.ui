@@ -11,7 +11,9 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import java.util.ArrayList;
 import org.eclipse.core.commands.Category;
+import org.eclipse.core.commands.IParameter;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
@@ -19,6 +21,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MCommandParameter;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.emf.common.notify.Notifier;
@@ -91,9 +94,19 @@ public class E4Workbench implements IWorkbench {
 				.defineCategory(MApplication.class.getName(), "Application Category", null); //$NON-NLS-1$
 		EList<MCommand> commands = appElement.getCommands();
 		for (MCommand cmd : commands) {
+			IParameter[] parms = null;
 			String id = cmd.getId();
 			String name = cmd.getCommandName();
-			cs.defineCommand(id, name, null, cat, null);
+			EList<MCommandParameter> modelParms = cmd.getParameters();
+			if (modelParms != null && !modelParms.isEmpty()) {
+				ArrayList<Parameter> parmList = new ArrayList<Parameter>();
+				for (MCommandParameter cmdParm : modelParms) {
+					parmList.add(new Parameter(cmdParm.getId(), cmdParm.getName(), null, null,
+							cmdParm.isOptional()));
+				}
+				parms = parmList.toArray(new Parameter[parmList.size()]);
+			}
+			cs.defineCommand(id, name, null, cat, parms);
 		}
 
 		// Do a top level processHierarchy for the application?
