@@ -95,12 +95,10 @@ public class ProgressManager extends ProgressProvider implements
 	final private Map familyListeners = Collections
 			.synchronizedMap(new HashMap());
 
-	final Object familyKey = new Object();
-
 	//	list of IJobProgressManagerListener
 	private ListenerList listeners = new ListenerList();
 	
-	IJobChangeListener changeListener;
+	final IJobChangeListener changeListener;
 
 	static final String PROGRESS_VIEW_NAME = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
 
@@ -129,10 +127,6 @@ public class ProgressManager extends ProgressProvider implements
 
 	final Map runnableMonitors = Collections.synchronizedMap(new HashMap());
 
-	final Object monitorKey = new Object();
-
-	FinishedJobs finishedJobs;
-
 	// A table that maps families to keys in the Jface image
 	// table
 	private Hashtable imageKeyTable = new Hashtable();
@@ -141,7 +135,7 @@ public class ProgressManager extends ProgressProvider implements
 	 * A listener that allows for removing error jobs & indicators when errors
 	 * are handled.
 	 */
-	private INotificationListener notificationListener;
+	private final INotificationListener notificationListener;
 
 	private static final String IMAGE_KEY = "org.eclipse.ui.progress.images"; //$NON-NLS-1$
 
@@ -363,22 +357,39 @@ public class ProgressManager extends ProgressProvider implements
 	 * Create a new instance of the receiver.
 	 */
 	ProgressManager() {
-		Job.getJobManager().setProgressProvider(this);
+
 		Dialog.setBlockedHandler(new WorkbenchDialogBlockedHandler());
-		createChangeListener();
+
+		setUpImages();
+
+		changeListener = createChangeListener();
+
+		notificationListener = createNotificationListener();
+
+		Job.getJobManager().setProgressProvider(this);
 		Job.getJobManager().addJobChangeListener(this.changeListener);
+		StatusManager.getManager().addListener(notificationListener);
+	}
+
+	private void setUpImages() {
 		URL iconsRoot = ProgressManagerUtil.getIconsRoot();
 		try {
 			setUpImage(iconsRoot, SLEEPING_JOB, SLEEPING_JOB_KEY);
 			setUpImage(iconsRoot, WAITING_JOB, WAITING_JOB_KEY);
 			setUpImage(iconsRoot, BLOCKED_JOB, BLOCKED_JOB_KEY);
 
-			// Let the error manager set up its own icons
-			setUpImages(iconsRoot);
+			ImageDescriptor errorImage = ImageDescriptor
+					.createFromURL(new URL(iconsRoot, ERROR_JOB));
+			JFaceResources.getImageRegistry().put(ERROR_JOB_KEY, errorImage);
+
 		} catch (MalformedURLException e) {
 			ProgressManagerUtil.logException(e);
 		}
-		this.notificationListener = new StatusManager.INotificationListener(){
+	}
+
+	private INotificationListener createNotificationListener() {
+
+		return new StatusManager.INotificationListener(){
 
 			public void statusManagerNotified(int type, StatusAdapter[] adapters) {
 				if(type == INotificationTypes.HANDLED){
@@ -388,27 +399,15 @@ public class ProgressManager extends ProgressProvider implements
 			}
 			
 		};
-		StatusManager.getManager().addListener(notificationListener);
 	}
 
 	/**
-	 * Set up any images the error management needs.
+	 * Create and return the IJobChangeListener registered with the Job manager.
 	 * 
-	 * @param iconsRoot
-	 * @throws MalformedURLException
+	 * @return the created IJobChangeListener
 	 */
-	void setUpImages(URL iconsRoot) throws MalformedURLException {
-		// TODO see ErrorNotificationManager - this method isn't currently used
-		// In the ErrorNotificationManager it is invoked by ProgressManager
-		JFaceResources.getImageRegistry().put(ERROR_JOB_KEY,
-				ImageDescriptor.createFromURL(new URL(iconsRoot, ERROR_JOB)));
-	}
-
-	/**
-	 * Create the IJobChangeListener registered with the Job manager.
-	 */
-	private void createChangeListener() {
-		changeListener = new JobChangeAdapter() {
+	private IJobChangeListener createChangeListener() {
+		return new JobChangeAdapter() {
 
 			/*
 			 * (non-Javadoc)
@@ -639,12 +638,13 @@ public class ProgressManager extends ProgressProvider implements
 	 */
 	public JobMonitor progressFor(Job job) {
 
-		synchronized (monitorKey) {
-			if (runnableMonitors.containsKey(job)) {
-				return (JobMonitor) runnableMonitors.get(job);
+		synchronized (runnableMonitors) {
+			JobMonitor monitor = (JobMonitor) runnableMonitors.get(job);
+			if (monitor == null) {
+				monitor = new JobMonitor(job);
+				runnableMonitors.put(job, monitor);
 			}
-			JobMonitor monitor = new JobMonitor(job);
-			runnableMonitors.put(job, monitor);
+			
 			return monitor;
 		}
 
@@ -752,11 +752,7 @@ public class ProgressManager extends ProgressProvider implements
 
 		Job job = info.getJob();
 		jobs.remove(job);
-		synchronized (monitorKey) {
-			if (runnableMonitors.containsKey(job)) {
-				runnableMonitors.remove(job);
-			}
-		}
+		runnableMonitors.remove(job);
 
 		Object[] listenersArray = listeners.getListeners();
 		for (int i = 0; i < listenersArray.length; i++) {
@@ -1073,15 +1069,13 @@ public class ProgressManager extends ProgressProvider implements
 	 * @param listener
 	 */
 	void addListenerToFamily(Object family, IJobBusyListener listener) {
-		synchronized (familyKey) {
-			Collection currentListeners;
-			if (familyListeners.containsKey(family)) {
-				currentListeners = (Collection) familyListeners.get(family);
-			} else {
+		synchronized (familyListeners) {
+			Collection currentListeners = (Collection) familyListeners.get(family);
+			if (currentListeners == null) {
 				currentListeners = new HashSet();
+				familyListeners.put(family, currentListeners);
 			}
 			currentListeners.add(listener);
-			familyListeners.put(family, currentListeners);
 		}
 	}
 
@@ -1091,26 +1085,18 @@ public class ProgressManager extends ProgressProvider implements
 	 * @param listener
 	 */
 	void removeListener(IJobBusyListener listener) {
-		synchronized (familyKey) {
-			Collection keysToRemove = new HashSet();
+		synchronized (familyListeners) {
 			Iterator families = familyListeners.keySet().iterator();
 			while (families.hasNext()) {
 				Object next = families.next();
 				Collection currentListeners = (Collection) familyListeners
 						.get(next);
-				if (currentListeners.contains(listener)) {
-					currentListeners.remove(listener);
-				}
+				currentListeners.remove(listener);
+
+				// Remove any empty listeners
 				if (currentListeners.isEmpty()) {
-					keysToRemove.add(next);
-				} else {
-					familyListeners.put(next, currentListeners);
+					families.remove();
 				}
-			}
-			// Remove any empty listeners
-			Iterator keysIterator = keysToRemove.iterator();
-			while (keysIterator.hasNext()) {
-				familyListeners.remove(keysIterator.next());
 			}
 		}
 	}
@@ -1125,14 +1111,14 @@ public class ProgressManager extends ProgressProvider implements
 		if (job.isSystem()) {
 			return Collections.EMPTY_LIST;
 		}
-		synchronized (familyKey) {
+		synchronized (familyListeners) {
 
 			if (familyListeners.isEmpty()) {
 				return Collections.EMPTY_LIST;
 			}
 
 			Iterator families = familyListeners.keySet().iterator();
-			Collection returnValue = new ArrayList();
+			Collection returnValue = new HashSet();
 			while (families.hasNext()) {
 				Object next = families.next();
 				if (job.belongsTo(next)) {
