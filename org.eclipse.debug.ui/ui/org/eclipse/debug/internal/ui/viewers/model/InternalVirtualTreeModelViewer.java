@@ -753,9 +753,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
      * @param force whether to force the selection (i.e. <code>true</code> to
      *  override the model selection policy)
      */
-    public void setSelection(ISelection selection, boolean reveal, boolean force) {
+    public boolean setSelection(ISelection selection, boolean reveal, boolean force) {
         if (!force && !overrideSelection(getSelection(), selection)) {
-            return;
+            return false;
         }
 
         if (!fPreservingSelecction) {
@@ -765,6 +765,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
             fRestoreSelection = false;
             internalSetSelection(selection, reveal);
         }
+        return true;
     }
 
     private void internalSetSelection(ISelection selection, boolean reveal) {

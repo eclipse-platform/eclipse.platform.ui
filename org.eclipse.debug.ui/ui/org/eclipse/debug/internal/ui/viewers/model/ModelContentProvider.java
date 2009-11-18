@@ -570,6 +570,57 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     abstract void doRestore(final ModelDelta delta, boolean knowsHasChildren, boolean knowsChildCount,
         boolean checkChildrenRealized);
 
+    public void cancelRestore(final TreePath path, final int flags) {
+        if (fPendingState == null) {
+            return;
+        }
+
+        if ((flags & (IModelDelta.SELECT | IModelDelta.REVEAL)) != 0) {
+            // If we're canceling select or reveal, cancel it for all of pending deltas
+            final int mask = flags & (IModelDelta.SELECT | IModelDelta.REVEAL);
+            fPendingState.accept(new IModelDeltaVisitor() {
+                public boolean visit(IModelDelta delta, int depth) {
+                    int deltaFlags = delta.getFlags();
+                    int newFlags = deltaFlags & ~mask;
+                    if (DEBUG_STATE_SAVE_RESTORE
+                        && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) 
+                    {
+                        if (deltaFlags != newFlags) {
+                            System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        }
+                    }
+                    ((ModelDelta)delta).setFlags(newFlags);
+                    return true;
+                }
+            });
+        }
+        if ((flags & ~(IModelDelta.SELECT | IModelDelta.REVEAL)) != 0) {
+            final int mask = flags & ~(IModelDelta.SELECT | IModelDelta.REVEAL);
+            // For other flags (EXPAND/COLLAPSE), cancel only from the matching path.
+            fPendingState.accept(new IModelDeltaVisitor() {
+                public boolean visit(IModelDelta delta, int depth) {
+                    if (depth == path.getSegmentCount()) {
+                        TreePath deltaPath = getViewerTreePath(delta);
+                        if (deltaPath.equals(path)) {
+                            int deltaFlags = delta.getFlags();
+                            int newFlags = deltaFlags & ~mask;
+                            if (DEBUG_STATE_SAVE_RESTORE
+                                && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) 
+                            {
+                                if (deltaFlags != newFlags) {
+                                    System.out.println("\tCANCEL: " + delta.getElement() + "(" + Integer.toHexString(deltaFlags & mask) + ")"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                                }
+                            }
+                            ((ModelDelta)delta).setFlags(newFlags);
+                        }
+                        return false;
+                    } 
+                    return true;
+                }
+            });
+        }
+    }
+    
     protected void appendToPendingStateDelta(TreePath path) {
         if (DEBUG_STATE_SAVE_RESTORE
             && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
@@ -629,8 +680,10 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                     // If the pending state node does not contain any flags,
                     // we can also skip it.
                     ModelDelta saveDeltaNode = findSaveDelta(appendDeltaRoot, pendingDeltaNode);
-                    if (saveDeltaNode != null && !isDeltaInParent(pendingDeltaNode, saveDeltaNode)
-                        && pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) {
+                    if (saveDeltaNode != null && 
+                        !isDeltaInParent(pendingDeltaNode, saveDeltaNode) &&
+                        pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) 
+                    {
                         saveDeltaNode.setChildCount(pendingDeltaNode.getParentDelta().getChildCount());
                         copyIntoDelta(pendingDeltaNode, saveDeltaNode);
                     } else {

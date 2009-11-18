@@ -144,6 +144,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 	protected void handleCollapse(IModelDelta delta) {
 		TreePath elementPath = getViewerTreePath(delta);
 		getViewer().setExpandedState(elementPath, false);
+        cancelRestore(elementPath, IModelDelta.EXPAND);
 	}
 
 	/* (non-Javadoc)
@@ -203,6 +204,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 			treeViewer.setChildCount(elementPath, viewCount);
 	        if (!treeViewer.getExpandedState(elementPath)) {
 	            treeViewer.expandToLevel(elementPath, 1);
+	            cancelRestore(elementPath, IModelDelta.COLLAPSE);
 	        }
 		}
 	}
@@ -355,7 +357,10 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 				treeViewer.replace(parentPath, viewIndex, delta.getElement());
 			}
 		}
-		treeViewer.setSelection(new TreeSelection(getViewerTreePath(delta)), false, (delta.getFlags() & IModelDelta.FORCE) != 0);
+		TreePath selectionPath = getViewerTreePath(delta);
+		if ( treeViewer.setSelection(new TreeSelection(selectionPath), false, (delta.getFlags() & IModelDelta.FORCE) != 0) ) {
+	        cancelRestore(selectionPath, IModelDelta.SELECT);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -373,6 +378,7 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
 		if (parentDelta != null) {
 			handleExpand(parentDelta);
 			reveal(delta);
+            cancelRestore(getViewerTreePath(delta), IModelDelta.REVEAL);
 		}
 	}
 	

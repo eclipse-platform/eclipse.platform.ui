@@ -62,6 +62,7 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.TreeEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -1693,11 +1694,12 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @param force whether to force the selection (i.e. <code>true</code> to
 	 *  override the model selection policy)
 	 */
-	public void setSelection(ISelection selection, boolean reveal, boolean force) {
-		if (force) {
+	public boolean setSelection(ISelection selection, boolean reveal, boolean force) {
+		if (force || overrideSelection(getSelection(), selection)) {
 			super.setSelection(selection, reveal);
+			return true;
 		} else {
-			setSelection(selection, reveal);
+			return false;
 		}
 	}
 	
@@ -2434,6 +2436,29 @@ public class InternalTreeModelViewer extends TreeViewer
 	            }
 	        } else {
 				super.handleSelect(event);
+		        IContentProvider contentProvider = getContentProvider();
+		        if (contentProvider instanceof TreeModelContentProvider) {
+		            TreePath path = getTreePathFromItem((TreeItem)event.item);
+		            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT);
+		        }
 			}
+	}
+	
+	protected void handleTreeExpand(TreeEvent event) {
+        super.handleTreeExpand(event);
+        IContentProvider contentProvider = getContentProvider();
+        if (contentProvider instanceof TreeModelContentProvider) {
+            TreePath path = getTreePathFromItem((TreeItem)event.item);
+            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.COLLAPSE);
+        }
+	}
+	
+	protected void handleTreeCollapse(TreeEvent event) {
+	    super.handleTreeCollapse(event);
+        IContentProvider contentProvider = getContentProvider();
+        if (contentProvider instanceof TreeModelContentProvider) {
+            TreePath path = getTreePathFromItem((TreeItem)event.item);
+            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.EXPAND);
+        }
 	}
 }

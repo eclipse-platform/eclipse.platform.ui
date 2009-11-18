@@ -165,7 +165,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         return fRoot;
     }
     
-    ModelDelta getBaseDelta(ModelDelta rootDelta) {
+    public ModelDelta getBaseDelta(ModelDelta rootDelta) {
         ModelDelta delta = rootDelta;
         for (int i = 0; i < fRootPath.getSegmentCount(); i++) {
         	ModelDelta subDelta = delta.getChildDelta(fRootPath.getSegment(i));
@@ -360,7 +360,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
                     	nextDelta = delta.getChildDelta(element);
                     }
                     if (nextDelta == null) {
-                    	nextDelta = delta.addNode(element, j, IModelDelta.NO_CHANGE);
+                    	nextDelta = delta.addNode(element, j, IModelDelta.NO_CHANGE, element.getChildren().length);
                     }
                     delta = nextDelta;
                     break;
@@ -520,6 +520,17 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         return rootDelta;
     }        
 
+    public ModelDelta makeElementDelta(TreePath path, int flags) {
+        ModelDelta rootDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+        ModelDelta baseDelta = getBaseDelta(rootDelta);
+
+        // Find the element and generate the delta node for it.
+        ModelDelta delta= getElementDelta(baseDelta, path, false);
+        
+        delta.setFlags(flags);
+        return rootDelta;
+    }        
+    
     public TreePath findElement(String label) {
         return findElement(TreePath.EMPTY, label);
     }

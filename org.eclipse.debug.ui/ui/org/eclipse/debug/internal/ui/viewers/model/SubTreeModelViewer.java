@@ -325,8 +325,8 @@ public class SubTreeModelViewer extends TreeModelViewer {
             SubTreeModelViewer.this.setAutoExpandLevel(level);
         }
 
-        public void setSelection(ISelection selection, boolean reveal, boolean force) {
-            SubTreeModelViewer.this.setSelection(selection, reveal, force);
+        public boolean setSelection(ISelection selection, boolean reveal, boolean force) {
+            return SubTreeModelViewer.this.setSelection(selection, reveal, force);
         }
 
         public void updateViewer(IModelDelta delta) {
@@ -446,6 +446,10 @@ public class SubTreeModelViewer extends TreeModelViewer {
             return null;
         }
 
+        public void cancelRestore(TreePath path, int flags) {
+            fBaseProvider.cancelRestore(createFullPath(path), flags);
+        }
+        
         public void dispose() {
             fBaseProvider.dispose();
         }

@@ -101,10 +101,14 @@ public class TestModelUpdatesListener
         fProxyModels.clear();
         fViewerUpdatesComplete = false;
         fLabelUpdatesComplete = false;
-        fModelChangedComplete = false;
         fStateSaveComplete = false;
         fStateRestoreComplete = false;
         fTimeoutTime = System.currentTimeMillis() + fTimeoutInterval;
+        resetModelChanged();
+    }
+    
+    public void resetModelChanged() {
+        fModelChangedComplete = false;
     }
     
     public void addHasChildrenUpdate(TreePath path) {

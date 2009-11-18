@@ -179,4 +179,17 @@ public interface ITreeModelContentProvider extends ILazyTreePathContentProvider 
      * @since 3.6
      */
     public void updateModel(IModelDelta delta, int mask);
+
+    /**
+     * Instructs the content provider to cancel any pending state changes 
+     * (i.e. SELECT, REVEAL, EXPAND, COLLAPSE) for the given path.  Pending
+     * state changes are changes the the viewer plans to re-apply to the 
+     * viewer following a refresh.  If the user changes viewer state while
+     * the viewer is being refreshed, user's change should override the 
+     * previous state. 
+     * 
+     * @param path Path of the element for which to cancel pending changes.
+     * @param flags Flags indicating the changes to cancel.
+     */
+    public void cancelRestore(TreePath path, int flags);
 }
