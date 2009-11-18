@@ -2223,39 +2223,39 @@
       </propertyTester>
    </extension>
    <extension
-         point="org.eclipse.core.resources.filters">
-      <filter
-      		id="org.eclipse.ui.ide.filters.stringMatcherFilter"
+         point="org.eclipse.core.resources.filterMatchers">
+      <filterMatcher
+      		id="org.eclipse.ui.ide.patternFilterMatcher"
             argumentType="string"
             class="org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher"
             description="%filterProvider.description"
             name="%filterProvider.name"
             ordering="first">
-      </filter>
-      <filter
-      		id="org.eclipse.ui.ide.filters.orFilter"
-            argumentType="filters"
+      </filterMatcher>
+      <filterMatcher
+      		id="org.eclipse.ui.ide.orFilterMatcher"
+            argumentType="filterMatchers"
             class="org.eclipse.ui.internal.ide.misc.OrFileInfoMatcher"
             description="%orFilterProvider.description"
             name="%orFilterProvider.name"
             ordering="first">
-      </filter>
-      <filter
-      		id="org.eclipse.ui.ide.filters.andFilter"
-            argumentType="filters"
+      </filterMatcher>
+      <filterMatcher
+      		id="org.eclipse.ui.ide.andFilterMatcher"
+            argumentType="filterMatchers"
             class="org.eclipse.ui.internal.ide.misc.AndFileInfoMatcher"
             description="%andFilterProvider.description"
             name="%andFilterProvider.name"
             ordering="first">
-      </filter>
-      <filter
-      		id="org.eclipse.ui.ide.filters.notFilter"
-            argumentType="filter"
+      </filterMatcher>
+      <filterMatcher
+      		id="org.eclipse.ui.ide.notFilterMatcher"
+            argumentType="filterMatcher"
             class="org.eclipse.ui.internal.ide.misc.NotFileInfoMatcher"
             description="%notFilterProvider.description"
             name="%notFilterProvider.name"
             ordering="first">
-      </filter>
+      </filterMatcher>
    </extension>
    <extension
          point="org.eclipse.ui.installationPages">
