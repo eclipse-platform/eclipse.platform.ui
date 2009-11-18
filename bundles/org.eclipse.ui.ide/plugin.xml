@@ -2223,42 +2223,33 @@
       </propertyTester>
    </extension>
    <extension
-         point="org.eclipse.core.resources.filters"
-         id="stringMatcherFilter">
+         point="org.eclipse.core.resources.filters">
       <filter
+      		id="org.eclipse.ui.ide.filters.stringMatcherFilter"
             argumentType="string"
             class="org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher"
             description="%filterProvider.description"
             name="%filterProvider.name"
             ordering="first">
       </filter>
-   </extension>
-   <extension
-         point="org.eclipse.core.resources.filters"
-         id="orFilter">
       <filter
+      		id="org.eclipse.ui.ide.filters.orFilter"
             argumentType="filters"
             class="org.eclipse.ui.internal.ide.misc.OrFileInfoMatcher"
             description="%orFilterProvider.description"
             name="%orFilterProvider.name"
             ordering="first">
       </filter>
-   </extension>
-   <extension
-         point="org.eclipse.core.resources.filters"
-         id="andFilter">
       <filter
+      		id="org.eclipse.ui.ide.filters.andFilter"
             argumentType="filters"
             class="org.eclipse.ui.internal.ide.misc.AndFileInfoMatcher"
             description="%andFilterProvider.description"
             name="%andFilterProvider.name"
             ordering="first">
       </filter>
-   </extension>
-   <extension
-         point="org.eclipse.core.resources.filters"
-         id="notFilter">
       <filter
+      		id="org.eclipse.ui.ide.filters.notFilter"
             argumentType="filter"
             class="org.eclipse.ui.internal.ide.misc.NotFileInfoMatcher"
             description="%notFilterProvider.description"
