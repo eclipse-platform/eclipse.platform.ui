@@ -10,12 +10,12 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.AbstractFileInfoMatcher;
-import org.eclipse.core.resources.IFilterDescriptor;
+import org.eclipse.core.resources.IFilterMatcherDescriptor;
+import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 
-public class FilterDescriptor implements IFilterDescriptor {
+public class FilterDescriptor implements IFilterMatcherDescriptor {
 	private String id;
 	private String name;
 	private String description;
@@ -33,7 +33,7 @@ public class FilterDescriptor implements IFilterDescriptor {
 		description = element.getAttribute("description"); //$NON-NLS-1$
 		argumentType = element.getAttribute("argumentType"); //$NON-NLS-1$
 		if (argumentType == null)
-			argumentType = IFilterDescriptor.ARGUMENT_TYPE_NONE;
+			argumentType = IFilterMatcherDescriptor.ARGUMENT_TYPE_NONE;
 		this.element = element;
 		String ordering = element.getAttribute("ordering"); //$NON-NLS-1$
 		if (ordering != null)

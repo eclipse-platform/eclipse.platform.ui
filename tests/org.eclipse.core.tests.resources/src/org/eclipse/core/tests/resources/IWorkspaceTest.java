@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import org.eclipse.core.resources.IWorkspace;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import junit.framework.Test;
@@ -1202,6 +1200,12 @@ public class IWorkspaceTest extends ResourceTest {
 		assertNotNull("1.0", ref);
 		IWorkspace ws = (IWorkspace) context.getService(ref);
 		assertNotNull("1.1", ws);
-		
+	}
+
+	public void testGetFilterMatcherDescriptor() {
+		IFilterMatcherDescriptor descriptor = getWorkspace().getFilterMatcherDescriptor("");
+		assertNull("1.0", descriptor);
+		descriptor = getWorkspace().getFilterMatcherDescriptor("org.eclipse.core.resources.regexFilterMatcher");
+		assertNotNull("1.1", descriptor);
 	}
 }

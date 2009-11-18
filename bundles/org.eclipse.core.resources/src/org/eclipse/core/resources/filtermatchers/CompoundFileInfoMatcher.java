@@ -9,7 +9,9 @@
  *     Serge Beauchamp (Freescale Semiconductor) - [252996] initial API and implementation
  *     IBM Corporation - ongoing implementation
  *******************************************************************************/
-package org.eclipse.core.resources;
+package org.eclipse.core.resources.filtermatchers;
+
+import org.eclipse.core.resources.*;
 
 import org.eclipse.core.internal.resources.FilterDescriptor;
 
@@ -23,7 +25,7 @@ public abstract class CompoundFileInfoMatcher extends AbstractFileInfoMatcher {
 
 	protected AbstractFileInfoMatcher instantiate(IProject project,
 			IFileInfoMatcherDescription filter) {
-		IFilterDescriptor desc = project.getWorkspace().getFilterDescriptor(
+		IFilterMatcherDescriptor desc = project.getWorkspace().getFilterMatcherDescriptor(
 				filter.getId());
 		if (desc != null) {
 			AbstractFileInfoMatcher matcher = ((FilterDescriptor) desc)

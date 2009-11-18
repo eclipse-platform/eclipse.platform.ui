@@ -14,8 +14,8 @@ package org.eclipse.core.internal.resources;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.resources.AbstractFileInfoMatcher;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 
 /**
  * A Filter provider for Java Regular expression supported by 

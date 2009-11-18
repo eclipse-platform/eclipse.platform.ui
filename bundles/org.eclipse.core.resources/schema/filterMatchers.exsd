@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.core.resources" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.core.resources" id="filters" name="Filters"/>
+         <meta.schema plugin="org.eclipse.core.resources" id="filterMatchers" name="Filter Matchers"/>
       </appInfo>
       <documentation>
-         A filter extension allows defining resource filter types that can be applied on a folder to remove file system objects from populating the resource tree.
+         The filter matchers extension point allows plug-ins to contribute matchers. The matchers are used by filters applied on containers (folders or projects) to include or exclude some file system objects while populating the resources tree.
       </documentation>
    </annotation>
 
@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="filter" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="filterMatcher" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,7 +47,7 @@
       </complexType>
    </element>
 
-   <element name="filter">
+   <element name="filterMatcher">
       <complexType>
          <attribute name="class" type="string" use="required">
             <annotation>
@@ -71,9 +71,9 @@
                   </enumeration>
                   <enumeration value="string">
                   </enumeration>
-                  <enumeration value="filter">
+                  <enumeration value="filterMatcher">
                   </enumeration>
-                  <enumeration value="filters">
+                  <enumeration value="filterMatchers">
                   </enumeration>
                </restriction>
             </simpleType>
@@ -141,13 +141,11 @@
 (in file plugin.xml)
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.core.resources.filters&quot;
-         id=&quot;regexFilter&quot;&gt;
-      &lt;filter
+         point=&quot;org.eclipse.core.resources.filterMatchers&quot;&gt;
+      &lt;filterMatcher
             argumentType=&quot;string&quot;
-            class=&quot;org.eclipse.core.internal.resources.RegexFilterProvider&quot;
-            hasArguments=&quot;true&quot;&gt;
-      &lt;/filter&gt;
+            class=&quot;org.eclipse.core.internal.resources.RegexFileInfoMatcher&quot;&gt;
+      &lt;/filterMatcher&gt;
    &lt;/extension&gt;
 &lt;/pre&gt;
       </documentation>
@@ -158,7 +156,8 @@
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The value of the class attribute must represent an implementation of &lt;tt&gt;org.eclipse.core.resources.IFileInfoFilterFactory&lt;/tt&gt;.
+         The value of the class attribute must represent a 
+subclass of &lt;samp&gt;org.eclipse.core.resources.AbstractFileInfoMatcher&lt;/samp&gt;.
       </documentation>
    </annotation>
 
@@ -167,7 +166,7 @@
          <meta.section type="implementation"/>
       </appInfo>
       <documentation>
-         The core resource plugin provides the regex filter, allowing the user to specify string arguments matching the specification supported by java.util.regex.Pattern.
+         The core resource plugin provides the regex matcher, allowing the user to specify string arguments matching the specification supported by java.util.regex.Pattern.
       </documentation>
    </annotation>
 

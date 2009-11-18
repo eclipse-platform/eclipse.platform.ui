@@ -26,6 +26,7 @@ public class AllTests extends TestCase {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(CharsetTest.suite());
 		suite.addTest(ContentDescriptionManagerTest.suite());
+		suite.addTest(FilteredResourceTest.suite());
 		suite.addTest(HiddenResourceTest.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());

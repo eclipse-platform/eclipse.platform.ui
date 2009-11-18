@@ -12,7 +12,9 @@
 package org.eclipse.core.internal.resources;
 
 import java.util.HashMap;
-import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.IFilterMatcherDescriptor;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.*;
 
 /**
@@ -21,12 +23,12 @@ import org.eclipse.core.runtime.*;
  */
 class FilterTypeManager implements IManager {
 
-	private static final String FILTER_ELEMENT = "filter"; //$NON-NLS-1$
+	private static final String FILTER_ELEMENT = "filterMatcher"; //$NON-NLS-1$
 
 	private HashMap/*<String, FilterDescriptor>*/factories = new HashMap();
 
 	public FilterTypeManager() {
-		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILTERS);
+		IExtensionPoint point = RegistryFactory.getRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_FILTER_MATCHERS);
 		if (point != null) {
 			IExtension[] ext = point.getExtensions();
 			// initial population
@@ -56,12 +58,12 @@ class FilterTypeManager implements IManager {
 		}
 	}
 
-	public IFilterDescriptor getFilterDescriptor(String id) {
-		return (IFilterDescriptor) factories.get(id);
+	public IFilterMatcherDescriptor getFilterDescriptor(String id) {
+		return (IFilterMatcherDescriptor) factories.get(id);
 	}
 
-	public IFilterDescriptor[] getFilterDescriptors() {
-		return (IFilterDescriptor[]) factories.values().toArray(new IFilterDescriptor[0]);
+	public IFilterMatcherDescriptor[] getFilterDescriptors() {
+		return (IFilterMatcherDescriptor[]) factories.values().toArray(new IFilterMatcherDescriptor[0]);
 	}
 
 	protected void processExtension(IExtension extension) {
@@ -70,7 +72,7 @@ class FilterTypeManager implements IManager {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase(FILTER_ELEMENT)) {
 				try {
-					IFilterDescriptor desc = new FilterDescriptor(element);
+					IFilterMatcherDescriptor desc = new FilterDescriptor(element);
 					factories.put(desc.getId(), desc);
 				} catch (CoreException e) {
 					e.printStackTrace();
@@ -85,7 +87,7 @@ class FilterTypeManager implements IManager {
 			IConfigurationElement element = elements[i];
 			if (element.getName().equalsIgnoreCase(FILTER_ELEMENT)) {
 				try {
-					IFilterDescriptor desc = new FilterDescriptor(element, false);
+					IFilterMatcherDescriptor desc = new FilterDescriptor(element, false);
 					factories.remove(desc.getId());
 				} catch (CoreException e) {
 					e.printStackTrace();

@@ -9,7 +9,9 @@
  *     Serge Beauchamp(Freescale Semiconductor) - initial API and implementation
  *     IBM Corporation - ongoing development
  *******************************************************************************/
-package org.eclipse.core.resources;
+package org.eclipse.core.resources.filtermatchers;
+
+import org.eclipse.core.resources.IProject;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileInfoFilter;

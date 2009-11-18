@@ -16,6 +16,7 @@ import java.util.LinkedList;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.resources.*;
+import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 
@@ -35,7 +36,7 @@ public class Filter {
 
 	public boolean match(IFileInfo fileInfo) throws CoreException {
 		if (provider == null) {
-			IFilterDescriptor filterDescriptor = project.getWorkspace().getFilterDescriptor(getId());
+			IFilterMatcherDescriptor filterDescriptor = project.getWorkspace().getFilterMatcherDescriptor(getId());
 			if (filterDescriptor != null)
 				provider = ((FilterDescriptor) filterDescriptor).createFilter();
 			provider.initialize(project, description.getFileInfoMatcherDescription().getArguments());
@@ -50,7 +51,7 @@ public class Filter {
 	}
 
 	public boolean isFirst() {
-		IFilterDescriptor descriptor = project.getWorkspace().getFilterDescriptor(getId());
+		IFilterMatcherDescriptor descriptor = project.getWorkspace().getFilterMatcherDescriptor(getId());
 		if (descriptor != null)
 			return descriptor.isFirstOrdering();
 		return false;

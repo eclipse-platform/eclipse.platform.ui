@@ -11,6 +11,8 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
+import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
+
 /**
  * A filter descriptor contains information about a filter type
  * obtained from the plug-in manifest (<code>plugin.xml</code>) files.
@@ -20,24 +22,24 @@ package org.eclipse.core.resources;
  * </p>
  * 
  * @see AbstractFileInfoMatcher
- * @see IWorkspace#getFilterDescriptor(String)
- * @see IWorkspace#getFilterDescriptors()
+ * @see IWorkspace#getFilterMatcherDescriptor(String)
+ * @see IWorkspace#getFilterMatcherDescriptors()
  * @since 3.6
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  */
-public interface IFilterDescriptor {
+public interface IFilterMatcherDescriptor {
 
 	/**
 	 * An argument filter type constant (value "filter"), denoting that this
 	 * filter takes another filter as argument.
 	 */
-	public static final String ARGUMENT_TYPE_FILTER = "filter"; //$NON-NLS-1$
+	public static final String ARGUMENT_TYPE_FILTER_MATCHER = "filterMatcher"; //$NON-NLS-1$
 	/**
 	 * An argument filter type constant (value "filters"), denoting that this
 	 * filter takes an array of other filters as argument.
 	 */
-	public static final String ARGUMENT_TYPE_FILTERS = "filters"; //$NON-NLS-1$
+	public static final String ARGUMENT_TYPE_FILTER_MATCHERS = "filterMatchers"; //$NON-NLS-1$
 	/**
 	 * An argument filter type constant (value "none"), denoting that this
 	 * filter does not take any arguments.

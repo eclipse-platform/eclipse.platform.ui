@@ -12,8 +12,6 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.osgi.framework.ServiceRegistration;
-
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
 import org.eclipse.core.runtime.*;
@@ -107,12 +105,12 @@ public final class ResourcesPlugin extends Plugin {
 	public static final String PT_VARIABLE_PROVIDERS = "variableResolvers"; //$NON-NLS-1$
 
 	/**
-	 * Simple identifier constant (value <code>"filters"</code>)
-	 * for the filters extension point.
+	 * Simple identifier constant (value <code>"filterMatchers"</code>)
+	 * for the filter matchers extension point.
 	 * 
 	 * @since 3.6
 	 */
-	public static final String PT_FILTERS = "filters"; //$NON-NLS-1$
+	public static final String PT_FILTER_MATCHERS = "filterMatchers"; //$NON-NLS-1$
 
 	/**
 	 * Constant identifying the job family identifier for the background autobuild job.

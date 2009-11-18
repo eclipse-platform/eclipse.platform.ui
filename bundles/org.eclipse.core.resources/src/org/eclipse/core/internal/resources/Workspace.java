@@ -1219,11 +1219,11 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		return moveDeleteHook;
 	}
 
-	public IFilterDescriptor getFilterDescriptor(String filterId) {
-		return filterManager.getFilterDescriptor(filterId);
+	public IFilterMatcherDescriptor getFilterMatcherDescriptor(String filterMAtcherId) {
+		return filterManager.getFilterDescriptor(filterMAtcherId);
 	}
 
-	public IFilterDescriptor[] getFilterDescriptors() {
+	public IFilterMatcherDescriptor[] getFilterMatcherDescriptors() {
 		return filterManager.getFilterDescriptors();
 	}
 
