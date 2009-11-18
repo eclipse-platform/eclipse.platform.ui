@@ -185,6 +185,9 @@ public interface ITreeModelViewer extends ISelectionProvider {
      * @param flagsToSave The flags to preserve during the state save.  The 
      * supported flags are <code>IModelDelta.SELECT</code>, 
      * <code>IModelDelta.EXPAND</code>, <code>IModelDelta.COLLAPSE</code>.
+     * @return Returns whether the state was saved for the given path.  Will 
+     * return <code>false</code> if an element at the given path cannot 
+     * be found.
      *
      * @since 3.6
      */
