@@ -559,6 +559,9 @@
       <frame
             class="org.eclipse.ua.tests.help.webextension.TestFrame">
       </frame>
+      <frame
+            class="org.eclipse.ua.tests.help.webextension.TestHelpToolbarFrame">
+      </frame>
    </extension>
    <extension
          point="org.eclipse.equinox.http.registry.httpcontexts">

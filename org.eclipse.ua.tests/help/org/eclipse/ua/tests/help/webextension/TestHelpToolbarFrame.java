@@ -15,23 +15,27 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.webapp.AbstractFrame;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 
-public class TestFrame extends AbstractFrame {
+public class TestHelpToolbarFrame extends AbstractFrame {
 
 	public String getName() {
-		return "testFrame";
+		return "testHelpToolbarFrame";
 	}
 
 	public String getURL() {
-		return "/titlesearch/jsp/advanced/testFrame.jsp";
+		return "/titlesearch/jsp/advanced/testHelpToolbarFrame.jsp";
 	}
 	
 	public int getLocation() {
-		return AbstractFrame.BELOW_CONTENT;
+		return AbstractFrame.HELP_TOOLBAR;
 	}
 	
 	public String getSize() {
-		return "24";
+		return "*";
 	}
+	
+    public String getFrameAttributes() {
+    	return "\"marginwidth=\"0\" marginheight=\"0\" frameborder=\"0\" scrolling=\"no\""; //$NON-NLS-1$
+    }
 	
 	public boolean isVisible() {
 		return Platform.getPreferencesService().getBoolean

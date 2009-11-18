@@ -43,7 +43,7 @@ function onloadHandler(e)
 <% if (data.isIE() || data.isMozilla() && "1.2.1".compareTo(data.getMozillaVersion()) <=0){
 %>	
     try {
-        var h=window.SearchFrame.document.getElementById("searchLabel").offsetHeight; <%-- default 13 --%>
+        var h=window.HelpToolbarFrame.SearchFrame.document.getElementById("searchLabel").offsetHeight; <%-- default 13 --%>
 	    if(h<=19){
 		    // no need to resize up to 19px 
 	    } else {
@@ -62,7 +62,7 @@ if (data.isMozilla()){
 <%
 }
 %>
-	window.frames["SearchFrame"].document.getElementById("searchWord").focus();
+	window.HelpToolbarFrame.frames["SearchFrame"].document.getElementById("searchWord").focus();
 }
 
 </script>
@@ -76,7 +76,7 @@ if (data.isMozilla()){
 <%
 	}
 %>
-	<frame name="SearchFrame" title="<%=ServletResources.getString("helpToolbarFrame", request)%>" src='<%="advanced/search.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
+	<frame name="HelpToolbarFrame" title="<%=ServletResources.getString("ignore", "HelpToolbarFrame", request)%>" src='<%="advanced/helpToolbar.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" noresize=0>
 	<frame name="HelpFrame" title="<%=ServletResources.getString("ignore", "HelpFrame", request)%>" src='<%="advanced/help.jsp"+UrlUtil.htmlEncode(data.getQuery())%>' marginwidth="0" marginheight="0" scrolling="no" frameborder="0" >
 <%
 	if(!("0".equals(data.getFooterHeight()))){

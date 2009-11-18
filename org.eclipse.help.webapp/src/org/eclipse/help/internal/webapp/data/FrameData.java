@@ -82,5 +82,40 @@ public class FrameData extends RequestData {
 		}
 		return size;
 	}
+	
+	/**
+	 * Get the additional frame added to the Main Help Toolbar
+	 * Considering of the layout and space of Main Help Toolbar, only one extra frame is supported
+	 * 
+	 * @return AbstractFrame or null if not found
+	 */
+	public AbstractFrame getHelpToolbarFrame() {
+		AbstractFrame[] frames = getFrames(AbstractFrame.HELP_TOOLBAR);
+		if(frames.length > 0) {
+			if(frames.length > 1){
+				HelpWebappPlugin.logWarning("Only one extra frame is supported to be added to Help Toolbar. The first reterived element will be used.");  //$NON-NLS-1$
+			}
+			return frames[0];
+		}else {
+			return null;
+		}
+	}
+	
+	/**
+	 * Get layout(frame sizes) of Main Help Toolbar
+	 */
+	public String getHelpToolbarFrameSizes() {
+		String size = "*"; //$NON-NLS-1$
+		AbstractFrame frame = getHelpToolbarFrame();
+		if(null != frame) {
+			boolean isRTL = UrlUtil.isRTL(request, response);
+			if(isRTL) {
+				size = frame.getSize() + ", " + size; //$NON-NLS-1$
+			}else {
+				size =  size + ", " + frame.getSize(); //$NON-NLS-1$
+			}
+		}
+		return size;
+	}
 
 }

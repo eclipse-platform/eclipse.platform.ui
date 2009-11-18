@@ -137,7 +137,7 @@ function getWindowBounds(window) {
 
 function getSearchWord() {
     var navFrame = parent.parent.parent;
-	var searchFrame = navFrame.parent.parent.frames["SearchFrame"];
+	var searchFrame = navFrame.parent.parent.HelpToolbarFrame.frames["SearchFrame"];
 	return searchFrame.document.forms["searchForm"].searchWord.value;
 }
 
@@ -185,7 +185,7 @@ function searchFor(searchWord) {
         query += treeItem.nodeid;
     }
     var navFrame = parent.parent.parent;
-	var searchFrame = navFrame.parent.parent.frames["SearchFrame"];
+	var searchFrame = navFrame.parent.parent.HelpToolbarFrame.frames["SearchFrame"];
 	navFrame.showView('search');
 	var searchView = navFrame.ViewsFrame.search.searchViewFrame;
 	searchView.location.replace("searchView.jsp?"+query);	

@@ -163,15 +163,15 @@ function doSearch(query)
 		
 	/******** HARD CODED VIEW NAME *********/
 	// do some tests to ensure the results are available
-	if (parent.HelpFrame && 
-		parent.HelpFrame.NavFrame && 
-		parent.HelpFrame.NavFrame.showView &&
-		parent.HelpFrame.NavFrame.ViewsFrame && 
-		parent.HelpFrame.NavFrame.ViewsFrame.search && 
-		parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame) 
+	if (parent.parent.HelpFrame && 
+		parent.parent.HelpFrame.NavFrame && 
+		parent.parent.HelpFrame.NavFrame.showView &&
+		parent.parent.HelpFrame.NavFrame.ViewsFrame && 
+		parent.parent.HelpFrame.NavFrame.ViewsFrame.search && 
+		parent.parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame) 
 	{
-		parent.HelpFrame.NavFrame.showView("search");
-		var searchView = parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame;
+		parent.parent.HelpFrame.NavFrame.showView("search");
+		var searchView = parent.parent.HelpFrame.NavFrame.ViewsFrame.search.searchViewFrame;
 		searchView.location.replace("searchView.jsp?"+query);
 	}
 }

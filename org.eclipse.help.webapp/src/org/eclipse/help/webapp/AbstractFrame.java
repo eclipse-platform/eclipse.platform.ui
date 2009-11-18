@@ -20,18 +20,16 @@ public abstract class AbstractFrame implements Comparable {
 	
 	/**
 	 * Constant returned from getFrameLocation() function to indicate that
-	 * the frame should be created below the content frame. This is 
-	 * currently the only supported location for extra frames.
+	 * the frame should be created below the content frame or the Main Help Toolbar
 	 */
 	public static final int BELOW_CONTENT = 1;
+	public static final int HELP_TOOLBAR = 2;
 	
 	/**
 	 * Function which defines the frame location
 	 * @return a constant defined in this class which indicates the location of this frame
 	 */
-	public int getLocation() {
-		return BELOW_CONTENT;
-	}
+	public abstract int getLocation();
 	
 	/**
 	 * 
