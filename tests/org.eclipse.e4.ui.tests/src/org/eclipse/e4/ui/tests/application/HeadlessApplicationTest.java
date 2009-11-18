@@ -154,28 +154,6 @@ public abstract class HeadlessApplicationTest extends
 		assertNull(context.get(IServiceConstants.ACTIVE_PART_ID));
 	}
 
-	public void test_SwitchActivePartsInCode() throws Exception {
-		IEclipseContext context = application.getContext();
-
-		MPart[] parts = getTwoParts();
-
-		parts[0].getParent().setActiveChild(parts[0]);
-		assertEquals(parts[0].getId(), context
-				.get(IServiceConstants.ACTIVE_PART_ID));
-
-		// the OSGi context should not have been affected by the recursion
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART_ID));
-
-		parts[1].getParent().setActiveChild(parts[1]);
-		assertEquals(parts[1].getId(), context
-				.get(IServiceConstants.ACTIVE_PART_ID));
-
-		// the OSGi context should not have been affected by the recursion
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART));
-		assertNull(osgiContext.get(IServiceConstants.ACTIVE_PART_ID));
-	}
-
 	// public void test_SwitchActiveChildInContext() {
 	// IEclipseContext context = application.getContext();
 	//

@@ -167,51 +167,6 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	}
 
 	@Override
-	public void test_SwitchActivePartsInCode() throws Exception {
-		final IEclipseContext context = application.getContext();
-
-		final MPart[] parts = getTwoParts();
-
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-			public void run() {
-				parts[0].getParent().setActiveChild(parts[1]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[1].getId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
-
-				parts[1].getParent().setActiveChild(parts[0]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[0].getId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
-			}
-		});
-	}
-
-	public void test_SwitchActivePartsInCode2() throws Exception {
-		final IEclipseContext context = getActiveChildContext(application);
-
-		final MPart[] parts = getTwoParts();
-
-		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
-			public void run() {
-				parts[0].getParent().setActiveChild(parts[1]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[1].getId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
-
-				parts[1].getParent().setActiveChild(parts[0]);
-				while (display.readAndDispatch())
-					;
-				assertEquals(parts[0].getId(), context
-						.get(IServiceConstants.ACTIVE_PART_ID));
-			}
-		});
-	}
-
-	@Override
 	public void test_SwitchActivePartsInContext() throws Exception {
 		final IEclipseContext context = application.getContext();
 
