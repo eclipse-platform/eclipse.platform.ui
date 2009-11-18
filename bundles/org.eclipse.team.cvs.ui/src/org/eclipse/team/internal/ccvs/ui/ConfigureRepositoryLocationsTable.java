@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.widgets.*;
-import org.eclipse.team.internal.ccvs.core.CVSProjectSetCapability;
+import org.eclipse.team.internal.ccvs.core.CVSRepositoryLocationMatcher;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
@@ -227,7 +227,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 							.isKnownRepository(
 									((ICVSRepositoryLocation) locationItem.alternativeList
 											.get(0)).getLocation(false))
-					&& CVSProjectSetCapability
+					&& CVSRepositoryLocationMatcher
 							.isCompatible(
 									locationItem.location,
 									(ICVSRepositoryLocation) locationItem.alternativeList
@@ -357,7 +357,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 			// consider sorting the list again
 			rli.alternativeList.add(location);
 			if (getSelection().toList().contains(element)
-					&& CVSProjectSetCapability.isCompatible(location,
+					&& CVSRepositoryLocationMatcher.isCompatible(location,
 							rli.location, false)) {
 				// at the end
 				rli.selected = getFilteredAlternativeRepositories(rli).size() - 1;
@@ -414,7 +414,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 				CVSRepositoryLocation repo = (CVSRepositoryLocation) alternativeList.get(i);
 				// If "Show only compatible..." option is on add only compatible
 				// locations or the location itself
-				if (!CVSProjectSetCapability.isCompatible(item.location,
+				if (!CVSRepositoryLocationMatcher.isCompatible(item.location,
 						repo, true)){
 					continue; // skip this repo location
 				}
@@ -430,7 +430,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 			for (int j = 0; j <= item.selected; j++) {
 				ICVSRepositoryLocation rl = (ICVSRepositoryLocation) item.alternativeList
 						.get(j);
-				if (!CVSProjectSetCapability.isCompatible(item.location,
+				if (!CVSRepositoryLocationMatcher.isCompatible(item.location,
 						rl, true)) {
 					shift++;
 				}
@@ -441,14 +441,14 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 			// one from the project set
 			ICVSRepositoryLocation selected = (ICVSRepositoryLocation) getFilteredAlternativeRepositories(
 					item).get(item.selected);
-			if (!CVSProjectSetCapability.isCompatible(item.location,
+			if (!CVSRepositoryLocationMatcher.isCompatible(item.location,
 					selected, true)) {
 				item.selected = 0; // default
 				// find compatible
 				for (int j = 0; j < item.alternativeList.size(); j++) {
 					ICVSRepositoryLocation l = (ICVSRepositoryLocation) item.alternativeList
 							.get(j);
-					if (CVSProjectSetCapability.isCompatible(l,
+					if (CVSRepositoryLocationMatcher.isCompatible(l,
 							item.location, true)) {
 						item.selected = j;
 						break;
@@ -465,7 +465,7 @@ public class ConfigureRepositoryLocationsTable implements ICellModifier,
 									item.selected)); j++) {
 				ICVSRepositoryLocation rl = (ICVSRepositoryLocation) item.alternativeList
 						.get(j);
-				if (!CVSProjectSetCapability.isCompatible(item.location, rl,
+				if (!CVSRepositoryLocationMatcher.isCompatible(item.location, rl,
 						true)) {
 					shift++;
 				}

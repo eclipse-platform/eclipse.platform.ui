@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,11 +62,10 @@ public class CVSProjectPropertiesPage extends CVSPropertiesPage {
 	private boolean fetch;
 	private boolean watchEdit;
 
-	public static boolean isCompatible(ICVSRepositoryLocation location, ICVSRepositoryLocation oldLocation) {
-		if (!location.getHost().equals(oldLocation.getHost())) return false;
-		if (!location.getRootDirectory().equals(oldLocation.getRootDirectory())) return false;
-		if (location.equals(oldLocation)) return false;
-		return true;
+	public static boolean isCompatible(ICVSRepositoryLocation location,
+			ICVSRepositoryLocation oldLocation) {
+		return CVSRepositoryLocationMatcher.isCompatible(location, oldLocation,
+				false);
 	}
 	
 	private class RepositorySelectionDialog extends Dialog {

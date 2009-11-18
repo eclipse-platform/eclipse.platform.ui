@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -122,35 +122,15 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
  		if (projects == null)
  			return new IProject[0];
 
- 		Map alternativeMap = isAdditionalRepositoryInformationRequired(projects, infoMap);
-		if (!alternativeMap.isEmpty()) {
-
-			// display the dialog
-			Map alternativeRespositoriesMap = promptForAdditionRepositoryInformation(alternativeMap);
-			// replace repository location from a project load info with one from the prompter
-			if (alternativeRespositoriesMap != null) {
-				for (Iterator iterator = infoMap.values().iterator(); iterator
-						.hasNext();) {
-					LoadInfo loadInfoForProject = (LoadInfo) iterator.next();
-					ICVSRepositoryLocation selectedAlternativeRepository = (ICVSRepositoryLocation) alternativeRespositoriesMap
-							.get(loadInfoForProject.repositoryLocation);
-					/*
-					 * If selectedAlternativeRepository isn't null use it by
-					 * replacing the one from loadInfoForProject. An opposite
-					 * situation, when selectedAlternativeRepository is null,
-					 * occurs when we haven't asked for any additional
-					 * information, because it's not needed - we've found a
-					 * (single) perfect match. To use it we will need to
-					 * recreate repository location with useKnown flag set to
-					 * true.
-					 */
-					// TODO: final modifier removed for LoadInfo.repositoryLocation 
-					// another solution is to create a copy (clone) of LoadInfo, and replace the whole object
-					loadInfoForProject.repositoryLocation = selectedAlternativeRepository != null ? selectedAlternativeRepository
-							: getRepositoryLocationFromString(
-									loadInfoForProject.repositoryLocation
-											.getLocation(true), true, false);
-				}
+		Map suggestedRepositoryLocations = CVSRepositoryLocationMatcher
+				.prepareSuggestedRepositoryLocations(projects, infoMap);
+ 		applySinglePerfectMatchesToInfoMap(suggestedRepositoryLocations, infoMap);
+ 		if (CVSRepositoryLocationMatcher.isPromptRequired(suggestedRepositoryLocations)) {
+			// Display the dialog
+			Map userSelectedRepositoryLocations = promptForAdditionRepositoryInformation(suggestedRepositoryLocations);
+			// Replace repository location from a project load info with one from the prompter
+			if (userSelectedRepositoryLocations != null) {
+				applyUserSelectionToInfoMap(userSelectedRepositoryLocations, infoMap);
 			} else {
 				// operation canceled
 				return new IProject[0];
@@ -159,7 +139,47 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		
  		// Load the projects
  		return checkout(projects, infoMap, monitor);
+	}
 
+	private void applySinglePerfectMatchesToInfoMap(
+			Map/* <IProject, List<ICVSRepositoryLocation>> */suggestedRepositoryLocations,
+			Map/* <IProject, LoadInfo> */infoMap) throws CVSException {
+		for (Iterator i = infoMap.values().iterator(); i.hasNext();) {
+			LoadInfo loadInfoForProject = (LoadInfo) i.next();
+			ICVSRepositoryLocation key = loadInfoForProject.repositoryLocation;
+			List suggestedList = (List) suggestedRepositoryLocations.get(key);
+			/*
+			 * We've found a (single) perfect match, the dialog should not
+			 * prompt for additional info in this case. To use the matched repo
+			 * we will need to recreate repository location with 'useKnown' flag
+			 * set to true.
+			 */
+			if (suggestedList.size() == 1
+					&& CVSRepositoryLocationMatcher.isMatching(
+							(ICVSRepositoryLocation) suggestedList.get(0),
+							loadInfoForProject.repositoryLocation)) {
+				loadInfoForProject.repositoryLocation = getRepositoryLocationFromString(
+						loadInfoForProject.repositoryLocation.getLocation(true),
+						true, false);
+				// Do not display in the dialog.
+				suggestedRepositoryLocations.remove(key);
+			}
+		}
+	}
+
+	private void applyUserSelectionToInfoMap(
+			Map/* <ICVSRepositoryLocation, CVSRepositoryLocation> */userSelectedRepositoryLocations,
+			Map/* <IProject, LoadInfo> */infoMap)
+			throws CVSException {
+		for (Iterator i = infoMap.values().iterator(); i.hasNext();) {
+			LoadInfo loadInfoForProject = (LoadInfo) i.next();
+			ICVSRepositoryLocation userSelectedRepository = (ICVSRepositoryLocation) userSelectedRepositoryLocations
+					.get(loadInfoForProject.repositoryLocation);
+			// TODO: final modifier removed for LoadInfo.repositoryLocation 
+			// another solution is to create a copy (clone) of LoadInfo, and replace the whole object
+			if (userSelectedRepository != null)
+				loadInfoForProject.repositoryLocation = userSelectedRepository;
+		}
 	}
 
 	/**
@@ -230,7 +250,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 	 */
 	static class LoadInfo {
 		// TODO: final modifier removed in order to replace a repository location before check out
-		private ICVSRepositoryLocation repositoryLocation;
+		ICVSRepositoryLocation repositoryLocation;
 		private final String module;
 		private final IProject project;
 		private final CVSTag tag;
@@ -306,7 +326,7 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			ICVSRepositoryLocation[] locations = CVSProviderPlugin.getPlugin().getKnownRepositories();
 			for (int i = 0; i < locations.length; i++) {
 				ICVSRepositoryLocation location = locations[i];
-				if (isMatching(newLocation, location))
+				if (CVSRepositoryLocationMatcher.isMatching(newLocation, location))
 						return location;
 			}
 		}
@@ -616,226 +636,8 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 		}
 	}
 	
-	private static final String EXTSSH = "extssh"; //$NON-NLS-1$
-	private static final String PSERVER = "pserver"; //$NON-NLS-1$
-	private static final String EXT = "ext"; //$NON-NLS-1$
-	
-	/**
-	 * Checks whether a dialog prompting for an addition repository location is
-	 * required.
-	 * 
-	 * @see org.eclipse.team.internal.ccvs.ui.AlternativeRepositoryDialog
-	 * @see org.eclipse.team.internal.ccvs.ui.AlternativeRepositoryTable
-	 * 
-	 * @param projects
-	 *            an array of project to check out a mapping of project to
-	 *            project load information
-	 * 
-	 * @return a mapping of project to project load information
-	 * 
-	 * 
-	 * When non-empty map is returned it will contain a mapping of a repository
-	 * location (<code>ICVSRepositoryLocation</code>) from the project set
-	 * to a list of suggested, known repositories locations (<code>ICVSRepositoryLocation</code>)
-	 * to use. The list contains at least one element - a default location (same
-	 * as in the project set). It's always on the first position in the list.
-	 * It's possible that the repository location is known, but even then we
-	 * still allow user to select a different location. So, the default location
-	 * is optionally followed by compatible locations found. Finally, the last
-	 * positions are held by the rest of known locations.
-	 * 
-	 * <p>
-	 * The order in which items are kept in a list also reflects the way a combo
-	 * box from the Alternative Repository dialog will look like.
-	 * </p>
-	 * <p>
-	 * Structure of the list:
-	 * <ul>
-	 * <li>default location form the project set</li>
-	 * <li>compatible locations (if found) - no particular order here</li>
-	 * <li>other known locations - no particular order here neither</li>
-	 * </ul>
-	 * </p>
-	 * An empty map is returned when the project set file contains all required
-	 * information.
-	 */
-	public static Map isAdditionalRepositoryInformationRequired(
-			IProject[] projects, final Map infoMap) {
-		
-		List confirmedProjectsList = Arrays.asList(projects);
-		
-		if (infoMap == null)
-			return Collections.EMPTY_MAP;
-
-		Set projectSetRepositoryLocations = new HashSet();
-		for (Iterator iterator = infoMap.keySet().iterator(); iterator
-				.hasNext();) {
-			IProject project = (IProject) iterator.next();
-			if (confirmedProjectsList.contains(project)) {
-				LoadInfo loadInfo = (LoadInfo) infoMap.get(project);
-				projectSetRepositoryLocations.add(loadInfo.repositoryLocation);
-			}
-		}
-		
-		// none of projects from project sets is confirmed to overwrite
-		if (projectSetRepositoryLocations.isEmpty()) {
-			return Collections.EMPTY_MAP;
-		}
-		
-		List knownRepositories = Arrays.asList(KnownRepositories.getInstance()
-				.getRepositories());
-		
-		Map resultMap = new HashMap();
-		
-		if (knownRepositories.isEmpty()) {
-			// there are no known repositories so use repository location from
-			// the project set
-			for (Iterator iterator = projectSetRepositoryLocations.iterator(); iterator
-					.hasNext();) {
-				ICVSRepositoryLocation projectSetRepositoryLocation = (ICVSRepositoryLocation) iterator
-						.next();
-				ArrayList alternativeList = new ArrayList(1);
-				alternativeList.add(projectSetRepositoryLocation);
-				resultMap.put(projectSetRepositoryLocation,
-						alternativeList);
-			}
-		} else if (!knownRepositories.containsAll(projectSetRepositoryLocations)) {
-			// not all repositories from the project set are known
-
-			for (Iterator iterator = projectSetRepositoryLocations.iterator(); iterator
-					.hasNext();) {
-				ICVSRepositoryLocation projectSetRepositoryLocation = (ICVSRepositoryLocation) iterator
-						.next();
-				
-				List alternativeList = new ArrayList();
-				List matchingList = new ArrayList();
-				List compatibleList = new ArrayList();
-				for (Iterator iterator2 = knownRepositories.iterator(); iterator2
-						.hasNext();) {
-					ICVSRepositoryLocation knownRepositoryLocation = (ICVSRepositoryLocation) iterator2
-							.next();
-					// there can be more than one perfect matches (i.e. two
-					// known, matching repositories with different user names)
-					if (isMatching(projectSetRepositoryLocation,
-							knownRepositoryLocation)) {
-						matchingList.add(knownRepositoryLocation);
-					} else if (isCompatible(knownRepositoryLocation,
-							projectSetRepositoryLocation, false)) {
-						compatibleList.add(knownRepositoryLocation);
-					} else {
-						alternativeList.add(knownRepositoryLocation);
-					}
-				}
-				
-				// Sort compatible repository locations starting from extssh,
-				// followed by pserver and finally ext.
-				Collections.sort(compatibleList, new Comparator() {
-					public int compare(Object o1, Object o2) {
-						if (o1 instanceof ICVSRepositoryLocation
-								&& o2 instanceof ICVSRepositoryLocation) {
-							ICVSRepositoryLocation rl1 = (ICVSRepositoryLocation) o1;
-							ICVSRepositoryLocation rl2 = (ICVSRepositoryLocation) o2;
-							String name1 = rl1.getMethod().getName();
-							String name2 = rl2.getMethod().getName();
-
-							if (!name1.equals(name2) && isCompatible(rl1, rl2, false)) {
-								if (name1.equals(EXTSSH))
-									return -1;
-								if (name2.equals(EXTSSH))
-									return 1;
-								if (name1.equals(PSERVER))
-									return -1;
-								if (name2.equals(PSERVER))
-									return 1;
-								if (name1.equals(EXT))
-									return -1;
-								if (name2.equals(EXT))
-									return 1;
-							}
-							return name1.compareTo(name2);
-						}
-						return 0;
-					}
-				});
-				
-				// add compatible repos before others
-				alternativeList.addAll(0, compatibleList);
-				
-				if (matchingList.isEmpty()) {
-					// if matching repos found add them first instead of the
-					// repository location from the project set
-					alternativeList.add(0, projectSetRepositoryLocation);
-				} else if (matchingList.size() == 1) {
-					// there is only one matching, known repository
-					// so there is no need to ask for any additional info.
-					// don't add it to the resultMap
-					continue;
-				} else {
-					// there is more than one matching, known repository
-					// ask which one we should use during the import
-					alternativeList.addAll(0, matchingList);
-				}
-
-				resultMap.put(projectSetRepositoryLocation,
-						alternativeList);
-			}
-		} // else { all repositories are known, we don't need to prompt for
-			// additional information }
-		
-		return resultMap;
-	}
-	
-	/**
-	 * Same check as in
-	 * org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage class.
-	 * 
-	 * @see org.eclipse.team.internal.ccvs.ui.CVSProjectPropertiesPage#isCompatible
-	 * 
-	 * @param location1
-	 *            First repository location to match
-	 * @param location2
-	 *            Second repository location to match
-	 * @param equalIsCompatible
-	 *            If equal means compatible
-	 * @return <code>true</code> if given repository location are compatible,
-	 *         otherwise <code>false</code> is returned.
-	 */
-	public static boolean isCompatible(ICVSRepositoryLocation location1,
-			ICVSRepositoryLocation location2, boolean equalIsCompatible) {
-		if (!location1.getHost().equals(location2.getHost()))
-			return false;
-		if (!location1.getRootDirectory().equals(location2.getRootDirectory()))
-			return false;
-		if (!equalIsCompatible && location1.equals(location2))
-			return false;
-		return true;
-	}
-	
-	/**
-	 * Checks whether two repository locations match (i.e. they use the same
-	 * connection method, they refer to the same host and root directory and
-	 * they use the same port)
-	 * .
-	 * @param location1
-	 *            First repository location to match
-	 * @param location2
-	 *            Second repository location to match
-	 * @return <code>true</code> if given repository location are matching
-	 *         according to the rule above, otherwise <code>false</code> is
-	 *         returned.
-	 */
-	public static boolean isMatching(ICVSRepositoryLocation location1,
-			ICVSRepositoryLocation location2) {
-		if (location2.getMethod() == location1.getMethod()
-				&& location2.getHost().equals(location1.getHost())
-				&& location2.getPort() == location1.getPort()
-				&& location2.getRootDirectory().equals(
-						location1.getRootDirectory()))
-			return true;
-		return false;
-	}
-	
-	private Map promptForAdditionRepositoryInformation(Map alternativeMap) {
+	private Map/* <ICVSRepositoryLocation, CVSRepositoryLocation> */promptForAdditionRepositoryInformation(
+			Map alternativeMap) {
 		IUserAuthenticator authenticator = CVSRepositoryLocation.getAuthenticator();
 		return authenticator.promptToConfigureRepositoryLocations(alternativeMap);
 	}

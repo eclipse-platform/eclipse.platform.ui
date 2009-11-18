@@ -23,6 +23,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.team.internal.ccvs.core.CVSProjectSetCapability;
+import org.eclipse.team.internal.ccvs.core.CVSRepositoryLocationMatcher;
 import org.eclipse.team.internal.ccvs.core.ICVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.connection.CVSRepositoryLocation;
 import org.eclipse.team.internal.ccvs.core.util.KnownRepositories;
@@ -65,122 +66,127 @@ public class CVSProjectSetImportTest extends TestCase {
 
 	public void testNullInfoMap() {
 		IProject[] projects = new IProject[] { null };
-		Map alternativeMap = CVSProjectSetCapability
-				.isAdditionalRepositoryInformationRequired(projects, null);
-		assertTrue(alternativeMap.isEmpty());
+		Map alternativeMap = CVSRepositoryLocationMatcher
+				.prepareSuggestedRepositoryLocations(projects, null);
+		assertNull(alternativeMap);
 	}
 
 	public void testEmptyInfoMap() {
 		IProject[] projects = new IProject[] { null };
 		Map infoMap = new HashMap();
-		Map alternativeMap = CVSProjectSetCapability
-				.isAdditionalRepositoryInformationRequired(projects, infoMap);
-		assertTrue(alternativeMap.isEmpty());
+		Map alternativeMap = CVSRepositoryLocationMatcher
+				.prepareSuggestedRepositoryLocations(projects, infoMap);
+		assertNull(alternativeMap);
 
 		assertEquals(0, knownRepositories.getRepositories().length);
 	}
 
 	public void testEmptyReferenceStrings() throws Exception {
-		testAlternativeMap(new String[] {}, new String[] {}, true,
-				new String[][] { {} });
+		_testPrepareSuggestedRepositoryLocations(new String[] {}, new String[] {}, new String[][] { {} });
+		// There is nothing we can suggest.
 	}
 
 	public void testMalformedReferenceString() throws Exception {
-		testAlternativeMap(new String[] {},
-				new String[] { "Hi, I'm a malformed reference string." }, true,
-				new String[][] { {} });
+		_testPrepareSuggestedRepositoryLocations(new String[] {},
+				new String[] { "Hi, I'm a malformed reference string." }, new String[][] { {} });
 	}
 
 	public void testUnknownSingleReferenceString() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] {},
 				new String[] { "1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
-				false,
 				new String[][] { { ":pserver:dev.eclipse.org:/cvsroot/eclipse" } });
 	}
 
 	public void testSelectionForUnknownSingleReferenceString() throws Exception {
-		testDialogDefaultSelection(
+		_testDialogDefaultSelection(
 				new String[] {},
 				new String[] { "1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse" });
 	}
 
 	public void testKnownSingleReferenceString() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] { "1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
-				true, new String[][] { {} });
+				new String[][] { {} });
 	}
 
 	// test for https://bugs.eclipse.org/bugs/show_bug.cgi?id=199108
 	public void testSingleKnownRepositoryWithUsername() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] {
 						"1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh",
 						"1.0,:extssh:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.tests.cvs.core,org.eclipse.team.tests.cvs.core" },
-				false,
 				new String[][] {
-						{},
+						{ ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" },
 						{ ":extssh:dev.eclipse.org:/cvsroot/eclipse",
 								":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" } });
+	}
+	
+	public void testSingleKnownRepositoryMatchesTwoReferenceStrings() throws Exception {
+		_testPrepareSuggestedRepositoryLocations(
+				new String[] { ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" },
+				new String[] {
+						"1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh",
+						"1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.tests.cvs.core,org.eclipse.team.tests.cvs.core" },
+				new String[][] {
+						{ ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" },
+						{ ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" } });
 	}
 
 	public void testOneMatchingReferenceString() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] {
 						"1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh",
 						"1.0,:extssh:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.tests.cvs.core,org.eclipse.team.tests.cvs.core" },
-				false,
 				new String[][] {
-						{},
+						{ ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" },
 						{ ":extssh:dev.eclipse.org:/cvsroot/eclipse",
 								":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" } });
-
 	}
 
 	public void testTwoMatchingKnownRepositories() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":pserver:joe@dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:ann@dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] { "1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
-				false, new String[][] { {
+				new String[][] { {
 						":pserver:ann@dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:joe@dev.eclipse.org:/cvsroot/eclipse" } });
 	}
 
 	public void testThreeKindsOfSuggestions() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:localhost:/cvsroot/project" },
 				new String[] { "1.0,:extssh:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
-				false, new String[][] { {
+				new String[][] { {
 						":extssh:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:localhost:/cvsroot/project" } });
-
 	}
 
 	public void testOneCompatibleOfTwoKnown() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:joe@dev.eclipse.org:/cvsroot/TECHNOLOGY" },
 				new String[] { "1.0,:extssh:joe@dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
-				false, new String[][] { {
+				new String[][] { {
 						":extssh:joe@dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:joe@dev.eclipse.org:/cvsroot/TECHNOLOGY" } });
 	}
 
 	public void testTwoUnknownOneCompatibleReferenceStrings() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":extssh:dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] {
 						"1.0,:ext:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh",
 						"1.0,:pserver:dev.eclipse.org:/cvsroot/TECHNOLOGY,org.eclipse.team.tests.cvs.core,org.eclipse.team.tests.cvs.core" },
-				false, new String[][] {
+				new String[][] {
 						{ ":ext:dev.eclipse.org:/cvsroot/eclipse",
 								":extssh:dev.eclipse.org:/cvsroot/eclipse" },
 						{ ":pserver:dev.eclipse.org:/cvsroot/TECHNOLOGY",
@@ -189,7 +195,7 @@ public class CVSProjectSetImportTest extends TestCase {
 
 	public void testSelectionForTwoUnknownOneCompatibleReferenceStrings()
 			throws Exception {
-		testDialogDefaultSelection(
+		_testDialogDefaultSelection(
 				new String[] { ":extssh:dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] {
 						"1.0,:ext:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh",
@@ -199,7 +205,7 @@ public class CVSProjectSetImportTest extends TestCase {
 	}
 
 	public void testSelectionForOneCompatibleOfTwoKnown() throws Exception {
-		testDialogDefaultSelection(
+		_testDialogDefaultSelection(
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:joe@dev.eclipse.org:/cvsroot/technology" },
 				new String[] { "1.0,:extssh:joe@dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
@@ -207,12 +213,12 @@ public class CVSProjectSetImportTest extends TestCase {
 	}
 
 	public void testCompatibleSuggestionsOrder() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse",
 						":extssh:dev.eclipse.org:/cvsroot/eclipse",
 						":ext:dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] { "1.0,:pserverssh2:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh" },
-				false, new String[][] { {
+				new String[][] { {
 						":pserverssh2:dev.eclipse.org:/cvsroot/eclipse",
 						":extssh:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:dev.eclipse.org:/cvsroot/eclipse",
@@ -220,7 +226,7 @@ public class CVSProjectSetImportTest extends TestCase {
 	}
 
 	public void testSelectionForCompatibleSuggestionsOrder() throws Exception {
-		testDialogDefaultSelection(
+		_testDialogDefaultSelection(
 				new String[] { ":ext:dev.eclipse.org:/cvsroot/eclipse",
 						":extssh:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:dev.eclipse.org:/cvsroot/eclipse" },
@@ -229,15 +235,15 @@ public class CVSProjectSetImportTest extends TestCase {
 	}
 
 	public void testCompatibleSuggestionsOrder2() throws Exception {
-		testAlternativeMap(
+		_testPrepareSuggestedRepositoryLocations(
 				new String[] { ":ext:dev.eclipse.org:/cvsroot/eclipse",
 						":extssh:dev.eclipse.org:/cvsroot/eclipse",
 						":pserver:dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] {
 						"1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.cvs.ssh,org.eclipse.team.cvs.ssh",
 						"1.0,:pserverssh2:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.tests.cvs.core,org.eclipse.team.tests.cvs.core" },
-				false, new String[][] {
-						{},
+				new String[][] {
+						{ ":pserver:dev.eclipse.org:/cvsroot/eclipse" },
 						{ ":pserverssh2:dev.eclipse.org:/cvsroot/eclipse",
 								":extssh:dev.eclipse.org:/cvsroot/eclipse",
 								":pserver:dev.eclipse.org:/cvsroot/eclipse",
@@ -246,7 +252,7 @@ public class CVSProjectSetImportTest extends TestCase {
 
 	public void testSelectionForOnlyOneReferenceStringNeedsAdditionalInfo()
 			throws Exception {
-		testDialogDefaultSelection(
+		_testDialogDefaultSelection(
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse" },
 				new String[] {
 						"1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.tests.cvs.core,org.eclipse.team.tests.cvs.core",
@@ -256,7 +262,7 @@ public class CVSProjectSetImportTest extends TestCase {
 	}
 
 	public void testSelectionForUnknownReferenceString() throws Exception {
-		testDialogDefaultSelection(
+		_testDialogDefaultSelection(
 				new String[] { ":pserver:LOCALHOST:/cvsroot/path" },
 				new String[] { "1.0,:pserver:dev.eclipse.org:/cvsroot/eclipse,org.eclipse.team.tests.cvs.core,org.eclipse.team.tests.cvs.core" },
 				new String[] { ":pserver:dev.eclipse.org:/cvsroot/eclipse" });
@@ -279,18 +285,14 @@ public class CVSProjectSetImportTest extends TestCase {
 	 *            <p>
 	 *            <code>1.0,:method:[[user][:password]@]hostname[:[port]]/path/to/repository,project.name,module.name[,tagname]</code>
 	 *            </p>
-	 * @param emptyMap
-	 *            Should the result map be empty, which means that there is no
-	 *            need for the dialog.
 	 * @param expectedSuggestions
 	 *            Two-dimensional array of expected suggestions. Each entry of
 	 *            the array will be matched against actual suggestion from the
 	 *            alternative map.
 	 * @throws Exception
 	 */
-	private void testAlternativeMap(String[] knownLocations,
-			String[] referenceStrings, boolean emptyMap,
-			String[][] expectedSuggestions) throws Exception {
+	private void _testPrepareSuggestedRepositoryLocations(String[] knownLocations,
+			String[] referenceStrings, String[][] expectedSuggestions) throws Exception {
 		for (int i = 0; i < knownLocations.length; i++) {
 			knownRepositories.addRepository(CVSRepositoryLocation
 					.fromString(knownLocations[i]), false);
@@ -300,11 +302,10 @@ public class CVSProjectSetImportTest extends TestCase {
 		IProject[] projects = CVSProjectSetCapability.asProjects(
 				referenceStrings, infoMap);
 
-		Map alternativeMap = CVSProjectSetCapability
-				.isAdditionalRepositoryInformationRequired(projects, infoMap);
-		assertEquals(emptyMap, alternativeMap.isEmpty());
-
-		if (!emptyMap)
+		Map/* <IProject, List<ICVSRepositoryLocation>> */suggestedRepositoryLocations = CVSRepositoryLocationMatcher
+				.prepareSuggestedRepositoryLocations(projects, infoMap);
+		
+		if (suggestedRepositoryLocations != null) {
 			for (int i = 0; i < referenceStrings.length; i++) {
 				StringTokenizer st = new StringTokenizer(referenceStrings[i],
 						",");
@@ -312,7 +313,7 @@ public class CVSProjectSetImportTest extends TestCase {
 				String locationString = st.nextToken();
 				CVSRepositoryLocation referenceLocation = CVSRepositoryLocation
 						.fromString(locationString);
-				List suggestedList = (List) alternativeMap
+				List suggestedList = (List) suggestedRepositoryLocations
 						.get(referenceLocation);
 
 				if (suggestedList == null) {
@@ -331,11 +332,11 @@ public class CVSProjectSetImportTest extends TestCase {
 					}
 				}
 			}
-
+		}
 		assertEquals(knownLocations.length,
 				knownRepositories.getRepositories().length);
 	}
-
+	
 	private static void assertEquals(ICVSRepositoryLocation expected,
 			ICVSRepositoryLocation actual) {
 		if (expected == actual)
@@ -368,7 +369,7 @@ public class CVSProjectSetImportTest extends TestCase {
 	 *            matched against actual suggestion from the alternative map.
 	 * @throws Exception
 	 */
-	private void testDialogDefaultSelection(String[] knownLocations,
+	private void _testDialogDefaultSelection(String[] knownLocations,
 			String[] referenceStrings, String[] expectedSelections)
 			throws Exception {
 		// set up values to test
@@ -381,8 +382,8 @@ public class CVSProjectSetImportTest extends TestCase {
 		IProject[] projects = CVSProjectSetCapability.asProjects(
 				referenceStrings, infoMap);
 
-		Map alternativeMap = CVSProjectSetCapability
-				.isAdditionalRepositoryInformationRequired(projects, infoMap);
+		Map alternativeMap = CVSRepositoryLocationMatcher
+				.prepareSuggestedRepositoryLocations(projects, infoMap);
 		assertFalse(alternativeMap.isEmpty());
 
 		// prepare the dialog
@@ -419,14 +420,14 @@ public class CVSProjectSetImportTest extends TestCase {
 
 	private void isItReallyAPerfectMatch(
 			ICVSRepositoryLocation referenceLocation) {
-		// it looks that we'd found a (single!) perfect match for
-		// referenceLocation, let's double check it
+		// It looks that we'd found a (single!) perfect match for
+		// referenceLocation, let's double check if this is true.
 		ICVSRepositoryLocation[] repositories = knownRepositories
 				.getRepositories();
 		boolean matchFound = false;
 		for (int j = 0; j < repositories.length; j++) {
 			ICVSRepositoryLocation rl = repositories[j];
-			if (CVSProjectSetCapability.isMatching(referenceLocation, rl)) {
+			if (CVSRepositoryLocationMatcher.isMatching(referenceLocation, rl)) {
 				assertFalse("There should be only one perfect match.",
 						matchFound);
 				matchFound = true;
