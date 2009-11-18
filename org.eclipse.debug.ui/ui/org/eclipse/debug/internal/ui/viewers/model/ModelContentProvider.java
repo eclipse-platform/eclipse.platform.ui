@@ -640,6 +640,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                 System.out.println("STATE APPEND CANCEL: Element " + path.getLastSegment() + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
             }
+            return;
         }
 
         // Append a marker CONTENT flag to all the delta nodes that contain the
