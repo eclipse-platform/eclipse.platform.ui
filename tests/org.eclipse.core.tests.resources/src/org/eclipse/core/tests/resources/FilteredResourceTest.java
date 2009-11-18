@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IPath;
  * and moving those resources to different parents.
  */
 public class FilteredResourceTest extends ResourceTest {
-	private static final String REGEX_FILTER_PROVIDER = "org.eclipse.core.resources.regexFilter";
+	private static final String REGEX_FILTER_PROVIDER = "org.eclipse.core.resources.filters.regexFilter";
 	protected String childName = "File.txt";
 	protected IProject closedProject;
 	protected IFile existingFileInExistingProject;
