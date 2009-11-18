@@ -191,9 +191,9 @@
    </extension>
 <!-- Filters -->
    <extension
-         point="org.eclipse.core.resources.filters"
-         id="regexFilter">
+         point="org.eclipse.core.resources.filters">
       <filter
+      		id="org.eclipse.core.resources.filters.regexFilter"
             argumentType="string"
             class="org.eclipse.core.internal.resources.RegexFileInfoMatcher"
             description="%regexFilterProvider.description"

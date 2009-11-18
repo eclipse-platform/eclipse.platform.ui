@@ -28,7 +28,7 @@ public class FilterDescriptor implements IFilterDescriptor {
 	}
 
 	public FilterDescriptor(IConfigurationElement element, boolean instantiateFactory) throws CoreException {
-		id = element.getDeclaringExtension().getUniqueIdentifier();
+		id = element.getAttribute("id"); //$NON-NLS-1$
 		name = element.getAttribute("name"); //$NON-NLS-1$
 		description = element.getAttribute("description"); //$NON-NLS-1$
 		argumentType = element.getAttribute("argumentType"); //$NON-NLS-1$
