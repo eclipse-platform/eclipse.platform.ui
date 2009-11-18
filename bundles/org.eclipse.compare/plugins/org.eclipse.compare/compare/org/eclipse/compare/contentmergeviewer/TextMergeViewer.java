@@ -13,6 +13,7 @@
  *     Max Weninger (max.weninger@windriver.com) - Bug 72936 [Viewers] Show line numbers in comparision
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 178968 [Viewers] Lines scrambled and different font size in compare
  *     Matt McCutchen (hashproduct+eclipse@gmail.com) - Bug 191524 [Viewers] Synchronize horizontal scrolling by # characters, not % of longest line
+ *     Stephan Herrmann (stephan@cs.tu-berlin.de) - Bug 291695: Element compare fails to use source range
  *******************************************************************************/
 package org.eclipse.compare.contentmergeviewer;
 
@@ -2818,7 +2819,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		fLeftContributor.setEncodingIfAbsent(fRightContributor);
 		fRightContributor.setEncodingIfAbsent(fLeftContributor);
 		fAncestorContributor.setEncodingIfAbsent(fLeftContributor);
-		
+
+		if (!isConfigured) {
+			configureSourceViewer(fAncestor.getSourceViewer(), false);
+			configureSourceViewer(fLeft.getSourceViewer(), cc.isLeftEditable() && cp.isLeftEditable(input));
+			configureSourceViewer(fRight.getSourceViewer(), cc.isRightEditable() && cp.isRightEditable(input));
+			isConfigured = true; // configure once
+		} 
+
 		// set new documents
 		fLeftContributor.setDocument(fLeft, cc.isLeftEditable() && cp.isLeftEditable(input));
 		fLeftLineCount= fLeft.getLineCount();
@@ -2827,13 +2835,6 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		fRightLineCount= fRight.getLineCount();
 		
 		fAncestorContributor.setDocument(fAncestor, false);
-		
-		if (!isConfigured) {
-			configureSourceViewer(fAncestor.getSourceViewer(), false);
-			configureSourceViewer(fLeft.getSourceViewer(), cc.isLeftEditable() && cp.isLeftEditable(input));
-			configureSourceViewer(fRight.getSourceViewer(), cc.isRightEditable() && cp.isRightEditable(input));
-			isConfigured = true; // configure once
-		}
 
 		//if the input is part of a patch hunk, toggle synchronized scrolling
 		/*if (isPatchHunk()){
@@ -2878,8 +2879,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 	}
 
 	private void configureSourceViewer(SourceViewer sourceViewer, boolean editable) {
-		configureTextViewer(sourceViewer);
 		setEditable(sourceViewer, editable);
+		configureTextViewer(sourceViewer);
 		if (!isCursorLinePainterInstalled(sourceViewer))
 			getSourceViewerDecorationSupport(sourceViewer).install(fPreferenceStore);
 	}
