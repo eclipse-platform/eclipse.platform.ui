@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
+import org.eclipse.e4.core.services.injector.IObjectProvider;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -23,6 +25,8 @@ import java.util.List;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
 
 /**
  * Reflection-based context injector.
@@ -32,7 +36,6 @@ public class ContextInjector {
 	private class Processor {
 
 		final private String name;
-		final private IEclipseContext context;
 		protected boolean addition;
 
 		protected boolean shouldProcessPostConstruct = false;
@@ -41,13 +44,14 @@ public class ContextInjector {
 
 		protected boolean injectWithNulls = false;
 
+		protected boolean processStatic = false;
+
 		private List postConstructMethods;
 
 		public ArrayList classHierarchy = new ArrayList(5);
 
-		public Processor(String name, IEclipseContext context, boolean addition, boolean isInDispose) {
+		public Processor(String name, boolean addition, boolean isInDispose) {
 			this.name = name;
-			this.context = context;
 			this.addition = addition;
 			this.isInDispose = isInDispose;
 		}
@@ -60,26 +64,31 @@ public class ContextInjector {
 			this.injectWithNulls = injectWithNulls;
 		}
 
+		public void setProcessStatic(boolean processStatic) {
+			this.processStatic = processStatic;
+		}
+
 		/**
 		 * The method assumes injection is needed for this field, from the context property named
 		 * injectName.
 		 */
 		public void processField(final Field field, InjectionProperties properties) {
-			String injectName = properties.getPropertyName();
-			if ((name != null) && !name.equals(injectName)) // filter if name is specified
+			if (Modifier.isStatic(field.getModifiers()) != processStatic)
+				return;
+			// filter if name is specified
+			if ((name != null) && !name.equals(context.getKey(properties)))
 				return;
 			Object value = null;
 			if (addition) {
-				IContextProvider provider = properties.getProvider();
-				if (provider != null) {
-					provider.setContext(context);
+				Object provider = properties.getProvider();
+				if (provider != null)
 					value = provider;
-				} else if (context.containsKey(injectName)) {
-					value = context.get(injectName);
-				} else {
+				else if (context.containsKey(properties))
+					value = context.get(properties);
+				else {
 					if (!properties.isOptional())
 						throw new IllegalStateException("Could not set " + field //$NON-NLS-1$
-								+ " because of missing: " + injectName); //$NON-NLS-1$
+								+ " because of missing: " + context.getKey(properties)); //$NON-NLS-1$
 					return;
 				}
 			}
@@ -87,14 +96,15 @@ public class ContextInjector {
 		}
 
 		public void processMethod(final Method method, boolean optional) {
+			if (Modifier.isStatic(method.getModifiers()) != processStatic)
+				return;
 			// we only get here if we are injecting
-			InjectionProperties[] properties = InjectionPropertyResolver
-					.getInjectionParamProperties(method);
+			InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
 			if (name != null) {
 				// is it one of the arguments of this method?
 				boolean found = false;
 				for (int i = 0; i < properties.length; i++) {
-					if (name.equals(properties[i].getPropertyName())) {
+					if (name.equals(context.getKey(properties[i]))) {
 						found = true;
 						break;
 					}
@@ -125,8 +135,8 @@ public class ContextInjector {
 				return;
 			for (Iterator it = postConstructMethods.iterator(); it.hasNext();) {
 				Method method = (Method) it.next();
-				InjectionProperties[] properties = InjectionPropertyResolver
-						.getInjectionParamProperties(method);
+				InjectionProperties[] properties = annotationSupport
+						.getInjectParamProperties(method);
 				Object[] actualParams = processParams(properties, method.getParameterTypes(),
 						!addition, injectWithNulls);
 				if (actualParams == null)
@@ -141,41 +151,46 @@ public class ContextInjector {
 	// TBD investigate if this approach to reparenting works with calculated values and providers
 	private class ReparentProcessor extends Processor {
 
-		private EclipseContext oldParent;
+		private IObjectProvider oldParent;
 
-		public ReparentProcessor(IEclipseContext oldParent, IEclipseContext context) {
-			super(null, context, true /* set */, false);
-			this.oldParent = (EclipseContext) oldParent;
+		public ReparentProcessor(IObjectProvider oldParent) {
+			super(null, true /* set */, false);
+			this.oldParent = oldParent;
 		}
 
 		/**
 		 * Returns whether the value associated with the given key is affected by the parent change.
 		 */
-		private boolean hasChanged(String key) {
+		private boolean hasChanged(InjectionProperties key) {
 			// if value is local then parent change has no effect
-			if (context.getLocal(key) != null)
-				return false;
-			Object oldValue = oldParent == null ? null : oldParent.internalGet(
-					(EclipseContext) context, key, null, false);
-			Object newValue = context == null ? null : ((EclipseContext) context).internalGet(
-					(EclipseContext) context, key, null, false);
-			return oldValue != newValue;
+			// XXX this is incorrect
+			// if (context.getLocal(key) != null)
+			// return false;
+			// XXX this is incorrect: different parents, same grandparent
+			// Object oldValue = oldParent == null ? null : oldParent.internalGet(
+			// (EclipseContext) context, key, null, false);
+			// Object newValue = context == null ? null : ((EclipseContext) context).internalGet(
+			// (EclipseContext) context, key, null, false);
+			// return oldValue != newValue;
+
+			// XXX for now, check if values are different
+			Object oldValue = oldParent.get(key);
+			Object newValue = context.get(key);
+			return (oldValue != newValue); // use pointer comparison, not #equals()
 		}
 
 		public void processField(final Field field, InjectionProperties properties) {
-			if (hasChanged(properties.getPropertyName()))
+			if (hasChanged(properties))
 				super.processField(field, properties);
 		}
 
 		public void processMethod(final Method method, boolean optional) {
 			// any argument changed?
-			InjectionProperties[] properties = InjectionPropertyResolver
-					.getInjectionParamProperties(method);
+			InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
 
 			boolean changed = false;
 			for (int i = 0; i < properties.length; i++) {
-				String key = properties[i].getPropertyName();
-				if (hasChanged(key)) {
+				if (hasChanged(properties[i])) {
 					changed = true;
 					break;
 				}
@@ -188,32 +203,42 @@ public class ContextInjector {
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
-	final protected IEclipseContext context;
+	final protected IObjectProvider context;
+	final private AnnotationsSupport annotationSupport;
 
-	public ContextInjector(IEclipseContext context) {
+	public ContextInjector(IObjectProvider context) {
 		this.context = context;
+		// plug-in class that gets replaced in Java 1.5+
+		annotationSupport = new AnnotationsSupport(context);
 	}
 
 	public void inject(String name, Object userObject) {
-		// final ContextChangeEvent event
-		// event.getName(), event.getContext()
-		Processor processor = new Processor(name, context, true, false);
+		Processor processor = new Processor(name, true, false);
 		processClassHierarchy(userObject, processor);
 	}
 
 	public void inject(Object userObject) {
-		Processor processor = new Processor(null, context, true, false);
+		Processor processor = new Processor(null, true, false);
 		processor.shouldProcessPostConstruct = true;
 		processClassHierarchy(userObject, processor);
 	}
 
+	// TBD use null object to inject statics
+	public void injectStatic(Class clazz) {
+		Processor processor = new Processor(null, true, false);
+		processor.shouldProcessPostConstruct = true;
+		processor.setProcessStatic(true);
+		Object object = make(clazz);
+		processClassHierarchy(object, processor);
+	}
+
 	public void uninject(String name, Object userObject) {
-		Processor processor = new Processor(name, context, false, false);
+		Processor processor = new Processor(name, false, false);
 		processClassHierarchy(userObject, processor);
 	}
 
 	public void uninject(Object userObject) {
-		Processor processor = new Processor(null, context, false, false);
+		Processor processor = new Processor(null, false, false);
 		processor.setInjectNulls(true);
 		processClassHierarchy(userObject, processor);
 	}
@@ -222,15 +247,15 @@ public class ContextInjector {
 		if (userObject instanceof IDisposable)
 			((IDisposable) userObject).dispose();
 
-		Processor processor = new Processor(null, context, false, true);
+		Processor processor = new Processor(null, false, true);
 		processor.setInjectNulls(true);
 		processClassHierarchy(userObject, processor);
 	}
 
-	public void reparent(Object userObject, EclipseContext oldParent, EclipseContext newParent) {
-		if (oldParent == newParent)
+	public void reparent(Object userObject, IObjectProvider oldParent) {
+		if (oldParent == context)
 			return;
-		Processor processor = new ReparentProcessor(oldParent, newParent);
+		Processor processor = new ReparentProcessor(oldParent);
 		processClassHierarchy(userObject, processor);
 	}
 
@@ -250,11 +275,13 @@ public class ContextInjector {
 	private void processClass(Class objectsClass, Processor processor) {
 		if (processor.addition) {
 			// order: superclass, fields, methods
-			Class superClass = objectsClass.getSuperclass();
-			if (!superClass.getName().equals(JAVA_OBJECT)) {
-				processor.classHierarchy.add(objectsClass);
-				processClass(superClass, processor);
-				processor.classHierarchy.remove(objectsClass);
+			if (objectsClass != null) {
+				Class superClass = objectsClass.getSuperclass();
+				if (!superClass.getName().equals(JAVA_OBJECT)) {
+					processor.classHierarchy.add(objectsClass);
+					processClass(superClass, processor);
+					processor.classHierarchy.remove(objectsClass);
+				}
 			}
 			processFields(objectsClass, processor);
 			processMethods(objectsClass, processor);
@@ -262,18 +289,20 @@ public class ContextInjector {
 			// order: methods, fields, superclass
 			processMethods(objectsClass, processor);
 			processFields(objectsClass, processor);
-			Class superClass = objectsClass.getSuperclass();
-			if (!superClass.getName().equals(JAVA_OBJECT)) {
-				processor.classHierarchy.add(objectsClass);
-				processClass(superClass, processor);
-				processor.classHierarchy.remove(objectsClass);
+			if (objectsClass != null) {
+				Class superClass = objectsClass.getSuperclass();
+				if (!superClass.getName().equals(JAVA_OBJECT)) {
+					processor.classHierarchy.add(objectsClass);
+					processClass(superClass, processor);
+					processor.classHierarchy.remove(objectsClass);
+				}
 			}
 		}
 	}
 
 	private void processClassHierarchy(Object userObject, Processor processor) {
 		processor.setObject(userObject);
-		processClass(userObject.getClass(), processor);
+		processClass((userObject == null) ? null : userObject.getClass(), processor);
 		processor.processPostConstructMethod();
 	}
 
@@ -285,8 +314,10 @@ public class ContextInjector {
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
 
-			InjectionProperties properties = InjectionPropertyResolver
-					.getInjectionProperties(field);
+			InjectionProperties properties = annotationSupport.getInjectProperties(field);
+			if (field.getName().startsWith(IContextConstants.INJECTION_PREFIX))
+				properties.setInject(true);
+
 			if (properties.shouldInject())
 				processor.processField(field, properties);
 		}
@@ -302,7 +333,7 @@ public class ContextInjector {
 				Method method = methods[i];
 				if (method.getParameterTypes().length > 0) // TBD why?
 					continue;
-				if (!InjectionPropertyResolver.isPreDestory(method))
+				if (!annotationSupport.isPreDestory(method))
 					continue;
 				if (!isOverridden(method, processor))
 					callMethod(processor.userObject, method, null);
@@ -313,16 +344,38 @@ public class ContextInjector {
 			if (isOverridden(method, processor))
 				continue; // process in the subclass
 			if (processor.shouldProcessPostConstruct) {
-				if (InjectionPropertyResolver.isPostConstruct(method)) {
+				if (isPostConstruct(method)) {
 					processor.addPostConstructMethod(method);
 					continue;
 				}
 			}
-			InjectionProperties properties = InjectionPropertyResolver
-					.getInjectionProperties(method);
+
+			InjectionProperties properties = annotationSupport.getInjectProperties(method);
+			if (method.getName().startsWith(IContextConstants.INJECTION_PREFIX))
+				properties.setInject(true);
+
 			if (properties.shouldInject())
 				processor.processMethod(method, properties.isOptional());
 		}
+	}
+
+	// TBD simplify this: only one non-annotation and one "implements IInitializable"?
+	/**
+	 * Returns whether the given method is a post-construction process method, as defined by the
+	 * class comment of {@link ContextInjectionFactory}.
+	 */
+	private boolean isPostConstruct(Method method) {
+		boolean isPostConstruct = annotationSupport.isPostConstruct(method);
+		if (isPostConstruct)
+			return true;
+		if (!method.getName().equals(IContextConstants.INJECTION_SET_CONTEXT_METHOD))
+			return false;
+		Class[] parms = method.getParameterTypes();
+		if (parms.length == 0)
+			return true;
+		if (parms.length == 1 && parms[0].equals(IEclipseContext.class))
+			return true;
+		return false;
 	}
 
 	/**
@@ -372,8 +425,7 @@ public class ContextInjector {
 			if (!method.getName().equals(methodName))
 				continue;
 
-			InjectionProperties[] properties = InjectionPropertyResolver
-					.getInjectionParamProperties(method);
+			InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
 			Object[] actualParams = processParams(properties, method.getParameterTypes(), false,
 					false);
 			if (actualParams != null)
@@ -407,22 +459,18 @@ public class ContextInjector {
 
 			// unless this is the last constructor, it has to be tagged
 			if (i.hasNext()) {
-				InjectionProperties properties = InjectionPropertyResolver
-						.getInjectionProperties(constructor);
+				InjectionProperties properties = annotationSupport.getInjectProperties(constructor);
 				if (!properties.shouldInject())
 					continue;
 			}
 
-			InjectionProperties[] properties = InjectionPropertyResolver
-					.getInjectionParamsProperties(constructor);
+			InjectionProperties[] properties = annotationSupport
+					.getInjectParamsProperties(constructor);
 			Object[] actualParams = processParams(properties, constructor.getParameterTypes(),
 					false, false);
 			if (actualParams == null)
 				continue;
 			Object newInstance = callConstructor(constructor, actualParams);
-			if (newInstance == null)
-				return null;
-			ContextInjectionFactory.inject(newInstance, context);
 			return newInstance;
 		}
 
@@ -436,23 +484,18 @@ public class ContextInjector {
 		Object[] actualParams = new Object[properties.length];
 		for (int i = 0; i < actualParams.length; i++) {
 			// 1) if we have a provider, use it
-			IContextProvider provider = properties[i].getProvider();
+			Object provider = properties[i].getProvider();
 			if (provider != null) {
-				provider.setContext(context);
 				actualParams[i] = provider;
 				continue;
 			}
-			// 2) must have a key defined by now
-			String key = properties[i].getPropertyName();
-			if (key == null)
-				return null;
-			// 3) if we have the key in the context
-			if (context.containsKey(key)) {
+			// 2) if we have the key in the context
+			if (context.containsKey(properties[i])) {
 				if (injectWithNulls) {
 					actualParams[i] = null;
 					continue;
 				} else {
-					Object candidate = context.get(key);
+					Object candidate = context.get(properties[i]);
 					if (candidate != null
 							&& parameterTypes[i].isAssignableFrom(candidate.getClass())) {
 						actualParams[i] = candidate;
@@ -460,12 +503,7 @@ public class ContextInjector {
 					}
 				}
 			}
-			// 4) special case: context as the argument
-			if (key.equals(IEclipseContext.class.getName())) {
-				actualParams[i] = context;
-				continue;
-			}
-			// 5) can we ignore this argument?
+			// 3) can we ignore this argument?
 			if (ignoreMissing || properties[i].isOptional()) {
 				actualParams[i] = null;
 				continue;

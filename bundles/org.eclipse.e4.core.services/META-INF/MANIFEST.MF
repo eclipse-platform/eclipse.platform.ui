@@ -13,6 +13,8 @@ Require-Bundle: org.eclipse.equinox.common;bundle-version="3.4.0",
 Export-Package: org.eclipse.e4.core.services,
  org.eclipse.e4.core.services.context,
  org.eclipse.e4.core.services.context.spi,
+ org.eclipse.e4.core.services.injector,
+ org.eclipse.e4.core.services.internal.annotations;x-internal:=true,
  org.eclipse.e4.core.services.internal.context;x-internal:=true,
  org.eclipse.e4.internal.core.services.osgi;x-internal:=true
 Bundle-Vendor: Eclipse.org

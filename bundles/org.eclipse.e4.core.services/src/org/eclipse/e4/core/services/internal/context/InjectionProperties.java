@@ -10,21 +10,25 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-// TBD change default "optional" to true
-public class InjectionProperties {
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
+
+public class InjectionProperties implements IObjectDescriptor {
 
 	private boolean inject;
-	private String propertyToInject;
 	private boolean optional;
-	private IContextProvider provider;
 
+	private String propertyToInject;
+	private Object provider; // <= shouldn't this be IObjectProvider?
 	private Class qualifier;
+	private Class elementClass;
 
-	public InjectionProperties(boolean inject, String propertyToInject, boolean optional) {
+	public InjectionProperties(boolean inject, String propertyToInject, boolean optional,
+			Class elementClass) {
 		super();
 		this.inject = inject;
 		this.propertyToInject = propertyToInject;
 		this.optional = optional;
+		this.elementClass = elementClass;
 	}
 
 	public String getPropertyName() {
@@ -47,12 +51,20 @@ public class InjectionProperties {
 		this.inject = inject;
 	}
 
-	public void setProvider(IContextProvider provider) {
+	public void setProvider(Object provider) {
 		this.provider = provider;
 	}
 
-	public IContextProvider getProvider() {
+	public Object getProvider() {
 		return provider;
+	}
+
+	public void setElementClass(Class elementClass) {
+		this.elementClass = elementClass;
+	}
+
+	public Class getElementClass() {
+		return elementClass;
 	}
 
 	public void setQualifier(Class qualifier) {

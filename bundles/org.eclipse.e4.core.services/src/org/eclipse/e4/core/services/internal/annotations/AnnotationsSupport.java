@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.annotations;
 
+import org.eclipse.e4.core.services.injector.IObjectProvider;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,39 +22,45 @@ import org.eclipse.e4.core.services.internal.context.InjectionProperties;
  */
 public class AnnotationsSupport {
 
-	static public InjectionProperties getInjectProperties(Field field) {
-		return new InjectionProperties(false, null, true);
+	private IObjectProvider context;
+
+	public AnnotationsSupport(IObjectProvider context) {
+		this.context = context;
 	}
 
-	static public InjectionProperties getInjectProperties(Method method) {
-		return new InjectionProperties(false, null, true);
+	public InjectionProperties getInjectProperties(Field field) {
+		return new InjectionProperties(false, null, true, field.getType());
 	}
 
-	static public InjectionProperties getInjectProperties(Constructor constructor) {
-		return new InjectionProperties(true, null, true);
+	public InjectionProperties getInjectProperties(Method method) {
+		return new InjectionProperties(false, null, true, null);
 	}
 
-	static public InjectionProperties[] getInjectParamsProperties(Constructor constructor) {
+	public InjectionProperties getInjectProperties(Constructor constructor) {
+		return new InjectionProperties(true, null, true, null);
+	}
+
+	public InjectionProperties[] getInjectParamsProperties(Constructor constructor) {
 		Class[] params = constructor.getParameterTypes();
 		InjectionProperties[] result = new InjectionProperties[params.length];
 		for (int i = 0; i < result.length; i++)
-			result[i] = new InjectionProperties(false, null, true);
+			result[i] = new InjectionProperties(false, null, true, params[i]);
 		return result;
 	}
 
-	static public InjectionProperties[] getInjectParamProperties(Method method) {
+	public InjectionProperties[] getInjectParamProperties(Method method) {
 		Class[] params = method.getParameterTypes();
 		InjectionProperties[] result = new InjectionProperties[params.length];
 		for (int i = 0; i < result.length; i++)
-			result[i] = new InjectionProperties(false, null, true);
+			result[i] = new InjectionProperties(false, null, true, params[i]);
 		return result;
 	}
 
-	static public boolean isPostConstruct(Method method) {
+	public boolean isPostConstruct(Method method) {
 		return false;
 	}
 
-	static public boolean isPreDestory(Method method) {
+	public boolean isPreDestory(Method method) {
 		return false;
 	}
 

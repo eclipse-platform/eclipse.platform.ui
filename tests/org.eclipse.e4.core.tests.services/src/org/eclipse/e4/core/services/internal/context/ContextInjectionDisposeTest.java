@@ -70,7 +70,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 		IEclipseContext context = EclipseContextFactory.create();
 		Object fieldValue = new Object();
 		Object methodValue = "abc";
-		context.set("Field", fieldValue);
+		context.set(Object.class.getName(), fieldValue);
 		context.set(String.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
@@ -108,7 +108,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 		IEclipseContext context = EclipseContextFactory.create();
 		Object fieldValue = new Object();
 		Object methodValue = "abc";
-		context.set("Field", fieldValue);
+		context.set(Object.class.getName(), fieldValue);
 		context.set(String.class.getName(), methodValue);
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);

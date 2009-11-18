@@ -118,8 +118,8 @@ public class ContextInjectionTest extends TestCase {
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set("Integer", testInt);
-		context.set("String", testString);
+		context.set(Integer.class.getName(), testInt);
+		context.set(String.class.getName(), testString);
 		context.set(Double.class.getName(), testDouble);
 		context.set(Float.class.getName(), testFloat);
 		context.set(Character.class.getName(), testChar);
@@ -155,8 +155,8 @@ public class ContextInjectionTest extends TestCase {
 
 		// create parent context
 		IEclipseContext parentContext = EclipseContextFactory.create();
-		parentContext.set("Integer", testInt);
-		parentContext.set("String", testString);
+		parentContext.set(Integer.class.getName(), testInt);
+		parentContext.set(String.class.getName(), testString);
 
 		// create child context
 		IEclipseContext context = EclipseContextFactory.create(parentContext, null);
@@ -193,8 +193,7 @@ public class ContextInjectionTest extends TestCase {
 
 		// create context
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set("Integer", testInt);
-		context.set("String", testString);
+		context.set(Integer.class.getName(), testInt);
 		context.set(String.class.getName(), testString);
 		context.set(Float.class.getName(), testFloat);
 

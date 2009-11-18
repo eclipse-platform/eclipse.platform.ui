@@ -42,7 +42,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			handleParentChange(event);
 			return;
 		}
-		ContextInjector injector = new ContextInjector(context);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
 			injector.inject(name, objectsCopy[i]);
@@ -57,10 +57,10 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 		if (oldParent == newParent)
 			return;
 
-		ContextInjector injector = new ContextInjector(context);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
-			injector.reparent(objectsCopy[i], oldParent, newParent);
+			injector.reparent(objectsCopy[i], new ObjectProviderContext(oldParent));
 		}
 	}
 
@@ -83,12 +83,12 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				return;
 		}
 
-		ContextInjector injector = new ContextInjector(context);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
 		injector.uninject(releasedObject);
 	}
 
 	private void handleDispose(ContextChangeEvent event) {
-		ContextInjector injector = new ContextInjector(context);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
 			injector.dispose(objectsCopy[i]);
@@ -100,7 +100,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 				|| event.getArguments()[0] == null)
 			throw new IllegalArgumentException();
 
-		ContextInjector injector = new ContextInjector(context);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
 		injector.inject(event.getArguments()[0]);
 
 		WeakReference ref = new WeakReference(event.getArguments()[0]);
@@ -115,7 +115,7 @@ public class ContextToObjectLink implements IRunAndTrack, IContextConstants {
 			handleParentChange(event);
 			return;
 		}
-		ContextInjector injector = new ContextInjector(context);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
 		Object[] objectsCopy = safeObjectsCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
 			injector.uninject(name, objectsCopy[i]);

@@ -8,13 +8,15 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.core.services.internal.context;
-
-import org.eclipse.e4.core.services.context.IEclipseContext;
+package org.eclipse.e4.core.services.injector;
 
 /**
- * Internal link for ContextProvider
+ * Description of an object to be created for IObjectProvider. NOTE: This is a preliminary form;
+ * this API will change.
  */
-public interface IContextProvider {
-	public void setContext(IEclipseContext context);
+public interface IObjectDescriptor {
+
+	public String getPropertyName();
+
+	public Class getElementClass();
 }

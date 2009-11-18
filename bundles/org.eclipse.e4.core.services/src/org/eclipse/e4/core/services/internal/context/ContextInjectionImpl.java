@@ -47,12 +47,15 @@ public class ContextInjectionImpl implements IContextConstants {
 
 	public static Object invoke(final Object userObject, final String methodName,
 			final IEclipseContext context, final Object defaultValue) {
-		ContextInjector injector = new ContextInjector(context);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
 		return injector.invoke(userObject, methodName, defaultValue);
 	}
 
 	public static Object make(Class clazz, final IEclipseContext context) {
-		ContextInjector injector = new ContextInjector(context);
-		return injector.make(clazz);
+		ContextInjector injector = new ContextInjector(new ObjectProviderContext(context));
+		Object result = injector.make(clazz);
+		if (result != null)
+			context.runAndTrack(new ContextToObjectLink(context), new Object[] { result });
+		return result;
 	}
 }

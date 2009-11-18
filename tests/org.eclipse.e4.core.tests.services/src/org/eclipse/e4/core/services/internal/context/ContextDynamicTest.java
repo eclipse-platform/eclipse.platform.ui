@@ -59,8 +59,8 @@ public class ContextDynamicTest extends TestCase {
 
 		// create original context
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set("Integer", testInt);
-		context.set("String", testString);
+		context.set(Integer.class.getName(), testInt);
+		context.set(String.class.getName(), testString);
 		context.set(Double.class.getName(), testDouble);
 		context.set(Float.class.getName(), testFloat);
 		context.set(Character.class.getName(), testChar);
@@ -82,7 +82,7 @@ public class ContextDynamicTest extends TestCase {
 		Double testDouble2 = new Double(3.45);
 		Integer testInt2 = new Integer(123);
 		context.set(Double.class.getName(), testDouble2);
-		context.set("Integer", testInt2);
+		context.set(Integer.class.getName(), testInt2);
 
 		// and check
 		assertEquals(testString, userObject.inject__String);
@@ -95,7 +95,7 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(testChar, userObject.c);
 
 		// remove element
-		context.remove("String");
+		context.remove(String.class.getName());
 		context.remove(Character.class.getName());
 
 		// and check
@@ -121,8 +121,8 @@ public class ContextDynamicTest extends TestCase {
 
 		// create original context
 		IEclipseContext parentContext = EclipseContextFactory.create();
-		parentContext.set("Integer", testInt);
-		parentContext.set("String", testString);
+		parentContext.set(Integer.class.getName(), testInt);
+		parentContext.set(String.class.getName(), testString);
 		parentContext.set(Double.class.getName(), testDouble);
 		parentContext.set(Float.class.getName(), testFloat);
 		parentContext.set(Character.class.getName(), testChar);
@@ -145,7 +145,7 @@ public class ContextDynamicTest extends TestCase {
 		Double testDouble2 = new Double(3.45);
 		Integer testInt2 = new Integer(123);
 		context.set(Double.class.getName(), testDouble2);
-		context.set("Integer", testInt2);
+		context.set(Integer.class.getName(), testInt2);
 
 		// and check
 		assertEquals(testString, userObject.inject__String);
@@ -158,7 +158,7 @@ public class ContextDynamicTest extends TestCase {
 		assertEquals(testChar, userObject.c);
 
 		// remove element
-		parentContext.remove("String");
+		parentContext.remove(String.class.getName());
 		parentContext.remove(Character.class.getName());
 
 		// and check
