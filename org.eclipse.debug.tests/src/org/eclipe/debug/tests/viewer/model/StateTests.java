@@ -312,6 +312,106 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         Assert.assertEquals(originalSelection, fViewer.getSelection());
     }
 
+    public void testPreserveExpandedOnMultLevelContent() {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = alternatingSubsreesModel();
+
+        // NOTE: WE ARE NOT EXPANDING ANY CHILDREN
+        
+        // Create the listener, only check the first level
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        expandAlternateElements(model);
+        
+        // Set a selection in view
+        TreeSelection originalSelection = new TreeSelection(model.findElement("5.1.1"));
+        fViewer.setSelection(originalSelection);
+
+        // Update the model
+        model.removeElementChild(TreePath.EMPTY, 0);
+        
+        // Note: Re-expanding nodes causes redundant updates.
+        fListener.reset(false, false);
+        fListener.addUpdates(getCTargetViewer(), TreePath.EMPTY, model.getRootElement(), -1, ALL_UPDATES_COMPLETE);
+        
+        // Create the delta which has nodes with CONTENT flag set at multiple levels. 
+        ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.CONTENT);
+        ModelDelta elementDelta = model.getElementDelta(rootDelta, model.findElement("3.1.1"), true);
+        elementDelta.setFlags(IModelDelta.CONTENT);
+        
+        // Post the multi-content update delta
+        model.postDelta(rootDelta);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Validate data
+        model.validateData(fViewer, TreePath.EMPTY, true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("2")) == false);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("4")) == false);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5")) == true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("5.1")) == true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("6")) == false);
+        Assert.assertEquals(originalSelection, fViewer.getSelection());
+    }
+
+
+    public void testPreserveExpandedOnSubTreeContent() {
+        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
+        TestModel model = TestModel.simpleMultiLevel();
+
+        // Expand all
+        fViewer.setAutoExpandLevel(-1);
+        
+        // Create the listener, 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+
+        // Set the input into the view and update the view.
+        fViewer.setInput(model.getRootElement());
+        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+        model.validateData(fViewer, TreePath.EMPTY, true);
+
+        // Turn off auto-expansion
+        fViewer.setAutoExpandLevel(0);
+        
+        // Set a selection in view
+        TreeSelection originalSelection = new TreeSelection(model.findElement("3.3.1"));
+        fViewer.setSelection(originalSelection);
+
+        // Update the model
+        model.addElementChild(model.findElement("3"), 0, new TestElement(model, "3.0 - new", new TestElement[0]));
+        
+        // Create the delta for element "3" with content update.
+        TreePath elementPath = model.findElement("3");
+        ModelDelta rootDelta = new ModelDelta(model.getRootElement(), IModelDelta.NO_CHANGE);
+        ModelDelta elementDelta = model.getElementDelta(rootDelta, elementPath, true);
+        elementDelta.setFlags(IModelDelta.CONTENT);
+
+        // Note: Re-expanding nodes causes redundant updates.
+        fListener.reset(false, false);
+        fListener.addUpdates(getCTargetViewer(), elementPath, model.getElement(elementPath), -1, ALL_UPDATES_COMPLETE);
+        
+        // Post the sub-tree update
+        model.postDelta(rootDelta);
+        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
+            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
+
+        // Validate data
+        model.validateData(fViewer, TreePath.EMPTY, true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true);
+        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true);
+        Assert.assertEquals(originalSelection, fViewer.getSelection());
+    }
+
     public void testPreserveExpandedOnContentStress() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         TestModel model = alternatingSubsreesModel();
@@ -379,47 +479,6 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
             Assert.assertEquals(originalSelection, fViewer.getSelection());
         }
     }
-
-//    public void testPreserveSetSelectionAfterContent() {
-//        //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
-//        TestModel model = TestModel.simpleMultiLevel();
-//
-//        // Expand all
-//        fViewer.setAutoExpandLevel(-1);
-//        
-//        // Create the listener.
-//        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
-//
-//        // Set the input into the view and update the view.
-//        fViewer.setInput(model.getRootElement());
-//        while (!fListener.isFinished()) if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
-//        model.validateData(fViewer, TreePath.EMPTY, true);
-//
-//        // Set a selection in view
-//        fViewer.setSelection(new TreeSelection(model.findElement("3.1.1")));
-//
-//        // Reset the listener (ignore redundant updates)
-//        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, false, false);
-//        
-//        // Refresh content.
-//        // Note: Wait only for the processing of the delta, nto for all updates
-//        model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-//        while (!fListener.isFinished(MODEL_CHANGED_COMPLETE)) 
-//            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
-//
-//        // Change the selection to something new in the view
-//        TreeSelection newSelection = new TreeSelection(model.findElement("2.1"));
-//        fViewer.setSelection(newSelection);
-//        
-//        // Wait for all the updates to cimplete (note: we're not resetting the listener.
-//        model.postDelta(new ModelDelta(model.getRootElement(), IModelDelta.CONTENT));
-//        while (!fListener.isFinished(ALL_UPDATES_COMPLETE | STATE_RESTORE_COMPLETE)) 
-//            if (!fDisplay.readAndDispatch ()) fDisplay.sleep ();
-//
-//        // Check to make sure that the state restore didn't change the selection.
-//        Assert.assertEquals(newSelection, fViewer.getSelection());
-//    }
-
     
     public void testPreserveSelectionDeltaAfterContent() {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);

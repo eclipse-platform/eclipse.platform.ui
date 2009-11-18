@@ -346,6 +346,16 @@ public class ModelDelta implements IModelDelta {
 	public void setFlags(int flags) {
 		fFlags = flags;
 	}
+
+    /**
+     * Sets this delta's index
+     * 
+     * @param index
+     * @since 3.6
+     */
+    public void setIndex(int index) {
+        fIndex = index;
+    }
 	
 	/**
      * Sets this delta's child count.

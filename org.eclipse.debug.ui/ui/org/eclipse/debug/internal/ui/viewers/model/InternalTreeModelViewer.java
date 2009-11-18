@@ -2268,7 +2268,7 @@ public class InternalTreeModelViewer extends TreeViewer
         return null;
     }
     
-    public void saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
+    public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         Tree tree = (Tree) getControl();
         TreeItem[] selection = tree.getSelection();
         Set set = new HashSet();
@@ -2302,10 +2302,13 @@ public class InternalTreeModelViewer extends TreeViewer
             }
             items = ((TreeItem)w).getItems();
         }
-        if (items != null) {
+        if (items != null && items.length != 0) {
             for (int i = 0; i < items.length; i++) {
                 doSaveElementState(path, delta, items[i], set, i, flagsToSave);
             }
+            return true;
+        } else {
+            return false;
         }
     }
     

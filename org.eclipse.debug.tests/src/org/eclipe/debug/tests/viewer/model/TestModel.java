@@ -343,7 +343,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
     /** Create or retrieve delta for given path
      * @param combine if then new deltas for the given path are created. If false existing ones are reused.
      */
-    private ModelDelta getElementDelta(ModelDelta baseDelta, TreePath path, boolean combine) {
+    public ModelDelta getElementDelta(ModelDelta baseDelta, TreePath path, boolean combine) {
         TestElement element = getRootElement();
         ModelDelta delta = baseDelta;
         
@@ -530,7 +530,7 @@ public class TestModel implements IElementContentProvider, IElementLabelProvider
         delta.setFlags(flags);
         return rootDelta;
     }        
-    
+
     public TreePath findElement(String label) {
         return findElement(TreePath.EMPTY, label);
     }

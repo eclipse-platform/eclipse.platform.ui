@@ -317,8 +317,8 @@ public class SubTreeModelViewer extends TreeModelViewer {
             SubTreeModelViewer.this.removeViewerUpdateListener(listener);
         }
 
-        public void saveElementState(TreePath path, ModelDelta delta, int deltaFlags) {
-            SubTreeModelViewer.this.saveElementState(path, delta, deltaFlags);
+        public boolean saveElementState(TreePath path, ModelDelta delta, int deltaFlags) {
+            return SubTreeModelViewer.this.saveElementState(path, delta, deltaFlags);
         }
 
         public void setAutoExpandLevel(int level) {

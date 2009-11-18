@@ -1329,7 +1329,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         return null;
     }
 
-    public void saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
+    public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave) {
         VirtualTree tree = getTree();
         VirtualItem[] selection = tree.getSelection();
         Set set = new HashSet();
@@ -1358,6 +1358,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
             for (int i = 0; i < items.length; i++) {
                 doSaveElementState(path, delta, items[i], set, flagsToSave);
             }
+            return true;
+        } else {
+            return false;
         }
     }
     

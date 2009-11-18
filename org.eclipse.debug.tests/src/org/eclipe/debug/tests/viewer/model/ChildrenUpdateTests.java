@@ -52,7 +52,7 @@ public class ChildrenUpdateTests extends TestCase {
 				public boolean setSelection(ISelection selection, boolean reveal, boolean force) { return true; }
 				public void setInput(Object object) {}
 				public void setAutoExpandLevel(int level) {}
-				public void saveElementState(TreePath path, ModelDelta delta, int flags) {}
+				public boolean saveElementState(TreePath path, ModelDelta delta, int flags) { return true; }
 				public void removeStateUpdateListener(IStateUpdateListener listener) {}
 				public void removeViewerUpdateListener(IViewerUpdateListener listener) {}
 				public void removeModelChangedListener(IModelChangedListener listener) {}

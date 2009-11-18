@@ -621,7 +621,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         }
     }
     
-    protected void appendToPendingStateDelta(TreePath path) {
+    protected void appendToPendingStateDelta(final TreePath path) {
         if (DEBUG_STATE_SAVE_RESTORE
             && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
             System.out.println("STATE APPEND BEGIN: " + path.getLastSegment()); //$NON-NLS-1$
@@ -634,7 +634,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             delta = delta.addNode(path.getSegment(i), IModelDelta.NO_CHANGE);
         }
 
-        fViewer.saveElementState(path, delta, IModelDelta.COLLAPSE | IModelDelta.EXPAND | IModelDelta.SELECT);
+        if (!fViewer.saveElementState(path, delta, IModelDelta.COLLAPSE | IModelDelta.EXPAND | IModelDelta.SELECT)) {
+            // Path to save the state was not found!  Abort the save.
+            if (DEBUG_STATE_SAVE_RESTORE
+                && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                System.out.println("STATE APPEND CANCEL: Element " + path.getLastSegment() + " not found."); //$NON-NLS-1$ //$NON-NLS-2$
+            }
+        }
 
         // Append a marker CONTENT flag to all the delta nodes that contain the
         // EXPAND node. These
@@ -663,9 +669,29 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 System.out.println("\tAPPEND OUTSTANDING RESTORE: " + fPendingState); //$NON-NLS-1$
             }
 
-            IModelDeltaVisitor pendingStateVisitor = new IModelDeltaVisitor() {
+            // If the append delta is generated for a sub-tree, copy the pending dela 
+            // attributes into the pending delta.
+            if (path.getSegmentCount() > 0) {
+                fPendingState.accept( new IModelDeltaVisitor() {
+                    public boolean visit(IModelDelta pendingDeltaNode, int depth) {
+                        TreePath pendingDeltaPath = getViewerTreePath(pendingDeltaNode);
+                        if (path.startsWith(pendingDeltaPath, null)) 
+                        {
+                            ModelDelta appendDelta = findDeltaForPath(appendDeltaRoot, pendingDeltaPath);
+                            appendDelta.setFlags(pendingDeltaNode.getFlags());
+                            appendDelta.setChildCount(pendingDeltaNode.getChildCount());
+                            appendDelta.setIndex(pendingDeltaNode.getIndex());
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+            }
+
+            // Copy the pending state into the new appended state.
+            fPendingState.accept( new IModelDeltaVisitor() {
                 public boolean visit(IModelDelta pendingDeltaNode, int depth) {
-                    // Ignore the top element.
+                    // Skip the top element
                     if (pendingDeltaNode.getParentDelta() == null) {
                         return true;
                     }
@@ -679,7 +705,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                     // node, it is already processed and we can skip it.
                     // If the pending state node does not contain any flags,
                     // we can also skip it.
-                    ModelDelta saveDeltaNode = findSaveDelta(appendDeltaRoot, pendingDeltaNode);
+                    ModelDelta saveDeltaNode = findSubDeltaParent(appendDeltaRoot, pendingDeltaNode);
                     if (saveDeltaNode != null && 
                         !isDeltaInParent(pendingDeltaNode, saveDeltaNode) &&
                         pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) 
@@ -704,8 +730,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                         return pendingDeltaNode.getChildCount() > 0;
                     }
                 }
-            };
-            fPendingState.accept(pendingStateVisitor);
+                
+            });
         }
 
         if (appendDeltaRoot.getChildDeltas().length > 0) {
@@ -864,7 +890,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                         // node, it is already processed and we can skip it.
                         // If the pending state node does not contain any flags,
                         // we can also skip it.
-                        ModelDelta saveDeltaNode = findSaveDelta(saveDeltaRoot, pendingDeltaNode);
+                        ModelDelta saveDeltaNode = findSubDeltaParent(saveDeltaRoot, pendingDeltaNode);
                         if (saveDeltaNode != null && !isDeltaInParent(pendingDeltaNode, saveDeltaNode)
                             && pendingDeltaNode.getFlags() != IModelDelta.NO_CHANGE) {
                             // There should be only one delta element with
@@ -925,22 +951,21 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         saveRootDelta.accept(clearDeltaVisitor);
     }
 
-    private ModelDelta findSaveDelta(ModelDelta saveDeltaRoot, IModelDelta pendingStateDelta) {
-        // Create a path of elements to the pendingStateDelta.
+    private ModelDelta findSubDeltaParent(ModelDelta destinationDeltaRoot, IModelDelta subDelta) {
+        // Create a path of elements to the sub-delta.
         LinkedList deltaPath = new LinkedList();
-        IModelDelta delta = pendingStateDelta;
+        IModelDelta delta = subDelta;
         while (delta.getParentDelta() != null) {
             delta = delta.getParentDelta();
             deltaPath.addFirst(delta);
         }
 
-        // For each element in the path of the pendingStateDelta, find the
-        // corresponding
-        // element in the partially restored delta being saved.
+        // For each element in the path of the sub-delta, find the corresponding
+        // element in the destination delta
         Iterator itr = deltaPath.iterator();
         // Skip the root element
         itr.next();
-        ModelDelta saveDelta = saveDeltaRoot;
+        ModelDelta saveDelta = destinationDeltaRoot;
         outer: while (itr.hasNext()) {
             IModelDelta itrDelta = (IModelDelta) itr.next();
             for (int i = 0; i < saveDelta.getChildDeltas().length; i++) {
@@ -952,6 +977,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             return null;
         }
         return saveDelta;
+    }
+
+    private ModelDelta findDeltaForPath(ModelDelta root, TreePath path) {
+        ModelDelta delta = root;
+        for (int i = 0; i < path.getSegmentCount(); i++) {
+            delta = delta.getChildDelta(path.getSegment(i));
+            if (delta == null) {
+                return null;
+            }
+        }
+        return delta;
     }
 
     private boolean deltasEqual(IModelDelta d1, IModelDelta d2) {
@@ -970,9 +1006,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
     }
 
     private void copyIntoDelta(IModelDelta delta, ModelDelta destParent) {
-        // Search the destination and make sure that the same delta
-        // doesn't exist already.
-
         ModelDelta newDelta = destParent.addNode(delta.getElement(), delta.getIndex(), delta.getFlags(), delta
             .getChildCount());
         for (int i = 0; i < delta.getChildDeltas().length; i++) {

@@ -188,7 +188,7 @@ public interface ITreeModelViewer extends ISelectionProvider {
      *
      * @since 3.6
      */
-    public void saveElementState(TreePath path, ModelDelta delta, int flagsToSave);
+    public boolean saveElementState(TreePath path, ModelDelta delta, int flagsToSave);
     
     /**
      * Causes the viewer to process the given delta as if it came from a
