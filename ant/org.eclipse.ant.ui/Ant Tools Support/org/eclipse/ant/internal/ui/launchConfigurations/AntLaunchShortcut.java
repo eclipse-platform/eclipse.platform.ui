@@ -82,7 +82,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				}
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
-					if (!(AntUtil.isKnownAntExtension(resource.getFileExtension()))) {
+					if (!(AntUtil.isKnownAntFile(resource))) {
 						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
 							if (resource.getType() == IResource.FILE) {
 								resource = resource.getParent();
@@ -462,7 +462,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				filepath = locationProvider.getPath(input);
 			}
 		}
-		if(filepath != null && AntUtil.isKnownAntExtension(filepath.getFileExtension())) {
+		if(filepath != null && AntUtil.isKnownAntFile(file)) {
 			launch(filepath, (file == null ? null : file.getProject()), mode, null);
 			return;
 		}
@@ -518,7 +518,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				}
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
-					if (!(AntUtil.isKnownAntExtension(resource.getFileExtension()))) {
+					if (!(AntUtil.isKnownAntFile(resource))) {
 						if (!AntUtil.isKnownBuildfileName(resource.getName())) {
 							if (resource.getType() == IResource.FILE) {
 								resource = resource.getParent();
@@ -572,7 +572,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 			if (object instanceof IAdaptable) {
 				IResource resource = (IResource)((IAdaptable)object).getAdapter(IResource.class);
 				if (resource != null) {
-					if (!(AntUtil.isKnownAntExtension(resource.getFileExtension()))) {
+					if (!(AntUtil.isKnownAntFile(resource))) {
 						if(AntUtil.isKnownBuildfileName(resource.getName())) {
 							return resource;
 						}

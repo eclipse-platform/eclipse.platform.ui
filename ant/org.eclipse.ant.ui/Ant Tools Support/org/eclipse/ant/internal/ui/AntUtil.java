@@ -39,12 +39,14 @@ import org.eclipse.core.filebuffers.ITextFileBuffer;
 import org.eclipse.core.filebuffers.ITextFileBufferManager;
 import org.eclipse.core.filebuffers.LocationKind;
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -82,7 +84,6 @@ public final class AntUtil {
 	public static final char ANT_CLASSPATH_DELIMITER= '*';
 	public static final String ANT_HOME_CLASSPATH_PLACEHOLDER= "G"; //$NON-NLS-1$
 	public static final String ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER= "UG"; //$NON-NLS-1$
-	public static final String[] ANT_EXTENSIONS = {"xml", "ant", "ent", "macrodef"}; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	private static String fgBrowserId;
 	
 	/**
@@ -581,17 +582,23 @@ public final class AntUtil {
     /**
      * Returns if the given extension is a known extension to Ant
      * i.e. a supported content type extension.
-     * @param extension
+     * @param resource
      * @return true if the file extension is supported false otherwise
      * 
      * @since 3.6
      */
-    public static boolean isKnownAntExtension(String extension) {
-    	for (int i = 0; i < ANT_EXTENSIONS.length; i++) {
-			if(ANT_EXTENSIONS[i].equals(extension)) {
-				return true;
-			}
-		}
+    public static boolean isKnownAntFile(IResource resource) {
+    	IFile file = null;
+    	if(resource.getType() == IResource.FILE) {
+    		file = (IFile) resource;
+    	}
+    	else {
+    		file = (IFile) resource.getAdapter(IFile.class);
+    	}
+    	if(file != null) {
+    		IContentType type = IDE.getContentType(file);
+    		return type.isAssociatedWith(file.getName());
+    	}
     	return false;
     }
     
