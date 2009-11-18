@@ -109,6 +109,14 @@ public class WebappPreferences {
 		return getPreferenceString("titleResource"); //$NON-NLS-1$
 	}
 
+	public String getQuickPrintMaxConnections(){
+		return getPreferenceString("maxConnections"); //$NON-NLS-1$
+	}
+	
+	public String getQuickPrintMaxTopics(){
+		return getPreferenceString("maxTopics"); //$NON-NLS-1$
+	}
+	
 	public boolean isWindowTitlePrefix() {
 		return ProductPreferences.getBoolean(HelpBasePlugin.getDefault(), "windowTitlePrefix"); //$NON-NLS-1$
 	}

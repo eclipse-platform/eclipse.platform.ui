@@ -24,7 +24,9 @@ import java.util.StringTokenizer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +44,12 @@ import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
  */
 public class PrintData extends RequestData {
 
+	// default max connections for concurrent print
+	private static final int defaultMaxConnections = 10;
+
+	// default max topics allowed for one print request
+	private static final int defaultMaxTopics = 500;
+
 	// where to inject the section numbers
 	private static final Pattern PATTERN_HEADING = Pattern.compile("<body.*?>[\\s]*?([\\w])", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
@@ -51,11 +59,36 @@ public class PrintData extends RequestData {
 	// Where to inject css
 	private static final Pattern PATTERN_END_HEAD = Pattern.compile("</head.*?>", Pattern.MULTILINE | Pattern.DOTALL | Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
 
+	private static boolean initialized = false;
+
+	private static int allowedConnections;
+
+	private static int allowedMaxTopics;
+
+	private boolean confirmed;
+	
+	// flag right-to-left direction of text
+	private boolean isRTL;
+
 	/*
 	 * Constructs the print data for the given request.
 	 */
 	public PrintData(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
 		super(context, request, response);
+
+		if (!initialized) {
+			initPreferences(preferences);
+		}
+
+		isRTL = UrlUtil.isRTL(request, response);
+		
+		String confirmString = request.getParameter("confirmed"); //$NON-NLS-1$
+		if ((confirmString != null) && ("true".equals(confirmString))) { //$NON-NLS-1$
+			confirmed = true;
+		} else {
+			confirmed = false;
+		}
+
 	}
 
 	/*
@@ -80,74 +113,212 @@ public class PrintData extends RequestData {
 	}
 
 	/*
+	 * init properties set in base preference.ini for quick print
+	 */
+	private static synchronized void initPreferences(WebappPreferences preferences) {
+
+		if (initialized) {
+			return;
+		}
+
+		// set max connection numbers for concurrent access
+		String maxConnections = preferences.getQuickPrintMaxConnections();
+		if ((null == maxConnections) || ("".equals(maxConnections.trim()))) { //$NON-NLS-1$
+			allowedConnections = defaultMaxConnections;
+		} else {
+			try {
+				allowedConnections = Integer.parseInt(maxConnections);
+			} catch (NumberFormatException e) {
+				HelpWebappPlugin.logError("Init maxConnections error. Set to default.", e); //$NON-NLS-1$
+				allowedConnections = defaultMaxConnections;
+			}
+		}
+
+		// set max topics allowed to print in one request
+		String maxTopics = preferences.getQuickPrintMaxTopics();
+		if ((null == maxTopics) || ("".equals(maxTopics.trim()))) { //$NON-NLS-1$
+			allowedMaxTopics = defaultMaxTopics;
+		} else {
+			try {
+				allowedMaxTopics = Integer.parseInt(maxTopics);
+			} catch (NumberFormatException e) {
+				HelpWebappPlugin.logError("Init maxTopics error. Set to default.", e); //$NON-NLS-1$
+				allowedMaxTopics = defaultMaxTopics;
+			}
+		}
+
+		initialized = true;
+	}
+
+	/*
+	 * Generates resources to print
+	 */
+	public void generateResources(Writer out) throws IOException, ServletException {
+		// check resource allocation
+		if (!getConnection()) {
+            RequestDispatcher rd = context.getRequestDispatcher("/advanced/printError.jsp"); //$NON-NLS-1$
+            request.setAttribute("msg", "noConnection"); //$NON-NLS-1$ //$NON-NLS-2$
+            rd.forward(request, response);
+            return;    
+		}
+        
+
+		ITopic topic = getTopic(); // topic selected for print
+		int topicRequested = topicsRequested(topic);
+		if (topicRequested > allowedMaxTopics) {
+			if (!confirmed) {
+				releaseConnection();
+				RequestDispatcher rd = context.getRequestDispatcher("/advanced/printConfirm.jsp"); //$NON-NLS-1$
+				request.setAttribute("topicsRequested", String.valueOf(topicRequested)); //$NON-NLS-1$
+				request.setAttribute("allowedMaxTopics", String.valueOf(allowedMaxTopics)); //$NON-NLS-1$
+				rd.forward(request, response);
+				return;
+			}
+		}
+
+		try {
+			generateToc(out);
+			generateContent(out);
+		} catch (IOException e) {
+			RequestDispatcher rd = context.getRequestDispatcher("/advanced/printError.jsp"); //$NON-NLS-1$
+			request.setAttribute("msg", "ioException"); //$NON-NLS-1$ //$NON-NLS-2$
+			rd.forward(request, response);
+		} finally {
+			releaseConnection();
+		}
+	}
+
+    private static synchronized boolean getConnection() {
+        if (allowedConnections > 0) {
+            allowedConnections--;
+            return true;
+        }
+        return false;
+    }
+
+    private static synchronized void releaseConnection() {
+    	allowedConnections++;
+    }
+	
+	/*
+	 * Calculate the amount of topics to print in one request 
+	 */
+	private int topicsRequested(ITopic topic) {
+		int topicsRequested = 0;
+		if (topic.getHref() != null && topic.getHref().length() > 0) {
+			topicsRequested++;
+		}
+
+		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+		for (int i = 0; i < subtopics.length; ++i) {
+			topicsRequested += topicsRequested(subtopics[i]);
+		}
+		return topicsRequested;
+	}
+
+	/*
 	 * Generates and outputs a table of contents div with links.
 	 */
-	public void generateToc(Writer out) throws IOException {
-		out.write("<div id=\"toc\">"); //$NON-NLS-1$
+	private void generateToc(Writer out) throws IOException {
+		int tocGenerated = 0;
+
+		out.write("<html>\n"); //$NON-NLS-1$
+		out.write("<head>\n"); //$NON-NLS-1$
+		out.write("<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n"); //$NON-NLS-1$
+		out.write("<title>" + UrlUtil.htmlEncode(getTitle()) +"</title>\n"); //$NON-NLS-1$ //$NON-NLS-2$ 
+		out.write("<link rel=\"stylesheet\" href=\"print.css\" charset=\"utf-8\" type=\"text/css\">\n"); //$NON-NLS-1$
+		out.write("</head>\n"); //$NON-NLS-1$
+		out.write("<body dir=\"" + (isRTL ? "right" : "left") + "\" onload=\"print()\">\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+		out.write("<div id=\"toc\">\n"); //$NON-NLS-1$
 		out.write("<h1>"); //$NON-NLS-1$
 		out.write(getTitle());
-		out.write("</h1>"); //$NON-NLS-1$
+		out.write("</h1>\n"); //$NON-NLS-1$
 		out.write("<h2>"); //$NON-NLS-1$
 		out.write(ServletResources.getString("TocHeading", request)); //$NON-NLS-1$
-		out.write("</h2>"); //$NON-NLS-1$
-		out.write("<div id=\"toc_content\">"); //$NON-NLS-1$
+		out.write("</h2>\n"); //$NON-NLS-1$
+		out.write("<div id=\"toc_content\">\n"); //$NON-NLS-1$
 		ITopic topic = getTopic();
-		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
-		for (int i=0;i<subtopics.length;++i) {
-			generateToc(subtopics[i], String.valueOf(i + 1), out);
+
+		String href = topic.getHref();
+		if (href != null && href.length() > 0) {
+			tocGenerated++;
 		}
-		out.write("</div>"); //$NON-NLS-1$
-		out.write("</div>"); //$NON-NLS-1$
+		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+		for (int i = 0; i < subtopics.length; ++i) {
+			tocGenerated = generateToc(subtopics[i], String.valueOf(i + 1), tocGenerated, out);
+		}
+
+		out.write("</div>\n"); //$NON-NLS-1$
+		out.write("</div>\n"); //$NON-NLS-1$
+		out.write("</body>\n"); //$NON-NLS-1$
+		out.write("</html>\n"); //$NON-NLS-1$
 	}
 
 	/*
 	 * Auxiliary method for recursively generating table of contents div.
 	 */
-	private void generateToc(ITopic topic, String sectionId, Writer out) throws IOException {
-		out.write("<div class=\"toc_" + (sectionId.length() > 2 ? "sub" : "") + "entry\">"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		out.write(sectionId + ". " + "<a href=\"#section" + sectionId + "\">" + topic.getLabel() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
-		for (int i=0;i<subtopics.length;++i) {
-			String subsectionId = sectionId + "." + (i + 1); //$NON-NLS-1$
-			generateToc(subtopics[i], subsectionId, out);
+	private int generateToc(ITopic topic, String sectionId, int tocGenerated, Writer out) throws IOException {
+		if (tocGenerated < allowedMaxTopics) {
+			out.write("<div class=\"toc_" + (sectionId.length() > 2 ? "sub" : "") + "entry\">\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+			out.write(sectionId + ". " + "<a href=\"#section" + sectionId + "\">" + topic.getLabel() + "</a>\n"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+
+			String href = topic.getHref();
+			if (href != null && href.length() > 0) {
+				tocGenerated++;
+			}
+
+			ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+			for (int i = 0; i < subtopics.length; ++i) {
+				String subsectionId = sectionId + "." + (i + 1); //$NON-NLS-1$
+				tocGenerated = generateToc(subtopics[i], subsectionId, tocGenerated, out);
+			}
+			out.write("</div>\n"); //$NON-NLS-1$
+			return tocGenerated;
 		}
-		out.write("</div>"); //$NON-NLS-1$
+		return tocGenerated;
 	}
 
 	/*
 	 * Generates the content to print (the merged topics).
 	 */
 	public void generateContent(Writer out) throws IOException {
-		generateContent(getTopic(), null, out, new HashSet());
+		int topicsGenerated = 0;
+		generateContent(getTopic(), null, topicsGenerated, new HashSet(), out);
 	}
-	
+
 	/*
 	 * Auxiliary method for recursively generating print content.
 	 */
-	private void generateContent(ITopic topic, String sectionId, Writer out, Set generated) throws IOException {
-		String href = topic.getHref();
-		if (href != null) {
-			// get the topic content
-			href = removeAnchor(href);
-			String pathHref = href.substring(0, href.lastIndexOf('/') + 1);
-			String baseHref = "../topic" + pathHref;   //$NON-NLS-1$
-			String content;
-			if (!generated.contains(href)) {
-				generated.add(href);
-				content = getContent(href, locale);
-				// root topic doesn't have sectionId
-				if (sectionId != null) {
-					content = injectHeading(content, sectionId);
+	private int generateContent(ITopic topic, String sectionId, int topicsGenerated, Set generated, Writer out) throws IOException {
+		if (topicsGenerated < allowedMaxTopics) {
+			String href = topic.getHref();
+			if (href != null && href.length() > 0) {
+				topicsGenerated++;
+				// get the topic content
+				href = removeAnchor(href);
+				String pathHref = href.substring(0, href.lastIndexOf('/') + 1);
+				String baseHref = "../topic" + pathHref; //$NON-NLS-1$
+				String content;
+				if (!generated.contains(href)) {
+					generated.add(href);
+					content = getContent(href, locale);
+					// root topic doesn't have sectionId
+					if (sectionId != null) {
+						content = injectHeading(content, sectionId);
+					}
+					content = normalizeHrefs(content, baseHref);
+					content = injectCss(content);
+					out.write(content);
 				}
-				content = normalizeHrefs(content, baseHref);
-				content = injectCss(content);
-				out.write(content);
-			}				
-		}
-		ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
-		for (int i=0;i<subtopics.length;++i) {
-			String subsectionId = (sectionId != null ? sectionId + "." : "") + (i + 1); //$NON-NLS-1$ //$NON-NLS-2$
-			generateContent(subtopics[i], subsectionId, out, generated);
+			}
+			ITopic[] subtopics = EnabledTopicUtils.getEnabled(topic.getSubtopics());
+			for (int i = 0; i < subtopics.length; ++i) {
+				String subsectionId = (sectionId != null ? sectionId + "." : "") + (i + 1); //$NON-NLS-1$ //$NON-NLS-2$
+				topicsGenerated = generateContent(subtopics[i], subsectionId, topicsGenerated, generated, out);
+			}
+			return topicsGenerated;
+		} else {
+			return topicsGenerated;
 		}
 	}
 
@@ -208,6 +379,11 @@ public class PrintData extends RequestData {
 				InputStream rawInput = HelpSystem.getHelpContent(href, locale);
 				boolean filter = BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER;
 				in = DynamicXHTMLProcessor.process(href, rawInput, locale, filter);
+
+				if (in == null) {
+					in = HelpSystem.getHelpContent(href, locale);
+				}
+
 				Reader reader = new BufferedReader(new InputStreamReader(in, charset));
 				char[] cbuf = new char[4096];
 				int num;

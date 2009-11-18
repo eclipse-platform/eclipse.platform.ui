@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -65,6 +65,29 @@ public class WebappResources {
 			return name;
 		}
 
+	}
+	
+	/**
+	 * Returns a string from a property file. It uses 'name' as the key to
+	 * retrieve from the webapp.properties file. And it uses args[] to replace the variables in property string. 
+	 */
+	public static String getString(String name, Locale locale, String[] args) {
+
+		// get bundle
+		ResourceBundle bundle = getBundle(locale);
+		if (bundle == null) {
+			return name;
+		}
+
+		// get value
+		try {
+			String stringFromPropertiesFile = bundle.getString(name);
+			stringFromPropertiesFile = MessageFormat.format(
+					stringFromPropertiesFile, args);
+			return stringFromPropertiesFile;
+		} catch (Exception e) {
+			return name;
+		}
 	}
 	/**
 	 * Obtains resource bundle for specified locale. Loads bundle if necessary

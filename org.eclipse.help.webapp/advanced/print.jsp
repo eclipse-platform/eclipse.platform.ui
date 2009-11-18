@@ -12,21 +12,6 @@
 
 <% 
 	PrintData data = new PrintData(application, request, response);
+	data.generateResources(out);
 %>
 
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title><%=UrlUtil.htmlEncode(data.getTitle())%></title>
-<link rel="stylesheet" href="print.css" charset="utf-8" type="text/css">
-</head>
-<body dir="<%=direction%>" onload="print()">
-<%
-	data.generateToc(out);
-%>
-</body>
-</html>
-
-<%
-	data.generateContent(out);
-%>

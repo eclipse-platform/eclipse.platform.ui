@@ -1,0 +1,66 @@
+<%--
+ Copyright (c) 2009 IBM Corporation and others.
+ All rights reserved. This program and the accompanying materials 
+ are made available under the terms of the Eclipse Public License v1.0
+ which accompanies this distribution, and is available at
+ http://www.eclipse.org/legal/epl-v10.html
+ 
+ Contributors:
+     IBM Corporation - initial API and implementation
+--%>
+<%@ include file="header.jsp"%>
+<%
+	String msg = (String)request.getAttribute("msg");
+%>
+
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="-1">
+<link rel="stylesheet" href="printAlert.css" charset="utf-8" type="text/css">
+
+<script language="JavaScript">
+
+function onloadHandler() {
+	sizeButtons();
+}
+
+function sizeButtons() {
+	var minWidth=60;
+
+	if(document.getElementById("ok").offsetWidth < minWidth){
+		document.getElementById("ok").style.width = minWidth+"px";
+	}
+}
+
+</script>
+
+</head>
+
+<body dir='<%=direction%>' onload="onloadHandler()">
+<p>&nbsp;</p>
+<div align="center">
+<div class="printAlertDiv">
+	<table align="center" width="400" cellpadding="10" cellspacing="0">
+		<tr>
+			<td class="caption"><strong><%=ServletResources.getString("error", request)%></strong></td>
+		</tr>
+		<tr>
+			<td height="50" class="message">
+			<p><%=ServletResources.getString(msg, request)%>
+			</p>
+			</td>
+		</tr>
+		<tr>
+			<td class="button">
+			<div align="center">
+				<button id="ok" onClick="top.close()"><%=ServletResources.getString("OK", request)%></button>
+            </div>
+			</td>
+		</tr>
+	</table>
+</Ddiv>
+</div>
+</body>
+</html>
