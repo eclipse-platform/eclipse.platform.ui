@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
+import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -64,6 +65,11 @@ public class MPartTest extends TestCase {
 		}
 	}
 
+	protected Control[] getPresentationControls(Shell shell) {
+		TrimmedPartLayout tpl = (TrimmedPartLayout) shell.getLayout();
+		return tpl.clientArea.getChildren();
+	}
+
 	public void testSetName() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		wb = new E4Workbench(window, appContext);
@@ -72,7 +78,7 @@ public class MPartTest extends TestCase {
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		assertEquals("MyWindow", shell.getText());
-		Control[] controls = shell.getChildren();
+		Control[] controls = getPresentationControls(shell);
 		assertEquals(1, controls.length);
 		SashForm sash = (SashForm) controls[0];
 		Control[] sashChildren = sash.getChildren();
@@ -102,7 +108,7 @@ public class MPartTest extends TestCase {
 		Widget topWidget = (Widget) window.getWidget();
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
-		Control[] controls = shell.getChildren();
+		Control[] controls = getPresentationControls(shell);
 		assertEquals(1, controls.length);
 		SashForm sash = (SashForm) controls[0];
 		Control[] sashChildren = sash.getChildren();
@@ -124,7 +130,7 @@ public class MPartTest extends TestCase {
 		Widget topWidget = (Widget) window.getWidget();
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
-		Control[] controls = shell.getChildren();
+		Control[] controls = getPresentationControls(shell);
 		assertEquals(1, controls.length);
 		SashForm sash = (SashForm) controls[0];
 		Control[] sashChildren = sash.getChildren();
@@ -158,7 +164,7 @@ public class MPartTest extends TestCase {
 		Widget topWidget = (Widget) window.getWidget();
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
-		Control[] controls = shell.getChildren();
+		Control[] controls = getPresentationControls(shell);
 		assertEquals(1, controls.length);
 		SashForm sash = (SashForm) controls[0];
 		Control[] sashChildren = sash.getChildren();

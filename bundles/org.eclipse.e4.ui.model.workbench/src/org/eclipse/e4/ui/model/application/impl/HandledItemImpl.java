@@ -17,7 +17,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledItem;
-import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MParameter;
 
 import org.eclipse.emf.common.notify.Notification;

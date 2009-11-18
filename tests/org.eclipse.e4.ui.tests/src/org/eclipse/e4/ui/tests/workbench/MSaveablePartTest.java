@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.widgets.CTabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
+import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -64,6 +65,11 @@ public class MSaveablePartTest extends TestCase {
 		}
 	}
 
+	protected Control[] getPresentationControls(Shell shell) {
+		TrimmedPartLayout tpl = (TrimmedPartLayout) shell.getLayout();
+		return tpl.clientArea.getChildren();
+	}
+
 	public void testCreateView() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		wb = new E4Workbench(window, appContext);
@@ -72,7 +78,7 @@ public class MSaveablePartTest extends TestCase {
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		assertEquals("MyWindow", shell.getText());
-		Control[] controls = shell.getChildren();
+		Control[] controls = getPresentationControls(shell);
 		assertEquals(1, controls.length);
 		SashForm sash = (SashForm) controls[0];
 		Control[] sashChildren = sash.getChildren();

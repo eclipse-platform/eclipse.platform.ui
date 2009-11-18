@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MUIItem;
 

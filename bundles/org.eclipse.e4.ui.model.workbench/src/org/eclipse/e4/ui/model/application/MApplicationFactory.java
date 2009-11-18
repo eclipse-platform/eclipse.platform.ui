@@ -111,15 +111,6 @@ public interface MApplicationFactory extends EFactory {
 	MTestHarness createTestHarness();
 
 	/**
-	 * Returns a new object of class '<em>Trim Structure</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Trim Structure</em>'.
-	 * @generated
-	 */
-	<T extends MUIElement> MTrimStructure<T> createTrimStructure();
-
-	/**
 	 * Returns a new object of class '<em>Application</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -264,6 +255,15 @@ public interface MApplicationFactory extends EFactory {
 	MWindow createWindow();
 
 	/**
+	 * Returns a new object of class '<em>Window Trim</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Window Trim</em>'.
+	 * @generated
+	 */
+	MWindowTrim createWindowTrim();
+
+	/**
 	 * Returns a new object of class '<em>Key Binding</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -291,15 +291,6 @@ public interface MApplicationFactory extends EFactory {
 	MViewStack createViewStack();
 
 	/**
-	 * Returns a new object of class '<em>View Sash Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>View Sash Container</em>'.
-	 * @generated
-	 */
-	MViewSashContainer createViewSashContainer();
-
-	/**
 	 * Returns a new object of class '<em>Editor</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -307,6 +298,15 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MEditor createEditor();
+
+	/**
+	 * Returns a new object of class '<em>View Sash Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>View Sash Container</em>'.
+	 * @generated
+	 */
+	MViewSashContainer createViewSashContainer();
 
 	/**
 	 * Returns a new object of class '<em>Multi Editor</em>'.

@@ -152,8 +152,8 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createGenericTileAdapter();
 			}
 			@Override
-			public <T extends MUIElement> Adapter caseTrimStructure(MTrimStructure<T> object) {
-				return createTrimStructureAdapter();
+			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
+				return createTrimContainerAdapter();
 			}
 			@Override
 			public Adapter caseV______________RCP_______________V(MV______________RCP_______________V object) {
@@ -226,6 +226,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 			@Override
 			public Adapter caseWindow(MWindow object) {
 				return createWindowAdapter();
+			}
+			@Override
+			public Adapter caseWindowTrim(MWindowTrim object) {
+				return createWindowTrimAdapter();
 			}
 			@Override
 			public Adapter caseKeyBinding(MKeyBinding object) {
@@ -574,16 +578,16 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTrimStructure <em>Trim Structure</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTrimContainer <em>Trim Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MTrimStructure
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer
 	 * @generated
 	 */
-	public Adapter createTrimStructureAdapter() {
+	public Adapter createTrimContainerAdapter() {
 		return null;
 	}
 
@@ -840,6 +844,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MWindowTrim <em>Window Trim</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MWindowTrim
+	 * @generated
+	 */
+	public Adapter createWindowTrimAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MKeyBinding <em>Key Binding</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -924,20 +942,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MViewSashContainer <em>View Sash Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MViewSashContainer
-	 * @generated
-	 */
-	public Adapter createViewSashContainerAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -948,6 +952,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createEditorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MViewSashContainer <em>View Sash Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MViewSashContainer
+	 * @generated
+	 */
+	public Adapter createViewSashContainerAdapter() {
 		return null;
 	}
 

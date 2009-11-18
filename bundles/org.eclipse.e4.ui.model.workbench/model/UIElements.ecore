@@ -5,6 +5,12 @@
     nsURI="http://www.eclipse.org/ui/2008/UIModel" nsPrefix="application">
   <eClassifiers xsi:type="ecore:EClass" name="V____________Abstract_____________V"
       abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="SideValue">
+    <eLiterals name="Top"/>
+    <eLiterals name="Bottom" value="1"/>
+    <eLiterals name="Left" value="2"/>
+    <eLiterals name="Right" value="3"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -118,33 +124,14 @@
       <eTypeArguments eTypeParameter="#//GenericTile/T"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="TrimStructure">
+  <eClassifiers xsi:type="ecore:EClass" name="TrimContainer" abstract="true">
     <eTypeParameters name="T">
       <eBounds eClassifier="#//UIElement"/>
     </eTypeParameters>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="top">
-      <eGenericType eClassifier="#//ElementContainer">
-        <eTypeArguments eClassifier="#//UIElement"/>
-      </eGenericType>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="bottom">
-      <eGenericType eClassifier="#//ElementContainer">
-        <eTypeArguments eClassifier="#//UIElement"/>
-      </eGenericType>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="left">
-      <eGenericType eClassifier="#//ElementContainer">
-        <eTypeArguments eClassifier="#//UIElement"/>
-      </eGenericType>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="right">
-      <eGenericType eClassifier="#//ElementContainer">
-        <eTypeArguments eClassifier="#//UIElement"/>
-      </eGenericType>
-    </eStructuralFeatures>
-    <eGenericSuperTypes eClassifier="#//UIElement"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" lowerBound="1" eType="#//SideValue"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
-      <eTypeArguments eTypeParameter="#//TrimStructure/T"/>
+      <eTypeArguments eTypeParameter="#//TrimContainer/T"/>
     </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V______________RCP_______________V"
@@ -181,7 +168,12 @@
       <eTypeArguments eClassifier="#//MenuItem"/>
     </eGenericSuperTypes>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="ToolItem" eSuperTypes="#//Item"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ToolItem">
+    <eGenericSuperTypes eClassifier="#//Item"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eClassifier="#//MenuItem"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem">
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//MenuItem"/>
@@ -232,6 +224,12 @@
     <eGenericSuperTypes eClassifier="#//UIElement"/>
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//BindingContainer"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="WindowTrim">
+    <eGenericSuperTypes eClassifier="#//TrimContainer">
+      <eTypeArguments eClassifier="#//UIElement"/>
+    </eGenericSuperTypes>
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//KeySequence">
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
@@ -300,14 +298,7 @@
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//VSCElement"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IDEWindow">
+  <eClassifiers xsi:type="ecore:EClass" name="IDEWindow" eSuperTypes="#//UIItem #//Context #//HandlerContainer #//BindingContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//Menu"/>
-    <eGenericSuperTypes eClassifier="#//TrimStructure">
-      <eTypeArguments eClassifier="#//VSCElement"/>
-    </eGenericSuperTypes>
-    <eGenericSuperTypes eClassifier="#//UIItem"/>
-    <eGenericSuperTypes eClassifier="#//Context"/>
-    <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
-    <eGenericSuperTypes eClassifier="#//BindingContainer"/>
   </eClassifiers>
 </ecore:EPackage>

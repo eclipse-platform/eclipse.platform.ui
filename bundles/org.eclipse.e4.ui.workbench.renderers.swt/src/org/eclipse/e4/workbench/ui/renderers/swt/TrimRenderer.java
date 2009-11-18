@@ -12,10 +12,9 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MTrimStructure;
+import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
-
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -34,17 +33,37 @@ public class TrimRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public Object createWidget(MUIElement element, Object parent) {
-		if (!(element instanceof MTrimStructure)
+		if (!(element instanceof MTrimContainer)
 				|| !(parent instanceof Composite))
 			return null;
 
-		Composite parentWidget = (Composite) parent;
-		Composite trimmedComp = new Composite(parentWidget, SWT.NONE);
-		TrimmedPartLayout trimLayout = new TrimmedPartLayout(trimmedComp);
-		trimmedComp.setLayout(trimLayout);
+		Composite parentComp = (Composite) parent;
+		if (!(parentComp.getLayout() instanceof TrimmedPartLayout))
+			return null;
 
-		// NOTE: The client area is where our direct children go...
-		return trimLayout.clientArea;
+		MTrimContainer<?> trimModel = (MTrimContainer<?>) element;
+		TrimmedPartLayout tpl = (TrimmedPartLayout) parentComp.getLayout();
+
+		switch (trimModel.getSide().getValue()) {
+		case SideValue.TOP_VALUE:
+			tpl.top = new Composite(parentComp, SWT.NONE);
+			tpl.top.setLayout(new RowLayout(SWT.HORIZONTAL));
+			return tpl.top;
+		case SideValue.BOTTOM_VALUE:
+			tpl.bottom = new Composite(parentComp, SWT.NONE);
+			tpl.bottom.setLayout(new RowLayout(SWT.HORIZONTAL));
+			return tpl.bottom;
+		case SideValue.LEFT_VALUE:
+			tpl.left = new Composite(parentComp, SWT.NONE);
+			tpl.left.setLayout(new RowLayout(SWT.VERTICAL));
+			return tpl.left;
+		case SideValue.RIGHT_VALUE:
+			tpl.right = new Composite(parentComp, SWT.NONE);
+			tpl.right.setLayout(new RowLayout(SWT.VERTICAL));
+			return tpl.right;
+		}
+
+		return null; // unknown side
 	}
 
 	/*
@@ -56,69 +75,12 @@ public class TrimRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
-		if (!(me instanceof MTrimStructure))
+		if (!(me instanceof MTrimContainer))
 			return;
-		MTrimStructure trimModel = (MTrimStructure) me;
-
-		// The trim's 'widget' is actually the client area of its layout
-		// NOTE: the casts below expect this arrangement
-		Composite clientArea = (Composite) me.getWidget();
-		Composite trimmedComp = clientArea.getParent();
-		TrimmedPartLayout layout = (TrimmedPartLayout) trimmedComp.getLayout();
-
-		// construct the trim
-		if (hasVisibleChildren(trimModel.getTop())) {
-			layout.top = createTrim(trimmedComp, SWT.HORIZONTAL, trimModel,
-					trimModel.getTop());
-		}
-		if (hasVisibleChildren(trimModel.getBottom())) {
-			layout.bottom = createTrim(trimmedComp, SWT.HORIZONTAL, trimModel,
-					trimModel.getBottom());
-		}
-		if (hasVisibleChildren(trimModel.getLeft())) {
-			layout.left = createTrim(trimmedComp, SWT.VERTICAL, trimModel,
-					trimModel.getLeft());
-		}
-		if (hasVisibleChildren(trimModel.getRight())) {
-			layout.right = createTrim(trimmedComp, SWT.VERTICAL, trimModel,
-					trimModel.getRight());
-		}
+		// MTrimContainer trimModel = (MTrimContainer) me;
 
 		// TODO Auto-generated method stub
 		super.processContents(me);
 	}
 
-	/**
-	 * @param trimmedComp
-	 * @param horizontal
-	 * @param topTrim
-	 * @return
-	 */
-	private Composite createTrim(Composite trimmedComp, int orientation,
-			MTrimStructure<MUIElement> trimModel,
-			MElementContainer<MUIElement> trimContainer) {
-		Composite trimComposite = new Composite(trimmedComp, SWT.NONE);
-		RowLayout trl = new RowLayout(orientation);
-		trl.marginBottom = trl.marginTop = 1;
-		trimComposite.setLayout(trl);
-
-		// Now we can create the controls in the trim...
-		// for (MUIElement tb : trimContainer.getChildren()) {
-		// renderer.createGui((trimModel, trimComposite, tb);
-		// }
-
-		return trimComposite;
-	}
-
-	/**
-	 * @param trimSide
-	 * @return
-	 */
-	private boolean hasVisibleChildren(MElementContainer<MUIElement> trimSide) {
-		if (trimSide == null)
-			return false;
-
-		EList<MUIElement> kids = trimSide.getChildren();
-		return kids != null && kids.size() > 0;
-	}
 }

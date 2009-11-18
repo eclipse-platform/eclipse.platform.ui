@@ -39,8 +39,8 @@ import org.eclipse.swt.widgets.Widget;
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 	public void processContents(MElementContainer<MUIElement> container) {
-		Widget parentWidget = (Widget) container.getWidget();
-		if (parentWidget == null)
+		// EMF gives us null lists if empty
+		if (container == null)
 			return;
 
 		// Process any contents of the newly created ME
@@ -64,6 +64,12 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		final IStylingEngine engine = (IStylingEngine) getContext(me).get(
 				IStylingEngine.SERVICE_NAME);
 		engine.setId(widget, me.getId()); // also triggers style()
+
+		Widget swtWidget = (Widget) widget;
+		swtWidget.addDisposeListener(new DisposeListener() {
+			public void widgetDisposed(DisposeEvent e) {
+			}
+		});
 	}
 
 	public Object unbindWidget(MUIElement me) {

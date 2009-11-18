@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.model.application;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
 
@@ -1110,14 +1111,14 @@ public interface MApplicationPackage extends EPackage {
 	int GENERIC_TILE_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TrimStructureImpl <em>Trim Structure</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.TrimStructureImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimStructure()
+	 * @see org.eclipse.e4.ui.model.application.impl.TrimContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
 	 * @generated
 	 */
-	int TRIM_STRUCTURE = 19;
+	int TRIM_CONTAINER = 19;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1126,7 +1127,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__ID = UI_ELEMENT__ID;
+	int TRIM_CONTAINER__ID = ELEMENT_CONTAINER__ID;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -1135,7 +1136,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__WIDGET = UI_ELEMENT__WIDGET;
+	int TRIM_CONTAINER__WIDGET = ELEMENT_CONTAINER__WIDGET;
 
 	/**
 	 * The feature id for the '<em><b>Factory</b></em>' attribute.
@@ -1144,7 +1145,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__FACTORY = UI_ELEMENT__FACTORY;
+	int TRIM_CONTAINER__FACTORY = ELEMENT_CONTAINER__FACTORY;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1153,7 +1154,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__VISIBLE = UI_ELEMENT__VISIBLE;
+	int TRIM_CONTAINER__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -1162,7 +1163,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__PARENT = UI_ELEMENT__PARENT;
+	int TRIM_CONTAINER__PARENT = ELEMENT_CONTAINER__PARENT;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1171,7 +1172,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
+	int TRIM_CONTAINER__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -1180,52 +1181,34 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
+	int TRIM_CONTAINER__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
 
 	/**
-	 * The feature id for the '<em><b>Top</b></em>' reference.
+	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__TOP = UI_ELEMENT_FEATURE_COUNT + 2;
+	int TRIM_CONTAINER__HORIZONTAL = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Bottom</b></em>' reference.
+	 * The feature id for the '<em><b>Side</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__BOTTOM = UI_ELEMENT_FEATURE_COUNT + 3;
+	int TRIM_CONTAINER__SIDE = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Left</b></em>' reference.
+	 * The number of structural features of the '<em>Trim Container</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_STRUCTURE__LEFT = UI_ELEMENT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Right</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_STRUCTURE__RIGHT = UI_ELEMENT_FEATURE_COUNT + 5;
-
-	/**
-	 * The number of structural features of the '<em>Trim Structure</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_STRUCTURE_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 6;
+	int TRIM_CONTAINER_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}' class.
@@ -1637,16 +1620,6 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 3;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl <em>Menu Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.MenuItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenuItem()
-	 * @generated
-	 */
-	int MENU_ITEM = 24;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuImpl <em>Menu</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1727,6 +1700,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int MENU_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl <em>Menu Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.MenuItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenuItem()
+	 * @generated
+	 */
+	int MENU_ITEM = 24;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2290,13 +2273,31 @@ public interface MApplicationPackage extends EPackage {
 	int TOOL_ITEM__SEPARATOR = ITEM__SEPARATOR;
 
 	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__CHILDREN = ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ACTIVE_CHILD = ITEM_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 0;
+	int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
@@ -2598,13 +2599,31 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_TOOL_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 9;
 
 	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 11;
+
+	/**
 	 * The number of structural features of the '<em>Direct Tool Item</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 10;
+	int DIRECT_TOOL_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl <em>Tool Bar</em>}' class.
@@ -3478,6 +3497,106 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 16;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.WindowTrimImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
+	 * @generated
+	 */
+	int WINDOW_TRIM = 38;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__ID = TRIM_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__WIDGET = TRIM_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__FACTORY = TRIM_CONTAINER__FACTORY;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__VISIBLE = TRIM_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__PARENT = TRIM_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__CHILDREN = TRIM_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__ACTIVE_CHILD = TRIM_CONTAINER__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__HORIZONTAL = TRIM_CONTAINER__HORIZONTAL;
+
+	/**
+	 * The feature id for the '<em><b>Side</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__SIDE = TRIM_CONTAINER__SIDE;
+
+	/**
+	 * The number of structural features of the '<em>Window Trim</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM_FEATURE_COUNT = TRIM_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3485,7 +3604,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
 	 * @generated
 	 */
-	int KEY_BINDING = 38;
+	int KEY_BINDING = 39;
 
 	/**
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
@@ -3531,7 +3650,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
 	 * @generated
 	 */
-	int BINDING_CONTAINER = 39;
+	int BINDING_CONTAINER = 40;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -3559,7 +3678,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________IDE_______________V()
 	 * @generated
 	 */
-	int VIDE_V = 40;
+	int VIDE_V = 41;
 
 	/**
 	 * The number of structural features of the '<em>VIDE V</em>' class.
@@ -3578,7 +3697,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getVSCElement()
 	 * @generated
 	 */
-	int VSC_ELEMENT = 41;
+	int VSC_ELEMENT = 42;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3642,7 +3761,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getView()
 	 * @generated
 	 */
-	int VIEW = 42;
+	int VIEW = 43;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3814,7 +3933,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewStack()
 	 * @generated
 	 */
-	int VIEW_STACK = 43;
+	int VIEW_STACK = 44;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3889,16 +4008,6 @@ public interface MApplicationPackage extends EPackage {
 	int VIEW_STACK_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl <em>View Sash Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
-	 * @generated
-	 */
-	int VIEW_SASH_CONTAINER = 45;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -3906,7 +4015,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
 	 * @generated
 	 */
-	int EDITOR = 44;
+	int EDITOR = 45;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -4089,6 +4198,16 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR_FEATURE_COUNT = INPUT_FEATURE_COUNT + 18;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl <em>View Sash Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
+	 * @generated
+	 */
+	int VIEW_SASH_CONTAINER = 46;
+
+	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4186,7 +4305,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMultiEditor()
 	 * @generated
 	 */
-	int MULTI_EDITOR = 46;
+	int MULTI_EDITOR = 47;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4385,7 +4504,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getESCElement()
 	 * @generated
 	 */
-	int ESC_ELEMENT = 47;
+	int ESC_ELEMENT = 48;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4449,7 +4568,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorStack()
 	 * @generated
 	 */
-	int EDITOR_STACK = 48;
+	int EDITOR_STACK = 49;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4540,7 +4659,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorSashContainer()
 	 * @generated
 	 */
-	int EDITOR_SASH_CONTAINER = 49;
+	int EDITOR_SASH_CONTAINER = 50;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4640,7 +4759,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 50;
+	int PERSPECTIVE = 51;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -4767,7 +4886,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
 	 * @generated
 	 */
-	int PERSPECTIVE_STACK = 51;
+	int PERSPECTIVE_STACK = 52;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4849,106 +4968,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIDEWindow()
 	 * @generated
 	 */
-	int IDE_WINDOW = 52;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__ID = TRIM_STRUCTURE__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__WIDGET = TRIM_STRUCTURE__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__FACTORY = TRIM_STRUCTURE__FACTORY;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__VISIBLE = TRIM_STRUCTURE__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__PARENT = TRIM_STRUCTURE__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__CHILDREN = TRIM_STRUCTURE__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__ACTIVE_CHILD = TRIM_STRUCTURE__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Top</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__TOP = TRIM_STRUCTURE__TOP;
-
-	/**
-	 * The feature id for the '<em><b>Bottom</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__BOTTOM = TRIM_STRUCTURE__BOTTOM;
-
-	/**
-	 * The feature id for the '<em><b>Left</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__LEFT = TRIM_STRUCTURE__LEFT;
-
-	/**
-	 * The feature id for the '<em><b>Right</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__RIGHT = TRIM_STRUCTURE__RIGHT;
+	int IDE_WINDOW = 53;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -4957,7 +4977,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__NAME = TRIM_STRUCTURE_FEATURE_COUNT + 0;
+	int IDE_WINDOW__NAME = UI_ITEM__NAME;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -4966,7 +4986,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__ICON_URI = TRIM_STRUCTURE_FEATURE_COUNT + 1;
+	int IDE_WINDOW__ICON_URI = UI_ITEM__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -4975,7 +4995,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__TOOLTIP = TRIM_STRUCTURE_FEATURE_COUNT + 2;
+	int IDE_WINDOW__TOOLTIP = UI_ITEM__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -4984,7 +5004,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__CONTEXT = TRIM_STRUCTURE_FEATURE_COUNT + 3;
+	int IDE_WINDOW__CONTEXT = UI_ITEM_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -4993,7 +5013,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__VARIABLES = TRIM_STRUCTURE_FEATURE_COUNT + 4;
+	int IDE_WINDOW__VARIABLES = UI_ITEM_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -5002,7 +5022,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__HANDLERS = TRIM_STRUCTURE_FEATURE_COUNT + 5;
+	int IDE_WINDOW__HANDLERS = UI_ITEM_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -5011,7 +5031,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__BINDINGS = TRIM_STRUCTURE_FEATURE_COUNT + 6;
+	int IDE_WINDOW__BINDINGS = UI_ITEM_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' reference.
@@ -5020,7 +5040,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__MAIN_MENU = TRIM_STRUCTURE_FEATURE_COUNT + 7;
+	int IDE_WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>IDE Window</em>' class.
@@ -5029,7 +5049,17 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW_FEATURE_COUNT = TRIM_STRUCTURE_FEATURE_COUNT + 8;
+	int IDE_WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 5;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.SideValue
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSideValue()
+	 * @generated
+	 */
+	int SIDE_VALUE = 54;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -5039,7 +5069,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 53;
+	int IECLIPSE_CONTEXT = 55;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -5049,7 +5079,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	int PARAMETERIZED_COMMAND = 54;
+	int PARAMETERIZED_COMMAND = 56;
 
 
 	/**
@@ -5573,58 +5603,36 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getGenericTile_Horizontal();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTrimStructure <em>Trim Structure</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTrimContainer <em>Trim Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Trim Structure</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimStructure
+	 * @return the meta object for class '<em>Trim Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer
 	 * @generated
 	 */
-	EClass getTrimStructure();
+	EClass getTrimContainer();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MTrimStructure#getTop <em>Top</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal <em>Horizontal</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Top</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimStructure#getTop()
-	 * @see #getTrimStructure()
+	 * @return the meta object for the attribute '<em>Horizontal</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal()
+	 * @see #getTrimContainer()
 	 * @generated
 	 */
-	EReference getTrimStructure_Top();
+	EAttribute getTrimContainer_Horizontal();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MTrimStructure#getBottom <em>Bottom</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#getSide <em>Side</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Bottom</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimStructure#getBottom()
-	 * @see #getTrimStructure()
+	 * @return the meta object for the attribute '<em>Side</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer#getSide()
+	 * @see #getTrimContainer()
 	 * @generated
 	 */
-	EReference getTrimStructure_Bottom();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MTrimStructure#getLeft <em>Left</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Left</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimStructure#getLeft()
-	 * @see #getTrimStructure()
-	 * @generated
-	 */
-	EReference getTrimStructure_Left();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MTrimStructure#getRight <em>Right</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Right</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimStructure#getRight()
-	 * @see #getTrimStructure()
-	 * @generated
-	 */
-	EReference getTrimStructure_Right();
+	EAttribute getTrimContainer_Side();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}'.
@@ -5961,6 +5969,16 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getWindow_Height();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MWindowTrim <em>Window Trim</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Window Trim</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindowTrim
+	 * @generated
+	 */
+	EClass getWindowTrim();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MKeyBinding <em>Key Binding</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6054,16 +6072,6 @@ public interface MApplicationPackage extends EPackage {
 	EClass getViewStack();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MViewSashContainer <em>View Sash Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>View Sash Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MViewSashContainer
-	 * @generated
-	 */
-	EClass getViewSashContainer();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6072,6 +6080,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getEditor();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MViewSashContainer <em>View Sash Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>View Sash Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MViewSashContainer
+	 * @generated
+	 */
+	EClass getViewSashContainer();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMultiEditor <em>Multi Editor</em>}'.
@@ -6164,6 +6182,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getIDEWindow_MainMenu();
+
+	/**
+	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Side Value</em>'.
+	 * @see org.eclipse.e4.ui.model.application.SideValue
+	 * @generated
+	 */
+	EEnum getSideValue();
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.services.context.IEclipseContext <em>IEclipse Context</em>}'.
@@ -6640,46 +6668,30 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute GENERIC_TILE__HORIZONTAL = eINSTANCE.getGenericTile_Horizontal();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.TrimStructureImpl <em>Trim Structure</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.TrimStructureImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimStructure()
+		 * @see org.eclipse.e4.ui.model.application.impl.TrimContainerImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
 		 * @generated
 		 */
-		EClass TRIM_STRUCTURE = eINSTANCE.getTrimStructure();
+		EClass TRIM_CONTAINER = eINSTANCE.getTrimContainer();
 
 		/**
-		 * The meta object literal for the '<em><b>Top</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Horizontal</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRIM_STRUCTURE__TOP = eINSTANCE.getTrimStructure_Top();
+		EAttribute TRIM_CONTAINER__HORIZONTAL = eINSTANCE.getTrimContainer_Horizontal();
 
 		/**
-		 * The meta object literal for the '<em><b>Bottom</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Side</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference TRIM_STRUCTURE__BOTTOM = eINSTANCE.getTrimStructure_Bottom();
-
-		/**
-		 * The meta object literal for the '<em><b>Left</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference TRIM_STRUCTURE__LEFT = eINSTANCE.getTrimStructure_Left();
-
-		/**
-		 * The meta object literal for the '<em><b>Right</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference TRIM_STRUCTURE__RIGHT = eINSTANCE.getTrimStructure_Right();
+		EAttribute TRIM_CONTAINER__SIDE = eINSTANCE.getTrimContainer_Side();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}' class.
@@ -6974,6 +6986,16 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute WINDOW__HEIGHT = eINSTANCE.getWindow_Height();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.WindowTrimImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
+		 * @generated
+		 */
+		EClass WINDOW_TRIM = eINSTANCE.getWindowTrim();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -7058,16 +7080,6 @@ public interface MApplicationPackage extends EPackage {
 		EClass VIEW_STACK = eINSTANCE.getViewStack();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl <em>View Sash Container</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
-		 * @generated
-		 */
-		EClass VIEW_SASH_CONTAINER = eINSTANCE.getViewSashContainer();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -7076,6 +7088,16 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass EDITOR = eINSTANCE.getEditor();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl <em>View Sash Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
+		 * @generated
+		 */
+		EClass VIEW_SASH_CONTAINER = eINSTANCE.getViewSashContainer();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.MultiEditorImpl <em>Multi Editor</em>}' class.
@@ -7162,6 +7184,16 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EReference IDE_WINDOW__MAIN_MENU = eINSTANCE.getIDEWindow_MainMenu();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.SideValue
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSideValue()
+		 * @generated
+		 */
+		EEnum SIDE_VALUE = eINSTANCE.getSideValue();
 
 		/**
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.

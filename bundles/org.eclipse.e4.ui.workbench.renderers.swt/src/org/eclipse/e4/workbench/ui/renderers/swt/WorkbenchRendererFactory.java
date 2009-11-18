@@ -8,7 +8,9 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
-import org.eclipse.e4.ui.model.application.MTrimStructure;
+import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MToolItem;
+import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
@@ -18,6 +20,8 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 
 	private MenuRenderer menuRenderer;
 	private MenuItemRenderer menuItemRenderer;
+	private ToolBarRenderer toolbarRenderer;
+	private ToolItemRenderer toolItemRenderer;
 	private ContributedPartRenderer contributedPartRenderer;
 	private PerspectiveRenderer perspRenderer;
 	private SashRenderer partSashRenderer;
@@ -46,6 +50,18 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(menuRenderer);
 			}
 			return menuRenderer;
+		} else if (uiElement instanceof MToolBar) {
+			if (toolbarRenderer == null) {
+				toolbarRenderer = new ToolBarRenderer();
+				initRenderer(toolbarRenderer);
+			}
+			return toolbarRenderer;
+		} else if (uiElement instanceof MToolItem) {
+			if (toolItemRenderer == null) {
+				toolItemRenderer = new ToolItemRenderer();
+				initRenderer(toolItemRenderer);
+			}
+			return toolItemRenderer;
 		} else if (uiElement instanceof MPerspective) {
 			if (perspRenderer == null) {
 				perspRenderer = new PerspectiveRenderer();
@@ -70,7 +86,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(stackRenderer);
 			}
 			return stackRenderer;
-		} else if (uiElement instanceof MTrimStructure<?>) {
+		} else if (uiElement instanceof MTrimContainer<?>) {
 			if (trimRenderer == null) {
 				trimRenderer = new TrimRenderer();
 				initRenderer(trimRenderer);

@@ -11,7 +11,6 @@
 package org.eclipse.e4.ui.model.application;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.core.commands.ParameterizedCommand;
 
 import org.eclipse.emf.common.util.EList;
 

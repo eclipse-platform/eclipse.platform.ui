@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.model.application.impl;
 import java.util.Collection;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.core.commands.ParameterizedCommand;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;

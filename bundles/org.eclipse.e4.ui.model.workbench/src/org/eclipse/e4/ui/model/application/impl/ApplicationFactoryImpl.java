@@ -74,7 +74,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
 			case MApplicationPackage.CONTEXT: return (EObject)createContext();
 			case MApplicationPackage.TEST_HARNESS: return (EObject)createTestHarness();
-			case MApplicationPackage.TRIM_STRUCTURE: return (EObject)createTrimStructure();
 			case MApplicationPackage.APPLICATION: return (EObject)createApplication();
 			case MApplicationPackage.ITEM: return (EObject)createItem();
 			case MApplicationPackage.HANDLED_ITEM: return (EObject)createHandledItem();
@@ -91,6 +90,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
 			case MApplicationPackage.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
+			case MApplicationPackage.WINDOW_TRIM: return (EObject)createWindowTrim();
 			case MApplicationPackage.KEY_BINDING: return (EObject)createKeyBinding();
 			case MApplicationPackage.VIEW: return (EObject)createView();
 			case MApplicationPackage.VIEW_STACK: return (EObject)createViewStack();
@@ -115,6 +115,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
+			case MApplicationPackage.SIDE_VALUE:
+				return createSideValueFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -128,6 +130,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
+			case MApplicationPackage.SIDE_VALUE:
+				return convertSideValueToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -221,16 +225,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MTestHarness createTestHarness() {
 		TestHarnessImpl testHarness = new TestHarnessImpl();
 		return testHarness;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public <T extends MUIElement> MTrimStructure<T> createTrimStructure() {
-		TrimStructureImpl<T> trimStructure = new TrimStructureImpl<T>();
-		return trimStructure;
 	}
 
 	/**
@@ -398,6 +392,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MWindowTrim createWindowTrim() {
+		WindowTrimImpl windowTrim = new WindowTrimImpl();
+		return windowTrim;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MKeyBinding createKeyBinding() {
 		KeyBindingImpl keyBinding = new KeyBindingImpl();
 		return keyBinding;
@@ -428,9 +432,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MViewSashContainer createViewSashContainer() {
-		ViewSashContainerImpl viewSashContainer = new ViewSashContainerImpl();
-		return viewSashContainer;
+	public MEditor createEditor() {
+		EditorImpl editor = new EditorImpl();
+		return editor;
 	}
 
 	/**
@@ -438,9 +442,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MEditor createEditor() {
-		EditorImpl editor = new EditorImpl();
-		return editor;
+	public MViewSashContainer createViewSashContainer() {
+		ViewSashContainerImpl viewSashContainer = new ViewSashContainerImpl();
+		return viewSashContainer;
 	}
 
 	/**
@@ -501,6 +505,26 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MIDEWindow createIDEWindow() {
 		IDEWindowImpl ideWindow = new IDEWindowImpl();
 		return ideWindow;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public SideValue createSideValueFromString(EDataType eDataType, String initialValue) {
+		SideValue result = SideValue.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertSideValueToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

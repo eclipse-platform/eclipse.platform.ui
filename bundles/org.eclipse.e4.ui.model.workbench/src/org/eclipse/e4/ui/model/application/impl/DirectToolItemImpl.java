@@ -10,10 +10,13 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import java.util.Collection;
+
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MItem;
+import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
@@ -21,13 +24,17 @@ import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentWithInverseEList;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -46,6 +53,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isSelected <em>Selected</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getChildren <em>Children</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getActiveChild <em>Active Child</em>}</li>
  * </ul>
  * </p>
  *
@@ -231,6 +240,26 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * @ordered
 	 */
 	protected boolean separator = SEPARATOR_EDEFAULT;
+
+	/**
+	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getChildren()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MMenuItem> children;
+
+	/**
+	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getActiveChild()
+	 * @generated
+	 * @ordered
+	 */
+	protected MMenuItem activeChild;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -487,6 +516,56 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MMenuItem> getChildren() {
+		if (children == null) {
+			children = new EObjectContainmentWithInverseEList<MMenuItem>(MUIElement.class, this, MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
+		}
+		return children;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMenuItem getActiveChild() {
+		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
+			InternalEObject oldActiveChild = (InternalEObject)activeChild;
+			activeChild = (MMenuItem)eResolveProxy(oldActiveChild);
+			if (activeChild != oldActiveChild) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD, oldActiveChild, activeChild));
+			}
+		}
+		return activeChild;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MMenuItem basicGetActiveChild() {
+		return activeChild;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setActiveChild(MMenuItem newActiveChild) {
+		MMenuItem oldActiveChild = activeChild;
+		activeChild = newActiveChild;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD, oldActiveChild, activeChild));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -495,6 +574,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				if (eInternalContainer() != null)
 					msgs = eBasicRemoveFromContainer(msgs);
 				return basicSetParent((MElementContainer<MUIElement>)otherEnd, msgs);
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
+				return ((InternalEList<InternalEObject>)(InternalEList<?>)getChildren()).basicAdd(otherEnd, msgs);
 		}
 		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
@@ -509,6 +590,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 		switch (featureID) {
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				return basicSetParent(null, msgs);
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
+				return ((InternalEList<?>)getChildren()).basicRemove(otherEnd, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -555,6 +638,11 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return isSelected();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
 				return isSeparator();
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
+				return getChildren();
+			case MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD:
+				if (resolve) return getActiveChild();
+				return basicGetActiveChild();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -598,6 +686,13 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
 				setSeparator((Boolean)newValue);
 				return;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
+				getChildren().clear();
+				getChildren().addAll((Collection<? extends MMenuItem>)newValue);
+				return;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD:
+				setActiveChild((MMenuItem)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -640,6 +735,12 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
 				setSeparator(SEPARATOR_EDEFAULT);
 				return;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
+				getChildren().clear();
+				return;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD:
+				setActiveChild((MMenuItem)null);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -672,6 +773,10 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return selected != SELECTED_EDEFAULT;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
 				return separator != SEPARATOR_EDEFAULT;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
+				return children != null && !children.isEmpty();
+			case MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD:
+				return activeChild != null;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -705,6 +810,13 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				case MApplicationPackage.DIRECT_TOOL_ITEM__ENABLED: return MApplicationPackage.ITEM__ENABLED;
 				case MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED: return MApplicationPackage.ITEM__SELECTED;
 				case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
+				default: return -1;
+			}
+		}
+		if (baseClass == MElementContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
+				case MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD: return MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD;
 				default: return -1;
 			}
 		}
@@ -745,6 +857,13 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.DIRECT_TOOL_ITEM__ENABLED;
 				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED;
 				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR;
+				default: return -1;
+			}
+		}
+		if (baseClass == MElementContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN;
+				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD;
 				default: return -1;
 			}
 		}

@@ -18,11 +18,13 @@ import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
+import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
@@ -61,13 +63,18 @@ public class WBWRenderer extends SWTPartRenderer {
 	@Inject
 	Logger logger;
 
+	@Inject
+	private IEventBroker eventBroker;
+
+	private EventHandler shellUpdater;
+
 	public WBWRenderer() {
 		super();
 	}
 
 	@PostConstruct
-	public void init(IEventBroker eventBroker) {
-		EventHandler shellUpdater = new EventHandler() {
+	public void init() {
+		shellUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MMenuItem
 				Object objElement = event
@@ -103,6 +110,11 @@ public class WBWRenderer extends SWTPartRenderer {
 		};
 
 		eventBroker.subscribe(IUIEvents.UIItem.Topic, shellUpdater);
+	}
+
+	@PreDestroy
+	public void contextDisposed() {
+		eventBroker.unsubscribe(shellUpdater);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -141,9 +153,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		localContext.set(Workbench.LOCAL_ACTIVE_SHELL, wbwShell);
 
 		if (element instanceof MWindow) {
-			// TrimmedLayout tl = new TrimmedLayout(wbwShell);
-			// wbwShell.setLayout(tl);
-			// localContext.set(MWindow.class.getName(), part);
+			TrimmedPartLayout tl = new TrimmedPartLayout(wbwShell);
+			wbwShell.setLayout(tl);
 		} else {
 			wbwShell.setLayout(new FillLayout());
 		}
@@ -195,6 +206,8 @@ public class WBWRenderer extends SWTPartRenderer {
 	}
 
 	/*
+	 * Processing the contents of a Workbench window has to take into account
+	 * that theere may be trim elements contained in its child list. Since the
 	 * (non-Javadoc)
 	 * 
 	 * @see
@@ -203,12 +216,11 @@ public class WBWRenderer extends SWTPartRenderer {
 	 */
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
-		super.processContents(me);
-
 		if (!(((MUIElement) me) instanceof MWindow))
 			return;
-
 		MWindow wbwModel = (MWindow) ((MUIElement) me);
+		super.processContents(me);
+
 		// Populate the main menu
 		if (wbwModel.getMainMenu() != null) {
 			IPresentationEngine renderer = (IPresentationEngine) context
@@ -218,6 +230,23 @@ public class WBWRenderer extends SWTPartRenderer {
 			shell.setMenuBar((Menu) wbwModel.getMainMenu().getWidget());
 			// createMenu(me, me.getWidget(), wbwModel.getMainMenu());
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer#getUIContainer
+	 * (org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	protected Object getUIContainer(MUIElement element) {
+		if (element instanceof MTrimContainer<?>)
+			return super.getUIContainer(element);
+
+		Composite shellComp = (Composite) element.getParent().getWidget();
+		TrimmedPartLayout tpl = (TrimmedPartLayout) shellComp.getLayout();
+		return tpl.clientArea;
 	}
 
 	/*

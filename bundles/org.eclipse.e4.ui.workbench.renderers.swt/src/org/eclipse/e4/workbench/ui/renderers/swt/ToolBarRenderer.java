@@ -12,7 +12,6 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MUIElement;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
@@ -26,7 +25,8 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		if (!(element instanceof MToolBar) || !(parent instanceof Composite))
 			return null;
 
-		ToolBar tb = new ToolBar((Composite) parent, SWT.HORIZONTAL);
+		// HACK!! should query the parent for orientation
+		ToolBar tb = new ToolBar((Composite) parent, SWT.HORIZONTAL | SWT.RIGHT);
 		return tb;
 	}
 

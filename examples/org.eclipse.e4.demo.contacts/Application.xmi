@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="ASCII"?>
 <application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
   <children xsi:type="application:Window" name="e4 Contacts Demo">
+    <children xsi:type="application:WindowTrim">
+      <children xsi:type="application:ToolBar">
+        <children xsi:type="application:DirectToolItem" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" name="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="Save"/>
+        <children xsi:type="application:HandledToolItem" name="Exit" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="Exit" command="//@commands.0"/>
+        <children xsi:type="application:ToolItem" separator="true"/>
+        <children xsi:type="application:HandledToolItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="Light" command="//@commands.2"/>
+        <children xsi:type="application:HandledToolItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="Dark" command="//@commands.1"/>
+      </children>
+    </children>
     <children xsi:type="application:PartSashContainer" horizontal="true">
       <children xsi:type="application:PartStack">
-        <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" tooltip="List of Contacts" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+        <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="List of Contacts"/>
       </children>
       <children xsi:type="application:PartStack">
-        <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" tooltip="Contact Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+        <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="Contact Details"/>
       </children>
       <weights>30</weights>
       <weights>70</weights>

@@ -14,6 +14,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
@@ -152,6 +153,43 @@ public class TrimmedPartLayout extends Layout {
 				shell.setLayoutDeferred(false);
 			}
 		});
+	}
+
+	/**
+	 * @param top2
+	 * @param b
+	 * @return
+	 */
+	public Composite getTrimComposite(Composite parent, int side,
+			boolean createIfNecessary) {
+		if (side == SWT.TOP) {
+			if (top == null && createIfNecessary) {
+				top = new Composite(parent, SWT.NONE);
+				top.setLayout(new RowLayout(SWT.HORIZONTAL));
+			}
+			return top;
+		} else if (side == SWT.BOTTOM) {
+			if (bottom == null && createIfNecessary) {
+				bottom = new Composite(parent, SWT.NONE);
+				bottom.setLayout(new RowLayout(SWT.HORIZONTAL));
+			}
+			return bottom;
+		} else if (side == SWT.LEFT) {
+			if (left == null && createIfNecessary) {
+				left = new Composite(parent, SWT.NONE);
+				left.setLayout(new RowLayout(SWT.VERTICAL));
+			}
+			return left;
+		} else if (side == SWT.RIGHT) {
+			if (right == null && createIfNecessary) {
+				right = new Composite(parent, SWT.NONE);
+				right.setLayout(new RowLayout(SWT.VERTICAL));
+			}
+			return right;
+		}
+
+		// Unknown location
+		return null;
 	}
 
 }

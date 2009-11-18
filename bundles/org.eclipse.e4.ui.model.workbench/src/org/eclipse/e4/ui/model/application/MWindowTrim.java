@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Tool Item</b></em>'.
+ * A representation of the model object '<em><b>Window Trim</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getToolItem()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getWindowTrim()
  * @model
  * @generated
  */
-public interface MToolItem extends MItem, MElementContainer<MMenuItem> {
-} // MToolItem
+public interface MWindowTrim extends MTrimContainer<MUIElement>, MPSCElement {
+} // MWindowTrim

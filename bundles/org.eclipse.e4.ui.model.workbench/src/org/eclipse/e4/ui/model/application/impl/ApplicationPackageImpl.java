@@ -56,7 +56,7 @@ import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
-import org.eclipse.e4.ui.model.application.MTrimStructure;
+import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.model.application.MVSCElement;
@@ -69,10 +69,13 @@ import org.eclipse.e4.ui.model.application.MView;
 import org.eclipse.e4.ui.model.application.MViewSashContainer;
 import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.MWindowTrim;
+import org.eclipse.e4.ui.model.application.SideValue;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
+import org.eclipse.emf.ecore.EEnum;
 import org.eclipse.emf.ecore.EGenericType;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
@@ -225,7 +228,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass trimStructureEClass = null;
+	private EClass trimContainerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -358,6 +361,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass windowTrimEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass keyBindingEClass = null;
 
 	/**
@@ -400,14 +410,14 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass viewSashContainerEClass = null;
+	private EClass editorEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass editorEClass = null;
+	private EClass viewSashContainerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -457,6 +467,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass ideWindowEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum sideValueEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -979,8 +996,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getTrimStructure() {
-		return trimStructureEClass;
+	public EClass getTrimContainer() {
+		return trimContainerEClass;
 	}
 
 	/**
@@ -988,8 +1005,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getTrimStructure_Top() {
-		return (EReference)trimStructureEClass.getEStructuralFeatures().get(0);
+	public EAttribute getTrimContainer_Horizontal() {
+		return (EAttribute)trimContainerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -997,26 +1014,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EReference getTrimStructure_Bottom() {
-		return (EReference)trimStructureEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getTrimStructure_Left() {
-		return (EReference)trimStructureEClass.getEStructuralFeatures().get(2);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EReference getTrimStructure_Right() {
-		return (EReference)trimStructureEClass.getEStructuralFeatures().get(3);
+	public EAttribute getTrimContainer_Side() {
+		return (EAttribute)trimContainerEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -1312,6 +1311,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getWindowTrim() {
+		return windowTrimEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getKeyBinding() {
 		return keyBindingEClass;
 	}
@@ -1393,8 +1401,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getViewSashContainer() {
-		return viewSashContainerEClass;
+	public EClass getEditor() {
+		return editorEClass;
 	}
 
 	/**
@@ -1402,8 +1410,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getEditor() {
-		return editorEClass;
+	public EClass getViewSashContainer() {
+		return viewSashContainerEClass;
 	}
 
 	/**
@@ -1485,6 +1493,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EReference getIDEWindow_MainMenu() {
 		return (EReference)ideWindowEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EEnum getSideValue() {
+		return sideValueEEnum;
 	}
 
 	/**
@@ -1601,11 +1618,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(genericTileEClass, GENERIC_TILE__WEIGHTS);
 		createEAttribute(genericTileEClass, GENERIC_TILE__HORIZONTAL);
 
-		trimStructureEClass = createEClass(TRIM_STRUCTURE);
-		createEReference(trimStructureEClass, TRIM_STRUCTURE__TOP);
-		createEReference(trimStructureEClass, TRIM_STRUCTURE__BOTTOM);
-		createEReference(trimStructureEClass, TRIM_STRUCTURE__LEFT);
-		createEReference(trimStructureEClass, TRIM_STRUCTURE__RIGHT);
+		trimContainerEClass = createEClass(TRIM_CONTAINER);
+		createEAttribute(trimContainerEClass, TRIM_CONTAINER__HORIZONTAL);
+		createEAttribute(trimContainerEClass, TRIM_CONTAINER__SIDE);
 
 		v______________RCP_______________VEClass = createEClass(VRCP_V);
 
@@ -1657,6 +1672,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(windowEClass, WINDOW__WIDTH);
 		createEAttribute(windowEClass, WINDOW__HEIGHT);
 
+		windowTrimEClass = createEClass(WINDOW_TRIM);
+
 		keyBindingEClass = createEClass(KEY_BINDING);
 		createEReference(keyBindingEClass, KEY_BINDING__COMMAND);
 		createEReference(keyBindingEClass, KEY_BINDING__PARAMETERS);
@@ -1692,6 +1709,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		ideWindowEClass = createEClass(IDE_WINDOW);
 		createEReference(ideWindowEClass, IDE_WINDOW__MAIN_MENU);
 
+		// Create enums
+		sideValueEEnum = createEEnum(SIDE_VALUE);
+
 		// Create data types
 		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
 		parameterizedCommandEDataType = createEDataType(PARAMETERIZED_COMMAND);
@@ -1723,7 +1743,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		// Create type parameters
 		ETypeParameter elementContainerEClass_T = addETypeParameter(elementContainerEClass, "T"); //$NON-NLS-1$
 		ETypeParameter genericTileEClass_T = addETypeParameter(genericTileEClass, "T"); //$NON-NLS-1$
-		ETypeParameter trimStructureEClass_T = addETypeParameter(trimStructureEClass, "T"); //$NON-NLS-1$
+		ETypeParameter trimContainerEClass_T = addETypeParameter(trimContainerEClass, "T"); //$NON-NLS-1$
 
 		// Set bounds for type parameters
 		EGenericType g1 = createEGenericType(this.getUIElement());
@@ -1731,7 +1751,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(this.getUIElement());
 		genericTileEClass_T.getEBounds().add(g1);
 		g1 = createEGenericType(this.getUIElement());
-		trimStructureEClass_T.getEBounds().add(g1);
+		trimContainerEClass_T.getEBounds().add(g1);
 
 		// Add supertypes to classes
 		contributionEClass.getESuperTypes().add(this.getApplicationElement());
@@ -1767,12 +1787,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g2 = createEGenericType(genericTileEClass_T);
 		g1.getETypeArguments().add(g2);
 		genericTileEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getUIElement());
-		trimStructureEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
-		g2 = createEGenericType(trimStructureEClass_T);
+		g2 = createEGenericType(trimContainerEClass_T);
 		g1.getETypeArguments().add(g2);
-		trimStructureEClass.getEGenericSuperTypes().add(g1);
+		trimContainerEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getContext());
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
@@ -1798,7 +1816,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g2 = createEGenericType(this.getMenuItem());
 		g1.getETypeArguments().add(g2);
 		menuEClass.getEGenericSuperTypes().add(g1);
-		toolItemEClass.getESuperTypes().add(this.getItem());
+		g1 = createEGenericType(this.getItem());
+		toolItemEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getElementContainer());
+		g2 = createEGenericType(this.getMenuItem());
+		g1.getETypeArguments().add(g2);
+		toolItemEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getMenuItem());
 		g1.getETypeArguments().add(g2);
@@ -1852,6 +1875,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBindingContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getTrimContainer());
+		g2 = createEGenericType(this.getUIElement());
+		g1.getETypeArguments().add(g2);
+		windowTrimEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPSCElement());
+		windowTrimEClass.getEGenericSuperTypes().add(g1);
 		keyBindingEClass.getESuperTypes().add(this.getKeySequence());
 		vscElementEClass.getESuperTypes().add(this.getUIElement());
 		viewEClass.getESuperTypes().add(this.getPart());
@@ -1914,18 +1943,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getVSCElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getTrimStructure());
-		g2 = createEGenericType(this.getVSCElement());
-		g1.getETypeArguments().add(g2);
-		ideWindowEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getUIItem());
-		ideWindowEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getContext());
-		ideWindowEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getHandlerContainer());
-		ideWindowEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getBindingContainer());
-		ideWindowEClass.getEGenericSuperTypes().add(g1);
+		ideWindowEClass.getESuperTypes().add(this.getUIItem());
+		ideWindowEClass.getESuperTypes().add(this.getContext());
+		ideWindowEClass.getESuperTypes().add(this.getHandlerContainer());
+		ideWindowEClass.getESuperTypes().add(this.getBindingContainer());
 
 		// Initialize classes and features; add operations and parameters
 		initEClass(v____________Abstract_____________VEClass, MV____________Abstract_____________V.class, "V____________Abstract_____________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -2001,23 +2022,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getGenericTile_Weights(), ecorePackage.getEInt(), "weights", null, 0, -1, MGenericTile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getGenericTile_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MGenericTile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(trimStructureEClass, MTrimStructure.class, "TrimStructure", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		g1 = createEGenericType(this.getElementContainer());
-		g2 = createEGenericType(this.getUIElement());
-		g1.getETypeArguments().add(g2);
-		initEReference(getTrimStructure_Top(), g1, null, "top", null, 0, 1, MTrimStructure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		g1 = createEGenericType(this.getElementContainer());
-		g2 = createEGenericType(this.getUIElement());
-		g1.getETypeArguments().add(g2);
-		initEReference(getTrimStructure_Bottom(), g1, null, "bottom", null, 0, 1, MTrimStructure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		g1 = createEGenericType(this.getElementContainer());
-		g2 = createEGenericType(this.getUIElement());
-		g1.getETypeArguments().add(g2);
-		initEReference(getTrimStructure_Left(), g1, null, "left", null, 0, 1, MTrimStructure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		g1 = createEGenericType(this.getElementContainer());
-		g2 = createEGenericType(this.getUIElement());
-		g1.getETypeArguments().add(g2);
-		initEReference(getTrimStructure_Right(), g1, null, "right", null, 0, 1, MTrimStructure.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(trimContainerEClass, MTrimContainer.class, "TrimContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getTrimContainer_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getTrimContainer_Side(), this.getSideValue(), "side", null, 1, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(v______________RCP_______________VEClass, MV______________RCP_______________V.class, "V______________RCP_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -2069,6 +2076,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getWindow_Width(), ecorePackage.getEInt(), "width", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEClass(windowTrimEClass, MWindowTrim.class, "WindowTrim", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+
 		initEClass(keyBindingEClass, MKeyBinding.class, "KeyBinding", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getKeyBinding_Command(), this.getCommand(), null, "command", null, 1, 1, MKeyBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getKeyBinding_Parameters(), this.getParameter(), null, "parameters", null, 0, -1, MKeyBinding.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -2103,6 +2112,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(ideWindowEClass, MIDEWindow.class, "IDEWindow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getIDEWindow_MainMenu(), this.getMenu(), null, "mainMenu", null, 0, 1, MIDEWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		// Initialize enums and add enum literals
+		initEEnum(sideValueEEnum, SideValue.class, "SideValue"); //$NON-NLS-1$
+		addEEnumLiteral(sideValueEEnum, SideValue.TOP);
+		addEEnumLiteral(sideValueEEnum, SideValue.BOTTOM);
+		addEEnumLiteral(sideValueEEnum, SideValue.LEFT);
+		addEEnumLiteral(sideValueEEnum, SideValue.RIGHT);
 
 		// Initialize data types
 		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$

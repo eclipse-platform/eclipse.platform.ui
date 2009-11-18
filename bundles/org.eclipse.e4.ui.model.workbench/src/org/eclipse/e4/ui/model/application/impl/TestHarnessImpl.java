@@ -676,27 +676,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getInputURI() {
-		return inputURI;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setInputURI(String newInputURI) {
-		String oldInputURI = inputURI;
-		inputURI = newInputURI;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__INPUT_URI, oldInputURI, inputURI));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public Object getWidget() {
 		return widget;
 	}
@@ -852,6 +831,69 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getTag() {
+		return tag;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setTag(String newTag) {
+		String oldTag = tag;
+		tag = newTag;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__TAG, oldTag, tag));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getValue() {
+		return value;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setValue(String newValue) {
+		String oldValue = value;
+		value = newValue;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__VALUE, oldValue, value));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getInputURI() {
+		return inputURI;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setInputURI(String newInputURI) {
+		String oldInputURI = inputURI;
+		inputURI = newInputURI;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__INPUT_URI, oldInputURI, inputURI));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getName() {
 		return name;
 	}
@@ -992,48 +1034,6 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		dirty = newDirty;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__DIRTY, oldDirty, dirty));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getTag() {
-		return tag;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setTag(String newTag) {
-		String oldTag = tag;
-		tag = newTag;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__TAG, oldTag, tag));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getValue() {
-		return value;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setValue(String newValue) {
-		String oldValue = value;
-		value = newValue;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__VALUE, oldValue, value));
 	}
 
 	/**

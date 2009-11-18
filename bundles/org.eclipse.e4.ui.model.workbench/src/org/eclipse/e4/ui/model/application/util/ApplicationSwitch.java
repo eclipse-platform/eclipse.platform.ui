@@ -228,12 +228,12 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case MApplicationPackage.TRIM_STRUCTURE: {
-				MTrimStructure<?> trimStructure = (MTrimStructure<?>)theEObject;
-				T1 result = caseTrimStructure(trimStructure);
-				if (result == null) result = caseElementContainer(trimStructure);
-				if (result == null) result = caseUIElement(trimStructure);
-				if (result == null) result = caseApplicationElement(trimStructure);
+			case MApplicationPackage.TRIM_CONTAINER: {
+				MTrimContainer<?> trimContainer = (MTrimContainer<?>)theEObject;
+				T1 result = caseTrimContainer(trimContainer);
+				if (result == null) result = caseElementContainer(trimContainer);
+				if (result == null) result = caseUIElement(trimContainer);
+				if (result == null) result = caseApplicationElement(trimContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -327,6 +327,7 @@ public class ApplicationSwitch<T1> {
 				MToolItem toolItem = (MToolItem)theEObject;
 				T1 result = caseToolItem(toolItem);
 				if (result == null) result = caseItem(toolItem);
+				if (result == null) result = caseElementContainer(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
 				if (result == null) result = caseUIItem(toolItem);
 				if (result == null) result = caseApplicationElement(toolItem);
@@ -336,9 +337,9 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.HANDLED_TOOL_ITEM: {
 				MHandledToolItem handledToolItem = (MHandledToolItem)theEObject;
 				T1 result = caseHandledToolItem(handledToolItem);
-				if (result == null) result = caseElementContainer(handledToolItem);
 				if (result == null) result = caseHandledItem(handledToolItem);
 				if (result == null) result = caseToolItem(handledToolItem);
+				if (result == null) result = caseElementContainer(handledToolItem);
 				if (result == null) result = caseItem(handledToolItem);
 				if (result == null) result = caseUIElement(handledToolItem);
 				if (result == null) result = caseApplicationElement(handledToolItem);
@@ -352,6 +353,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContribution(directToolItem);
 				if (result == null) result = caseToolItem(directToolItem);
 				if (result == null) result = caseItem(directToolItem);
+				if (result == null) result = caseElementContainer(directToolItem);
 				if (result == null) result = caseUIElement(directToolItem);
 				if (result == null) result = caseUIItem(directToolItem);
 				if (result == null) result = caseApplicationElement(directToolItem);
@@ -436,6 +438,17 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseBindingContainer(window);
 				if (result == null) result = caseUIElement(window);
 				if (result == null) result = caseApplicationElement(window);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.WINDOW_TRIM: {
+				MWindowTrim windowTrim = (MWindowTrim)theEObject;
+				T1 result = caseWindowTrim(windowTrim);
+				if (result == null) result = caseTrimContainer(windowTrim);
+				if (result == null) result = casePSCElement(windowTrim);
+				if (result == null) result = caseElementContainer(windowTrim);
+				if (result == null) result = caseUIElement(windowTrim);
+				if (result == null) result = caseApplicationElement(windowTrim);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -595,14 +608,10 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.IDE_WINDOW: {
 				MIDEWindow ideWindow = (MIDEWindow)theEObject;
 				T1 result = caseIDEWindow(ideWindow);
-				if (result == null) result = caseTrimStructure(ideWindow);
 				if (result == null) result = caseUIItem(ideWindow);
 				if (result == null) result = caseContext(ideWindow);
 				if (result == null) result = caseHandlerContainer(ideWindow);
 				if (result == null) result = caseBindingContainer(ideWindow);
-				if (result == null) result = caseElementContainer(ideWindow);
-				if (result == null) result = caseUIElement(ideWindow);
-				if (result == null) result = caseApplicationElement(ideWindow);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -896,17 +905,17 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Trim Structure</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Trim Container</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Trim Structure</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Trim Container</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public <T extends MUIElement> T1 caseTrimStructure(MTrimStructure<T> object) {
+	public <T extends MUIElement> T1 caseTrimContainer(MTrimContainer<T> object) {
 		return null;
 	}
 
@@ -1181,6 +1190,21 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Window Trim</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Window Trim</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseWindowTrim(MWindowTrim object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Key Binding</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -1271,21 +1295,6 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>View Sash Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>View Sash Container</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseViewSashContainer(MViewSashContainer object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Editor</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -1297,6 +1306,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseEditor(MEditor object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>View Sash Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>View Sash Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseViewSashContainer(MViewSashContainer object) {
 		return null;
 	}
 

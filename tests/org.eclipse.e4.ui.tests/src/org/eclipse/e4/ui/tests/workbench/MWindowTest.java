@@ -29,6 +29,7 @@ import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.ui.workbench.swt.internal.PartRenderingEngine;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
+import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Composite;
@@ -74,6 +75,11 @@ public class MWindowTest extends TestCase {
 		}
 	}
 
+	protected Control[] getPresentationControls(Shell shell) {
+		TrimmedPartLayout tpl = (TrimmedPartLayout) shell.getLayout();
+		return tpl.clientArea.getChildren();
+	}
+
 	public void testCreateWindow() {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setName("MyWindow");
@@ -93,7 +99,7 @@ public class MWindowTest extends TestCase {
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		assertEquals("MyWindow", shell.getText());
-		Control[] controls = shell.getChildren();
+		Control[] controls = getPresentationControls(shell);
 		assertEquals(1, controls.length);
 		SashForm sash = (SashForm) controls[0];
 		Control[] sashChildren = sash.getChildren();

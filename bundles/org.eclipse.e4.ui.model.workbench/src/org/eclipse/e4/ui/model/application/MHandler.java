@@ -28,7 +28,6 @@ package org.eclipse.e4.ui.model.application;
  * @generated
  */
 public interface MHandler extends MContribution {
-
 	/**
 	 * Returns the value of the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
@@ -54,4 +53,5 @@ public interface MHandler extends MContribution {
 	 * @generated
 	 */
 	void setCommand(MCommand value);
+
 } // MHandler

@@ -12,7 +12,6 @@ package org.eclipse.e4.ui.model.application;
 
 import org.eclipse.emf.common.util.EList;
 
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Key Binding</b></em>'.

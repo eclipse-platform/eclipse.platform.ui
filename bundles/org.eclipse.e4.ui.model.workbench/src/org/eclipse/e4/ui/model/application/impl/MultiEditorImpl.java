@@ -13,7 +13,6 @@ package org.eclipse.e4.ui.model.application.impl;
 import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MMultiEditor;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
