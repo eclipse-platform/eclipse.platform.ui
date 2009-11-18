@@ -54,6 +54,30 @@ public abstract class HeadlessApplicationTest extends
 
 	protected IPresentationEngine renderer;
 
+	private EventHandler eventHandler = new EventHandler() {
+		public void handleEvent(Event event) {
+			if (event.getProperty(IUIEvents.EventTags.AttName).equals(
+					IUIEvents.ElementContainer.ActiveChild)) {
+				Object oldPart = event
+						.getProperty(IUIEvents.EventTags.OldValue);
+				Object newPart = event
+						.getProperty(IUIEvents.EventTags.NewValue);
+				if (oldPart instanceof MContext) {
+					IEclipseContext context = (IEclipseContext) ((MContext) oldPart)
+							.getContext().get(IContextConstants.PARENT);
+					context.set(IContextConstants.ACTIVE_CHILD,
+							newPart == null ? null : ((MContext) newPart)
+									.getContext());
+				} else if (newPart instanceof MContext) {
+					IEclipseContext context = (IEclipseContext) ((MContext) newPart)
+							.getContext().get(IContextConstants.PARENT);
+					context.set(IContextConstants.ACTIVE_CHILD,
+							((MContext) newPart).getContext());
+				}
+			}
+		}
+	};
+
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -67,6 +91,10 @@ public abstract class HeadlessApplicationTest extends
 
 	@Override
 	protected void tearDown() throws Exception {
+		IEventBroker eventBroker = (IEventBroker) application.getContext().get(
+				IEventBroker.class.getName());
+		eventBroker.unsubscribe(eventHandler);
+
 		super.tearDown();
 
 		for (MWindow window : application.getChildren()) {
@@ -82,32 +110,7 @@ public abstract class HeadlessApplicationTest extends
 		IEventBroker eventBroker = (IEventBroker) application.getContext().get(
 				IEventBroker.class.getName());
 		eventBroker.subscribe(IUIEvents.ElementContainer.Topic, null,
-				new EventHandler() {
-					public void handleEvent(Event event) {
-						if (event.getProperty(IUIEvents.EventTags.AttName)
-								.equals(IUIEvents.ElementContainer.ActiveChild)) {
-							Object oldPart = event
-									.getProperty(IUIEvents.EventTags.OldValue);
-							Object newPart = event
-									.getProperty(IUIEvents.EventTags.NewValue);
-							if (oldPart instanceof MContext) {
-								IEclipseContext context = (IEclipseContext) ((MContext) oldPart)
-										.getContext().get(
-												IContextConstants.PARENT);
-								context.set(IContextConstants.ACTIVE_CHILD,
-										newPart == null ? null
-												: ((MContext) newPart)
-														.getContext());
-							} else if (newPart instanceof MContext) {
-								IEclipseContext context = (IEclipseContext) ((MContext) newPart)
-										.getContext().get(
-												IContextConstants.PARENT);
-								context.set(IContextConstants.ACTIVE_CHILD,
-										((MContext) newPart).getContext());
-							}
-						}
-					}
-				}, true);
+				eventHandler, true);
 	}
 
 	public void testGet_ActiveContexts() throws Exception {
