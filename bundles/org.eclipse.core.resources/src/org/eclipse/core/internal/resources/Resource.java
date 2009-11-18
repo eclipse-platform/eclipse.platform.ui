@@ -643,6 +643,14 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	public void createLink(URI localLocation, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(localLocation);
 		monitor = Policy.monitorFor(monitor);
+		IResource existing = null;
+		if ((updateFlags & REPLACE) != 0) {
+			existing = workspace.getRoot().findMember(getFullPath());
+			if (existing != null && existing.isLinked()) {
+				setLinkLocation(localLocation, updateFlags, monitor);
+				return;
+			}
+		}
 		try {
 			String message = NLS.bind(Messages.links_creating, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
@@ -656,7 +664,6 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				workspace.beginOperation(true);
 				//replace existing resource, if applicable
 				if ((updateFlags & REPLACE) != 0) {
-					IResource existing = workspace.getRoot().findMember(getFullPath());
 					if (existing != null)
 						workspace.deleteResource(existing);
 				}
