@@ -25,4 +25,4 @@ core :
 	$(CC) $(CFLAGS) $(JDK_INCLUDE) $(COMMON_INCLUDE) -c $(CORE.C) -o $(CORE.O)
 	$(LD) $(LDFLAGS) -o $(LIB_NAME_FULL) $(CORE.O)
 clean :
-	rm -f *.o *.so
+	rm -f *.o *.a
