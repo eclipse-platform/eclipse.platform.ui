@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@
 #include <utime.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 #include "../localfile.h"
 #include <os_custom.h>
 
@@ -257,7 +258,75 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
   (JNIEnv *env, jclass clazz, jcharArray source, jcharArray destination, jboolean copyLastModified) {
 	// shouldn't ever be called - there is no Unicode-specific calls on *nix
 	return JNI_FALSE;
-}  
+}
+
+mode_t getumask() {
+	// in case something goes wrong just return 63 which is 0077 in octals
+	mode_t mask = 63; 
+
+	int fds[2];
+	if (pipe(fds) == -1) {
+		return mask;
+	}
+
+	pid_t child_pid;
+	child_pid = fork();
+
+	if (child_pid == 0) {
+		// child process
+		ssize_t bytes_written = 0;
+		close(fds[0]);
+		mask = umask(0);
+		while (1) {
+			ssize_t written = write(fds[1], &mask + bytes_written, sizeof(mask) - bytes_written);
+			if (written == -1) {
+				if (errno != EINTR) {
+					break;
+				}
+			} else {
+				bytes_written += written;
+				if (bytes_written == sizeof(mask)) {
+					break;
+				}
+			}
+		}
+		close(fds[1]);
+		_exit(0);
+	} else if (child_pid != -1) {
+		// parent process, fork succeded
+		int stat_loc;
+		ssize_t bytes_read = 0;
+		mode_t buf;
+		close(fds[1]);
+		while (1) {
+			ssize_t b_read = read(fds[0], &buf + bytes_read, sizeof(buf) - bytes_read);
+			if (b_read == -1) {
+				if (errno != EINTR) {
+					break;
+				}
+			} else {
+				if (b_read == 0) {
+					break;
+				}
+				bytes_read += b_read;
+				if (bytes_read == sizeof(mask)) {
+					break;
+				}
+			}
+		}
+		if (bytes_read == sizeof(mask)) {
+			mask = buf;
+		}
+		close(fds[0]);
+		waitpid(child_pid, &stat_loc, 0);
+	} else {
+		// parent process, fork failed
+		close(fds[0]);
+		close(fds[1]);
+	}
+
+	return mask;
+}
 
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
@@ -267,7 +336,8 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_LocalFileNatives_internalSetFileInfo
   (JNIEnv *env, jclass clazz, jcharArray target, jobject obj) {
 
-    int mask;
+    mode_t mask;
+    mode_t umask;
     struct stat info;
     jbyte *name;
     jint code = -1;
@@ -287,7 +357,9 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
     /* get the current permissions */
     name = getByteArray(env, target);
     code = stat((const char*)name, &info);
-    
+
+    umask = getumask();
+
     /* create the mask */
     mask = S_IRUSR |
 	       S_IWUSR |
@@ -300,14 +372,14 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
            S_IXOTH;
     mask &= info.st_mode;
     if (executable)
-	    mask |= S_IXUSR;
+	    mask |= S_IXUSR | ((S_IXGRP | S_IXOTH) & ~umask);
     else
 	    mask &= ~(S_IXUSR | S_IXGRP | S_IXOTH);
 	if (readOnly)
 	    mask &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 	else
-	    mask |= (S_IRUSR | S_IWUSR);
-    
+	    mask |= S_IRUSR | S_IWUSR | ((S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) & ~umask);
+
     /* write the permissions */
     code = chmod((const char*)name, mask);
 
