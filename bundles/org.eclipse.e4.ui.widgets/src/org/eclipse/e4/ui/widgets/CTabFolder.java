@@ -2367,6 +2367,12 @@ void redrawTabs() {
 		redraw(0, 0, size.x, borderTop + tabHeight + highlight_header + 1, false);
 	}
 }
+public void reskin(int flags) {
+	super.reskin(flags);
+	for (int i = 0; i < items.length; i++) {
+		items[i].reskin(flags);
+	}
+}
 /**	 
  * Removes the listener.
  *

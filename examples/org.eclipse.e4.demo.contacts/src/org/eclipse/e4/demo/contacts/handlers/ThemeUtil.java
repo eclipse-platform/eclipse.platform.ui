@@ -56,7 +56,7 @@ public class ThemeUtil {
 					
 					try {
 						shell.setRedraw(false);
-						engine.applyStyles(shell, true, false);	
+						shell.reskin(SWT.ALL);
 					} finally {
 						shell.setRedraw(true);
 					}
