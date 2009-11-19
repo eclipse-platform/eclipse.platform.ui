@@ -45,6 +45,7 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -596,8 +597,9 @@ public final class AntUtil {
     		file = (IFile) resource.getAdapter(IFile.class);
     	}
     	if(file != null) {
-    		IContentType type = IDE.getContentType(file);
-    		return type.isAssociatedWith(file.getName());
+    		IContentType fileType = IDE.getContentType(file);
+    		IContentType antType = Platform.getContentTypeManager().getContentType(AntCorePlugin.ANT_BUILDFILE_CONTENT_TYPE);
+    		return fileType.isKindOf(antType);
     	}
     	return false;
     }
