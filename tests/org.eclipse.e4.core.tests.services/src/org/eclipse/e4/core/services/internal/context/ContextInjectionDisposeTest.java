@@ -46,7 +46,7 @@ public class ContextInjectionDisposeTest extends TestCase {
 			}
 		}
 		IEclipseContext context = EclipseContextFactory.create();
-		context.set("Field", "hello");
+		context.set(String.class.getName(), "hello");
 		Injected object = new Injected();
 		ContextInjectionFactory.inject(object, context);
 		((IDisposable) context).dispose();
