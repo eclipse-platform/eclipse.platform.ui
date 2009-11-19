@@ -405,7 +405,8 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         // Validate data
         model.validateData(fViewer, TreePath.EMPTY, true);
         Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3")) == true);
-        Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
+        // On windows, getExpandedState() may return true for an element with no children:
+        // Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.0 - new")) == false);
         Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.1")) == true);
         Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.2")) == true);
         Assert.assertTrue(getCTargetViewer().getExpandedState(model.findElement("3.3")) == true);

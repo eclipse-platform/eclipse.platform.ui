@@ -567,6 +567,9 @@ public class TreeModelContentProvider extends ModelContentProvider implements IT
             }
 		}
 		if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
+            if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                System.out.println("\tRESTORE SELECT: " + treePath.getLastSegment()); //$NON-NLS-1$
+            }
 			viewer.setSelection(new TreeSelection(treePath), false, false);
             delta.setFlags(delta.getFlags() & ~IModelDelta.SELECT);
 		}

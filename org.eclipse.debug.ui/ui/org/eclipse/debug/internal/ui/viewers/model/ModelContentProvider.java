@@ -132,6 +132,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      */
     private ModelDelta fPendingState = null;
 
+    /**
+     * Flag indicating that the content provider is performing
+     * state restore operations.  
+     */
+    private boolean fInStateRestore = false; 
+    
     private static class CompareRequestKey {
         CompareRequestKey(TreePath path, IModelDelta delta) {
             fPath = path;
@@ -572,9 +578,17 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
 
     public void cancelRestore(final TreePath path, final int flags) {
         if (fPendingState == null) {
+        	// Nothing to do
             return;
         }
 
+        if (fInStateRestore) {
+        	// If we are currently processing pending state already, ignore 
+        	// cancelRestore requests.  These requests may be triggered in the viewer
+        	// by changes to the tree state (Bug 295585).
+        	return;
+        }
+        
         if ((flags & (IModelDelta.SELECT | IModelDelta.REVEAL)) != 0) {
             // If we're canceling select or reveal, cancel it for all of pending deltas
             final int mask = flags & (IModelDelta.SELECT | IModelDelta.REVEAL);
@@ -815,7 +829,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 return element.equals(potentialMatch);
             }
         };
-        fPendingState.accept(visitor);
+        try {
+        	fInStateRestore = true;
+        	fPendingState.accept(visitor);
+        } 
+        finally {
+        	fInStateRestore = false;
+        }
     }
 
     void compareFinished(ElementCompareRequest request, ModelDelta delta) {
