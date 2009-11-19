@@ -2247,7 +2247,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			throw new ResourceException(IResourceStatus.INVALID_VALUE, getFullPath(), message, null);
 		}
 
-		final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
+		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 		try {
 			String message = NLS.bind(Messages.links_setLocation, getFullPath());
 			monitor.beginTask(message, Policy.totalWork);
@@ -2264,14 +2264,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			Project project = (Project) getProject();
 			project.internalGetDescription().setLinkLocation(getProjectRelativePath(), linkDescription);
 			project.writeDescription(updateFlags);
-		} finally {
-			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
-		}
 
-		final ISchedulingRule rule2 = workspace.getRuleFactory().refreshRule(this);
-		try {
-			workspace.prepareOperation(rule2, monitor);
-			workspace.beginOperation(true);
 			// refresh either in background or foreground
 			if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
 				workspace.refreshManager.refresh(this);
@@ -2280,8 +2273,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				refreshLocal(DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 90 / 100));
 			}
 		} finally {
-			workspace.endOperation(rule2, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
-			monitor.done();
+			workspace.endOperation(rule, true, Policy.subMonitorFor(monitor, Policy.endOpWork));
 		}
 	}
 
