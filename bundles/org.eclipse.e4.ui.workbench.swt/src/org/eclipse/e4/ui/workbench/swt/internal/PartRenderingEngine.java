@@ -131,7 +131,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	private IEclipseContext appContext;
 
-	protected Shell hackShell;
+	protected Shell testShell;
 
 	protected MApplication theApp;
 
@@ -413,27 +413,27 @@ public class PartRenderingEngine implements IPresentationEngine {
 				// HACK!! we should loop until the display gets disposed...
 				// ...then we listen for the last 'main' window to get disposed
 				// and dispose the Display
-				hackShell = null;
+				testShell = null;
 				theApp = null;
 				boolean spinOnce = true;
 				if (uiRoot instanceof MApplication) {
 					spinOnce = false; // loop until the app closes
 					theApp = (MApplication) uiRoot;
 					for (MWindow window : theApp.getChildren()) {
-						hackShell = (Shell) createGui(window);
+						testShell = (Shell) createGui(window);
 					}
 				} else if (uiRoot instanceof MUIElement) {
 					if (uiRoot instanceof MWindow) {
-						hackShell = (Shell) createGui((MUIElement) uiRoot);
+						testShell = (Shell) createGui((MUIElement) uiRoot);
 					} else {
 						// Special handling for partial models (for testing...)
-						hackShell = new Shell(display, SWT.SHELL_TRIM);
-						createGui((MUIElement) uiRoot, hackShell);
+						testShell = new Shell(display, SWT.SHELL_TRIM);
+						createGui((MUIElement) uiRoot, testShell);
 					}
 				}
 
 				// Spin the event loop until someone disposes the display
-				while (!hackShell.isDisposed() && !display.isDisposed()) {
+				while (!testShell.isDisposed() && !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
 							if (spinOnce)
@@ -455,13 +455,14 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	public void stop() {
-		if (theApp == null)
-			return;
-
-		for (MWindow window : theApp.getChildren()) {
-			if (window.getWidget() != null) {
-				((Shell) window.getWidget()).close();
+		if (theApp != null) {
+			for (MWindow window : theApp.getChildren()) {
+				if (window.getWidget() != null) {
+					((Shell) window.getWidget()).close();
+				}
 			}
+		} else if (testShell != null && !testShell.isDisposed()) {
+			testShell.close();
 		}
 	}
 }
