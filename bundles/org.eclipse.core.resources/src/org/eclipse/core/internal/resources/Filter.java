@@ -39,11 +39,11 @@ public class Filter {
 			IFilterMatcherDescriptor filterDescriptor = project.getWorkspace().getFilterMatcherDescriptor(getId());
 			if (filterDescriptor != null)
 				provider = ((FilterDescriptor) filterDescriptor).createFilter();
-			provider.initialize(project, description.getFileInfoMatcherDescription().getArguments());
 			if (provider == null) {
 				String message = NLS.bind(Messages.filters_missingFilterType, getId());
 				throw new CoreException(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, Platform.PLUGIN_ERROR, message, new Error()));
 			}
+			provider.initialize(project, description.getFileInfoMatcherDescription().getArguments());
 		}
 		if (provider != null)
 			return provider.matches(fileInfo);
