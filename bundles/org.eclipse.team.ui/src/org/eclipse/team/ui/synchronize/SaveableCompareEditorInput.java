@@ -280,19 +280,27 @@ public abstract class SaveableCompareEditorInput extends CompareEditorInput impl
 		if (isSaveNeeded() && checkForUnsavedChanges) {
 			return false;
 		} else {
+			final IWorkbenchPage page= getPage();
+			if (page == null)
+				return false;
+
 			Runnable runnable = new Runnable() {
 				public void run() {
-					IEditorPart part = getPage().findEditor(SaveableCompareEditorInput.this);
+					Shell shell= page.getWorkbenchWindow().getShell();
+					if (shell == null)
+						return;
+
+					IEditorPart part= page.findEditor(SaveableCompareEditorInput.this);
 					getPage().closeEditor(part, false);
 				}
 			};
 			if (Display.getCurrent() != null) {
 				runnable.run();
 			} else {
-				IWorkbenchPage page = getPage();
-				if (page == null)
+				Shell shell= page.getWorkbenchWindow().getShell();
+				if (shell == null)
 					return false;
-				Display display = page.getWorkbenchWindow().getShell().getDisplay();
+				Display display= shell.getDisplay();
 				display.asyncExec(runnable);
 			}
 			return true;
