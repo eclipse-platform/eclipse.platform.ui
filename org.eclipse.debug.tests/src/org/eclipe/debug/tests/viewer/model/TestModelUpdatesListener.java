@@ -39,7 +39,8 @@ public class TestModelUpdatesListener
         IStateUpdateListener
 {
     private boolean fFailOnRedundantUpdates;
-    private boolean fFailOnMultipleUpdateSequences;
+    private boolean fFailOnMultipleModelUpdateSequences;
+    private boolean fFailOnMultipleLabelUpdateSequences;
     
     private Set fHasChildrenUpdates = new HashSet();
     private Map fChildrenUpdates = new HashMap();
@@ -58,19 +59,23 @@ public class TestModelUpdatesListener
 	private long fTimeoutTime;
 	
 	
-    public TestModelUpdatesListener(boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
+    public TestModelUpdatesListener(boolean failOnRedundantUpdates, boolean failOnMultipleModelUpdateSequences) {
         setFailOnRedundantUpdates(failOnRedundantUpdates);
-        setFailOnMultipleUpdateSequences(failOnMultipleUpdateSequences);
+        setFailOnMultipleModelUpdateSequences(failOnMultipleModelUpdateSequences);
     }
     
     public void setFailOnRedundantUpdates(boolean failOnRedundantUpdates) {
         fFailOnRedundantUpdates = failOnRedundantUpdates;
     }
 
-    public void setFailOnMultipleUpdateSequences(boolean failOnMultipleUpdateSequences) {
-        fFailOnMultipleUpdateSequences = failOnMultipleUpdateSequences;
+    public void setFailOnMultipleModelUpdateSequences(boolean failOnMultipleLabelUpdateSequences) {
+        fFailOnMultipleModelUpdateSequences = failOnMultipleLabelUpdateSequences;
     }
-    
+
+    public void setFailOnMultipleLabelUpdateSequences(boolean failOnMultipleLabelUpdateSequences) {
+        fFailOnMultipleLabelUpdateSequences = failOnMultipleLabelUpdateSequences;
+    }
+
     /**
      * Sets the the maximum amount of time (in milliseconds) that the update listener 
      * is going to wait. If set to -1, the listener will wait indefinitely. 
@@ -84,13 +89,15 @@ public class TestModelUpdatesListener
         addUpdates(path, element, levels);
         addProxies(element);
         setFailOnRedundantUpdates(failOnRedundantUpdates);
-        setFailOnMultipleUpdateSequences(failOnMultipleUpdateSequences);
+        setFailOnMultipleModelUpdateSequences(failOnMultipleUpdateSequences);
+        setFailOnMultipleLabelUpdateSequences(false);
     }
 
     public void reset(boolean failOnRedundantUpdates, boolean failOnMultipleUpdateSequences) {
         reset();
         setFailOnRedundantUpdates(failOnRedundantUpdates);
-        setFailOnMultipleUpdateSequences(failOnMultipleUpdateSequences);
+        setFailOnMultipleModelUpdateSequences(failOnMultipleUpdateSequences);
+        setFailOnMultipleLabelUpdateSequences(false);
     }
 
     public void reset() {
@@ -310,7 +317,7 @@ public class TestModelUpdatesListener
     }
     
     public void viewerUpdatesComplete() {
-        if (fFailOnMultipleUpdateSequences && fViewerUpdatesComplete) {
+        if (fFailOnMultipleModelUpdateSequences && fViewerUpdatesComplete) {
             Assert.fail("Multiple viewer update sequences detected");
         }
         fViewerUpdatesComplete = true;
@@ -335,16 +342,13 @@ public class TestModelUpdatesListener
     }
 
     public void labelUpdatesComplete() {
-        if (fFailOnMultipleUpdateSequences && fLabelUpdatesComplete) {
+        if (fFailOnMultipleLabelUpdateSequences && fLabelUpdatesComplete) {
             Assert.fail("Multiple label update sequences detected");
         }
         fLabelUpdatesComplete = true;
     }
     
     public void modelChanged(IModelDelta delta, IModelProxy proxy) {
-        if (fFailOnMultipleUpdateSequences && fModelChangedComplete) {
-            Assert.fail("Multiple model changed sequences detected");
-        }
         fModelChangedComplete = true;
 
         for (Iterator itr = fProxyModels.iterator(); itr.hasNext();) {

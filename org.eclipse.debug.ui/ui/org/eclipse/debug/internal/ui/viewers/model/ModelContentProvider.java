@@ -1777,31 +1777,39 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
      * 
      * @param update
      */
-    void updateComplete(ViewerUpdateMonitor update) {
-        boolean end = false;
-        synchronized (fRequestsInProgress) {
-            List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
-            if (requests != null) {
-                requests.remove(update);
-                trigger(update);
-                if (requests.isEmpty()) {
-                    fRequestsInProgress.remove(update.getSchedulingPath());
-                }
-            }
-            end = fRequestsInProgress.isEmpty();
-        }
+    void updateComplete(final ViewerUpdateMonitor update) {
         notifyUpdate(UPDATE_COMPLETE, update);
         if (DEBUG_UPDATE_SEQUENCE
             && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
             System.out.println("\tEND - " + update); //$NON-NLS-1$
         }
-        if (end) {
-            if (DEBUG_UPDATE_SEQUENCE
-                && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
-                System.out.println("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
+
+        new UIJob("Update complete") { //$NON-NLS-1$
+            { setSystem(true); }
+            
+            public IStatus runInUIThread(IProgressMonitor monitor) {
+                boolean end = false;
+                synchronized (fRequestsInProgress) {
+                    List requests = (List) fRequestsInProgress.get(update.getSchedulingPath());
+                    if (requests != null) {
+                        requests.remove(update);
+                        trigger(update);
+                        if (requests.isEmpty()) {
+                            fRequestsInProgress.remove(update.getSchedulingPath());
+                        }
+                    }
+                    end = fRequestsInProgress.isEmpty();
+                }
+                if (end) {
+                    if (DEBUG_UPDATE_SEQUENCE
+                        && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
+                        System.out.println("MODEL SEQUENCE ENDS"); //$NON-NLS-1$
+                    }
+                    notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
+                }
+                return Status.OK_STATUS;
             }
-            notifyUpdate(UPDATE_SEQUENCE_COMPLETE, null);
-        }
+        }.schedule();
     }
 
     protected void notifyUpdate(final int type, final IViewerUpdate update) {

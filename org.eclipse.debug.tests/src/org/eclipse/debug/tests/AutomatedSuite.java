@@ -28,6 +28,7 @@ import org.eclipe.debug.tests.viewer.model.JFaceViewerSelectionTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerStateTests;
 import org.eclipe.debug.tests.viewer.model.JFaceViewerUpdateTests;
 import org.eclipe.debug.tests.viewer.model.PresentationContextTests;
+import org.eclipe.debug.tests.viewer.model.VirtualViewerContentTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerDeltaTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerLazyModeTests;
 import org.eclipe.debug.tests.viewer.model.VirtualViewerSelectionTests;
@@ -65,6 +66,7 @@ public class AutomatedSuite extends TestSuite {
 		
 		// Virtual viewer tests
 		addTest(new TestSuite(VirtualViewerDeltaTests.class));
+        addTest(new TestSuite(VirtualViewerContentTests.class));
 		addTest(new TestSuite(VirtualViewerLazyModeTests.class));
 		addTest(new TestSuite(VirtualViewerSelectionTests.class));
 		addTest(new TestSuite(VirtualViewerStateTests.class));

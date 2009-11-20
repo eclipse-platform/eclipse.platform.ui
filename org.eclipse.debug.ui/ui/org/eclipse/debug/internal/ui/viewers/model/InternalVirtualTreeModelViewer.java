@@ -22,9 +22,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.viewers.model.VirtualItem.Index;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentation;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IColumnPresentationFactory;
@@ -55,7 +52,6 @@ import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * A tree model viewer without a UI component.
@@ -175,7 +171,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
      */
     private Map fShowColumns = new HashMap();    
 
-    private UIJob fValidateJob;
+    /**
+     * Runnable for validating the virtual tree.  It is scheduled to run in the 
+     * UI thread whenever a tree validation is requested.
+     */
+    private Runnable fValidateRunnable;
     
     public InternalVirtualTreeModelViewer(Display display, int style, IPresentationContext context) {        
         fDisplay = display;
@@ -461,19 +461,16 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
     
     private void validate() {
-        if (fValidateJob == null) {
-            fValidateJob = new UIJob(getDisplay(), "Virtual viewer validate job") {
-                {
-                    setSystem(true);
-                }
-                
-                public IStatus runInUIThread(IProgressMonitor monitor) {
-                    fValidateJob = null;
-                    fTree.validate();
-                    return Status.OK_STATUS;
+        if (fValidateRunnable == null) {
+            fValidateRunnable = new Runnable() {
+                public void run() {
+                    if (!fTree.isDisposed()) {
+                        fValidateRunnable = null;
+                        fTree.validate();
+                    }
                 }
             };
-            fValidateJob.schedule();
+            getDisplay().asyncExec(fValidateRunnable);
         }
     }
     

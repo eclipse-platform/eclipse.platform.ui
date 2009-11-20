@@ -48,7 +48,7 @@ abstract public class ContentTests extends TestCase {
 
         fViewer = createViewer(fDisplay, fShell);
         
-        fListener = new TestModelUpdatesListener(false, false);
+        fListener = new TestModelUpdatesListener(true, true);
         fViewer.addViewerUpdateListener(fListener);
         fViewer.addLabelUpdateListener(fListener);
         fViewer.addModelChangedListener(fListener);
@@ -82,7 +82,7 @@ abstract public class ContentTests extends TestCase {
         //TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
         
         // Create the listener which determines when the view is finished updating.
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
         
         // Set the viewer input (and trigger updates).
         fViewer.setInput(model.getRootElement());
@@ -99,7 +99,7 @@ abstract public class ContentTests extends TestCase {
         TestModel model = TestModel.simpleMultiLevel();
         fViewer.setAutoExpandLevel(-1);
         
-        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, false); 
+        fListener.reset(TreePath.EMPTY, model.getRootElement(), -1, true, true); 
         
         fViewer.setInput(model.getRootElement());
 
