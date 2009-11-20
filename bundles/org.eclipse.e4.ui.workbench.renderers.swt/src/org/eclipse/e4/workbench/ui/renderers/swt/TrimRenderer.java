@@ -16,13 +16,26 @@ import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.layout.RowLayout;
+import org.eclipse.swt.events.ControlEvent;
+import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 
 /**
  *
  */
 public class TrimRenderer extends SWTPartRenderer {
+
+	ControlListener childResizeListener = new ControlListener() {
+		public void controlResized(ControlEvent e) {
+			Control ctrl = (Control) e.widget;
+			Control[] changed = { ctrl };
+			ctrl.getShell().layout(changed, SWT.DEFER);
+		}
+
+		public void controlMoved(ControlEvent e) {
+		}
+	};
 
 	/*
 	 * (non-Javadoc)
@@ -46,21 +59,13 @@ public class TrimRenderer extends SWTPartRenderer {
 
 		switch (trimModel.getSide().getValue()) {
 		case SideValue.TOP_VALUE:
-			tpl.top = new Composite(parentComp, SWT.NONE);
-			tpl.top.setLayout(new RowLayout(SWT.HORIZONTAL));
-			return tpl.top;
+			return tpl.getTrimComposite(parentComp, SWT.TOP);
 		case SideValue.BOTTOM_VALUE:
-			tpl.bottom = new Composite(parentComp, SWT.NONE);
-			tpl.bottom.setLayout(new RowLayout(SWT.HORIZONTAL));
-			return tpl.bottom;
+			return tpl.getTrimComposite(parentComp, SWT.BOTTOM);
 		case SideValue.LEFT_VALUE:
-			tpl.left = new Composite(parentComp, SWT.NONE);
-			tpl.left.setLayout(new RowLayout(SWT.VERTICAL));
-			return tpl.left;
+			return tpl.getTrimComposite(parentComp, SWT.LEFT);
 		case SideValue.RIGHT_VALUE:
-			tpl.right = new Composite(parentComp, SWT.NONE);
-			tpl.right.setLayout(new RowLayout(SWT.VERTICAL));
-			return tpl.right;
+			return tpl.getTrimComposite(parentComp, SWT.RIGHT);
 		}
 
 		return null; // unknown side
@@ -83,4 +88,23 @@ public class TrimRenderer extends SWTPartRenderer {
 		super.processContents(me);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.SWTPartRenderer#childRendered
+	 * (org.eclipse.e4.ui.model.application.MElementContainer,
+	 * org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		super.childRendered(parentElement, element);
+
+		// Add a size change listener to auto-layout
+		if (element.getWidget() instanceof Control) {
+			final Control ctrl = (Control) element.getWidget();
+			ctrl.addControlListener(childResizeListener);
+		}
+	}
 }

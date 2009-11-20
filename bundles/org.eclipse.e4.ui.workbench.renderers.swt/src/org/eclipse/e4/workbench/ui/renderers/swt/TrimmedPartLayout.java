@@ -16,9 +16,7 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * This arranges its controls into 5 'slots' defined by its composite children
@@ -74,85 +72,77 @@ public class TrimmedPartLayout extends Layout {
 	}
 
 	protected void layout(Composite composite, boolean flushCache) {
-		Rectangle ca = composite.getClientArea();
-		Rectangle caRect = new Rectangle(0, 0, ca.width, ca.height);
+		composite.setRedraw(false);
+		try {
+			Rectangle ca = composite.getClientArea();
+			Rectangle caRect = new Rectangle(0, 0, ca.width, ca.height);
 
-		// Optimization
-		final Shell shell = composite.getShell();
-		shell.setLayoutDeferred(true);
+			// 'Top' spans the entire area
+			if (top != null) {
+				Point topSize = top
+						.computeSize(caRect.width, SWT.DEFAULT, true);
+				caRect.y += topSize.y;
+				caRect.height -= topSize.y;
 
-		// 'Top' spans the entire area
-		if (top != null) {
-			Point topSize = top.computeSize(caRect.width, SWT.DEFAULT, true);
-			caRect.y += topSize.y;
-			caRect.height -= topSize.y;
-
-			// Don't layout unless we've changed
-			Rectangle newBounds = new Rectangle(0, 0, caRect.width, topSize.y);
-			if (!newBounds.equals(top.getBounds())) {
-				top.setBounds(newBounds);
-				shell.layout(new Control[] { top });
+				// Don't layout unless we've changed
+				Rectangle newBounds = new Rectangle(0, 0, caRect.width,
+						topSize.y);
+				if (!newBounds.equals(top.getBounds())) {
+					top.setBounds(newBounds);
+				}
 			}
-		}
 
-		// 'Bottom' spans the entire area
-		if (bottom != null) {
-			Point bottomSize = bottom.computeSize(caRect.width, SWT.DEFAULT,
-					true);
-			caRect.height -= bottomSize.y;
+			// 'Bottom' spans the entire area
+			if (bottom != null) {
+				Point bottomSize = bottom.computeSize(caRect.width,
+						SWT.DEFAULT, true);
+				caRect.height -= bottomSize.y;
 
-			// Don't layout unless we've changed
-			Rectangle newBounds = new Rectangle(0, caRect.y + caRect.height,
-					caRect.width, bottomSize.y);
-			if (!newBounds.equals(bottom.getBounds())) {
-				bottom.setBounds(newBounds);
-				shell.layout(new Control[] { bottom });
+				// Don't layout unless we've changed
+				Rectangle newBounds = new Rectangle(0,
+						caRect.y + caRect.height, caRect.width, bottomSize.y);
+				if (!newBounds.equals(bottom.getBounds())) {
+					bottom.setBounds(newBounds);
+				}
 			}
-		}
 
-		// 'Left' spans between 'top' and 'bottom'
-		if (left != null) {
-			Point leftSize = left.computeSize(SWT.DEFAULT, caRect.height, true);
-			caRect.x += leftSize.x;
-			caRect.width -= leftSize.x;
+			// 'Left' spans between 'top' and 'bottom'
+			if (left != null) {
+				Point leftSize = left.computeSize(SWT.DEFAULT, caRect.height,
+						true);
+				caRect.x += leftSize.x;
+				caRect.width -= leftSize.x;
 
-			// Don't layout unless we've changed
-			Rectangle newBounds = new Rectangle(0, caRect.y, leftSize.x,
-					caRect.height);
-			if (!newBounds.equals(left.getBounds())) {
-				left.setBounds(newBounds);
-				shell.layout(new Control[] { left });
-			}
-		}
-
-		// 'Right' spans between 'top' and 'bottom'
-		if (right != null) {
-			Point rightSize = right.computeSize(SWT.DEFAULT, caRect.height,
-					true);
-			caRect.width -= rightSize.x;
-
-			// Don't layout unless we've changed
-			Rectangle newBounds = new Rectangle(caRect.x + caRect.width,
-					caRect.y, rightSize.x, caRect.height);
-			if (!newBounds.equals(right.getBounds())) {
-				right.setBounds(caRect.x + caRect.width, caRect.y, rightSize.x,
+				// Don't layout unless we've changed
+				Rectangle newBounds = new Rectangle(0, caRect.y, leftSize.x,
 						caRect.height);
-				shell.layout(new Control[] { right });
+				if (!newBounds.equals(left.getBounds())) {
+					left.setBounds(newBounds);
+				}
 			}
-		}
 
-		// Don't layout unless we've changed
-		if (!caRect.equals(clientArea.getBounds())) {
-			clientArea.setBounds(caRect);
-			shell.layout(new Control[] { clientArea });
-		}
+			// 'Right' spans between 'top' and 'bottom'
+			if (right != null) {
+				Point rightSize = right.computeSize(SWT.DEFAULT, caRect.height,
+						true);
+				caRect.width -= rightSize.x;
 
-		// Now we'll allow the layout to proceed
-		shell.getDisplay().asyncExec(new Runnable() {
-			public void run() {
-				shell.setLayoutDeferred(false);
+				// Don't layout unless we've changed
+				Rectangle newBounds = new Rectangle(caRect.x + caRect.width,
+						caRect.y, rightSize.x, caRect.height);
+				if (!newBounds.equals(right.getBounds())) {
+					right.setBounds(caRect.x + caRect.width, caRect.y,
+							rightSize.x, caRect.height);
+				}
 			}
-		});
+
+			// Don't layout unless we've changed
+			if (!caRect.equals(clientArea.getBounds())) {
+				clientArea.setBounds(caRect);
+			}
+		} finally {
+			composite.setRedraw(true);
+		}
 	}
 
 	/**
@@ -160,28 +150,27 @@ public class TrimmedPartLayout extends Layout {
 	 * @param b
 	 * @return
 	 */
-	public Composite getTrimComposite(Composite parent, int side,
-			boolean createIfNecessary) {
+	public Composite getTrimComposite(Composite parent, int side) {
 		if (side == SWT.TOP) {
-			if (top == null && createIfNecessary) {
+			if (top == null) {
 				top = new Composite(parent, SWT.NONE);
 				top.setLayout(new RowLayout(SWT.HORIZONTAL));
 			}
 			return top;
 		} else if (side == SWT.BOTTOM) {
-			if (bottom == null && createIfNecessary) {
+			if (bottom == null) {
 				bottom = new Composite(parent, SWT.NONE);
 				bottom.setLayout(new RowLayout(SWT.HORIZONTAL));
 			}
 			return bottom;
 		} else if (side == SWT.LEFT) {
-			if (left == null && createIfNecessary) {
+			if (left == null) {
 				left = new Composite(parent, SWT.NONE);
 				left.setLayout(new RowLayout(SWT.VERTICAL));
 			}
 			return left;
 		} else if (side == SWT.RIGHT) {
-			if (right == null && createIfNecessary) {
+			if (right == null) {
 				right = new Composite(parent, SWT.NONE);
 				right.setLayout(new RowLayout(SWT.VERTICAL));
 			}

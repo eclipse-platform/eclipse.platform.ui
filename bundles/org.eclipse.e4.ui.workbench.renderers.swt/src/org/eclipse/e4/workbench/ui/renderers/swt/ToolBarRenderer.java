@@ -11,7 +11,9 @@
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.ToolBar;
@@ -25,9 +27,19 @@ public class ToolBarRenderer extends SWTPartRenderer {
 		if (!(element instanceof MToolBar) || !(parent instanceof Composite))
 			return null;
 
-		// HACK!! should query the parent for orientation
-		ToolBar tb = new ToolBar((Composite) parent, SWT.HORIZONTAL | SWT.RIGHT);
+		int orientation = SWT.HORIZONTAL;
+
+		if (element.getParent() instanceof MTrimContainer<?>) {
+			MTrimContainer<?> trimContainer = (MTrimContainer<?>) element
+					.getParent();
+			SideValue side = trimContainer.getSide();
+			if (side.getValue() == SideValue.LEFT_VALUE
+					|| side.getValue() == SideValue.RIGHT_VALUE)
+				orientation = SWT.VERTICAL;
+		}
+
+		ToolBar tb = new ToolBar((Composite) parent, orientation | SWT.WRAP
+				| SWT.FLAT | SWT.RIGHT);
 		return tb;
 	}
-
 }
