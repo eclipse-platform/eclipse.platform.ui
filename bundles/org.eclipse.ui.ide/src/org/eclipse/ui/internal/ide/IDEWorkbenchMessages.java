@@ -349,6 +349,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CopyFilesAndFoldersOperation_CopyResourcesTask;
 	public static String CopyFilesAndFoldersOperation_parentNotEqual;
 	public static String CopyFilesAndFoldersOperation_infoNotFound;
+	public static String CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAGroup;
 	public static String CopyFilesAndFoldersOperation_copyTitle;
 	public static String CopyFilesAndFoldersOperation_moveTitle;
 
@@ -422,6 +423,16 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_internalErrorTitle;
 	public static String WizardNewFolderCreationPage_title;
 	public static String WizardNewFolder_internalError;
+
+	// --- New Group ---
+	public static String WizardNewGroupMainPage_groupName;
+	public static String WizardNewGroupMainPage_groupLabel;
+	public static String WizardNewGroupMainPage_description;
+	public static String WizardNewGroupCreationPage_progress;
+	public static String WizardNewGroupCreationPage_errorTitle;
+	public static String WizardNewGroupCreationPage_internalErrorTitle;
+	public static String WizardNewGroupCreationPage_title;
+	public static String WizardNewGroup_internalError;
 
 	// --- New File ---
 	public static String WizardNewFileCreationPage_progress;
@@ -559,6 +570,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_project;
 	public static String ResourceInfo_linkedFile;
 	public static String ResourceInfo_linkedFolder;
+	public static String ResourceInfo_groupFolder;
 	public static String ResourceInfo_unknown;
 	public static String ResourceInfo_notLocal;
 	public static String ResourceInfo_undefinedPathVariable;
@@ -571,6 +583,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_fileContainerEncodingFormat;
 	public static String ResourceInfo_containerEncodingFormat;
 	public static String ResourceInfo_exWarning;
+	public static String ResourceInfo_isGroup;
 
 	// --- Project References ---
 	public static String ProjectReferencesPage_label;
@@ -669,6 +682,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String CreateLinkedResourceGroup_linkTargetNotFolder;
 	public static String CreateLinkedResourceGroup_linkTargetNonExistent;
 	public static String CreateLinkedResourceGroup_unableToValidateLinkTarget;
+	public static String CreateLinkedResourceGroup_linkRequiredUnderAGroup;
 
 	public static String PathVariablesBlock_variablesLabel;
 	public static String PathVariablesBlock_addVariableButton;
@@ -679,6 +693,18 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String PathVariableSelectionDialog_extendButton;
 	public static String PathVariableSelectionDialog_ExtensionDialog_title;
 	public static String PathVariableSelectionDialog_ExtensionDialog_description;
+
+	public static String ImportTypeDialog_title;
+	public static String ImportTypeDialog_question;
+	public static String ImportTypeDialog_moveFilesAndDirectories;
+	public static String ImportTypeDialog_copyFilesAndDirectories;
+	public static String ImportTypeDialog_recreateFilesAndDirectories;
+	public static String ImportTypeDialog_createLinks;
+	public static String ImportTypeDialog_importElementsAs;
+	public static String ImportTypeDialog_automatic;
+	public static String ImportTypeDialog_absolutePath;
+	public static String ImportTypeDialog_editVariables;
+	public static String ImportTypeDialog_alwaysPerformThisOperation;
 
 	// ==============================================================================
 	// Editor Framework

@@ -189,6 +189,9 @@ public interface IIDEHelpContextIds {
     public static final String NEW_FOLDER_WIZARD_PAGE = PREFIX
             + "new_folder_wizard_page_context"; //$NON-NLS-1$
 
+    public static final String NEW_GROUP_WIZARD_PAGE = PREFIX
+    		+ "new_group_wizard_page_context"; //$NON-NLS-1$
+
     public static final String NEW_FILE_WIZARD_PAGE = PREFIX
             + "new_file_wizard_page_context"; //$NON-NLS-1$
 

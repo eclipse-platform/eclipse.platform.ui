@@ -864,7 +864,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget,
      * @since 2.0
      */
     protected void initDragAndDrop() {
-        int ops = DND.DROP_COPY | DND.DROP_MOVE;
+        int ops = DND.DROP_COPY | DND.DROP_MOVE  | DND.DROP_LINK;
         Transfer[] transfers = new Transfer[] {
                 LocalSelectionTransfer.getInstance(),
                 ResourceTransfer.getInstance(), FileTransfer.getInstance(),

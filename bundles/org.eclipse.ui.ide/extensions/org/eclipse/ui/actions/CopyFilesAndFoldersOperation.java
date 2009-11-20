@@ -7,13 +7,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Serge Beauchamp (Freescale Semiconductor) - [229633] Group Support
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
-import com.ibm.icu.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -65,6 +65,8 @@ import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.wizards.datatransfer.FileStoreStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
 
+import com.ibm.icu.text.MessageFormat;
+
 /**
  * Perform the copy of file and folder resources from the clipboard when paste
  * action is invoked.
@@ -90,6 +92,17 @@ public class CopyFilesAndFoldersOperation {
 	 * Whether or not the copy has been canceled by the user.
 	 */
 	private boolean canceled = false;
+
+	/**
+	 * Whether or not the operation creates groups and links instead of folders
+	 * and files.
+	 */
+	private boolean createGroupsAndLinks = false;
+
+	/**
+	 * Whether or not the operation creates links instead of folders and files.
+	 */
+	private boolean createLinks = false;
 
 	/**
 	 * Overwrite all flag.
@@ -211,7 +224,7 @@ public class CopyFilesAndFoldersOperation {
 
 		for (int i = 0; i < resources.length; i++) {
 			IResource resource = resources[i];
-			if (resource != null) {
+			if (resource != null && !resource.isGroup()) {
 				URI location = resource.getLocationURI();
 				String message = null;
 				if (location != null) {
@@ -435,21 +448,44 @@ public class CopyFilesAndFoldersOperation {
 						copyExisting(source, existing, new SubProgressMonitor(
 								subMonitor, 1));
 					} else {
+					if (existing != null) {
 						// Copying a linked resource over unlinked or vice
 						// versa.
 						// Can't use setContents here. Fixes bug 28772.
 						delete(existing, new SubProgressMonitor(subMonitor, 0));
-						source.copy(destinationPath, IResource.SHALLOW,
-								new SubProgressMonitor(subMonitor, 1));
 					}
-				} else {
-					source.copy(destinationPath, IResource.SHALLOW,
+
+					if ((createLinks || createGroupsAndLinks)
+							&& (source.isLinked() == false)
+							&& (source.isGroup() == false)) {
+						if (source.getType() == IResource.FILE) {
+							IFile file = workspaceRoot.getFile(destinationPath);
+							file.createLink(source.getLocationURI(), 0,
+									new SubProgressMonitor(subMonitor, 1));
+						} else {
+							IFolder folder = workspaceRoot
+									.getFolder(destinationPath);
+							if (createGroupsAndLinks) {
+								folder.createGroup(0, new SubProgressMonitor(
+										subMonitor, 1));
+								IResource[] members = ((IContainer) source)
+										.members();
+								if (members.length > 0)
+									copy(members, destinationPath,
+											new SubProgressMonitor(subMonitor,
+													1));
+							} else
+								folder.createLink(source.getLocationURI(), 0,
+								new SubProgressMonitor(subMonitor, 1));
+						}
+					} else
+						source.copy(destinationPath, IResource.SHALLOW,
 							new SubProgressMonitor(subMonitor, 1));
+					}
 
-				}
-
-				if (subMonitor.isCanceled()) {
-					throw new OperationCanceledException();
+					if (subMonitor.isCanceled()) {
+						throw new OperationCanceledException();
+					}
 				}
 			}
 		}
@@ -498,7 +534,7 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	public IResource[] copyResources(final IResource[] resources,
 			IContainer destination) {
-		return copyResources(resources, destination, true, null);
+		return copyResources(resources, destination, true);
 	}
 
 	/**
@@ -521,7 +557,7 @@ public class CopyFilesAndFoldersOperation {
 	public IResource[] copyResourcesInCurrentThread(
 			final IResource[] resources, IContainer destination,
 			IProgressMonitor monitor) {
-		return copyResources(resources, destination, false, monitor);
+		return copyResources(resources, destination, false);
 	}
 
 	/**
@@ -534,7 +570,7 @@ public class CopyFilesAndFoldersOperation {
 	 * @return IResource[] the resulting {@link IResource}[]
 	 */
 	private IResource[] copyResources(final IResource[] resources,
-			IContainer destination, boolean fork, IProgressMonitor monitor) {
+			IContainer destination, boolean fork) {
 		final IPath destinationPath = destination.getFullPath();
 		final IResource[][] copiedResources = new IResource[1][0];
 
@@ -1159,6 +1195,11 @@ public class CopyFilesAndFoldersOperation {
 			AbstractWorkspaceOperation op = getUndoableCopyOrMoveOperation(
 					resources, destination);
 			op.setModelProviderIds(getModelProviderIds());
+			if (op instanceof CopyResourcesOperation) {
+				CopyResourcesOperation copyMoveOp = (CopyResourcesOperation) op;
+				copyMoveOp.setCreateGroups(createGroupsAndLinks);
+				copyMoveOp.setCreateLinks(createLinks);
+			}
 			PlatformUI.getWorkbench().getOperationSupport()
 					.getOperationHistory().execute(op, monitor,
 							WorkspaceUndoUtil.getUIInfoAdapter(messageShell));
@@ -1282,6 +1323,8 @@ public class CopyFilesAndFoldersOperation {
 				query, Arrays.asList(stores));
 		op.setContext(messageShell);
 		op.setCreateContainerStructure(false);
+		op.setCreateGroups(createGroupsAndLinks);
+		op.setCreateLinks(createLinks);
 		try {
 			op.run(monitor);
 		} catch (InterruptedException e) {
@@ -1351,6 +1394,17 @@ public class CopyFilesAndFoldersOperation {
 				return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_parentNotEqual;
 			}
 
+			// verify that if the destination is a group, the resource must be
+			// either a link or another group
+			if (destination.isGroup()) {
+				if (!sourceResource.isLinked() && !sourceResource.isGroup()
+						&& !createLinks && !createGroupsAndLinks) {
+					return NLS
+							.bind(
+									IDEWorkbenchMessages.CopyFilesAndFoldersOperation_sourceCannotBeCopiedIntoAGroup,
+									sourceResource.getName());
+				}
+			}
 			URI sourceLocation = sourceResource.getLocationURI();
 			if (sourceLocation == null) {
 				if (sourceResource.isLinked()) {
@@ -1367,6 +1421,7 @@ public class CopyFilesAndFoldersOperation {
 								sourceResource.getName());
 
 			}
+			if (!destination.isGroup()) {
 			if (sourceLocation.equals(destinationLocation)) {
 				return NLS
 						.bind(
@@ -1377,6 +1432,7 @@ public class CopyFilesAndFoldersOperation {
 			if (new Path(sourceLocation.toString()).isPrefixOf(new Path(
 					destinationLocation.toString()))) {
 				return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
+			}
 			}
 
 			String linkedResourceMessage = validateLinkedResource(destination,
@@ -1472,6 +1528,7 @@ public class CopyFilesAndFoldersOperation {
 		if (!isAccessible(destination))
 			return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationAccessError;
 
+		if (!destination.isGroup()) {
 		IFileStore destinationStore;
 		try {
 			destinationStore = EFS.getStore(destination.getLocationURI());
@@ -1501,7 +1558,7 @@ public class CopyFilesAndFoldersOperation {
 				if (sourceStore.isParentOf(destinationParent)) {
 					return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_destinationDescendentError;
 				}
-
+				}
 			}
 		}
 		return null;
@@ -1518,7 +1575,7 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private String validateLinkedResource(IContainer destination,
 			IResource source) {
-		if (source.isLinked() == false) {
+		if ((source.isLinked() == false) || source.isGroup()) {
 			return null;
 		}
 		IWorkspace workspace = destination.getWorkspace();
@@ -1708,6 +1765,78 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	public void setModelProviderIds(String[] modelProviderIds) {
 		this.modelProviderIds = modelProviderIds;
+	}
+
+	/**
+	 * Create groups and links of the given files and folders to the
+	 * destination. The current Thread is halted while the resources are copied
+	 * using a WorkspaceModifyOperation. This method should be called from the
+	 * UI Thread.
+	 * 
+	 * @param fileNames
+	 *            names of the files to copy
+	 * @param destination
+	 *            destination to which files will be copied
+	 * @see WorkspaceModifyOperation
+	 * @see Display#getThread()
+	 * @see Thread#currentThread()
+	 * @since 3.6
+	 */
+	public void createGroupAndLinks(final String[] fileNames,
+			IContainer destination) {
+		IFileStore[] stores = buildFileStores(fileNames);
+		if (stores == null) {
+			return;
+		}
+
+		createGroupsAndLinks = true;
+		copyFileStores(destination, stores, true, null);
+	}
+
+	/**
+	 * Create links of the given files and folders to the destination. The
+	 * current Thread is halted while the resources are copied using a
+	 * WorkspaceModifyOperation. This method should be called from the UI
+	 * Thread.
+	 * 
+	 * @param fileNames
+	 *            names of the files to copy
+	 * @param destination
+	 *            destination to which files will be copied
+	 * @see WorkspaceModifyOperation
+	 * @see Display#getThread()
+	 * @see Thread#currentThread()
+	 * @since 3.6
+	 */
+	public void linkFiles(final String[] fileNames, IContainer destination) {
+		IFileStore[] stores = buildFileStores(fileNames);
+		if (stores == null) {
+			return;
+		}
+
+		createLinks = true;
+		copyFileStores(destination, stores, true, null);
+	}
+
+	/**
+	 * Set whether or not groups and links will be created under the destination
+	 * container.
+	 * 
+	 * @param value
+	 * @since 3.6
+	 */
+	public void setCreateGroups(boolean value) {
+		createGroupsAndLinks = value;
+	}
+
+	/**
+	 * Set whether or not links will be created under the destination container.
+	 * 
+	 * @param value
+	 * @since 3.6
+	 */
+	public void setCreateLinks(boolean value) {
+		createLinks = value;
 	}
 
 	/**

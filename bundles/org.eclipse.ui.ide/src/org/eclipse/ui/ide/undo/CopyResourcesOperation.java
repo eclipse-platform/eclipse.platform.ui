@@ -154,7 +154,7 @@ public class CopyResourcesOperation extends
 					new IResource[] { resources[i] }, getDestinationPath(
 							resources[i], i), resourcesAtDestination,
 					new SubProgressMonitor(monitor, 1000 / resources.length),
-					uiInfo, true);
+					uiInfo, true, fCreateGroups, fCreateLinks);
 			// Accumulate the overwrites into the full list
 			for (int j = 0; j < overwrites.length; j++) {
 				overwrittenResources.add(overwrites[j]);
