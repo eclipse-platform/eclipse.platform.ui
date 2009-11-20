@@ -90,7 +90,6 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #run(IProgressMonitor)
 	 */
 	public static final int BUILD = 40;
-
 	/** 
 	 * Job priority constant (value 50) for decoration jobs.
 	 * Decoration jobs have lowest priority.  Decoration jobs generally
@@ -102,6 +101,7 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 * @see #run(IProgressMonitor)
 	 */
 	public static final int DECORATE = 50;
+
 	/** 
 	 * Job state code (value 0) indicating that a job is not 
 	 * currently sleeping, waiting, or running (i.e., the job manager doesn't know 
@@ -118,9 +118,10 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public static final int SLEEPING = 0x01;
 	/** 
-	 * Job state code (value 2) indicating that a job is waiting to be run.
+	 * Job state code (value 2) indicating that a job is waiting to run.
 	 * 
 	 * @see #getState()
+	 * @see #yieldRule()
 	 */
 	public static final int WAITING = 0x02;
 	/** 
@@ -559,19 +560,6 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
-	 * Sets whether or not this job has been directly initiated by a UI end user. 
-	 * These jobs may be presented differently in the UI. This method must be 
-	 * called before the job is scheduled.
-	 * 
-	 * @param value <code>true</code> if this job is a user-initiated job, and
-	 * <code>false</code> otherwise.
-	 * @see #isUser()
-	 */
-	public final void setUser(boolean value) {
-		super.setUser(value);
-	}
-
-	/**
 	 * Sets the thread that this job is currently running in, or <code>null</code>
 	 * if this job is not running or the thread is unknown.
 	 * <p>
@@ -585,6 +573,19 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final void setThread(Thread thread) {
 		super.setThread(thread);
+	}
+
+	/**
+	 * Sets whether or not this job has been directly initiated by a UI end user. 
+	 * These jobs may be presented differently in the UI. This method must be 
+	 * called before the job is scheduled.
+	 * 
+	 * @param value <code>true</code> if this job is a user-initiated job, and
+	 * <code>false</code> otherwise.
+	 * @see #isUser()
+	 */
+	public final void setUser(boolean value) {
+		super.setUser(value);
 	}
 
 	/**
@@ -669,5 +670,27 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	 */
 	public final void wakeUp(long delay) {
 		super.wakeUp(delay);
+	}
+
+	/**
+	 * Temporarily puts this job back into {@link #WAITING} state and relinquishes the job's 
+	 * scheduling rule so that any blocked jobs have an opportunity to run. This method
+	 * will block until the rule this job held prior to invoking this method
+	 * is re-acquired. If this method returns <tt>true</tt> then at least one blocked 
+	 * job has had a chance to execute. This method has no effect and returns <tt>false</tt>
+	 * if there are no jobs blocked by this one. <p>Note: If this job has acquired any other locks,
+	 * implicit or explicit, they will <i>not</i> be released. This may increase the risk of deadlock, so this method
+	 * should only be used when it is known that the environment is safe. 
+	 * <p>
+	 * This method must only be called from within the thread of this job, and only while it is in
+	 * the {@link #RUNNING} state.
+	 * <p>
+	 * @return <tt>true</tt> if this job yielded to a blocked job and <tt>false</tt> otherwise
+	 * @since org.eclipse.core.jobs 3.5
+	 * @see Job#getRule()
+	 * @see Job#isBlocking()
+	 */
+	public boolean yieldRule() {
+		return super.yieldRule();
 	}
 }

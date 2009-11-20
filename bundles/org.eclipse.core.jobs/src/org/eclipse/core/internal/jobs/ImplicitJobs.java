@@ -20,24 +20,34 @@ import org.eclipse.core.runtime.jobs.Job;
  * Implicit jobs are jobs that are running by virtue of a JobManager.begin/end
  * pair. They act like normal jobs, except they are tied to an arbitrary thread
  * of the client's choosing, and they can be nested.
+ * @ThreadSafe
  */
 class ImplicitJobs {
 	/**
 	 * Cached unused instance that can be reused 
+	 * 	@GuardedBy("this")
 	 */
 	private ThreadJob jobCache = null;
 	protected JobManager manager;
 
 	/**
 	 * Set of suspended scheduling rules.
+	 * 	@GuardedBy("this")
 	 */
 	private final Set suspendedRules = new HashSet(20);
 
 	/**
 	 * Maps (Thread->ThreadJob), threads to the currently running job for that
 	 * thread.
+	 * @GuardedBy("this")
 	 */
 	private final Map threadJobs = new HashMap(20);
+	/**
+	 * Maps (Thread->ThreadJob), threads to the currently waiting job for that
+	 * thread.
+	 * @GuardedBy("this")
+	 */
+	private final Map waitingJobs = new HashMap(20);
 
 	ImplicitJobs(JobManager manager) {
 		this.manager = manager;
@@ -81,7 +91,7 @@ class ImplicitJobs {
 			//join the thread job outside sync block
 			if (threadJob.acquireRule) {
 				//no need to re-acquire any locks because the thread did not wait to get this lock
-				if (manager.runNow(threadJob))
+				if (manager.runNow(threadJob) == null)
 					manager.getLockManager().addLockThread(Thread.currentThread(), rule);
 				else
 					threadJob = threadJob.joinRun(monitor);
@@ -128,7 +138,7 @@ class ImplicitJobs {
 			ThreadJob threadJob = (ThreadJob) threadJobs.get(currentThread);
 			if (threadJob == null) {
 				if (lastJob.getRule() != null)
-					notifyWaitingThreadJobs();
+					notifyWaitingThreadJobs(lastJob);
 				return;
 			}
 			String msg = "Worker thread ended job: " + lastJob + ", but still holds rule: " + threadJob; //$NON-NLS-1$ //$NON-NLS-2$
@@ -144,6 +154,9 @@ class ImplicitJobs {
 		}
 	}
 
+	/**
+	 * @GuardedBy("this")
+	 */
 	private void endThreadJob(ThreadJob threadJob, boolean resume) {
 		Thread currentThread = Thread.currentThread();
 		//clean up when last rule scope exits
@@ -155,7 +168,7 @@ class ImplicitJobs {
 		//note it is safe to do this even if the acquire was aborted
 		if (threadJob.acquireRule) {
 			manager.getLockManager().removeLockThread(currentThread, rule);
-			notifyWaitingThreadJobs();
+			notifyWaitingThreadJobs(threadJob);
 		}
 		//if the job was started, we need to notify job manager to end it
 		if (threadJob.isRunning())
@@ -165,6 +178,7 @@ class ImplicitJobs {
 
 	/**
 	 * Returns true if this rule has been suspended, and false otherwise.
+	 * @GuardedBy("this")
 	 */
 	private boolean isSuspended(ISchedulingRule rule) {
 		if (suspendedRules.size() == 0)
@@ -177,11 +191,15 @@ class ImplicitJobs {
 
 	/**
 	 * Returns a new or reused ThreadJob instance. 
+	 * @GuardedBy("this")
 	 */
 	private ThreadJob newThreadJob(ISchedulingRule rule) {
 		if (jobCache != null) {
 			ThreadJob job = jobCache;
-			job.setRule(rule);
+			// calling setRule will try to acquire JobManager.lock, breaking
+			// lock acquisition protocol. Since we managing this special job 
+			// ourselves we can call internalSetRule
+			((InternalJob) job).internalSetRule(rule);
 			job.acquireRule = job.isRunning = false;
 			job.realJob = null;
 			jobCache = null;
@@ -195,14 +213,15 @@ class ImplicitJobs {
 	 * scheduling rule is now free.  Wake any blocked thread jobs so they can 
 	 * compete for the newly freed lock
 	 */
-	private void notifyWaitingThreadJobs() {
-		synchronized (ThreadJob.notifier) {
-			ThreadJob.notifier.notifyAll();
+	void notifyWaitingThreadJobs(InternalJob job) {
+		synchronized (job.jobStateLock) {
+			job.jobStateLock.notifyAll();
 		}
 	}
 
 	/**
 	 * Indicates that a thread job is no longer in use and can be reused. 
+	 * @GuardedBy("this")
 	 */
 	private void recycle(ThreadJob job) {
 		if (jobCache == null && job.recycle())
@@ -244,20 +263,63 @@ class ImplicitJobs {
 		if (currentThread == destinationThread)
 			return;
 		//ensure destination thread doesn't already have a rule
-		ThreadJob job = (ThreadJob) threadJobs.get(destinationThread);
-		Assert.isLegal(job == null, "Transfer rule to job that already owns a rule"); //$NON-NLS-1$
+		ThreadJob target = (ThreadJob) threadJobs.get(destinationThread);
+		Assert.isLegal(target == null, "Transfer rule to job that already owns a rule"); //$NON-NLS-1$
 		//ensure calling thread owns the job being transferred
-		job = (ThreadJob) threadJobs.get(currentThread);
-		Assert.isNotNull(job, "transferRule without beginRule"); //$NON-NLS-1$
-		Assert.isLegal(job.getRule() == rule, "transferred rule " + rule + " does not match beginRule: " + job.getRule()); //$NON-NLS-1$ //$NON-NLS-2$
-		//transfer the thread job without ending it
-		job.setThread(destinationThread);
+		ThreadJob source = (ThreadJob) threadJobs.get(currentThread);
+		Assert.isNotNull(source, "transferRule without beginRule"); //$NON-NLS-1$
+		Assert.isLegal(source.getRule() == rule, "transferred rule " + rule + " does not match beginRule: " + source.getRule()); //$NON-NLS-1$ //$NON-NLS-2$		// transfer the thread job without ending it
+		source.setThread(destinationThread);
 		threadJobs.remove(currentThread);
-		threadJobs.put(destinationThread, job);
-		//transfer lock
-		if (job.acquireRule) {
+		threadJobs.put(destinationThread, source);
+		// transfer lock
+		if (source.acquireRule) {
 			manager.getLockManager().removeLockThread(currentThread, rule);
 			manager.getLockManager().addLockThread(destinationThread, rule);
 		}
+		// Wake up any blocked jobs (waiting within yield or joinRun) waiting on
+		// this rule
+		notifyWaitingThreadJobs(source);
+	}
+
+	synchronized InternalJob findBlockedJob(InternalJob job) {
+		ThreadJob threadJob = (ThreadJob) threadJobs.get(job.getThread());
+		Collection c = waitingJobs.values();
+		for (Iterator jobItr = c.iterator(); jobItr.hasNext();) {
+			InternalJob waitingThreadJob = (InternalJob) jobItr.next();
+			if (threadJob == null) {
+				if (waitingThreadJob.isConflicting(job))
+					return waitingThreadJob;
+			} else {
+				if (waitingThreadJob.isConflicting(threadJob))
+					return waitingThreadJob;
+			}
+		}
+		return null;
+	}
+
+	synchronized ThreadJob removeWaiting(ThreadJob threadJob) {
+		synchronized (((InternalJob) threadJob).jobStateLock) {
+			threadJob.isWaiting = false;
+			notifyWaitingThreadJobs(threadJob);
+		}
+		return (ThreadJob) waitingJobs.remove(threadJob.getThread());
+	}
+
+	synchronized ThreadJob addWaiting(ThreadJob threadJob) {
+		synchronized (((InternalJob) threadJob).jobStateLock) {
+			threadJob.isWaiting = true;
+			notifyWaitingThreadJobs(threadJob);
+		}
+		return (ThreadJob) waitingJobs.put(threadJob.getThread(), threadJob);
+	}
+
+	synchronized ThreadJob getThreadJob(Thread thread) {
+		return (ThreadJob) threadJobs.get(thread);
+	}
+
+	synchronized void resumeJob(ThreadJob job) {
+		final Thread currentThread = Thread.currentThread();
+		threadJobs.put(currentThread, job);
 	}
 }
