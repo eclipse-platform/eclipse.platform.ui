@@ -154,7 +154,8 @@ public class CVSProjectSetCapability extends ProjectSetCapability {
 			 * we will need to recreate repository location with 'useKnown' flag
 			 * set to true.
 			 */
-			if (suggestedList.size() == 1
+			if (suggestedList != null
+					&& suggestedList.size() == 1
 					&& CVSRepositoryLocationMatcher.isMatching(
 							(ICVSRepositoryLocation) suggestedList.get(0),
 							loadInfoForProject.repositoryLocation)) {

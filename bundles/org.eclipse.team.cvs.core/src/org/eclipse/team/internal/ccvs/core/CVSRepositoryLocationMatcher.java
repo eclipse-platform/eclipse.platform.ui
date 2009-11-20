@@ -91,7 +91,7 @@ public class CVSRepositoryLocationMatcher {
 		} else if (knownRepositories.containsAll(projectSetRepositoryLocations)) {
 			// All repositories are known, no need to prompt for additional
 			// information.
-			return null;
+			return Collections.EMPTY_MAP;
 		} else {
 			// Not all repositories from the project set are known.
 			Map result = new HashMap();
@@ -149,11 +149,6 @@ public class CVSRepositoryLocationMatcher {
 
 				result.put(projectSetRepositoryLocation, list);
 			}
-//			for (Iterator i = result.values().iterator(); i.hasNext();) {
-//				List l = (List) i.next();
-//				if (!l.isEmpty())
-//					return result;
-//			}
 			return result;
 		}
 	}
@@ -208,7 +203,8 @@ public class CVSRepositoryLocationMatcher {
 	static boolean isPromptRequired(Map suggestedRepositoryLocations) {
 		if (suggestedRepositoryLocations == null)
 			return false;
-		for (Iterator i = suggestedRepositoryLocations.values().iterator(); i.hasNext();) {
+		for (Iterator i = suggestedRepositoryLocations.values().iterator(); i
+				.hasNext();) {
 			List list = (List) i.next();
 			if (!list.isEmpty())
 				return true;
