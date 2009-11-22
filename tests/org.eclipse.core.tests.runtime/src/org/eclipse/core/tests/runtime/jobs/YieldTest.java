@@ -11,7 +11,8 @@
 package org.eclipse.core.tests.runtime.jobs;
 
 import java.util.*;
-import org.eclipse.core.internal.jobs.JobManager;
+import junit.framework.Test;
+import junit.framework.TestSuite;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -22,6 +23,20 @@ import org.eclipse.core.tests.harness.TestJob;
  * Tests for {@link Job#yieldRule()}.
  */
 public class YieldTest extends AbstractJobManagerTest implements ILogListener {
+
+	public static Test suite() {
+		return new TestSuite(YieldTest.class);
+		//		TestSuite suite = new TestSuite();
+		//		for (int i = 0; i < 1000; i++) {
+		//			suite.addTest(new YieldTest("testYieldJobToJob"));
+		//		}
+		//		return suite;
+	}
+
+	public YieldTest(String name) {
+		super(name);
+	}
+
 	class TestJobListener extends JobChangeAdapter {
 		private Set scheduled = Collections.synchronizedSet(new HashSet());
 
@@ -125,19 +140,18 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 	}
 
 	public void testYieldJobToJob() {
-		final PathRule rule = new PathRule("testYield");
+		final PathRule rule = new PathRule("testYieldJobToJob");
 
 		final Job[] jobs = new Job[2];
 		Job yieldJob = new Job("Yielding") {
 			protected IStatus run(IProgressMonitor monitor) {
-				Assert.isTrue(jobs[1].getResult() == null);
-				Assert.isTrue(jobs[1].getState() == Job.WAITING);
-				while (true)
-					if (yieldRule())
-						break;
+				assertTrue(jobs[1].getResult() == null);
+				while (!yieldRule()) {
+					//loop until yield succeeds
+				}
 				waitForCompletion(jobs[1]);
-				Assert.isTrue(jobs[1].getResult().isOK());
-				Assert.isTrue(jobs[1].getState() == Job.NONE);
+				assertTrue(jobs[1].getResult().isOK());
+				assertTrue(jobs[1].getState() == Job.NONE);
 				return Status.OK_STATUS;
 			}
 		};
@@ -146,8 +160,8 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 
 		Job conflictingJob = new Job("Conflicting") {
 			protected IStatus run(IProgressMonitor monitor) {
-				Assert.isTrue(jobs[0].getState() == WAITING);
-				Assert.isTrue(jobs[0].getResult() == null);
+				assertEquals(WAITING, jobs[0].getState());
+				assertTrue(jobs[0].getResult() == null);
 				return Status.OK_STATUS;
 			}
 		};
@@ -157,28 +171,33 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		yieldJob.schedule();
 		conflictingJob.schedule();
 		waitForCompletion(yieldJob);
-		Assert.isTrue(yieldJob.getResult().isOK(), "Result is not ok: " + yieldJob.getResult());
+		final IStatus yieldResult = yieldJob.getResult();
+		if (!yieldResult.isOK()) {
+			Throwable t = yieldResult.getException();
+			if (t != null)
+				fail("yieldJob failed", t);
+			fail("yieldJob failed:" + yieldResult);
+		}
 		waitForCompletion(conflictingJob);
-		Assert.isTrue(conflictingJob.getResult().isOK());
+		assertTrue(conflictingJob.getResult().isOK());
 	}
 
 	public void testThreadRestored() {
-		final PathRule rule = new PathRule("testYield");
+		final PathRule rule = new PathRule("testThreadRestored");
 
 		final Job[] jobs = new Job[2];
 		Job yieldJob = new Job("Yielding") {
 			protected IStatus run(IProgressMonitor monitor) {
-				Assert.isTrue(jobs[1].getResult() == null, "Conflicting job result is not null: " + jobs[1].getResult());
-				Assert.isTrue(jobs[1].getState() == Job.WAITING, "Conflicting jobs state is not waiting: " + JobManager.printState(jobs[1].getState()));
+				assertNull("Conflicting job result is not null: " + jobs[1].getResult(), jobs[1].getResult());
 				Thread before = getThread();
 				while (true)
 					if (yieldRule())
 						break;
 				waitForCompletion(jobs[1]);
 				Thread after = getThread();
-				Assert.isTrue(before == after, "Thread not restored");
-				Assert.isTrue(jobs[1].getResult().isOK(), "Conflicting job not done");
-				Assert.isTrue(jobs[1].getState() == Job.NONE, "Conflicting job still running");
+				assertEquals("Thread not restored", before, after);
+				assertTrue("Conflicting job not done", jobs[1].getResult().isOK());
+				assertTrue("Conflicting job still running", jobs[1].getState() == Job.NONE);
 				return Status.OK_STATUS;
 			}
 		};
@@ -187,8 +206,8 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 
 		Job conflictingJob = new Job("Conflicting") {
 			protected IStatus run(IProgressMonitor monitor) {
-				Assert.isTrue(jobs[0].getState() == WAITING);
-				Assert.isTrue(jobs[0].getResult() == null);
+				assertTrue(jobs[0].getState() == WAITING);
+				assertTrue(jobs[0].getResult() == null);
 				return Status.OK_STATUS;
 			}
 		};
@@ -198,9 +217,9 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		yieldJob.schedule();
 		conflictingJob.schedule();
 		waitForCompletion(yieldJob);
-		Assert.isTrue(yieldJob.getResult().isOK(), "Result is not ok: " + yieldJob.getResult());
+		assertTrue("Result is not ok: " + yieldJob.getResult(), yieldJob.getResult().isOK());
 		waitForCompletion(conflictingJob);
-		Assert.isTrue(conflictingJob.getResult().isOK());
+		assertTrue(conflictingJob.getResult().isOK());
 	}
 
 	public void testYieldJobToJobAndEnsureConflictingRunsBeforeResume() {
@@ -248,9 +267,9 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		waitForCompletion(yieldJob);
 		waitForCompletion(conflictingJob1);
 		waitForCompletion(nonConflict);
-		Assert.isTrue(yieldJob.getResult().isOK());
-		Assert.isTrue(conflictingJob1.getResult().isOK());
-		Assert.isTrue(nonConflict.getResult().isOK());
+		assertTrue(yieldJob.getResult().isOK());
+		assertTrue(conflictingJob1.getResult().isOK());
+		assertTrue(nonConflict.getResult().isOK());
 		System.out.println("");
 	}
 
@@ -261,14 +280,14 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 	//		final IStatus[] results = new IStatus[2];
 	//		Job yieldJob = new Job("Yielding") {
 	//			protected IStatus run(IProgressMonitor monitor) {
-	//				Assert.isTrue(results[1] == null);
-	//				Assert.isTrue(jobs[1].getState() == Job.WAITING);
+	//				assertTrue(results[1] == null);
+	//				assertTrue(jobs[1].getState() == Job.WAITING);
 	//				lock.acquire();
 	//				while (true)
 	//					if (yield())
 	//						break;
-	//				Assert.isTrue(results[1].isOK());
-	//				Assert.isTrue(jobs[1].getState() == Job.NONE);
+	//				assertTrue(results[1].isOK());
+	//				assertTrue(jobs[1].getState() == Job.NONE);
 	//				return Status.OK_STATUS;
 	//			}
 	//		};
@@ -279,8 +298,8 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 	//		Job conflictingJob = new Job("Conflicting") {
 	//			protected IStatus run(IProgressMonitor monitor) {
 	//				lock.acquire();
-	//				Assert.isTrue(jobs[0].getState() == WAITING);
-	//				Assert.isTrue(results[0] == null);
+	//				assertTrue(jobs[0].getState() == WAITING);
+	//				assertTrue(results[0] == null);
 	//				return Status.OK_STATUS;
 	//			}
 	//		};
@@ -291,9 +310,9 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 	//		yieldJob.schedule();
 	//		conflictingJob.schedule();
 	//		waitForCompletion(yieldJob);
-	//		Assert.isTrue(yieldJob.getResult().isOK());
+	//		assertTrue(yieldJob.getResult().isOK());
 	//		waitForCancel(conflictingJob);
-	//		Assert.isTrue(conflictingJob.getResult().isOK());
+	//		assertTrue(conflictingJob.getResult().isOK());
 	//	}
 
 	public void testYieldThreadToJob() {
@@ -334,12 +353,12 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		barrier.setStatus(TestBarrier.STATUS_WAIT_FOR_START);
 		barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_DONE);
 		waitForCompletion(conflictingJob);
-		Assert.isTrue(conflictingJob.getResult().isOK());
+		assertTrue(conflictingJob.getResult().isOK());
 	}
 
 	public void testYieldJobToThread() {
 
-		final PathRule rule = new PathRule("testYield");
+		final PathRule rule = new PathRule("testYieldJobToThread");
 		final TestBarrier barrier = new TestBarrier();
 		final Job yielding = new Job("Yielding") {
 			protected IStatus run(IProgressMonitor monitor) {
@@ -369,7 +388,7 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		t.start();
 
 		waitForCompletion(yielding);
-		Assert.isTrue(yielding.getResult().isOK());
+		assertTrue(yielding.getResult().isOK());
 	}
 
 	public void testYieldThreadJobToThread() {
@@ -408,7 +427,7 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		t.start();
 
 		waitForCompletion(yielding, 5000);
-		Assert.isTrue(yielding.getResult().isOK());
+		assertTrue(yielding.getResult().isOK());
 	}
 
 	public void testYieldThreadToThreadJob() {
@@ -449,7 +468,7 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		conflicting.schedule();
 
 		waitForCompletion(conflicting, 5000);
-		Assert.isTrue(conflicting.getResult().isOK());
+		assertTrue(conflicting.getResult().isOK());
 		barrier.waitForStatus(TestBarrier.STATUS_BLOCKED);
 	}
 
@@ -480,7 +499,7 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		otherJob.schedule();
 
 		waitForCompletion(otherJob);
-		Assert.isTrue(!otherJob.getResult().isOK());
+		assertTrue(!otherJob.getResult().isOK());
 		waitForCompletion(yielding);
 	}
 
