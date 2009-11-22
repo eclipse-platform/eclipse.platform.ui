@@ -283,7 +283,9 @@ class ThreadJob extends Job {
 					if (blocker == newBlocker) {
 						synchronized (blockingJob.jobStateLock) {
 							try {
-								blockingJob.jobStateLock.wait();
+								//blocking job may have finished before we entered sync block
+								if (blockingJob.getState() == Job.RUNNING)
+									blockingJob.jobStateLock.wait();
 							} catch (InterruptedException e) {
 								interrupted = true;
 								// Must break here to ensure aboutToWait() is called outside the lock.
