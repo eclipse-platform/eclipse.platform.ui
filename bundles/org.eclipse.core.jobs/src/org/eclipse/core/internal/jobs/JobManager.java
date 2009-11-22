@@ -1229,7 +1229,8 @@ public class JobManager implements IJobManager {
 			synchronized (unblocked.jobStateLock) {
 				while (((ThreadJob) unblocked).isWaiting) {
 					try {
-						unblocked.jobStateLock.wait();
+						//wait a reasonable amount of time for the waiting job to start, but avoid setting up a circular wait
+						unblocked.jobStateLock.wait(5000);
 					} catch (InterruptedException e) {
 						interrupted = true;
 					}
@@ -1239,7 +1240,8 @@ public class JobManager implements IJobManager {
 			synchronized (unblocked.jobStateLock) {
 				while (unblocked.internalGetState() == Job.WAITING) {
 					try {
-						unblocked.jobStateLock.wait();
+						//wait a reasonable amount of time for the waiting job to start, but avoid setting up a circular wait
+						unblocked.jobStateLock.wait(5000);
 					} catch (InterruptedException e) {
 						interrupted = true;
 					}
