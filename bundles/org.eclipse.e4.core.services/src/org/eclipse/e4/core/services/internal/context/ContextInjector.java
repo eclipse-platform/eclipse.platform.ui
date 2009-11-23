@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.internal.context;
 
-import org.eclipse.e4.core.services.injector.IObjectProvider;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -26,8 +24,11 @@ import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.injector.IObjectDescriptor;
+import org.eclipse.e4.core.services.injector.IObjectProvider;
 import org.eclipse.e4.core.services.internal.annotations.AnnotationsSupport;
 
+// TBD rename InjectorImpl
 /**
  * Reflection-based context injector.
  */
@@ -35,7 +36,7 @@ public class ContextInjector {
 
 	private class Processor {
 
-		final private String name;
+		final private IObjectDescriptor descriptor;
 		protected boolean addition;
 
 		protected boolean shouldProcessPostConstruct = false;
@@ -50,14 +51,16 @@ public class ContextInjector {
 
 		public ArrayList classHierarchy = new ArrayList(5);
 
-		public Processor(String name, boolean addition, boolean isInDispose) {
-			this.name = name;
+		public Processor(IObjectDescriptor descriptor, boolean addition, boolean isInDispose) {
+			this.descriptor = descriptor;
 			this.addition = addition;
 			this.isInDispose = isInDispose;
 		}
 
 		public void setObject(Object userObject) {
 			this.userObject = userObject;
+			// this operation also resets state variables
+			classHierarchy.clear();
 		}
 
 		public void setInjectNulls(boolean injectWithNulls) {
@@ -75,9 +78,11 @@ public class ContextInjector {
 		public void processField(final Field field, InjectionProperties properties) {
 			if (Modifier.isStatic(field.getModifiers()) != processStatic)
 				return;
-			// filter if name is specified
-			if ((name != null) && !name.equals(context.getKey(properties)))
-				return;
+			if (descriptor != null) { // filter if descriptor is specified
+				String descriptorsKey = context.getKey(descriptor);
+				if (!descriptorsKey.equals(context.getKey(properties)))
+					return;
+			}
 			Object value = null;
 			if (addition) {
 				Object provider = properties.getProvider();
@@ -100,11 +105,12 @@ public class ContextInjector {
 				return;
 			// we only get here if we are injecting
 			InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
-			if (name != null) {
+			if (descriptor != null) {
 				// is it one of the arguments of this method?
 				boolean found = false;
+				String descriptorsKey = context.getKey(descriptor);
 				for (int i = 0; i < properties.length; i++) {
-					if (name.equals(context.getKey(properties[i]))) {
+					if (descriptorsKey.equals(context.getKey(properties[i]))) {
 						found = true;
 						break;
 					}
@@ -144,6 +150,7 @@ public class ContextInjector {
 				else
 					callMethod(userObject, method, actualParams);
 			}
+			postConstructMethods.clear();
 		}
 
 	}
@@ -203,8 +210,11 @@ public class ContextInjector {
 
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
+	// TBD rename objectProvider
 	final protected IObjectProvider context;
 	final private AnnotationsSupport annotationSupport;
+
+	protected WeakRefList userObjects = new WeakRefList(3); // start small
 
 	public ContextInjector(IObjectProvider context) {
 		this.context = context;
@@ -212,15 +222,19 @@ public class ContextInjector {
 		annotationSupport = new AnnotationsSupport(context);
 	}
 
-	public void inject(String name, Object userObject) {
-		Processor processor = new Processor(name, true, false);
-		processClassHierarchy(userObject, processor);
+	public void added(IObjectDescriptor descriptor) {
+		Object[] objectsCopy = userObjects.getSafeCopy();
+		Processor processor = new Processor(descriptor, true, false);
+		for (int i = 0; i < objectsCopy.length; i++) {
+			processClassHierarchy(objectsCopy[i], processor);
+		}
 	}
 
 	public void inject(Object userObject) {
 		Processor processor = new Processor(null, true, false);
 		processor.shouldProcessPostConstruct = true;
 		processClassHierarchy(userObject, processor);
+		userObjects.add(userObject);
 	}
 
 	// TBD use null object to inject statics
@@ -232,31 +246,41 @@ public class ContextInjector {
 		processClassHierarchy(object, processor);
 	}
 
-	public void uninject(String name, Object userObject) {
-		Processor processor = new Processor(name, false, false);
-		processClassHierarchy(userObject, processor);
+	public void removed(IObjectDescriptor descriptor) {
+		Processor processor = new Processor(descriptor, false, false);
+		Object[] objectsCopy = userObjects.getSafeCopy();
+		for (int i = 0; i < objectsCopy.length; i++) {
+			processClassHierarchy(objectsCopy[i], processor);
+		}
 	}
 
-	public void uninject(Object userObject) {
+	public void uninject(Object releasedObject) {
+		if (!userObjects.remove(releasedObject))
+			return;
 		Processor processor = new Processor(null, false, false);
 		processor.setInjectNulls(true);
-		processClassHierarchy(userObject, processor);
+		processClassHierarchy(releasedObject, processor);
 	}
 
-	public void dispose(Object userObject) {
-		if (userObject instanceof IDisposable)
-			((IDisposable) userObject).dispose();
-
+	public void dispose() {
+		Object[] objectsCopy = userObjects.getSafeCopy();
 		Processor processor = new Processor(null, false, true);
 		processor.setInjectNulls(true);
-		processClassHierarchy(userObject, processor);
+		for (int i = 0; i < objectsCopy.length; i++) {
+			if (objectsCopy[i] instanceof IDisposable)
+				((IDisposable) objectsCopy[i]).dispose();
+			processClassHierarchy(objectsCopy[i], processor);
+		}
 	}
 
-	public void reparent(Object userObject, IObjectProvider oldParent) {
+	public void reparent(IObjectProvider oldParent) {
 		if (oldParent == context)
 			return;
+		Object[] objectsCopy = userObjects.getSafeCopy();
 		Processor processor = new ReparentProcessor(oldParent);
-		processClassHierarchy(userObject, processor);
+		for (int i = 0; i < objectsCopy.length; i++) {
+			processClassHierarchy(objectsCopy[i], processor);
+		}
 	}
 
 	static void logWarning(Object destination, Exception e) {

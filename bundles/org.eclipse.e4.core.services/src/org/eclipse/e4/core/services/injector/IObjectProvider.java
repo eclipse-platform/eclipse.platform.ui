@@ -22,6 +22,8 @@ public interface IObjectProvider {
 
 	public void setInjector(Injector injector);
 
+	public Injector getInjector();
+
 	public String getKey(IObjectDescriptor key);
 
 }

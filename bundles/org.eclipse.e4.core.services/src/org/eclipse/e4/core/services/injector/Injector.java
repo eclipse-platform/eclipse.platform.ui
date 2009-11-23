@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.injector;
 
+import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.internal.context.ContextInjector;
 
 /**
@@ -17,7 +18,7 @@ import org.eclipse.e4.core.services.internal.context.ContextInjector;
  * 
  * @noextend This class is not intended to be subclassed by clients.
  */
-final public class Injector {
+final public class Injector implements IDisposable {
 
 	final private ContextInjector eInjector;
 
@@ -25,30 +26,40 @@ final public class Injector {
 		eInjector = new ContextInjector(context);
 	}
 
-	// TBD change name to key
-	public void inject(String name, Object userObject) {
-		eInjector.inject(name, userObject);
+	public void inject(Object object) {
+		eInjector.inject(object);
 	}
 
-	public void inject(Object userObject) {
-		eInjector.inject(userObject);
+	public void uninject(Object object) {
+		eInjector.uninject(object);
+	}
+
+	public void added(IObjectDescriptor descriptor) {
+		eInjector.added(descriptor);
+	}
+
+	public void removed(IObjectDescriptor descriptor) {
+		eInjector.removed(descriptor);
+	}
+
+	public Object make(Class clazz) {
+		return eInjector.make(clazz);
+	}
+
+	public Object invoke(Object object, String methodName, Object defaultValue) {
+		return eInjector.invoke(object, methodName, defaultValue);
 	}
 
 	public void injectStatic(Class clazz) {
 		eInjector.injectStatic(clazz);
 	}
 
-	// TBD change name to key
-	public void uninject(String name, Object userObject) {
-		eInjector.uninject(name, userObject);
+	public void reparent(IObjectProvider oldParent) {
+		eInjector.reparent(oldParent);
 	}
 
-	public void uninject(Object userObject) {
-		eInjector.uninject(userObject);
-	}
-
-	public Object make(Class clazz) {
-		return eInjector.make(clazz);
+	public void dispose() {
+		eInjector.dispose();
 	}
 
 }

@@ -14,8 +14,7 @@ package org.eclipse.e4.core.services.context.spi;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IEclipseContextAware;
-import org.eclipse.e4.core.services.internal.context.ContextInjectionImpl;
-import org.eclipse.e4.core.services.internal.context.EclipseContext;
+import org.eclipse.e4.core.services.internal.context.ObjectProviderContext;
 
 /**
  * An injection factory is used to inject data and services from a context into a domain object. The
@@ -86,8 +85,10 @@ final public class ContextInjectionFactory {
 	 * @return Returns the injected object
 	 */
 	static public Object inject(Object object, IEclipseContext context) {
-		ContextInjectionImpl injector = new ContextInjectionImpl();
-		injector.injectInto(object, context);
+		// TBD IEclipseContext might have a delayed runAndTrack. In this case
+		// the object might be returned before the actual injection took place.
+		context.runAndTrack(ObjectProviderContext.getObjectProvider(context),
+				new Object[] { object });
 		return object;
 	}
 
@@ -106,7 +107,8 @@ final public class ContextInjectionFactory {
 	 */
 	static public Object invoke(Object object, String methodName, IEclipseContext context,
 			Object defaultValue) {
-		return ContextInjectionImpl.invoke(object, methodName, context, defaultValue);
+		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
+		return objectProvider.getInjector().invoke(object, methodName, defaultValue);
 	}
 
 	/**
@@ -118,7 +120,26 @@ final public class ContextInjectionFactory {
 	 *            the context previously injected into the object
 	 */
 	static public void uninject(Object object, IEclipseContext context) {
-		if (context instanceof EclipseContext)
-			((EclipseContext) context).uninject(object);
+		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
+		objectProvider.getInjector().uninject(object);
+	}
+
+	/**
+	 * Obtain an instance of the specified class and inject it with the context.
+	 * <p>
+	 * Class'es scope dictates if a new instance of the class will be created, or existing instance
+	 * will be reused.
+	 * </p>
+	 * 
+	 * @param clazz
+	 *            the class to be instantiated
+	 * @return an instance of the specified class
+	 */
+	static public Object make(Class clazz, final IEclipseContext context) {
+		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
+		Object result = objectProvider.getInjector().make(clazz);
+		if (result != null)
+			context.runAndTrack(objectProvider, new Object[] { result });
+		return result;
 	}
 }

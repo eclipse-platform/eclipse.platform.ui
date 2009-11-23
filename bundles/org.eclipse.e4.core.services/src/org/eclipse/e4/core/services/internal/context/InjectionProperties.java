@@ -12,6 +12,8 @@ package org.eclipse.e4.core.services.internal.context;
 
 import org.eclipse.e4.core.services.injector.IObjectDescriptor;
 
+// TBD separate InjectionProperties into 2 classes: what we need for the key
+// and the extra info for injection.
 public class InjectionProperties implements IObjectDescriptor {
 
 	private boolean inject;

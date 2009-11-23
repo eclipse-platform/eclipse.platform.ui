@@ -84,7 +84,8 @@ public class ContextInjectionFactoryTest extends TestCase {
 		// add an extra argument for the inner class constructors
 		context.set(ContextInjectionFactoryTest.class.getName(), this);
 
-		Object basicResult = context.make(TestConstructorObjectBasic.class);
+		Object basicResult = ContextInjectionFactory
+				.make(TestConstructorObjectBasic.class, context);
 		assertNotNull(basicResult);
 		assertTrue(basicResult instanceof TestConstructorObjectBasic);
 		assertTrue(((TestConstructorObjectBasic) basicResult).defaultConstructorCalled);
