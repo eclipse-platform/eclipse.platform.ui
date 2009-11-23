@@ -93,14 +93,14 @@ public class LocalFileSystem extends FileSystem {
 		//all known platforms with native implementation support the read only flag
 		attributes |= EFS.ATTRIBUTE_READ_ONLY;
 
-		//this must be kept in sync with the actual native implementations.
+		// this must be kept in sync with functionality of previous libs not implementing nativeAttributes method
 		String os = getOS();
 		String arch = System.getProperty("osgi.arch", ""); //$NON-NLS-1$ //$NON-NLS-2$
 		if (os.equals(Constants.OS_WIN32))
 			attributes |= EFS.ATTRIBUTE_ARCHIVE | EFS.ATTRIBUTE_HIDDEN;
-		else if (os.equals(Constants.OS_LINUX) || (os.equals(Constants.OS_SOLARIS) && arch.equals(Constants.ARCH_SPARC)) || os.equals(Constants.OS_MACOSX))
+		else if (os.equals(Constants.OS_LINUX) || (os.equals(Constants.OS_SOLARIS) && arch.equals(Constants.ARCH_SPARC)))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE | EFS.ATTRIBUTE_SYMLINK | EFS.ATTRIBUTE_LINK_TARGET;
-		else if (os.equals(Constants.OS_HPUX) || os.equals(Constants.OS_QNX))
+		else if (os.equals(Constants.OS_MACOSX) || os.equals(Constants.OS_HPUX) || os.equals(Constants.OS_QNX))
 			attributes |= EFS.ATTRIBUTE_EXECUTABLE;
 		return attributes;
 	}
