@@ -560,7 +560,7 @@ M4 = Platform-specific fourth key -->
          point="org.eclipse.ui.newWizards">
     <wizard
             name="%antNewJavaProjectWizard.name"
-            icon="$nl$/icons/full/obj16/ant.gif"
+            icon="$nl$/icons/full/obj16/new_ant_project.gif"
             class="org.eclipse.ant.internal.ui.datatransfer.AntNewJavaProjectWizard"
             preferredPerspectives="org.eclipse.jdt.ui.JavaPerspective,org.eclipse.jdt.ui.JavaBrowsingPerspective,org.eclipse.jdt.ui.JavaHierarchyPerspective"
             project="true"
