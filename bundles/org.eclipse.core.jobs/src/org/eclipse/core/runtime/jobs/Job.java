@@ -646,6 +646,13 @@ public abstract class Job extends InternalJob implements IAdaptable {
 	}
 
 	/**
+	 * Returns a string representation of this job to be used for debugging purposes only.
+	 */
+	public String toString() {
+		return super.toString();
+	}
+
+	/**
 	 * Puts this job immediately into the {@link #WAITING} state so that it is 
 	 * eligible for immediate execution. If this job is not currently sleeping, 
 	 * the request is ignored.
