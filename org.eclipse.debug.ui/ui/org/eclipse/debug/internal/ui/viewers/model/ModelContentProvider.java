@@ -480,11 +480,6 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                  */
                 public synchronized void requestComplete(IElementMementoRequest request) {
                     notifyStateUpdate(input, UPDATE_COMPLETE, request);
-                    if (DEBUG_STATE_SAVE_RESTORE
-                        && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
-                            .getId()))) {
-                        System.out.println("\tSTATE END: " + request); //$NON-NLS-1$
-                    }
 
                     if (!request.isCanceled() && (request.getStatus() == null || request.getStatus().isOK())) {
                         XMLMemento keyMemento = (XMLMemento) delta.getElement();
@@ -494,6 +489,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                             final String keyMementoString = writer.toString();
                             final ModelDelta stateDelta = (ModelDelta) fViewerStates.get(keyMementoString);
                             if (stateDelta != null) {
+                                if (DEBUG_STATE_SAVE_RESTORE
+                                    && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
+                                        .getId()))) {
+                                    System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
+                                }
+
                                 stateDelta.setElement(input);
                                 // begin restoration
                                 UIJob job = new UIJob("restore state") { //$NON-NLS-1$
@@ -502,13 +503,19 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                                             if (DEBUG_STATE_SAVE_RESTORE
                                                 && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID
                                                     .equals(getPresentationContext().getId()))) {
+                                                System.out.println("STATE RESTORE BEGINS"); //$NON-NLS-1$
                                                 System.out.println("\tRESTORE: " + stateDelta.toString()); //$NON-NLS-1$
+                                                notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
                                             }
                                             fViewerStates.remove(keyMementoString);
                                             fPendingState = stateDelta;
                                             doInitialRestore(fPendingState);
                                         } else {
-                                            notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
+                                            if (DEBUG_STATE_SAVE_RESTORE
+                                                && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
+                                                    .getId()))) {
+                                                System.out.println("STATE RESTORE CANCELED."); //$NON-NLS-1$
+                                            }
                                         }
                                         return Status.OK_STATUS;
                                     }
@@ -517,7 +524,11 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                                 job.setSystem(true);
                                 job.schedule();
                             } else {
-                                notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
+                                if (DEBUG_STATE_SAVE_RESTORE
+                                    && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
+                                        .getId()))) {
+                                    System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - NO MATCHING STATE"); //$NON-NLS-1$ //$NON-NLS-2$
+                                }
                             }
                         } catch (IOException e) {
                             DebugUIPlugin.log(e);
@@ -539,7 +550,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                     if (DEBUG_STATE_SAVE_RESTORE
                         && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
                             .getId()))) {
-                        System.out.println("\tSTATE BEGIN: " + fRequest); //$NON-NLS-1$
+                        System.out.println("STATE RESTORE INPUT COMARE BEGIN : " + fRequest); //$NON-NLS-1$
                     }
                     notifyStateUpdate(input, UPDATE_BEGINS, fRequest);
                     defaultProvider.encodeElements(new IElementMementoRequest[] { fRequest });
@@ -562,6 +573,12 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
             manager.addRequest(new ElementMementoRequest(ModelContentProvider.this, getViewer().getInput(), manager,
                 getPresentationContext(), delta.getElement(), getViewerTreePath(delta), inputMemento, delta));
             manager.processReqeusts();
+        } else {
+            if (DEBUG_STATE_SAVE_RESTORE
+                && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
+                    .getId()))) {
+                System.out.println("STATE RESTORE: No input memento provider"); //$NON-NLS-1$
+            }            
         }
     }
 
