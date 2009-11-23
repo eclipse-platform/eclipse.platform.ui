@@ -23,6 +23,7 @@ import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.demo.contacts.databinding.AggregateNameObservableValue;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -44,7 +45,7 @@ import org.eclipse.swt.widgets.Text;
 
 public class DetailComposite extends Composite {
 
-	private MDirtyable dirtyable;
+	private final MDirtyable dirtyable;
 	private Contact originalContact;
 	private Contact clonedContact;
 	private boolean commitChanges = false;
@@ -85,10 +86,9 @@ public class DetailComposite extends Composite {
 		createSeparator(composite, "General");
 
 		createText(composite, "Title:", "title");
-		createText(composite, "First Name:", "firstName");
-		createText(composite, "Middle Name:", "middleName");
-		createText(composite, "Last Name:", "lastName");
-
+		createText(composite, "Name:", "name"); // Leads to Aggregate
+		// "firstName" "middleName"
+		// "lastName"
 		createText(composite, "Company:", "company");
 		createText(composite, "Job Title:", "jobTitle");
 		createText(composite, "Note:", "note");
@@ -130,7 +130,7 @@ public class DetailComposite extends Composite {
 					image = dummyPortrait;
 				}
 				ImageData imageData = image.getImageData();
-				double ratio = imageData.height / 68.0;
+				double ratio = imageData.height / 85.0;
 				int width = (int) (imageData.width / ratio);
 				int height = (int) (imageData.height / ratio);
 				ImageData scaledImageData = imageData.scaledTo(width, height);
@@ -238,16 +238,21 @@ public class DetailComposite extends Composite {
 				// The label image is set with data binding
 				imageLabel = new Label(parent, SWT.NONE);
 				GridData gridData3 = new GridData();
-				gridData3.verticalSpan = 7;
+				gridData3.verticalSpan = 5;
 				imageLabel.setLayoutData(gridData3);
 			}
 		}
 		text.setLayoutData(gridData2);
 
 		if (property != null) {
-			dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
-					PojoObservables.observeDetailValue(contactValue, property,
-							String.class));
+			if (property.equals("name")) {
+				dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
+						new AggregateNameObservableValue(contactValue));
+			} else {
+				dbc.bindValue(SWTObservables.observeText(text, SWT.Modify),
+						PojoObservables.observeDetailValue(contactValue,
+								property, String.class));
+			}
 		}
 
 		text.addModifyListener(new ModifyListener() {

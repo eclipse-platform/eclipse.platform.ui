@@ -41,9 +41,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
 
+@SuppressWarnings("restriction")
 public class VCardContactsRepository implements IContactsRepository {
 
-	private IObservableList contacts;
+	private final IObservableList contacts;
 
 	public VCardContactsRepository() {
 		List<Contact> contacts = new ArrayList<Contact>();
@@ -56,7 +57,7 @@ public class VCardContactsRepository implements IContactsRepository {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		this.contacts = new WritableList(contacts, null);
 	}
 
@@ -69,17 +70,17 @@ public class VCardContactsRepository implements IContactsRepository {
 				FileInputStream inputStream = new FileInputStream(contact);
 				FileOutputStream outputStream = new FileOutputStream(path
 						.append(contact.getName()).toFile());
-				
+
 				int read = inputStream.read(buffer);
 				while (read != -1) {
 					outputStream.write(buffer, 0, read);
 					read = inputStream.read(buffer);
 				}
-				
+
 				inputStream.close();
 				outputStream.close();
 			}
-			
+
 			return getLocalContacts();
 		}
 		return localContacts;
@@ -106,10 +107,6 @@ public class VCardContactsRepository implements IContactsRepository {
 				return name.endsWith(".vcf");
 			}
 		});
-	}
-
-	private void readContacts() {
-
 	}
 
 	public void addContact(final Contact contact) {
@@ -168,7 +165,8 @@ public class VCardContactsRepository implements IContactsRepository {
 		String charSet = "Cp1252";
 
 		/*
-		 * irst try to guess the char set (currently not working under some JVMs
+		 * first try to guess the char set (currently not working under some
+		 * JVMs
 		 */
 
 		/*
@@ -279,7 +277,7 @@ public class VCardContactsRepository implements IContactsRepository {
 						line = bufferedReader.readLine();
 					}
 					String jpegString = builder.toString();
-					
+
 					byte[] imageBytes = Base64.decode(jpegString.getBytes());
 					ByteArrayInputStream is = new ByteArrayInputStream(
 							imageBytes);
