@@ -2,11 +2,11 @@ Native Build Info:
 ------------------
 
 platform:         x86_64-redhat-linux
-built by:         john_arthorne@ca.ibm.com
-build date:       10-May-2007
+built by:         pawel.pogorzelski@pl.ibm.com
+build date:       23-Nov-2009
 OS Name:          Red Hat Enterprise Linux Client release 4
-OS Version:       Linux 2.6.9-42.EL x86_64 (glibc-2.3.4-2.25)
-Compiler version: gcc version 3.4.6-3
+OS Version:       Linux 2.6.9-67.EL x86_64 (glibc-2.3.4-2.39)
+Compiler version: gcc version 3.4.6-9
 
 build script:
 -------------
