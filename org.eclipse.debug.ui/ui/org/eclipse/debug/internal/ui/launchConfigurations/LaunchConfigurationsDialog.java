@@ -485,7 +485,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
         comp.setLayoutData(new GridData(GridData.FILL_BOTH));
         
         ViewForm viewForm = new ViewForm(comp, SWT.FLAT | SWT.BORDER);
-        ToolBarManager toolBarManager= new ToolBarManager();
+        ToolBarManager toolBarManager= new ToolBarManager(SWT.FLAT);
         ToolBar toolBar = toolBarManager.createControl(viewForm);
         toolBar.setBackground(parent.getBackground());
         viewForm.setTopLeft(toolBar);
