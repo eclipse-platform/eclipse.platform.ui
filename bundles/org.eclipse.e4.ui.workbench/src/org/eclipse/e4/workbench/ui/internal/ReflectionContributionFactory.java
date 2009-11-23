@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.InvalidRegistryObjectException;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IContributionFactorySpi;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.emf.common.util.URI;
 import org.osgi.framework.Bundle;
 import org.osgi.service.log.LogService;
@@ -188,7 +189,7 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			String clazz = uri.segment(2);
 			try {
 				Class<?> targetClass = bundle.loadClass(clazz);
-				contribution = context.make(targetClass);
+				contribution = ContextInjectionFactory.make(targetClass, context);
 			} catch (ClassNotFoundException e) {
 				contribution = null;
 				String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
