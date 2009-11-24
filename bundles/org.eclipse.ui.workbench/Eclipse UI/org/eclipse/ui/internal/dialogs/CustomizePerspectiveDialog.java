@@ -22,7 +22,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.runtime.CoreException;
@@ -3130,6 +3129,13 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				invisible.add(id);
 			}
 		} else if (item.getChildren().size() > 0) {
+			if (item.isChangedByUser()) {
+				String id = getCommandID(item);
+				if (item.getState())
+					visible.add(id);
+				else
+					invisible.add(id);
+			}
 			for (Iterator i = item.getChildren().iterator(); i.hasNext();) {
 				getChangedIds((DisplayItem) i.next(), invisible, visible);
 			}
