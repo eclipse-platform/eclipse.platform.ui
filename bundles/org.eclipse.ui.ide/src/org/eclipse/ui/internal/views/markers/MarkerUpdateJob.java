@@ -80,7 +80,10 @@ class MarkerUpdateJob extends Job {
 	 */
 	protected void buildMarkers(IProgressMonitor monitor) {
 		MarkersChangeListener markersListener = builder.getMarkerListener();
-		markersListener.cancelQueuedUIUpdates();
+		if (monitor.isCanceled()) {
+			return;
+		}
+		//markersListener.cancelQueuedUIUpdates();
 		markersListener
 				.indicateStatus(
 						MarkerMessages.MarkerView_searching_for_markers, false);
@@ -97,12 +100,15 @@ class MarkerUpdateJob extends Job {
 		monitor.setTaskName(MarkerMessages.MarkerView_processUpdates);
 		
 		markersListener.indicateStatus(
-				MarkerMessages.MarkerView_processUpdates, true/* false */);
+				MarkerMessages.MarkerView_processUpdates, false);
 		processMarkerEntries(markers, monitor);
 		if (monitor.isCanceled()) {
 			return;
 		}
-		markersListener.scheduleUIUpdate(0L);
+		markersListener.scheduleUIUpdate(MarkersChangeListener.SHORT_DELAY);
+		if (monitor.isCanceled()) {
+			return;
+		}
 		lastUpdateTime=System.currentTimeMillis();
 	}
 
@@ -157,17 +163,12 @@ class MarkerUpdateJob extends Job {
 	 * @see org.eclipse.core.runtime.jobs.Job#shouldRun()
 	 */
 	public boolean shouldRun() {
-		if (!builder.isActive()) {
-			return false;
-		}
 		if (!PlatformUI.isWorkbenchRunning()) {
 			return false;
 		}
-		MarkersChangeListener markersListener = builder.getMarkerListener();
 		// Do not run if the change came in before there is a viewer
-		return markersListener != null ? (markersListener.canUpdateNow())
-				&& (IDEWorkbenchPlugin.getDefault().getBundle().getState() == Bundle.ACTIVE)
-				: false;
+		return (IDEWorkbenchPlugin.getDefault().getBundle().getState() == Bundle.ACTIVE)
+				&& builder.isActive();
 	}
 
 	/*
@@ -247,25 +248,12 @@ class SortingJob extends MarkerUpdateJob {
 		MarkersChangeListener markersListener = builder.getMarkerListener();
 		markersListener.cancelQueuedUIUpdates();
 		markersListener.indicateStatus(
-				MarkerMessages.MarkerView_19, true/* false */);
+				MarkerMessages.MarkerView_19, false);
 		builder.getMarkers().sortMarkerEntries(monitor);
 		markersListener.scheduleUIUpdate(0L);
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
 		return Status.OK_STATUS;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.internal.views.markers.MarkerUpdateJob#shouldRun()
-	 */
-	public boolean shouldRun() {
-		MarkersChangeListener markersListener = builder.getMarkerListener();
-		// Do not run if the change came in before there is a viewer
-		return markersListener != null ? (markersListener.canUpdateNow())
-				&& (IDEWorkbenchPlugin.getDefault().getBundle().getState() == Bundle.ACTIVE)
-				: false;
 	}
 }

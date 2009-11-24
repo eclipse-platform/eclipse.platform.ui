@@ -29,6 +29,7 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
  * 
  */
 class UIUpdateJob extends WorkbenchJob {
+	
 	private ExtendedMarkersView view;
 
 	private boolean updating;
@@ -54,18 +55,29 @@ class UIUpdateJob extends WorkbenchJob {
 	 * IProgressMonitor)
 	 */
 	public IStatus runInUIThread(IProgressMonitor monitor) {
-		monitor.beginTask(MarkerMessages.MarkerView_19,
-				IProgressMonitor.UNKNOWN);
-		Markers clone=view.getActiveViewerInputClone();
+		if(monitor.isCanceled()){
+			return Status.CANCEL_STATUS;
+		}
 		TreeViewer viewer = view.getViewer();
+		Markers clone = view.getActiveViewerInputClone();
 		try {
 			updating = true;
+			monitor.beginTask(MarkerMessages.MarkerView_19,
+					IProgressMonitor.UNKNOWN);
+
+			if (monitor.isCanceled()) {
+				return Status.CANCEL_STATUS;
+			}
 			viewer.getTree().setRedraw(false);
 			
 			//always use a clone for Thread safety.
 			//We avoid setting the clone as new input as we would offset
 			//the benefits of optimization in TreeViewer.
-			clone=view.createViewerInputClone();
+			clone = view.createViewerInputClone();
+			if (clone == null) {
+				//do not update yet,we are changing
+				return Status.OK_STATUS;
+			}
 			IContentProvider contentProvider = viewer.getContentProvider();
 			contentProvider.inputChanged(viewer, view.getViewerInput(),clone);
 			
@@ -91,14 +103,14 @@ class UIUpdateJob extends WorkbenchJob {
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
 			viewer.refresh(true);
-
-			if (monitor.isCanceled())
-				return Status.CANCEL_STATUS;
+			//cancellation after the refresh call 
+			//does not save us much
 			view.reexpandCategories();
+			
 			if(view.getBuilder().readChangeFlags()[0]){
 				//indicate changes
 			}
-			lastUpdateTime=System.currentTimeMillis();
+			lastUpdateTime = System.currentTimeMillis();
 		} finally {
 			viewer.getTree().setRedraw(true);
 			view.updateStatusLine((IStructuredSelection) viewer.getSelection());

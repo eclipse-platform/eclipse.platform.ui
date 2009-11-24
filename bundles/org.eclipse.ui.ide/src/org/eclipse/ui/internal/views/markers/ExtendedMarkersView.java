@@ -382,8 +382,11 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.setInput(builder.getMarkers());
 		//always use a clone for Thread safety
 		IContentProvider contentProvider = viewer.getContentProvider();
-		contentProvider.inputChanged(viewer, getViewerInput(),
-				createViewerInputClone());
+		Markers clone = createViewerInputClone();
+		if (clone == null) {
+			clone = builder.getMarkers().getClone();
+		}
+		contentProvider.inputChanged(viewer, getViewerInput(), clone);
 		builder.start();
 	}
 
@@ -530,7 +533,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @see org.eclipse.ui.part.WorkbenchPart#dispose()
 	 */
 	public void dispose() {
-		builder.cancelUpdate(false);
+		builder.cancelUpdate();
 		cancelQueuedUpdates();
 		
 		builder.dispose();
@@ -916,7 +919,10 @@ public class ExtendedMarkersView extends ViewPart {
 	}
 
 	/**
-	 * Return a new clone to use in UI.
+	 * Return a new clone to use in UI.Can return
+	 * null if markers are changing or building.
+	 * @see CachedMarkerBuilder#createMarkersClone()
+	 * 
 	 * 
 	 * @return Object
 	 */
@@ -1579,6 +1585,13 @@ public class ExtendedMarkersView extends ViewPart {
 			return uiUpdateJob.getLastUpdateTime();
 		}
 		return -1;
+	}
+	/**
+	 * @return true if the UI isUpdating
+	 * 
+	 */
+	boolean isUIUpdating() {
+		return uiUpdateJob!=null?uiUpdateJob.isUpdating():false;
 	}
 
 	/**
