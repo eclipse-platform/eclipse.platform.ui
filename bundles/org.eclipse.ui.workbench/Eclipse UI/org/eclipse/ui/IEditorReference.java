@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,13 +12,13 @@
 package org.eclipse.ui;
 
 /**
- * Implements a reference to a editor.
- * The IEditorPart will not be instanciated until
- * the editor becomes visible or the API getEditor
- * is sent with true;
+ * Implements a reference to an editor. The IEditorPart will not be instantiated
+ * until the editor becomes visible or the API {@link #getEditor(boolean)} is
+ * called with true.
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
+ * 
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IEditorReference extends IWorkbenchPartReference {
@@ -29,11 +29,10 @@ public interface IEditorReference extends IWorkbenchPartReference {
      */
     public String getFactoryId();
 
-    /**
-     * Returns the editor input name. May return null is the
-     * name is not available or if the editor failed to be 
-     * restored.
-     */
+	/**
+	 * Returns the editor input's name. May return null if the name is not
+	 * available or if the editor failed to be restored.
+	 */
     public String getName();
 
     /**
@@ -44,9 +43,9 @@ public interface IEditorReference extends IWorkbenchPartReference {
      */
     public IEditorPart getEditor(boolean restore);
 
-    /**
-     * Returns true if the editor is pinned otherwise returns false.
-     */
+	/**
+	 * Returns true if the editor is pinned, otherwise returns false.
+	 */
     public boolean isPinned();
 
     /**
