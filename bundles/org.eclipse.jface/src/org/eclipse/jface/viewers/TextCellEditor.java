@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Tom Eicher <eclipse@tom.eicher.name> - fix minimum width
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -264,7 +265,9 @@ public class TextCellEditor extends CellEditor {
      * set a minimumSize.
      */
     public LayoutData getLayoutData() {
-        return new LayoutData();
+        LayoutData data = new LayoutData();
+        data.minimumWidth= 0;
+        return data;
     }
 
     /**
