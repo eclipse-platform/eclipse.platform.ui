@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,28 +35,6 @@ public class ContextManager {
 	
 	private Map providersByPluginId;
 	private List globalProviders;
-
-	private Map contextsById = new HashMap();
-	private Map idsByContext = new HashMap();
-	private int idCounter = 0;
-
-	/*
-	 * Adds the given dynamically generated IContext to the system, and
-	 * generates a unique ID for it.
-	 */
-	public String addContext(IContext context) {
-		String plugin = HelpPlugin.PLUGIN_ID;
-		String id = (String)idsByContext.get(context);
-		if (id != null) {
-			// context already registered
-		} else {
-			// generate ID and register the context
-			id = "ID" + idCounter++; //$NON-NLS-1$
-			idsByContext.put(context, id);
-			contextsById.put(id, context);
-		}
-		return plugin + "." + id; //$NON-NLS-1$
-	}
 	
 	/*
 	 * Returns the Context for the given id and locale.
@@ -64,14 +42,6 @@ public class ContextManager {
 	public IContext getContext(String contextId, String locale) {
 		if (HelpPlugin.DEBUG_CONTEXT  && contextId != null) {
 			System.out.println("ContextManager.getContext(\"" + contextId + "\")"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		// first check for dynamic context definitions
-		Context dynamicContext = (Context)contextsById.get(contextId);
-		if (dynamicContext != null) {
-			if (HelpPlugin.DEBUG_CONTEXT) {
-				System.out.println("ContextManager.getContext found dynamic context"); //$NON-NLS-1$
-			}
-			return dynamicContext;
 		}
 		
 		// ask the providers
