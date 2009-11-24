@@ -13,6 +13,7 @@
 
 package org.eclipse.ui.internal;
 
+import com.ibm.icu.util.ULocale;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
@@ -29,7 +30,6 @@ import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.CommandManager;
 import org.eclipse.core.commands.common.EventManager;
@@ -197,8 +197,6 @@ import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.SynchronousBundleListener;
-
-import com.ibm.icu.util.ULocale;
 
 /**
  * The workbench class represents the top of the Eclipse user interface. Its
@@ -389,6 +387,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 	 */
 	private ListenerList workbenchListeners = new ListenerList(
 			ListenerList.IDENTITY);
+
+	private ServiceRegistration workbenchService;
 
 	/**
 	 * Creates a new workbench.
@@ -2343,6 +2343,9 @@ public final class Workbench extends EventManager implements IWorkbench {
 			}
 
 			if (initOK[0] && runEventLoop) {
+				workbenchService = WorkbenchPlugin.getDefault()
+						.getBundleContext().registerService(
+								IWorkbench.class.getName(), this, null);
 				// start eager plug-ins
 				startPlugins();
 				addStartupRegistryListener();
@@ -2741,6 +2744,8 @@ public final class Workbench extends EventManager implements IWorkbench {
 		workbenchListeners.clear();
 
 		cancelEarlyStartup();
+		if (workbenchService != null)
+			workbenchService.unregister();
 
 		// for dynamic UI
 		Platform.getExtensionRegistry().removeRegistryChangeListener(
