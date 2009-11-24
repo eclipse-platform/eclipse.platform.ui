@@ -56,6 +56,7 @@ import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.Perspective;
 import org.eclipse.ui.internal.SaveableHelper;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -2866,4 +2867,33 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertFalse(refs2[0].equals(refs[0]));
 		assertFalse(refs2[1].equals(refs[2]));
 	}
+	
+	/**
+	 * A generic test to validate IWorkbenchPage's
+	 * {@link IWorkbenchPage#setPartState(IWorkbenchPartReference, int)
+	 * setPartState(IWorkbenchPartReference, int)} method which ensures the
+	 * prevention of regressing on bug 209333.
+	 */
+	public void testSetPartState() throws Exception {
+		// show a view
+		IViewPart view = fActivePage.showView(MockViewPart.ID);
+
+		// now minimize it
+		IViewReference reference = (IViewReference) fActivePage
+				.getReference(view);
+		fActivePage.setPartState(reference, IWorkbenchPage.STATE_MINIMIZED);
+
+		// since it's minimized, it should be a fast view
+		Perspective perspective = ((WorkbenchPage) fActivePage)
+				.getActivePerspective();
+		assertTrue("A minimized view should be a fast view", perspective
+				.isFastView(reference));
+
+		// try to restore it
+		fActivePage.setPartState(reference, IWorkbenchPage.STATE_RESTORED);
+		// since it's maximized, it should not be a fast view
+		assertFalse("A restored view should not be a fast view", perspective
+				.isFastView(reference));
+	}
+
 }
