@@ -13,6 +13,7 @@
 #include <jni.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include <utime.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,6 +46,20 @@ static jbyte* getUTF8ByteArray(JNIEnv *env, jcharArray target) {
 	(*env)->ReleaseCharArrayElements(env, target, temp, 0);
 	
 	return result;
+}
+
+/*
+ * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
+ * Method:    nativeAttributes
+ * Signature: ()I
+ */
+JNIEXPORT jint JNICALL Java_org_eclipse_core_internal_filesystem_local_LocalFileNatives_nativeAttributes
+  (JNIEnv *env, jclass clazz) {
+#if defined(EFS_SYMLINK_SUPPORT)
+    return ATTRIBUTE_READ_ONLY | ATTRIBUTE_EXECUTABLE | ATTRIBUTE_SYMLINK | ATTRIBUTE_LINK_TARGET;
+#else
+    return ATTRIBUTE_READ_ONLY | ATTRIBUTE_EXECUTABLE;
+#endif
 }
 
 /*
@@ -257,6 +272,74 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
 }
 
+mode_t getumask() {
+	// in case something goes wrong just return 63 which is 0077 in octals
+	mode_t mask = 63;
+
+	int fds[2];
+	if (pipe(fds) == -1) {
+		return mask;
+	}
+
+	pid_t child_pid;
+	child_pid = fork();
+
+	if (child_pid == 0) {
+		// child process
+		ssize_t bytes_written = 0;
+		close(fds[0]);
+		mask = umask(0);
+		while (1) {
+			ssize_t written = write(fds[1], &mask + bytes_written, sizeof(mask) - bytes_written);
+			if (written == -1) {
+				if (errno != EINTR) {
+					break;
+				}
+			} else {
+				bytes_written += written;
+				if (bytes_written == sizeof(mask)) {
+					break;
+				}
+			}
+		}
+		close(fds[1]);
+		_exit(0);
+	} else if (child_pid != -1) {
+		// parent process, fork succeded
+		int stat_loc;
+		ssize_t bytes_read = 0;
+		mode_t buf;
+		close(fds[1]);
+		while (1) {
+			ssize_t b_read = read(fds[0], &buf + bytes_read, sizeof(buf) - bytes_read);
+			if (b_read == -1) {
+				if (errno != EINTR) {
+					break;
+				}
+			} else {
+				if (b_read == 0) {
+					break;
+				}
+				bytes_read += b_read;
+				if (bytes_read == sizeof(mask)) {
+					break;
+				}
+			}
+		}
+		if (bytes_read == sizeof(mask)) {
+			mask = buf;
+		}
+		close(fds[0]);
+		waitpid(child_pid, &stat_loc, 0);
+	} else {
+		// parent process, fork failed
+		close(fds[0]);
+		close(fds[1]);
+	}
+
+	return mask;
+}
+
 /*
  * Class:     org_eclipse_core_internal_filesystem_local_LocalFileNatives
  * Method:    internalSetFileInfoW
@@ -288,9 +371,10 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 	if (result != 0) goto fail;
 
 	/* create the mask for the relevant bits */
-	int mask= info.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
-	int oldmask= mask;
-	int flags= info.st_flags;
+	mode_t mask = info.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
+	mode_t umask = getumask();
+	mode_t oldmask = mask;
+	int flags = info.st_flags;
 			
 #if USE_ARCHIVE_FLAG
 	if (archive)
@@ -300,7 +384,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 #endif
 
 	if (executable)
-		mask |= S_IXUSR;							// set 'x' only for user
+		mask |= S_IXUSR | ((S_IXGRP | S_IXOTH) & ~umask);
 	else
 		mask &= ~(S_IXUSR | S_IXGRP | S_IXOTH);	// clear all 'x'
 		
@@ -310,7 +394,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 		flags |= UF_IMMUTABLE;					// set immutable flag for usr
 #endif
 	} else {
-		mask |= (S_IRUSR | S_IWUSR);				// set 'r' and 'w' for user
+		mask |= S_IRUSR | S_IWUSR | ((S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) & ~umask);
 #if USE_IMMUTABLE_FLAG
 		flags &= ~UF_IMMUTABLE;					// try to clear immutable flags for usr
 #endif
