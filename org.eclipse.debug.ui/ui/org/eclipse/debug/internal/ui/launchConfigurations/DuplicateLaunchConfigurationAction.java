@@ -44,7 +44,7 @@ public class DuplicateLaunchConfigurationAction extends AbstractLaunchConfigurat
 	 */
 	protected void performAction() {
 		ILaunchConfiguration original = (ILaunchConfiguration)getStructuredSelection().getFirstElement();
-		String newName = DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(original.getName());
+		String newName = DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(original.getName());
 		try {
 			ILaunchConfigurationWorkingCopy newWorkingCopy = original.copy(newName);
 			newWorkingCopy.doSave();

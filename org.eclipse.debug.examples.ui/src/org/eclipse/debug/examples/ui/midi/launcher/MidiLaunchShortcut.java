@@ -143,7 +143,7 @@ public class MidiLaunchShortcut implements ILaunchShortcut {
 		ILaunchConfigurationType type = getLaunchType();
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = type.newInstance(null, getLaunchManager().
-					generateUniqueLaunchConfigurationNameFrom(
+					generateLaunchConfigurationName(
 							"[" + file.getProject().getName() + "] " + file.getName()));
 			workingCopy.setAttribute(MidiLaunchDelegate.ATTR_MIDI_FILE, file.getFullPath().toString());
 			workingCopy.setMappedResources(new IResource[]{file});

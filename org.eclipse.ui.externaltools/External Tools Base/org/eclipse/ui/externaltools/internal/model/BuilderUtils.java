@@ -145,7 +145,7 @@ public class BuilderUtils {
 	public static ILaunchConfiguration duplicateConfiguration(IProject project, ILaunchConfiguration config) throws CoreException {
 		Map attributes= config.getAttributes();
 		String newName= new StringBuffer(config.getName()).append(ExternalToolsModelMessages.BuilderUtils_7).toString();
-		newName= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(newName);
+		newName= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(newName);
 		ILaunchConfigurationType newType= getConfigurationDuplicationType(config);
 		ILaunchConfigurationWorkingCopy newWorkingCopy= newType.newInstance(getBuilderFolder(project, true), newName);
 		newWorkingCopy.setAttributes(attributes);

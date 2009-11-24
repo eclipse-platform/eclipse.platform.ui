@@ -65,7 +65,7 @@ public class CreateLaunchConfigurationAction extends AbstractLaunchConfiguration
 				type = (ILaunchConfigurationType) object;
 			}
 			try {
-				ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2)); 
+				ILaunchConfigurationWorkingCopy wc = type.newInstance(null, DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(LaunchConfigurationsMessages.CreateLaunchConfigurationAction_New_configuration_2)); 
 				ILaunchConfigurationTabGroup tabGroup = LaunchConfigurationPresentationManager.getDefault().getTabGroup(wc, getMode());
 				// this only works because this action is only present when the dialog is open
 				ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();

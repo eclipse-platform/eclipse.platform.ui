@@ -579,7 +579,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		boolean wasAutobuilding= ResourcesPlugin.getWorkspace().getDescription().isAutoBuilding();
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
-			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(ExternalToolsUIMessages.BuilderPropertyPage_New_Builder_7);
+			String name= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(ExternalToolsUIMessages.BuilderPropertyPage_New_Builder_7);
 			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);		
 			
 			StringBuffer buffer= new StringBuffer(IExternalToolConstants.BUILD_TYPE_FULL);
@@ -1096,7 +1096,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		try {
 			ILaunchConfigurationWorkingCopy workingCopy = null;
 			String builderName = command.getBuilderName();
-			String name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(builderName);
+			String name= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(builderName);
 			workingCopy = type.newInstance(BuilderUtils.getBuilderFolder(getInputProject(), true), name);		
 					
 			workingCopy.setAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, builderName);
