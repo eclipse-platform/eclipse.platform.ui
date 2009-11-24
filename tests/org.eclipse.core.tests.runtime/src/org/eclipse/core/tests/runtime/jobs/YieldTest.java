@@ -60,6 +60,7 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 	private IJobChangeListener[] jobListeners;
 
 	protected int scheduledJobs;
+
 	public static Test suite() {
 		return new TestSuite(YieldTest.class);
 		//		TestSuite suite = new TestSuite();
@@ -485,24 +486,6 @@ public class YieldTest extends AbstractJobManagerTest implements ILogListener {
 		waitForCompletion(conflicting, 5000);
 		assertTrue(conflicting.getResult().isOK());
 		barrier.waitForStatus(TestBarrier.STATUS_BLOCKED);
-	}
-
-	/**
-	 * A job has been canceled.  Pause this thread so that a worker thread
-	 * has a chance to receive the cancel event.
-	 */
-	private void waitForCancel(Job job) {
-		int i = 0;
-		while (job.getState() == Job.RUNNING) {
-			Thread.yield();
-			sleep(100);
-			Thread.yield();
-			//sanity test to avoid hanging tests
-			if (i++ > 1000) {
-				dumpState();
-				assertTrue("Timeout waiting for job to cancel", false);
-			}
-		}
 	}
 
 	private synchronized void waitForCompletion() {
