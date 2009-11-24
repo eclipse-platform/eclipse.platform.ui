@@ -30,7 +30,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 
@@ -117,7 +116,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 			cancelQueuedUIUpdates();
 			cancelUpdate();
 		}
-		indicateStatus(MarkerMessages.MarkerView_queueing_updates, true);
+		//indicateStatus(MarkerMessages.MarkerView_queueing_updates, true);
 		builder.scheduleUpdateJob(delay, true, changeFlags);
 		//updateTimer.reset();
 	}
@@ -130,7 +129,7 @@ class MarkersChangeListener implements IResourceChangeListener {
 			cancelQueuedUIUpdates();
 			cancelUpdate();
 		}
-		indicateStatus(MarkerMessages.MarkerView_queueing_updates, true);
+		//indicateStatus(MarkerMessages.MarkerView_queueing_updates, true);
 		builder.scheduleUpdateJob(delay, true);
 		//updateTimer.reset();
 	}
@@ -168,28 +167,29 @@ class MarkersChangeListener implements IResourceChangeListener {
 		view.scheduleUpdate(delay);
 	}
 
-	/**
-	 * Indicate the status message on UI.
-	 * 
-	 * @param messsage
-	 *            the status to display
-	 */
-	void indicateStatus(String messsage) {
-		indicateStatus(messsage, false);
-	}
-
-	/**
-	 * Indicate the status message on UI.
-	 * 
-	 * @param messsage
-	 *            the status to display
-	 * @param updateUI
-	 *            <code>true</code> update label to show changing status
-	 */
-	void indicateStatus(String messsage, boolean updateUI) {
-		view.indicateUpdating(messsage != null ? messsage
-				: MarkerMessages.MarkerView_queueing_updates, updateUI);
-	}
+	///**
+	// * Indicate the status message on UI.
+	// * 
+	// * @param messsage
+	// *            the status to display
+	// */
+	//void indicateStatus(String messsage) {
+	//	indicateStatus(messsage, false);
+	//}
+	////See Bug 294303
+	///**
+	// * Indicate the status message on UI.
+	// * 
+	// * @param messsage
+	// *            the status to display
+	// * @param updateUI
+	// *            <code>true</code> update label to show changing status
+	// */
+	//void indicateStatus(String messsage, boolean updateUI) {
+	// //See Bug 294303
+	//	view.indicateUpdating(messsage != null ? messsage
+	//			: MarkerMessages.MarkerView_queueing_updates, updateUI);
+	//}
 
 	/**
 	 * Cancel any marker update if pending.

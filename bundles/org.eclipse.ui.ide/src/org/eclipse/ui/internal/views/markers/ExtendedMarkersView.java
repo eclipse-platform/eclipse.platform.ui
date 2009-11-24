@@ -23,10 +23,8 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.IContext;
 import org.eclipse.help.IContextProvider;
 import org.eclipse.jface.action.ContributionManager;
@@ -66,7 +64,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
@@ -92,7 +89,6 @@ import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
-import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
@@ -351,7 +347,6 @@ public class ExtendedMarkersView extends ViewPart {
 	 * .Composite)
 	 */
 	public void createPartControl(Composite parent) {
-		setContentDescription(MarkerMessages.MarkerView_queueing_updates);
 
 		createViewer(parent);
 
@@ -559,7 +554,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	MarkerSupportItem[] getAllConcreteItems() {
 
-		MarkerSupportItem[] elements = builder.getClonedMarkers().getElements();
+		MarkerSupportItem[] elements =getActiveViewerInputClone().getElements();
 		Collection allMarkers = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			addAllConcreteItems(elements[i], allMarkers);
@@ -586,7 +581,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	IMarker[] getAllMarkers() {
 
-		MarkerSupportItem[] elements = builder.getClonedMarkers().getElements();
+		MarkerSupportItem[] elements =getActiveViewerInputClone().getElements();
 		Collection allMarkers = new ArrayList();
 		for (int i = 0; i < elements.length; i++) {
 			addMarkers(elements[i], allMarkers);
@@ -620,7 +615,7 @@ public class ExtendedMarkersView extends ViewPart {
 				if (expanded != null) {
 					IMemento[] mementoCategories = expanded
 							.getChildren(TAG_CATEGORY);
-					MarkerCategory[] markerCategories = builder.getClonedMarkers().getCategories();
+					MarkerCategory[] markerCategories =getActiveViewerInputClone().getCategories();
 					if (markerCategories != null) {
 						for (int i = 0; i < markerCategories.length; i++) {
 							for (int j = 0; j < mementoCategories.length; j++) {
@@ -852,7 +847,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return String
 	 */
 	private String getStatusMessage() {
-		Markers markers=builder.getClonedMarkers();
+		Markers markers=getActiveViewerInputClone();
 		String status = MarkerSupportInternalUtilities.EMPTY_STRING;
 		int totalCount = builder.getTotalMarkerCount(markers);
 		int filteredCount = 0;
@@ -915,6 +910,8 @@ public class ExtendedMarkersView extends ViewPart {
 	 * @return Object
 	 */
 	Markers getActiveViewerInputClone() {
+		/*The ideal place to hold the reference for the
+		 clone is the view,as it is a for-ui-only clone*/
 		return builder.getClonedMarkers();
 	}
 
@@ -1124,7 +1121,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 */
 	void reexpandCategories() {
 		if (!getCategoriesToExpand().isEmpty() && builder.isShowingHierarchy()) {
-			MarkerItem[] items = builder.getClonedMarkers().getElements();
+			MarkerItem[] items =getActiveViewerInputClone().getElements();
 			IContentProvider provider = viewer.getContentProvider();
 			for (int i = 0; i < items.length; i++) {
 				String name = ((MarkerCategory) items[i]).getName();
@@ -1471,54 +1468,55 @@ public class ExtendedMarkersView extends ViewPart {
 		scheduleUpdate(0L);
 	}
 
-	void indicateUpdating(final String message, final boolean updateLabels) {
-		Display display = getSite().getShell().getDisplay();
-		if (Display.getCurrent() == display) {
-			setContentDescription(message != null ? message
-					: getStatusMessage());
-			if (updateLabels) {
-				updateCategoryLabels();
-			}
-			return;
-		}
-		WorkbenchJob job = new WorkbenchJob(display,
-				MarkerMessages.MarkerView_queueing_updates) {
-			public IStatus runInUIThread(IProgressMonitor monitor) {
-					setContentDescription(message != null ? message
-							: getStatusMessage());
-					if (updateLabels) {
-						updateCategoryLabels();
-					}
-					return Status.OK_STATUS;
-			}
-		};
-		job.setPriority(Job.INTERACTIVE);
-		job.schedule();
-// See Bug 293305
-//		if (block) {
-//			try {
-//				if (display.getSyncThread() != Thread.currentThread()) {
-//					job.join();
-//				}
-//			} catch (InterruptedException e) {
-//			}
-//		}
-	}
-
-	void updateCategoryLabels() {
-		if (builder.isShowingHierarchy()) {
-			MarkerCategory[] categories = builder.getClonedMarkers().getCategories();
-			boolean refreshing = builder.isBuilding()
-					|| builder.getMarkerListener().isUpdating() 
-					|| builder.getMarkerListener().workspaceBuilding();
-			for (int i = 0; i < categories.length; i++) {
-				categories[i].refreshing = refreshing;
-			}
-			if (categories != null && categories.length > 1) {
-				viewer.update(categories, null);
-			}
-		}
-	}
+	//See Bug 294303
+	//void indicateUpdating(final String message, final boolean updateLabels) {
+	//	Display display = getSite().getShell().getDisplay();
+	//	if (Display.getCurrent() == display) {
+	//		setContentDescription(message != null ? message
+	//				: getStatusMessage());
+	//		if (updateLabels) {
+	//			updateCategoryLabels();
+	//		}
+	//		return;
+	//	}
+	//	WorkbenchJob job = new WorkbenchJob(display,
+	//			MarkerMessages.MarkerView_queueing_updates) {
+	//		public IStatus runInUIThread(IProgressMonitor monitor) {
+	//				setContentDescription(message != null ? message
+	//						: getStatusMessage());
+	//				if (updateLabels) {
+	//					updateCategoryLabels();
+	//				}
+	//				return Status.OK_STATUS;
+	//		}
+	//	};
+	//	job.setPriority(Job.INTERACTIVE);
+	//	job.schedule();
+	//  //see Bug 293305
+	//	//	if (block) {
+	//	//		try {
+	//	//			if (display.getSyncThread() != Thread.currentThread()) {
+	//	//				job.join();
+	//	//			}
+	//	//		} catch (InterruptedException e) {
+	//	//		}
+	//	//	}
+	//}
+	//
+	//void updateCategoryLabels() {
+	//	if (builder.isShowingHierarchy()) {
+	//		MarkerCategory[] categories =getActiveViewerInputClone().getCategories();
+	//		boolean refreshing = builder.isBuilding()
+	//				|| builder.getMarkerListener().isUpdating() 
+	//				|| builder.getMarkerListener().workspaceBuilding();
+	//		for (int i = 0; i < categories.length; i++) {
+	//			categories[i].refreshing = refreshing;
+	//		}
+	//		if (categories != null && categories.length > 1) {
+	//			viewer.update(categories, null);
+	//		}
+	//	}
+	//}
 
 	/**
 	 * @return the viewer

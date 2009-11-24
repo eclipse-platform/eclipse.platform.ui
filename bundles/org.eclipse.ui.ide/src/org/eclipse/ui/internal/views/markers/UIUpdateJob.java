@@ -68,27 +68,12 @@ class UIUpdateJob extends WorkbenchJob {
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-			viewer.getTree().setRedraw(false);
 			
-			//always use a clone for Thread safety.
-			//We avoid setting the clone as new input as we would offset
-			//the benefits of optimization in TreeViewer.
-			clone = view.createViewerInputClone();
-			if (clone == null) {
-				//do not update yet,we are changing
-				return Status.OK_STATUS;
-			}
-			IContentProvider contentProvider = viewer.getContentProvider();
-			contentProvider.inputChanged(viewer, view.getViewerInput(),clone);
-			
-			view.indicateUpdating(MarkerMessages.MarkerView_19,
-					true);
+			//view.indicateUpdating(MarkerMessages.MarkerView_19,
+			//		true);
 			if (viewer.getControl().isDisposed()) {
 				return Status.CANCEL_STATUS;
 			}
-
-			if (monitor.isCanceled())
-				return Status.CANCEL_STATUS;
 
 			// If there is only one category and the user has no saved state
 			// show it
@@ -102,22 +87,39 @@ class UIUpdateJob extends WorkbenchJob {
 
 			if (monitor.isCanceled())
 				return Status.CANCEL_STATUS;
-			viewer.refresh(true);
-			//cancellation after the refresh call 
-			//does not save us much
-			view.reexpandCategories();
-			
-			if(view.getBuilder().readChangeFlags()[0]){
-				//indicate changes
+			/* 
+			 * always use a clone for Thread safety. We avoid setting the clone
+			 * as new input as we would offset the benefits of optimization in
+			 * TreeViewer.
+			 */
+			clone = view.createViewerInputClone();
+			if (clone == null) {
+				// do not update yet,we are changing
+				return Status.CANCEL_STATUS;
 			}
+			/*
+			 * we prefer not to check for cancellation beyond this since we
+			 * have to show correct marker counts on UI, not an updating message.
+			 */
+			IContentProvider contentProvider = viewer.getContentProvider();
+			contentProvider.inputChanged(viewer, view.getViewerInput(), clone);
+			viewer.getTree().setRedraw(false);
+			viewer.refresh(true);
+			if (!monitor.isCanceled()) {
+				//do not expand if canceled
+				view.reexpandCategories();
+			}
+			if (view.getBuilder().readChangeFlags()[0]) {
+				// indicate changes
+			}
+			//show new counts
+			view.updateTitle();
+
 			lastUpdateTime = System.currentTimeMillis();
 		} finally {
 			viewer.getTree().setRedraw(true);
 			view.updateStatusLine((IStructuredSelection) viewer.getSelection());
-			view.updateCategoryLabels();
-			if (!monitor.isCanceled()) {
-				view.updateTitle();
-			}
+			//view.updateCategoryLabels();
 			updating = false;
 		}
 		monitor.done();

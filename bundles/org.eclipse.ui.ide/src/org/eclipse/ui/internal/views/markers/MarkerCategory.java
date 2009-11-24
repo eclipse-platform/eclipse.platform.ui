@@ -87,10 +87,12 @@ class MarkerCategory extends MarkerSupportItem {
 	 * org.eclipse.ui.internal.views.markers.MarkerSupportItem#getDescription()
 	 */
 	String getDescription() {
-		if(refreshing){
-			return NLS.bind(MarkerMessages.Category_building,
-					new Object[] { getName() });
-		}
+		//see Bug 294959
+		//if(refreshing){
+		//	//see Bug 294959
+		//	return NLS.bind(MarkerMessages.Category_building,
+		//			new Object[] { getName() });
+		//}
 		int size = getChildrenCount();
 		int limit = MarkerSupportInternalUtilities.getMarkerLimit();
 

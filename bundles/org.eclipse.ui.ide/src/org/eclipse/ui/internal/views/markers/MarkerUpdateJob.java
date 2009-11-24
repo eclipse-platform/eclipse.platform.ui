@@ -84,9 +84,9 @@ class MarkerUpdateJob extends Job {
 			return;
 		}
 		//markersListener.cancelQueuedUIUpdates();
-		markersListener
-				.indicateStatus(
-						MarkerMessages.MarkerView_searching_for_markers, false);
+		//markersListener
+		//		.indicateStatus(
+		//				MarkerMessages.MarkerView_searching_for_markers, false);
 		if (clean || !isIncremental()) {
 			clean = !clean(markersListener, monitor);
 		}
@@ -99,8 +99,8 @@ class MarkerUpdateJob extends Job {
 		}
 		monitor.setTaskName(MarkerMessages.MarkerView_processUpdates);
 		
-		markersListener.indicateStatus(
-				MarkerMessages.MarkerView_processUpdates, false);
+		//markersListener.indicateStatus(
+		//		MarkerMessages.MarkerView_processUpdates, false);
 		processMarkerEntries(markers, monitor);
 		if (monitor.isCanceled()) {
 			return;
@@ -247,8 +247,8 @@ class SortingJob extends MarkerUpdateJob {
 				IProgressMonitor.UNKNOWN);
 		MarkersChangeListener markersListener = builder.getMarkerListener();
 		markersListener.cancelQueuedUIUpdates();
-		markersListener.indicateStatus(
-				MarkerMessages.MarkerView_19, false);
+		//markersListener.indicateStatus(
+		//		MarkerMessages.MarkerView_19, false);
 		builder.getMarkers().sortMarkerEntries(monitor);
 		markersListener.scheduleUIUpdate(0L);
 		if (monitor.isCanceled()) {
