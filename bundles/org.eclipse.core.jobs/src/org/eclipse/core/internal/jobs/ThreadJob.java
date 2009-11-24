@@ -204,6 +204,9 @@ class ThreadJob extends Job {
 				while (true) {
 					if (isCanceled(monitor))
 						throw new OperationCanceledException();
+					// just return if lock listener decided to grant immediate access
+					if (manager.getLockManager().aboutToWait(blocker))
+						return this;
 					synchronized (runner.getNotifier()) {
 						if (runner.isFinished())
 							break;
