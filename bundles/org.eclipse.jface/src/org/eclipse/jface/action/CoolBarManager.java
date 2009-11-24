@@ -293,6 +293,8 @@ public class CoolBarManager extends ContributionManager implements
             // for 19630
             if ((control != null) && !control.isDisposed()) {
                 item.setControl(null);
+                // we created it, we dispose it, see bug 293433
+            	control.dispose();
             }
             item.dispose();
         }
