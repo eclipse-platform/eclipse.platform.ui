@@ -49,7 +49,6 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
@@ -3231,7 +3230,7 @@ public abstract class FilteredItemsSelectionDialog extends
 		 */
 		private void doRefresh(String text, Image image) {
 			if ( text != null ) {
-				text = Util.replaceAll(text, "&", "&&"); //$NON-NLS-1$//$NON-NLS-2$
+				text = LegacyActionTools.escapeMnemonics(text);
 			}
 			label.setText(text);
 			label.setImage(image);

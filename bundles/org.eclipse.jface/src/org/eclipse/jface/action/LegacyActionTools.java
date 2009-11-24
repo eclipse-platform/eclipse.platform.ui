@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,10 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.StringTokenizer;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
+
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 
 /**
  * <p>
@@ -726,6 +728,20 @@ public final class LegacyActionTools {
 			sb.append(text.substring(lastIndex, len));
 		}
 		return sb.toString();
+	}
+	
+	/**
+	 * Convenience method for escaping all mnemonics in the given string. For
+	 * example, <code>escapeMnemonics("a & b & c")</code> will return
+	 * <code>"a && b && c"</code>.
+	 * 
+	 * @param text
+	 *            the text
+	 * @return the text with mnemonics escaped
+	 * @since 3.6
+	 */
+	public static final String escapeMnemonics(String text) {
+		return Util.replaceAll(text, "&", "&&"); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
 	/**

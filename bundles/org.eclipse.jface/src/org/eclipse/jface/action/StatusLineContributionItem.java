@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,7 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.util.Util;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -20,6 +20,8 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+
+import org.eclipse.jface.util.Util;
 
 /**
  * A contribution item to be used with status line managers.
@@ -135,7 +137,7 @@ public class StatusLineContributionItem extends ContributionItem {
 	public void setText(String text) {
 		Assert.isNotNull(text);
 
-		this.text = escape(text);
+		this.text = LegacyActionTools.escapeMnemonics(text);
 
 		if (label != null && !label.isDisposed()) {
 			label.setText(this.text);
@@ -160,9 +162,5 @@ public class StatusLineContributionItem extends ContributionItem {
 				}
 			}
 		}
-	}
-
-	private String escape(String text) {
-		return Util.replaceAll(text, "&", "&&");  //$NON-NLS-1$//$NON-NLS-2$
 	}
 }
