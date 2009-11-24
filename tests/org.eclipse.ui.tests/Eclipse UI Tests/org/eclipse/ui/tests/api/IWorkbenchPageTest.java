@@ -2149,6 +2149,78 @@ public class IWorkbenchPageTest extends UITestCase {
 		assertEquals(0, openPersps.length);
 		assertNull(fWin.getActivePage()); // page closed
 	}
+	
+ 	/**
+	 * This tests that closing a perspective will not bring a prompt up for
+	 * {@link org.eclipse.ui.ISaveablePart ISaveablePart} implementations that
+	 * are returning false for their
+	 * {@link org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 * isSaveOnCloseNeeded()} implementation.
+	 * 
+	 * @see #testCloseAllPerspectivesDoesNotPromptBug272070()
+	 */
+	public void testClosePerspectiveDoesNotPromptBug272070() throws Exception {
+		try {
+			SaveableHelper.testSetAutomatedResponse(2);
+			proj = FileUtil
+					.createProject("testClosePerspectiveDoesNotPromptBug272070");
+
+			IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+			IPerspectiveDescriptor resourcePersp = reg
+					.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+
+			// close all perspectives so we start fresh
+			fActivePage.closeAllPerspectives(false, false);
+			// set the page to the 'Resource' perspective
+			fActivePage.setPerspective(resourcePersp);
+
+			// create a file and show an editor
+			IEditorInput input = new FileEditorInput(FileUtil.createFile(
+					"test.mock1", proj));
+			MockEditorPart editor = (MockEditorPart) fActivePage.openEditor(
+					input, MockEditorPart.ID1);
+
+			// mark the editor as being dirty but not requiring saving when
+			// closed
+			editor.setDirty(true);
+			editor.setSaveNeeded(false);
+
+			// close the perspective
+			fActivePage.closePerspective(resourcePersp, true, false);
+			// mark the editor as not dirty, this is important because if the
+			// editor is not closed, the test will fail and when JUnit tries to
+			// tear down the workbench it will not shutdown because it will
+			// prompt about the editor being dirty
+			editor.setDirty(false);
+			// the editor should have been closed when the perspective was
+			// closed
+			assertFalse("The editor should've been closed", fActivePage
+					.isPartVisible(editor));
+
+			// set the page to the 'Resource' perspective
+			fActivePage.setPerspective(resourcePersp);
+
+			// show a view
+			SaveableMockViewPart view = (SaveableMockViewPart) fActivePage
+					.showView(SaveableMockViewPart.ID);
+
+			// mark the view as being dirty but not requiring saving when closed
+			view.setDirty(true);
+			view.setSaveNeeded(false);
+
+			// close the perspective
+			fActivePage.closePerspective(resourcePersp, true, false);
+			// like the editor above, we need to mark the view as not being
+			// dirty for the same reasons
+			view.setDirty(false);
+			// the view should have been hidden when the perspective was closed
+			assertFalse("The view should be hidden", fActivePage
+					.isPartVisible(view));
+		} finally {
+			SaveableHelper
+					.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE);
+		}
+	}
 
 	/**
 	 * Tests the closeAllPerspectives method.
@@ -2181,6 +2253,79 @@ public class IWorkbenchPageTest extends UITestCase {
 		openPersps = fActivePage.getOpenPerspectives();
 		assertEquals(0, openPersps.length);
 		assertNull(fWin.getActivePage()); // page closed
+	}
+	
+ 	/**
+	 * This tests that closing all perspectives will not bring a prompt up for
+	 * {@link org.eclipse.ui.ISaveablePart ISaveablePart} implementations that
+	 * are returning false for their
+	 * {@link org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 * isSaveOnCloseNeeded()} implementation.
+	 * 
+	 * @see #testClosePerspectiveDoesNotPromptBug272070()
+	 */
+	public void testCloseAllPerspectivesDoesNotPromptBug272070()
+			throws Exception {
+		try {
+			SaveableHelper.testSetAutomatedResponse(2);
+			proj = FileUtil
+					.createProject("testCloseAllPerspectivesDoesNotPromptBug272070");
+
+			IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
+			IPerspectiveDescriptor resourcePersp = reg
+					.findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
+
+			// close all perspectives so we start fresh
+			fActivePage.closeAllPerspectives(false, false);
+			// set the page to the 'Resource' perspective
+			fActivePage.setPerspective(resourcePersp);
+
+			// create a file and show an editor
+			IEditorInput input = new FileEditorInput(FileUtil.createFile(
+					"test.mock1", proj));
+			MockEditorPart editor = (MockEditorPart) fActivePage.openEditor(
+					input, MockEditorPart.ID1);
+
+			// mark the editor as being dirty but not requiring saving when
+			// closed
+			editor.setDirty(true);
+			editor.setSaveNeeded(false);
+
+			// close all perspectives
+			fActivePage.closeAllPerspectives(true, false);
+			// mark the editor as not dirty, this is important because if the
+			// editor is not closed, the test will fail and when JUnit tries to
+			// tear down the workbench it will not shutdown because it will
+			// prompt about the editor being dirty
+			editor.setDirty(false);
+			// the editor should have been closed when the perspective was
+			// closed
+			assertFalse("The editor should've been closed", fActivePage
+					.isPartVisible(editor));
+
+			// set the page to the 'Resource' perspective
+			fActivePage.setPerspective(resourcePersp);
+
+			// show a view
+			SaveableMockViewPart view = (SaveableMockViewPart) fActivePage
+					.showView(SaveableMockViewPart.ID);
+
+			// mark the view as being dirty but not requiring saving when closed
+			view.setDirty(true);
+			view.setSaveNeeded(false);
+
+			// close all perspectives
+			fActivePage.closeAllPerspectives(true, false);
+			// like the editor above, we need to mark the view as not being
+			// dirty for the same reasons
+			view.setDirty(false);
+			// the view should have been hidden when the perspective was closed
+			assertFalse("The view should be hidden", fActivePage
+					.isPartVisible(view));
+		} finally {
+			SaveableHelper
+					.testSetAutomatedResponse(SaveableHelper.USER_RESPONSE);
+		}
 	}
 
 	/**

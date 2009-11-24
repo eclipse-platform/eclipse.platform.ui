@@ -1045,6 +1045,19 @@ public class EditorManager implements IExtensionChangeHandler {
 				boolean addNonPartSources, final IRunnableContext runnableContext, final IShellProvider shellProvider) {
 		// clone the input list
 		dirtyParts = new ArrayList(dirtyParts);
+
+		if (closing) {
+			// if the parts are going to be closed, then we only save those that
+			// need to be saved when closed, see bug 272070
+			for (int i = 0; i < dirtyParts.size(); i++) {
+				ISaveablePart saveablePart = (ISaveablePart) dirtyParts.get(i);
+				if (!saveablePart.isSaveOnCloseNeeded()) {
+					dirtyParts.remove(i);
+					i--;
+				}
+			}
+		}
+
     	List modelsToSave;
 		if (confirm) {
 			boolean saveable2Processed = false;

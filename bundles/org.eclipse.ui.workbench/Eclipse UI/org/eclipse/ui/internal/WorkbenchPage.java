@@ -1611,7 +1611,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 		}
 
         if(saveEditors) {
-        	if (!saveAllEditors(true)) {
+        	// directly call to the editor manager that we're saving and closing
+        	// parts, see bug 272070
+			if (!getEditorManager().saveAll(true, true, false)) {
         		return;
         	}
         }
