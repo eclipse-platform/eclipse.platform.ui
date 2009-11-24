@@ -81,7 +81,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 				buffer.append(' ');
 				buffer.append(file.getName());
 				String name = buffer.toString().trim();
-				name= DebugPlugin.getDefault().getLaunchManager().generateUniqueLaunchConfigurationNameFrom(name);
+				name= DebugPlugin.getDefault().getLaunchManager().generateLaunchConfigurationName(name);
 				configuration.rename(name);
 				//set the project name so that the correct default VM install can be determined
 				configuration.setAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, projectName);
