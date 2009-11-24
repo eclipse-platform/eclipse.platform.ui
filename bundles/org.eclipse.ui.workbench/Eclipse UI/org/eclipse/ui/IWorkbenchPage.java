@@ -28,7 +28,7 @@ import org.eclipse.ui.presentations.IStackPresentationSite;
  * The number of views and editors within a page is restricted to simplify part
  * management for the user. In particular:
  * <ul>
- * <li>Unless a view explicitly allows for multiple instances in its plugin
+ * <li>Unless a view explicitly allows for multiple instances in its plug-in
  * declaration there will be only one instance in a given workbench page.</li>
  * <li>Only one editor can exist for each editor input within a page.
  * <li>
@@ -420,7 +420,10 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 
 	 * @return a list of open editors
 	 * 
-	 * @deprecated use #getEditorReferences() instead
+	 * @deprecated Clients are encouraged to use {@link #getEditorReferences()}
+	 *             instead. Calling this method has the side effect of restoring
+	 *             all the editors in the page which can cause plug-in
+	 *             activation.
 	 */
 	public IEditorPart[] getEditors();
 
@@ -487,7 +490,9 @@ public interface IWorkbenchPage extends IPartService, ISelectionService,
 	 * 
 	 * @return a list of visible views
 	 * 
-	 * @deprecated use #getViewReferences() instead.
+	 * @deprecated Clients are encouraged to use {@link #getViewReferences()}
+	 *             instead. Calling this method has the side effect of restoring
+	 *             all the views in the page which can cause plug-in activation.
 	 */
 	public IViewPart[] getViews();
 
