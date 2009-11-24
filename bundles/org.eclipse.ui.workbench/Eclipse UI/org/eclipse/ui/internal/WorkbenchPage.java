@@ -4692,6 +4692,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      * <li>currently applies only to views</li>
      * <li>has no effect when view is zoomed</li>
      * </ul> 
+	 * <p>
+	 * <b>Note:</b> At the time of the writing of this note, this method does
+	 * not appear to be used anywhere in the workbench. Please refer to bug
+	 * 126622.
+	 * </p>
      */
     public void resizeView(IViewPart part, int width, int height) {
         SashInfo sashInfo = new SashInfo();
