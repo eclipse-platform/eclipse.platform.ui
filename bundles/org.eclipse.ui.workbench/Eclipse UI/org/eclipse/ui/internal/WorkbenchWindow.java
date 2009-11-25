@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -3161,7 +3162,6 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		}
 		
 		getStatusLineManager().update(false);
-		trimMgr2.updateTrim(getTrimManager());
 	}
 
 	/**
