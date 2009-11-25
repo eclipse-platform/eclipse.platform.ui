@@ -12,6 +12,7 @@ package org.eclipse.ui.tests.keys;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.jface.bindings.Binding;
+import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -190,6 +191,10 @@ public final class BindingPersistenceTest extends UITestCase {
 					}
 				} else if (binding.getParameterizedCommand() == null
 						&& m18w.equals(binding.getTriggerSequence())) {
+					assertTrue(platform, Util.WS_CARBON.equals(platform)
+							|| Util.WS_COCOA.equals(platform)
+							|| Util.WS_GTK.equals(platform)
+							|| Util.WS_WIN32.equals(platform));
 					numOfMarkers++;
 					foundDeleteMarker = true;
 				}
@@ -197,7 +202,8 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 		assertEquals(3, numOfMarkers);
 		assertTrue("Unable to find delete marker", foundDeleteMarker);
-
+		TriggerSequence[] activeBindingsFor = bindingService.getActiveBindingsFor(addWS);
+		assertEquals(1, activeBindingsFor.length);
 	}
 
 	public void testModifierWithPlatform() throws Exception {
