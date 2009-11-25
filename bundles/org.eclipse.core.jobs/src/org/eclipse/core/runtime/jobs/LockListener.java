@@ -28,15 +28,6 @@ public class LockListener {
 	private final LockManager manager = ((JobManager) Job.getJobManager()).getLockManager();
 
 	/**
-	 * Notification that a thread is about to release a lock.
-	 * <p>
-	 * This default implementation does nothing. Subclasses may override.
-	 */
-	public void aboutToRelease() {
-		//do nothing
-	}
-
-	/**
 	 * Notification that a thread is about to block on an attempt to acquire a lock.
 	 * Returns whether the thread should be granted immediate access to the lock.
 	 * <p>
@@ -53,17 +44,12 @@ public class LockListener {
 	}
 
 	/**
-	 * Returns if it is safe for the calling thread to block while waiting to obtain
-	 * a lock. When blocking in the calling thread is not safe, the caller will ensure
-	 * that the thread is kept alive and responsive to cancellation while waiting.
-	 * 
-	 * @return <code>true</code> if this thread can block, and
-	 * <code>false</code> otherwise.
-	 * 
-	 * @since org.eclipse.core.jobs 3.5
+	 * Notification that a thread is about to release a lock.
+	 * <p>
+	 * This default implementation does nothing. Subclasses may override.
 	 */
-	public boolean canBlock() {
-		return true;
+	public void aboutToRelease() {
+		//do nothing
 	}
 
 	/**
