@@ -13,7 +13,6 @@ package org.eclipse.ui.internal.presentations.util;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -402,4 +401,9 @@ public abstract class AbstractTabFolder {
 	 */
 	public void showMinMax(boolean show) {
 	}
+
+	public void showItem(AbstractTabItem toSelect) {
+		setSelection(toSelect);
+	}
+
 }

@@ -256,6 +256,20 @@ public class DefaultTabFolder extends AbstractTabFolder {
         paneFolder.setSelection(indexOf(toSelect));
     }
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.ui.internal.presentations.util.AbstractTabFolder#showItem
+	 * (org.eclipse.ui.internal.presentations.util.AbstractTabItem)
+	 */
+	public void showItem(AbstractTabItem toSelect) {
+		// overrides default
+		int index = indexOf(toSelect);
+		if (index != -1)
+			paneFolder.showItem(index);
+	}
+
     /* (non-Javadoc)
      * @see org.eclipse.ui.internal.presentations.util.AbstractTabFolder#getToolbarParent()
      */

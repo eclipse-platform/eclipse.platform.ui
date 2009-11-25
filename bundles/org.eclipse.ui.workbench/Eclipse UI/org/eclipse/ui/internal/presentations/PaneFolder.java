@@ -732,6 +732,10 @@ public final class PaneFolder {
         tabFolder.setSelection(selection);
     }
 
+	public void showItem(int selection) {
+		tabFolder.showItem(tabFolder.getItem(selection));
+	}
+
     /**
      * @param i
      * @param j
