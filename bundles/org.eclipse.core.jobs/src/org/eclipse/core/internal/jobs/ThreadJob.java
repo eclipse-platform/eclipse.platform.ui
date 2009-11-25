@@ -240,6 +240,8 @@ class ThreadJob extends Job {
 				return runner.getResult();
 			} finally {
 				manager.reportUnblocked(monitor);
+				//runner may already be shutdown, but make sure it shuts down in all cases
+				runner.shutdown();
 			}
 		} finally {
 			manager.getLockManager().aboutToRelease();
