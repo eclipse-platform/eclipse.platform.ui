@@ -3074,6 +3074,10 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		for (int i = 0; i < toolitems.length; i++) {
 			IContributionItem contributionItem = (IContributionItem) toolitems[i]
 					.getData();
+			if (contributionItem.isGroupMarker()
+					|| contributionItem.isSeparator()) {
+				continue;
+			}
 			DisplayItem toolBarEntry = new DisplayItem(toolitems[i]
 					.getToolTipText(), contributionItem);
 			Image image = toolitems[i].getImage();
