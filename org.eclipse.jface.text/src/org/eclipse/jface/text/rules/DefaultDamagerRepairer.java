@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,7 +8,6 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
-
 package org.eclipse.jface.text.rules;
 
 
@@ -115,8 +114,15 @@ public class DefaultDamagerRepairer implements IPresentationDamager, IPresentati
 		}
 	}
 
-	/*
-	 * @see IPresentationDamager#getDamageRegion(ITypedRegion, DocumentEvent, boolean)
+	/**
+	 * {@inheritDoc}
+	 * <p>
+	 * This implementation damages entire lines unless clipped by the given partition.
+	 * </p>
+	 * 
+	 * @return the full lines containing the document changes described by the document event,
+	 *         clipped by the given partition. If there was a partitioning change then the whole
+	 *         partition is returned.
 	 */
 	public IRegion getDamageRegion(ITypedRegion partition, DocumentEvent e, boolean documentPartitioningChanged) {
 
