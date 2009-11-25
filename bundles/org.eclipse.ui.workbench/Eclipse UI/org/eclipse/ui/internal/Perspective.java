@@ -1097,11 +1097,13 @@ public class Perspective {
 		IPerspectiveDescriptor regDesc = reg.findPerspectiveWithId(descriptor
 				.getId());
 		if (regDesc == null) {
-			String msg = "Perspective " + descriptor.getLabel() + " has beed made into a local copy"; //$NON-NLS-1$//$NON-NLS-2$
+			String msg = "Perspective " + descriptor.getLabel() + " has been made into a local copy"; //$NON-NLS-1$//$NON-NLS-2$
 			IStatus status = StatusUtil.newStatus(IStatus.WARNING, msg, null);
 			StatusManager.getManager().handle(status, StatusManager.LOG);
 
-			String newDescId = '<' + descriptor.getLabel() + '>';
+			String newDescId = NLS.bind(
+					WorkbenchMessages.Perspective_localCopyLabel, descriptor
+							.getLabel());
 			while (reg.findPerspectiveWithId(newDescId) != null)
 				newDescId = '<' + newDescId + '>';
 			PerspectiveDescriptor newDesc = reg.createPerspective(newDescId, descriptor);
