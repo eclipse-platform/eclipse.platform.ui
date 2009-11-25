@@ -174,6 +174,22 @@ public final class BindingPersistence extends PreferencePersistence {
 				.formalKeyLookupInteger(IKeyLookup.F11_NAME));
 		r2_1KeysByName.put(IKeyLookup.F12_NAME, lookup
 				.formalKeyLookupInteger(IKeyLookup.F12_NAME));
+		r2_1KeysByName.put(IKeyLookup.F13_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F13_NAME));
+		r2_1KeysByName.put(IKeyLookup.F14_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F14_NAME));
+		r2_1KeysByName.put(IKeyLookup.F15_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F15_NAME));
+		r2_1KeysByName.put(IKeyLookup.F16_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F16_NAME));
+		r2_1KeysByName.put(IKeyLookup.F17_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F17_NAME));
+		r2_1KeysByName.put(IKeyLookup.F18_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F18_NAME));
+		r2_1KeysByName.put(IKeyLookup.F19_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F19_NAME));
+		r2_1KeysByName.put(IKeyLookup.F20_NAME, lookup
+				.formalKeyLookupInteger(IKeyLookup.F20_NAME));
 	}
 
 	/**
