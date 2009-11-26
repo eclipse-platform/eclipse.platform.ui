@@ -1049,11 +1049,10 @@ public class EditorManager implements IExtensionChangeHandler {
 		if (closing) {
 			// if the parts are going to be closed, then we only save those that
 			// need to be saved when closed, see bug 272070
-			for (int i = 0; i < dirtyParts.size(); i++) {
-				ISaveablePart saveablePart = (ISaveablePart) dirtyParts.get(i);
+			for (Iterator it = dirtyParts.iterator(); it.hasNext();) {
+				ISaveablePart saveablePart = (ISaveablePart) it.next();
 				if (!saveablePart.isSaveOnCloseNeeded()) {
-					dirtyParts.remove(i);
-					i--;
+					it.remove();
 				}
 			}
 		}
