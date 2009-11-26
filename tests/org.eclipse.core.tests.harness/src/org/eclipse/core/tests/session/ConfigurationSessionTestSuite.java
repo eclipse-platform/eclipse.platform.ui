@@ -26,25 +26,24 @@ import org.osgi.framework.Bundle;
 
 public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	// include configurator as it is required by compatibility, but do not set it to start 	
-	public static String[] MINIMAL_BUNDLE_SET = {
-		"org.eclipse.equinox.common@2:start", 
-		"org.eclipse.core.runtime@:start",
-		
-		"org.eclipse.core.jobs", 
-		"org.eclipse.core.runtime.compatibility.registry",
-		"org.eclipse.equinox.registry", 
-		"org.eclipse.equinox.preferences", 
-		"org.eclipse.core.contenttype",
-		"org.eclipse.equinox.app",
-		"org.eclipse.core.runtime.compatibility", 
-		"org.eclipse.core.runtime.compatibility.auth", 
-		"org.eclipse.update.configurator", 
-		"org.eclipse.core.tests.harness", 
-		"org.eclipse.jdt.junit.runtime", 
-		"org.eclipse.pde.junit.runtime", 
-		"org.junit", 
-		"org.eclipse.test.performance"
-		};
+	public static String[] MINIMAL_BUNDLE_SET = {"org.eclipse.equinox.common@2:start", //
+			"org.eclipse.core.runtime@:start", //
+			"org.eclipse.core.jobs", //
+			"org.eclipse.core.runtime.compatibility.registry", //
+			"org.eclipse.equinox.registry", //
+			"org.eclipse.equinox.preferences", //
+			"org.eclipse.core.contenttype", //
+			"org.eclipse.equinox.app", //
+			"org.eclipse.core.runtime.compatibility", //
+			"org.eclipse.core.runtime.compatibility.auth", //
+			"org.eclipse.update.configurator", //
+			"org.eclipse.core.tests.harness", //
+			"org.eclipse.jdt.junit.runtime", //
+			"org.eclipse.jdt.junit4.runtime", //
+			"org.eclipse.pde.junit.runtime", //
+			"org.hamcrest.core", //
+			"org.junit", //
+			"org.eclipse.test.performance"};
 
 	private static final String PROP_CONFIG_AREA_READ_ONLY = InternalPlatform.PROP_CONFIG_AREA + ".readOnly";
 	private static final String PROP_CONFIG_CASCADED = "osgi.configuration.cascaded";
@@ -80,7 +79,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 	}
 
 	public void addBundle(String id) {
-		bundles.add(getURL(id));
+		bundles.addAll(getURLs(id));
 	}
 
 	private void createConfigINI() throws IOException {
@@ -93,7 +92,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		}
 		osgiBundles.deleteCharAt(osgiBundles.length() - 1);
 		contents.put("osgi.bundles", osgiBundles.toString());
-		String osgiFramework = getURL("org.eclipse.osgi");
+		String osgiFramework = (String) getURLs("org.eclipse.osgi").get(0);
 		contents.put("osgi.framework", osgiFramework);
 		contents.put("osgi.bundles.defaultStartLevel", "4");
 		contents.put("osgi.install.area", Platform.getInstallLocation().getURL().toExternalForm());
@@ -125,33 +124,39 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		return configurationPath;
 	}
 
-	private String getURL(String id) {
+	private List getURLs(String id) {
+		List result = new ArrayList();
 		String suffix = "";
 		int atIndex = id.indexOf("@");
 		if (atIndex >= 0) {
 			suffix = id.substring(atIndex);
 			id = id.substring(0, atIndex);
 		}
-		Bundle bundle = Platform.getBundle(id);
-		Assert.assertNotNull("0.1 " + id, bundle);
-		URL url = bundle.getEntry("/");
-		Assert.assertNotNull("0.2 " + id, url);
-		try {
-			url = FileLocator.resolve(url);
-		} catch (IOException e) {
-			CoreTest.fail("0.3 " + url, e);
+		Bundle[] allVersions = Platform.getBundles(id, null);
+		Assert.assertNotNull("0.0.1." + id, allVersions);
+		for (int i = 0; i < allVersions.length; i++) {
+			Bundle bundle = allVersions[i];
+			Assert.assertNotNull("0.1 " + id, bundle);
+			URL url = bundle.getEntry("/");
+			Assert.assertNotNull("0.2 " + id, url);
+			try {
+				url = FileLocator.resolve(url);
+			} catch (IOException e) {
+				CoreTest.fail("0.3 " + url, e);
+			}
+			String externalForm;
+			if (url.getProtocol().equals("jar")) {
+				// if it is a JAR'd plug-in, URL is jar:file:/path/file.jar!/ - see bug 86195
+				String path = url.getPath();
+				// change it to be file:/path/file.jar
+				externalForm = path.substring(0, path.length() - 2);
+			} else
+				externalForm = url.toExternalForm();
+			// workaround for bug 88070		
+			externalForm = "reference:" + externalForm;
+			result.add(externalForm + suffix);
 		}
-		String externalForm;
-		if (url.getProtocol().equals("jar")) {
-			// if it is a JAR'd plug-in, URL is jar:file:/path/file.jar!/ - see bug 86195
-			String path = url.getPath();
-			// change it to be file:/path/file.jar
-			externalForm = path.substring(0, path.length() - 2);
-		} else
-			externalForm = url.toExternalForm();
-		// workaround for bug 88070		
-		externalForm = "reference:" + externalForm;
-		return externalForm + suffix;
+		return result;
 	}
 
 	public boolean isCascaded() {
@@ -209,7 +214,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 						CoreTest.fail("0.1", e);
 					}
 				// end of KLUDGE
-				
+
 				runTest(allTests[i], result);
 			}
 		} finally {
