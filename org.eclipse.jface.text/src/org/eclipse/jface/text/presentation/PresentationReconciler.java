@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -500,15 +500,15 @@ public class PresentationReconciler implements IPresentationReconciler, IPresent
 				damage= r;
 			} else {
 
+				int damageStart= r.getOffset();
 				int damageEnd= getDamageEndOffset(e);
 
-				int parititionDamageEnd= -1;
-				if (fChangedDocumentPartitions != null)
-					parititionDamageEnd= fChangedDocumentPartitions.getOffset() + fChangedDocumentPartitions.getLength();
-
-				int end= Math.max(damageEnd, parititionDamageEnd);
-
-				damage= end == -1 ? r : new Region(r.getOffset(), end - r.getOffset());
+				if (fChangedDocumentPartitions != null) {
+					damageStart= Math.min(damageStart, fChangedDocumentPartitions.getOffset());
+					damageEnd= Math.max(damageEnd, fChangedDocumentPartitions.getOffset() + fChangedDocumentPartitions.getLength());
+				}
+				
+				damage= damageEnd == -1 ? r : new Region(damageStart, damageEnd - damageStart);
 			}
 
 		} catch (BadLocationException x) {
