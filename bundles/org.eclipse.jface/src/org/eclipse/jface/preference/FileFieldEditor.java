@@ -142,9 +142,15 @@ public class FileFieldEditor extends StringButtonFieldEditor {
             return false;
         }
 
-        // OK!
-        clearErrorMessage();
-        return true;
+        if(doCheckState()) { // OK!
+	        clearErrorMessage();
+	        return true;
+        }
+        msg = getErrorMessage(); // subclass might have changed it in the #doCheckState()
+        if (msg != null) {
+            showErrorMessage(msg);
+        }
+    	return false;
     }
 
     /**
