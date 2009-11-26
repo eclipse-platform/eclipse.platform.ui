@@ -47,18 +47,15 @@ public class CoolBarManagerTest extends JFaceActionTest {
 		coolBarManager.add(manager);
 		coolBarManager.update(true);
 		
-		Control[] children = coolBar.getChildren();
-		assertEquals(1, children.length);
-		
 		CoolItem[] items = coolBar.getItems();
 		assertEquals(1, items.length);
 		
-		assertEquals(children[0], items[0].getControl());
+		Control control = items[0].getControl();
 		
 		// reset causes items to be disposed
 		coolBarManager.resetItemOrder();
 		
 		// ensure that the control was actually disposed
-		assertTrue(children[0].isDisposed());
+		assertTrue(control.isDisposed());
 	}
 }
