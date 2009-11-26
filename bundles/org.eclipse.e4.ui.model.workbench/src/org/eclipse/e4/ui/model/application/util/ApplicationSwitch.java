@@ -590,6 +590,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseUIItem(perspective);
 				if (result == null) result = caseElementContainer(perspective);
 				if (result == null) result = caseContext(perspective);
+				if (result == null) result = casePSCElement(perspective);
 				if (result == null) result = caseUIElement(perspective);
 				if (result == null) result = caseApplicationElement(perspective);
 				if (result == null) result = defaultCase(theEObject);
@@ -600,6 +601,7 @@ public class ApplicationSwitch<T1> {
 				T1 result = casePerspectiveStack(perspectiveStack);
 				if (result == null) result = caseElementContainer(perspectiveStack);
 				if (result == null) result = caseVSCElement(perspectiveStack);
+				if (result == null) result = casePSCElement(perspectiveStack);
 				if (result == null) result = caseUIElement(perspectiveStack);
 				if (result == null) result = caseApplicationElement(perspectiveStack);
 				if (result == null) result = defaultCase(theEObject);

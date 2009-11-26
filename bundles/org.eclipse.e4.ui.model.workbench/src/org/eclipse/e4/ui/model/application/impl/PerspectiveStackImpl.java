@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -256,6 +257,11 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 				default: return -1;
 			}
 		}
+		if (baseClass == MPSCElement.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -274,6 +280,11 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 			}
 		}
 		if (baseClass == MVSCElement.class) {
+			switch (baseFeatureID) {
+				default: return -1;
+			}
+		}
+		if (baseClass == MPSCElement.class) {
 			switch (baseFeatureID) {
 				default: return -1;
 			}

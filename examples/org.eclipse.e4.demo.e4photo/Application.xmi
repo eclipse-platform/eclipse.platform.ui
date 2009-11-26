@@ -1,35 +1,49 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel">
   <children xsi:type="application:Window">
-    <children xsi:type="application:PartSashContainer" horizontal="true">
-      <children xsi:type="application:PartSashContainer">
-        <children xsi:type="application:PartStack">
-          <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" name="Library"/>
+    <children xsi:type="application:PerspectiveStack" id="DefaultPerspectiveStack">
+      <children xsi:type="application:Perspective" id="Default">
+        <children xsi:type="application:PartSashContainer" horizontal="true">
+          <children xsi:type="application:PartSashContainer">
+            <children xsi:type="application:PartStack">
+              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" name="Library"/>
+            </children>
+            <children xsi:type="application:PartStack">
+              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" name="Location"/>
+            </children>
+            <weights>60</weights>
+            <weights>40</weights>
+          </children>
+          <children xsi:type="application:PartSashContainer">
+            <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" name="Preview" iconURI=""/>
+            <children xsi:type="application:PartStack">
+              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" name="Thumbnails"/>
+              <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" name="Exif"/>
+            </children>
+            <weights>70</weights>
+            <weights>30</weights>
+          </children>
+          <weights>30</weights>
+          <weights>70</weights>
         </children>
-        <children xsi:type="application:PartStack">
+      </children>
+      <children xsi:type="application:Perspective" id="Simple">
+        <children xsi:type="application:PartSashContainer">
           <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" name="Location"/>
+          <children xsi:type="application:PartStack">
+            <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" name="Exif"/>
+          </children>
+          <weights>30</weights>
+          <weights>70</weights>
         </children>
-        <weights>60</weights>
-        <weights>40</weights>
       </children>
-      <children xsi:type="application:PartSashContainer">
-        <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" name="Preview" iconURI=""/>
-        <children xsi:type="application:PartStack">
-          <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" name="Thumbnails"/>
-          <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" name="Exif"/>
-        </children>
-        <weights>70</weights>
-        <weights>30</weights>
-      </children>
-      <weights>30</weights>
-      <weights>70</weights>
     </children>
     <variables>selection</variables>
     <variables>exif</variables>
     <mainMenu>
       <children xsi:type="application:MenuItem" name="File">
         <children xsi:type="application:HandledMenuItem" name="Create Album" command="//@commands.1"/>
-        <children xsi:type="application:HandledMenuItem" name="Image Dialog" command="//@commands.2"/>
+        <children xsi:type="application:HandledMenuItem" name="Switch Perspective" command="//@commands.2"/>
         <children xsi:type="application:MenuItem" name="Create Album" separator="true"/>
         <children xsi:type="application:HandledMenuItem" name="Exit" command="//@commands.0"/>
       </children>
@@ -43,10 +57,12 @@
   </children>
   <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="//@commands.0"/>
   <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="//@commands.1"/>
-  <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="//@commands.2"/>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="//@commands.2"/>
+  <handlers URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="//@commands.3"/>
   <bindings keySequence="CTRL+X" command="//@commands.0"/>
   <bindings keySequence="CTRL+N" command="//@commands.1"/>
   <commands id="e4photo.exit" commandName="Exit" description=""/>
   <commands id="e4photo.createAlbum" commandName="Create Album"/>
+  <commands id="e4photo.switchPersepective" commandName="Switch Perspective" description=""/>
   <commands id="e4photo.imageDialog" commandName="Image Dialog" description=""/>
 </application:Application>

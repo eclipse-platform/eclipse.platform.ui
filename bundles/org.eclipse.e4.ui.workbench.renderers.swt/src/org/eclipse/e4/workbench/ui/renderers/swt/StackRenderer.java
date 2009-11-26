@@ -86,10 +86,9 @@ public class StackRenderer extends LazyStackRenderer {
 					return;
 
 				// Is this Item visible
-				Object stackObj = uiElement.getParent();
-				MPartStack stack = (MPartStack) stackObj;
+				MElementContainer<MUIElement> stack = uiElement.getParent();
 
-				CTabItem item = findItemForPart(stack, (MPart) uiElement);
+				CTabItem item = findItemForPart(stack, uiElement);
 				if (item == null)
 					return;
 
@@ -132,8 +131,7 @@ public class StackRenderer extends LazyStackRenderer {
 				}
 
 				// Is this Item visible
-				Object stackObj = uiElement.getParent();
-				MPartStack stack = (MPartStack) stackObj;
+				MElementContainer<MUIElement> stack = uiElement.getParent();
 
 				CTabItem item = findItemForPart(stack, uiElement);
 				if (item == null) {
@@ -161,8 +159,8 @@ public class StackRenderer extends LazyStackRenderer {
 		eventBroker.subscribe(IUIEvents.Dirtyable.Topic, dirtyUpdater);
 	}
 
-	private String getLabel(MPart part, String newName) {
-		if (part instanceof MDirtyable && ((MDirtyable) part).isDirty()) {
+	private String getLabel(MUIItem itemPart, String newName) {
+		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()) {
 			newName = '*' + newName;
 		}
 		return newName;
@@ -250,16 +248,17 @@ public class StackRenderer extends LazyStackRenderer {
 	public void postProcess(MUIElement element) {
 		super.postProcess(element);
 
-		if (!(element instanceof MPartStack))
+		if (!(element instanceof MElementContainer<?>))
 			return;
 
+		MElementContainer<MUIElement> container = (MElementContainer<MUIElement>) element;
 		CTabFolder ctf = (CTabFolder) element.getWidget();
 		MPart selPart = ((MPartStack) element).getActiveChild();
 		if (selPart == null)
 			return;
 
 		// Find the tab associated with the part and set it as the selection
-		CTabItem selItem = findItemForPart((MPartStack) element, selPart);
+		CTabItem selItem = findItemForPart(container, selPart);
 		if (selItem != null) {
 			if (selPart.getWidget() == null) {
 				IPresentationEngine renderer = (IPresentationEngine) getContext(
@@ -280,11 +279,12 @@ public class StackRenderer extends LazyStackRenderer {
 	 * org.eclipse.e4.ui.model.application.MPart)
 	 */
 	@Override
-	protected void showChild(MPartStack stack, MPart part) {
+	protected void showChild(MElementContainer<MUIElement> stack,
+			MUIElement part) {
 		// TODO Auto-generated method stub
 		super.showChild(stack, part);
 
-		MUIItem itemPart = part;
+		MUIItem itemPart = (MUIItem) part;
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		int createFlags = 0;
 
@@ -296,8 +296,8 @@ public class StackRenderer extends LazyStackRenderer {
 			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
 
 			cti.setData(OWNING_ME, part);
-			cti.setText(getLabel(part, itemPart.getName()));
-			cti.setImage(getImage(part));
+			cti.setText(getLabel(itemPart, itemPart.getName()));
+			cti.setImage(getImage(itemPart));
 			cti.setToolTipText(itemPart.getTooltip());
 
 			Control widget = (Control) part.getWidget();
@@ -315,11 +315,12 @@ public class StackRenderer extends LazyStackRenderer {
 		hookTabControllerLogic(stack, part, cti);
 	}
 
-	private int calcIndexFor(MPartStack stack, final MPart part) {
+	private int calcIndexFor(MElementContainer<MUIElement> stack,
+			final MUIElement part) {
 		int index = 0;
 
 		// Find the -visible- part before this element
-		for (MPart mPart : stack.getChildren()) {
+		for (MUIElement mPart : stack.getChildren()) {
 			if (mPart == part)
 				return index;
 			if (mPart.isVisible())
@@ -338,21 +339,20 @@ public class StackRenderer extends LazyStackRenderer {
 				|| !(element instanceof MPart))
 			return;
 
-		MPartStack stack = (MPartStack) ((MUIElement) parentElement);
-		MPart part = (MPart) element;
-		showChild(stack, part);
+		showChild(parentElement, element);
 
 		// Lazy Loading: On the first pass through this method the
 		// part's control will be null (we're just creating the tabs
 		Control ctrl = (Control) element.getWidget();
 		if (ctrl != null) {
-			showTab(stack, part);
+			showTab(parentElement, element);
 			stylingEngine.style(ctrl);
 		}
 	}
 
-	private CTabItem findItemForPart(MPartStack folder, MPart part) {
-		CTabFolder ctf = (CTabFolder) folder.getWidget();
+	private CTabItem findItemForPart(MElementContainer<MUIElement> stack,
+			MUIElement part) {
+		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		if (ctf == null)
 			return null;
 
@@ -364,8 +364,9 @@ public class StackRenderer extends LazyStackRenderer {
 		return null;
 	}
 
-	private void hookTabControllerLogic(final MPartStack stack,
-			final MPart part, final CTabItem cti) {
+	private void hookTabControllerLogic(
+			final MElementContainer<MUIElement> stack, final MUIElement part,
+			final CTabItem cti) {
 	}
 
 	@Override
@@ -377,18 +378,15 @@ public class StackRenderer extends LazyStackRenderer {
 				|| !(child instanceof MPart))
 			return;
 
-		MPartStack stack = (MPartStack) ((MUIElement) parentElement);
-		MPart part = (MPart) child;
-
-		CTabItem oldItem = findItemForPart(stack, part);
+		CTabItem oldItem = findItemForPart(parentElement, child);
 		if (oldItem != null) {
 			oldItem.setControl(null); // prevent the widget from being disposed
 			oldItem.dispose();
 		}
 
-		// 'auto-hide' empty stacks
+		// HACK!! 'auto-hide' empty stacks (should be modeled explicitly
 		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
-		boolean isEditorStack = part instanceof MEditor;
+		boolean isEditorStack = child instanceof MEditor;
 		if (ctf.getItemCount() == 0 && !isEditorStack) {
 			final Shell sh = ctf.getShell();
 			parentElement.setVisible(false);
@@ -409,7 +407,10 @@ public class StackRenderer extends LazyStackRenderer {
 	public void hookControllerLogic(final MUIElement me) {
 		super.hookControllerLogic(me);
 
-		final MPartStack stack = (MPartStack) me;
+		if (!(me instanceof MElementContainer<?>))
+			return;
+
+		final MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) me;
 
 		// Match the selected TabItem to its Part
 		CTabFolder ctf = (CTabFolder) me.getWidget();
@@ -460,13 +461,14 @@ public class StackRenderer extends LazyStackRenderer {
 		});
 	}
 
-	private void showTab(MPartStack stack, MPart part) {
-		CTabFolder ctf = (CTabFolder) getParentWidget(part);
-		Control ctrl = (Control) part.getWidget();
-		CTabItem cti = findItemForPart(stack, part);
+	private void showTab(MElementContainer<MUIElement> parentElement,
+			MUIElement element) {
+		CTabFolder ctf = (CTabFolder) getParentWidget(element);
+		Control ctrl = (Control) element.getWidget();
+		CTabItem cti = findItemForPart(parentElement, element);
 		cti.setControl(ctrl);
 
-		ToolBar tb = getToolbar(part);
+		ToolBar tb = getToolbar(element);
 		if (tb != null) {
 			Control curTR = ctf.getTopRight();
 			if (curTR != null)
@@ -498,7 +500,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 	}
 
-	private ToolBar getToolbar(MPart part) {
+	private ToolBar getToolbar(MUIElement element) {
 		// if (part.getToolBar() == null && part.getMenu() == null)
 		// return null;
 		// CTabFolder ctf = (CTabFolder) getParentWidget(part);

@@ -287,9 +287,10 @@
   <eClassifiers xsi:type="ecore:EClass" name="Perspective">
     <eGenericSuperTypes eClassifier="#//UIItem"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
-      <eTypeArguments eClassifier="#//VSCElement"/>
+      <eTypeArguments eClassifier="#//PSCElement"/>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//Context"/>
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
     <eGenericSuperTypes eClassifier="#//UIElement"/>
@@ -297,6 +298,7 @@
       <eTypeArguments eClassifier="#//Perspective"/>
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//VSCElement"/>
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="IDEWindow" eSuperTypes="#//UIItem #//Context #//HandlerContainer #//BindingContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//Menu"/>

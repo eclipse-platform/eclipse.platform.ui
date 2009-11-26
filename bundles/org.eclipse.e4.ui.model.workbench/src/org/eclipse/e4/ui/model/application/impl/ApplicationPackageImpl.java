@@ -1930,10 +1930,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(this.getUIItem());
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
-		g2 = createEGenericType(this.getVSCElement());
+		g2 = createEGenericType(this.getPSCElement());
 		g1.getETypeArguments().add(g2);
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getContext());
+		perspectiveEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPSCElement());
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getUIElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
@@ -1942,6 +1944,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1.getETypeArguments().add(g2);
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getVSCElement());
+		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPSCElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
 		ideWindowEClass.getESuperTypes().add(this.getUIItem());
 		ideWindowEClass.getESuperTypes().add(this.getContext());

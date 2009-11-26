@@ -44,9 +44,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			public void handleEvent(Event event) {
 				String attName = (String) event
 						.getProperty(IUIEvents.EventTags.AttName);
+				Object element = event.getProperty(IUIEvents.EventTags.Element);
 				if (IUIEvents.ElementContainer.ActiveChild.equals(attName)) {
-					MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) event
-							.getProperty(IUIEvents.EventTags.Element);
+					MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
 					MUIElement selPart = stack.getActiveChild();
 					if (selPart != null && selPart.getWidget() == null) {
 						IPresentationEngine renderer = (IPresentationEngine) context
@@ -62,17 +62,18 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	}
 
 	public void postProcess(MUIElement element) {
-		if (!(element instanceof MPartStack))
+		if (!(element instanceof MElementContainer<?>))
 			return;
 
-		MPartStack stack = (MPartStack) element;
-		MPart selPart = stack.getActiveChild();
+		MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
+		MUIElement selPart = stack.getActiveChild();
 
 		// If there's no 'active' part defined then pick the first
 		if (selPart == null && stack.getChildren().size() > 0) {
 			// NOTE: no need to render first because the listener for
 			// the active child changing will do it
-			stack.setActiveChild(stack.getChildren().get(0));
+			int defaultIndex = 0;
+			stack.setActiveChild(stack.getChildren().get(defaultIndex));
 		} else if (selPart != null && selPart.getWidget() == null) {
 			IPresentationEngine renderer = (IPresentationEngine) context
 					.get(IPresentationEngine.class.getName());
@@ -82,19 +83,15 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 	@Override
 	public void processContents(MElementContainer<MUIElement> me) {
-		if (!(((MUIElement) me) instanceof MPartStack))
-			return;
-
-		MPartStack stack = (MPartStack) ((MUIElement) me);
 		Widget parentWidget = getParentWidget(me);
 		if (parentWidget == null)
 			return;
 
 		// Lazy Loading: here we only process the contents through childAdded,
 		// we specifically do not render them
-		for (MPart part : stack.getChildren()) {
+		for (MUIElement part : me.getChildren()) {
 			if (part.isVisible())
-				showChild(stack, part);
+				showChild(me, part);
 		}
 	}
 
@@ -102,12 +99,12 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	 * This method is necessary to allow the parent container to show affordance
 	 * (i.e. tabs) for child elements -without- creating the actual part
 	 * 
-	 * @param stack
+	 * @param me
 	 *            The parent model element
-	 * @param childME
+	 * @param part
 	 *            The child to show the affordance for
 	 */
-	protected void showChild(MPartStack stack, MPart childME) {
+	protected void showChild(MElementContainer<MUIElement> me, MUIElement part) {
 	}
 
 	@Override

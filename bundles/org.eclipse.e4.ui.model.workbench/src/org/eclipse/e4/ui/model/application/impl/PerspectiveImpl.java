@@ -18,9 +18,9 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MVSCElement;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -148,7 +148,7 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MVSCElement> children;
+	protected EList<MPSCElement> children;
 
 	/**
 	 * The cached value of the '{@link #getActiveChild() <em>Active Child</em>}' reference.
@@ -158,7 +158,7 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * @generated
 	 * @ordered
 	 */
-	protected MVSCElement activeChild;
+	protected MPSCElement activeChild;
 
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
@@ -340,9 +340,9 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MVSCElement> getChildren() {
+	public EList<MPSCElement> getChildren() {
 		if (children == null) {
-			children = new EObjectContainmentWithInverseEList<MVSCElement>(MUIElement.class, this, MApplicationPackage.PERSPECTIVE__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
+			children = new EObjectContainmentWithInverseEList<MPSCElement>(MUIElement.class, this, MApplicationPackage.PERSPECTIVE__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
 		}
 		return children;
 	}
@@ -352,10 +352,10 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MVSCElement getActiveChild() {
+	public MPSCElement getActiveChild() {
 		if (activeChild != null && ((EObject)activeChild).eIsProxy()) {
 			InternalEObject oldActiveChild = (InternalEObject)activeChild;
-			activeChild = (MVSCElement)eResolveProxy(oldActiveChild);
+			activeChild = (MPSCElement)eResolveProxy(oldActiveChild);
 			if (activeChild != oldActiveChild) {
 				if (eNotificationRequired())
 					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD, oldActiveChild, activeChild));
@@ -369,7 +369,7 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MVSCElement basicGetActiveChild() {
+	public MPSCElement basicGetActiveChild() {
 		return activeChild;
 	}
 
@@ -378,8 +378,8 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setActiveChild(MVSCElement newActiveChild) {
-		MVSCElement oldActiveChild = activeChild;
+	public void setActiveChild(MPSCElement newActiveChild) {
+		MPSCElement oldActiveChild = activeChild;
 		activeChild = newActiveChild;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD, oldActiveChild, activeChild));
@@ -524,10 +524,10 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 				return;
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				getChildren().clear();
-				getChildren().addAll((Collection<? extends MVSCElement>)newValue);
+				getChildren().addAll((Collection<? extends MPSCElement>)newValue);
 				return;
 			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
-				setActiveChild((MVSCElement)newValue);
+				setActiveChild((MPSCElement)newValue);
 				return;
 			case MApplicationPackage.PERSPECTIVE__CONTEXT:
 				setContext((IEclipseContext)newValue);
@@ -567,7 +567,7 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 				getChildren().clear();
 				return;
 			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
-				setActiveChild((MVSCElement)null);
+				setActiveChild((MPSCElement)null);
 				return;
 			case MApplicationPackage.PERSPECTIVE__CONTEXT:
 				setContext(CONTEXT_EDEFAULT);
@@ -645,6 +645,11 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 				default: return -1;
 			}
 		}
+		if (baseClass == MPSCElement.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -681,6 +686,11 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.PERSPECTIVE__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.PERSPECTIVE__VARIABLES;
+				default: return -1;
+			}
+		}
+		if (baseClass == MPSCElement.class) {
+			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}

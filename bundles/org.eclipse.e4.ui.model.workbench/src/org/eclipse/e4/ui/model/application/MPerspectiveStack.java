@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MPerspectiveStack extends MUIElement, MElementContainer<MPerspective>, MVSCElement {
+public interface MPerspectiveStack extends MUIElement, MElementContainer<MPerspective>, MVSCElement, MPSCElement {
 } // MPerspectiveStack

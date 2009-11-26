@@ -8,6 +8,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MTrimContainer;
@@ -23,6 +24,7 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 	private ToolBarRenderer toolbarRenderer;
 	private ToolItemRenderer toolItemRenderer;
 	private ContributedPartRenderer contributedPartRenderer;
+	private PerspectiveStackRenderer perspStackRenderer;
 	private PerspectiveRenderer perspRenderer;
 	private SashRenderer partSashRenderer;
 	private StackRenderer stackRenderer;
@@ -68,12 +70,12 @@ public class WorkbenchRendererFactory implements IRendererFactory {
 				initRenderer(perspRenderer);
 			}
 			return perspRenderer;
-		} else if (uiElement instanceof MPerspective) {
-			if (perspRenderer == null) {
-				perspRenderer = new PerspectiveRenderer();
-				initRenderer(perspRenderer);
+		} else if (uiElement instanceof MPerspectiveStack) {
+			if (perspStackRenderer == null) {
+				perspStackRenderer = new PerspectiveStackRenderer();
+				initRenderer(perspStackRenderer);
 			}
-			return perspRenderer;
+			return perspStackRenderer;
 		} else if (uiElement instanceof MPartSashContainer) {
 			if (partSashRenderer == null) {
 				partSashRenderer = new SashRenderer();

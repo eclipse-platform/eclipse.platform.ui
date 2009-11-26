@@ -21,5 +21,5 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MPerspective extends MUIItem, MElementContainer<MVSCElement>, MContext {
+public interface MPerspective extends MUIItem, MElementContainer<MPSCElement>, MContext, MPSCElement {
 } // MPerspective
