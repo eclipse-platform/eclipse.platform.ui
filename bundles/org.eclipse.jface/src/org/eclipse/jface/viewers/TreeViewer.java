@@ -881,11 +881,20 @@ public class TreeViewer extends AbstractTreeViewer {
 							continue;
 						if (index < parentItem.getItemCount()) {
 							TreeItem item = parentItem.getItem(index);
-							if (item.getData() != null) {
+							
+							if (item.getData() == null) {
+								// If getData()==null and index == 0, we are
+								// being asked to remove the dummy node. We'll
+								// just ignore the request to remove the dummy
+								// node.
+								if (index > 0) {
+									item.dispose();
+								}
+							} else {
 								removedPath = getTreePathFromItem(item);
 								disassociate(item);
+								item.dispose();
 							}
-							item.dispose();
 						}
 					}
 				}
