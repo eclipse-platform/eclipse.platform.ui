@@ -90,4 +90,26 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 
 		return perspStack;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.ui.renderers.swt.LazyStackRenderer#postProcess
+	 * (org.eclipse.e4.ui.model.application.MUIElement)
+	 */
+	@Override
+	public void postProcess(MUIElement element) {
+		super.postProcess(element);
+
+		MPerspectiveStack ps = (MPerspectiveStack) element;
+		if (ps.getActiveChild() != null
+				&& ps.getActiveChild().getWidget() != null) {
+			Control ctrl = (Control) ps.getActiveChild().getWidget();
+			Composite psComp = (Composite) ps.getWidget();
+			StackLayout sl = (StackLayout) psComp.getLayout();
+			sl.topControl = ctrl;
+			psComp.layout();
+		}
+	}
 }
