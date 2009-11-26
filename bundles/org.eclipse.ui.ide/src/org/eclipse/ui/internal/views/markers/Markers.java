@@ -383,6 +383,13 @@ class Markers {
 		return markers;
 	}
 
+	/**
+	 * @return Returns true if markers are changing.
+	 */
+	boolean isInChange() {
+		return inChange;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -416,5 +423,4 @@ class Markers {
 		}
 		return true;
 	}
-	
 }

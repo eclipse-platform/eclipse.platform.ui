@@ -172,7 +172,7 @@ public class ResourceInfoPage extends PropertyPage {
 		locationValue.setBackground(locationValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 
-		if (isPathVariable(resource)) {
+		if (!resource.isGroup() && isPathVariable(resource)) {
 			Label resolvedLocationTitle = new Label(basicInfoComposite,
 					SWT.LEFT);
 			resolvedLocationTitle.setText(RESOLVED_LOCATION_TITLE);

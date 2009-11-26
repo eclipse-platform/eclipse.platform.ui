@@ -12,8 +12,8 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.resources.AbstractFileInfoMatcher;
 import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
 import org.eclipse.ui.internal.ide.StringMatcher;
 
 /**

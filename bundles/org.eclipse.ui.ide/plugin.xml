@@ -177,6 +177,19 @@
                class="org.eclipse.core.resources.IResource">
          </selection>
       </wizard>
+      <wizard
+            name="%NewWizards.group"
+            icon="$nl$/icons/full/etool16/newgroup_wiz.gif"
+            category="org.eclipse.ui.Basic"
+        	class="org.eclipse.ui.wizards.newresource.BasicNewGroupResourceWizard"
+            id="org.eclipse.ui.wizards.new.group">
+         <description>
+            %NewWizards.group.description
+         </description>
+         <selection
+               class="org.eclipse.core.resources.IResource">
+         </selection>
+      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
@@ -2223,48 +2236,39 @@
       </propertyTester>
    </extension>
    <extension
-         point="org.eclipse.core.resources.filters"
-         id="stringMatcherFilter">
-      <filter
+         point="org.eclipse.core.resources.filterMatchers">
+      <filterMatcher
+      		id="org.eclipse.ui.ide.patternFilterMatcher"
             argumentType="string"
             class="org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher"
             description="%filterProvider.description"
             name="%filterProvider.name"
             ordering="first">
-      </filter>
-   </extension>
-   <extension
-         point="org.eclipse.core.resources.filters"
-         id="orFilter">
-      <filter
-            argumentType="filters"
+      </filterMatcher>
+      <filterMatcher
+      		id="org.eclipse.ui.ide.orFilterMatcher"
+            argumentType="filterMatchers"
             class="org.eclipse.ui.internal.ide.misc.OrFileInfoMatcher"
             description="%orFilterProvider.description"
             name="%orFilterProvider.name"
             ordering="first">
-      </filter>
-   </extension>
-   <extension
-         point="org.eclipse.core.resources.filters"
-         id="andFilter">
-      <filter
-            argumentType="filters"
+      </filterMatcher>
+      <filterMatcher
+      		id="org.eclipse.ui.ide.andFilterMatcher"
+            argumentType="filterMatchers"
             class="org.eclipse.ui.internal.ide.misc.AndFileInfoMatcher"
             description="%andFilterProvider.description"
             name="%andFilterProvider.name"
             ordering="first">
-      </filter>
-   </extension>
-   <extension
-         point="org.eclipse.core.resources.filters"
-         id="notFilter">
-      <filter
-            argumentType="filter"
+      </filterMatcher>
+      <filterMatcher
+      		id="org.eclipse.ui.ide.notFilterMatcher"
+            argumentType="filterMatcher"
             class="org.eclipse.ui.internal.ide.misc.NotFileInfoMatcher"
             description="%notFilterProvider.description"
             name="%notFilterProvider.name"
             ordering="first">
-      </filter>
+      </filterMatcher>
    </extension>
    <extension
          point="org.eclipse.ui.installationPages">

@@ -12,7 +12,7 @@
 package org.eclipse.ui.internal.ide.misc;
 
 import org.eclipse.core.filesystem.IFileInfo;
-import org.eclipse.core.resources.CompoundFileInfoMatcher;
+import org.eclipse.core.resources.filtermatchers.CompoundFileInfoMatcher;
 
 /**
  * A Resource Filter Type Factory for supporting the NOT logical preposition

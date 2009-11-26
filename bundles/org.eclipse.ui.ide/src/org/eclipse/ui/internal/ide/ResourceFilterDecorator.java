@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.ILightweightLabelDecorator;
  */
 public class ResourceFilterDecorator implements ILightweightLabelDecorator {
 
-	private static final String IMG_MARKERS_RESOURCE_FILTER_DECORATION_PATH = "markers/filter_ovr.gif"; //$NON-NLS-1$
+	private static final String IMG_MARKERS_RESOURCE_FILTER_DECORATION_PATH = "ovr16/filterapplied_ovr.gif"; //$NON-NLS-1$
 	ImageDescriptor descriptorImage = null;
 
 	/**
@@ -45,7 +45,8 @@ public class ResourceFilterDecorator implements ILightweightLabelDecorator {
 		try {
 			filters = container.getFilters();
 			if ((filters.length > 0) && (descriptorImage != null))
-				decoration.addOverlay(descriptorImage);
+				decoration
+						.addOverlay(descriptorImage, IDecoration.BOTTOM_RIGHT);
 		} catch (CoreException e) {
 		}
 	}

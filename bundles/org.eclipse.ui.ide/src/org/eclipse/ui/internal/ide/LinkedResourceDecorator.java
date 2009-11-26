@@ -87,7 +87,7 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 			return;
 		}
         IResource resource = (IResource) element;
-        if (resource.isLinked()) {
+        if (resource.isLinked() && !resource.isGroup()) {
 			IFileInfo fileInfo = null;
 			URI location = resource.getLocationURI();
 			if (location != null) {

@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
@@ -120,6 +119,7 @@ public class CachedMarkerBuilder {
 	void dispose() {
 		markerListener.stop();
 		active=false;
+		Job.getJobManager().cancel(MARKERSVIEW_UPDATE_JOB_FAMILY);
 		if(workingSetListener!=null){
 			PlatformUI.getWorkbench().getWorkingSetManager()
 			.removePropertyChangeListener(getWorkingSetListener());
@@ -286,7 +286,7 @@ public class CachedMarkerBuilder {
 	 */
 	void scheduleUpdate() {
 		if (active) {
-			markerListener.scheduleUpdate(MarkersChangeListener.SHORT_DELAY,changeFlags);
+			markerListener.scheduleUpdate(MarkersChangeListener.SHORT_DELAY,true);
 		}
 	}
 	/**
@@ -295,7 +295,7 @@ public class CachedMarkerBuilder {
 	 */
 	void scheduleUpdate(long delay) {
 		if (active) {
-			markerListener.scheduleUpdate(delay,changeFlags);
+			markerListener.scheduleUpdate(delay,true);
 		}
 	}
 
@@ -410,18 +410,16 @@ public class CachedMarkerBuilder {
 		} else {
 			/*
 			 * unfortunately marker operations cannot be locked so locking
-			 * between gathering of markers and marker deltas is not possible we
-			 * have the very simple code (the 3 handle* methods in
-			 * MarkersChangeListener) addition to take care of this anyway
+			 * between gathering of markers and marker deltas is not
+			 * possible.We do not update incrementally. We have 
+			 * code for further investigation(*) for this anyway.
 			 */
 			// updateJob = new MarkerUpdateJob(this);
 			updateJob = new MarkerUpdateJob(this, false);
 			updateJob.setPriority(Job.LONG);
 			updateJob.setSystem(true);
 		}
-		for (int i = 0; i < changeFlags.length; i++) {
-			this.changeFlags[i]=this.changeFlags[i]|changeFlags[i];
-		}
+		updateChangeFlags(changeFlags);
 		if (clean) {
 			updateJob.setClean();
 		}
@@ -433,22 +431,9 @@ public class CachedMarkerBuilder {
 		return updateJob;
 	}
 	
-	synchronized void cancelUpdate(boolean block) {
+	synchronized void cancelUpdate() {
 		if (updateJob != null) {
 			updateJob.cancel();
-			if (block) {
-				try {
-					Display display = Display.getCurrent();
-					if (display == null) {
-						//the update job depends on UI to finish
-						display = Display.getDefault();
-						if (display.getSyncThread() != Thread.currentThread()) {
-							updateJob.join();
-						}
-					}
-				} catch (InterruptedException e) {
-				}
-			}
 		}
 	}
 	/**
@@ -457,6 +442,7 @@ public class CachedMarkerBuilder {
 	MarkersChangeListener getMarkerListener() {
 		return markerListener;
 	}
+	
 	/**
 	 * @param {@link MarkersChangeListener} The MarkersChangeListener to set.
 	 */
@@ -590,9 +576,25 @@ public class CachedMarkerBuilder {
 
 	/**
 	 * Create a new clone of Markers
+	 * Returns null if markers are changing/building
+	 * @see CachedMarkerBuilder#getClonedMarkers()
+	 * and {@link #getMarkers()}
 	 */
 	 Markers createMarkersClone() {
+		 if(markers.isInChange()){
+			 return null;
+		 }
 		markersClone =markers.getClone();
 		return markersClone;
+	}
+
+	/**
+	 * @param changeFlags
+	 * 
+	 */
+	void updateChangeFlags(boolean[] changeFlags) {
+		for (int i = 0; i < changeFlags.length; i++) {
+			this.changeFlags[i]=this.changeFlags[i]|changeFlags[i];
+		}
 	}
 }

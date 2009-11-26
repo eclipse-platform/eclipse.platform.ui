@@ -590,6 +590,11 @@ public class CreateLinkedResourceGroup {
 	public IStatus validateLinkLocation(IResource linkHandle) {
 		if (linkTargetField == null || linkTargetField.isDisposed()
 				|| !createLink) {
+			if (linkHandle.getParent().isGroup()) {
+				return createStatus(
+						IStatus.ERROR,
+						IDEWorkbenchMessages.CreateLinkedResourceGroup_linkRequiredUnderAGroup);
+			} 
 			return Status.OK_STATUS;
 		}
 		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();

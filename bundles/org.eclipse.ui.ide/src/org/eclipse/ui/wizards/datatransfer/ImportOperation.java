@@ -83,6 +83,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private List errorTable = new ArrayList();
 
+    private boolean createGroups = false;
+
+    private boolean createLinks = false;
+
     private boolean createContainerStructure = true;
 
     //The constants for the overwrite 3 state
@@ -94,7 +98,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 
     private int overwriteState = OVERWRITE_NOT_SET;
 
-    /**
+	/**
      * Creates a new operation that recursively imports the entire contents of the
      * specified root file system object.
      * <p>
@@ -305,8 +309,13 @@ public class ImportOperation extends WorkspaceModifyOperation {
         for (int i = 0; i < segmentCount; i++) {
             currentFolder = currentFolder.getFolder(new Path(path.segment(i)));
             if (!currentFolder.exists()) {
-				((IFolder) currentFolder).create(false, true, null);
-			}
+                if (createGroups)
+                    ((IFolder) currentFolder).createGroup(0, null);
+                else if (createLinks)
+                    ((IFolder) currentFolder).createLink(path, 0, null);
+                else
+                    ((IFolder) currentFolder).create(false, true, null);
+            }
         }
 
         return currentFolder;
@@ -552,11 +561,22 @@ public class ImportOperation extends WorkspaceModifyOperation {
             if (targetResource.exists()) {
 				targetResource.setContents(contentStream,
                         IResource.KEEP_HISTORY, null);
-			} else {
-				targetResource.create(contentStream, false, null);
-			}
-            setResourceAttributes(targetResource,fileObject);
-            
+            } else {
+                if (createGroups || createLinks)
+                    targetResource.createLink(new Path(provider
+                                    .getFullPath(fileObject)), 0, null);
+                else
+                    targetResource.create(contentStream, false, null);
+            }
+            setResourceAttributes(targetResource, fileObject);
+
+            if (provider instanceof TarLeveledStructureProvider) {
+            	try {
+            		targetResource.setResourceAttributes(((TarLeveledStructureProvider) provider).getResourceAttributes(fileObject));
+            	} catch (CoreException e) {
+            		errorTable.add(e.getStatus());
+            	}
+            }
         } catch (CoreException e) {
             errorTable.add(e.getStatus());
         } finally {
@@ -618,9 +638,10 @@ public class ImportOperation extends WorkspaceModifyOperation {
      *
      * @param filesToImport the list of file system objects to import
      *   (element type: <code>Object</code>)
+	 * @throws CoreException 
      * @exception OperationCanceledException if canceled
      */
-    void importFileSystemObjects(List filesToImport) {
+    void importFileSystemObjects(List filesToImport) throws CoreException {
         Iterator filesEnum = filesToImport.iterator();
         while (filesEnum.hasNext()) {
             Object fileSystemObject = filesEnum.next();
@@ -651,8 +672,9 @@ public class ImportOperation extends WorkspaceModifyOperation {
      * @param folderObject the file system container object to be imported
      * @param policy determines how the folder object and children are imported
      * @return the policy to use to import the folder's children
+     * @throws CoreException 
      */
-    int importFolder(Object folderObject, int policy) {
+    int importFolder(Object folderObject, int policy) throws CoreException {
         IContainer containerResource;
         try {
             containerResource = getDestinationContainerFor(folderObject);
@@ -682,12 +704,23 @@ public class ImportOperation extends WorkspaceModifyOperation {
 				return POLICY_SKIP_CHILDREN;
 			}
 
-            return POLICY_FORCE_OVERWRITE;
+            IFolder folder = workspace.getRoot().getFolder(resourcePath);
+            if (createGroups || createLinks || folder.isGroup() || folder.isLinked()) {
+                folder.delete(true, null);
+            } else
+                return POLICY_FORCE_OVERWRITE;
         }
 
         try {
-            workspace.getRoot().getFolder(resourcePath).create(false, true,
-                    null);
+            if (createGroups)
+                workspace.getRoot().getFolder(resourcePath).createGroup(0, null);
+            else if (createLinks) {
+                workspace.getRoot().getFolder(resourcePath).createLink(
+                        new Path(provider.getFullPath(folderObject)),
+                        0, null);
+                policy = POLICY_SKIP_CHILDREN;
+            } else
+                workspace.getRoot().getFolder(resourcePath).create(false, true, null);
         } catch (CoreException e) {
             errorTable.add(e.getStatus());
         }
@@ -695,16 +728,17 @@ public class ImportOperation extends WorkspaceModifyOperation {
         return policy;
     }
 
-    /**
+	/**
      * Imports the specified file system object recursively into the workspace.
      * If the import fails, adds a status object to the list to be returned by
      * <code>getStatus</code>.
      *
      * @param fileSystemObject the file system object to be imported
      * @param policy determines how the file system object and children are imported
+	 * @throws CoreException 
      * @exception OperationCanceledException if canceled
      */
-    void importRecursivelyFrom(Object fileSystemObject, int policy) {
+    void importRecursivelyFrom(Object fileSystemObject, int policy) throws CoreException {
         if (monitor.isCanceled()) {
 			throw new OperationCanceledException();
 		}
@@ -876,5 +910,25 @@ public class ImportOperation extends WorkspaceModifyOperation {
                 overwriteReadonly, POLICY_DEFAULT);
         rejectedFiles = validateEdit(overwriteReadonly);
         rejectedFiles.addAll(noOverwrite);
+    }
+
+    /**
+     * Set Whether groups and links will be created instead of files and folders
+     * 
+     * @param groups
+     * @since 3.6
+     */
+    public void setCreateGroups(boolean groups) {
+        createGroups = groups;
+    }
+
+    /**
+     * Set Whether links will be created instead of files and folders
+     * 
+     * @param links
+     * @since 3.6
+     */
+    public void setCreateLinks(boolean links) {
+        createLinks = links;
     }
 }

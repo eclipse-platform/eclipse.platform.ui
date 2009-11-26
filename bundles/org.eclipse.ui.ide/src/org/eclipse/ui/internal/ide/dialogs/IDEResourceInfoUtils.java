@@ -62,6 +62,10 @@ public class IDEResourceInfoUtils {
 
 	private static String LINKED_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFolder;
 
+	private static String GROUP_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_groupFolder;
+
+	private static String GROUP_TEXT = IDEWorkbenchMessages.ResourceInfo_isGroup;
+
 	private static String MISSING_PATH_VARIABLE_TEXT = IDEWorkbenchMessages.ResourceInfo_undefinedPathVariable;
 
 	private static String NOT_EXIST_TEXT = IDEWorkbenchMessages.ResourceInfo_notExist;
@@ -174,6 +178,8 @@ public class IDEResourceInfoUtils {
 	 * @return String or <code>null</code>
 	 */
 	public static IFileInfo getFileInfo(URI location) {
+		if (location.getScheme() == null)
+			return null;
 		IFileStore store = getFileStore(location);
 		if (store == null) {
 			return null;
@@ -215,6 +221,8 @@ public class IDEResourceInfoUtils {
 	 * @return String the text to display the location
 	 */
 	public static String getLocationText(IResource resource) {
+		if (resource.isGroup())
+			return GROUP_TEXT;
 		if (!resource.isLocal(IResource.DEPTH_ZERO)) {
 			return NOT_LOCAL_TEXT;
 		}
@@ -229,6 +237,9 @@ public class IDEResourceInfoUtils {
 			return NOT_EXIST_TEXT;
 		}
 
+		if (resolvedLocation.getScheme() == null)
+			return location.toString();
+		
 		IFileStore store = getFileStore(resolvedLocation);
 		// don't access the file system for closed projects (bug 151089)
 		boolean isPathVariable = isPathVariable(resource);
@@ -273,6 +284,9 @@ public class IDEResourceInfoUtils {
 			return NOT_EXIST_TEXT;
 		}
 
+		if (location.getScheme() == null)
+			return UNKNOWN_LABEL;
+		
 		IFileStore store = getFileStore(location);
 		if (store == null) {
 			return UNKNOWN_LABEL;
@@ -350,6 +364,9 @@ public class IDEResourceInfoUtils {
 		}
 
 		if (resource.getType() == IResource.FOLDER) {
+			if (resource.isGroup()) {
+				return GROUP_FOLDER_LABEL;
+			}
 			if (resource.isLinked()) {
 				return LINKED_FOLDER_LABEL;
 			}

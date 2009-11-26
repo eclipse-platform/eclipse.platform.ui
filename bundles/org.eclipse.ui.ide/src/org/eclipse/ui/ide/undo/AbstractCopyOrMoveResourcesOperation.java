@@ -39,6 +39,10 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 	// Used when all resources are going to the same container (no name changes)
 	protected IPath destination = null;
 
+	protected boolean fCreateGroups = false;
+
+	protected boolean fCreateLinks = false;
+
 	/**
 	 * Create an AbstractCopyOrMoveResourcesOperation that moves or copies all
 	 * of the specified resources to the specified paths. The destination paths
@@ -255,5 +259,13 @@ abstract class AbstractCopyOrMoveResourcesOperation extends
 			status = computeMoveOrCopyStatus();
 		}
 		return status;
+	}
+
+	public void setCreateGroups(boolean value) {
+		fCreateGroups = value;
+	}
+
+	public void setCreateLinks(boolean value) {
+		fCreateLinks = value;
 	}
 }
