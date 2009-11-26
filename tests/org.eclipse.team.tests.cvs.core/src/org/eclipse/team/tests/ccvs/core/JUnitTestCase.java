@@ -18,7 +18,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.awtui.TestRunner;
+import junit.textui.TestRunner;
 import junit.framework.TestCase;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
