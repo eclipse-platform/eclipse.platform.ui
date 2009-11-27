@@ -64,10 +64,9 @@ public class RunAndTrackTest extends TestCase {
 		return childContext;
 	}
 
-	private IEclipseContext createGlobalContext() {
+	private IEclipseContext getGlobalContext() {
 		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(TestActivator.bundleContext);
-		createdContexts.add(serviceContext);
+				.getServiceContext(TestActivator.bundleContext);
 		// global initialization and setup, usually done by workbench
 		IEclipseContext appContext = createContext(serviceContext, "globalContext");
 
@@ -102,7 +101,7 @@ public class RunAndTrackTest extends TestCase {
 	}
 
 	public void testActiveChain() throws Exception {
-		final IEclipseContext workbenchContext = createGlobalContext();
+		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
 		createNextLevel(windows[0], "part", 2);
@@ -110,7 +109,7 @@ public class RunAndTrackTest extends TestCase {
 	}
 
 	public void testActiveChange() throws Exception {
-		final IEclipseContext workbenchContext = createGlobalContext();
+		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
 		final IEclipseContext[] parts = createNextLevel(windows[0], "part", 2);
@@ -220,7 +219,7 @@ public class RunAndTrackTest extends TestCase {
 	 * @throws Exception
 	 */
 	public void testRunAndTrackComplex() throws Exception {
-		final IEclipseContext workbenchContext = createGlobalContext();
+		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
 		windows[0].runAndTrack(new Runnable() {
@@ -273,7 +272,7 @@ public class RunAndTrackTest extends TestCase {
 	}
 
 	public void testRunAndTrackSimple() throws Exception {
-		final IEclipseContext workbenchContext = createGlobalContext();
+		final IEclipseContext workbenchContext = getGlobalContext();
 		workbenchContext.set("activePart", new ActivePartLookupFunction());
 		final IEclipseContext[] windows = createNextLevel(workbenchContext, "window", 1);
 		windows[0].runAndTrack(new Runnable() {

@@ -11,8 +11,10 @@
 
 package org.eclipse.e4.core.services.context;
 
+import java.util.WeakHashMap;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
+import org.eclipse.e4.core.services.context.spi.ILookupStrategy;
 import org.eclipse.e4.core.services.internal.context.EclipseContext;
 import org.eclipse.e4.internal.core.services.osgi.OSGiContextStrategy;
 import org.osgi.framework.BundleContext;
@@ -50,6 +52,8 @@ public final class EclipseContextFactory {
 		return eclipseContext;
 	}
 
+	private static WeakHashMap serviceContexts = new WeakHashMap();
+
 	/**
 	 * Returns a context that can be used to lookup OSGi services.
 	 * 
@@ -57,10 +61,14 @@ public final class EclipseContextFactory {
 	 *            The bundle context to use for service lookup
 	 * @return A context containing all OSGi services
 	 */
-	public static IEclipseContext createServiceContext(BundleContext bundleContext) {
-		IEclipseContext result = create(null, new OSGiContextStrategy(bundleContext));
-		result.set(IContextConstants.DEBUG_STRING,
-				"OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+	public static IEclipseContext getServiceContext(BundleContext bundleContext) {
+		IEclipseContext result = (IEclipseContext) serviceContexts.get(bundleContext);
+		if (result == null) {
+			result = create(null, new OSGiContextStrategy(bundleContext));
+			result.set(IContextConstants.DEBUG_STRING,
+					"OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+			serviceContexts.put(bundleContext, result);
+		}
 		return result;
 	}
 
