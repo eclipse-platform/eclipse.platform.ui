@@ -143,7 +143,7 @@ public class RunApplicationTest extends TestCase {
 									// an OSGi service
 									// context that can provide OSGi services
 									IEclipseContext serviceContext = EclipseContextFactory
-											.createServiceContext(bundleContext);
+											.getServiceContext(bundleContext);
 									applicationContext = EclipseContextFactory
 											.create(serviceContext, null);
 									applicationContext.set(

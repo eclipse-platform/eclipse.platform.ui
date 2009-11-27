@@ -64,7 +64,7 @@ public abstract class HeadlessStartupTest extends TestCase {
 	}
 
 	private IEclipseContext createOSGiContext() {
-		osgiContext = EclipseContextFactory.createServiceContext(Activator
+		osgiContext = EclipseContextFactory.getServiceContext(Activator
 				.getDefault().getBundle().getBundleContext());
 		return osgiContext;
 	}

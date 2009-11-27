@@ -90,7 +90,7 @@ public class WorkbenchApplication implements IApplication {
 					// parent of the global workbench context is an OSGi service
 					// context that can provide OSGi services
 					IEclipseContext serviceContext = EclipseContextFactory
-							.createServiceContext(Activator.getDefault()
+							.getServiceContext(Activator.getDefault()
 									.getContext());
 					IEclipseContext appContext = EclipseContextFactory.create(
 							serviceContext, null);

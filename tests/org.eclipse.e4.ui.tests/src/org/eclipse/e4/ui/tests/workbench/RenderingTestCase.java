@@ -60,7 +60,7 @@ public class RenderingTestCase extends TestCase {
 			RegistryFactory.getRegistry());
 
 	protected static IEclipseContext serviceContext = EclipseContextFactory
-			.createServiceContext(Activator.getDefault().getBundle()
+			.getServiceContext(Activator.getDefault().getBundle()
 					.getBundleContext());
 
 	protected static MApplication app = MApplicationFactory.eINSTANCE
@@ -99,7 +99,7 @@ public class RenderingTestCase extends TestCase {
 		// Create a fresh org.eclipse.e4.ui.model.application context for each
 		// test
 		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(Activator.getDefault().getBundle()
+				.getServiceContext(Activator.getDefault().getBundle()
 						.getBundleContext());
 
 		appContext = Workbench.createWorkbenchContext(serviceContext,

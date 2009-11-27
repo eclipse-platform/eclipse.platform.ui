@@ -43,7 +43,7 @@ public class Activator implements BundleActivator {
 
 	public void start(BundleContext context) throws Exception {
 		plugin = this;
-		serviceContext = EclipseContextFactory.createServiceContext(context);
+		serviceContext = EclipseContextFactory.getServiceContext(context);
 		appContext = EclipseContextFactory.create(serviceContext, null);
 		addLogService(appContext);
 	}

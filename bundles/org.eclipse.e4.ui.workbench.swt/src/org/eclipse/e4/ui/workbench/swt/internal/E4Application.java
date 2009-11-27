@@ -152,7 +152,7 @@ public class E4Application implements IApplication {
 		// parent of the global workbench context is an OSGi service
 		// context that can provide OSGi services
 		IEclipseContext serviceContext = EclipseContextFactory
-				.createServiceContext(Activator.getDefault().getContext());
+				.getServiceContext(Activator.getDefault().getContext());
 		final IEclipseContext appContext = EclipseContextFactory.create(
 				serviceContext, UISchedulerStrategy.getInstance());
 		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchAppContext"); //$NON-NLS-1$
