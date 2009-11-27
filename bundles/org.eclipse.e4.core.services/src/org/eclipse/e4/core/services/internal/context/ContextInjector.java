@@ -481,12 +481,10 @@ public class ContextInjector {
 					|| ((constructor.getModifiers() & Modifier.PROTECTED) != 0))
 				continue;
 
-			// unless this is the last constructor, it has to be tagged
-			if (i.hasNext()) {
-				InjectionProperties properties = annotationSupport.getInjectProperties(constructor);
-				if (!properties.shouldInject())
-					continue;
-			}
+			// unless this is the default constructor, it has to be tagged
+			InjectionProperties cProps = annotationSupport.getInjectProperties(constructor);
+			if (!cProps.shouldInject() && constructor.getParameterTypes().length != 0)
+				continue;
 
 			InjectionProperties[] properties = annotationSupport
 					.getInjectParamsProperties(constructor);

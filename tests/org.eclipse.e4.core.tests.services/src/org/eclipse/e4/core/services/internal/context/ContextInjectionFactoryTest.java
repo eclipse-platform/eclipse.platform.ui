@@ -42,7 +42,7 @@ public class ContextInjectionFactoryTest extends TestCase {
 
 	}
 
-	protected class TestConstructorObjectBasic {
+	static class TestConstructorObjectBasic {
 		public boolean defaultConstructorCalled = false;
 
 		public TestConstructorObjectBasic() {
