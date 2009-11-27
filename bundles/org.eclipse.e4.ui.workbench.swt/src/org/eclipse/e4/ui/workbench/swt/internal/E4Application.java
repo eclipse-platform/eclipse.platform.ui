@@ -29,8 +29,6 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.e4.ui.services.events.EventBrokerFactory;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.internal.ActiveChildLookupFunction;
@@ -158,8 +156,6 @@ public class E4Application implements IApplication {
 		final IEclipseContext appContext = EclipseContextFactory.create(
 				serviceContext, UISchedulerStrategy.getInstance());
 		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchAppContext"); //$NON-NLS-1$
-		appContext.set(IEventBroker.class.getName(), EventBrokerFactory
-				.newEventBroker());
 
 		// FROM: Workbench#createWorkbenchContext
 		IExtensionRegistry registry = RegistryFactory.getRegistry();

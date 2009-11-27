@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.events;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextFunction;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.services.internal.events.EventBroker;
 
 
@@ -21,8 +24,10 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
  * @noextend This class is not intended to be sub-classed by clients.
  */
 
-public class EventBrokerFactory {
-	public static IEventBroker newEventBroker() {
-		return new EventBroker();
+public class EventBrokerFactory extends ContextFunction {
+	@Override
+	public Object compute(IEclipseContext context, Object[] arguments) {
+		return ContextInjectionFactory.make(EventBroker.class, context);
 	}
 }
+

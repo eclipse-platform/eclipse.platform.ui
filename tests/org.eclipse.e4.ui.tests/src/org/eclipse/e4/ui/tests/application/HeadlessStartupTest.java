@@ -28,8 +28,6 @@ import org.eclipse.e4.core.services.context.spi.ISchedulerStrategy;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.services.IServiceConstants;
-import org.eclipse.e4.ui.services.events.EventBrokerFactory;
-import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.Activator;
 import org.eclipse.e4.workbench.ui.IExceptionHandler;
 import org.eclipse.e4.workbench.ui.internal.ActivePartLookupFunction;
@@ -88,8 +86,6 @@ public abstract class HeadlessStartupTest extends TestCase {
 
 		appContext.set(IEclipseContext.class.getName(), appContext);
 
-		appContext.set(IEventBroker.class.getName(), EventBrokerFactory
-				.newEventBroker());
 		appContext.set(IContributionFactory.class.getName(),
 				new ReflectionContributionFactory(
 						(IExtensionRegistry) appContext

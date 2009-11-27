@@ -10,11 +10,13 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.internal.events;
 
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.internal.services.Activator;
 import org.eclipse.e4.ui.internal.services.ServiceMessages;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -122,5 +124,16 @@ public class EventBroker implements IEventBroker {
 			return false;
 		registration.unregister();
 		return true;
+	}
+	
+	@PreDestroy
+	void dispose() {
+		Collection<ServiceRegistration> values = registrations.values();
+		ServiceRegistration[] array = values.toArray(new ServiceRegistration[values.size()]);
+		registrations.clear();
+		for (int i = 0; i < array.length; i++) {
+			//System.out.println("EventBroker dispose:" + array[i] + ")");
+			array[i].unregister();
+		}
 	}
 }
