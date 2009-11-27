@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -42,26 +42,23 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		showPerspectiveHandler = new EventHandler() {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MMenuItem
-				if (!(event.getProperty(IUIEvents.EventTags.Element) instanceof MPerspectiveStack))
+				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MPerspectiveStack))
 					return;
 
 				MPerspectiveStack ps = (MPerspectiveStack) event
-						.getProperty(IUIEvents.EventTags.Element);
+						.getProperty(UIEvents.EventTags.ELEMENT);
 
-				String attName = (String) event
-						.getProperty(IUIEvents.EventTags.AttName);
-				if (IUIEvents.ElementContainer.ActiveChild.equals(attName)) {
-					Composite psComp = (Composite) ps.getWidget();
-					StackLayout sl = (StackLayout) psComp.getLayout();
-					Control ctrl = (Control) ps.getActiveChild().getWidget();
-					sl.topControl = ctrl;
-					psComp.layout();
-				}
+				Composite psComp = (Composite) ps.getWidget();
+				StackLayout sl = (StackLayout) psComp.getLayout();
+				Control ctrl = (Control) ps.getActiveChild().getWidget();
+				sl.topControl = ctrl;
+				psComp.layout();
 			}
 		};
 
-		eventBroker.subscribe(IUIEvents.ElementContainer.Topic,
-				showPerspectiveHandler);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.ElementContainer.ACTIVECHILD_TOPIC,
+				UIEvents.EventTypes.ALL), showPerspectiveHandler);
 	}
 
 	@PreDestroy

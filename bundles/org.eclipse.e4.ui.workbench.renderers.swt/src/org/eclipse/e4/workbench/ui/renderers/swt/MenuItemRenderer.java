@@ -29,7 +29,7 @@ import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -53,11 +53,11 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		itemUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MMenuItem
-				if (!(event.getProperty(IUIEvents.EventTags.Element) instanceof MMenuItem))
+				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
 					return;
 
 				MMenuItem itemModel = (MMenuItem) event
-						.getProperty(IUIEvents.EventTags.Element);
+						.getProperty(UIEvents.EventTags.ELEMENT);
 				MenuItem menuItem = (MenuItem) itemModel.getWidget();
 
 				// No widget == nothing to update
@@ -65,16 +65,18 @@ public class MenuItemRenderer extends SWTPartRenderer {
 					return;
 
 				String attName = (String) event
-						.getProperty(IUIEvents.EventTags.AttName);
-				if (IUIEvents.UIItem.Name.equals(attName)) {
+						.getProperty(UIEvents.EventTags.ATTNAME);
+				if (UIEvents.UIItem.NAME.equals(attName)) {
 					setItemText(itemModel, menuItem);
-				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
 					menuItem.setImage(getImage(itemModel));
 				}
 			}
 		};
 
-		eventBroker.subscribe(IUIEvents.UIItem.Topic, itemUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.UIItem.TOPIC,
+				UIEvents.ALL_ATTRIBUTES), itemUpdater);
 	}
 
 	@PreDestroy

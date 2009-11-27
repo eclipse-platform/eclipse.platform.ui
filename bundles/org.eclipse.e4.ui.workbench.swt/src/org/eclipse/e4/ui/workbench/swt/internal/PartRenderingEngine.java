@@ -37,9 +37,9 @@ import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
 import org.eclipse.e4.workbench.ui.internal.Policy;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
@@ -82,13 +82,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 	// Life Cycle handlers
 	private EventHandler visibilityHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			String attName = (String) event
-					.getProperty(IUIEvents.EventTags.AttName);
-			if (!IUIEvents.UIElement.Visible.equals(attName))
-				return;
 
 			MUIElement changedElement = (MUIElement) event
-					.getProperty(IUIEvents.EventTags.Element);
+					.getProperty(UIEvents.EventTags.ELEMENT);
 
 			// If the parent isn't displayed who cares?
 			MElementContainer<?> parent = changedElement.getParent();
@@ -116,7 +112,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 			MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) event
-					.getProperty(IUIEvents.EventTags.Element);
+					.getProperty(UIEvents.EventTags.ELEMENT);
 
 			// If the parent isn't in the UI then who cares?
 			AbstractPartRenderer factory = getFactoryFor(changedElement);
@@ -124,11 +120,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 				return;
 
 			String eventType = (String) event
-					.getProperty(IUIEvents.EventTags.Type);
-			if (IUIEvents.EventTypes.Add.equals(eventType)) {
+					.getProperty(UIEvents.EventTags.TYPE);
+			if (UIEvents.EventTypes.ADD.equals(eventType)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Added", null); //$NON-NLS-1$
 				MUIElement added = (MUIElement) event
-						.getProperty(IUIEvents.EventTags.NewValue);
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
 
 				// OK, we have a new -visible- part we either have to create
 				// it or host it under the correct parent
@@ -138,10 +134,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 				else {
 					factory.childRendered(changedElement, added);
 				}
-			} else if (IUIEvents.EventTypes.Remove.equals(eventType)) {
+			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
 				MUIElement removed = (MUIElement) event
-						.getProperty(IUIEvents.EventTags.OldValue);
+						.getProperty(UIEvents.EventTags.OLD_VALUE);
 				// Removing invisible elements is a NO-OP as far as the
 				// renderer is concerned
 				if (!removed.isVisible())
@@ -206,9 +202,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// Hook up the widget life-cycle subscriber
 		IEventBroker eventBroker = (IEventBroker) context
 				.get(IEventBroker.class.getName());
-		eventBroker.subscribe(IUIEvents.UIElement.Topic, visibilityHandler);
-		eventBroker
-				.subscribe(IUIEvents.ElementContainer.Topic, childrenHandler);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.UIElement.VISIBLE_TOPIC,
+				UIEvents.EventTypes.ALL), visibilityHandler);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.ElementContainer.CHILDREN_TOPIC,
+				UIEvents.EventTypes.ALL), childrenHandler);
 	}
 
 	@Inject
@@ -479,12 +478,12 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (uiRoot instanceof MApplication) {
 					spinOnce = false; // loop until the app closes
 					theApp = (MApplication) uiRoot;
-					//long startTime = System.currentTimeMillis();
+					// long startTime = System.currentTimeMillis();
 					for (MWindow window : theApp.getChildren()) {
 						testShell = (Shell) createGui(window);
 					}
-					//long endTime = System.currentTimeMillis();
-					//System.out.println("Render: " + (endTime - startTime));
+					// long endTime = System.currentTimeMillis();
+					// System.out.println("Render: " + (endTime - startTime));
 				} else if (uiRoot instanceof MUIElement) {
 					if (uiRoot instanceof MWindow) {
 						testShell = (Shell) createGui((MUIElement) uiRoot);

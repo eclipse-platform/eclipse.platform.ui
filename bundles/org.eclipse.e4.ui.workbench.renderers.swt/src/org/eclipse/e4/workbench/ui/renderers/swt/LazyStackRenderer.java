@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.widgets.CTabFolder;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
@@ -42,23 +42,22 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	public void init(IEventBroker eventBroker) {
 		EventHandler lazyLoader = new EventHandler() {
 			public void handleEvent(Event event) {
-				String attName = (String) event
-						.getProperty(IUIEvents.EventTags.AttName);
-				Object element = event.getProperty(IUIEvents.EventTags.Element);
-				if (IUIEvents.ElementContainer.ActiveChild.equals(attName)) {
-					MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
-					MUIElement selPart = stack.getActiveChild();
-					if (selPart != null && selPart.getWidget() == null) {
-						IPresentationEngine renderer = (IPresentationEngine) context
-								.get(IPresentationEngine.class.getName());
-						renderer.createGui(selPart);
-						// activate(selPart);
-					}
+				Object element = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
+				MUIElement selPart = stack.getActiveChild();
+				if (selPart != null && selPart.getWidget() == null) {
+					IPresentationEngine renderer = (IPresentationEngine) context
+							.get(IPresentationEngine.class.getName());
+					renderer.createGui(selPart);
+					// activate(selPart);
 				}
 			}
 		};
 
-		eventBroker.subscribe(IUIEvents.ElementContainer.Topic, lazyLoader);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.ElementContainer.ACTIVECHILD_TOPIC,
+				UIEvents.EventTypes.ALL), lazyLoader);
 	}
 
 	public void postProcess(MUIElement element) {

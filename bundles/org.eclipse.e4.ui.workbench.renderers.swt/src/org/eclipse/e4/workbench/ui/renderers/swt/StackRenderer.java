@@ -33,7 +33,7 @@ import org.eclipse.e4.ui.widgets.ETabFolder;
 import org.eclipse.e4.ui.widgets.ETabItem;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.IValueFunction;
 import org.eclipse.e4.workbench.ui.internal.Trackable;
 import org.eclipse.swt.SWT;
@@ -70,7 +70,7 @@ public class StackRenderer extends LazyStackRenderer {
 		EventHandler itemUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				Object objElement = event
-						.getProperty(IUIEvents.EventTags.Element);
+						.getProperty(UIEvents.EventTags.ELEMENT);
 				// Ensure that this event is for a MMenuItem
 				if (!(objElement instanceof MUIItem)
 						|| !(objElement instanceof MUIElement))
@@ -93,28 +93,30 @@ public class StackRenderer extends LazyStackRenderer {
 					return;
 
 				String attName = (String) event
-						.getProperty(IUIEvents.EventTags.AttName);
+						.getProperty(UIEvents.EventTags.ATTNAME);
 
-				if (IUIEvents.UIItem.Name.equals(attName)) {
+				if (UIEvents.UIItem.NAME.equals(attName)) {
 					String newName = (String) event
-							.getProperty(IUIEvents.EventTags.NewValue);
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					item.setText(getLabel((MPart) uiElement, newName));
-				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
 					item.setImage(getImage(modelItem));
-				} else if (IUIEvents.UIItem.Tooltip.equals(attName)) {
+				} else if (UIEvents.UIItem.TOOLTIP.equals(attName)) {
 					String newTTip = (String) event
-							.getProperty(IUIEvents.EventTags.NewValue);
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					item.setToolTipText(newTTip);
 				}
 			}
 		};
 
-		eventBroker.subscribe(IUIEvents.UIItem.Topic, itemUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.UIItem.TOPIC,
+				UIEvents.ALL_ATTRIBUTES), itemUpdater);
 
 		EventHandler dirtyUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				Object objElement = event
-						.getProperty(IUIEvents.EventTags.Element);
+						.getProperty(UIEvents.EventTags.ELEMENT);
 
 				// Ensure that this event is for a MMenuItem
 				if (!(objElement instanceof MSaveablePart)) {
@@ -138,25 +140,23 @@ public class StackRenderer extends LazyStackRenderer {
 					return;
 				}
 
-				String attName = (String) event
-						.getProperty(IUIEvents.EventTags.AttName);
-				if (IUIEvents.Dirtyable.Dirty.equals(attName)) {
-					Boolean dirtyState = (Boolean) event
-							.getProperty(IUIEvents.EventTags.NewValue);
-					String text = item.getText();
-					boolean hasAsterisk = text.charAt(0) == '*';
-					if (dirtyState.booleanValue()) {
-						if (!hasAsterisk) {
-							item.setText('*' + text);
-						}
-					} else if (hasAsterisk) {
-						item.setText(text.substring(1));
+				Boolean dirtyState = (Boolean) event
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
+				String text = item.getText();
+				boolean hasAsterisk = text.charAt(0) == '*';
+				if (dirtyState.booleanValue()) {
+					if (!hasAsterisk) {
+						item.setText('*' + text);
 					}
+				} else if (hasAsterisk) {
+					item.setText(text.substring(1));
 				}
 			}
 		};
 
-		eventBroker.subscribe(IUIEvents.Dirtyable.Topic, dirtyUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.Dirtyable.DIRTY_TOPIC,
+				UIEvents.EventTypes.ALL), dirtyUpdater);
 	}
 
 	private String getLabel(MUIItem itemPart, String newName) {

@@ -23,19 +23,20 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents.ApplicationElement;
+import org.eclipse.e4.workbench.ui.UIEvents.Command;
+import org.eclipse.e4.workbench.ui.UIEvents.Context;
+import org.eclipse.e4.workbench.ui.UIEvents.Contribution;
+import org.eclipse.e4.workbench.ui.UIEvents.Dirtyable;
+import org.eclipse.e4.workbench.ui.UIEvents.ElementContainer;
+import org.eclipse.e4.workbench.ui.UIEvents.EventTags;
+import org.eclipse.e4.workbench.ui.UIEvents.Input;
+import org.eclipse.e4.workbench.ui.UIEvents.Parameter;
+import org.eclipse.e4.workbench.ui.UIEvents.UIElement;
+import org.eclipse.e4.workbench.ui.UIEvents.UIItem;
+import org.eclipse.e4.workbench.ui.UIEvents.Window;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.AppElement;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.Command;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.Context;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.Contribution;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.Dirtyable;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.ElementContainer;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.EventTags;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.Input;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.Parameter;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.UIElement;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.UIItem;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents.Window;
 import org.eclipse.emf.common.notify.Notifier;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -54,7 +55,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 				assertTrue(event.getTopic().equals(topic),
 						"Incorrect Topic: " + event.getTopic()); //$NON-NLS-1$
 
-				String attId = (String) event.getProperty(EventTags.AttName);
+				String attId = (String) event.getProperty(EventTags.ATTNAME);
 				int attIndex = getAttIndex(attId);
 				assertTrue(attIndex >= 0, "Unknown Attribite: " + attId); //$NON-NLS-1$
 				hasFired[attIndex] = true;
@@ -64,14 +65,15 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		public EventTester(String name, String topic, String[] attIds,
 				IEventBroker eventBroker) {
 			this.testerName = name;
-			this.topic = topic;
+			this.topic = UIEvents.buildTopic(topic,
+					UIEvents.ALL_ATTRIBUTES);
 			this.attIds = attIds;
 			this.eventBroker = eventBroker;
 
 			hasFired = new boolean[attIds.length];
 			reset();
 
-			eventBroker.subscribe(topic, attListener);
+			eventBroker.subscribe(this.topic, attListener);
 		}
 
 		/**
@@ -115,80 +117,81 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	public class AppElementTester extends EventTester {
 		AppElementTester(IEventBroker eventBroker) {
-			super("AppElement", AppElement.Topic,
-					new String[] { AppElement.Id }, eventBroker);
+			super("AppElement", ApplicationElement.TOPIC,
+					new String[] { ApplicationElement.ID }, eventBroker);
 		}
 	}
 
 	public class CommandTester extends EventTester {
 		CommandTester(IEventBroker eventBroker) {
-			super("Command", Command.Topic, new String[] { Command.Name },
-					eventBroker);
+			super("Command", Command.TOPIC,
+					new String[] { Command.COMMANDNAME }, eventBroker);
 		}
 	}
 
 	public class ContextTester extends EventTester {
 		ContextTester(IEventBroker eventBroker) {
-			super("Context", Context.Topic, new String[] { Context.Context,
-					Context.Variables }, eventBroker);
+			super("Context", Context.TOPIC, new String[] { Context.CONTEXT,
+					Context.VARIABLES }, eventBroker);
 		}
 	}
 
 	public class ContributionTester extends EventTester {
 		ContributionTester(IEventBroker eventBroker) {
-			super("Contribution", Contribution.Topic,
-					new String[] { Contribution.URI, Contribution.State,
-							Contribution.Object }, eventBroker);
+			super("Contribution", Contribution.TOPIC, new String[] {
+					Contribution.URI, Contribution.PERSISTEDSTATE,
+					Contribution.OBJECT }, eventBroker);
 		}
 	}
 
 	public class ElementContainerTester extends EventTester {
 		ElementContainerTester(IEventBroker eventBroker) {
-			super("ElementContainer", ElementContainer.Topic, new String[] {
-					ElementContainer.Children, ElementContainer.ActiveChild },
+			super("ElementContainer", ElementContainer.TOPIC, new String[] {
+					ElementContainer.CHILDREN, ElementContainer.ACTIVECHILD },
 					eventBroker);
 		}
 	}
 
 	public class DirtyableTester extends EventTester {
 		DirtyableTester(IEventBroker eventBroker) {
-			super("Dirtyable", Dirtyable.Topic,
-					new String[] { Dirtyable.Dirty }, eventBroker);
+			super("Dirtyable", Dirtyable.TOPIC,
+					new String[] { Dirtyable.DIRTY }, eventBroker);
 		}
 	}
 
 	public class InputTester extends EventTester {
 		InputTester(IEventBroker eventBroker) {
-			super("Input", Input.Topic, new String[] { Input.URI }, eventBroker);
+			super("Input", Input.TOPIC, new String[] { Input.INPUTURI },
+					eventBroker);
 		}
 	}
 
 	public class ParameterTester extends EventTester {
 		ParameterTester(IEventBroker eventBroker) {
-			super("Parameter", Parameter.Topic, new String[] { Parameter.Tag,
-					Parameter.Value }, eventBroker);
+			super("Parameter", Parameter.TOPIC, new String[] { Parameter.TAG,
+					Parameter.VALUE }, eventBroker);
 		}
 	}
 
 	public class UIElementTester extends EventTester {
 		UIElementTester(IEventBroker eventBroker) {
-			super("UIElement", UIElement.Topic, new String[] {
-					UIElement.Factory, UIElement.Parent, UIElement.Visible,
-					UIElement.Widget }, eventBroker);
+			super("UIElement", UIElement.TOPIC, new String[] {
+					UIElement.FACTORY, UIElement.PARENT, UIElement.VISIBLE,
+					UIElement.WIDGET }, eventBroker);
 		}
 	}
 
 	public class UIItemTester extends EventTester {
 		UIItemTester(IEventBroker eventBroker) {
-			super("UIItem", UIItem.Topic, new String[] { UIItem.Name,
-					UIItem.IconURI, UIItem.Tooltip }, eventBroker);
+			super("UIItem", UIItem.TOPIC, new String[] { UIItem.NAME,
+					UIItem.ICONURI, UIItem.TOOLTIP }, eventBroker);
 		}
 	}
 
 	public class WindowTester extends EventTester {
 		WindowTester(IEventBroker eventBroker) {
-			super("Window", Window.Topic, new String[] { Window.MainMenu,
-					Window.X, Window.Y, Window.Width, Window.Height },
+			super("Window", Window.TOPIC, new String[] { Window.MAINMENU,
+					Window.X, Window.Y, Window.WIDTH, Window.HEIGHT },
 					eventBroker);
 		}
 	}

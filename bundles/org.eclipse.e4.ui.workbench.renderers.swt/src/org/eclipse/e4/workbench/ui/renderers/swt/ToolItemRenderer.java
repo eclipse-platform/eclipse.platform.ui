@@ -31,7 +31,7 @@ import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
 import org.eclipse.e4.ui.services.events.IEventBroker;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
@@ -55,11 +55,11 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		itemUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MMenuItem
-				if (!(event.getProperty(IUIEvents.EventTags.Element) instanceof MMenuItem))
+				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
 					return;
 
 				MToolItem itemModel = (MToolItem) event
-						.getProperty(IUIEvents.EventTags.Element);
+						.getProperty(UIEvents.EventTags.ELEMENT);
 				ToolItem toolItem = (ToolItem) itemModel.getWidget();
 
 				// No widget == nothing to update
@@ -67,12 +67,12 @@ public class ToolItemRenderer extends SWTPartRenderer {
 					return;
 
 				String attName = (String) event
-						.getProperty(IUIEvents.EventTags.AttName);
-				if (IUIEvents.UIItem.Name.equals(attName)) {
+						.getProperty(UIEvents.EventTags.ATTNAME);
+				if (UIEvents.UIItem.NAME.equals(attName)) {
 					setItemText(itemModel, toolItem);
-				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
 					toolItem.setImage(getImage(itemModel));
-				} else if (IUIEvents.UIItem.Tooltip.equals(attName)) {
+				} else if (UIEvents.UIItem.TOOLTIP.equals(attName)) {
 					if (itemModel.getTooltip() != null)
 						toolItem.setToolTipText(itemModel.getTooltip());
 					toolItem.setImage(getImage(itemModel));
@@ -80,7 +80,9 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(IUIEvents.UIItem.Topic, itemUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.UIItem.TOPIC,
+				UIEvents.ALL_ATTRIBUTES), itemUpdater);
 	}
 
 	@PreDestroy

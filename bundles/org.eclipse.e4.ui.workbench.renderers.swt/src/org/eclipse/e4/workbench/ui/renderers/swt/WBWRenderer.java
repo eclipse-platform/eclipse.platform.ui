@@ -30,7 +30,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -78,8 +78,8 @@ public class WBWRenderer extends SWTPartRenderer {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MMenuItem
 				Object objElement = event
-						.getProperty(IUIEvents.EventTags.Element);
-				if (!(event.getProperty(IUIEvents.EventTags.Element) instanceof MWindow))
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MWindow))
 					return;
 
 				// Is this listener interested ?
@@ -93,23 +93,25 @@ public class WBWRenderer extends SWTPartRenderer {
 					return;
 
 				String attName = (String) event
-						.getProperty(IUIEvents.EventTags.AttName);
+						.getProperty(UIEvents.EventTags.ATTNAME);
 
-				if (IUIEvents.UIItem.Name.equals(attName)) {
+				if (UIEvents.UIItem.NAME.equals(attName)) {
 					String newTitle = (String) event
-							.getProperty(IUIEvents.EventTags.NewValue);
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					theShell.setText(newTitle);
-				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
 					theShell.setImage(getImage(windowModel));
-				} else if (IUIEvents.UIItem.IconURI.equals(attName)) {
+				} else if (UIEvents.UIItem.TOOLTIP.equals(attName)) {
 					String newTTip = (String) event
-							.getProperty(IUIEvents.EventTags.NewValue);
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					theShell.setToolTipText(newTTip);
 				}
 			}
 		};
 
-		eventBroker.subscribe(IUIEvents.UIItem.Topic, shellUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.UIItem.TOPIC,
+				UIEvents.ALL_ATTRIBUTES), shellUpdater);
 	}
 
 	@PreDestroy

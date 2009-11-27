@@ -35,7 +35,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
-import org.eclipse.e4.workbench.ui.internal.IUIEvents;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Workbench;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.TreeIterator;
@@ -56,12 +56,12 @@ public abstract class HeadlessApplicationTest extends
 
 	private EventHandler eventHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			if (event.getProperty(IUIEvents.EventTags.AttName).equals(
-					IUIEvents.ElementContainer.ActiveChild)) {
+			if (event.getProperty(UIEvents.EventTags.ATTNAME)
+					.equals(UIEvents.ElementContainer.ACTIVECHILD)) {
 				Object oldPart = event
-						.getProperty(IUIEvents.EventTags.OldValue);
+						.getProperty(UIEvents.EventTags.OLD_VALUE);
 				Object newPart = event
-						.getProperty(IUIEvents.EventTags.NewValue);
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
 				if (oldPart instanceof MContext) {
 					IEclipseContext context = (IEclipseContext) ((MContext) oldPart)
 							.getContext().get(IContextConstants.PARENT);
@@ -109,8 +109,9 @@ public abstract class HeadlessApplicationTest extends
 	private void addActiveChildEventHandling() {
 		IEventBroker eventBroker = (IEventBroker) application.getContext().get(
 				IEventBroker.class.getName());
-		eventBroker.subscribe(IUIEvents.ElementContainer.Topic, null,
-				eventHandler, true);
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.ElementContainer.TOPIC,
+				UIEvents.ALL_ATTRIBUTES), null, eventHandler, true);
 	}
 
 	public void testGet_ActiveContexts() throws Exception {
