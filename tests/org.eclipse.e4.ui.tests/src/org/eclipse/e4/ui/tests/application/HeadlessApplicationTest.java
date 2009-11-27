@@ -95,11 +95,11 @@ public abstract class HeadlessApplicationTest extends
 				IEventBroker.class.getName());
 		eventBroker.unsubscribe(eventHandler);
 
-		super.tearDown();
-
 		for (MWindow window : application.getChildren()) {
 			renderer.removeGui(window);
 		}
+
+		super.tearDown();
 	}
 
 	protected boolean needsActiveChildEventHandling() {
