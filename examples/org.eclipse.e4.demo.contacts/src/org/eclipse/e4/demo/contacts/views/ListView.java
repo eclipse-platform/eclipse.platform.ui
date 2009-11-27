@@ -43,6 +43,7 @@ public class ListView {
 	@Inject
 	private IEclipseContext context;
 
+	@Inject
 	public ListView(Composite parent) {
 		// Table composite (because of TableColumnLayout)
 		final Composite tableComposite = new Composite(parent, SWT.NONE);

@@ -51,6 +51,7 @@ public class Thumbnails {
 
 	private IEclipseContext context;
 
+	@Inject
 	public Thumbnails(Composite parent, 
 			ISchedulingExecutor backgroundRunner, IStylingEngine stylingEngine) {
 		this.stylingEngine = stylingEngine;

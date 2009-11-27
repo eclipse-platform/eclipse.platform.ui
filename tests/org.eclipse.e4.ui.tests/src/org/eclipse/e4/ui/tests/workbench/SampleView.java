@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.tests.workbench;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
@@ -37,6 +39,7 @@ public class SampleView {
 	 * @param parent
 	 * @param selectionService
 	 */
+	@Inject
 	public SampleView(Composite parent, final IEclipseContext outputContext,
 			final IExtensionRegistry registry) {
 		TreeViewer viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL
@@ -44,7 +47,8 @@ public class SampleView {
 		viewer.getTree().setData("class", "navigator"); //$NON-NLS-1$ //$NON-NLS-2$
 		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
-				outputContext.set(IServiceConstants.SELECTION, event.getSelection());
+				outputContext.set(IServiceConstants.SELECTION, event
+						.getSelection());
 			}
 		});
 		viewer.setContentProvider(new ITreeContentProvider() {

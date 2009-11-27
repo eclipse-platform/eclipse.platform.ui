@@ -53,6 +53,7 @@ public class Preview {
 	private final Realm bgRealm;
 	private Color borderColor;
 	
+	@Inject
 	public Preview(final Composite parentComposite, Realm backgroundRealm) {
 		this.parent = parentComposite;
 		parent.setData("org.eclipse.e4.ui.css.id", "preview");

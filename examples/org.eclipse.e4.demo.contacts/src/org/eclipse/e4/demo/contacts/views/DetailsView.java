@@ -57,6 +57,7 @@ public class DetailsView {
 	@Inject
 	private MUIItem uiItem;
 
+	@Inject
 	public DetailsView(Composite parent, MDirtyable dirtyable) {
 		detailComposite = new DetailComposite(dirtyable, parent, SWT.NONE);
 		this.dirtyable = dirtyable;

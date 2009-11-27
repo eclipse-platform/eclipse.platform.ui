@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.demo.e4photo;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
@@ -24,6 +26,7 @@ public class Location implements EventHandler {
 	private Composite browserParent;
 	private Exif exif;
 
+	@Inject
 	public Location(Composite parent, IEventBroker eventBroker) {
 		parent.setLayout(new FillLayout());
 		parent.setData("org.eclipse.e4.ui.css.id", "location");

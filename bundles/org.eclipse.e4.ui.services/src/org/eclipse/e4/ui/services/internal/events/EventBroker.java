@@ -80,7 +80,7 @@ public class EventBroker implements IEventBroker {
 		eventAdmin.postEvent(event);
 		return true;
 	}
-	
+
 	private Event constructEvent(String topic, Object data) {
 		Event event;
 		if (data instanceof Dictionary<?,?>) {

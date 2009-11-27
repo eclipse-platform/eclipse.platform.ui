@@ -14,6 +14,8 @@ package org.eclipse.e4.demo.contacts.views;
 
 import java.net.URL;
 
+import javax.inject.Inject;
+
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
 import org.eclipse.core.databinding.beans.PojoObservables;
@@ -59,6 +61,7 @@ public class DetailComposite extends Composite {
 	private final WritableValue contactValue = new WritableValue();
 	private final IObservableValue scaledImage;
 
+	@Inject
 	public DetailComposite(MDirtyable dirtyable, final Composite parent,
 			final int style) {
 		super(parent, style);
