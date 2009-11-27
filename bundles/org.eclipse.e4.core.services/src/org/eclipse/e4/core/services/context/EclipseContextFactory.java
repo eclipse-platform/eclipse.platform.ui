@@ -62,14 +62,16 @@ public final class EclipseContextFactory {
 	 * @return A context containing all OSGi services
 	 */
 	public static IEclipseContext getServiceContext(BundleContext bundleContext) {
-		IEclipseContext result = (IEclipseContext) serviceContexts.get(bundleContext);
-		if (result == null) {
-			result = create(null, new OSGiContextStrategy(bundleContext));
-			result.set(IContextConstants.DEBUG_STRING,
-					"OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
-			serviceContexts.put(bundleContext, result);
+		synchronized (serviceContexts) {
+			IEclipseContext result = (IEclipseContext) serviceContexts.get(bundleContext);
+			if (result == null) {
+				result = create(null, new OSGiContextStrategy(bundleContext));
+				result.set(IContextConstants.DEBUG_STRING,
+						"OSGi context for bundle: " + bundleContext.getBundle().getSymbolicName()); //$NON-NLS-1$
+				serviceContexts.put(bundleContext, result);
+			}
+			return result;
 		}
-		return result;
 	}
 
 	/**
