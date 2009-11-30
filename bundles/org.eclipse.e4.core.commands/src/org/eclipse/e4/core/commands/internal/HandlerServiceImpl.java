@@ -11,11 +11,13 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.Iterator;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.e4.core.commands.EHandlerService;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 
@@ -70,8 +72,17 @@ public class HandlerServiceImpl implements EHandlerService {
 			return false;
 		}
 		addParmsToContext(command);
-		return ((Boolean) ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
-				Boolean.TRUE)).booleanValue();
+		Boolean result;
+		try {
+			result = ((Boolean) ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE,
+					context, Boolean.TRUE));
+		} catch (InvocationTargetException e) {
+			Logger logger = (Logger) context.get(Logger.class.getName());
+			if (logger != null)
+				logger.error(e);
+			return true;
+		}
+		return result.booleanValue();
 	}
 
 	/*
@@ -98,12 +109,26 @@ public class HandlerServiceImpl implements EHandlerService {
 			return null;
 		}
 		addParmsToContext(command);
-		Object rc = ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
-				Boolean.TRUE);
-		if (Boolean.FALSE.equals(rc)) {
+
+		try {
+			Object rc = ContextInjectionFactory.invoke(handler, METHOD_CAN_EXECUTE, context,
+					Boolean.TRUE);
+			if (Boolean.FALSE.equals(rc))
+				return null;
+		} catch (InvocationTargetException e1) {
+			Logger logger = (Logger) context.get(Logger.class.getName());
+			if (logger != null)
+				logger.error(e1);
+		}
+
+		try {
+			return ContextInjectionFactory.invoke(handler, METHOD_EXECUTE, context, null);
+		} catch (InvocationTargetException e) {
+			Logger logger = (Logger) context.get(Logger.class.getName());
+			if (logger != null)
+				logger.error(e);
 			return null;
 		}
-		return ContextInjectionFactory.invoke(handler, METHOD_EXECUTE, context, null);
 	}
 
 	private Object[] lookupHandler(String handlerId) {

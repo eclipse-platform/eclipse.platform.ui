@@ -10,12 +10,14 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
@@ -274,10 +276,17 @@ public class WBWRenderer extends SWTPartRenderer {
 				if (part.isDirty()) {
 					Object clientObject = part.getObject();
 					if (clientObject != null) {
-						Boolean saveOnCloseNeeded = (Boolean) ContextInjectionFactory
-								.invoke(
-										clientObject,
-										"isSaveOnCloseNeeded", null, Boolean.TRUE); //$NON-NLS-1$
+
+						Boolean saveOnCloseNeeded = Boolean.TRUE;
+						try {
+							saveOnCloseNeeded = (Boolean) ContextInjectionFactory
+									.invoke(
+											clientObject,
+											"isSaveOnCloseNeeded", null, Boolean.TRUE); //$NON-NLS-1$
+						} catch (InvocationTargetException e) {
+							if (logger != null)
+								logger.error(e);
+						}
 						if (saveOnCloseNeeded.booleanValue()) {
 							saveableParts.add(part);
 						}
@@ -306,8 +315,16 @@ public class WBWRenderer extends SWTPartRenderer {
 			for (Object element : dialog.getCheckedElements()) {
 				MSaveablePart part = (MSaveablePart) element;
 				Object clientObject = part.getObject();
-				ContextInjectionFactory.invoke(clientObject, "doSave", //$NON-NLS-1$
-						context, null);
+				try {
+					ContextInjectionFactory.invoke(clientObject,
+							"doSave", context); //$NON-NLS-1$
+				} catch (InvocationTargetException e) {
+					if (logger != null)
+						logger.error(e);
+				} catch (CoreException e) {
+					if (logger != null)
+						logger.error(e);
+				}
 			}
 		}
 

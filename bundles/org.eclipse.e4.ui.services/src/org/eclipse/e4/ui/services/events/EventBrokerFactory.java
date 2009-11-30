@@ -10,6 +10,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.services.events;
 
+import java.lang.reflect.InvocationTargetException;
+
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -27,7 +30,18 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
 public class EventBrokerFactory extends ContextFunction {
 	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
-		return ContextInjectionFactory.make(EventBroker.class, context);
+		Throwable exception = null;
+		try {
+			return ContextInjectionFactory.make(EventBroker.class, context);
+		} catch (InvocationTargetException e) {
+			exception = e;
+		} catch (InstantiationException e) {
+			exception = e;
+		}
+		Logger logger = (Logger) context.get(Logger.class.getName());
+		if (logger != null)
+			logger.error(exception);
+		return null;
 	}
 }
 

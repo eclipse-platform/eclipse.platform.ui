@@ -10,13 +10,16 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
 import org.eclipse.e4.core.services.IContributionFactory;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -46,6 +49,8 @@ import org.osgi.service.event.EventHandler;
  */
 public class ToolItemRenderer extends SWTPartRenderer {
 
+	@Inject
+	Logger logger;
 	@Inject
 	IEventBroker eventBroker;
 	private EventHandler itemUpdater;
@@ -184,8 +189,16 @@ public class ToolItemRenderer extends SWTPartRenderer {
 						ContextInjectionFactory.inject(contrib.getObject(),
 								lclContext);
 					}
-					ContextInjectionFactory.invoke(contrib.getObject(),
-							"execute", lclContext, null); //$NON-NLS-1$
+					try {
+						ContextInjectionFactory.invoke(contrib.getObject(),
+								"execute", lclContext); //$NON-NLS-1$
+					} catch (InvocationTargetException e1) {
+						if (logger != null)
+							logger.error(e1);
+					} catch (CoreException e1) {
+						if (logger != null)
+							logger.error(e1);
+					}
 				}
 
 				public void widgetDefaultSelected(SelectionEvent e) {

@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
@@ -193,6 +194,16 @@ public class ReflectionContributionFactory implements IContributionFactory {
 			} catch (ClassNotFoundException e) {
 				contribution = null;
 				String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
+						+ bundle.getBundleId() + "'"; //$NON-NLS-1$
+				Activator.log(LogService.LOG_ERROR, message, e);
+			} catch (InvocationTargetException e) {
+				contribution = null;
+				String message = "Unable to instantiate class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
+						+ bundle.getBundleId() + "'"; //$NON-NLS-1$
+				Activator.log(LogService.LOG_ERROR, message, e);
+			} catch (InstantiationException e) {
+				contribution = null;
+				String message = "Unable to instantiate class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
 						+ bundle.getBundleId() + "'"; //$NON-NLS-1$
 				Activator.log(LogService.LOG_ERROR, message, e);
 			}
