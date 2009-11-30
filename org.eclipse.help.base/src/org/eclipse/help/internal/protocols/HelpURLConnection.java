@@ -112,27 +112,40 @@ public class HelpURLConnection extends URLConnection {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
 		}
 
+		int helpOption=PreferenceFileHandler.getEmbeddedHelpOption();
 		InputStream in = null;
-		if (plugin != null) {
-			// first try using content provider, then try to find the file
-			// inside doc.zip, and finally try the file system
-			in = ResourceLocator.openFromProducer(plugin,
-					query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
-					getLocale());
-
-			if (in == null) {
-				in = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
-						getFile(), getLocale());
-			}
-			if (in == null) {
-				in = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
-			}
+		if (plugin != null && (helpOption==PreferenceFileHandler.LOCAL_HELP_ONLY || helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY)) {
+			in = getLocalHelp(plugin);
 		} 
-        if (in == null) {
-			in = openFromRemoteServer(getHref(), getLocale());
+        if (in == null && (helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY || helpOption==PreferenceFileHandler.REMOTE_HELP_PRIORITY)) { 
+			
+        	in = openFromRemoteServer(getHref(), getLocale());
+        	
+        	if(in==null && plugin!=null && helpOption==PreferenceFileHandler.REMOTE_HELP_PRIORITY) 
+        	{
+        		in = getLocalHelp(plugin);
+        	}
 		}
 		if (in == null) {
 			throw new IOException("Resource not found."); //$NON-NLS-1$
+		}
+		return in;
+	}
+
+	private InputStream getLocalHelp(Bundle plugin) {
+		InputStream in;
+		// first try using content provider, then try to find the file
+		// inside doc.zip, and finally try the file system
+		in = ResourceLocator.openFromProducer(plugin,
+				query == null ? getFile() : getFile() + "?" + query, //$NON-NLS-1$
+				getLocale());
+
+		if (in == null) {
+			in = ResourceLocator.openFromZip(plugin, "doc.zip", //$NON-NLS-1$
+					getFile(), getLocale());
+		}
+		if (in == null) {
+			in = ResourceLocator.openFromPlugin(plugin, getFile(), getLocale());
 		}
 		return in;
 	}

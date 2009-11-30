@@ -43,14 +43,15 @@ public class HelpContentPreferencePage extends PreferencePage implements
 
 	private InfocenterDisplay remoteICPage;
 
-	private Button checkbox;
+	private Button searchLocalHelpOnly;
+	private Button searchLocalHelpFirst;
+	private Button searchLocalHelpLast;
 	private Label descLabel;
 
 	/**
 	 * Creates the preference page
 	 */
 	public HelpContentPreferencePage() {
-		
 	}
 
 	/*
@@ -71,18 +72,19 @@ public class HelpContentPreferencePage extends PreferencePage implements
 				IHelpUIConstants.PREF_PAGE_HELP_CONTENT);
 
 		initializeDialogUnits(parent);
-
-		createCheckbox(parent);
 		
 		descLabel = new Label(parent, SWT.NONE);
 		descLabel.setText(Messages.HelpContentPage_title);
 		Dialog.applyDialogFont(descLabel);
 		
+		createSearchLocalHelpOnly(parent);
+		createSearchLocalHelpFirst(parent);
+		createSearchLocalHelpLast(parent);
+		
 		remoteICPage = new InfocenterDisplay(this);
 		remoteICPage.createContents(parent);
-		
 
-		initializeTableEnablement(checkbox.getSelection());
+		initializeTableEnablement(searchLocalHelpOnly.getSelection());
 		
 		return parent;
 	}
@@ -100,7 +102,9 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		currentBlock.getRemoteICviewer().getRemoteICList().removeAllRemoteICs(currentBlock.getRemoteICList());
 		currentBlock.getRemoteICviewer().getRemoteICList().loadDefaultPreferences();
 		currentBlock.restoreDefaultButtons();
-		checkbox.setSelection(new DefaultPreferenceFileHandler().isRemoteHelpOn());
+		searchLocalHelpOnly.setSelection(!(new DefaultPreferenceFileHandler().isRemoteHelpOn()));
+		searchLocalHelpFirst.setSelection(new DefaultPreferenceFileHandler().isRemoteHelpPreferred());
+		searchLocalHelpLast.setSelection(new DefaultPreferenceFileHandler().isRemoteHelpPreferred());
 		changeListener.handleEvent(null);
 	}
 
@@ -121,7 +125,8 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		 * 
 		 * @see org.eclipse.jface.preference.PreferencePage#performOk()
 		 */
-		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, checkbox.getSelection());
+		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, !(searchLocalHelpOnly.getSelection()));
+		prefs.putBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, searchLocalHelpLast.getSelection());
 	
 		currentBlock=remoteICPage.getHelpContentBlock();
 		currentRemoteICArray=currentBlock.getRemoteICList();
@@ -141,33 +146,62 @@ public class HelpContentPreferencePage extends PreferencePage implements
 		return super.setButtonLayoutData(button);
 	}
 
-	private void createCheckbox(Composite parent) {
-		checkbox = new Button(parent, SWT.CHECK);
-		checkbox.setText(Messages.HelpContentPreferencePage_remote);
-		checkbox.addListener(SWT.Selection, changeListener);
+	private void createSearchLocalHelpOnly(Composite parent) {
+		searchLocalHelpOnly = new Button(parent, SWT.RADIO);
+		searchLocalHelpOnly.setText(Messages.SearchEmbeddedHelpOnly);
+		searchLocalHelpOnly.addListener(SWT.Selection, changeListener);
 
-		boolean isOn = Platform.getPreferencesService().getBoolean
+		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
 		    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
-		checkbox.setSelection(isOn);
-		Dialog.applyDialogFont(checkbox);	
+		
+		searchLocalHelpOnly.setSelection(!isRemoteOn);
+		Dialog.applyDialogFont(searchLocalHelpOnly);	
+	}
+	
+	private void createSearchLocalHelpFirst(Composite parent) {
+		searchLocalHelpFirst = new Button(parent, SWT.RADIO);
+		searchLocalHelpFirst.setText(Messages.SearchEmbeddedHelpFirst);
+		searchLocalHelpFirst.addListener(SWT.Selection, changeListener);
+		
+		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
+	    	(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
+		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
+	    	(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
+		
+		searchLocalHelpFirst.setSelection(isRemoteOn && !isRemotePreferred);
+		Dialog.applyDialogFont(searchLocalHelpFirst);
+	}
+	
+	private void createSearchLocalHelpLast(Composite parent) {
+		searchLocalHelpLast = new Button(parent, SWT.RADIO);
+		searchLocalHelpLast.setText(Messages.SearchEmbeddedHelpLast);
+		searchLocalHelpLast.addListener(SWT.Selection, changeListener);
+		
+		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
+			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
+		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
+			(HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
+		
+		searchLocalHelpLast.setSelection(isRemoteOn && isRemotePreferred);
+		Dialog.applyDialogFont(searchLocalHelpLast);
 	}
 	
 	/*
 	 * Initialize the table enablement with the current checkbox selection 
 	 */
 	
-	private void initializeTableEnablement(boolean isRemoteHelpEnabled)
+	private void initializeTableEnablement(boolean isRemoteHelpDisabled)
 	{
 		
 		HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();
 		
-		if(isRemoteHelpEnabled)
-			currentBlock.restoreDefaultButtons();
-		else
+		if(isRemoteHelpDisabled)
 			currentBlock.disableAllButtons();
+		else
+			currentBlock.restoreDefaultButtons();
 			
 		// Disable/Enable table
-		currentBlock.getRemoteICviewer().getTable().setEnabled(isRemoteHelpEnabled);
+		currentBlock.getRemoteICviewer().getTable().setEnabled(!isRemoteHelpDisabled);
 	}
 
 	/*
@@ -179,19 +213,17 @@ public class HelpContentPreferencePage extends PreferencePage implements
 
 			HelpContentBlock currentBlock=remoteICPage.getHelpContentBlock();			
 			
-			boolean isRemoteHelpEnabled=checkbox.getSelection();
+			boolean isRemoteHelpEnabled = !(searchLocalHelpOnly.getSelection());
 			//  Disable/Enable buttons
 			if(isRemoteHelpEnabled)
 				currentBlock.restoreDefaultButtons();
 			else
 				currentBlock.disableAllButtons();
-				
+			
 			// Disable/Enable table
 			currentBlock.getRemoteICviewer().getTable().setEnabled(isRemoteHelpEnabled);
-			
-			
-			
 		}
+		
 	};
-
+	
 }

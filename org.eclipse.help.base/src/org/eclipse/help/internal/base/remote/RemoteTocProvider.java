@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -77,7 +77,7 @@ public class RemoteTocProvider extends AbstractTocProvider {
 
 			URL url = null;
 			String urlStr = ""; //$NON-NLS-1$
-			for (int i = 0; i < numICs; i++) {
+			for (int i = numICs-1; i >= 0; i--) {
 				if (isEnabled[i].equalsIgnoreCase("true")) { //$NON-NLS-1$
 					try {
 						url = new URL("http", host[i], new Integer(port[i]) .intValue(),  //$NON-NLS-1$
@@ -133,4 +133,15 @@ public class RemoteTocProvider extends AbstractTocProvider {
 		return new ITocContribution[0];
 	}
 
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractTocProvider#getPriority()
+	 */
+	public int getPriority() {
+		
+		int helpOption=PreferenceFileHandler.getEmbeddedHelpOption();
+		
+		if(helpOption ==PreferenceFileHandler.LOCAL_HELP_ONLY || helpOption==PreferenceFileHandler.LOCAL_HELP_PRIORITY)
+			return TOC_FILE_PRIORITY+1;
+		else return DEFAULT_PRIORITY-1;
+	}
 }

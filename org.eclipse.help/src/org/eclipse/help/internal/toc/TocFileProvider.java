@@ -87,4 +87,11 @@ public class TocFileProvider extends AbstractTocProvider {
 		}
 		return (TocFile[])tocFiles.toArray(new TocFile[tocFiles.size()]);
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.help.AbstractTocProvider#getPriority()
+	 */
+	public int getPriority() {
+		return TOC_FILE_PRIORITY;
+	}
 }

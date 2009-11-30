@@ -31,6 +31,10 @@ public class PreferenceFileHandler {
 
 	protected static String PREFERENCE_ENTRY_DELIMITER = ","; //$NON-NLS-1$
 
+	public static final int LOCAL_HELP_ONLY=0;
+	public static final int LOCAL_HELP_PRIORITY=1;
+	public static final int REMOTE_HELP_PRIORITY=2;
+	
 	public PreferenceFileHandler() {
 
 		/*
@@ -211,6 +215,27 @@ public class PreferenceFileHandler {
 
 	}
 
+	public static int getEmbeddedHelpOption() {
+		boolean isRemoteOn = Platform.getPreferencesService().getBoolean
+	    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false, null);
+		
+		boolean isRemotePreferred = Platform.getPreferencesService().getBoolean
+	    (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false, null);
+
+		if(!isRemoteOn)
+		{
+			return LOCAL_HELP_ONLY;
+		}
+		else if(!isRemotePreferred)
+		{
+			return LOCAL_HELP_PRIORITY;
+		}
+		else
+		{
+			return REMOTE_HELP_PRIORITY;
+		}
+	}
+	
 	public String[] getHostEntries() {
 		return hostEntries;
 	}

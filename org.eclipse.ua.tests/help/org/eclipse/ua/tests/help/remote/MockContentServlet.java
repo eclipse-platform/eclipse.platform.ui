@@ -40,7 +40,8 @@ public class MockContentServlet extends HttpServlet {
 		if (file.startsWith("/invalid")) {
 			resp.setStatus(HttpServletResponse.SC_NOT_FOUND);
 		} else {
-		    String response = RemoteTestUtils.createMockContent(plugin, file, locale);
+			int port = req.getLocalPort();
+		    String response = RemoteTestUtils.createMockContent(plugin, file, locale, port);
 		    resp.getWriter().write(response);
 		}
 	}

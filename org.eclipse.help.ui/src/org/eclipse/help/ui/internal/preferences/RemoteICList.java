@@ -113,6 +113,13 @@ public class RemoteICList {
 	}
 
 	/**
+	 * @param rics the new set of remote ICs
+	 */
+	public void setRemoteICs(Vector rics) {
+		remote_ics = rics;
+	}
+	
+	/**
 	 * Return the remote IC at the given index in the table
 	 */
 	public RemoteIC getRemoteICAtIndex(int index)

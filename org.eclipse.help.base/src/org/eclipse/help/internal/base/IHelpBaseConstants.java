@@ -23,6 +23,7 @@ public interface IHelpBaseConstants {
 	String P_KEY_ALWAYS_EXTERNAL_BROWSER = "always_external_browser"; //$NON-NLS-1$
 	String P_KEY_SEARCH_FROM_BROWSER = "search_from_browser"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_ON = "remoteHelpOn"; //$NON-NLS-1$
+	String P_KEY_REMOTE_HELP_PREFERRED = "remoteHelpPreferred"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_NAME = "remoteHelpName"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_HOST = "remoteHelpHost"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_PATH = "remoteHelpPath"; //$NON-NLS-1$
@@ -30,5 +31,5 @@ public interface IHelpBaseConstants {
 	String P_KEY_REMOTE_HELP_PORT = "remoteHelpPort"; //$NON-NLS-1$
 	String P_KEY_REMOTE_HELP_ICEnabled = "remoteHelpICEnabled"; //$NON-NLS-1$
     String P_SHOW_BREADCRUMBS = "showBreadcrumbs"; //$NON-NLS-1$
-    String P_PAGE_NOT_FOUND = "page_not_found"; //$NON-NLS-1$
+    String P_PAGE_NOT_FOUND = "page_not_found"; //$NON-NLS-1$    
 }

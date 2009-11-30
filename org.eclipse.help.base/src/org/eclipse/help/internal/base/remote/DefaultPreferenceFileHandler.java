@@ -19,8 +19,7 @@ import org.eclipse.help.internal.base.IHelpBaseConstants;
 
 public class DefaultPreferenceFileHandler extends PreferenceFileHandler {
 
-	private boolean isRemoteOn;
-	
+	private boolean isRemoteOn, isRemoteHelpPreferred;
 	/**
 	 * Class handles the default preferences for the Help Content preference page
 	 */
@@ -34,7 +33,7 @@ public class DefaultPreferenceFileHandler extends PreferenceFileHandler {
 		portPreference = prefs.get(IHelpBaseConstants.P_KEY_REMOTE_HELP_PORT, ""); //$NON-NLS-1$
 		icEnabledPreference = prefs.get(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, ""); //$NON-NLS-1$
 		isRemoteOn = prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, false);
-		
+		isRemoteHelpPreferred = prefs.getBoolean(IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, false);
 		
 		//Get host array first, and initialize values
 		if(hostPreference.length()==0)
@@ -62,9 +61,13 @@ public class DefaultPreferenceFileHandler extends PreferenceFileHandler {
 			this.numEntries = this.nameEntries.length;
 
 	}
-
-	public boolean isRemoteHelpOn()
-	{
-		return isRemoteOn;
+	
+	public boolean isRemoteHelpOn() { 
+		return isRemoteOn; 
 	}
+	
+	public boolean isRemoteHelpPreferred() {
+		return isRemoteHelpPreferred;
+	}
+	
 }

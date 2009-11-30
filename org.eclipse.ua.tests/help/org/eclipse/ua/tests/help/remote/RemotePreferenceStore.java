@@ -26,6 +26,7 @@ public class RemotePreferenceStore {
 	private static String icEnabledPreference;
 	private static String helpOn;
 	private static String defaultPort;
+	private static String remoteHelpPreferred;
 	private static String pageNotFound;
 	
 	public static void savePreferences() throws Exception {
@@ -50,6 +51,9 @@ public class RemotePreferenceStore {
 		helpOn = Platform.getPreferencesService().getString
 	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_ON,
 			      "", null); 
+		remoteHelpPreferred = Platform.getPreferencesService().getString
+	     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED,
+			      "", null); 
 		pageNotFound = Platform.getPreferencesService().getString
 				     (HelpBasePlugin.PLUGIN_ID, IHelpBaseConstants.P_PAGE_NOT_FOUND,
 						      "", null); 
@@ -65,6 +69,7 @@ public class RemotePreferenceStore {
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_DEFAULT_PORT, defaultPort);
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ON, helpOn);		
 		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_ICEnabled, icEnabledPreference);	
+		prefs.put(IHelpBaseConstants.P_KEY_REMOTE_HELP_PREFERRED, remoteHelpPreferred);	
 		prefs.put(IHelpBaseConstants.P_PAGE_NOT_FOUND, pageNotFound);
 	}
 
@@ -79,7 +84,7 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference("remoteHelpICEnabled", "true");
 		RemotePreferenceTest.setPreference("remoteHelpICContributed", "false");
 	}	
-	
+
 	public static void setTwoMockRemoteServers() throws Exception {
         TestServerManager.start("ua.test", 0);
         TestServerManager.start("ua.test2", 1);
@@ -93,6 +98,19 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference("remoteHelpICEnabled", "true,true");
 		RemotePreferenceTest.setPreference("remoteHelpICContributed", "false,false");
 	}
+	public static void setTwoMockRemoteServersReversePriority() throws Exception {
+        TestServerManager.start("ua.test", 0);
+        TestServerManager.start("ua.test2", 1);
+		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
+		RemotePreferenceTest.setPreference("remoteHelpHost", "localhost,localhost");
+		RemotePreferenceTest.setPreference("remoteHelpPath", "/help,/help");
+		RemotePreferenceTest.setPreference("remoteHelpUseDefaultPort", "true,true");
+		RemotePreferenceTest.setPreference("remoteHelpPort", "" 
+				+ TestServerManager.getPort(1) + ',' + TestServerManager.getPort(0));
+		RemotePreferenceTest.setPreference("remoteHelpName", "uatest,uatest2");
+		RemotePreferenceTest.setPreference("remoteHelpICEnabled", "true,true");
+		RemotePreferenceTest.setPreference("remoteHelpICContributed", "false,false");
+	}
 	
 	public static void disableRemoteHelp() throws Exception {
 		RemotePreferenceTest.setPreference("remoteHelpOn", "false");
@@ -102,4 +120,13 @@ public class RemotePreferenceStore {
 		RemotePreferenceTest.setPreference(IHelpBaseConstants.P_PAGE_NOT_FOUND, "");
 	}
 
+	public static void setMockLocalPriority() throws Exception {
+		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
+		RemotePreferenceTest.setPreference("remoteHelpPreferred", "false");
+	}
+	
+	public static void setMockRemotePriority() throws Exception {
+		RemotePreferenceTest.setPreference("remoteHelpOn", "true");
+		RemotePreferenceTest.setPreference("remoteHelpPreferred", "true");
+	}
 }

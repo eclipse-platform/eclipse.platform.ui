@@ -25,11 +25,11 @@ import org.osgi.framework.Bundle;
 public class RemoteTestUtils {
 
 	public static String createMockContent(String plugin, String path,
-			String locale) {
+			String locale, int port) {
 		String result = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0//EN\">"
 				+ "<HTML lang =\"" + locale + "\"><HEAD>"
 				+ "<TITLE> Content from: " + plugin + "</TITLE></HEAD>"
-				+ "<BODY><P>Path is: " + path + "</P></BODY></HTML>";
+				+ "<BODY><P>Path is: " + path + ",Port is: "+port+"</P></BODY></HTML>";
 		return result;
 	}
 

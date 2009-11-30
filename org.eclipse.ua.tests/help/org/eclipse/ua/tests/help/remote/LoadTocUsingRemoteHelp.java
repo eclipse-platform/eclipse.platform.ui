@@ -63,8 +63,6 @@ public class LoadTocUsingRemoteHelp extends TestCase {
 	    RemotePreferenceStore.disableRemoteHelp();
 	}
 	
-	/*
-	 * Fails, see  Bug 292176
 	public void testTocContributionFromTwoServers() throws Exception {
 		BaseHelpSystem.setMode(BaseHelpSystem.MODE_INFOCENTER);
 		RemotePreferenceStore.setTwoMockRemoteServers();
@@ -76,7 +74,6 @@ public class LoadTocUsingRemoteHelp extends TestCase {
 		assertEquals(0, deTocs);
 	    RemotePreferenceStore.disableRemoteHelp();
 	}
-	*/
 
 	/*
 	 * Return the number of tocs with this label

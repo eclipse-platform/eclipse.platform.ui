@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,8 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.ui.internal.preferences;
+
+import java.util.Vector;
 
 import org.eclipse.help.internal.base.remote.RemoteIC;
 import org.eclipse.help.ui.internal.Messages;
@@ -37,6 +39,8 @@ public class HelpContentBlock {
 	private Button viewPropertiesButton;
 	private Button testICConnectionButton;
 	private Button enableDisableICButton;
+	private Button upButton;
+	private Button downButton;
 	private IHelpContentBlockContainer container;
 	private RemoteICViewer remoteICviewer = null;
 	private int validated = 2;
@@ -57,6 +61,10 @@ public class HelpContentBlock {
 				testICConnection();
 			} else if (enableDisableICButton == source) {
 				enableDisableIC();
+			} else if (upButton == source) {
+				moveICUp();
+			} else if (downButton == source) {
+				moveICDown();
 			}
 		}
 	};
@@ -93,9 +101,16 @@ public class HelpContentBlock {
 			Messages.HelpContentBlock_3 : Messages.HelpContentBlock_4;
 		enableDisableICButton = container.createPushButton(parent, enableTitle); 
 		enableDisableICButton.addSelectionListener(selectionListener);
-
+		
+		upButton = container.createPushButton(parent, 
+				Messages.HelpContentBlock_upTitle);
+		upButton.addSelectionListener(selectionListener);
+		
+		downButton = container.createPushButton(parent, 
+				Messages.HelpContentBlock_downTitle);
+		downButton.addSelectionListener(selectionListener);
 	}
-
+	
 	private void viewICProperties() {
 
 		// Get selected item
@@ -205,6 +220,9 @@ public class HelpContentBlock {
 
 			enableDisableICButton.setText(Messages.HelpContentBlock_3);
 			enableDisableICButton.setEnabled(true);
+			
+			upButton.setEnabled(true);
+			downButton.setEnabled(true);
 		}
 
 	}
@@ -256,6 +274,61 @@ public class HelpContentBlock {
 
 	}
 
+	/**
+	 * Raise the search priority of the selected InfoCenter
+	 */
+	public void moveICUp() {
+		// Get selected item
+		RemoteIC remoteic = (RemoteIC) ((IStructuredSelection) remoteICviewer
+				.getSelection()).getFirstElement();
+		
+		RemoteIC[] rics = remoteICviewer.getRemoteICList().getRemoteICArray();
+		
+		for(int i = 0; i < rics.length; i++) {
+			if(rics[i] == remoteic) {
+				// Move the item as long as it's not already at the top of the list
+				if(i > 0) { 
+					remoteic = rics[i - 1];
+					rics[i - 1] = rics[i];
+					rics[i] = remoteic;
+				}
+			}
+		}
+		updateRemoteICs(rics);
+	}
+	
+	/**
+	 * Lower the search priority of the selected InfoCenter
+	 */
+	public void moveICDown() {
+		// Get selected item
+		RemoteIC remoteic = (RemoteIC) ((IStructuredSelection) remoteICviewer
+				.getSelection()).getFirstElement();
+		
+		RemoteIC[] rics = remoteICviewer.getRemoteICList().getRemoteICArray();
+		
+		for(int i = 0; i < rics.length; i++) {
+			if(rics[i] == remoteic) {
+				// Move the item as long as it's not already at the bottom of the list
+				if(i < (rics.length - 1)) { 
+					remoteic = rics[i + 1];
+					rics[i + 1] = rics[i];
+					rics[i] = remoteic;
+				}
+			}
+		}
+		updateRemoteICs(rics);
+	}
+	
+	/**
+	 * @param rics the ordered ICs
+	 */
+	public void updateRemoteICs(RemoteIC[] rics) {
+		Vector v = new Vector();
+		for(int i = 0; i < rics.length; i++) { v.add(rics[i]); }
+		getRemoteICviewer().updateRemoteICList(v);
+	}
+	
 	/**
 	 * Creates the group which will contain the buttons.
 	 */
@@ -320,6 +393,10 @@ public class HelpContentBlock {
 				enableDisableICButton.setEnabled(true);
 				selectedEntry.setEnabled(false);
 			}
+			
+			upButton.setEnabled(true);
+			downButton.setEnabled(true);
+			
 		} else {
 			restoreDefaultButtons();
 		}
@@ -352,14 +429,16 @@ public class HelpContentBlock {
 		testICConnectionButton.setEnabled(false);
 		enableDisableICButton.setEnabled(false);
 		enableDisableICButton.setText(Messages.HelpContentBlock_4);
+		upButton.setEnabled(false);
+		downButton.setEnabled(false);
 		
-		//Clear previous table selection
+		// Clear previous table selection
 		indexSelected = - 1;
 		
 
 	}
+	
 	public void disableAllButtons() {
-
 		addNewICButton.setEnabled(false);
 		editICButton.setEnabled(false);
 		removeICButton.setEnabled(false);
@@ -367,7 +446,8 @@ public class HelpContentBlock {
 		testICConnectionButton.setEnabled(false);
 		enableDisableICButton.setEnabled(false);
 		enableDisableICButton.setText(Messages.HelpContentBlock_4);
-
+		upButton.setEnabled(false);
+		downButton.setEnabled(false);
 	}
 
 	public RemoteICViewer getRemoteICviewer()

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -20,7 +20,7 @@ import org.eclipse.help.internal.HelpPlugin;
  * @since 3.3
  */
 public abstract class AbstractTocProvider {
-
+	
 	/**
 	 * Returns all toc contributions for this provider. Providers
 	 * are free to provide any number of contributions (zero or more).
@@ -38,5 +38,28 @@ public abstract class AbstractTocProvider {
 	protected void contentChanged() {
 		// will force a reload next time around
 		HelpPlugin.getTocManager().clearCache();
+	}
+	
+	/**
+	 * Default priority for toc providers that do not override getPriority()
+	 * @since 3.5
+	 */
+	public static final int DEFAULT_PRIORITY=10;
+	
+	/**
+	 * Priority for toc files read from the local file system
+	 * @since 3.5
+	 */
+	public static final int TOC_FILE_PRIORITY=20;
+	
+	/**
+	 * If two toc contributions have the same id, the one with higher priority will be shown.
+	 * For example, a provider with priority 1 will take precedence over a provider with priority 2.
+	 * @return the priority of this provider
+	 * @since 3.5
+	 */
+	public int getPriority()
+	{
+		return DEFAULT_PRIORITY;
 	}
 }

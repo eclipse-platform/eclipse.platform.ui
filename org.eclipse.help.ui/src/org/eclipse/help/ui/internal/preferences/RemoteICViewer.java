@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,6 +11,7 @@
 package org.eclipse.help.ui.internal.preferences;
 
 import java.util.Arrays;
+import java.util.Vector;
 
 import org.eclipse.help.internal.base.remote.RemoteIC;
 import org.eclipse.help.ui.internal.Messages;
@@ -174,6 +175,21 @@ public class RemoteICViewer {
 	}
 
 	/**
+	 * @param rics the ordered remote InfoCenters
+	 */
+	public void updateRemoteICList(Vector rics) {
+		getRemoteICList().setRemoteICs(rics);
+		updateView();
+	}
+	
+	/**
+	 * Make sure the table viewer shows the latest copy of the ordered InfoCenters 
+	 */
+	public void updateView() {
+		getTableViewer().refresh(getRemoteICList());
+	}
+	
+	/**
 	 * Return the column names in a collection
 	 * 
 	 * @return List containing column names
@@ -188,7 +204,7 @@ public class RemoteICViewer {
 	public ISelection getSelection() {
 		return tableViewer.getSelection();
 	}
-
+	
 	/**
 	 * Return the RemoteICList
 	 */

@@ -13,6 +13,7 @@ package org.eclipse.help.internal.toc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -201,7 +202,7 @@ public class TocManager {
 	private synchronized TocContribution[] getAndCacheTocContributions(String locale, Map contributionsByLocale) {
 		TocContribution[] cached = (TocContribution[])contributionsByLocale.get(locale);
 		if (cached == null) {
-			List contributions = new ArrayList();
+			HashMap contributions = new HashMap();
 			AbstractTocProvider[] providers = getTocProviders();
 			for (int i=0;i<providers.length;++i) {
 				ITocContribution[] contrib;
@@ -219,7 +220,8 @@ public class TocManager {
 						Toc t = toc instanceof Toc ? (Toc)toc : (Toc)UAElementFactory.newElement(toc);
 						t.setLinkTo(contrib[j].getLinkTo());
 						contribution.setToc(t);
-						contributions.add(contribution);
+						if(!contributions.containsKey(contrib[j].getId()))
+							contributions.put(contrib[j].getId(), contribution);
 					}
 				}
 				catch (Throwable t) {
@@ -230,7 +232,7 @@ public class TocManager {
 				}
 				
 			}
-			cached = (TocContribution[])contributions.toArray(new TocContribution[contributions.size()]);
+			cached = (TocContribution[])contributions.values().toArray(new TocContribution[contributions.size()]);
 			contributionsByLocale.put(locale, cached);
 		}
 		return cached;
@@ -246,6 +248,7 @@ public class TocManager {
 		tocsByLocale.clear();
 		tocsById.clear();
 		tocsByTopic = null;
+		tocProviders=null;
 	}
 
 	/*
@@ -270,6 +273,7 @@ public class TocManager {
 					}
 				}
 			}
+			Collections.sort(providers, new TocProviderComparator());
 			tocProviders = (AbstractTocProvider[])providers.toArray(new AbstractTocProvider[providers.size()]);
 		}
 		return tocProviders;

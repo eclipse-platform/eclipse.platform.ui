@@ -166,8 +166,11 @@ public final class Messages extends NLS {
 	public static String IndexInstructions;
 	public static String IndexButton;
 	
-	public static String HelpContentPreferencePage_remote;
 	public static String NoWorkbenchForExecuteCommand_msg;
+	
+	public static String SearchEmbeddedHelpOnly;
+	public static String SearchEmbeddedHelpFirst;
+	public static String SearchEmbeddedHelpLast;
 	
 	// Remote Help Preferences
 	public static String AddICDialog_10;
@@ -210,7 +213,8 @@ public final class Messages extends NLS {
 	public static String HelpContentBlock_testConnectionTitle;
 	public static String HelpContentBlock_rmvTitle;
 	public static String HelpContentBlock_rmvLabel;
-	
+	public static String HelpContentBlock_upTitle;
+	public static String HelpContentBlock_downTitle;
 
 	public static String RemoteICLabelProvider_4;
 

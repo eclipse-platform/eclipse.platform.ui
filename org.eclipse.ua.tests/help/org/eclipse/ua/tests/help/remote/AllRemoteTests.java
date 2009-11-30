@@ -40,5 +40,6 @@ public class AllRemoteTests extends TestSuite {
 		addTestSuite(LoadIndexUsingRemoteHelp.class);
 		addTestSuite(GetContentUsingRemoteHelp.class);
 		addTestSuite(GetContextUsingRemoteHelp.class);
+		addTestSuite(TocManagerTest.class);
 	}
 }
