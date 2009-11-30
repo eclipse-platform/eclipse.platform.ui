@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.core.commands.internal;
 
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -26,8 +28,19 @@ public class HandlerServiceCreationFunction extends ContextFunction {
 	 */
 	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
-		HandlerServiceImpl hsi = new HandlerServiceImpl();
-		ContextInjectionFactory.inject(hsi, context);
-		return hsi;
+		try {
+			return ContextInjectionFactory.make(HandlerServiceImpl.class, context);
+		} catch (InvocationTargetException e) {
+			Logger logger = (Logger) context.get(Logger.class.getName());
+			if (logger != null) {
+				logger.error(e);
+			}
+		} catch (InstantiationException e) {
+			Logger logger = (Logger) context.get(Logger.class.getName());
+			if (logger != null) {
+				logger.error(e);
+			}
+		}
+		return null;
 	}
 }

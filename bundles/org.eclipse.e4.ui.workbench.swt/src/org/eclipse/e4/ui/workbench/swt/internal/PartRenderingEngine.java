@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import javax.inject.Inject;
@@ -18,6 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
@@ -203,8 +205,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 		IEventBroker eventBroker = (IEventBroker) context
 				.get(IEventBroker.class.getName());
 		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.UIElement.VISIBLE_TOPIC,
-				UIEvents.EventTypes.ALL), visibilityHandler);
+				UIEvents.UIElement.VISIBLE_TOPIC, UIEvents.EventTypes.ALL),
+				visibilityHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.CHILDREN_TOPIC,
 				UIEvents.EventTypes.ALL), childrenHandler);
@@ -460,12 +462,26 @@ public class PartRenderingEngine implements IPresentationEngine {
 								.getBundleAdmin()));
 
 				// set up the keybinding manager
-				KeyBindingDispatcher dispatcher = new KeyBindingDispatcher();
-				ContextInjectionFactory.inject(dispatcher, appContext);
-				org.eclipse.swt.widgets.Listener listener = dispatcher
-						.getKeyDownFilter();
-				display.addFilter(SWT.KeyDown, listener);
-				display.addFilter(SWT.Traverse, listener);
+				try {
+					KeyBindingDispatcher dispatcher = (KeyBindingDispatcher) ContextInjectionFactory
+							.make(KeyBindingDispatcher.class, appContext);
+					org.eclipse.swt.widgets.Listener listener = dispatcher
+							.getKeyDownFilter();
+					display.addFilter(SWT.KeyDown, listener);
+					display.addFilter(SWT.Traverse, listener);
+				} catch (InvocationTargetException e) {
+					Logger logger = (Logger) appContext.get(Logger.class
+							.getName());
+					if (logger != null) {
+						logger.error(e);
+					}
+				} catch (InstantiationException e) {
+					Logger logger = (Logger) appContext.get(Logger.class
+							.getName());
+					if (logger != null) {
+						logger.error(e);
+					}
+				}
 
 				// Show the initial UI
 

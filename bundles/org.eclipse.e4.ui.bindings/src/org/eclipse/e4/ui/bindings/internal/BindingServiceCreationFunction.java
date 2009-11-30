@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.bindings.internal;
 
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -29,9 +31,20 @@ public class BindingServiceCreationFunction extends ContextFunction {
 	 */
 	@Override
 	public Object compute(IEclipseContext context, Object[] arguments) {
-		BindingServiceImpl bsi = new BindingServiceImpl();
-		ContextInjectionFactory.inject(bsi, context);
-		return bsi;
+		try {
+			return ContextInjectionFactory.make(BindingServiceImpl.class, context);
+		} catch (InvocationTargetException e) {
+			Logger logger = (Logger) context.get(Logger.class.getName());
+			if (logger != null) {
+				logger.error(e);
+			}
+		} catch (InstantiationException e) {
+			Logger logger = (Logger) context.get(Logger.class.getName());
+			if (logger != null) {
+				logger.error(e);
+			}
+		}
+		return null;
 	}
 
 }

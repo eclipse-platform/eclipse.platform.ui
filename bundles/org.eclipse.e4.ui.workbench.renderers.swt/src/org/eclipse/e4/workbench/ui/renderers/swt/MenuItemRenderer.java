@@ -79,8 +79,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.UIItem.TOPIC,
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC,
 				UIEvents.ALL_ATTRIBUTES), itemUpdater);
 	}
 
@@ -155,8 +154,6 @@ public class MenuItemRenderer extends SWTPartRenderer {
 								.get(IContributionFactory.class.getName());
 						contrib.setObject(cf.create(contrib.getURI(),
 								lclContext));
-						ContextInjectionFactory.inject(contrib.getObject(),
-								lclContext);
 					}
 					try {
 						ContextInjectionFactory.invoke(contrib.getObject(),
