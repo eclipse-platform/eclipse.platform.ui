@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.internal.Activator;
+import org.eclipse.e4.workbench.ui.internal.Policy;
 
 public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
@@ -35,6 +37,18 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		}
 
 		return context;
+	}
+
+	private static void populateModelInterfaces(MContext contextModel,
+			IEclipseContext context, Class<?>[] interfaces) {
+		for (Class<?> intf : interfaces) {
+			Activator.trace(Policy.DEBUG_CONTEXTS,
+					"Adding " + intf.getName() + " for " //$NON-NLS-1$ //$NON-NLS-2$
+							+ contextModel.getClass().getName(), null);
+			context.set(intf.getName(), contextModel);
+
+			populateModelInterfaces(contextModel, context, intf.getInterfaces());
+		}
 	}
 
 	/*
@@ -54,7 +68,8 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			createdContext.set(IContextConstants.DEBUG_STRING, element
 					.getClass().getInterfaces()[0].getName()
 					+ " eclipse context"); //$NON-NLS-1$
-			createdContext.set(MApplicationElement.class.getName(), element);
+			populateModelInterfaces(mcontext, createdContext, element
+					.getClass().getInterfaces());
 
 			createdContext.runAndTrack(new Runnable() {
 				public void run() {

@@ -8,27 +8,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
+package org.eclipse.e4.workbench.modeling;
 
-package org.eclipse.e4.ui.tests.application;
+import java.util.Collection;
+import org.eclipse.e4.ui.model.application.MPart;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+public interface EPartService {
 
-public class StartupTestSuite extends TestSuite {
+	public void activate(MPart part);
 
-	public static Test suite() {
-		TestSuite suite = new StartupTestSuite();
+	public void bringToTop(MPart part);
 
-		suite.addTestSuite(EPartServiceTest.class);
-		suite.addTestSuite(HeadlessContactsDemoTest.class);
-		suite.addTestSuite(HeadlessPhotoDemoTest.class);
+	public MPart findPart(String id);
 
-		suite.addTestSuite(UIContactsDemoTest.class);
-		suite.addTestSuite(UIPhotoDemoTest.class);
+	public Collection<MPart> getParts();
 
-		suite.addTestSuite(UIEventsTest.class);
+	public MPart getActivePart();
+	
+	public boolean isPartVisible(MPart part);
 
-		return suite;
-	}
+	// public MPart showPart(String id);
+	//
+	// public MPart showPart(MPart part);
 
 }
