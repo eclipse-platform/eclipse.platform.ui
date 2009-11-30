@@ -31,6 +31,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -90,8 +91,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 
 		fViewer.addDoubleClickListener(new IDoubleClickListener() {
 			public void doubleClick(DoubleClickEvent event) {
-				ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) event.getSelection()).getFirstElement();
-				addEntries(type);
+				okPressed();
 			}
 		});
 		
@@ -104,8 +104,10 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				if (!selection.isEmpty()) {
 					ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection)selection).getFirstElement();
 					setMessage(type.getDescription());
+					getButton(IDialogConstants.OK_ID).setEnabled(true);
 				}
 				else {
+					getButton(IDialogConstants.OK_ID).setEnabled(false);
 					setMessage(SourceLookupUIMessages.AddSourceContainerDialog_select_source_container);
 				}
 			}
@@ -117,29 +119,37 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), IDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
 		return comp;
 	}	
-	
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
+		super.createButtonsForButtonBar(parent);
+		Table table = fViewer.getTable(); 
+		if(table.getItemCount() > 0) {
+			fViewer.setSelection(new StructuredSelection(table.getItem(0).getData()));
+		}
 	}
 	
-	/**
-	 * Delegate method to add created entries to the backing source container viewer
-	 * @param type
-	 * @since 3.6
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
 	 */
-	void addEntries(ISourceContainerType type) {
+	protected void okPressed() {
+		ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
 		if (type != null) {
             ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
             if (browser != null) {
                 ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
                 if (results != null && results.length > 0) {
                     fSourceContainerViewer.addEntries(results);
+                    super.okPressed();
+                }
+                else {
+                	return;
                 }
             }
         }
+		super.okPressed();
 	}
 	
 	/**
