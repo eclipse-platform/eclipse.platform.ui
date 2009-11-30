@@ -22,17 +22,19 @@ import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.sourcelookup.ISourceContainerBrowser;
 import org.eclipse.jface.dialogs.Dialog;
+import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.DoubleClickEvent;
+import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.SelectionAdapter;
-import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -51,7 +53,6 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	
 	private TableViewer fViewer;
 	private SourceContainerViewer fSourceContainerViewer;
-	private boolean fDoubleClickSelects = true;
 	private ISourceLookupDirector fDirector;
 	
 	/**
@@ -72,6 +73,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		getShell().setText(SourceLookupUIMessages.addSourceLocation_title); 
 		setTitle(SourceLookupUIMessages.addSourceLocation_description); 
 		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_LOC_WIZ));
+		setMessage(SourceLookupUIMessages.AddSourceContainerDialog_select_source_container);
 		
 		Composite comp = (Composite) super.createDialogArea(parent);
 		GridData gd= new GridData(GridData.FILL_BOTH);
@@ -87,14 +89,12 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		gd = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(gd);
 
-		if (fDoubleClickSelects) {
-			table.addSelectionListener(new SelectionAdapter() {
-				public void widgetDefaultSelected(SelectionEvent e) {
-					if (table.getSelectionCount() == 1)
-						okPressed();
-				}
-			});
-		}
+		fViewer.addDoubleClickListener(new IDoubleClickListener() {
+			public void doubleClick(DoubleClickEvent event) {
+				ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) event.getSelection()).getFirstElement();
+				addEntries(type);
+			}
+		});
 		
 		fViewer.setLabelProvider(new SourceContainerLabelProvider());
 		fViewer.setContentProvider(new ArrayContentProvider());			
@@ -102,12 +102,15 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
 				ISelection selection = event.getSelection();
-				String desc = null;
 				if (!selection.isEmpty()) {
 					ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection)selection).getFirstElement();
-					desc = type.getDescription();
+					setMessage(type.getDescription());
+					getButton(IDialogConstants.OK_ID).setEnabled(true);
 				}
-				setMessage(desc);
+				else {
+					getButton(IDialogConstants.OK_ID).setEnabled(false);
+					setMessage(SourceLookupUIMessages.AddSourceContainerDialog_select_source_container);
+				}
 			}
 		});
 		if(types.length != 0) {	
@@ -117,6 +120,46 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), IDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
 		return comp;
 	}	
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
+	 */
+	protected void createButtonsForButtonBar(Composite parent) {
+		super.createButtonsForButtonBar(parent);
+		getButton(IDialogConstants.OK_ID).setEnabled(false);
+		Table table = fViewer.getTable();
+		if(table.getItemCount() > 0) {
+			fViewer.setSelection(new StructuredSelection(table.getItem(0).getData()));
+		}
+	}
+	
+	/**
+	 * Delegate method to add created entries to the backing source container viewer
+	 * @param type
+	 * @since 3.6
+	 */
+	void addEntries(ISourceContainerType type) {
+		if (type != null) {
+            ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
+            if (browser != null) {
+                ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
+                if (results != null && results.length > 0) {
+                    fSourceContainerViewer.addEntries(results);
+                }
+            }
+        }
+	}
+	
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
+	 */
+	protected void okPressed() {
+		Object obj = ((IStructuredSelection)fViewer.getSelection()).getFirstElement();
+		if(obj != null) {
+			addEntries((ISourceContainerType) obj);
+		}
+		super.okPressed();
+	}
 	
 	/**
 	 * Removes types without browsers from the provided list of types.
@@ -137,24 +180,4 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		return (ISourceContainerType[]) validTypes.toArray(new ISourceContainerType[validTypes.size()]);
 		
 	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
-	protected void okPressed() {
-		//single selection dialog, so take first item in array
-		//there will always be a selected item since we set it with viewer.setSelection
-		ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection) fViewer.getSelection()).getFirstElement();
-        if (type != null) {
-            ISourceContainerBrowser browser = DebugUITools.getSourceContainerBrowser(type.getId());
-            if (browser != null) {
-                ISourceContainer[] results = browser.addSourceContainers(getShell(), fDirector);
-                if (results != null && results.length > 0) {
-                    fSourceContainerViewer.addEntries(results);
-                }
-            }
-        }
-		super.okPressed();
-	}
-	
 }

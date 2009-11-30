@@ -60,6 +60,8 @@ public class SourceLookupUIMessages extends NLS {
 	public static String EditSourceLookupPathAction_0;
 	public static String LookupSourceAction_0;
 	public static String ExternalArchiveSourceContainerBrowser_2;
+	public static String AddSourceContainerDialog_select_source_container;
+
 	public static String ArchiveSourceContainerBrowser_3;
 	public static String ArchiveSourceContainerBrowser_4;
 	public static String DirectorySourceContainerDialog_0;
