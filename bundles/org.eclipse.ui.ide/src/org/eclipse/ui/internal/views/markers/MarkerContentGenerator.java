@@ -17,22 +17,19 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
-import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.resources.mapping.ResourceMapping;
-import org.eclipse.core.resources.mapping.ResourceMappingContext;
-import org.eclipse.core.resources.mapping.ResourceTraversal;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
@@ -42,7 +39,6 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEInternalPreferences;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.MarkerField;
@@ -72,12 +68,10 @@ public class MarkerContentGenerator {
 	private static final String TAG_AND = "andFilters"; //$NON-NLS-1$
 	private static final String TAG_LEGACY_FILTER_ENTRY = "filter"; //$NON-NLS-1$
 	
-	/**
-	 * The job family for content updates
-	 */
+	/*Use this to indicate filter change rather than a null*/
+	private final Collection FILTERS_CHANGED = Collections.EMPTY_SET;
 
-	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
-
+	//Carries the description for the generator, as coded in the given extension point 
 	private ContentGeneratorDescriptor generatorDescriptor;
 
 	// fields
@@ -93,12 +87,14 @@ public class MarkerContentGenerator {
 	 * 
 	 */
 	private IResource[] selectedResources = MarkerSupportInternalUtilities.EMPTY_RESOURCE_ARRAY;
+	
+	private Collection currentResources = Collections.EMPTY_SET;
 
 	private CachedMarkerBuilder builder;
 	private String viewId;
 
 	private IPropertyChangeListener filterPreferenceListener;
-
+	
 	/**
 	 * Create a new MarkerContentGenerator
 	 * 
@@ -291,7 +287,7 @@ public class MarkerContentGenerator {
 	 * @return Collection of MarkerFieldFilterGroup
 	 */
 	Collection getAllFilters() {
-		if (filters == null) {
+		if (filters == null || filters == FILTERS_CHANGED) {
 			filters = getDeclaredFilters();
 			// Apply the last settings
 			loadFiltersPreference();
@@ -306,15 +302,16 @@ public class MarkerContentGenerator {
 	 * @return Collection of MarkerFieldFilterGroup
 	 */
 	Collection getEnabledFilters() {
-		if (enabledFilters == null) {
-			enabledFilters = new HashSet();
+		if (enabledFilters == null || enabledFilters == FILTERS_CHANGED) {
+			Collection enabled = new HashSet();
 			Iterator filtersIterator = getAllFilters().iterator();
 			while (filtersIterator.hasNext()) {
 				MarkerFieldFilterGroup next = (MarkerFieldFilterGroup) filtersIterator
 						.next();
 				if (next.isEnabled())
-					enabledFilters.add(next);
+					enabled.add(next);
 			}
+			enabledFilters = enabled;
 		}
 		return enabledFilters;
 	}
@@ -323,8 +320,8 @@ public class MarkerContentGenerator {
 	 * Rebuild the list of filters
 	 */
 	protected void rebuildFilters() {
-		filters = null;
-		enabledFilters = null;
+		filters = FILTERS_CHANGED;
+		enabledFilters = FILTERS_CHANGED;
 		requestMarkerUpdate();
 	}
 
@@ -366,12 +363,12 @@ public class MarkerContentGenerator {
 	 * Update the filters.
 	 * 
 	 * @param filters
-	 * @param
+	 * @param andFilters
 	 */
 	void updateFilters(Collection filters, boolean andFilters) {
 		setAndFilters(andFilters);
 		this.filters = filters;
-		enabledFilters = null;
+		enabledFilters = FILTERS_CHANGED;
 		writeFiltersPreference();
 		requestMarkerUpdate();
 	}
@@ -760,35 +757,38 @@ public class MarkerContentGenerator {
 	 * 	@return <code>true</code> if it matches all enabled filters 
 	 */
 	boolean select(MarkerEntry entry) {
-		 Collection enabledFilters=getEnabledFilters();
-		IResource[] resources =getSelectedResources();
-		boolean andFilters = andFilters();
-		if (enabledFilters.size() > 0) {
-			Iterator filtersIterator = enabledFilters.iterator();
-			if (andFilters) {
+		try {
+			Collection enabledFilters = getEnabledFilters();
+			IResource[] resources = getSelectedResources();
+			boolean andFilters = andFilters();
+			if (enabledFilters.size() > 0) {
+				Iterator filtersIterator = enabledFilters.iterator();
+				if (andFilters) {
+					while (filtersIterator.hasNext()) {
+						MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
+								.next();
+						if (!group.selectByScope(entry, resources)
+								|| !group.selectByFilters(entry)) {
+							return false;
+						}
+					}
+					return true;
+				}
+
 				while (filtersIterator.hasNext()) {
 					MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
 							.next();
-					if (!group.selectByScope(entry, resources)
-							|| !group.selectByFilters(entry)) {
-						return false;
+					if (group.selectByScope(entry, resources)
+							&& group.selectByFilters(entry)) {
+						return true;
 					}
 				}
-				return true;
+				return false;
 			}
-
-			while (filtersIterator.hasNext()) {
-				MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
-						.next();
-				if (group.selectByScope(entry, resources)
-						&& group.selectByFilters(entry)) {
-					return true;
-				}
-			}
-			return false;
-
+			return true;
+		} finally {
+			entry.clearCache();
 		}
-		return true;
 	}
 
 	/**
@@ -804,7 +804,7 @@ public class MarkerContentGenerator {
 			if (elements[i] instanceof IResource) {
 				resourceCollection.add(elements[i]);
 			} else {
-				addResources(resourceCollection,
+				MarkerResourceUtil.addResources(resourceCollection,
 						((ResourceMapping) elements[i]));
 			}
 		}
@@ -821,7 +821,9 @@ public class MarkerContentGenerator {
 	void updateSelectedResource(Object[] newElements) {
 		if (updateNeededForSelection(newElements)) {
 			internalUpdateSelectedElements(newElements);
-			requestMarkerUpdate();
+			if (contentChanged()) {
+				requestMarkerUpdate();
+			}
 		}
 	}
 
@@ -854,8 +856,10 @@ public class MarkerContentGenerator {
 				continue;
 
 			if (scope == MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER) {
-				Collection oldProjects = getProjectsAsCollection(selectedResources);
-				Collection newProjects = getProjectsAsCollection(newElements);
+				Collection oldProjects = MarkerResourceUtil
+						.getProjectsAsCollection(selectedResources);
+				Collection newProjects = MarkerResourceUtil
+						.getProjectsAsCollection(newElements);
 
 				if (oldProjects.size() == newProjects.size()
 						&& newProjects.containsAll(oldProjects))
@@ -871,169 +875,197 @@ public class MarkerContentGenerator {
 	/**
 	 * @return list of selected resources
 	 */
-	IResource[] getSelectedResources(){
-		return selectedResources;
+	IResource[] getSelectedResources() {
+		IResource[] selected=selectedResources;
+		IResource[] resources = new IResource[selected.length];
+		System.arraycopy(selected, 0, resources, 0,
+				selected.length);
+		return resources;
 	}
 
 	/**
+	 * Note:As opposed to the previous scheme, the reason we gather markers only
+	 * for the "effective"(ored/anded) resource collection is because collecting
+	 * for individual filters and then adding them to a Set to remove duplicates
+	 * is a lot more time-consuming than collecting only once,filtering once and
+	 * adding to a list once.As a pre-filtering step, the
+	 * MarkerFieldFilterGroup#selectByScope uses IPath comparison for selection,
+	 * which happens real quickly.Also when filters are Anded we get a chance to
+	 * gather only on resources that actually matter.And we get a tool to check
+	 * at various places.
+	 * 
 	 * @return list of resource we want to collect markers for taking various
 	 *         enabled filters into account.
+	 * 
 	 */
 	Collection getResourcesForBuild() {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		Collection resourceSet = getResourcesFor(getEnabledFilters(), andFilters());
-		// return common most parents
-		if (andFilters()) {
-			// Skip Anding the resources (optimization).
-			//TODO: include the elaborate logic later ?
-		}
-		Set ressouceSetClone = new HashSet(resourceSet);
-		Iterator cloneIterator = ressouceSetClone.iterator();
-		while (cloneIterator.hasNext()) {
-			IResource resource = (IResource) cloneIterator.next();
-			Iterator iterator = resourceSet.iterator();
-			while (iterator.hasNext()) {
-				IResource resToRemove = (IResource) iterator.next();
-				if(resource.equals(resToRemove)){
-					continue;
-				}
-				if (resource.getFullPath()
-						.isPrefixOf(resToRemove.getFullPath())) {
-					iterator.remove();
-				}
-				if(resource.equals(root)){
-					resourceSet.clear();
-					resourceSet.add(root);
-					return resourceSet;
-				}
-			}
-		}
-		return resourceSet;
+		currentResources = MarkerResourceUtil.computeResources(
+				getSelectedResources(), getEnabledFilters(), andFilters());
+		return currentResources;
 	}
 
 	/**
-	 * @param enabledFilters
-	 * @param andFilters
-	 * @return
+	 * Change in markers itself is taken care of by the IResourceChangeListener,
+	 * We can think about change in the resource content when filters have
+	 * changed or selections have changed and the particular update we perform
+	 * manually is not required at all since nothing had changed.This is
+	 * particularly useful when a filter is set to 'On Selected element scope'.A
+	 * change in a filter is a combination of both its scope and other settings.
+	 * 
+	 * 
+	 * @return true if the resource-content has changed due to change in filter
+	 *         settings or selection. false if content has not change or an
+	 *         update has cleared the changes.
 	 */
-	private Collection getResourcesFor(Collection enabledFilters,
-			boolean andFilters) {
-		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
-		if (enabledFilters.size() == 0) {
-			List list = new ArrayList(1);
-			list.add(root);
-			return list;
+	boolean contentChanged() {
+		if (enabledFilters == null || enabledFilters == FILTERS_CHANGED) {
+			/*
+			 * TODO:Find a more narrowing way to check if active filters have
+			 * actually changed.Right now the update filter method set the
+			 * enabled filters to null. TODO: We should use a preference
+			 * listener for this We can 'optimally' use it for filter change
+			 * only on fixing the above.
+			 */
+			return true;
 		}
-		Set resourceSet = new HashSet();
-		Iterator filtersIterator = enabledFilters.iterator();
-		while (filtersIterator.hasNext()) {
-			MarkerFieldFilterGroup group = (MarkerFieldFilterGroup) filtersIterator
-					.next();
-			switch (group.getScope()) {
-			case MarkerFieldFilterGroup.ON_ANY: {
-				resourceSet.add(root);
-				break;
-			}
-			case MarkerFieldFilterGroup.ON_SELECTED_ONLY:
-			case MarkerFieldFilterGroup.ON_SELECTED_AND_CHILDREN: {
-				for (int i = 0; i < selectedResources.length; i++) {
-					resourceSet.add(selectedResources[i]);
-				}
-				break;
-			}
-			case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
-				IResource[] resources = getProjects(selectedResources);
-				for (int i = 0; i < resources.length; i++) {
-					resourceSet.add(resources[i]);
-				}
-				break;
-			}
-			case MarkerFieldFilterGroup.ON_WORKING_SET: {
-				group.refresh();
-				IResource[] resources = group.getResourcesInWorkingSet();
-				for (int i = 0; i < resources.length; i++) {
-					resourceSet.add(resources[i]);
-				}
-				break;
-			}
-			}
-			if (!andFilters && resourceSet.contains(root)) {
-				List list = new ArrayList(1);
-				list.add(root);
-				return list;
+		Collection current = MarkerResourceUtil.computeResources(
+				getSelectedResources(), getEnabledFilters(), andFilters());
+		Collection activeResources = currentResources;
+		if (current.size() != activeResources.size()) {
+			// changed
+			return true;
+		}
+		Iterator iterator = activeResources.iterator();
+		boolean needsUpdate = false;
+		while (!needsUpdate && iterator.hasNext()) {
+			Object object = iterator.next();
+			if (!current.contains(object)) {
+				needsUpdate = true;
 			}
 		}
-		return resourceSet;
+		return needsUpdate;
+	}
+
+	/**
+	 * Refresh gathered markers entries
+	 * 
+	 * @param monitor
+	 */
+	Collection generateMarkerEntries(IProgressMonitor monitor) {
+		List result = new LinkedList();
+		String[] typeIds = getTypes();
+		boolean includeSubTypes = builder.includeMarkerSubTypes();
+		boolean cancelled = gatherMarkers(typeIds, includeSubTypes, result,
+				monitor);
+		if (cancelled) {
+			result.clear();
+		}
+		return result;
+	}
+
+	/**
+	 * Refresh gathered markers entries
+	 * @param result
+	 * @param monitor
+	 */
+	boolean generateMarkerEntries(Collection result,IProgressMonitor monitor) {
+		String[] typeIds = getTypes();
+		boolean includeSubTypes = builder.includeMarkerSubTypes();
+		return gatherMarkers(typeIds, includeSubTypes, result, monitor);
+	}
+
+	/**
+	 * Gather markers into result.
+	 * @param typeIds
+	 * @param includeSubTypes
+	 * @param result
+	 * @param monitor
+	 */
+	boolean gatherMarkers(String[] typeIds, boolean includeSubTypes,
+			Collection result, IProgressMonitor monitor) {
+		try {
+			Collection resources = getResourcesForBuild();
+			if (includeSubTypes) {
+				// Optimize and calculate super types
+				String[] superTypes = MarkerResourceUtil
+						.getMutuallyExclusiveSupersIds(typeIds);
+				if (monitor.isCanceled()) {
+					return false;
+				}
+				for (int i = 0; i < superTypes.length; i++) {
+					boolean success = internalGatherMarkers(resources,superTypes[i],
+							includeSubTypes, result, monitor);
+					if (!success || monitor.isCanceled()) {
+						return false;
+					}
+				}
+			} else {
+				for (int i = 0; i < typeIds.length; i++) {
+					boolean success = internalGatherMarkers(resources,typeIds[i],
+							includeSubTypes, result, monitor);
+					if (!success || monitor.isCanceled()) {
+						return false;
+					}
+				}
+			}
+		} catch (Exception e) {
+			MarkerSupportInternalUtilities.logViewError(e);
+			return false;
+		} finally {
+		}
+		return true;
+	}
+
+	/**
+	 * A helper to the
+	 * {@link #gatherMarkers(String[], boolean, Collection, IProgressMonitor)}
+	 * 
+	 * @param resources
+	 * @param typeId
+	 * @param includeSubTypes
+	 * @param result
+	 * @param monitor
+	 */
+	private boolean internalGatherMarkers(Collection resources, String typeId,
+			boolean includeSubTypes, Collection result, IProgressMonitor monitor) {
+		if (monitor.isCanceled()) {
+			return false;
+		}
+		Iterator iterator = resources.iterator();
+		while (iterator.hasNext()) {
+			IMarker[] markers = null;
+			try {
+				IResource resource = (IResource) iterator.next();
+				if (!resource.isAccessible()) {
+					continue;
+				}
+				markers = resource.findMarkers(typeId, includeSubTypes,
+						IResource.DEPTH_INFINITE);
+			} catch (CoreException e) {
+				MarkerSupportInternalUtilities.logViewError(e);
+			}
+			if (markers == null) {
+				continue;
+			}
+			if (monitor.isCanceled()) {
+				return false;
+			}
+			for (int i = 0; i < markers.length; i++) {
+				MarkerEntry entry = new MarkerEntry(markers[i]);
+				if (select(entry)) {
+					result.add(entry);
+				}
+				if (i % 500 == 0) {
+					if (monitor.isCanceled()) {
+						return false;
+					}
+				}
+			}
+		}
+		return true;
 	}
 
 	void dispose() {
-
-	}
-
-	/**
-	 * Returns the set of projects that contain the given set of resources.
-	 * 
-	 * @param resources
-	 * @return IProject[]
-	 */
-	static IProject[] getProjects(IResource[] resources) {
-		if (resources == null)
-			return EMPTY_PROJECT_ARRAY;
-
-		Collection projects = getProjectsAsCollection(resources);
-
-		return (IProject[]) projects.toArray(new IProject[projects.size()]);
-	}
-
-	/**
-	 * Return the projects for the elements.
-	 * 
-	 * @param elements
-	 *            collection of IResource or IResourceMapping
-	 * @return Collection of IProject
-	 */
-	static Collection getProjectsAsCollection(Object[] elements) {
-		HashSet projects = new HashSet();
-
-		for (int idx = 0; idx < elements.length; idx++) {
-			if (elements[idx] instanceof IResource) {
-				projects.add(((IResource) elements[idx]).getProject());
-			} else {
-				IProject[] mappingProjects = (((ResourceMapping) elements[idx])
-						.getProjects());
-				for (int i = 0; i < mappingProjects.length; i++) {
-					projects.add(mappingProjects[i]);
-				}
-			}
-
-		}
-
-		return projects;
-	}
-
-	/**
-	 * Add the resources in resourceMapping to the resourceCollection
-	 * 
-	 * @param resourceCollection
-	 * @param resourceMapping
-	 */
-	static void addResources(Collection resourceCollection,
-			ResourceMapping resourceMapping) {
-
-		try {
-			ResourceTraversal[] traversals = resourceMapping.getTraversals(
-					ResourceMappingContext.LOCAL_CONTEXT,
-					new NullProgressMonitor());
-			for (int i = 0; i < traversals.length; i++) {
-				ResourceTraversal traversal = traversals[i];
-				IResource[] result = traversal.getResources();
-				for (int j = 0; j < result.length; j++) {
-					resourceCollection.add(result[j]);
-				}
-			}
-		} catch (CoreException e) {
-			Policy.handle(e);
-		}
 
 	}
 }

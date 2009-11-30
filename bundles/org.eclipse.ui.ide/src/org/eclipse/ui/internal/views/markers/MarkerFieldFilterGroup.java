@@ -698,7 +698,7 @@ class MarkerFieldFilterGroup {
 		}
 		case MarkerFieldFilterGroup.ON_ANY_IN_SAME_CONTAINER: {
 			IPath  markerProjectPath=entry.getMarker().getResource().getFullPath();
-			IProject[] projects=MarkerContentGenerator.getProjects(resources);
+			IProject[] projects=MarkerResourceUtil.getProjects(resources);
 			for (int i = 0; i < projects.length; i++) {
 				if(projects[i].getFullPath().isPrefixOf(markerProjectPath)){
 					return true;

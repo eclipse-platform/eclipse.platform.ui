@@ -11,7 +11,8 @@
 
 package org.eclipse.ui.internal.views.markers;
 
-import java.util.List;
+import java.util.Collection;
+import java.util.LinkedList;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -23,9 +24,9 @@ import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.osgi.framework.Bundle;
 
 /**
- * The MarkerUpdateJob processes marker updates , the job is scheduled by
- * MarkersChangeListener. Once the processing is complete it schedules the an UI
- * update
+ * The MarkerUpdateJob processes marker updates.
+ * Once the processing is complete it schedules an UI
+ * update.
  * 
  * @since 3.6
  * 
@@ -33,26 +34,15 @@ import org.osgi.framework.Bundle;
 class MarkerUpdateJob extends Job {
 
 	CachedMarkerBuilder builder;
-	private boolean building = false;
 	private boolean clean;
-	private boolean incremental;
 	private long lastUpdateTime=-1;
 
 	/**
 	 * @param builder
 	 */
 	MarkerUpdateJob(CachedMarkerBuilder builder) {
-		this(builder, true);
-	}
-
-	/**
-	 * @param builder
-	 * @param incremental
-	 */
-	MarkerUpdateJob(CachedMarkerBuilder builder, boolean incremental) {
 		super(MarkerMessages.MarkerView_searching_for_markers);
 		this.builder = builder;
-		this.incremental = incremental;
 	}
 
 	/*
@@ -62,14 +52,9 @@ class MarkerUpdateJob extends Job {
 	 * IProgressMonitor)
 	 */
 	protected IStatus run(IProgressMonitor monitor) {
-		building = true;
-		try {
-			monitor.beginTask(MarkerMessages.MarkerView_searching_for_markers,
-					IProgressMonitor.UNKNOWN);
-			buildMarkers(monitor);
-		} finally {
-			building = false;
-		}
+		monitor.beginTask(MarkerMessages.MarkerView_searching_for_markers,
+				IProgressMonitor.UNKNOWN);
+		buildMarkers(monitor);
 		return Status.OK_STATUS;
 	}
 
@@ -78,83 +63,74 @@ class MarkerUpdateJob extends Job {
 	 * 
 	 * @param monitor
 	 */
-	protected void buildMarkers(IProgressMonitor monitor) {
-		MarkersChangeListener markersListener = builder.getMarkerListener();
+	void buildMarkers(IProgressMonitor monitor) {
+		//check for cancellation before we start
 		if (monitor.isCanceled()) {
 			return;
 		}
-		//markersListener.cancelQueuedUIUpdates();
-		//markersListener
-		//		.indicateStatus(
-		//				MarkerMessages.MarkerView_searching_for_markers, false);
-		if (clean || !isIncremental()) {
-			clean = !clean(markersListener, monitor);
-		}
+		// builder.getUpdateScheduler().cancelQueuedUIUpdates();
+		// builder.getUpdateScheduler().indicateStatus(
+		// MarkerMessages.MarkerView_searching_for_markers, false);
+
+		Collection markerEntries = new LinkedList();
+		//this is not incremental clean every time
+		clean = !clean(markerEntries, monitor);
 		if (monitor.isCanceled()) {
 			return;
 		}
-		List markers = markersListener.getMarkerEntryList();
-		if (monitor.isCanceled()) {
-			return;
-		}
-		monitor.setTaskName(MarkerMessages.MarkerView_processUpdates);
+		// builder.getUpdateScheduler().indicateStatus(
+		// MarkerMessages.MarkerView_processUpdates, false);
 		
-		//markersListener.indicateStatus(
-		//		MarkerMessages.MarkerView_processUpdates, false);
-		processMarkerEntries(markers, monitor);
+		monitor.setTaskName(MarkerMessages.MarkerView_processUpdates);
+		if (!processMarkerEntries(markerEntries, monitor)) {
+			return;
+		}
 		if (monitor.isCanceled()) {
 			return;
 		}
-		markersListener.scheduleUIUpdate(MarkersChangeListener.SHORT_DELAY);
+		builder.getUpdateScheduler().scheduleUIUpdate(
+				MarkerUpdateScheduler.SHORT_DELAY);
 		if (monitor.isCanceled()) {
 			return;
 		}
-		lastUpdateTime=System.currentTimeMillis();
+		builder.setBuilding(false);
+		updateDone();
+	}
+
+	/**
+	 * Capture the current time into as lastupdate time
+	 */
+	void updateDone() {
+		lastUpdateTime = System.currentTimeMillis();
 	}
 
 	/**
 	 * Collect the markers starting clean, all over again.
+	 * @param markerEntries 
 	 */
-	protected boolean clean(MarkersChangeListener markersListener,
-			IProgressMonitor monitor) {
+	boolean clean(Collection markerEntries, IProgressMonitor monitor) {
 		MarkerContentGenerator generator = builder.getGenerator();
-		if (generator == null) {
+		if (monitor.isCanceled() || generator == null) {
 			return false;
 		}
-		String[] types = generator.getTypes();
-		if (monitor.isCanceled()) {
-			return false;
-		}
-		return markersListener.startCollectingType(types, true,
-				isIncremental(), monitor);
+		builder.registerTypesToListener();
+		return generator.generateMarkerEntries(markerEntries, monitor);
 	}
 
 	/**
 	 * Process,sort and group the new marker entries in markerEntryList and
 	 * update the Markers object
 	 * 
-	 * @param markerEntryList
-	 *            the list of new MarkerEntry(s)
+	 * @param markerEntries
+	 *            the collection of new MarkerEntry(s)
 	 */
-	private void processMarkerEntries(List markerEntryList,
+	boolean processMarkerEntries(Collection markerEntries,
 			IProgressMonitor monitor) {
-		synchronized (markerEntryList) {
-			Markers markers = builder.getMarkers();
-			if (monitor.isCanceled()) {
-				return;
-			}
-			markers.updateWithNewMarkers(markerEntryList, true, monitor);
-			if (monitor.isCanceled()) {
-				return;
-			}
-			if (isIncremental()) {
-				markerEntryList.clear();
-				MarkerEntry[] entries = markers.getMarkerEntryArray();
-				for (int i = 0; i < entries.length; i++) {
-					markerEntryList.add(entries[i]);
-				}
-			}
+		Markers markers = builder.getMarkers();
+		if (monitor.isCanceled()) {
+			return false;
 		}
+		return markers.updateWithNewMarkers(markerEntries, true, monitor);
 	}
 
 	/*
@@ -187,13 +163,6 @@ class MarkerUpdateJob extends Job {
 	}
 
 	/**
-	 * @return Returns true when building.
-	 */
-	boolean isBuilding() {
-		return building;
-	}
-
-	/**
 	 * @return Returns if the a clean is requested.
 	 */
 	boolean isClean() {
@@ -205,13 +174,6 @@ class MarkerUpdateJob extends Job {
 	 */
 	void setClean() {
 		this.clean = true;
-	}
-
-	/**
-	 * @return Returns true if collecting markers incrementally.
-	 */
-	boolean isIncremental() {
-		return incremental;
 	}
 
 	/**
@@ -245,12 +207,11 @@ class SortingJob extends MarkerUpdateJob {
 	protected IStatus run(IProgressMonitor monitor) {
 		monitor.beginTask(MarkerMessages.MarkerView_19,
 				IProgressMonitor.UNKNOWN);
-		MarkersChangeListener markersListener = builder.getMarkerListener();
-		markersListener.cancelQueuedUIUpdates();
-		//markersListener.indicateStatus(
-		//		MarkerMessages.MarkerView_19, false);
+		builder.getUpdateScheduler().cancelQueuedUIUpdates();
+		// builder.getUpdateScheduler().indicateStatus(
+		// MarkerMessages.MarkerView_19, false);
 		builder.getMarkers().sortMarkerEntries(monitor);
-		markersListener.scheduleUIUpdate(0L);
+		builder.getUpdateScheduler().scheduleUIUpdate(0L);
 		if (monitor.isCanceled()) {
 			return Status.CANCEL_STATUS;
 		}
