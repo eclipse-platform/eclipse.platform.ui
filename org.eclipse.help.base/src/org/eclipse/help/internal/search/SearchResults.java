@@ -19,7 +19,10 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.internal.workingset.AdaptableHelpResource;
+import org.eclipse.help.internal.workingset.AdaptableSelectedToc;
+import org.eclipse.help.internal.workingset.AdaptableSelectedTopic;
 import org.eclipse.help.internal.workingset.AdaptableToc;
+import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
 
 /**
@@ -67,9 +70,9 @@ public class SearchResults implements ISearchHitCollector {
 				if (scope == null) {
 					// topic outside of scope
 					continue;
-				} else if (scope instanceof AdaptableToc) {
+				} else if ((scope instanceof AdaptableToc) || (scope instanceof AdaptableSelectedToc)) {
 					toc = (IToc) scope.getAdapter(IToc.class);
-				} else { // scope is AdaptableTopic
+				} else if((scope instanceof AdaptableTopic) || (scope instanceof AdaptableSelectedTopic)){ // scope is AdaptableTopic or AdaptableSelectedTopic
 					toc = (IToc) scope.getParent().getAdapter(IToc.class);
 				}
 			}

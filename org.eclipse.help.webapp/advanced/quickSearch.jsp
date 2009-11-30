@@ -13,11 +13,12 @@
 <% 
     SearchData data=new SearchData(application,request,response);
     WebappPreferences prefs = data.getPrefs();
+    String quickSearchType = data.isSelectedTopicQuickSearchRequest()? "QuickSearchTopic":"QuickSearchToc";
 %>
 
 <html>
 <head>
-<title><%=ServletResources.getString("QuickSearch", request)%></title>
+<title><%= ServletResources.getString(quickSearchType, request)%></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="-1">
@@ -92,6 +93,8 @@ if (data.isMozilla()) {
 <script language="JavaScript" src="list.js"></script>
 <script language="JavaScript">
 
+var quickSearchType = "<%=quickSearchType%>";
+
 function onloadHandler() {
 <%
 if(!data.isMozilla() || "1.3".compareTo(data.getMozillaVersion()) <=0){
@@ -116,7 +119,7 @@ function sizeButtons() {
 
 function doQuickSearch(){
 	var searchWord = document.getElementById("searchWord").value;
-	window.opener.searchFor(searchWord);		
+	window.opener.searchFor(searchWord, quickSearchType);		
 	window.close();
 }
 

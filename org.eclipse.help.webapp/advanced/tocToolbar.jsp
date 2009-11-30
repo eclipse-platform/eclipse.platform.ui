@@ -15,8 +15,13 @@
 	String printTocLabel = UrlUtil.JavaScriptEncode(ServletResources.getString("PrintToc", request));
 	String printError = UrlUtil.JavaScriptEncode(ServletResources.getString("PrintError", request));
 	String menuData = printTopicLabel + "=printTopic(\\'" + printError + "\\')," + printTocLabel + "=printToc(\\'" + printError + "\\')";
-    String quickSearchError = UrlUtil.JavaScriptEncode(ServletResources.getString("QuickSearchError", request));
-    // See  Bug 290064 for an explanation of why these constants are used
+   
+	String quickSearchTopicLabel = UrlUtil.JavaScriptEncode(ServletResources.getString("QuickSearchTopic", request));
+	String quickSearchTocLabel = UrlUtil.JavaScriptEncode(ServletResources.getString("QuickSearchToc", request));
+	String quickSearchError = UrlUtil.JavaScriptEncode(ServletResources.getString("QuickSearchError", request));
+	String quickSearchMenuData = quickSearchTopicLabel + "=quickSearchTopic(\\'" + quickSearchError + "\\')," + quickSearchTocLabel+ "=quickSearchToc(\\'" + quickSearchError + "\\')";
+    
+	// See  Bug 290064 for an explanation of why these constants are used
     final String ON = "on";
     final String OFF = "off";
 %>
@@ -47,10 +52,10 @@
 	<jsp:param name="state"    value='off'/>
 	
 	<jsp:param name="name"     value="quick_search"/>
-	<jsp:param name="tooltip"  value='QuickSearch'/>
-	<jsp:param name="image"    value="quick_search.gif"/>
-	<jsp:param name="action"   value="quickSearch"/>
-	<jsp:param name="param"    value="<%=quickSearchError%>"/>
+	<jsp:param name="tooltip"  value='QuickSearchMulti'/>
+	<jsp:param name="image"    value="quick_search_multi.gif"/>
+	<jsp:param name="action"   value="menu"/>
+	<jsp:param name="param"    value="<%=quickSearchMenuData%>"/>
 	<jsp:param name="state"    value='off'/> 
 
 	<jsp:param name="name"     value="collapseall"/>

@@ -37,6 +37,8 @@ import org.eclipse.help.internal.search.SearchQuery;
 import org.eclipse.help.internal.search.SearchResults;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.webapp.servlet.WebappWorkingSetManager;
+import org.eclipse.help.internal.workingset.AdaptableSelectedToc;
+import org.eclipse.help.internal.workingset.AdaptableSelectedTopic;
 import org.eclipse.help.internal.workingset.AdaptableToc;
 import org.eclipse.help.internal.workingset.AdaptableTopic;
 import org.eclipse.help.internal.workingset.WorkingSet;
@@ -122,6 +124,11 @@ public class SearchData extends ActivitiesData {
 	 */
 	public boolean isScopeRequest() {
 		return (request.getParameter("workingSet") != null); //$NON-NLS-1$
+	}
+	
+	public boolean isSelectedTopicQuickSearchRequest() {
+		String quickSearchType = request.getParameter("quickSearchType"); //$NON-NLS-1$
+		return (null != quickSearchType && "QuickSearchTopic".equalsIgnoreCase(quickSearchType)); //$NON-NLS-1$
 	}
 
 	public String getCategoryLabel(int i) {
@@ -385,8 +392,12 @@ public class SearchData extends ActivitiesData {
 			// scopes are books (advanced search)
 			workingSets = createTempWorkingSets();
 		} else if (request.getParameterValues("quickSearch") != null) { //$NON-NLS-1$
-			// scopes is a toc or topic and its children
-			workingSets = createQuickSearchWorkingSet();
+			// scopes is just the selected toc or topic
+			if(isSelectedTopicQuickSearchRequest()){
+				workingSets = createQuickSearchWorkingSetOnSelectedTopic();
+			} else{  // scopes is a toc or topic and its children
+				workingSets = createQuickSearchWorkingSet();
+			}
 		} else {
 			// scopes are working set names
 			workingSets = getWorkingSets();
@@ -479,6 +490,32 @@ public class SearchData extends ActivitiesData {
 			adaptableTopic.setParent(adaptableToc);
 		} else {
 			resources.add(adaptableToc);
+		}
+		workingSets[0] = new WorkingSet("quickSearch", resources); //$NON-NLS-1$
+		return workingSets;
+	}
+	
+	/**
+	 * @return WorkingSet[] consisting of a single selected toc or topic or null
+	 */
+	private WorkingSet[] createQuickSearchWorkingSetOnSelectedTopic() {
+		WorkingSet[] workingSets = new WorkingSet[1];
+		TocData tocData = new TocData(context, request, response);
+		int selectedToc = tocData.getSelectedToc();
+		if (selectedToc < 0) {
+			return new WorkingSet[0];
+		}
+		IToc toc = tocData.getTocs()[selectedToc];
+		ITopic[] topics = tocData.getTopicPathFromRootPath(toc);
+		List resources = new ArrayList();
+		AdaptableSelectedToc adaptableSelectedToc = new AdaptableSelectedToc(toc);
+		if (topics != null) {
+			ITopic selectedTopic = topics[topics.length - 1];
+			AdaptableSelectedTopic adaptableSelectedTopic = new AdaptableSelectedTopic(selectedTopic);
+			resources.add(adaptableSelectedTopic);
+			adaptableSelectedTopic.setParent(adaptableSelectedToc);
+		} else {
+			resources.add(adaptableSelectedToc);
 		}
 		workingSets[0] = new WorkingSet("quickSearch", resources); //$NON-NLS-1$
 		return workingSets;

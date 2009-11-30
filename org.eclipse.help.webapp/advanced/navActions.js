@@ -141,13 +141,22 @@ function getSearchWord() {
 	return searchFrame.document.forms["searchForm"].searchWord.value;
 }
 
-function quickSearch(button, errorMsg) {		//search this topic and all subTopics
+function quickSearchTopic(errorMsg) {
+	quickSearch("QuickSearchTopic", errorMsg);
+}
+
+function quickSearchToc(errorMsg) {
+	quickSearch("QuickSearchToc", errorMsg);
+}
+
+function quickSearch(quickSearchType, errorMsg) {		//search this topic and all subTopics
 	var topic = parent.tocViewFrame.getSelectedTopic();
 	if (topic) {
 		var node = parent.tocViewFrame.getActiveAnchor();
 		var treeItem = parent.tocViewFrame.getTreeItem(node);
         if (!treeItem) { return; }  // TODO need better error
 	    var parameters = "?searchWord=" + getSearchWord();
+	    parameters = parameters + "&quickSearchType=" + quickSearchType;
 	     
 	    // Defect 593: resize search window     2/2
 	    var w = 315;
@@ -172,14 +181,14 @@ function quickSearch(button, errorMsg) {		//search this topic and all subTopics
 	}	
 }
 
-function searchFor(searchWord) {  
+function searchFor(searchWord, quickSearchType) {  
 	var node = parent.tocViewFrame.getActiveAnchor();
 	var treeItem = parent.tocViewFrame.getTreeItem(node);
     var topAncestor = parent.tocViewFrame.getTopAncestor(treeItem);
     if (!topAncestor) { return; } 
 	var toc = topAncestor.nodeid;
 	var maxHits = 500;
-	var query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits + "&quickSearch=true&toc="+toc;
+	var query ="searchWord="+encodeURIComponent(searchWord)+"&maxHits="+maxHits + "&quickSearch=true&toc="+toc +"&quickSearchType=" + quickSearchType;
     if (topAncestor !== treeItem) {
         query += "&path=";
         query += treeItem.nodeid;
