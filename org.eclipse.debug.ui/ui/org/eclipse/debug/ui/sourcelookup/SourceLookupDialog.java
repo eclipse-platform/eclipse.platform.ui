@@ -69,6 +69,7 @@ public class SourceLookupDialog extends TitleAreaDialog {
 		// create a composite with standard margins and spacing
 		setTitle(SourceLookupUIMessages.manageSourceDialog_description); 
 		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_EDIT_SRC_LOC_WIZ));
+		setMessage(SourceLookupUIMessages.SourceLookupDialog_add_edit_remove);
 		Composite composite = new Composite(parent, SWT.NONE);
 		
 		GridLayout layout = new GridLayout();

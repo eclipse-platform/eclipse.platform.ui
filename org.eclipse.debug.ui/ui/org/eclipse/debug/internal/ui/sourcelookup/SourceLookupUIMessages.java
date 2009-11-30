@@ -26,6 +26,8 @@ public class SourceLookupUIMessages extends NLS {
 	public static String SourceLookupDialog_0;
 
 	public static String SourceLookupDialog_1;
+
+	public static String SourceLookupDialog_add_edit_remove;
 	public static String sourceTab_lookupLabel;
 	public static String sourceTab_searchDuplicateLabel;
 	public static String sourceTab_upButton;
