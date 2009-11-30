@@ -79,8 +79,8 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC,
-				UIEvents.ALL_ATTRIBUTES), itemUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC),
+				itemUpdater);
 	}
 
 	@PreDestroy

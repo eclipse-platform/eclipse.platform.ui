@@ -42,8 +42,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	public void init(IEventBroker eventBroker) {
 		EventHandler lazyLoader = new EventHandler() {
 			public void handleEvent(Event event) {
-				Object element = event
-						.getProperty(UIEvents.EventTags.ELEMENT);
+				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 				MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
 				MUIElement selPart = stack.getActiveChild();
 				if (selPart != null && selPart.getWidget() == null) {
@@ -56,8 +55,8 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		};
 
 		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.ACTIVECHILD_TOPIC,
-				UIEvents.EventTypes.ALL), lazyLoader);
+				UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.ACTIVECHILD), lazyLoader);
 	}
 
 	public void postProcess(MUIElement element) {

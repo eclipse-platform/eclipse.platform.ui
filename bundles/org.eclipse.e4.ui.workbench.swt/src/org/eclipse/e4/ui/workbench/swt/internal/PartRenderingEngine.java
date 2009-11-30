@@ -204,12 +204,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// Hook up the widget life-cycle subscriber
 		IEventBroker eventBroker = (IEventBroker) context
 				.get(IEventBroker.class.getName());
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.VISIBLE), visibilityHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.UIElement.VISIBLE_TOPIC, UIEvents.EventTypes.ALL),
-				visibilityHandler);
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.CHILDREN_TOPIC,
-				UIEvents.EventTypes.ALL), childrenHandler);
+				UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.CHILDREN), childrenHandler);
 	}
 
 	@Inject

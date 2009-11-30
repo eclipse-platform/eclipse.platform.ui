@@ -56,8 +56,8 @@ public abstract class HeadlessApplicationTest extends
 
 	private EventHandler eventHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			if (event.getProperty(UIEvents.EventTags.ATTNAME)
-					.equals(UIEvents.ElementContainer.ACTIVECHILD)) {
+			if (event.getProperty(UIEvents.EventTags.ATTNAME).equals(
+					UIEvents.ElementContainer.ACTIVECHILD)) {
 				Object oldPart = event
 						.getProperty(UIEvents.EventTags.OLD_VALUE);
 				Object newPart = event
@@ -109,9 +109,9 @@ public abstract class HeadlessApplicationTest extends
 	private void addActiveChildEventHandling() {
 		IEventBroker eventBroker = (IEventBroker) application.getContext().get(
 				IEventBroker.class.getName());
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.TOPIC,
-				UIEvents.ALL_ATTRIBUTES), null, eventHandler, true);
+		eventBroker.subscribe(UIEvents
+				.buildTopic(UIEvents.ElementContainer.TOPIC), null,
+				eventHandler, true);
 	}
 
 	public void testGet_ActiveContexts() throws Exception {

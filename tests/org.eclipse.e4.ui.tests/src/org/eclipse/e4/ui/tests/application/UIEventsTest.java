@@ -65,8 +65,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		public EventTester(String name, String topic, String[] attIds,
 				IEventBroker eventBroker) {
 			this.testerName = name;
-			this.topic = UIEvents.buildTopic(topic,
-					UIEvents.ALL_ATTRIBUTES);
+			this.topic = UIEvents.buildTopic(topic);
 			this.attIds = attIds;
 			this.eventBroker = eventBroker;
 

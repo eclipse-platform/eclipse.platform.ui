@@ -57,8 +57,8 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		};
 
 		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.ElementContainer.ACTIVECHILD_TOPIC,
-				UIEvents.EventTypes.ALL), showPerspectiveHandler);
+				UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.ACTIVECHILD), showPerspectiveHandler);
 	}
 
 	@PreDestroy

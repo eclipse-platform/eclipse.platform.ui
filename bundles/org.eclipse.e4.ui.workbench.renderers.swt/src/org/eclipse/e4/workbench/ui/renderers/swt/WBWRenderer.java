@@ -111,9 +111,8 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.UIItem.TOPIC,
-				UIEvents.ALL_ATTRIBUTES), shellUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC),
+				shellUpdater);
 	}
 
 	@PreDestroy

@@ -109,9 +109,8 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.UIItem.TOPIC,
-				UIEvents.ALL_ATTRIBUTES), itemUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC),
+				itemUpdater);
 
 		EventHandler dirtyUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
@@ -154,9 +153,8 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(
-				UIEvents.Dirtyable.DIRTY_TOPIC,
-				UIEvents.EventTypes.ALL), dirtyUpdater);
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Dirtyable.TOPIC,
+				UIEvents.Dirtyable.DIRTY), dirtyUpdater);
 	}
 
 	private String getLabel(MUIItem itemPart, String newName) {
