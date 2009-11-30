@@ -27,5 +27,18 @@
          </run>
       </application>
    </extension>
+   <extension
+         id="GenTopic"
+         name="Internal Model Topic Generator"
+         point="org.eclipse.core.runtime.applications">
+      <application
+            cardinality="singleton-global"
+            thread="main"
+            visible="true">
+         <run
+               class="org.eclipse.e4.ui.workbench.swt.internal.GenTopic">
+         </run>
+      </application>
+   </extension>
 
 </plugin>
