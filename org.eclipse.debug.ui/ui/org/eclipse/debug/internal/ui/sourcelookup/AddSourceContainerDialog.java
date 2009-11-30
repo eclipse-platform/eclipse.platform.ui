@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2007 IBM Corporation and others.
+ * Copyright (c) 2003, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -63,26 +63,26 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		fSourceContainerViewer=viewer;		
 		fDirector = director;
 	}
-	
-	/**
-	 * Creates the dialog area to display source container types that are "browseable"
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.jface.dialogs.TitleAreaDialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
-	protected Control createDialogArea(Composite ancestor) {			
+	protected Control createDialogArea(Composite parent) {			
 		
 		getShell().setText(SourceLookupUIMessages.addSourceLocation_title); 
 		setTitle(SourceLookupUIMessages.addSourceLocation_description); 
 		setTitleImage(DebugPluginImages.getImage(IInternalDebugUIConstants.IMG_ADD_SRC_LOC_WIZ));
 		
-		Composite parent = new Composite(ancestor, SWT.NULL);
+		Composite comp = (Composite) super.createDialogArea(parent);
 		GridData gd= new GridData(GridData.FILL_BOTH);
 		GridLayout topLayout = new GridLayout();
 		topLayout.numColumns = 1;
-		parent.setLayout(topLayout);
-		parent.setLayoutData(gd);	
+		comp.setLayout(topLayout);
+		comp.setLayoutData(gd);	
 				
 		ISourceContainerType[] types = filterTypes(DebugPlugin.getDefault().getLaunchManager().getSourceContainerTypes());
 		
-		fViewer = new TableViewer(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
+		fViewer = new TableViewer(comp, SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.SINGLE);
 		final Table table = fViewer.getTable();
 		gd = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(gd);
@@ -113,9 +113,9 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		if(types.length != 0) {	
 			fViewer.setInput(types);
 		}
-		Dialog.applyDialogFont(parent);
+		Dialog.applyDialogFont(comp);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getShell(), IDebugHelpContextIds.ADD_SOURCE_CONTAINER_DIALOG);
-		return parent;
+		return comp;
 	}	
 	
 	/**
