@@ -31,7 +31,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
-import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
@@ -105,10 +104,8 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 				if (!selection.isEmpty()) {
 					ISourceContainerType type = (ISourceContainerType) ((IStructuredSelection)selection).getFirstElement();
 					setMessage(type.getDescription());
-					getButton(IDialogConstants.OK_ID).setEnabled(true);
 				}
 				else {
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
 					setMessage(SourceLookupUIMessages.AddSourceContainerDialog_select_source_container);
 				}
 			}
@@ -125,12 +122,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 * @see org.eclipse.jface.dialogs.Dialog#createButtonsForButtonBar(org.eclipse.swt.widgets.Composite)
 	 */
 	protected void createButtonsForButtonBar(Composite parent) {
-		super.createButtonsForButtonBar(parent);
-		getButton(IDialogConstants.OK_ID).setEnabled(false);
-		Table table = fViewer.getTable();
-		if(table.getItemCount() > 0) {
-			fViewer.setSelection(new StructuredSelection(table.getItem(0).getData()));
-		}
+		createButton(parent, IDialogConstants.OK_ID, IDialogConstants.OK_LABEL, true);
 	}
 	
 	/**
@@ -148,17 +140,6 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
                 }
             }
         }
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
-	protected void okPressed() {
-		Object obj = ((IStructuredSelection)fViewer.getSelection()).getFirstElement();
-		if(obj != null) {
-			addEntries((ISourceContainerType) obj);
-		}
-		super.okPressed();
 	}
 	
 	/**
