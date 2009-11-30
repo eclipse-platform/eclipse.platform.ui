@@ -11,6 +11,7 @@
 
 package org.eclipse.e4.core.services.internal.context;
 
+import java.lang.reflect.InvocationTargetException;
 import junit.framework.TestCase;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -79,7 +80,8 @@ public class ContextInjectionFactoryTest extends TestCase {
 	/**
 	 * If no other constructors are available, the default constructor should be used
 	 */
-	public void testConstructorInjectionBasic() {
+	public void testConstructorInjectionBasic() throws InvocationTargetException,
+			InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
 		// add an extra argument for the inner class constructors
 		context.set(ContextInjectionFactoryTest.class.getName(), this);

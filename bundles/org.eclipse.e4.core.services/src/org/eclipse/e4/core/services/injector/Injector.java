@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.eclipse.e4.core.services.injector;
 
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.internal.context.ContextInjector;
 
@@ -26,12 +28,12 @@ final public class Injector implements IDisposable {
 		eInjector = new ContextInjector(context);
 	}
 
-	public void inject(Object object) {
-		eInjector.inject(object);
+	public boolean inject(Object object) {
+		return eInjector.inject(object);
 	}
 
-	public void uninject(Object object) {
-		eInjector.uninject(object);
+	public boolean uninject(Object object) {
+		return eInjector.uninject(object);
 	}
 
 	public void added(IObjectDescriptor descriptor) {
@@ -42,16 +44,22 @@ final public class Injector implements IDisposable {
 		eInjector.removed(descriptor);
 	}
 
-	public Object make(Class clazz) {
+	public Object make(Class clazz) throws InvocationTargetException, InstantiationException {
 		return eInjector.make(clazz);
 	}
 
-	public Object invoke(Object object, String methodName, Object defaultValue) {
+	public Object invoke(Object object, String methodName) throws InvocationTargetException,
+			CoreException {
+		return eInjector.invoke(object, methodName);
+	}
+
+	public Object invoke(Object object, String methodName, Object defaultValue)
+			throws InvocationTargetException {
 		return eInjector.invoke(object, methodName, defaultValue);
 	}
 
-	public void injectStatic(Class clazz) {
-		eInjector.injectStatic(clazz);
+	public boolean injectStatic(Class clazz) {
+		return eInjector.injectStatic(clazz);
 	}
 
 	public void reparent(IObjectProvider oldParent) {

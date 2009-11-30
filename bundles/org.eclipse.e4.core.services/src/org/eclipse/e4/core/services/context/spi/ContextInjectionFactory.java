@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.core.services.context.spi;
 
+import java.lang.reflect.InvocationTargetException;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.IEclipseContextAware;
@@ -101,12 +103,35 @@ final public class ContextInjectionFactory {
 	 *            The method to call
 	 * @param context
 	 *            The context to obtain injected values from
+	 * @return the return value of the method call, or <code>null</code>
+	 * @throws InvocationTargetException
+	 *             if an exception was thrown by the invoked method
+	 * @throws CoreException
+	 *             if no matching method was found
+	 */
+	static public Object invoke(Object object, String methodName, IEclipseContext context)
+			throws InvocationTargetException, CoreException {
+		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
+		return objectProvider.getInjector().invoke(object, methodName);
+	}
+
+	/**
+	 * Call a method, injecting the parameters from the context.
+	 * 
+	 * @param object
+	 *            The object to perform injection on
+	 * @param methodName
+	 *            The method to call
+	 * @param context
+	 *            The context to obtain injected values from
 	 * @param defaultValue
 	 *            A value to be returned if the method cannot be called
 	 * @return the return value of the method call, or <code>null</code>
+	 * @throws InvocationTargetException
+	 *             if an exception was thrown by the invoked method
 	 */
 	static public Object invoke(Object object, String methodName, IEclipseContext context,
-			Object defaultValue) {
+			Object defaultValue) throws InvocationTargetException {
 		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
 		return objectProvider.getInjector().invoke(object, methodName, defaultValue);
 	}
@@ -134,8 +159,13 @@ final public class ContextInjectionFactory {
 	 * @param clazz
 	 *            the class to be instantiated
 	 * @return an instance of the specified class
+	 * @throws InstantiationException
+	 *             if the class is abstract (or an interface) and can not instantiated
+	 * @throws InvocationTargetException
+	 *             if invoked constructor generated an exception
 	 */
-	static public Object make(Class clazz, final IEclipseContext context) {
+	static public Object make(Class clazz, final IEclipseContext context)
+			throws InvocationTargetException, InstantiationException {
 		ObjectProviderContext objectProvider = ObjectProviderContext.getObjectProvider(context);
 		Object result = objectProvider.getInjector().make(clazz);
 		if (result != null)

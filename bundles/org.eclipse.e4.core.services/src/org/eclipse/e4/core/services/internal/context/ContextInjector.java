@@ -20,6 +20,10 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.core.internal.services.ServicesActivator;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -72,16 +76,15 @@ public class ContextInjector {
 		}
 
 		/**
-		 * The method assumes injection is needed for this field, from the context property named
-		 * injectName.
+		 * The method assumes injection is needed for this field.
 		 */
-		public void processField(final Field field, InjectionProperties properties) {
+		public boolean processField(final Field field, InjectionProperties properties) {
 			if (Modifier.isStatic(field.getModifiers()) != processStatic)
-				return;
+				return true;
 			if (descriptor != null) { // filter if descriptor is specified
 				String descriptorsKey = context.getKey(descriptor);
 				if (!descriptorsKey.equals(context.getKey(properties)))
-					return;
+					return true;
 			}
 			Object value = null;
 			if (addition) {
@@ -91,18 +94,22 @@ public class ContextInjector {
 				else if (context.containsKey(properties))
 					value = context.get(properties);
 				else {
-					if (!properties.isOptional())
-						throw new IllegalStateException("Could not set " + field //$NON-NLS-1$
-								+ " because of missing: " + context.getKey(properties)); //$NON-NLS-1$
-					return;
+					if (!properties.isOptional()) {
+						if (shouldTrace)
+							System.out.println("Could not set " + field.getName()
+									+ " because of the missing: " + context.getKey(properties));
+						return false;
+					}
+					return true;
 				}
 			}
-			setField(userObject, field, value);
+			return setField(userObject, field, value);
 		}
 
-		public void processMethod(final Method method, boolean optional) {
+		public boolean processMethod(final Method method, boolean optional)
+				throws InvocationTargetException {
 			if (Modifier.isStatic(method.getModifiers()) != processStatic)
-				return;
+				return true;
 			// we only get here if we are injecting
 			InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
 			if (descriptor != null) {
@@ -116,16 +123,20 @@ public class ContextInjector {
 					}
 				}
 				if (!found)
-					return;
+					return true;
 			}
 
 			Object[] actualParams = processParams(properties, method.getParameterTypes(),
 					!addition, injectWithNulls);
 			if (actualParams != null)
 				callMethod(userObject, method, actualParams);
-			else if (!optional)
-				throw new IllegalStateException("Could not invoke " + method //$NON-NLS-1$
-						+ ": no matching context elements"); //$NON-NLS-1$
+			else if (!optional) {
+				if (shouldTrace)
+					System.out.println("Could not invoke " + method.getName()
+							+ ": no matching context elements");
+				return false;
+			}
+			return true;
 		}
 
 		public void addPostConstructMethod(Method method) {
@@ -134,7 +145,7 @@ public class ContextInjector {
 			postConstructMethods.add(method);
 		}
 
-		public void processPostConstructMethod() {
+		public void processPostConstructMethod() throws InvocationTargetException {
 			if (!shouldProcessPostConstruct)
 				return;
 			if (postConstructMethods == null)
@@ -146,7 +157,7 @@ public class ContextInjector {
 				Object[] actualParams = processParams(properties, method.getParameterTypes(),
 						!addition, injectWithNulls);
 				if (actualParams == null)
-					logWarning(userObject, new IllegalArgumentException());
+					logError(userObject, new IllegalArgumentException());
 				else
 					callMethod(userObject, method, actualParams);
 			}
@@ -186,12 +197,14 @@ public class ContextInjector {
 			return (oldValue != newValue); // use pointer comparison, not #equals()
 		}
 
-		public void processField(final Field field, InjectionProperties properties) {
+		public boolean processField(final Field field, InjectionProperties properties) {
 			if (hasChanged(properties))
-				super.processField(field, properties);
+				return super.processField(field, properties);
+			return true;
 		}
 
-		public void processMethod(final Method method, boolean optional) {
+		public boolean processMethod(final Method method, boolean optional)
+				throws InvocationTargetException {
 			// any argument changed?
 			InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
 
@@ -203,11 +216,15 @@ public class ContextInjector {
 				}
 			}
 			if (changed)
-				super.processMethod(method, optional);
+				return super.processMethod(method, optional);
+			return true;
 		}
 
 	}
 
+	final static private String DEBUG_INJECTOR = "org.eclipse.e4.core.services/debug/injector"; //$NON-NLS-1$
+	final static private boolean shouldTrace = ServicesActivator.getDefault()
+			.getBooleanDebugOption(DEBUG_INJECTOR, false);
 	final static private String JAVA_OBJECT = "java.lang.Object"; //$NON-NLS-1$
 
 	// TBD rename objectProvider
@@ -226,40 +243,69 @@ public class ContextInjector {
 		Object[] objectsCopy = userObjects.getSafeCopy();
 		Processor processor = new Processor(descriptor, true, false);
 		for (int i = 0; i < objectsCopy.length; i++) {
-			processClassHierarchy(objectsCopy[i], processor);
+			try {
+				processClassHierarchy(objectsCopy[i], processor);
+			} catch (InvocationTargetException e) {
+				logExternalError("Exception occured while processing addition on", objectsCopy[i],
+						e);
+			}
 		}
 	}
 
-	public void inject(Object userObject) {
+	public boolean inject(Object userObject) {
 		Processor processor = new Processor(null, true, false);
 		processor.shouldProcessPostConstruct = true;
-		processClassHierarchy(userObject, processor);
+		boolean result = false;
+		try {
+			result = processClassHierarchy(userObject, processor);
+		} catch (InvocationTargetException e) {
+			logExternalError("Exception occured while processing injecting", userObject, e);
+		}
 		userObjects.add(userObject);
+		return result;
 	}
 
 	// TBD use null object to inject statics
-	public void injectStatic(Class clazz) {
+	public boolean injectStatic(Class clazz) {
 		Processor processor = new Processor(null, true, false);
 		processor.shouldProcessPostConstruct = true;
 		processor.setProcessStatic(true);
-		Object object = make(clazz);
-		processClassHierarchy(object, processor);
+		try {
+			Object object = make(clazz);
+			return processClassHierarchy(object, processor);
+		} catch (InvocationTargetException e) {
+			// try-catch won't be necessary once we stop creating an object
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// try-catch won't be necessary once we stop creating an object
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 	public void removed(IObjectDescriptor descriptor) {
 		Processor processor = new Processor(descriptor, false, false);
 		Object[] objectsCopy = userObjects.getSafeCopy();
 		for (int i = 0; i < objectsCopy.length; i++) {
-			processClassHierarchy(objectsCopy[i], processor);
+			try {
+				processClassHierarchy(objectsCopy[i], processor);
+			} catch (InvocationTargetException e) {
+				logExternalError("Exception occured while processing removal on", objectsCopy[i], e);
+			}
 		}
 	}
 
-	public void uninject(Object releasedObject) {
+	public boolean uninject(Object releasedObject) {
 		if (!userObjects.remove(releasedObject))
-			return;
+			return false;
 		Processor processor = new Processor(null, false, false);
 		processor.setInjectNulls(true);
-		processClassHierarchy(releasedObject, processor);
+		try {
+			return processClassHierarchy(releasedObject, processor);
+		} catch (InvocationTargetException e) {
+			logExternalError("Exception occured while uninjecting", releasedObject, e);
+		}
+		return false;
 	}
 
 	public void dispose() {
@@ -269,7 +315,11 @@ public class ContextInjector {
 		for (int i = 0; i < objectsCopy.length; i++) {
 			if (objectsCopy[i] instanceof IDisposable)
 				((IDisposable) objectsCopy[i]).dispose();
-			processClassHierarchy(objectsCopy[i], processor);
+			try {
+				processClassHierarchy(objectsCopy[i], processor);
+			} catch (InvocationTargetException e) {
+				logExternalError("Exception occured while disposing", objectsCopy[i], e);
+			}
 		}
 	}
 
@@ -279,61 +329,68 @@ public class ContextInjector {
 		Object[] objectsCopy = userObjects.getSafeCopy();
 		Processor processor = new ReparentProcessor(oldParent);
 		for (int i = 0; i < objectsCopy.length; i++) {
-			processClassHierarchy(objectsCopy[i], processor);
+			try {
+				processClassHierarchy(objectsCopy[i], processor);
+			} catch (InvocationTargetException e) {
+				logExternalError("Exception occured while reparenting", objectsCopy[i], e);
+			}
 		}
-	}
-
-	static void logWarning(Object destination, Exception e) {
-		System.out.println("Injection failed " + destination.toString()); //$NON-NLS-1$
-		if (e != null)
-			e.printStackTrace();
-		// TBD convert this into real logging
-		// String msg = NLS.bind("Injection failed", destination.toString());
-		// RuntimeLog.log(new Status(IStatus.WARNING,
-		// IRuntimeConstants.PI_COMMON, 0, msg, e));
 	}
 
 	/**
 	 * Make the processor visit all declared members on the given class and all superclasses
+	 * 
+	 * @throws InvocationTargetException
 	 */
-	private void processClass(Class objectsClass, Processor processor) {
+	private boolean processClass(Class objectsClass, Processor processor)
+			throws InvocationTargetException {
 		if (processor.addition) {
 			// order: superclass, fields, methods
 			if (objectsClass != null) {
 				Class superClass = objectsClass.getSuperclass();
 				if (!superClass.getName().equals(JAVA_OBJECT)) {
 					processor.classHierarchy.add(objectsClass);
-					processClass(superClass, processor);
+					if (!processClass(superClass, processor))
+						return false;
 					processor.classHierarchy.remove(objectsClass);
 				}
 			}
-			processFields(objectsClass, processor);
-			processMethods(objectsClass, processor);
+			if (!processFields(objectsClass, processor))
+				return false;
+			if (!processMethods(objectsClass, processor))
+				return false;
 		} else {
 			// order: methods, fields, superclass
-			processMethods(objectsClass, processor);
-			processFields(objectsClass, processor);
+			if (!processMethods(objectsClass, processor))
+				return false;
+			if (!processFields(objectsClass, processor))
+				return false;
 			if (objectsClass != null) {
 				Class superClass = objectsClass.getSuperclass();
 				if (!superClass.getName().equals(JAVA_OBJECT)) {
 					processor.classHierarchy.add(objectsClass);
-					processClass(superClass, processor);
+					if (!processClass(superClass, processor))
+						return false;
 					processor.classHierarchy.remove(objectsClass);
 				}
 			}
 		}
+		return true;
 	}
 
-	private void processClassHierarchy(Object userObject, Processor processor) {
+	private boolean processClassHierarchy(Object userObject, Processor processor)
+			throws InvocationTargetException {
 		processor.setObject(userObject);
-		processClass((userObject == null) ? null : userObject.getClass(), processor);
+		if (!processClass((userObject == null) ? null : userObject.getClass(), processor))
+			return false;
 		processor.processPostConstructMethod();
+		return true;
 	}
 
 	/**
 	 * Make the processor visit all declared fields on the given class.
 	 */
-	private void processFields(Class objectsClass, Processor processor) {
+	private boolean processFields(Class objectsClass, Processor processor) {
 		Field[] fields = objectsClass.getDeclaredFields();
 		for (int i = 0; i < fields.length; i++) {
 			Field field = fields[i];
@@ -342,15 +399,21 @@ public class ContextInjector {
 			if (field.getName().startsWith(IContextConstants.INJECTION_PREFIX))
 				properties.setInject(true);
 
-			if (properties.shouldInject())
-				processor.processField(field, properties);
+			if (!properties.shouldInject())
+				continue;
+			if (!processor.processField(field, properties))
+				return false;
 		}
+		return true;
 	}
 
 	/**
 	 * Make the processor visit all declared methods on the given class.
+	 * 
+	 * @throws InvocationTargetException
 	 */
-	private void processMethods(Class objectsClass, Processor processor) {
+	private boolean processMethods(Class objectsClass, Processor processor)
+			throws InvocationTargetException {
 		Method[] methods = objectsClass.getDeclaredMethods();
 		if (processor.isInDispose) {
 			for (int i = 0; i < methods.length; i++) {
@@ -378,9 +441,12 @@ public class ContextInjector {
 			if (method.getName().startsWith(IContextConstants.INJECTION_PREFIX))
 				properties.setInject(true);
 
-			if (properties.shouldInject())
-				processor.processMethod(method, properties.isOptional());
+			if (!properties.shouldInject())
+				continue;
+			if (!processor.processMethod(method, properties.isOptional()))
+				return false;
 		}
+		return true;
 	}
 
 	// TBD simplify this: only one non-annotation and one "implements IInitializable"?
@@ -442,7 +508,27 @@ public class ContextInjector {
 		return false;
 	}
 
-	public Object invoke(Object userObject, String methodName, Object defaultValue) {
+	public Object invoke(Object userObject, String methodName) throws InvocationTargetException,
+			CoreException {
+		Method[] methods = userObject.getClass().getDeclaredMethods();
+		for (int j = 0; j < methods.length; j++) {
+			Method method = methods[j];
+			if (!method.getName().equals(methodName))
+				continue;
+
+			InjectionProperties[] properties = annotationSupport.getInjectParamProperties(method);
+			Object[] actualParams = processParams(properties, method.getParameterTypes(), false,
+					false);
+			if (actualParams != null)
+				return callMethod(userObject, method, actualParams);
+		}
+		IStatus status = new Status(IStatus.ERROR, "org.eclipse.e4.core.services",
+				"Unable to find matching method to invoke");
+		throw new CoreException(status);
+	}
+
+	public Object invoke(Object userObject, String methodName, Object defaultValue)
+			throws InvocationTargetException {
 		Method[] methods = userObject.getClass().getDeclaredMethods();
 		for (int j = 0; j < methods.length; j++) {
 			Method method = methods[j];
@@ -458,7 +544,7 @@ public class ContextInjector {
 		return defaultValue;
 	}
 
-	public Object make(Class clazz) {
+	public Object make(Class clazz) throws InvocationTargetException, InstantiationException {
 		Constructor[] constructors = clazz.getDeclaredConstructors();
 
 		// Sort the constructors by descending number of constructor arguments
@@ -493,11 +579,13 @@ public class ContextInjector {
 			if (actualParams == null)
 				continue;
 			Object newInstance = callConstructor(constructor, actualParams);
-			return newInstance;
+			if (newInstance != null)
+				return newInstance;
 		}
 
-		String message = "could not find satisfiable constructor in class " + clazz.getName(); //$NON-NLS-1$
-		logWarning(clazz, new RuntimeException(message));
+		if (shouldTrace)
+			System.out
+					.println("Could not find satisfiable constructor in class " + clazz.getName());
 		return null;
 	}
 
@@ -549,10 +637,10 @@ public class ContextInjector {
 		try {
 			field.set(userObject, value);
 		} catch (IllegalArgumentException e) {
-			logWarning(field, e);
+			logError(field, e);
 			return false;
 		} catch (IllegalAccessException e) {
-			logWarning(field, e);
+			logError(field, e);
 			return false;
 		} finally {
 			if (!wasAccessible)
@@ -561,7 +649,8 @@ public class ContextInjector {
 		return true;
 	}
 
-	private Object callMethod(Object userObject, Method method, Object[] args) {
+	private Object callMethod(Object userObject, Method method, Object[] args)
+			throws InvocationTargetException {
 		Object result = null;
 		boolean wasAccessible = true;
 		if (!method.isAccessible()) {
@@ -571,13 +660,12 @@ public class ContextInjector {
 		try {
 			result = method.invoke(userObject, args);
 		} catch (IllegalArgumentException e) {
-			logWarning(method, e);
+			// should not happen, is checked during formation of the array of actual arguments
+			logError(method, e);
 			return null;
 		} catch (IllegalAccessException e) {
-			logWarning(method, e);
-			return null;
-		} catch (InvocationTargetException e) {
-			logWarning(method, e);
+			// should not happen, is checked at the start of this method
+			logError(method, e);
 			return null;
 		} finally {
 			if (!wasAccessible)
@@ -586,19 +674,18 @@ public class ContextInjector {
 		return result;
 	}
 
-	private Object callConstructor(Constructor constructor, Object[] args) {
+	private Object callConstructor(Constructor constructor, Object[] args)
+			throws InvocationTargetException, InstantiationException {
 		if (args != null) { // make sure args are assignable
 			Class[] parameterTypes = constructor.getParameterTypes();
 			if (parameterTypes.length != args.length) {
-				logWarning(constructor, new IllegalArgumentException());
+				// internal error, log it
+				logError(constructor, new IllegalArgumentException());
 				return null;
 			}
 			for (int i = 0; i < args.length; i++) {
-				if ((args[i] != null) && !parameterTypes[i].isAssignableFrom(args[i].getClass())) {
-					// TBD consider when do we need to log
-					// logWarning(method, new IllegalArgumentException());
+				if ((args[i] != null) && !parameterTypes[i].isAssignableFrom(args[i].getClass()))
 					return null;
-				}
 			}
 		}
 
@@ -611,22 +698,38 @@ public class ContextInjector {
 		try {
 			result = constructor.newInstance(args);
 		} catch (IllegalArgumentException e) {
-			logWarning(constructor, e);
+			// should not happen, is checked at the start of this method
+			logError(constructor, e);
 			return null;
 		} catch (IllegalAccessException e) {
-			logWarning(constructor, e);
-			return null;
-		} catch (InvocationTargetException e) {
-			logWarning(constructor, e);
-			return null;
-		} catch (InstantiationException e) {
-			logWarning(constructor, e);
+			// should not happen as we set constructor to be accessible
+			logError(constructor, e);
 			return null;
 		} finally {
 			if (!wasAccessible)
 				constructor.setAccessible(false);
 		}
 		return result;
+	}
+
+	private void logExternalError(String msg, Object destination, Exception e) {
+		System.out.println(msg + " " + destination.toString()); //$NON-NLS-1$
+		if (e != null)
+			e.printStackTrace();
+		// TBD convert this into real logging
+		// String msg = NLS.bind("Injection failed", destination.toString());
+		// RuntimeLog.log(new Status(IStatus.WARNING,
+		// IRuntimeConstants.PI_COMMON, 0, msg, e));
+	}
+
+	private void logError(Object destination, Exception e) {
+		System.out.println("Injection failed " + destination.toString()); //$NON-NLS-1$
+		if (e != null)
+			e.printStackTrace();
+		// TBD convert this into real logging
+		// String msg = NLS.bind("Injection failed", destination.toString());
+		// RuntimeLog.log(new Status(IStatus.WARNING,
+		// IRuntimeConstants.PI_COMMON, 0, msg, e));
 	}
 
 }
