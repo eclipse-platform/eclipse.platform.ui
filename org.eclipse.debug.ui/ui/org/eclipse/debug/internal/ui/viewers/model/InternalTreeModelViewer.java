@@ -2414,37 +2414,30 @@ public class InternalTreeModelViewer extends TreeViewer
 	 * @see org.eclipse.jface.viewers.StructuredViewer#handleSelect(org.eclipse.swt.events.SelectionEvent)
 	 */
 	protected void handleSelect(SelectionEvent event) {
-	       if (event.detail == SWT.CHECK) {
-	            TreeItem item = (TreeItem) event.item;
-	            super.handleSelect(event);
+        super.handleSelect(event);
 
-	            Object element = item.getData();
-	            if (element != null) {
-	            	boolean checked = item.getChecked();	            	
-	            	
-	            	TreePath path = getTreePathFromItem(item);
-	            	
-	            	boolean accepted = false;
-	            	IContentProvider contentProvider = getContentProvider();
-	            	if (contentProvider instanceof TreeModelContentProvider) {
-	            		IModelProxy elementProxy = ((TreeModelContentProvider) contentProvider).getElementProxy(path);
-	            		if (elementProxy instanceof ICheckboxModelProxy) {
-	            			accepted = ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getInput(), path, checked);
-	            		}	            		
-	            	} 
+        TreeItem item = (TreeItem) event.item;
+        Object element = item.getData();
+        IContentProvider contentProvider = getContentProvider();
+        if (element != null && contentProvider instanceof TreeModelContentProvider) {
+            TreePath path = getTreePathFromItem((TreeItem)event.item);
 
-            	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
-	            	if (!accepted)
-	            		item.setChecked(!checked);	            	
-	            }
-	        } else {
-				super.handleSelect(event);
-		        IContentProvider contentProvider = getContentProvider();
-		        if (contentProvider instanceof TreeModelContentProvider) {
-		            TreePath path = getTreePathFromItem((TreeItem)event.item);
-		            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT);
-		        }
-			}
+            if (event.detail == SWT.CHECK) {
+                boolean checked = item.getChecked();	            	
+            	boolean accepted = false;
+        		IModelProxy elementProxy = ((TreeModelContentProvider) contentProvider).getElementProxy(path);
+        		if (elementProxy instanceof ICheckboxModelProxy) {
+        			accepted = ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getInput(), path, checked);
+        		}	            		
+
+        	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
+            	if (!accepted) {
+            		item.setChecked(!checked);
+            	}
+            } else {
+	            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT);
+    		}
+        }        
 	}
 	
 	protected void handleTreeExpand(TreeEvent event) {
