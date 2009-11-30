@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2007 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -52,23 +52,23 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener{
 	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
 	 */
 	protected Control createDialogArea(Composite parent) {
-	
+		Composite comp = (Composite) super.createDialogArea(parent);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IDebugUIConstants.PLUGIN_ID + ".GoToAddressDialog_context"); //$NON-NLS-1$
-		parent.setLayout(new GridLayout());
+		comp.setLayout(new GridLayout());
 		GridData spec2= new GridData();
 		spec2.grabExcessVerticalSpace= true;
 		spec2.grabExcessHorizontalSpace= true;
 		spec2.horizontalAlignment= GridData.FILL;
 		spec2.verticalAlignment= GridData.CENTER;
-		parent.setLayoutData(spec2);
+		comp.setLayoutData(spec2);
 
-		Label textLabel = new Label(parent, SWT.NONE);
+		Label textLabel = new Label(comp, SWT.NONE);
 		textLabel.setText(DebugUIMessages.GoToAddressDialog_Address);
 		GridData textLayout = new GridData();
 		textLayout.widthHint = 280;
 		textLabel.setLayoutData(textLayout);
 		
-		expressionInput = new Combo(parent, SWT.BORDER);
+		expressionInput = new Combo(comp, SWT.BORDER);
 		GridData spec= new GridData();
 		spec.grabExcessVerticalSpace= false;
 		spec.grabExcessHorizontalSpace= true;
@@ -86,7 +86,7 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener{
 		
 		expressionInput.addModifyListener(this);
 		
-		return parent;
+		return comp;
 	}
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
