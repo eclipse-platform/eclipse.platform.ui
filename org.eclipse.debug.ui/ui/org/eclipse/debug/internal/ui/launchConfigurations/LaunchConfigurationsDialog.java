@@ -120,7 +120,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 	 * Constant specifying how tall this dialog is allowed to get (as a percentage of
 	 * total available screen height) as a result of preferred tab size.
 	 */
-	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.60f;
+	protected static final float MAX_DIALOG_HEIGHT_PERCENT = 0.65f;
 	/**
 	 * Size of this dialog if there is no preference specifying a size.
 	 */
@@ -925,9 +925,12 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
  					fTabViewer.handleApplyPressed();
  				}
  			}
+ 			if(getShell() != null && getShell().isVisible()) {
+ 				resize();
+ 			}
  		}
   	}
-	
+ 	
 	/**
 	 * Notification the 'launch' button has been pressed.
 	 * Save and launch.
@@ -1173,7 +1176,23 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		updateButtons();
 	}
 
-	
+	/**
+	 * resize the dialog to show all relevant content
+	 */
+	protected void resize() {
+ 		if(getTabGroup() != null) {
+			Point shell = getShell().getSize();
+ 			int maxx = (int)(getDisplay().getBounds().width * MAX_DIALOG_WIDTH_PERCENT),
+				maxy = (int) (getDisplay().getBounds().height * MAX_DIALOG_HEIGHT_PERCENT);
+ 			maxx = (maxx < DEFAULT_INITIAL_DIALOG_SIZE.x ? DEFAULT_INITIAL_DIALOG_SIZE.x : maxx);
+ 			maxy = (maxy < DEFAULT_INITIAL_DIALOG_SIZE.y ? DEFAULT_INITIAL_DIALOG_SIZE.y : maxy);
+ 			Point psize = getShell().computeSize(SWT.DEFAULT, maxy);
+ 			if((psize.x > maxx ? maxx : psize.x) > shell.x || (psize.y > maxy ? maxy : psize.y) > shell.y) {
+				setShellSize(Math.min(psize.x, maxx), Math.min(psize.y, maxy));
+				constrainShellSize();
+ 			}
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.jface.operation.IRunnableContext#run(boolean, boolean, org.eclipse.jface.operation.IRunnableWithProgress)
