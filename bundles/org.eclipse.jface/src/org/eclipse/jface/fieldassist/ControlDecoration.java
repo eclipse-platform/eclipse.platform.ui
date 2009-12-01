@@ -1072,7 +1072,7 @@ public class ControlDecoration {
 		}
 
 		// If there is no control, nothing to do
-		if (control == null) {
+		if (control == null || control.isDisposed()) {
 			return;
 		}
 		// Create the hover if it's not showing
@@ -1081,7 +1081,8 @@ public class ControlDecoration {
 		}
 		hover.setText(text, getDecorationRectangle(control.getParent()),
 				control);
-		hover.setVisible(true);
+		if (control.isVisible())
+			hover.setVisible(true);
 	}
 
 	/*
