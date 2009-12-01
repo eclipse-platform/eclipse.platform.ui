@@ -15,14 +15,10 @@ package org.eclipse.jface.databinding.swt;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.INativePropertyListener;
-import org.eclipse.core.databinding.property.IProperty;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
-import org.eclipse.core.databinding.property.NativePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
-import org.eclipse.jface.internal.databinding.swt.WidgetListenerUtil;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Event;
+import org.eclipse.jface.internal.databinding.swt.WidgetListener;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Widget;
 
@@ -95,77 +91,9 @@ public abstract class WidgetValueProperty extends SimpleValueProperty implements
 
 	public INativePropertyListener adaptListener(
 			ISimplePropertyListener listener) {
-		return changeEvents == null && staleEvents == null ? null
-				: new WidgetListener(this, listener);
-	}
-
-	private class WidgetListener extends NativePropertyListener implements
-			Listener {
-		protected WidgetListener(IProperty property,
-				ISimplePropertyListener listener) {
-			super(property, listener);
-		}
-
-		public void handleEvent(Event event) {
-			if (staleEvents != null)
-				for (int i = 0; i < staleEvents.length; i++)
-					if (event.type == staleEvents[i]) {
-						fireStale(event.widget);
-						break;
-					}
-
-			if (changeEvents != null)
-				for (int i = 0; i < changeEvents.length; i++)
-					if (event.type == changeEvents[i]) {
-						fireChange(event.widget, null);
-						break;
-					}
-		}
-
-		protected void doAddTo(Object source) {
-			Widget widget = (Widget) source;
-			if (changeEvents != null) {
-				for (int i = 0; i < changeEvents.length; i++) {
-					int event = changeEvents[i];
-					if (event != SWT.None) {
-						WidgetListenerUtil
-								.asyncAddListener(widget, event, this);
-					}
-				}
-			}
-			if (staleEvents != null) {
-				for (int i = 0; i < staleEvents.length; i++) {
-					int event = staleEvents[i];
-					if (event != SWT.None) {
-						WidgetListenerUtil
-								.asyncAddListener(widget, event, this);
-					}
-				}
-			}
-		}
-
-		protected void doRemoveFrom(Object source) {
-			Widget widget = (Widget) source;
-			if (!widget.isDisposed()) {
-				if (changeEvents != null) {
-					for (int i = 0; i < changeEvents.length; i++) {
-						int event = changeEvents[i];
-						if (event != SWT.None)
-							WidgetListenerUtil.asyncRemoveListener(widget,
-									event, this);
-					}
-				}
-				if (staleEvents != null) {
-					for (int i = 0; i < staleEvents.length; i++) {
-						int event = staleEvents[i];
-						if (event != SWT.None) {
-							WidgetListenerUtil.asyncRemoveListener(widget,
-									event, this);
-						}
-					}
-				}
-			}
-		}
+		if (changeEvents == null && staleEvents == null)
+			return null;
+		return new WidgetListener(this, listener, changeEvents, staleEvents);
 	}
 
 	public IObservableValue observe(Object source) {

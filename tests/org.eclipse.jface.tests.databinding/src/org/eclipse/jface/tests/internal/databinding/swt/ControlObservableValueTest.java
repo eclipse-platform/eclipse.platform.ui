@@ -13,14 +13,21 @@
 
 package org.eclipse.jface.tests.internal.databinding.swt;
 
+import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
 import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.SWTObservables;
+import org.eclipse.jface.databinding.swt.WidgetProperties;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Text;
 
 /**
  * @since 3.2
@@ -171,5 +178,34 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 	public void testGetValueTypeTooltipText() throws Exception {
 		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
 		assertEquals(String.class, value.getValueType());
+	}
+
+	public void testObserveFocus() {
+		shell.setLayout(new FillLayout());
+		Control c1 = new Text(shell, SWT.NONE);
+		Control c2 = new Text(shell, SWT.NONE);
+		shell.pack();
+		shell.setVisible(true);
+
+		assertTrue(c1.setFocus());
+
+		IObservableValue value = WidgetProperties.focused().observe(c2);
+		ValueChangeEventTracker tracker = ValueChangeEventTracker
+				.observe(value);
+
+		assertTrue(c2.setFocus());
+
+		processDisplayQueue();
+
+		assertEquals(Boolean.TRUE, value.getValue());
+
+		assertEquals(1, tracker.count);
+		assertEquals(Boolean.FALSE, tracker.event.diff.getOldValue());
+		assertEquals(Boolean.TRUE, tracker.event.diff.getNewValue());
+	}
+
+	private void processDisplayQueue() {
+		while (Display.getCurrent().readAndDispatch()) {
+		}
 	}
 }
