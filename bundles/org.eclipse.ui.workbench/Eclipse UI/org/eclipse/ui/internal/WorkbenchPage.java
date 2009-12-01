@@ -5110,6 +5110,22 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 									continue;
 								activationList.bringToTop(results[i]);
 							}
+
+							// Force focus to the first editor. The activation
+							// above does most of the work, but does not set
+							// the SWT widget focus as the widget's parents
+							// aren't visible until deferred updates are
+							// processed.
+
+							// Only consider first editor for the force focus
+							// as any other editor potentially needs to be fully
+							// activated using #activate().
+							if (results[0] != null) {
+								IEditorPart editorPart = results[0]
+										.getEditor(true);
+								if (editorPart != null)
+									activatePart(editorPart);
+							}
 						} finally {
 							workbench.largeUpdateEnd();
 						}
