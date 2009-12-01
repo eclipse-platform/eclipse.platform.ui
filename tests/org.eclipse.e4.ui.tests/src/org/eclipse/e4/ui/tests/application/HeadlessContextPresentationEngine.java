@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
@@ -71,69 +70,29 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 			populateModelInterfaces(mcontext, createdContext, element
 					.getClass().getInterfaces());
 
-			createdContext.runAndTrack(new Runnable() {
-				public void run() {
-					MApplicationElement activePart = (MApplicationElement) createdContext
-							.get(IServiceConstants.ACTIVE_PART);
-					if (parentContext != null) {
-						parentContext.set(IServiceConstants.ACTIVE_PART,
-								activePart);
-					}
-				}
-
-				@Override
-				public String toString() {
-					return getClass().getName() + '['
-							+ IServiceConstants.ACTIVE_PART_ID + ']';
-				}
-			});
-
-			createdContext.runAndTrack(new Runnable() {
-				public void run() {
-					IEclipseContext childContext = (IEclipseContext) createdContext
-							.getLocal(IContextConstants.ACTIVE_CHILD);
-					if (childContext != null) {
-						parentContext.set(IContextConstants.ACTIVE_CHILD,
-								createdContext);
-					}
-				}
-
-				@Override
-				public String toString() {
-					return getClass().getName() + '['
-							+ IContextConstants.ACTIVE_CHILD + ']';
-				}
-			});
-
-			parentContext.runAndTrack(new Runnable() {
-				public void run() {
-					IEclipseContext childContext = (IEclipseContext) parentContext
-							.get(IContextConstants.ACTIVE_CHILD);
-					if (childContext != null) {
-						parentContext.set(IServiceConstants.ACTIVE_PART,
-								childContext.get(MApplicationElement.class
-										.getName()));
-					}
-				}
-
-				@Override
-				public String toString() {
-					return getClass().getName() + '['
-							+ IContextConstants.ACTIVE_CHILD + ']';
-				}
-			});
-
 			for (String variable : mcontext.getVariables()) {
 				createdContext.declareModifiable(variable);
 			}
 
 			mcontext.setContext(createdContext);
 		}
-
 		if (element instanceof MElementContainer<?>) {
+			boolean active = false;
 			for (Object child : ((MElementContainer<?>) element).getChildren()) {
 				if (child instanceof MUIElement) {
 					createGui((MUIElement) child, element);
+					if (!active) {
+						active = true;
+						((MElementContainer) element)
+								.setActiveChild((MUIElement) child);
+						if (child instanceof MContext) {
+							IEclipseContext childContext = ((MContext) child)
+									.getContext();
+							IEclipseContext parentContext = getParentContext((MUIElement) child);
+							parentContext.set(IContextConstants.ACTIVE_CHILD,
+									childContext);
+						}
+					}
 				}
 			}
 		}

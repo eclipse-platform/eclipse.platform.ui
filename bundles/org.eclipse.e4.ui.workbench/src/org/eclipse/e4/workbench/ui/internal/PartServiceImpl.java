@@ -35,8 +35,7 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	@Optional
-	@Named(IServiceConstants.ACTIVE_PART)
-	void setPart(MPart p) {
+	void setPart(@Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		activePart = p;
 	}
 

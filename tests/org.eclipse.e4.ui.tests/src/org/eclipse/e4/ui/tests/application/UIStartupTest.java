@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.tests.Activator;
 import org.eclipse.e4.ui.workbench.swt.internal.ResourceUtility;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
 import org.eclipse.e4.workbench.ui.internal.UISchedulerStrategy;
 import org.eclipse.jface.databinding.swt.SWTObservables;
@@ -197,14 +198,16 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
-				context.set(IServiceConstants.ACTIVE_PART, parts[0]);
+				EPartService service = (EPartService) context
+						.get(EPartService.class.getName());
+				service.activate(parts[0]);
 				while (display.readAndDispatch())
 					;
 
 				assertEquals(parts[0].getId(), context
 						.get(IServiceConstants.ACTIVE_PART_ID));
 
-				context.set(IServiceConstants.ACTIVE_PART, parts[1]);
+				service.activate(parts[1]);
 				while (display.readAndDispatch())
 					;
 				assertEquals(parts[1].getId(), context

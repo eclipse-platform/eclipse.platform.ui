@@ -24,6 +24,7 @@ import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.core.services.context.spi.IEclipseContextStrategy;
 import org.eclipse.e4.ui.internal.services.ActiveContextsFunction;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -148,13 +149,18 @@ public class E4Application implements IApplication {
 	}
 
 	public static IEclipseContext createDefaultContext() {
+		return createDefaultContext(UISchedulerStrategy.getInstance());
+	}
+
+	public static IEclipseContext createDefaultContext(
+			IEclipseContextStrategy strategy) {
 		// FROM: WorkbenchApplication
 		// parent of the global workbench context is an OSGi service
 		// context that can provide OSGi services
 		IEclipseContext serviceContext = EclipseContextFactory
 				.getServiceContext(Activator.getDefault().getContext());
 		final IEclipseContext appContext = EclipseContextFactory.create(
-				serviceContext, UISchedulerStrategy.getInstance());
+				serviceContext, strategy);
 		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchAppContext"); //$NON-NLS-1$
 
 		// FROM: Workbench#createWorkbenchContext

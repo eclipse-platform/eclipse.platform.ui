@@ -36,7 +36,7 @@ public class EPartServiceTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		applicationContext = E4Application.createDefaultContext();
+		applicationContext = E4Application.createDefaultContext(null);
 
 		IContributionFactory contributionFactory = (IContributionFactory) applicationContext
 				.get(IContributionFactory.class.getName());
@@ -603,13 +603,11 @@ public class EPartServiceTest extends TestCase {
 		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
 		MPart partFrontA = partStackA.getChildren().get(0);
 		MPart partBackA = partStackA.getChildren().get(1);
-		partStackA.setActiveChild(partFrontA);
 
 		MWindow windowB = application.getChildren().get(1);
 		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
 		MPart partFrontB = partStackB.getChildren().get(0);
 		MPart partBackB = partStackB.getChildren().get(1);
-		partStackB.setActiveChild(partFrontB);
 
 		engine.createGui(windowA);
 		engine.createGui(windowB);
