@@ -29,6 +29,7 @@
       <key
             commandId="org.eclipse.ui.cocoa.closeDialog"
             contextId="org.eclipse.ui.contexts.dialog"
+            platform="cocoa"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+W">
       </key>

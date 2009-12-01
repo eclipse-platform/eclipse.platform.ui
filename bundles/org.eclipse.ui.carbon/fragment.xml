@@ -30,6 +30,7 @@
       <key
             commandId="org.eclipse.ui.carbon.closeDialog"
             contextId="org.eclipse.ui.contexts.dialog"
+            platform="carbon"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+W">
       </key>
