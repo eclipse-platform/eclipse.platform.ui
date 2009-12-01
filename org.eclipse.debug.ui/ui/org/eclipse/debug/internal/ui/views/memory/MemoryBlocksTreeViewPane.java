@@ -32,6 +32,7 @@ import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
 import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -74,6 +75,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	public static final String PANE_ID = DebugUIPlugin.getUniqueIdentifier() + ".MemoryView.MemoryBlocksTreeViewPane"; //$NON-NLS-1$
 	
 	private IViewPart fParent;
+	private IPresentationContext fPresentationContext;
 	private MemoryViewTreeViewer fTreeViewer;
 	protected IMemoryBlockRetrieval fRetrieval;
 	private ViewPaneSelectionProvider fSelectionProvider;
@@ -291,8 +293,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fLabel = label;
 		
 		IMemoryRenderingSite site = getMemoryRenderingSite();
-		MemoryViewPresentationContext presentationContext = new MemoryViewPresentationContext(site, this, null);
-		fTreeViewer = new MemoryViewTreeViewer(parent, style, presentationContext);
+		fPresentationContext = new MemoryViewPresentationContext(site, this, null);
+		fTreeViewer = new MemoryViewTreeViewer(parent, style, fPresentationContext);
 		
 		IAdaptable context = DebugUITools.getDebugContext();
 		IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(context);
@@ -367,6 +369,7 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fAddMemoryBlockAction.dispose();
 		DebugUITools.getDebugContextManager().getContextService(fParent.getSite().getWorkbenchWindow()).removeDebugContextListener(fDebugContextListener);
 		fEvtHandler.dispose();	
+        fPresentationContext.dispose();
 	}
 
 	/* (non-Javadoc)

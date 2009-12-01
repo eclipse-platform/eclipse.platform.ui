@@ -48,6 +48,7 @@ public class PresentationContextTests extends TestCase {
         assertEquals("Wrong value restored", new Integer(1), context.getProperty("integer"));
         assertEquals("Wrong value restored", new Boolean(true), context.getProperty("boolean"));
         assertEquals("Wrong value restored", ResourcesPlugin.getWorkspace().getRoot(), context.getProperty("persistable"));
+        context.dispose();
     }
     
 }

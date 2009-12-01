@@ -68,6 +68,7 @@ public class VirtualViewerLazyModeTests extends TestCase {
         fViewer.removeLabelUpdateListener(fListener);
         fViewer.removeViewerUpdateListener(fListener);
         fViewer.removeModelChangedListener(fListener);
+        fViewer.getPresentationContext().dispose();
         
         // Close the shell and exit.
         fShell.close();

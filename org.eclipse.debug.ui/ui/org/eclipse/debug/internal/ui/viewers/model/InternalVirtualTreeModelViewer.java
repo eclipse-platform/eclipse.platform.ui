@@ -951,7 +951,6 @@ public class InternalVirtualTreeModelViewer extends Viewer
         if (fColumnPresentation != null) {
             fColumnPresentation.dispose();
         }
-        fContext.dispose();
         
         if (fContentProvider != null) {
             fContentProvider.dispose();

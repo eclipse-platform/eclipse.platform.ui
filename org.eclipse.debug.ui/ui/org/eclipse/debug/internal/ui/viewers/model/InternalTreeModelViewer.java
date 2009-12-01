@@ -165,16 +165,6 @@ public class InternalTreeModelViewer extends TreeViewer
 	private boolean fNotifyUnmap = true;
 	
 	/**
-	 * Flag indicating whether the viewer is a pop-up viewer.  A pop-up viewer 
-	 * is transient and does not automatically expand and select elements up
-	 * when requested by the model.  It also does not dispose the presentation 
-	 * context when its control is disposed. 
-	 * 
-	 * @since 3.5
-	 */
-	private boolean fIsPopup;
-	
-	/**
 	 * Persist column sizes when they change.
 	 * 
 	 * @since 3.2
@@ -1019,8 +1009,9 @@ public class InternalTreeModelViewer extends TreeViewer
 		setContentProvider(createContentProvider());
 		setLabelProvider(createLabelProvider());
 		
-		fIsPopup = (style & SWT.POP_UP) != 0;
-		if (fIsPopup) {
+		// A pop-up viewer is transient and does not automatically expand
+		// and select elements up when requested by the model  
+		if ((style & SWT.POP_UP) != 0) {
 		    ((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
 		        ~ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS & ~ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
 		}
@@ -1138,9 +1129,6 @@ public class InternalTreeModelViewer extends TreeViewer
 		}
 		fCellModifier.dispose();
 		
-		if (!fIsPopup) {
-		    fContext.dispose();
-		}
 		super.handleDispose(event);
 	}
 	

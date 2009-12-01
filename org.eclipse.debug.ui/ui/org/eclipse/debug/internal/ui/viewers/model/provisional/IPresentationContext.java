@@ -22,13 +22,23 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * @since 3.2
  */
 public interface IPresentationContext {
-	
+
 	/**
 	 * Property name used for property change notification when the columns
 	 * in a presentation context change.
 	 */
 	public static final String PROPERTY_COLUMNS = "PROPERTY_COLUMNS"; //$NON-NLS-1$
-    
+
+	/**
+	 * Property indicating whether the presentation context is disposed.
+	 * It is set to <code>Boolean.TRUE</code> after the presentation context 
+	 * is disposed. This property may be <code>null</code>, which indicates 
+	 * that context is not yet disposed.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String PROPERTY_DISPOSED = "PROPERTY_DISPOSED"; //$NON-NLS-1$
+	
     /**
      * Returns identifiers of the visible columns in the order
      * labels should be provided, or <code>null</code> if columns

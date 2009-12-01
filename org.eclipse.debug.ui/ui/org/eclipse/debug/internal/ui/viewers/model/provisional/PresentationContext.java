@@ -98,8 +98,9 @@ public class PresentationContext implements IPresentationContext {
 	 * @see org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext#dispose()
 	 */
 	public void dispose() {
+        fProperties.clear();
+        setProperty(PROPERTY_DISPOSED, Boolean.TRUE);
 		fListeners.clear();
-		fProperties.clear();
 	}
 
 	/* (non-Javadoc)

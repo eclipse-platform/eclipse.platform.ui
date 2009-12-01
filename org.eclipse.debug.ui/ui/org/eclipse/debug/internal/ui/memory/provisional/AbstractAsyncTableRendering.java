@@ -1875,6 +1875,10 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			fTableViewer.dispose();
 		}
 		
+		if (fPresentationContext != null) {
+		    fPresentationContext.dispose();
+		}
+		
 		if (!fToolTipShell.isDisposed())
 		{
 			fToolTipShell.dispose();

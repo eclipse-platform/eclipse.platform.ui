@@ -64,6 +64,7 @@ public class InspectPopupDialog extends DebugPopup {
     private static final int MIN_WIDTH = 300;
     private static final int MIN_HEIGHT = 250;
 
+    private IPresentationContext fContext;
     private TreeModelViewer fViewer;
     private SashForm fSashForm;
     private Composite fDetailPaneComposite;
@@ -100,17 +101,17 @@ public class InspectPopupDialog extends DebugPopup {
         fSashForm.setLayoutData(new GridData(GridData.FILL_BOTH));
 
         VariablesView view = getViewToEmulate();
-        IPresentationContext context = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
+        fContext = new PresentationContext(IDebugUIConstants.ID_VARIABLE_VIEW);
         if (view != null) {
         	// copy over properties
         	IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
         	String[] properties = copy.getProperties();
         	for (int i = 0; i < properties.length; i++) {
 				String key = properties[i];
-				context.setProperty(key, copy.getProperty(key));
+				fContext.setProperty(key, copy.getProperty(key));
 			}
         }
-        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, context);
+        fViewer = new TreeModelViewer(fSashForm, SWT.NO_TRIM | SWT.MULTI | SWT.VIRTUAL, fContext);
         fViewer.setAutoExpandLevel(1);
 
         fDetailPaneComposite = SWTFactory.createComposite(fSashForm, 1, 1, GridData.FILL_BOTH);
@@ -253,6 +254,7 @@ public class InspectPopupDialog extends DebugPopup {
     		fExpression.dispose();
     	}
     	fDetailPane.dispose();
+    	fContext.dispose();
 		return super.close();
 	}
 

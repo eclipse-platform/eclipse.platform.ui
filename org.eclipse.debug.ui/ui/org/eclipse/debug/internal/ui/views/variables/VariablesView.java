@@ -357,6 +357,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	private SelectionProviderWrapper fSelectionProvider;
     
 	/**
+	 * Presentation context for this view.
+	 */
+	private IPresentationContext fPresentationContext;
+	
+	/**
 	 * Remove myself as a selection listener
 	 * and preference change listener.
 	 *
@@ -372,6 +377,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		if (viewer != null) {
 			viewer.removeModelChangedListener(this);
 			viewer.removeViewerUpdateListener(this);
+		}
+		if (fPresentationContext != null) {
+		    fPresentationContext.dispose();
+		    fPresentationContext = null;
 		}
 		if (fDetailPane != null) fDetailPane.dispose();
         fInputService.dispose();
@@ -580,8 +589,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	protected TreeModelViewer createTreeViewer(Composite parent) {
 		
 		int style = getViewerStyle();
-		final TreeModelViewer variablesViewer = new TreeModelViewer(parent, style,
-				new DebugModelPresentationContext(getPresentationContextId(), fModelPresentation));
+		fPresentationContext = new DebugModelPresentationContext(getPresentationContextId(), fModelPresentation); 
+		final TreeModelViewer variablesViewer = new TreeModelViewer(parent, style, fPresentationContext);
 		
 		variablesViewer.getControl().addFocusListener(new FocusAdapter() {
 			public void focusGained(FocusEvent e) {

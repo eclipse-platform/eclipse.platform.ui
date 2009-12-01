@@ -71,6 +71,7 @@ abstract public class StateTests extends TestCase implements ITestModelUpdatesLi
         fViewer.removeViewerUpdateListener(fListener);
         fViewer.removeModelChangedListener(fListener);
         fViewer.addStateUpdateListener(fListener);
+        fViewer.getPresentationContext().dispose();
         
         // Close the shell and exit.
         fShell.close();

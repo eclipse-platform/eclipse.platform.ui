@@ -63,6 +63,7 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelChangedList
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -172,6 +173,8 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 * Model presentation or <code>null</code> if none
 	 */
 	private IDebugModelPresentation fPresentation = null;
+	
+	private IPresentationContext fPresentationContext;
 	
 	private EditLaunchConfigurationAction fEditConfigAction = null;
 	private AddToFavoritesAction fAddToFavoritesAction = null;
@@ -771,9 +774,10 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 	 */
 	protected Viewer createViewer(Composite parent) {
 		fPresentation = new DelegatingModelPresentation();
+		fPresentationContext = new DebugModelPresentationContext(IDebugUIConstants.ID_DEBUG_VIEW, fPresentation);
 		TreeModelViewer viewer = new TreeModelViewer(parent,
 				SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL,
-				new DebugModelPresentationContext(IDebugUIConstants.ID_DEBUG_VIEW, fPresentation));
+				fPresentationContext);
         
         viewer.addSelectionChangedListener(fTreeViewerSelectionChangedListener);
         viewer.getControl().addKeyListener(new KeyAdapter() {
@@ -991,6 +995,9 @@ public class LaunchView extends AbstractDebugView implements ISelectionChangedLi
 		if (viewer != null) {
 			viewer.removeSelectionChangedListener(fTreeViewerSelectionChangedListener);
             ((TreeModelViewer)viewer).removeViewerUpdateListener(this);
+		}
+		if (fPresentationContext != null) {
+		    fPresentationContext.dispose();
 		}
 		IWorkbenchPage page = getSite().getPage();
 		page.removePartListener((IPartListener2) this);
