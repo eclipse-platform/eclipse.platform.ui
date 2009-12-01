@@ -37,8 +37,6 @@ public class PartServiceImpl implements EPartService {
 	@Optional
 	@Named(IServiceConstants.ACTIVE_PART)
 	void setPart(MPart p) {
-		System.err.println("activePart: " + p); //$NON-NLS-1$
-		Thread.dumpStack();
 		activePart = p;
 	}
 
@@ -148,7 +146,6 @@ public class PartServiceImpl implements EPartService {
 		if (!isInContainer(part)) {
 			return;
 		}
-		System.err.println("activate: " + part); //$NON-NLS-1$
 		IEclipseContext curContext = getContext(part);
 		MContext pwc = getParentWithContext(part);
 		MUIElement curElement = part;
