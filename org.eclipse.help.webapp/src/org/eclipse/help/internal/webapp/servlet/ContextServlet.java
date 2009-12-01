@@ -23,6 +23,7 @@ import org.eclipse.help.IContext2;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.Topic;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 
@@ -39,6 +40,7 @@ public class ContextServlet extends HttpServlet {
 	
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$

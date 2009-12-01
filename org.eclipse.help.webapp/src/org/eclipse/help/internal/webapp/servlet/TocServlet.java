@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.xml.transform.TransformerException;
 
 import org.eclipse.help.internal.HelpPlugin;
+import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.dynamic.DocumentWriter;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.toc.TocContribution;
@@ -43,6 +44,7 @@ public class TocServlet extends HttpServlet {
 
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
+		BaseHelpSystem.checkMode();
 		String locale = UrlUtil.getLocale(req, resp);
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
 		resp.setContentType("application/xml; charset=UTF-8"); //$NON-NLS-1$

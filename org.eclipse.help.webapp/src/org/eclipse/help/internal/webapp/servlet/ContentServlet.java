@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,8 @@ import java.io.*;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
+
+import org.eclipse.help.internal.base.BaseHelpSystem;
 /**
  * Servlet to interface client with remote Eclipse
  */
@@ -38,6 +40,7 @@ public class ContentServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
 		req.setCharacterEncoding("UTF-8"); //$NON-NLS-1$
+		BaseHelpSystem.checkMode();
 		if (connector != null) {
 			connector.transfer(req, resp);
 		}
