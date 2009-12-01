@@ -17,11 +17,13 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
@@ -473,6 +475,25 @@ public class EPartServiceTest extends TestCase {
 	}
 
 	public void testActivate_partService() {
+		MApplication application = createApplication("partId", "partId2");
+
+		MWindow window = application.getChildren().get(0);
+		MPartStack partStack = (MPartStack) window.getChildren().get(0);
+		partStack.setActiveChild(partStack.getChildren().get(0));
+
+		engine.createGui(window);
+
+		MPart part = partStack.getChildren().get(1);
+
+		EPartService partService = (EPartService) part.getContext().get(
+				EPartService.class.getName());
+		assertFalse(partService.isPartVisible(part));
+
+		partService.activate(part);
+		assertTrue(partService.isPartVisible(part));
+	}
+
+	public void testActivate_partService_twoWindows() {
 		MApplication application = createApplication(new String[] {
 				"partFrontA", "partBackA" }, new String[] { "partFrontB",
 				"partBackB" });
@@ -504,10 +525,114 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(partServiceA.isPartVisible(partFrontB));
 		assertFalse(partServiceA.isPartVisible(partBackB));
 
+		partServiceA.activate(partBackB);
+
+		assertFalse(partServiceA.isPartVisible(partFrontA));
+		assertTrue(partServiceA.isPartVisible(partBackA));
+		assertFalse(partServiceA.isPartVisible(partFrontB));
+		assertFalse(partServiceA.isPartVisible(partBackB));
+
 		assertFalse(partServiceB.isPartVisible(partFrontA));
 		assertFalse(partServiceB.isPartVisible(partBackA));
 		assertTrue(partServiceB.isPartVisible(partFrontB));
 		assertFalse(partServiceB.isPartVisible(partBackB));
+
+		partServiceB.activate(partBackB);
+		assertFalse(partServiceB.isPartVisible(partFrontA));
+		assertFalse(partServiceB.isPartVisible(partBackA));
+		assertFalse(partServiceB.isPartVisible(partFrontB));
+		assertTrue(partServiceB.isPartVisible(partBackB));
+	}
+
+	public void testActivate_partService_activeChild() {
+		MApplication application = createApplication(new String[] {
+				"partFrontA", "partBackA" }, new String[] { "partFrontB",
+				"partBackB" });
+
+		MWindow windowA = application.getChildren().get(0);
+		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
+		MPart partFrontA = partStackA.getChildren().get(0);
+		MPart partBackA = partStackA.getChildren().get(1);
+		partStackA.setActiveChild(partFrontA);
+
+		MWindow windowB = application.getChildren().get(1);
+		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
+		MPart partFrontB = partStackB.getChildren().get(0);
+		MPart partBackB = partStackB.getChildren().get(1);
+		partStackB.setActiveChild(partFrontB);
+
+		engine.createGui(windowA);
+		engine.createGui(windowB);
+
+		EPartService partServiceA = (EPartService) partFrontA.getContext().get(
+				EPartService.class.getName());
+		EPartService partServiceB = (EPartService) partFrontB.getContext().get(
+				EPartService.class.getName());
+
+		partServiceA.activate(partBackA);
+
+		assertEquals(windowA, application.getActiveChild());
+		IEclipseContext a = application.getContext();
+		IEclipseContext c = (IEclipseContext) a
+				.getLocal(IContextConstants.ACTIVE_CHILD);
+		while (c != null) {
+			a = c;
+			c = (IEclipseContext) a.getLocal(IContextConstants.ACTIVE_CHILD);
+		}
+		MPart aPart = (MPart) a.get(MPart.class.getName());
+		assertEquals(partBackA, aPart);
+
+		partServiceB.activate(partBackB);
+		assertEquals(windowB, application.getActiveChild());
+		a = application.getContext();
+		c = (IEclipseContext) a.getLocal(IContextConstants.ACTIVE_CHILD);
+		while (c != null) {
+			a = c;
+			c = (IEclipseContext) a.getLocal(IContextConstants.ACTIVE_CHILD);
+		}
+		aPart = (MPart) a.get(MPart.class.getName());
+		assertEquals(partBackB, aPart);
+	}
+
+	public void testActivate_partService_activePart() {
+		MApplication application = createApplication(new String[] {
+				"partFrontA", "partBackA" }, new String[] { "partFrontB",
+				"partBackB" });
+
+		MWindow windowA = application.getChildren().get(0);
+		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
+		MPart partFrontA = partStackA.getChildren().get(0);
+		MPart partBackA = partStackA.getChildren().get(1);
+		partStackA.setActiveChild(partFrontA);
+
+		MWindow windowB = application.getChildren().get(1);
+		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
+		MPart partFrontB = partStackB.getChildren().get(0);
+		MPart partBackB = partStackB.getChildren().get(1);
+		partStackB.setActiveChild(partFrontB);
+
+		engine.createGui(windowA);
+		engine.createGui(windowB);
+
+		EPartService partServiceA = (EPartService) partFrontA.getContext().get(
+				EPartService.class.getName());
+		EPartService partServiceB = (EPartService) partFrontB.getContext().get(
+				EPartService.class.getName());
+
+		partServiceA.activate(partBackA);
+
+		assertEquals(windowA, application.getActiveChild());
+		MPart shouldBeCorrect = (MPart) partFrontA.getContext().get(
+				IServiceConstants.ACTIVE_PART);
+		assertNotNull(shouldBeCorrect);
+		assertEquals(partBackA, partServiceA.getActivePart());
+
+		partServiceB.activate(partBackB);
+		assertEquals(windowB, application.getActiveChild());
+		shouldBeCorrect = (MPart) partFrontB.getContext().get(
+				IServiceConstants.ACTIVE_PART);
+		assertNotNull(shouldBeCorrect);
+		assertEquals(partBackB, partServiceB.getActivePart());
 	}
 
 	private MApplication createApplication(String partId) {

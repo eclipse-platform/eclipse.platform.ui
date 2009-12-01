@@ -22,6 +22,7 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.workbench.modeling.EPartService;
 
 public class PartServiceImpl implements EPartService {
@@ -34,7 +35,13 @@ public class PartServiceImpl implements EPartService {
 
 	@Inject
 	@Optional
-	@Named("activePart")
+	@Named(IServiceConstants.ACTIVE_PART)
+	void setPart(MPart p) {
+		System.err.println("activePart: " + p); //$NON-NLS-1$
+		Thread.dumpStack();
+		activePart = p;
+	}
+
 	private MPart activePart;
 
 	protected MContext getParentWithContext(MUIElement part) {
@@ -138,6 +145,10 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart)
 	 */
 	public void activate(MPart part) {
+		if (!isInContainer(part)) {
+			return;
+		}
+		System.err.println("activate: " + part); //$NON-NLS-1$
 		IEclipseContext curContext = getContext(part);
 		MContext pwc = getParentWithContext(part);
 		MUIElement curElement = part;
@@ -158,7 +169,6 @@ public class PartServiceImpl implements EPartService {
 
 			pwc = getParentWithContext((MUIElement) pwc);
 		}
-		bringToTop(part);
 	}
 
 	/*
