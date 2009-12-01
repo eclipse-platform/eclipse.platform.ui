@@ -60,7 +60,7 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 				.create(part.getURI(), localContext);
 		part.setObject(newPart);
 
-		activate(element);
+		activate((MPart) element);
 		return newWidget;
 	}
 
@@ -74,11 +74,14 @@ public class ContributedPartRenderer extends SWTPartRenderer {
 	@Override
 	public void hookControllerLogic(final MUIElement me) {
 		super.hookControllerLogic(me);
+		if (!(me instanceof MPart)) {
+			return;
+		}
 		Widget widget = (Widget) me.getWidget();
 		if (widget instanceof Composite) {
 			((Composite) widget).addListener(SWT.Activate, new Listener() {
 				public void handleEvent(Event event) {
-					activate(me);
+					activate((MPart) me);
 				}
 			});
 		}

@@ -13,6 +13,10 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import javax.inject.Inject;
+import javax.inject.Named;
+import org.eclipse.e4.core.services.annotations.Optional;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
@@ -28,6 +32,11 @@ public class PartServiceImpl implements EPartService {
 	@Inject
 	private MWindow windowContainer;
 
+	@Inject
+	@Optional
+	@Named("activePart")
+	private MPart activePart;
+
 	protected MContext getParentWithContext(MUIElement part) {
 		MElementContainer<MUIElement> parent = part.getParent();
 		while (parent != null) {
@@ -38,6 +47,10 @@ public class PartServiceImpl implements EPartService {
 			parent = parent.getParent();
 		}
 		return null;
+	}
+
+	protected IEclipseContext getContext(MPart part) {
+		return part.getContext();
 	}
 
 	public void bringToTop(MPart part) {
@@ -125,8 +138,27 @@ public class PartServiceImpl implements EPartService {
 	 * .MPart)
 	 */
 	public void activate(MPart part) {
-		// TODO Auto-generated method stub
+		IEclipseContext curContext = getContext(part);
+		MContext pwc = getParentWithContext(part);
+		MUIElement curElement = part;
+		while (pwc != null) {
+			IEclipseContext parentContext = pwc.getContext();
+			if (parentContext != null) {
+				parentContext.set(IContextConstants.ACTIVE_CHILD, curContext);
+				curContext = parentContext;
+			}
 
+			// Ensure that the UI model has the part 'on top'
+			while (curElement != pwc) {
+				MElementContainer<MUIElement> parent = curElement.getParent();
+				if (parent.getActiveChild() != curElement)
+					parent.setActiveChild(curElement);
+				curElement = parent;
+			}
+
+			pwc = getParentWithContext((MUIElement) pwc);
+		}
+		bringToTop(part);
 	}
 
 	/*
@@ -135,7 +167,6 @@ public class PartServiceImpl implements EPartService {
 	 * @see org.eclipse.e4.workbench.modeling.EPartService#getActivePart()
 	 */
 	public MPart getActivePart() {
-		// TODO Auto-generated method stub
-		return null;
+		return activePart;
 	}
 }

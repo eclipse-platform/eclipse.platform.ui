@@ -11,11 +11,12 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
-import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.workbench.modeling.EPartService;
 
 public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
@@ -125,27 +126,11 @@ public abstract class AbstractPartRenderer {
 	 * 
 	 * @param element
 	 */
-	public void activate(MUIElement element) {
+	public void activate(MPart element) {
 		IEclipseContext curContext = getContext(element);
-		MUIElement curElement = element;
-		MContext pwc = getParentWithContext(element);
-		while (pwc != null) {
-			IEclipseContext parentContext = pwc.getContext();
-			if (parentContext != null) {
-				parentContext.set(IContextConstants.ACTIVE_CHILD, curContext);
-				curContext = parentContext;
-			}
-
-			// Ensure that the UI model has the part 'on top'
-			while (curElement != pwc) {
-				MElementContainer<MUIElement> parent = curElement.getParent();
-				if (parent.getActiveChild() != element)
-					parent.setActiveChild(curElement);
-				curElement = parent;
-			}
-
-			pwc = getParentWithContext((MUIElement) pwc);
-		}
+		EPartService ps = (EPartService) curContext.get(EPartService.class
+				.getName());
+		ps.activate(element);
 	}
 
 	public void removeGui(MUIElement element, Object widget) {

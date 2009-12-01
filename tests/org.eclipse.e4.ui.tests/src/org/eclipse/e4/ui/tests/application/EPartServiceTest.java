@@ -472,6 +472,44 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(partServiceB.isPartVisible(partBackB));
 	}
 
+	public void testActivate_partService() {
+		MApplication application = createApplication(new String[] {
+				"partFrontA", "partBackA" }, new String[] { "partFrontB",
+				"partBackB" });
+
+		MWindow windowA = application.getChildren().get(0);
+		MPartStack partStackA = (MPartStack) windowA.getChildren().get(0);
+		MPart partFrontA = partStackA.getChildren().get(0);
+		MPart partBackA = partStackA.getChildren().get(1);
+		partStackA.setActiveChild(partFrontA);
+
+		MWindow windowB = application.getChildren().get(1);
+		MPartStack partStackB = (MPartStack) windowB.getChildren().get(0);
+		MPart partFrontB = partStackB.getChildren().get(0);
+		MPart partBackB = partStackB.getChildren().get(1);
+		partStackB.setActiveChild(partFrontB);
+
+		engine.createGui(windowA);
+		engine.createGui(windowB);
+
+		EPartService partServiceA = (EPartService) partFrontA.getContext().get(
+				EPartService.class.getName());
+		EPartService partServiceB = (EPartService) partFrontB.getContext().get(
+				EPartService.class.getName());
+
+		partServiceA.activate(partBackA);
+
+		assertFalse(partServiceA.isPartVisible(partFrontA));
+		assertTrue(partServiceA.isPartVisible(partBackA));
+		assertFalse(partServiceA.isPartVisible(partFrontB));
+		assertFalse(partServiceA.isPartVisible(partBackB));
+
+		assertFalse(partServiceB.isPartVisible(partFrontA));
+		assertFalse(partServiceB.isPartVisible(partBackA));
+		assertTrue(partServiceB.isPartVisible(partFrontB));
+		assertFalse(partServiceB.isPartVisible(partBackB));
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}
