@@ -52,6 +52,9 @@ public class AdaptableToc extends AdaptableHelpResource {
 	 * @see org.eclipse.help.IToc#getTopic(java.lang.String)
 	 */
 	public ITopic getTopic(String href) {
+		if(null != href && href.equals(((IToc) element).getTopic(null).getHref())){
+			return ((IToc) element).getTopic(null);
+		}
 		return ((IToc) element).getTopic(href);
 	}
 
