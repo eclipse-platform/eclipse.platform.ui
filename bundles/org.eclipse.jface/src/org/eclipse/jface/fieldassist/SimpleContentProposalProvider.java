@@ -71,7 +71,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 				if (proposals[i].length() >= contents.length()
 						&& proposals[i].substring(0, contents.length())
 								.equalsIgnoreCase(contents)) {
-					list.add(new SimpleContentProposal(proposals[i]));
+					list.add(new ContentProposal(proposals[i]));
 				}
 			}
 			return (IContentProposal[]) list.toArray(new IContentProposal[list
@@ -80,7 +80,7 @@ public class SimpleContentProposalProvider implements IContentProposalProvider {
 		if (contentProposals == null) {
 			contentProposals = new IContentProposal[proposals.length];
 			for (int i = 0; i < proposals.length; i++) {
-				contentProposals[i] = new SimpleContentProposal(proposals[i]);
+				contentProposals[i] = new ContentProposal(proposals[i]);
 			}
 		}
 		return contentProposals;
