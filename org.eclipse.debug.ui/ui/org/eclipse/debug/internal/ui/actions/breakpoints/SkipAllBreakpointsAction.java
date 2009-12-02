@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,13 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.IBreakpointManagerListener;
 import org.eclipse.debug.internal.ui.DebugPluginImages;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -40,6 +42,8 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
  */
 public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindowActionDelegate, IBreakpointManagerListener {
 	
+	public static final String ACTION_ID = "org.eclipse.debug.ui.actions.SkipAllBreakpoints"; //$NON-NLS-1$
+	
 	//The real action if this is an action delegate
 	private IAction fAction;
 	
@@ -49,12 +53,11 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	private IWorkbenchPart fPart = null;
 	
 	public SkipAllBreakpointsAction() {
-		super(ActionMessages.SkipAllBreakpointsAction_0); 
+		super(ActionMessages.SkipAllBreakpointsAction_0, AS_CHECK_BOX); 
 		setToolTipText(ActionMessages.SkipAllBreakpointsAction_0); 
 		setDescription(ActionMessages.SkipAllBreakpointsAction_2); 
 		setImageDescriptor(DebugPluginImages.getImageDescriptor(IDebugUIConstants.IMG_SKIP_BREAKPOINTS));
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.SKIP_ALL_BREAKPOINT_ACTION);
-		updateActionCheckedState();
 	}
 	
 	/**
@@ -65,6 +68,7 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	public SkipAllBreakpointsAction(IWorkbenchPart part) {
 		this();
 		fPart = part;
+		setId(ACTION_ID); // set action ID when created programmatically.
 	}
 	
 	/* (non-Javadoc)
@@ -76,11 +80,12 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 			 progressService =  (IWorkbenchSiteProgressService)fPart.getSite().
 			 	getAdapter(IWorkbenchSiteProgressService.class);
 		}
+		final boolean enabled = !isChecked();
 		Job job = new Job(getText()) {
 			protected IStatus run(IProgressMonitor monitor) {
 				if (!monitor.isCanceled()) {
 					IBreakpointManager bm = getBreakpointManager();
-					bm.setEnabled(!bm.isEnabled());
+					bm.setEnabled(enabled);
 				}
 				return Status.OK_STATUS;
 			}
@@ -132,7 +137,12 @@ public class SkipAllBreakpointsAction extends Action implements IWorkbenchWindow
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
+		setChecked(action.isChecked());
 		run();	
+		// when run from the workbench window action, need to keep view action state in synch (in case view has been closed)
+		String prefKey = IDebugUIConstants.ID_BREAKPOINT_VIEW + '+' + action.getId();
+		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
+		prefStore.setValue(prefKey, action.isChecked());
 	}
 	
 	/* (non-Javadoc)
