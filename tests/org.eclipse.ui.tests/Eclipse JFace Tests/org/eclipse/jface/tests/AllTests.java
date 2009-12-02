@@ -32,6 +32,6 @@ public class AllTests extends TestSuite {
         addTest(new org.eclipse.jface.tests.preferences.AllTests());
         addTest(new org.eclipse.jface.tests.wizards.WizardTestSuite());
         addTest(new org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests());
-        // disabled, see bug 275393...addTest(new FieldAssistTestSuite());
+        addTest(new org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite());
     }
 }

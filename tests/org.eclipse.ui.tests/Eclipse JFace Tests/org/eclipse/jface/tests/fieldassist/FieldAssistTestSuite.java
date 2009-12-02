@@ -29,7 +29,9 @@ public class FieldAssistTestSuite extends TestSuite {
 	 * Construct the test suite.
 	 */
 	public FieldAssistTestSuite() {
-		addTest(new TestSuite(TextFieldAssistTests.class));
-		addTest(new TestSuite(ComboFieldAssistTests.class));
+		// disabled, see bug 275393...
+		// addTest(new TestSuite(TextFieldAssistTests.class));
+		// addTest(new TestSuite(ComboFieldAssistTests.class));
+		addTest(new TestSuite(ControlDecorationTests.class));
 	}
 }

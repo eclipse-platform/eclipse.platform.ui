@@ -1053,9 +1053,17 @@ public class ControlDecoration {
 
 	/*
 	 * Show the specified text in the hover, positioning the hover near the
-	 * specified control.
+	 * specified control. The hover will only be shown if the control is
+	 * visible.
+	 * 
+	 * The caller has already established that the control is not null.
 	 */
 	private void showHoverText(String text, Control hoverNear) {
+		// We do not show the hover if the control is disposed or
+		// invisible.
+		if (control.isDisposed() || !control.isVisible())
+			return;
+
 		// If we aren't to show a hover, don't do anything.
 		if (!showHover) {
 			return;
@@ -1065,24 +1073,21 @@ public class ControlDecoration {
 		if (!visible) {
 			return;
 		}
-		// If there is no text, don't do anything.
+		// If there is no text, any existing hover should be hidden, and
+		// there is nothing more to do.
 		if (text == null || text.length() == 0) {
 			hideHover();
 			return;
 		}
-
-		// If there is no control, nothing to do
-		if (control == null || control.isDisposed()) {
-			return;
-		}
-		// Create the hover if it's not showing
+		
+		// Now we can hover!
+		// Create the hover if it's not already showing
 		if (hover == null) {
 			hover = new Hover(hoverNear.getShell());
 		}
 		hover.setText(text, getDecorationRectangle(control.getParent()),
 				control);
-		if (control.isVisible())
-			hover.setVisible(true);
+		hover.setVisible(true);
 	}
 
 	/*

@@ -58,8 +58,14 @@ public abstract class AbstractFieldAssistWindow extends Window {
 		adapter.setFilterStyle(filterStyle);
 		adapter.setPropagateKeys(propagateKeys);
 		adapter.setProposalAcceptanceStyle(acceptance);
+		
+		createExtraControls(parent);
 
 		return content;
+	}
+	
+	protected void createExtraControls(Composite parent) {
+		// default is to do nothing
 	}
 	
 	protected Layout getLayout() {
