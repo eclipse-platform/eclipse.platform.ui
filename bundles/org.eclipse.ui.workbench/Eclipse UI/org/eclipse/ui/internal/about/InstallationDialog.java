@@ -244,6 +244,9 @@ public class InstallationDialog extends TrayDialog implements
 			if (!selected)
 				tabSelected(folder.getItem(0));
 		}
+		// need to reapply the dialog font now that we've created new
+		// tab items
+		Dialog.applyDialogFont(folder);
 		return control;
 	}
 
@@ -269,6 +272,9 @@ public class InstallationDialog extends TrayDialog implements
 				final InstallationPage page = (InstallationPage) element
 						.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
 				page.createControl(pageComposite);
+				// new controls created since the dialog font was applied, so
+				// apply again.
+				Dialog.applyDialogFont(pageComposite);
 				page.setPageContainer(this);
 				// Must be done before creating the buttons because the control
 				// button creation methods
@@ -310,6 +316,7 @@ public class InstallationDialog extends TrayDialog implements
 
 	protected void createButtons(InstallationPage page) {
 		page.createPageButtons(buttonManager.getParent());
+		Dialog.applyDialogFont(buttonManager.getParent());
 	}
 
 	private void rememberSelectedTab(String pageId) {
