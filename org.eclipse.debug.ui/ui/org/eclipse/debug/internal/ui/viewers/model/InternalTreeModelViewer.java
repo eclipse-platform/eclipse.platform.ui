@@ -2405,27 +2405,29 @@ public class InternalTreeModelViewer extends TreeViewer
         super.handleSelect(event);
 
         TreeItem item = (TreeItem) event.item;
-        Object element = item.getData();
-        IContentProvider contentProvider = getContentProvider();
-        if (element != null && contentProvider instanceof TreeModelContentProvider) {
-            TreePath path = getTreePathFromItem((TreeItem)event.item);
-
-            if (event.detail == SWT.CHECK) {
-                boolean checked = item.getChecked();	            	
-            	boolean accepted = false;
-        		IModelProxy elementProxy = ((TreeModelContentProvider) contentProvider).getElementProxy(path);
-        		if (elementProxy instanceof ICheckboxModelProxy) {
-        			accepted = ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getInput(), path, checked);
-        		}	            		
-
-        	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
-            	if (!accepted) {
-            		item.setChecked(!checked);
-            	}
-            } else {
-	            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT);
-    		}
-        }        
+        if (item != null) { // item can be null when de-selected (bug 296703) 
+	        Object element = item.getData();
+	        IContentProvider contentProvider = getContentProvider();
+	        if (element != null && contentProvider instanceof TreeModelContentProvider) {
+	            TreePath path = getTreePathFromItem(item);
+	
+	            if (event.detail == SWT.CHECK) {
+	                boolean checked = item.getChecked();	            	
+	            	boolean accepted = false;
+	        		IModelProxy elementProxy = ((TreeModelContentProvider) contentProvider).getElementProxy(path);
+	        		if (elementProxy instanceof ICheckboxModelProxy) {
+	        			accepted = ((ICheckboxModelProxy) elementProxy).setChecked(getPresentationContext(), getInput(), path, checked);
+	        		}	            		
+	
+	        	    // if the listen rejects the change or there is not ICheckboxModelProxy, than revert the check state
+	            	if (!accepted) {
+	            		item.setChecked(!checked);
+	            	}
+	            } else {
+		            ((TreeModelContentProvider) contentProvider).cancelRestore(path, IModelDelta.SELECT);
+	    		}
+	        }
+        }
 	}
 	
 	protected void handleTreeExpand(TreeEvent event) {
