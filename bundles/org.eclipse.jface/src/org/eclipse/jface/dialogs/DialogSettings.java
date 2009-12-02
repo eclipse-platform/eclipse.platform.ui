@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,19 +7,20 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marc R. Hoffmann <hoffmann@mountainminds.com> - Bug 284265 [JFace] 
+ *                  DialogSettings.save() silently ignores IOException
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Reader;
-import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,13 +35,12 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * Concrete implementation of a dialog settings (<code>IDialogSettings</code>)
@@ -362,8 +362,10 @@ public class DialogSettings implements IDialogSettings {
     /* (non-Javadoc)
      * Method declared on IDialogSettings.
      */
-	public void save(Writer writer) {
-    	save(new XMLWriter(writer));
+	public void save(Writer writer) throws IOException {
+    	final XMLWriter xmlWriter = new XMLWriter(writer);
+    	save(xmlWriter);
+    	xmlWriter.flush();
     }
 
     /* (non-Javadoc)
@@ -379,7 +381,7 @@ public class DialogSettings implements IDialogSettings {
     /* (non-Javadoc)
      * Save the settings in the <code>document</code>.
      */
-    private void save(XMLWriter out) {
+    private void save(XMLWriter out) throws IOException {
     	HashMap attributes = new HashMap(2);
     	attributes.put(TAG_NAME, name == null ? "" : name); //$NON-NLS-1$
         out.startTag(TAG_SECTION, attributes);
@@ -420,8 +422,9 @@ public class DialogSettings implements IDialogSettings {
      * A simple XML writer.  Using this instead of the javax.xml.transform classes allows
      * compilation against JCL Foundation (bug 80059).
      */
-    private static class XMLWriter extends PrintWriter {
-    	/** current number of tabs to use for ident */
+    private static class XMLWriter extends BufferedWriter {
+    	
+    	/** current number of tabs to use for indent */
     	protected int tab;
 
     	/** the xml header */
@@ -430,36 +433,41 @@ public class DialogSettings implements IDialogSettings {
     	/**
     	 * Create a new XMLWriter
     	 * @param output the stream to write the output to
-    	 * @throws UnsupportedEncodingException thrown if charset is not supported
+    	 * @throws IOException 
     	 */
-    	public XMLWriter(OutputStream output) throws UnsupportedEncodingException {
-    		super(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
-    		tab = 0;
-    		println(XML_VERSION);
+    	public XMLWriter(OutputStream output) throws IOException {
+    		this(new OutputStreamWriter(output, "UTF8")); //$NON-NLS-1$
     	}
 
     	/**
     	 * Create a new XMLWriter
     	 * @param output the write to used when writing to
+    	 * @throws IOException 
     	 */
-    	public XMLWriter(Writer output) {
+    	public XMLWriter(Writer output) throws IOException {
     		super(output);
     		tab = 0;
-    		println(XML_VERSION);
+    		writeln(XML_VERSION);
+    	}
+
+    	private  void writeln(String text) throws IOException {
+    		write(text);
+    		newLine();
     	}
 
     	/**
     	 * write the intended end tag
     	 * @param name the name of the tag to end
+    	 * @throws IOException 
     	 */
-    	public void endTag(String name) {
+    	public void endTag(String name) throws IOException {
     		tab--;
     		printTag("/" + name, null, false); //$NON-NLS-1$
     	}
 
-    	private void printTabulation() {
+    	private void printTabulation() throws IOException {
     		for (int i = 0; i < tab; i++) {
-				super.print('\t');
+				super.write('\t');
 			}
     	}
 
@@ -468,12 +476,13 @@ public class DialogSettings implements IDialogSettings {
     	 * @param name the name of the tag
     	 * @param parameters map of parameters
     	 * @param close should the tag be ended automatically (=> empty tag)
+    	 * @throws IOException 
     	 */
-    	public void printTag(String name, HashMap parameters, boolean close) {
+    	public void printTag(String name, HashMap parameters, boolean close) throws IOException {
     		printTag(name, parameters, true, true, close);
     	}
 
-    	private void printTag(String name, HashMap parameters, boolean shouldTab, boolean newLine, boolean close) {
+    	private void printTag(String name, HashMap parameters, boolean shouldTab, boolean newLine, boolean close) throws IOException {
     		StringBuffer sb = new StringBuffer();
     		sb.append('<');
     		sb.append(name);
@@ -495,9 +504,9 @@ public class DialogSettings implements IDialogSettings {
 				printTabulation();
 			}
     		if (newLine) {
-				println(sb.toString());
+				writeln(sb.toString());
 			} else {
-				print(sb.toString());
+				write(sb.toString());
 			}
     	}
 
@@ -505,13 +514,14 @@ public class DialogSettings implements IDialogSettings {
     	 * start the tag
     	 * @param name the name of the tag
     	 * @param parameters map of parameters
+    	 * @throws IOException 
     	 */
-    	public void startTag(String name, HashMap parameters) {
+    	public void startTag(String name, HashMap parameters) throws IOException {
     		startTag(name, parameters, true);
     		tab++;
     	}
 
-    	private void startTag(String name, HashMap parameters, boolean newLine) {
+    	private void startTag(String name, HashMap parameters, boolean newLine) throws IOException {
     		printTag(name, parameters, true, newLine, false);
     	}
 

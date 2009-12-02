@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Marc R. Hoffmann <hoffmann@mountainminds.com> - Bug 284265 [JFace] 
+ *                  DialogSettings.save() silently ignores IOException
  *******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.Writer;
 
 import junit.framework.TestCase;
 
@@ -431,6 +434,32 @@ public class DialogSettingsTest extends TestCase {
 
 		dialogSettingsChecker
 				.checkAfterDeserialization(deserializedDialogSettings);
+	}
+
+	public void testSaveWithIOException() {
+		final DialogSettings settings = new DialogSettings("test");
+		try {
+			settings.save(new BrokenWriter());
+			fail("IOException expected");
+		} catch (IOException e) {
+		}
+	}
+
+	private static class BrokenWriter extends Writer {
+
+		public void write(final char[] cbuf, final int off, final int len)
+				throws IOException {
+			throw new IOException("Bang!");
+		}
+
+		public void close() throws IOException {
+			throw new IOException("Bang!");
+		}
+
+		public void flush() throws IOException {
+			throw new IOException("Bang!");
+		}
+
 	}
 
 }
