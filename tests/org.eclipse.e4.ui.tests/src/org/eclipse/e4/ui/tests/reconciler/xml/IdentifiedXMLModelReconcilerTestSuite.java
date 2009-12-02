@@ -35,6 +35,8 @@ public class IdentifiedXMLModelReconcilerTestSuite extends TestSuite {
 		addTestSuite(IdentifiedXMLModelReconcilerKeySequenceTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerPartTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerTrimContainerTest.class);
+		addTestSuite(IdentifiedXMLModelReconcilerViewSashContainerTest.class);
+		addTestSuite(IdentifiedXMLModelReconcilerViewStackTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerUIElementTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerUIItemTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerWindowTest.class);

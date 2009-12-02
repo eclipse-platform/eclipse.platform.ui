@@ -34,6 +34,8 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MView;
+import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
@@ -618,6 +620,10 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createMenu();
 		} else if (type.equals(MWindow.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createWindow();
+		} else if (type.equals(MView.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createView();
+		} else if (type.equals(MViewStack.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createViewStack();
 		}
 		return null;
 	}
