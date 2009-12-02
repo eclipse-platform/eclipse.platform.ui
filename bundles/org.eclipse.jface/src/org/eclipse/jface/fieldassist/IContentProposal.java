@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,13 +10,18 @@
  *******************************************************************************/
 package org.eclipse.jface.fieldassist;
 
+
 /**
  * IContentProposal describes a content proposal to be shown. It consists of the
  * content that will be provided if the proposal is accepted, an optional label
  * used to describe the content to the user, and an optional description that
- * further elaborates the meaning of the proposal.
+ * further elaborates the meaning of the proposal. It also includes a a
+ * zero-based index position within the contents where the cursor should be
+ * placed after a proposal is accepted.
  * 
  * @since 3.2
+ * 
+ * @see ContentProposal
  */
 public interface IContentProposal {
 	/**
@@ -31,7 +36,9 @@ public interface IContentProposal {
 	 * placed after the proposal is accepted.
 	 * 
 	 * @return the zero-based index position within the contents where the
-	 *         cursor should be placed after the proposal is accepted.
+	 *         cursor should be placed after the proposal is accepted. The range
+	 *         of the cursor position is from 0..N where N is the number of
+	 *         characters in the contents.
 	 */
 	public int getCursorPosition();
 

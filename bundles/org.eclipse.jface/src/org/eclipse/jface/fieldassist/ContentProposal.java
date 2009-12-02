@@ -14,15 +14,13 @@ package org.eclipse.jface.fieldassist;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * A default implementation of IContentProposal that allows clients to specify
- * the contents in a constructor method.
+ * A default implementation of {{@link IContentProposal} that allows clients to
+ * specify a content proposal using simple constructors.
  * 
  * @since 3.6
- * @deprecated use {@link ContentProposal} instead. This class will be removed
- *             before the final release.
  * 
  */
-public class SimpleContentProposal implements IContentProposal {
+public class ContentProposal implements IContentProposal {
 	private static final String EMPTY = ""; //$NON-NLS-1$
 
 	private String content = EMPTY;
@@ -31,20 +29,21 @@ public class SimpleContentProposal implements IContentProposal {
 	private int cursorPosition = 0;
 
 	/**
-	 * Create a simple content proposal whose label and content are the
-	 * specified String.
+	 * Create a content proposal whose label and content are the specified
+	 * String. The cursor position will be located at the end of the content.
 	 * 
 	 * @param content
 	 *            the String representing the content. Should not be
 	 *            <code>null</code>.
 	 */
-	public SimpleContentProposal(String content) {
+	public ContentProposal(String content) {
 		this(content, content, null);
 	}
 
 	/**
-	 * Create a simple content proposal whose content and description are as
-	 * specified in the parameters.
+	 * Create a content proposal whose content and description are as specified
+	 * in the parameters. The cursor position will be located at the end of the
+	 * content.
 	 * 
 	 * @param content
 	 *            the String representing the content. Should not be
@@ -53,13 +52,14 @@ public class SimpleContentProposal implements IContentProposal {
 	 *            the String representing the description, or <code>null</code>
 	 *            if there should be no description.
 	 */
-	public SimpleContentProposal(String content, String description) {
+	public ContentProposal(String content, String description) {
 		this(content, content, description);
 	}
 
 	/**
-	 * Create a simple content proposal whose content, label, and description
-	 * are as specified in the parameters.
+	 * Create a content proposal whose content, label, and description are as
+	 * specified in the parameters. The cursor position will be located at the
+	 * end of the content.
 	 * 
 	 * @param content
 	 *            the String representing the content. Should not be
@@ -72,14 +72,45 @@ public class SimpleContentProposal implements IContentProposal {
 	 *            the String representing the description, or <code>null</code>
 	 *            if there should be no description.
 	 */
-	public SimpleContentProposal(String content, String label,
-			String description) {
+	public ContentProposal(String content, String label, String description) {
+		this(content, label, description, content.length());
+	}
+
+	/**
+	 * Create a content proposal whose content, label, description, and cursor
+	 * position are as specified in the parameters.
+	 * 
+	 * @param content
+	 *            the String representing the content. Should not be
+	 *            <code>null</code>.
+	 * @param label
+	 *            the String representing the label. Should not be
+	 *            <code>null</code>.
+	 * 
+	 * @param description
+	 *            the String representing the description, or <code>null</code>
+	 *            if there should be no description.
+	 * 
+	 * @param cursorPosition
+	 *            the zero-based index position within the contents where the
+	 *            cursor should be placed after the proposal is accepted. The
+	 *            range of the cursor position is from 0..N where N is the
+	 *            number of characters in the content.
+	 * 
+	 * @exception IllegalArgumentException
+	 *                if the index is not between 0 and the number of characters
+	 *                in the content.
+	 */
+	public ContentProposal(String content, String label, String description,
+			int cursorPosition) {
 		Assert.isNotNull(content);
 		Assert.isNotNull(label);
+		Assert.isLegal(cursorPosition >= 0
+				&& cursorPosition <= content.length());
 		this.content = content;
 		this.label = label;
 		this.description = description;
-		this.cursorPosition = content.length();
+		this.cursorPosition = cursorPosition;
 	}
 
 	/*

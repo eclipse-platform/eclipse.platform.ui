@@ -33,5 +33,6 @@ public class FieldAssistTestSuite extends TestSuite {
 		// addTest(new TestSuite(TextFieldAssistTests.class));
 		// addTest(new TestSuite(ComboFieldAssistTests.class));
 		addTest(new TestSuite(ControlDecorationTests.class));
+		addTest(new TestSuite(FieldAssistAPITests.class));
 	}
 }

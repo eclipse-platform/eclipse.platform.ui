@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,11 +16,13 @@ package org.eclipse.jface.fieldassist;
  * the current cursor position. 
  * 
  * @since 3.2
+ * 
+ * @see SimpleContentProposalProvider
  */
 public interface IContentProposalProvider {
 
 	/**
-	 * Return an array of Objects representing the valid content proposals for a
+	 * Return an array of content proposals representing the valid proposals for a
 	 * field.
 	 * 
 	 * @param contents
