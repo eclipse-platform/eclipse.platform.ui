@@ -14,20 +14,17 @@ package org.eclipse.core.internal.resources;
 import java.util.Iterator;
 import java.util.LinkedList;
 import org.eclipse.core.resources.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.core.runtime.IPath;
 
 /**
  * Class for describing the characteristics of filters that are stored
  * in the project description.
  */
-public class FilterDescription implements Comparable, IResourceFilterDescription {
+public class FilterDescription implements IResourceFilterDescription, Comparable {
 
 	private long id;
 
-	/**
-	 * The project relative path.
-	 */
-	private IPath path;
 	/**
 	 * The resource type (IResourceFilter.INCLUDE_ONLY or IResourceFilter.EXCLUDE_ALL) and/or IResourceFilter.INHERITABLE
 	 */
@@ -35,8 +32,12 @@ public class FilterDescription implements Comparable, IResourceFilterDescription
 
 	private IFileInfoMatcherDescription matcherDescription;
 
+	/**
+	 * The resource that this filter is applied to
+	 */
+	private IResource resource;
+
 	public FilterDescription() {
-		this.path = Path.EMPTY;
 		this.type = -1;
 	}
 
@@ -44,47 +45,20 @@ public class FilterDescription implements Comparable, IResourceFilterDescription
 		super();
 		Assert.isNotNull(resource);
 		this.type = type;
-		this.path = resource.getProjectRelativePath();
 		this.matcherDescription = matcherDescription;
-	}
-
-	public FilterDescription(IPath projectRelativePath, int type, IFileInfoMatcherDescription matcherDescription) {
-		super();
-		Assert.isNotNull(projectRelativePath);
-		this.type = type;
-		this.path = projectRelativePath;
-		this.matcherDescription = matcherDescription;
-	}
-
-	/**
-	 * Compare filter descriptions in a way that sorts them topologically by path.
-	 */
-	public int compareTo(Object o) {
-		FilterDescription that = (FilterDescription) o;
-		IPath path1 = this.getPath();
-		IPath path2 = that.getPath();
-		int count1 = path1.segmentCount();
-		int compare = count1 - path2.segmentCount();
-		if (compare != 0)
-			return compare;
-		for (int i = 0; i < count1; i++) {
-			compare = path1.segment(i).compareTo(path2.segment(i));
-			if (compare != 0)
-				return compare;
-		}
-		return 0;
+		this.resource = resource;
 	}
 
 	public boolean isInheritable() {
 		return (getType() & IResourceFilterDescription.INHERITABLE) != 0;
 	}
 
-	public static LinkedList copy(LinkedList originalDescriptions, IPath projectRelativePath) {
+	public static LinkedList copy(LinkedList originalDescriptions, IResource resource) {
 		LinkedList copy = new LinkedList();
 		Iterator it = originalDescriptions.iterator();
 		while (it.hasNext()) {
 			FilterDescription desc = (FilterDescription) it.next();
-			FilterDescription newDesc = new FilterDescription(projectRelativePath, desc.getType(), desc.getFileInfoMatcherDescription());
+			FilterDescription newDesc = new FilterDescription(resource, desc.getType(), desc.getFileInfoMatcherDescription());
 			copy.add(newDesc);
 		}
 		return copy;
@@ -106,20 +80,12 @@ public class FilterDescription implements Comparable, IResourceFilterDescription
 		this.type = type;
 	}
 
-	public void setPath(IPath path) {
-		this.path = path;
+	public void setResource(IResource resource) {
+		this.resource = resource;
 	}
 
-	public IPath getPath() {
-		return path;
-	}
-
-	public IProject getProject() {
-		return null;
-	}
-
-	public void setProject(IProject project) {
-		//
+	public IResource getResource() {
+		return resource;
 	}
 
 	public IFileInfoMatcherDescription getFileInfoMatcherDescription() {
@@ -130,20 +96,13 @@ public class FilterDescription implements Comparable, IResourceFilterDescription
 		this.matcherDescription = matcherDescription;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#hashCode()
-	 */
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + (int) (id ^ (id >>> 32));
-		result = prime * result + ((path == null) ? 0 : path.hashCode());
 		return result;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
@@ -154,11 +113,25 @@ public class FilterDescription implements Comparable, IResourceFilterDescription
 		FilterDescription other = (FilterDescription) obj;
 		if (id != other.id)
 			return false;
-		if (path == null) {
-			if (other.path != null)
-				return false;
-		} else if (!path.equals(other.path))
-			return false;
 		return true;
+	}
+
+	/**
+	 * Compare filter descriptions in a way that sorts them topologically by path.
+	 */
+	public int compareTo(Object o) {
+		FilterDescription that = (FilterDescription) o;
+		IPath path1 = this.getResource().getProjectRelativePath();
+		IPath path2 = that.getResource().getProjectRelativePath();
+		int count1 = path1.segmentCount();
+		int compare = count1 - path2.segmentCount();
+		if (compare != 0)
+			return compare;
+		for (int i = 0; i < count1; i++) {
+			compare = path1.segment(i).compareTo(path2.segment(i));
+			if (compare != 0)
+				return compare;
+		}
+		return 0;
 	}
 }

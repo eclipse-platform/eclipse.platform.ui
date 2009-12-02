@@ -84,7 +84,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			if (source.hasFilters()) {
 				Project sourceProject = (Project) source.getProject();
 				LinkedList/*<FilterDescription>*/originalDescriptions = sourceProject.internalGetDescription().getFilter(source.getProjectRelativePath());
-				LinkedList/*<FilterDescription>*/filterDescriptions = FilterDescription.copy(originalDescriptions, destination.getProjectRelativePath());
+				LinkedList/*<FilterDescription>*/filterDescriptions = FilterDescription.copy(originalDescriptions, destination);
 				Project project = (Project) destination.getProject();
 				project.internalGetDescription().setFilters(destination.getProjectRelativePath(), filterDescriptions);
 				project.writeDescription(updateFlags);

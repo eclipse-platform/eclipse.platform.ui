@@ -92,7 +92,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.startTag(FILTER, null);
 		if (description != null) {
 			writer.printSimpleTag(ID, new Long(((FilterDescription)description).getId()));
-			writer.printSimpleTag(NAME, description.getPath());
+			writer.printSimpleTag(NAME, description.getResource().getProjectRelativePath());
 			writer.printSimpleTag(TYPE, Integer.toString(description.getType()));
 			if (description.getFileInfoMatcherDescription() != null) {
 				write(description.getFileInfoMatcherDescription(), writer);

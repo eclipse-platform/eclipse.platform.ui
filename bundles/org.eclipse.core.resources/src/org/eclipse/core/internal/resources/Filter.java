@@ -65,14 +65,6 @@ public class Filter {
 		return description.getFileInfoMatcherDescription().getId();
 	}
 
-	public IPath getPath() {
-		return description.getPath();
-	}
-
-	public IProject getProject() {
-		return project;
-	}
-
 	public int getType() {
 		return description.getType();
 	}

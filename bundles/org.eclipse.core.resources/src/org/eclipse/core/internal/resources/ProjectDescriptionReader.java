@@ -515,7 +515,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			// Pop off the filter description
 			FilterDescription filter = (FilterDescription) objectStack.pop();
 			// Make sure that you have something reasonable
-			IPath path = filter.getPath();
+			IPath path = filter.getResource().getProjectRelativePath();
 			int type = filter.getType();
 			// arguments can be null
 			if (path == null) {
@@ -530,10 +530,10 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			state = S_FILTERED_RESOURCES;
 			// The HashMap of filtered resources is the next thing on the stack
 			HashMap map = ((HashMap) objectStack.peek());
-			LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getPath());
+			LinkedList/*FilterDescription*/list = (LinkedList/*FilterDescription*/) map.get(filter.getResource().getProjectRelativePath());
 			if (list == null) {
 				list = new LinkedList/*FilterDescription*/();
-				map.put(filter.getPath(), list);
+				map.put(filter.getResource().getProjectRelativePath(), list);
 			}
 			list.add(filter);
 		}
@@ -671,11 +671,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			IPath newPath = new Path(charBuffer.toString());
 			// objectStack has a FilterDescription on it. Set the name
 			// on this FilterDescription.
-			IPath oldPath = ((FilterDescription) objectStack.peek()).getPath();
-			if (oldPath.segmentCount() != 0) {
-				parseProblem(NLS.bind(Messages.projRead_badFilterName, oldPath, newPath));
+			IResource oldResource = ((FilterDescription) objectStack.peek()).getResource();
+			if (oldResource != null) {
+				parseProblem(NLS.bind(Messages.projRead_badFilterName, oldResource.getProjectRelativePath(), newPath));
 			} else {
-				((FilterDescription) objectStack.peek()).setPath(newPath);
+				((FilterDescription) objectStack.peek()).setResource(newPath.isEmpty() ? (IResource) project : project.getFolder(newPath));
 			}
 			state = S_FILTER;
 		}

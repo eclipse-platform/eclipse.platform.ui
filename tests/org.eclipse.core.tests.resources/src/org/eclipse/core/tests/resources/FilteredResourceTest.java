@@ -148,7 +148,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("1.5", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("1.6", filters[0].getFileInfoMatcherDescription().getArguments(), "foo");
 		assertEquals("1.7", filters[0].getType(), IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS);
-		assertEquals("1.8", filters[0].getPath(), existingFolderInExistingProject.getProjectRelativePath());
+		assertEquals("1.8", filters[0].getResource(), existingFolderInExistingProject);
 
 		IResource members[] = null;
 		try {
@@ -203,7 +203,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("1.5", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("1.6", filters[0].getFileInfoMatcherDescription().getArguments(), "foo");
 		assertEquals("1.7", filters[0].getType(), IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FOLDERS);
-		assertEquals("1.8", filters[0].getPath(), existingProject.getProjectRelativePath());
+		assertEquals("1.8", filters[0].getResource(), existingProject);
 
 		IResource members[] = null;
 		try {
@@ -273,7 +273,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("1.5", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("1.6", filters[0].getFileInfoMatcherDescription().getArguments(), "foo");
 		assertEquals("1.7", filters[0].getType(), IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES);
-		assertEquals("1.8", filters[0].getPath(), folder.getProjectRelativePath());
+		assertEquals("1.8", filters[0].getResource(), folder);
 
 		IResource members[] = null;
 		try {
@@ -946,7 +946,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("1.5", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("1.6", filters[0].getFileInfoMatcherDescription().getArguments(), "foo");
 		assertEquals("1.7", filters[0].getType(), IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES);
-		assertEquals("1.8", filters[0].getPath(), folder.getProjectRelativePath());
+		assertEquals("1.8", filters[0].getResource(), folder);
 
 		IResource members[] = null;
 		try {
@@ -1426,7 +1426,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("1.7", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("1.8", filters[0].getFileInfoMatcherDescription().getArguments(), "foo.*");
 		assertEquals("1.9", filters[0].getType(), IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES);
-		assertEquals("2.0", filters[0].getPath(), destination.getProjectRelativePath());
+		assertEquals("2.0", filters[0].getResource(), destination);
 	}
 
 	/**
@@ -1472,7 +1472,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("1.5", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("1.6", filters[0].getFileInfoMatcherDescription().getArguments(), "foo.*");
 		assertEquals("1.7", filters[0].getType(), IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES);
-		assertEquals("1.8", filters[0].getPath(), existingFolderInExistingProject.getProjectRelativePath());
+		assertEquals("1.8", filters[0].getResource(), existingFolderInExistingProject);
 
 		filters = null;
 		try {
@@ -1485,7 +1485,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.2", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("2.3", filters[0].getFileInfoMatcherDescription().getArguments(), "foo.*");
 		assertEquals("2.4", filters[0].getType(), IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES);
-		assertEquals("2.5", filters[0].getPath(), destination.getProjectRelativePath());
+		assertEquals("2.5", filters[0].getResource(), destination);
 	}
 
 	/**
@@ -1533,7 +1533,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("1.5", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("1.6", filters[0].getFileInfoMatcherDescription().getArguments(), "foo.*");
 		assertEquals("1.7", filters[0].getType(), IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES);
-		assertEquals("1.8", filters[0].getPath(), existingFolderInExistingProject.getProjectRelativePath());
+		assertEquals("1.8", filters[0].getResource(), existingFolderInExistingProject);
 
 		filters = null;
 		try {
@@ -1546,7 +1546,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.2", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("2.3", filters[0].getFileInfoMatcherDescription().getArguments(), "foo.*");
 		assertEquals("2.4", filters[0].getType(), IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES);
-		assertEquals("2.5", filters[0].getPath(), destination.getProjectRelativePath());
+		assertEquals("2.5", filters[0].getResource(), destination);
 	}
 
 	/**
@@ -1603,7 +1603,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.2", filters[0].getFileInfoMatcherDescription().getId(), REGEX_FILTER_PROVIDER);
 		assertEquals("2.3", filters[0].getFileInfoMatcherDescription().getArguments(), "foo.*");
 		assertEquals("2.4", filters[0].getType(), IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES);
-		assertEquals("2.5", filters[0].getPath(), destination.getProjectRelativePath());
+		assertEquals("2.5", filters[0].getResource(), destination);
 	}
 
 	/**

@@ -11,8 +11,6 @@
  *******************************************************************************/
 package org.eclipse.core.resources;
 
-import org.eclipse.core.runtime.*;
-
 /**
  * Interface for resource filters.  A filter determines which file system
  * objects will be visible when a local refresh is performed for an IContainer.
@@ -62,22 +60,11 @@ public interface IResourceFilterDescription {
 	public static final int INHERITABLE = 16;
 
 	/**
-	 * Return the project relative Path towards which this filter is set.
+	 * Return the resource towards which this filter is set.
 	 * 
-	 * @return the project relative Path towards which this filter is set
+	 * @return the resource towards which this filter is set
 	 */
-	public IPath getPath();
-
-	/**
-	 * Returns the project which contains this filter.
-	 * <p>
-	 * This is a resource handle operation; neither the resource 
-	 * nor the resulting project need exist.
-	 * </p>
-	 *
-	 * @return the project handle
-	 */
-	public IProject getProject();
+	public IResource getResource();
 
 	/**
 	 * Return the filter type, either INCLUDE_ONLY or EXCLUDE_ALL
@@ -85,10 +72,6 @@ public interface IResourceFilterDescription {
 	 * @return (INCLUDE_ONLY or EXCLUDE_ALL) and/or INHERITABLE
 	 */
 	public int getType();
-
-	public void setType(int type);
-
-	public void setFileInfoMatcherDescription(IFileInfoMatcherDescription description);
 
 	public IFileInfoMatcherDescription getFileInfoMatcherDescription();
 }
