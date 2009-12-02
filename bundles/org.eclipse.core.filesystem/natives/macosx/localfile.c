@@ -26,6 +26,8 @@
 #define USE_ARCHIVE_FLAG 0
 #define EFS_SYMLINK_SUPPORT 1
 
+mode_t process_umask;
+
 /*
  * Get a null-terminated byte array from a java char array.
  * The byte array contains UTF8 encoding.
@@ -372,7 +374,6 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 
 	/* create the mask for the relevant bits */
 	mode_t mask = info.st_mode & (S_IRWXU | S_IRWXG | S_IRWXO);
-	mode_t umask = getumask();
 	mode_t oldmask = mask;
 	int flags = info.st_flags;
 			
@@ -384,7 +385,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 #endif
 
 	if (executable)
-		mask |= S_IXUSR | ((S_IXGRP | S_IXOTH) & ~umask);
+		mask |= S_IXUSR | ((S_IXGRP | S_IXOTH) & ~process_umask);
 	else
 		mask &= ~(S_IXUSR | S_IXGRP | S_IXOTH);	// clear all 'x'
 		
@@ -394,7 +395,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 		flags |= UF_IMMUTABLE;					// set immutable flag for usr
 #endif
 	} else {
-		mask |= S_IRUSR | S_IWUSR | ((S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) & ~umask);
+		mask |= S_IRUSR | S_IWUSR | ((S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) & ~process_umask);
 #if USE_IMMUTABLE_FLAG
 		flags &= ~UF_IMMUTABLE;					// try to clear immutable flags for usr
 #endif
@@ -416,4 +417,9 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 fail:	
 	free(name);
 	return result == 0;
+}
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+	process_umask = getumask();
+	return JNI_VERSION_1_1;
 }

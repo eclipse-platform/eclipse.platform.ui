@@ -43,7 +43,7 @@ $(LIB_NAME_FULL) : $(CORE.C)
 core : $(LIB_NAME_FULL)
 
 clean :
-	rm *.o *.so
+	rm -f $(CORE.O) $(LIB_NAME_FULL)
 
 install : $(LIB_NAME_FULL)
 	cp -f $(LIB_NAME_FULL) ../../../../org.eclipse.core.filesystem.solaris.sparc/os/solaris/sparc/

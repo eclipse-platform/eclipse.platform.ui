@@ -24,6 +24,8 @@
 #include "../localfile.h"
 #include <os_custom.h>
 
+mode_t process_umask;
+
 /*
  * Get a null-terminated byte array from a java byte array.
  * The returned bytearray needs to be freed when not used
@@ -338,7 +340,6 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
   (JNIEnv *env, jclass clazz, jcharArray target, jobject obj) {
 
     mode_t mask;
-    mode_t umask;
     struct stat info;
     jbyte *name;
     jint code = -1;
@@ -359,8 +360,6 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
     name = getByteArray(env, target);
     code = stat((const char*)name, &info);
 
-    umask = getumask();
-
     /* create the mask */
     mask = S_IRUSR |
 	       S_IWUSR |
@@ -373,14 +372,13 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
            S_IXOTH;
     mask &= info.st_mode;
     if (executable)
-	    mask |= S_IXUSR | ((S_IXGRP | S_IXOTH) & ~umask);
+	    mask |= S_IXUSR | ((S_IXGRP | S_IXOTH) & ~process_umask);
     else
 	    mask &= ~(S_IXUSR | S_IXGRP | S_IXOTH);
 	if (readOnly)
 	    mask &= ~(S_IWUSR | S_IWGRP | S_IWOTH);
 	else
-	    mask |= S_IRUSR | S_IWUSR | ((S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) & ~umask);
-
+	    mask |= S_IRUSR | S_IWUSR | ((S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH) & ~process_umask);
     /* write the permissions */
     code = chmod((const char*)name, mask);
 
@@ -398,4 +396,9 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
   (JNIEnv *env, jclass clazz, jcharArray target, jobject obj, jint options) {
 	// shouldn't ever be called - there is no Unicode-specific calls on *nix
 	return JNI_FALSE;
+}
+
+JNIEXPORT jint JNICALL JNI_OnLoad(JavaVM *vm, void *reserved) {
+	process_umask = getumask();
+	return JNI_VERSION_1_1;
 }
