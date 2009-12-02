@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,7 @@ import org.eclipse.ui.SelectionEnabler;
 import org.eclipse.ui.internal.ISelectionConversionService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.KeywordRegistry;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
@@ -57,6 +58,8 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 	private static final String [] EMPTY_TAGS = new String[0];
 
 	private static final String [] PROJECT_TAGS = new String[] {TAG_PROJECT};
+
+	private String[] keywordLabels;
 
     
     /**
@@ -339,5 +342,21 @@ public class WorkbenchWizardElement extends WorkbenchAdapter implements
 			return true;
 		}
 		return Boolean.valueOf(hasPagesString).booleanValue();
+	}
+
+	public String[] getKeywordLabels() {
+		if (keywordLabels == null) {
+
+			IConfigurationElement[] children = configurationElement
+					.getChildren(IWorkbenchRegistryConstants.TAG_KEYWORD_REFERENCE);
+			keywordLabels = new String[children.length];
+			KeywordRegistry registry = KeywordRegistry.getInstance();
+			for (int i = 0; i < children.length; i++) {
+				String id = children[i]
+						.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+				keywordLabels[i] = registry.getKeywordLabel(id);
+			}
+		}
+		return keywordLabels;
 	}
 }

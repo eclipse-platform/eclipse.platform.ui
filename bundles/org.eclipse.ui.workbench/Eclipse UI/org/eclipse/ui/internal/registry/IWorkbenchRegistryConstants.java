@@ -1346,4 +1346,6 @@ public interface IWorkbenchRegistryConstants {
 	public static final String ATT_REPLACE = "replace"; //$NON-NLS-1$
 
 	public static final String ATT_FIND = "find"; //$NON-NLS-1$
+
+	public static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
 }

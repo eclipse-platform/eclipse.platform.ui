@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="exportWizards" name="Export Wizards"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point is used to register export wizard extensions. Export wizards appear as choices within the &quot;Export Dialog&quot;, and are used to export resources from the workbench. 
 &lt;p&gt;
@@ -15,9 +15,9 @@ Wizards may optionally specify a description subelement whose body should contai
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
@@ -43,9 +43,29 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="keywordReference">
+      <annotation>
+         <documentation>
+            A reference by an Export Wizard to a keyword. See the keywords extension point.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the keyword being referred to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.keywords/keyword/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -53,9 +73,9 @@ Wizards may optionally specify a description subelement whose body should contai
 
    <element name="category">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name"/>
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <attribute name="id" type="string" use="required">
@@ -70,9 +90,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a translatable name of the category that will be used in the dialog box
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parentCategory" type="string">
@@ -80,9 +100,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a path to another category if this category should be added as a child
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.exportWizards/category/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -90,9 +110,9 @@ Wizards may optionally specify a description subelement whose body should contai
 
    <element name="wizard">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element labelAttribute="name" icon="icon"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             an element that will be used to create export wizard
          </documentation>
@@ -101,6 +121,7 @@ Wizards may optionally specify a description subelement whose body should contai
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
             <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="keywordReference" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -114,9 +135,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a translatable name that will be used in the dialog box to represent this wizard
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -135,9 +156,9 @@ added to the &quot;Other&quot; category.
                   a fully qualified name of the class that implements &lt;tt&gt;org.eclipse.ui.IExportWizard&lt;/tt&gt;
 interface
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.IExportWizard"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -146,9 +167,9 @@ interface
                   a relative name of the icon that will be used 
 alongside the wizard name in the export engine listing.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -156,9 +177,9 @@ alongside the wizard name in the export engine listing.
 
    <element name="description" type="string">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element translatable="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             an optional subelement whose body should represent a short description
 of the export engine functionality.
@@ -186,18 +207,18 @@ when the wizard is invoked.
                <documentation>
                   a fully qualified class name.  If each object in the workbench selection implements this interface the selection will be passed to the wizard.  Otherwise, an empty selection is passed.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The following is an example of an export extension definition:
 &lt;p&gt;
@@ -221,9 +242,9 @@ when the wizard is invoked.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The value of the &lt;samp&gt;class&lt;/samp&gt; attribute 
 must be a name of the class that implements 
@@ -233,9 +254,9 @@ must be a name of the class that implements
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The workbench comes preloaded with basic export engines 
 for files and directories.
@@ -243,9 +264,9 @@ for files and directories.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made

@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
@@ -37,8 +36,6 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferenceExpressionNode 
     implements IComparableContribution {
 	
-	private static final String TAG_KEYWORD_REFERENCE = "keywordReference"; //$NON-NLS-1$
-
 	private Collection keywordReferences;
 	
 	private IConfigurationElement configurationElement;
@@ -73,7 +70,7 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 	public Collection getKeywordReferences() {
 		if (keywordReferences == null) {
 			IConfigurationElement[] references = getConfigurationElement()
-					.getChildren(TAG_KEYWORD_REFERENCE);
+					.getChildren(IWorkbenchRegistryConstants.TAG_KEYWORD_REFERENCE);
 			HashSet list = new HashSet(references.length);
 			for (int i = 0; i < references.length; i++) {
 				IConfigurationElement page = references[i];

@@ -2,9 +2,9 @@
 <!-- Schema file written by PDE -->
 <schema targetNamespace="org.eclipse.ui" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
-      <appinfo>
+      <appInfo>
          <meta.schema plugin="org.eclipse.ui" id="newWizards" name="Creation Wizards"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          This extension point is used to register resource creation wizard extensions. Creation wizards appear as choices within the &quot;New Dialog&quot;, and are typically used to create folders and files. 
 &lt;p&gt;
@@ -19,9 +19,9 @@ Wizards may optionally specify a description subelement whose body should contai
 
    <element name="extension">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element />
-         </appinfo>
+         </appInfo>
       </annotation>
       <complexType>
          <choice minOccurs="0" maxOccurs="unbounded">
@@ -48,9 +48,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   an optional name of the extension instance
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -70,9 +70,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a translatable name of the category that will be used in the dialog box
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="parentCategory" type="string">
@@ -80,9 +80,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a path to another category if this category should be added as a child
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.newWizards/category/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
@@ -93,6 +93,7 @@ Wizards may optionally specify a description subelement whose body should contai
          <sequence>
             <element ref="description" minOccurs="0" maxOccurs="1"/>
             <element ref="selection" minOccurs="0" maxOccurs="unbounded"/>
+            <element ref="keywordReference" minOccurs="0" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
@@ -106,9 +107,9 @@ Wizards may optionally specify a description subelement whose body should contai
                <documentation>
                   a translatable name of the wizard that will be used in the dialog box
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute translatable="true"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="icon" type="string">
@@ -117,9 +118,9 @@ Wizards may optionally specify a description subelement whose body should contai
                   a relative path of an icon that will be used together with the name to represent the wizard 
 as one of the choices in the creation dialog box.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="category" type="string">
@@ -137,9 +138,9 @@ added to the &quot;Other&quot; category.
                <documentation>
                   a fully qualified name of the Java class implementing &lt;samp&gt;org.eclipse.ui.INewWizard&lt;/samp&gt;.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java" basedOn="org.eclipse.jface.wizard.Wizard:org.eclipse.ui.INewWizard"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="project" type="boolean">
@@ -155,9 +156,9 @@ Also causes the wizard to appear as a choice within the &quot;New Project Dialog
                <documentation>
                   an optional attribute which identifies a perspective to activate when IProject resource creation is finished.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.perspectives/perspective/@id"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="preferredPerspectives" type="string">
@@ -185,9 +186,9 @@ Since 3.0
 Since 3.0
 &lt;/p&gt;
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="resource"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="canFinishEarly" type="boolean">
@@ -209,9 +210,9 @@ Since 3.0
 
    <element name="description" type="string">
       <annotation>
-         <appinfo>
+         <appInfo>
             <meta.element translatable="true"/>
-         </appinfo>
+         </appInfo>
          <documentation>
             an optional subelement whose body contains a short text describing what the wizard will do when started
          </documentation>
@@ -225,9 +226,9 @@ Since 3.0
                <documentation>
                   a fully qualified class name.  If each object in the workbench selection implements this interface the selection will be passed to the wizard.  Otherwise, an empty selection is passed
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="java"/>
-               </appinfo>
+               </appInfo>
             </annotation>
          </attribute>
          <attribute name="name" type="string">
@@ -252,18 +253,38 @@ Since 3.0
                <documentation>
                   the id of a wizard that should be made primary.
                </documentation>
-               <appinfo>
+               <appInfo>
                   <meta.attribute kind="identifier" basedOn="org.eclipse.ui.newWizards/wizard/@id"/>
-               </appinfo>
+               </appInfo>
+            </annotation>
+         </attribute>
+      </complexType>
+   </element>
+
+   <element name="keywordReference">
+      <annotation>
+         <documentation>
+            A reference by a New Wizard to a keyword. See the keywords extension point.
+         </documentation>
+      </annotation>
+      <complexType>
+         <attribute name="id" type="string" use="required">
+            <annotation>
+               <documentation>
+                  The id of the keyword being referred to.
+               </documentation>
+               <appInfo>
+                  <meta.attribute kind="identifier" basedOn="org.eclipse.ui.keywords/keyword/@id"/>
+               </appInfo>
             </annotation>
          </attribute>
       </complexType>
    </element>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="examples"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Following is an example of creation wizard configuration: 
 &lt;p&gt;
@@ -296,9 +317,9 @@ Since 3.0
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="apiInfo"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The value of the class attribute must represent a class 
 that implements &lt;samp&gt;org.eclipse.ui.INewWizard&lt;/samp&gt;. 
@@ -312,9 +333,9 @@ appear standalone as a separate dialog box.
 
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="implementation"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          The workbench comes with wizards for creating empty 
 resources of the following types: 
@@ -326,9 +347,9 @@ particular platform installation.
    </annotation>
 
    <annotation>
-      <appinfo>
+      <appInfo>
          <meta.section type="copyright"/>
-      </appinfo>
+      </appInfo>
       <documentation>
          Copyright (c) 2002, 2005 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made
