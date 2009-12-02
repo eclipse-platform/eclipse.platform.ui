@@ -15,6 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 import org.eclipse.e4.ui.tests.application.StartupTestSuite;
+import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerTestSuite;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
 import org.eclipse.e4.ui.tests.workbench.HandlerTest;
 import org.eclipse.e4.ui.tests.workbench.MPartTest;
@@ -38,5 +39,6 @@ public class UIAllTests extends TestSuite {
 		addTestSuite(MSashTest.class);
 		addTestSuite(HandlerTest.class);
 		addTestSuite(ContextTest.class);
+		addTest(ModelReconcilerTestSuite.suite());
 	}
 }

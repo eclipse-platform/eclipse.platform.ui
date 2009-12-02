@@ -15,12 +15,20 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URLConnection;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Map;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -30,16 +38,25 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
+import org.w3c.dom.Document;
 
 /**
  * This class is responsible to load and save the model
  */
 public class ResourceHandler {
+
+	/**
+	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
+	 */
+	private static final boolean RESTORE_VIA_DELTAS = true;
+
 	private File workbenchData;
 	private URI applicationDefinitionInstance;
 	private ResourceSetImpl resourceSetImpl;
 	private URI restoreLocation;
 	private Resource resource;
+	private ModelReconciler reconciler;
 
 	public ResourceHandler(Location instanceLocation, URI applicationDefinitionInstance,
 			boolean saveAndRestore) {
@@ -59,7 +76,12 @@ public class ResourceHandler {
 		workbenchData = new File(workbenchData, ".metadata"); //$NON-NLS-1$
 		workbenchData = new File(workbenchData, ".plugins"); //$NON-NLS-1$
 		workbenchData = new File(workbenchData, "org.eclipse.e4.workbench"); //$NON-NLS-1$
-		workbenchData = new File(workbenchData, "workbench.xmi"); //$NON-NLS-1$
+
+		if (RESTORE_VIA_DELTAS) {
+			workbenchData = new File(workbenchData, "deltas.xml"); //$NON-NLS-1$	
+		} else {
+			workbenchData = new File(workbenchData, "workbench.xmi"); //$NON-NLS-1$			
+		}
 
 		if (workbenchData != null && saveAndRestore) {
 			restoreLocation = URI.createFileURI(workbenchData.getAbsolutePath());
@@ -95,10 +117,51 @@ public class ResourceHandler {
 	}
 
 	public void save() throws IOException {
-		resource.save(null);
+		if (RESTORE_VIA_DELTAS) {
+			try {
+				Document document = (Document) reconciler.serialize();
+
+				// Use a Transformer for output
+				TransformerFactory tFactory = TransformerFactory.newInstance();
+				Transformer transformer = tFactory.newTransformer();
+
+				DOMSource source = new DOMSource(document);
+				File f = new File(restoreLocation.toFileString());
+				f.getParentFile().mkdirs();
+				StreamResult result = new StreamResult(f);
+				transformer.transform(source, result);
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+		} else {
+			resource.save(null);
+		}
 	}
 
 	public Resource loadMostRecentModel() {
+		if (RESTORE_VIA_DELTAS) {
+			Resource resource = loadBaseModel();
+			try {
+				File file = new File(restoreLocation.toFileString());
+				reconciler = new XMLModelReconciler();
+				reconciler.recordChanges(resource.getContents().get(0));
+
+				if (file.exists()) {
+					Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+							.parse(file);
+					XMLModelReconciler deltaReconciler = new XMLModelReconciler();
+					Collection<ModelDeltaOperation> operations = deltaReconciler.applyDeltas(
+							resource.getContents().get(0), document);
+					for (ModelDeltaOperation operation : operations) {
+						operation.apply();
+					}
+				}
+			} catch (Exception e) {
+				throw new RuntimeException(e);
+			}
+			return resource;
+		}
+
 		long restoreLastModified = getLastStoreDatetime();
 		long lastApplicationModification = getLastApplicationModification();
 
