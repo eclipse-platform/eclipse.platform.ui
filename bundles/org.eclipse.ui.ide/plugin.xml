@@ -464,6 +464,9 @@
     <keyword
             label="%PreferenceKeywords.Encoding"
             id="org.eclipse.ui.ide.encoding"/>
+      <keyword
+            id="org.eclipse.ui.ide.recentlyOpened"
+            label="%PreferenceKeywords.RecentlyOpened"/>
    </extension>      
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -484,6 +487,7 @@
          <keywordReference id="org.eclipse.ui.ide.pin"/>
          <keywordReference id="org.eclipse.ui.ide.dirty"/>
          <keywordReference id="org.eclipse.ui.ide.close"/>
+         <keywordReference id="org.eclipse.ui.ide.recentlyOpened"/>
          <keywordReference
                id="org.eclipse.ui.ide.restore">
          </keywordReference>

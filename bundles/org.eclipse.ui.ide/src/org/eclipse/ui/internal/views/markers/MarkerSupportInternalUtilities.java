@@ -34,6 +34,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.FilterConfigurationArea;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerFieldFilter;
@@ -387,4 +388,36 @@ public class MarkerSupportInternalUtilities {
 
 	}
 
+	/**
+	 * Log an exception from a markers view.
+	 * 
+	 * @param exception
+	 */
+	public static void logViewError(Exception exception) {
+		if (exception instanceof CoreException) {
+			StatusManager.getManager().handle(
+					((CoreException) exception).getStatus(),StatusManager.LOG);
+			return;
+		}
+		StatusManager.getManager().handle(
+				new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+						exception.getLocalizedMessage(), exception),
+				StatusManager.LOG);
+	}
+	/**
+	 * Show an exception from a markers view.
+	 * 
+	 * @param exception
+	 */
+	public static void showViewError(Exception exception) {
+		if (exception instanceof CoreException) {
+			StatusManager.getManager().handle(
+					((CoreException) exception).getStatus(),StatusManager.LOG|StatusManager.SHOW);
+			return;
+		}
+		StatusManager.getManager().handle(
+				new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+						exception.getLocalizedMessage(), exception),
+				StatusManager.LOG|StatusManager.SHOW);
+	}
 }

@@ -19,10 +19,7 @@ import java.util.List;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.IContext;
@@ -84,7 +81,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.ResourceUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StatusUtil;
-import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.part.MarkerTransfer;
 import org.eclipse.ui.part.ViewPart;
@@ -96,7 +92,6 @@ import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
-import org.eclipse.ui.views.tasklist.ITaskListResourceAdapter;
 
 import com.ibm.icu.text.MessageFormat;
 
@@ -140,6 +135,8 @@ public class ExtendedMarkersView extends ViewPart {
 	private CachedMarkerBuilder builder;
 	private Collection categoriesToExpand;
 
+	private UIUpdateJob uiUpdateJob;
+	
 	private MarkersTreeViewer viewer;
 	private ISelectionListener pageSelectionListener;
 	private IPartListener2 partListener;
@@ -1525,53 +1522,46 @@ public class ExtendedMarkersView extends ViewPart {
 		return viewer;
 	}
 
-	private UIUpdateJob uiUpdateJob;
-
 	/**
+	 * The method should not be called directly, see
+	 * {@link MarkerUpdateScheduler}
+	 * 
+	 * Cancel a scheduled delay
 	 */
-	synchronized void cancelQueuedUpdates() {
-		if (uiUpdateJob != null) {
-			if (uiUpdateJob.cancel())
-				return;
-// See Bug 293305,
-//			if (false) {
-//				try {
-//					final Display display = uiUpdateJob.getDisplay();
-//					//make sure we don't join from within the UI thread where the ui update job runs
-//					if (display != null && display != Display.getCurrent()) {
-//						if (display.getSyncThread() != Thread
-//								.currentThread()) {
-//							uiUpdateJob.join();
-//						}
-//					}
-//				} catch (InterruptedException e) {
-//				}
-//			}
+	void cancelQueuedUpdates() {
+		synchronized (builder.getUpdateScheduler().getSchedulingLock()) {
+			if (uiUpdateJob != null) {
+				uiUpdateJob.cancel();
+			}
 		}
 	}
 
 	/**
+	 * The method should not be called directly, see
+	 * {@link MarkerUpdateScheduler}
+	 * 
 	 * @param delay
 	 * @return UIUpdateJob
-	 * 
 	 */
-	synchronized UIUpdateJob scheduleUpdate(long delay) {
-		if (uiUpdateJob != null) {
-			//ensure cancellation before calling the method
-			//uiUpdateJob.cancel();
-		} else {
-			uiUpdateJob = new UIUpdateJob(this);
-			// uiUpdateJob.setPriority(Job.SHORT);
-			uiUpdateJob.setSystem(true);
+	UIUpdateJob scheduleUpdate(long delay) {
+		synchronized (builder.getUpdateScheduler().getSchedulingLock()) {
+			if (uiUpdateJob != null) {
+				// ensure cancellation before calling the method
+				// uiUpdateJob.cancel();
+			} else {
+				uiUpdateJob = new UIUpdateJob(this);
+				// uiUpdateJob.setPriority(Job.SHORT);
+				uiUpdateJob.setSystem(true);
+			}
+			IWorkbenchSiteProgressService progressService = builder
+					.getProgressService();
+			if (progressService != null) {
+				progressService.schedule(uiUpdateJob, delay);
+			} else {
+				uiUpdateJob.schedule(delay);
+			}
+			return uiUpdateJob;
 		}
-		IWorkbenchSiteProgressService progressService = builder
-				.getProgressService();
-		if (progressService != null) {
-			progressService.schedule(uiUpdateJob, delay);
-		} else {
-			uiUpdateJob.schedule(delay);
-		}
-		return uiUpdateJob;
 	}
 
 	/**
@@ -1697,7 +1687,7 @@ public class ExtendedMarkersView extends ViewPart {
 			for (Iterator iterator = objectsToAdapt.iterator(); iterator
 					.hasNext();) {
 				Object object = iterator.next();
-				Object resElement = adapt2ResourceElement(object);
+				Object resElement = MarkerResourceUtil.adapt2ResourceElement(object);
 				if (resElement != null) {
 					selectedElements.add(resElement);
 				}
@@ -1705,33 +1695,6 @@ public class ExtendedMarkersView extends ViewPart {
 			MarkerContentGenerator generator = view.getGenerator();
 			generator.updateSelectedResource(selectedElements.toArray());
 		}
-
-		private Object adapt2ResourceElement(Object object) {
-			IResource resource = null;
-			if (object instanceof IAdaptable) {
-				Object adapter = Util.getAdapter(object,
-						ITaskListResourceAdapter.class);
-				if (adapter != null) {
-					resource = ((ITaskListResourceAdapter) adapter)
-							.getAffectedResource((IAdaptable) object);
-				}
-			}
-			if (resource == null) {
-				resource = (IResource) Util.getAdapter(object, IResource.class);
-			}
-			if (resource == null) {
-				resource = (IResource) Util.getAdapter(object, IFile.class);
-			}
-			if (resource == null) {
-				Object mapping = Util.getAdapter(object, ResourceMapping.class);
-				if (mapping != null) {
-					return mapping;
-				}
-			} else {
-				return resource;
-			}
-			return null;
-		}
-
+		
 	}
 }

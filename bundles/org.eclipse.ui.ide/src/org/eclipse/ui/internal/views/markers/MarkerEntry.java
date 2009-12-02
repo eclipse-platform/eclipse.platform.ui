@@ -67,8 +67,20 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	// The key for the string we built for display
 	private static final Object LOCATION_STRING = "LOCATION_STRING"; //$NON-NLS-1$
 	private MarkerCategory category;
-	IMarker marker;
-	Map cache = null;
+	private Map cache = null;
+	
+	/**
+	 * Set the MarkerEntry to be stale, if discovered at any point of time
+	 * of its use.This will greatly speed up a lot of parts of the view.
+	 * @since 3.6
+	 */
+	private boolean stale;
+	/**
+	 * Important:
+	 * access to these fields must be via methods, they must be in sync and their
+	 * values should reflect correctly the state of the other
+	 */
+	private IMarker marker;
 
 	/**
 	 * Create a new instance of the receiver.
@@ -77,6 +89,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	public MarkerEntry(IMarker marker) {
 		this.marker = marker;
+		stale = false;
 	}
 
 	/*
@@ -128,9 +141,13 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	Object getAttributeValue(String attribute) {
 		Object value = getCache().get(attribute);
 		if(value == null) {
+			if(stale){
+				return value;
+			}
 			try {
 				value = marker.getAttribute(attribute);
 			} catch (CoreException e) {
+				checkIfMarkerStale() ;
 				value = null;
 			}
 			if(value != null) {
@@ -212,9 +229,13 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getCreationTime()
 	 */
 	long getCreationTime() {
+		if(stale){
+			return -1;
+		}
 		try {
 			return marker.getCreationTime();
 		} catch (CoreException e) {
+			checkIfMarkerStale();
 			Policy.handle(e);
 			return -1;
 		}
@@ -245,7 +266,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.views.markers.MarkerItem#getLocation()
 	 */
 	public String getLocation() {
-		if(!marker.exists()){
+		if(stale||checkIfMarkerStale()){
 			return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
 		}
 		if (getCache().containsKey(LOCATION_STRING)) {
@@ -293,19 +314,29 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 * @see org.eclipse.ui.internal.views.markers.MarkerSupportItem#getMarkerTypeName()
 	 */
 	String getMarkerTypeName() {
+		if(stale){
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
+					.toString());
+		}
 		try {
 			return MarkerTypesModel.getInstance().getType(marker.getType())
 					.getLabel();
 		} catch (CoreException e) {
+			checkIfMarkerStale() ;
 			Policy.handle(e);
 			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
 					.toString());
 		}
 	}
 	String getMarkerTypeId() {
+		if(stale){
+			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
+					.toString());
+		}
 		try {
 			return marker.getType();
 		} catch (CoreException e) {
+			checkIfMarkerStale();
 			Policy.handle(e);
 			return NLS.bind(MarkerMessages.FieldMessage_WrongType, marker
 					.toString());
@@ -331,7 +362,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		if (folder != null) {
 			return folder;
 		}
-		if (!marker.exists()) {
+		if (stale||checkIfMarkerStale()) {
 			return MarkerSupportInternalUtilities.UNKNOWN_ATRRIBTE_VALUE_STRING;
 		}
 		IPath path = marker.getResource().getFullPath();
@@ -373,6 +404,8 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 	 */
 	void setMarker(IMarker marker) {
 		this.marker = marker;
+		// reset stale
+		stale = false;
 		clearCache();
 	}
 
@@ -394,6 +427,31 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		cache = null;		
 	}
 
+	/**
+	 * @return true if the marker does not exist
+	 * 		   else false
+	 */
+	boolean checkIfMarkerStale() {
+		if (stale) {
+			return true;
+		}
+		if (marker == null || !marker.exists()) {
+			stale = true;
+		}
+		return stale;
+	}
+
+	/**
+	 * 
+	 * @return true if the {@link MarkerEntry} is stale,i.e. the marker does not
+	 *         exist. A false value can mean that marker's state of existence was
+	 *         never captured or that it exists.#checkIfMarkerExists() will
+	 *         accurately indicate its state.
+	 */
+	boolean getStaleState() {
+		return stale;
+	}
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
@@ -427,6 +485,4 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 		}
 		return true;
 	}
-	
-	
 }

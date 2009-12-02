@@ -50,11 +50,11 @@ public abstract class UIResourceFilterDescription {
 				return iResourceFilterDescription.getFileInfoMatcherDescription();
 			}
 			public IPath getPath() {
-				return iResourceFilterDescription.getPath();
+				return iResourceFilterDescription.getResource().getProjectRelativePath();
 			}
 	
 			public IProject getProject() {
-				return iResourceFilterDescription.getProject();
+				return iResourceFilterDescription.getResource().getProject();
 			}
 	
 			public int getType() {

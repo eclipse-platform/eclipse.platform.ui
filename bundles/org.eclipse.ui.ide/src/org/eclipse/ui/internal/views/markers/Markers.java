@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.views.markers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -68,8 +69,8 @@ class Markers {
 	 * 			true 	sort and group them
 	 * @param monitor
 	 */
-	synchronized boolean updateWithNewMarkers(List markerEntries, boolean sortAndGroup,
-			IProgressMonitor monitor) {
+	synchronized boolean updateWithNewMarkers(Collection markerEntries,
+			boolean sortAndGroup, IProgressMonitor monitor) {
 		boolean initialVal=inChange;
 		try {
 			inChange=true;
@@ -127,7 +128,7 @@ class Markers {
 			if (monitor.isCanceled()) {
 				return false;
 			}
-			monitor.subTask(MarkerMessages.MarkerView_queueing_updates);
+			monitor.subTask(MarkerMessages.MarkerView_processUpdates);
 
 			return sortMarkerEntries(monitor);
 		} finally {
@@ -255,6 +256,7 @@ class Markers {
 				}
 				list.add(entries[i]);
 			} catch (CoreException e) {
+				entries[i].checkIfMarkerStale();
 			}
 		}
 		Iterator keys = map.keySet().iterator();
@@ -302,9 +304,17 @@ class Markers {
 	static Integer[] getMarkerCounts(MarkerEntry[] entries) {
 		int[] ints = new int[] { 0, 0, 0, 0 };
 		for (int idx = 0; idx < entries.length; idx++) {
-			MarkerEntry marker = entries[idx];
-			int severity = marker.getMarker().getAttribute(
-					IMarker.SEVERITY, -1);
+			IMarker marker = entries[idx].getMarker();
+			int severity = -1;
+			Object value = null;
+			try {
+				value = marker.getAttribute(IMarker.SEVERITY);
+			} catch (CoreException e) {
+				entries[idx].checkIfMarkerStale();
+			}
+			if (value instanceof Integer) {
+				severity = ((Integer) value).intValue();
+			}
 			if (severity >= IMarker.SEVERITY_INFO) {
 				ints[severity]++;
 			} else {
@@ -312,9 +322,8 @@ class Markers {
 			}
 		}
 
-		return new Integer[] { new Integer(ints[2]),
-				new Integer(ints[1]), new Integer(ints[0]),
-				new Integer(ints[3]) };
+		return new Integer[] { new Integer(ints[2]), new Integer(ints[1]),
+				new Integer(ints[0]), new Integer(ints[3]) };
 	}
 
 	/**

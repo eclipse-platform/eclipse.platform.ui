@@ -152,45 +152,47 @@ public class ResourceInfoPage extends PropertyPage {
 		typeValue.setBackground(typeValue.getDisplay().getSystemColor(
 				SWT.COLOR_WIDGET_BACKGROUND));
 
-		// The group for location
-		Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
-		locationTitle.setText(LOCATION_TITLE);
-		gd = new GridData();
-		gd.verticalAlignment = SWT.TOP;
-		locationTitle.setLayoutData(gd);
-
-		Text locationValue = new Text(basicInfoComposite, SWT.WRAP
-				| SWT.READ_ONLY);
-		String locationStr = TextProcessor.process(IDEResourceInfoUtils
-				.getLocationText(resource));
-		locationValue.setText(locationStr);
-		gd = new GridData();
-		gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
-		gd.grabExcessHorizontalSpace = true;
-		gd.horizontalAlignment = GridData.FILL;
-		locationValue.setLayoutData(gd);
-		locationValue.setBackground(locationValue.getDisplay().getSystemColor(
-				SWT.COLOR_WIDGET_BACKGROUND));
-
-		if (!resource.isGroup() && isPathVariable(resource)) {
-			Label resolvedLocationTitle = new Label(basicInfoComposite,
-					SWT.LEFT);
-			resolvedLocationTitle.setText(RESOLVED_LOCATION_TITLE);
+		if (!resource.isGroup()) {
+			// The group for location
+			Label locationTitle = new Label(basicInfoComposite, SWT.LEFT);
+			locationTitle.setText(LOCATION_TITLE);
 			gd = new GridData();
 			gd.verticalAlignment = SWT.TOP;
-			resolvedLocationTitle.setLayoutData(gd);
-
-			Text resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP
+			locationTitle.setLayoutData(gd);
+	
+			Text locationValue = new Text(basicInfoComposite, SWT.WRAP
 					| SWT.READ_ONLY);
-			resolvedLocationValue.setText(IDEResourceInfoUtils
-					.getResolvedLocationText(resource));
+			String locationStr = TextProcessor.process(IDEResourceInfoUtils
+					.getLocationText(resource));
+			locationValue.setText(locationStr);
 			gd = new GridData();
 			gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
 			gd.grabExcessHorizontalSpace = true;
 			gd.horizontalAlignment = GridData.FILL;
-			resolvedLocationValue.setLayoutData(gd);
-			resolvedLocationValue.setBackground(resolvedLocationValue
-					.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			locationValue.setLayoutData(gd);
+			locationValue.setBackground(locationValue.getDisplay().getSystemColor(
+					SWT.COLOR_WIDGET_BACKGROUND));
+
+			if (isPathVariable(resource)) {
+				Label resolvedLocationTitle = new Label(basicInfoComposite,
+						SWT.LEFT);
+				resolvedLocationTitle.setText(RESOLVED_LOCATION_TITLE);
+				gd = new GridData();
+				gd.verticalAlignment = SWT.TOP;
+				resolvedLocationTitle.setLayoutData(gd);
+	
+				Text resolvedLocationValue = new Text(basicInfoComposite, SWT.WRAP
+						| SWT.READ_ONLY);
+				resolvedLocationValue.setText(IDEResourceInfoUtils
+						.getResolvedLocationText(resource));
+				gd = new GridData();
+				gd.widthHint = convertWidthInCharsToPixels(MAX_VALUE_WIDTH);
+				gd.grabExcessHorizontalSpace = true;
+				gd.horizontalAlignment = GridData.FILL;
+				resolvedLocationValue.setLayoutData(gd);
+				resolvedLocationValue.setBackground(resolvedLocationValue
+						.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
+			}
 		}
 		if (resource.getType() == IResource.FILE) {
 			// The group for size
