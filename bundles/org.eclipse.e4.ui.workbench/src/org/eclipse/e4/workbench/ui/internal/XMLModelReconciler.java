@@ -164,6 +164,11 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static final String MENUS_ATTNAME = "menus"; //$NON-NLS-1$
 
 	/**
+	 * Attribute defined by MParts (value is <code>toolbar</code>).
+	 */
+	private static final String TOOLBAR_ATTNAME = "toolbar"; //$NON-NLS-1$
+
+	/**
 	 * Attribute defined by MGenericTiles and MTrimContainers (value is <code>horizontal</code>).
 	 */
 	private static final String HORIZONTAL_ATTNAME = "horizontal"; //$NON-NLS-1$
@@ -357,6 +362,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getItem_Separator();
 		} else if (featureName.equals(MENUS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getPart_Menus();
+		} else if (featureName.equals(TOOLBAR_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getPart_Toolbar();
 		} else if (featureName.equals(HORIZONTAL_ATTNAME)) {
 			if (object instanceof MGenericTile<?>) {
 				return MApplicationPackage.eINSTANCE.getGenericTile_Horizontal();
@@ -624,6 +631,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createView();
 		} else if (type.equals(MViewStack.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createViewStack();
+		} else if (type.equals(MToolBar.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createToolBar();
 		}
 		return null;
 	}
@@ -1424,7 +1433,9 @@ public class XMLModelReconciler extends ModelReconciler {
 		// a HandledItem/KeyBinding has a single reference to a command
 				featureName.equals(COMMAND_ATTNAME) ||
 				// a Window has a single reference to a menu
-				featureName.equals(MAINMENU_ATTNAME);
+				featureName.equals(MAINMENU_ATTNAME) ||
+				// a Part has a single reference to a tool bar
+				featureName.equals(TOOLBAR_ATTNAME);
 	}
 
 	private boolean isChainedReference(String featureName) {

@@ -149,7 +149,6 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.setFactory(new Object());
 		menu.setVisible(after);
 
 		Object state = reconciler.serialize();
@@ -195,6 +194,105 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		testPart_Menu_Visible(false, false);
 	}
 
+	public void testPart_ToolBar_Set() {
+		String applicationId = createId();
+		String windowId = createId();
+		String partId = createId();
+		String toolBarId = createId();
+
+		MApplication application = createApplication();
+		application.setId(applicationId);
+
+		MWindow window = createWindow(application);
+		window.setId(windowId);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setId(partId);
+		window.getChildren().add(part);
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		toolBar.setId(toolBarId);
+		part.setToolbar(toolBar);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		application.setId(applicationId);
+
+		window = createWindow(application);
+		window.setId(windowId);
+
+		part = MApplicationFactory.eINSTANCE.createPart();
+		part.setId(partId);
+		window.getChildren().add(part);
+
+		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+				state);
+
+		assertNull(part.getToolbar());
+
+		applyAll(operations);
+
+		toolBar = part.getToolbar();
+		assertNotNull(toolBar);
+		assertEquals(toolBarId, toolBar.getId());
+	}
+
+	public void testPart_ToolBar_Unset() {
+		String applicationId = createId();
+		String windowId = createId();
+		String partId = createId();
+		String toolBarId = createId();
+
+		MApplication application = createApplication();
+		application.setId(applicationId);
+
+		MWindow window = createWindow(application);
+		window.setId(windowId);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setId(partId);
+		window.getChildren().add(part);
+
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		toolBar.setId(toolBarId);
+		part.setToolbar(toolBar);
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		part.setToolbar(null);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		application.setId(applicationId);
+
+		window = createWindow(application);
+		window.setId(windowId);
+
+		part = MApplicationFactory.eINSTANCE.createPart();
+		part.setId(partId);
+		window.getChildren().add(part);
+
+		toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		toolBar.setId(toolBarId);
+		part.setToolbar(toolBar);
+
+		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+				state);
+
+		assertEquals(toolBar, part.getToolbar());
+		assertEquals(toolBarId, part.getToolbar().getId());
+
+		applyAll(operations);
+
+		assertNull(part.getToolbar());
+	}
+
 	private void testPart_ToolBar_Visible(boolean before, boolean after) {
 		String applicationId = createId();
 		String windowId = createId();
@@ -219,7 +317,6 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		application.setFactory(new Object());
 		toolBar.setVisible(after);
 
 		Object state = reconciler.serialize();

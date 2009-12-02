@@ -101,7 +101,6 @@ public abstract class ModelReconcilerViewSashContainerTest extends
 		viewSashContainer.getChildren().remove(0);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		application.setId(applicationId);
