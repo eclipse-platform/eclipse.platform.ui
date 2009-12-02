@@ -47,7 +47,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.custom.ViewForm;
 import org.eclipse.swt.events.ModifyEvent;
@@ -105,7 +104,7 @@ public class LaunchConfigurationTabGroupViewer {
 	/**
 	 * Composite containing the launch config tab widgets
 	 */
-	private ScrolledComposite fTabComposite;
+	private Composite fGroupComposite;
 	
 	/**
 	 * Tab folder
@@ -223,13 +222,10 @@ public class LaunchConfigurationTabGroupViewer {
 		
 		createGettingStarted(fGettingStarted);
 		
-		fTabComposite = SWTFactory.createScrolledComposite(fTabPlaceHolder, 2, GridData.FILL_BOTH, 0, 0);
-		fTabComposite.setAlwaysShowScrollBars(false);
-		Composite comp = SWTFactory.createComposite(fTabComposite, fTabComposite.getFont(), 2, 2, GridData.FILL_BOTH, 5, 5);
-		fTabComposite.setContent(comp);
-		SWTFactory.createLabel(comp, LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16, 1);
+		fGroupComposite = SWTFactory.createComposite(fTabPlaceHolder, fTabPlaceHolder.getFont(), 2, 2, GridData.FILL_BOTH, 5, 5);
+		SWTFactory.createLabel(fGroupComposite, LaunchConfigurationsMessages.LaunchConfigurationDialog__Name__16, 1);
        
-		fNameWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
+		fNameWidget = new Text(fGroupComposite, SWT.SINGLE | SWT.BORDER);
         fNameWidget.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
         fNameWidget.addModifyListener(new ModifyListener() {
     				public void modifyText(ModifyEvent e) {
@@ -240,7 +236,7 @@ public class LaunchConfigurationTabGroupViewer {
     			}
     		);
     		
-		createTabFolder(comp);
+		createTabFolder(fGroupComposite);
 		
 		Composite blComp = SWTFactory.createComposite(mainComp, mainComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
 		Composite linkComp = SWTFactory.createComposite(blComp, blComp.getFont(), 2, 1, GridData.FILL_HORIZONTAL);
@@ -690,7 +686,7 @@ public class LaunchConfigurationTabGroupViewer {
 		fRevertButton.setVisible(visible);
 		fOptionsLink.setVisible(visible);
 		if(visible) {
-			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fTabComposite;
+			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGroupComposite;
 		}
 		else {
 			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGettingStarted;
@@ -801,8 +797,6 @@ public class LaunchConfigurationTabGroupViewer {
 				break;
 			}
 		}
-		
-		fTabComposite.setMinSize(fTabComposite.getContent().computeSize(SWT.DEFAULT, SWT.DEFAULT));
 		fDescription = getDescription(configType);
 	}	
 
@@ -1205,7 +1199,7 @@ public class LaunchConfigurationTabGroupViewer {
 		fDisposingTabs = true;
         fTabFolder.dispose();
         fTabFolder = null;
-		createTabFolder((Composite) fTabComposite.getContent());
+		createTabFolder(fGroupComposite);
 		disposeTabGroup();
 		fDisposingTabs = false;
 	}	
