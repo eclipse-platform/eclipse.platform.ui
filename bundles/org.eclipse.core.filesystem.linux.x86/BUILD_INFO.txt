@@ -2,9 +2,9 @@ Native Build Info:
 ------------------
 
 platform:         linux.x86
-built by:         szymon.brandys@pl.ibm.com
-build date:       07-Dec-2007
-OS Name:          Red Hat Enterprise Linux AS release 4 (Nahant Update 4)
-OS Version:       Linux 2.6.9-42.0.10.ELsmp
-Compiler version: gcc version 3.4.6-3
-Java version:     Standard Edition (build 1.4.2_16-b05)
+built by:         pawel.pogorzelski@pl.ibm.com
+build date:       02-Dec-2009
+OS Name:          Red Hat Enterprise Linux AS release 4 (Nahant Update 2)
+OS Version:       Linux 2.6.9-22.0.10.ELsmp
+Compiler version: gcc version 3.4.4-2
+Java version:     1.5.0 IBM J9 2.3 Linux x86-32 j9vmxi3223-20080710
