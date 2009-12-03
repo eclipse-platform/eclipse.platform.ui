@@ -274,7 +274,9 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			rememberCurrentParticipant();
 		}			
 		fParticipantToPart = null;
-		fPartToParticipant = null;	
+		fPartToParticipant = null;
+		// Remove 'Link with Editor' listener, even if we didn't register it
+		getSite().getPage().removePartListener(fLinkWithEditorListener);
 	}
 
     /**
@@ -793,7 +795,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 			return a.equals(b);
 		}
 	};
-	
+
 	public void setLinkingEnabled(boolean enabled) {
 		fLinkingEnabled= enabled;
 		IDialogSettings dialogSettings = getDialogSettings();
@@ -833,14 +835,14 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 	}
 
 	/**
-	 * An editor has been activated.  Set the selection in this Packages Viewer
+	 * An editor has been activated. Set the selection in the Sync View
 	 * to be the editor's input, if linking is enabled.
 	 * @param editor the activated editor
 	 */
 	private void editorActivated(IEditorPart editor) {
-        if (!isLinkingEnabled())
-            return;
-		
+		if (!isLinkingEnabled())
+			return;
+
 		IEditorInput editorInput= editor.getEditorInput();
 		if (editorInput == null)
 			return;
@@ -902,7 +904,7 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		if (currentPage instanceof ISynchronizePage) {
 			return (TreeViewer) ((ISynchronizePage)currentPage).getViewer();
 		}
-		// TODO: nobody is expecting null!
+		// TODO: nobody expects null!
 		return null;
 	}
 
