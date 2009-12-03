@@ -362,6 +362,23 @@
          </enablement>
       </decorator>
       <decorator
+            lightweight="true"
+            adaptable="true"
+            location="BOTTOM_RIGHT"
+            label="%DecoratorVirtualResource.label"
+            class="org.eclipse.ui.internal.ide.VirtualResourceDecorator"
+            state="true"
+            id="org.eclipse.ui.VirtualResourceDecorator">
+         <description>
+            %DecoratorVirtualResource.description
+         </description>
+         <enablement>
+            <objectClass
+                  name="org.eclipse.core.resources.IResource">
+            </objectClass>
+         </enablement>
+      </decorator>
+      <decorator
             adaptable="false"
             class="org.eclipse.ui.internal.ide.ContentTypeDecorator"
             id="org.eclipse.ui.ContentTypeDecorator"
