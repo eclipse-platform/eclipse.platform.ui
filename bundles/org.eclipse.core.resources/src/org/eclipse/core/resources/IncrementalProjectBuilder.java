@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ * Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
  *******************************************************************************/
 package org.eclipse.core.resources;
 
@@ -227,6 +228,11 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * build. The delta returned will be valid only for the duration of the
 	 * enclosing build execution.
 	 * </p>
+	 * <p>
+	 * If {@link #getRule()} is overridden to return a scheduling rule other than 
+	 * the workspace root, the delta returned by this method may be incomplete
+	 * since the builder cannot control changes outside its scheduling rule.
+	 * </p>
 	 * 
 	 * @return the resource delta for the project or <code>null</code>
 	 */
@@ -341,13 +347,41 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	protected void startupOnInitialize() {
 		// reserved for future use
 	}
-	
+
 	/**
 	 * Returns the scheduling rule that is required for building 
 	 * the project for which this builder is defined. The default 
 	 * is the workspace root rule.
 	 * 
-	 * @return scheduling rule
+	 * The scheduling rule determines which resources in the workspace are 
+	 * protected from being modified while the builder is running. Up until
+	 * Eclipse 3.5, the entire workspace was always locked during a build;
+	 * since Eclipse 3.6, builders can allow resources outside their scheduling
+	 * rule to be modified.
+	 * <p>
+	 * <strong>Notes:</strong>
+	 * <ul>
+	 * <li>
+	 * The builder rule must be "contained" in the workspace root rule.
+	 * I.e. {@link ISchedulingRule#contains(ISchedulingRule)} must return 
+	 * <code>true</code> when invoked on the workspace root with the builder rule.
+	 * </li>
+	 * <li>
+	 * The rule returned here has no effect in case of an automatic build 
+	 * or any other workspace-wide build, since the builder is still invoked 
+	 * inside a workspace root rule in this case.
+     * </li>
+     * <li>
+	 * If this method returns any rule other than the workspace root,
+	 * resources can be modified concurrently to the build. Therefore, the
+	 * delta returned by {@link #getDelta(IProject)} might be incomplete.
+	 * The builder should be configured with the "callOnEmptyDelta" option 
+	 * enabled in this case. This will ensure that the builder is called
+	 * even if the delta appears to be empty.
+	 * </ul>
+	 * </p>
+	 * 
+	 * @return a scheduling rule which is contained in the workspace root rule
 	 * 
 	 * @since 3.5
 	 */

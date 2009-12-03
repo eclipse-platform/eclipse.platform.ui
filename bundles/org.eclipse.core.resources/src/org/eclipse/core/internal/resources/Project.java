@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Serge Beauchamp (Freescale Semiconductor) - [229633] Project Path Variable Support
+ * Anton Leherbauer (Wind River) - [198591] Allow Builder to specify scheduling rule
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
@@ -552,7 +553,7 @@ public class Project extends Container implements IProject {
 				return true;
 			}
 
-		}, monitor);
+		}, null, IWorkspace.AVOID_UPDATE, monitor);
 	}
 
 
