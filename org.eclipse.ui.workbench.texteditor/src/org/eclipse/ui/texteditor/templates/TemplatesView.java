@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Dakshinamurthy Karra (Jalian Systems) - Templates View - https://bugs.eclipse.org/bugs/show_bug.cgi?id=69581
- *     Piotr Maj (pm@jcake.com) - no access to template store and current selection - https://bugs.eclipse.org/bugs/show_bug.cgi?id=296439
+ *     Piotr Maj <pm@jcake.com> - no access to template store and current selection - https://bugs.eclipse.org/bugs/show_bug.cgi?id=296439
  *******************************************************************************/
 package org.eclipse.ui.texteditor.templates;
 

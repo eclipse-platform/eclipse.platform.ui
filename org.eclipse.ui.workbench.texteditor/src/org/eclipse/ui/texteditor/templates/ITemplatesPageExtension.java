@@ -6,7 +6,7 @@
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     Piotr Maj (pm@jcake.com) - initial API and implementation
+ *     Piotr Maj <pm@jcake.com> - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.texteditor.templates;
 

@@ -7,7 +7,7 @@
  *
  * Contributors:
  *     Dakshinamurthy Karra (Jalian Systems) - Templates View - https://bugs.eclipse.org/bugs/show_bug.cgi?id=69581
- *    Piotr Maj (pm@jcake.com) - no access to template store and current selection - https://bugs.eclipse.org/bugs/show_bug.cgi?id=296439
+ *     Piotr Maj <pm@jcake.com> - no access to template store and current selection - https://bugs.eclipse.org/bugs/show_bug.cgi?id=296439
  *******************************************************************************/
 package org.eclipse.ui.texteditor.templates;
 
@@ -125,14 +125,6 @@ import org.eclipse.ui.texteditor.templates.TemplatePreferencePage.EditTemplateDi
  * </p>
  *
  * @since 3.4
- */
-/**
- * 
- * @since 3.6
- */
-/**
- * 
- * @since 3.6
  */
 public abstract class AbstractTemplatesPage extends Page implements ITemplatesPage, ITemplatesPageExtension {
 
@@ -1242,7 +1234,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	 * Returns the currently selected templates
 	 * 
 	 * @return selected templates
-	 * @since 3.6 public, before it was protected
+	 * @since 3.6 public, before it was private
 	 */
 	public TemplatePersistenceData[] getSelectedTemplates() {
 		return fSelectedTemplates;
