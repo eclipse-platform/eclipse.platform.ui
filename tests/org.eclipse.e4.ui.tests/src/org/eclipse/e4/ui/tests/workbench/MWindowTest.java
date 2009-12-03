@@ -194,6 +194,25 @@ public class MWindowTest extends TestCase {
 		fileMenu.notifyListeners(SWT.Hide, null);
 	}
 
+	public void testWindow_Name() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		window.setName("windowName");
+
+		wb = new E4Workbench(window, appContext);
+
+		Object widget = window.getWidget();
+		assertTrue(widget instanceof Shell);
+
+		Shell shell = (Shell) widget;
+		assertEquals(shell.getText(), window.getName());
+		assertEquals("windowName", shell.getText());
+
+		// the shell's name should have been updated
+		window.setName("windowName2");
+		assertEquals(shell.getText(), window.getName());
+		assertEquals("windowName2", shell.getText());
+	}
+
 	private MPart getContributedPart(MWindow window) {
 		MPartSashContainer psc = (MPartSashContainer) window.getChildren().get(
 				0);
