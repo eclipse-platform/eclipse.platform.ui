@@ -586,6 +586,10 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      *            the part to activate
      */
     public void activate(IWorkbenchPart part) {
+		internalActivate(part, false);
+	}
+
+	private void internalActivate(IWorkbenchPart part, boolean force) {
         // Sanity check.
         if (!certifyPart(part)) {
 			return;
@@ -610,7 +614,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         //if (window.getActivePage() == this) {
         IWorkbenchPartReference ref = getReference(part);
         internalBringToTop(ref);
-        setActivePart(part);
+		setActivePart(part, force);
     }
 
     /**
@@ -1237,11 +1241,11 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
      */
     private void makeActive(IWorkbenchPartReference ref) {
         if (ref == null) {
-            setActivePart(null);
+			setActivePart(null, false);
         } else {
             IWorkbenchPart newActive = ref.getPart(true);
             if (newActive == null) {
-                setActivePart(null);
+				setActivePart(null, false);
             } else {
                 activate(newActive);
             }
@@ -3070,7 +3074,7 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
         }
 
         // Real work.
-        setActivePart(part);
+		setActivePart(part, false);
     }
 
     /**
@@ -3472,9 +3476,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
     /**
      * Sets the active part.
      */
-    private void setActivePart(IWorkbenchPart newPart) {
+	private void setActivePart(IWorkbenchPart newPart, boolean force) {
         // Optimize it.
-        if (getActivePart() == newPart) {
+		if (!force && (getActivePart() == newPart)) {
             return;
         }
         
@@ -3874,9 +3878,9 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
                 IEditorPart activeEditor = getActiveEditor();
                 if (activeEditor != null
                         && previouslyActive instanceof IEditorPart) {
-					setActivePart(activeEditor);
+					setActivePart(activeEditor, false);
 				} else {
-					setActivePart(previouslyActive);
+					setActivePart(previouslyActive, false);
 				}
             }
         }
@@ -5111,20 +5115,27 @@ public class WorkbenchPage extends CompatibleWorkbenchPage implements
 								activationList.bringToTop(results[i]);
 							}
 
-							// Force focus to the first editor. The activation
-							// above does most of the work, but does not set
-							// the SWT widget focus as the widget's parents
-							// aren't visible until deferred updates are
-							// processed.
-
-							// Only consider first editor for the force focus
-							// as any other editor potentially needs to be fully
-							// activated using #activate().
-							if (results[0] != null) {
-								IEditorPart editorPart = results[0]
+							// The first request for activation done above is
+							// required to properly position editor tabs.
+							// However, when it is done the updates are deferred
+							// and container of the editor is not visible.
+							// As a result the focus is not set.
+							// Therefore, find the first created editor and
+							// activate it again:
+							for (int i = 0; i < results.length; i++) {
+								if (results[i] == null)
+									continue;
+								IEditorPart editorPart = results[i]
 										.getEditor(true);
-								if (editorPart != null)
-									activatePart(editorPart);
+								if (editorPart == null)
+									continue;
+								if (editorPart instanceof AbstractMultiEditor)
+									internalActivate(
+											((AbstractMultiEditor) editorPart)
+													.getActiveEditor(), true);
+								else
+									internalActivate(editorPart, true);
+								break;
 							}
 						} finally {
 							workbench.largeUpdateEnd();
