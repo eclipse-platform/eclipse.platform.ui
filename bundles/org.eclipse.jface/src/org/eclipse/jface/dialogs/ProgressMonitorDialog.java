@@ -152,7 +152,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	private class ProgressMonitor implements IProgressMonitorWithBlocking {
 		private String fSubTask = "";//$NON-NLS-1$
 
-		private boolean fIsCanceled;
+		private volatile boolean fIsCanceled;
 
 		/**
 		 * is the process forked

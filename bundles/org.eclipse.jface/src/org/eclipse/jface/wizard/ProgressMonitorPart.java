@@ -55,7 +55,7 @@ public class ProgressMonitorPart extends Composite implements
     protected Control fCancelComponent;
 
     /** true if canceled */
-    protected boolean fIsCanceled;
+    protected volatile boolean fIsCanceled;
 
     /** current blocked status */
     protected IStatus blockedStatus;

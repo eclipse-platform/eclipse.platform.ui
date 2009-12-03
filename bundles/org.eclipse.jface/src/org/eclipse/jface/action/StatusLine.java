@@ -73,7 +73,7 @@ import org.eclipse.jface.util.Util;
 	protected String fTaskName;
 
 	/** is the task is cancled */
-	protected boolean fIsCanceled;
+	protected volatile boolean fIsCanceled;
 
 	/** the start time of the task */
 	protected long fStartTime;
