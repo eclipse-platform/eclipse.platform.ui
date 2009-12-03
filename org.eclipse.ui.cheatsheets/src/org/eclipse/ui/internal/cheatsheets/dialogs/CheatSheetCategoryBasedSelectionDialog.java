@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2008 IBM Corporation and others.
+ *  Copyright (c) 2002, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -54,12 +54,12 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ITriggerPoint;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
+import org.eclipse.ui.forms.widgets.ScrolledFormText;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
@@ -88,7 +88,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 
 	private TreeViewer treeViewer;
 
-	private Text desc;
+	private ScrolledFormText desc;
 
 	private Button showAllButton;
 	
@@ -284,8 +284,7 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		treeViewer.addSelectionChangedListener(this);
 		treeViewer.setInput(cheatsheetCategories);
 
-		desc = new Text(sform, SWT.MULTI | SWT.WRAP);
-		desc.setEditable(false);
+		desc = new ScrolledFormText(sform, true);
 
 		sform.setWeights(new int[] {10, 2});
 		
@@ -531,11 +530,14 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 			currentSelection = (CheatSheetElement) obj;
 		}
 
+		String description; 
 		if (currentSelection != null) {
-			desc.setText(currentSelection.getDescription());
-		} else {
-			desc.setText(""); //$NON-NLS-1$
+			description = currentSelection.getDescription();
+		} else {	
+			description = ""; //$NON-NLS-1$
 		}
+		desc.getFormText().setText(description, false, false);
+		desc.reflow(true);
 		setOkButton();
 	}
 	
