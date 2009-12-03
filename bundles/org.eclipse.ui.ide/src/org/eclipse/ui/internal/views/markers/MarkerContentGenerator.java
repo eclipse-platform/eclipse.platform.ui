@@ -821,9 +821,10 @@ public class MarkerContentGenerator {
 	void updateSelectedResource(Object[] newElements) {
 		if (updateNeededForSelection(newElements)) {
 			internalUpdateSelectedElements(newElements);
-			if (contentChanged()) {
-				requestMarkerUpdate();
-			}
+			// See comments below and Bug 296695
+			// if (contentChanged()) {
+			requestMarkerUpdate();
+			// }
 		}
 	}
 
@@ -903,48 +904,64 @@ public class MarkerContentGenerator {
 				getSelectedResources(), getEnabledFilters(), andFilters());
 		return currentResources;
 	}
-
-	/**
-	 * Change in markers itself is taken care of by the IResourceChangeListener,
-	 * We can think about change in the resource content when filters have
-	 * changed or selections have changed and the particular update we perform
-	 * manually is not required at all since nothing had changed.This is
-	 * particularly useful when a filter is set to 'On Selected element scope'.A
-	 * change in a filter is a combination of both its scope and other settings.
-	 * 
-	 * 
-	 * @return true if the resource-content has changed due to change in filter
-	 *         settings or selection. false if content has not change or an
-	 *         update has cleared the changes.
+	
+	/*
+	 * See Bug 296695: This method is trickier than it may seem/appears to be.If
+	 * it is ever desired to use this, it would need to be *RE-IMPLEMENTED* and
+	 * would need a good amount of testing with various combination of filters
+	 * and scopes. The key here is to understand and getting it right how filter
+	 * scope and our trimmed, optimized resources and selected resource elements
+	 * interact. 
+	 * Another possible way to check if content has changed is by
+	 * comparing the markers gathered freshly with the previously gathered
+	 * markers(cache them when an update is not canceled), whether this up to a
+	 * visible limit, or completely, or selected filters we have to see. I am
+	 * assuming that this takes little time to do. If this is done prior to
+	 * sorting a good amount of time can be saved; we still save the UI time if
+	 * checked after sorting. In the sorted case we can use a Binary search as
+	 * well.Anyhow if this does take up time, we should skip this method.
 	 */
-	boolean contentChanged() {
-		if (enabledFilters == null || enabledFilters == FILTERS_CHANGED) {
-			/*
-			 * TODO:Find a more narrowing way to check if active filters have
-			 * actually changed.Right now the update filter method set the
-			 * enabled filters to null. TODO: We should use a preference
-			 * listener for this We can 'optimally' use it for filter change
-			 * only on fixing the above.
-			 */
-			return true;
-		}
-		Collection current = MarkerResourceUtil.computeResources(
-				getSelectedResources(), getEnabledFilters(), andFilters());
-		Collection activeResources = currentResources;
-		if (current.size() != activeResources.size()) {
-			// changed
-			return true;
-		}
-		Iterator iterator = activeResources.iterator();
-		boolean needsUpdate = false;
-		while (!needsUpdate && iterator.hasNext()) {
-			Object object = iterator.next();
-			if (!current.contains(object)) {
-				needsUpdate = true;
-			}
-		}
-		return needsUpdate;
-	}
+//	/**
+//	 * Change in markers itself is taken care of by the IResourceChangeListener,
+//	 * We can think about change in the resource content when filters have
+//	 * changed or selections have changed and the particular update we perform
+//	 * manually is not required at all since nothing had changed.This is
+//	 * particularly useful when a filter is set to 'On Selected element scope'.A
+//	 * change in a filter is a combination of both its scope and other settings.
+//	 * 
+//	 * 
+//	 * @return true if the resource-content has changed due to change in filter
+//	 *         settings or selection. false if content has not change or an
+//	 *         update has cleared the changes.
+//	 */
+//	boolean contentChanged() {
+//		if (enabledFilters == null || enabledFilters == FILTERS_CHANGED) {
+//			/*
+//			 * TODO:Find a more narrowing way to check if active filters have
+//			 * actually changed.Right now the update filter method set the
+//			 * enabled filters to null. TODO: We should use a preference
+//			 * listener for this We can 'optimally' use it for filter change
+//			 * only on fixing the above.
+//			 */
+//			return true;
+//		}
+//		Collection current = MarkerResourceUtil.computeResources(
+//				getSelectedResources(), getEnabledFilters(), andFilters());
+//		Collection activeResources = currentResources;
+//		if (current.size() != activeResources.size()) {
+//			// changed
+//			return true;
+//		}
+//		Iterator iterator = activeResources.iterator();
+//		boolean needsUpdate = false;
+//		while (!needsUpdate && iterator.hasNext()) {
+//			Object object = iterator.next();
+//			if (!current.contains(object)) {
+//				needsUpdate = true;
+//			}
+//		}
+//		return needsUpdate;
+//	}
 
 	/**
 	 * Refresh gathered markers entries
@@ -1009,7 +1026,8 @@ public class MarkerContentGenerator {
 				}
 			}
 		} catch (Exception e) {
-			MarkerSupportInternalUtilities.logViewError(e);
+			//do not propagate but do show the error 
+			MarkerSupportInternalUtilities.showViewError(e);
 			return false;
 		} finally {
 		}
