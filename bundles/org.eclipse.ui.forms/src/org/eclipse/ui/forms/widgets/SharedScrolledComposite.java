@@ -7,8 +7,6 @@
  * 
  *  Contributors:
  *     IBM Corporation - initial API and implementation
- *     Wojciech Galanciak - fix for Bug 294868 – [Forms] Problem with text 
- *     wrapping in SharedScrolledComposite:
  *******************************************************************************/
 package org.eclipse.ui.forms.widgets;
 
@@ -180,8 +178,7 @@ public abstract class SharedScrolledComposite extends ScrolledComposite {
 		Rectangle clientArea = getClientArea();
 		if (c == null)
 			return;
-		if (clientArea.width == getSize().x) 
-			clientArea.width -= getVerticalBar().getSize().x;
+
 		contentCache.setControl(c);
 		if (flushCache) {
 			contentCache.flush();
