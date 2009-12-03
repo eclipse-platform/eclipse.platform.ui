@@ -229,9 +229,10 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * enclosing build execution.
 	 * </p>
 	 * <p>
+	 * The delta does not include changes made while this builder is running.
 	 * If {@link #getRule()} is overridden to return a scheduling rule other than 
-	 * the workspace root, the delta returned by this method may be incomplete
-	 * since the builder cannot control changes outside its scheduling rule.
+	 * the workspace root, changes performed in other threads during the build
+	 * will not appear in the resource delta.
 	 * </p>
 	 * 
 	 * @return the resource delta for the project or <code>null</code>
@@ -354,7 +355,7 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * is the workspace root rule.
 	 * 
 	 * The scheduling rule determines which resources in the workspace are 
-	 * protected from being modified while the builder is running. Up until
+	 * protected from being modified by other threads while the builder is running. Up until
 	 * Eclipse 3.5, the entire workspace was always locked during a build;
 	 * since Eclipse 3.6, builders can allow resources outside their scheduling
 	 * rule to be modified.
@@ -367,17 +368,15 @@ public abstract class IncrementalProjectBuilder extends InternalBuilder implemen
 	 * <code>true</code> when invoked on the workspace root with the builder rule.
 	 * </li>
 	 * <li>
-	 * The rule returned here has no effect in case of an automatic build 
-	 * or any other workspace-wide build, since the builder is still invoked 
-	 * inside a workspace root rule in this case.
+	 * The rule returned here may have no effect if the build is invoked within the 
+	 * scope of another operation that locks the entire workspace.
      * </li>
      * <li>
 	 * If this method returns any rule other than the workspace root,
-	 * resources can be modified concurrently to the build. Therefore, the
-	 * delta returned by {@link #getDelta(IProject)} might be incomplete.
-	 * The builder should be configured with the "callOnEmptyDelta" option 
-	 * enabled in this case. This will ensure that the builder is called
-	 * even if the delta appears to be empty.
+	 * resources outside of the rule scope can be modified concurrently with the build. 
+	 * The delta returned by {@link #getDelta(IProject)} for any project
+	 * outside the scope of the builder's rule will not contain changes that occurred 
+	 * concurrently with the build.
 	 * </ul>
 	 * </p>
 	 * 
