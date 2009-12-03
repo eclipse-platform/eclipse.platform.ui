@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -2451,11 +2450,11 @@ public class WorkbenchWindow extends ApplicationWindow implements
 
 	/**
 	 * Helper method used for restoring an old cool bar layout. This method
-	 * reads the memento and populatates the item id's and wrap indicies.
+	 * reads the memento and populates the item id's and wrap indices.
 	 */
 	private boolean readLayout(IMemento memento, ArrayList itemIds,
 			ArrayList wrapIndicies) {
-		// Get the Wrap indicies
+		// Get the Wrap indices
 		IMemento[] wraps = memento
 				.getChildren(IWorkbenchConstants.TAG_ITEM_WRAP_INDEX);
 		if (wraps == null) {
@@ -2555,7 +2554,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 		boolean perspectiveBarWasEnabled = perspectiveBarControl == null ? false
 				: perspectiveBarControl.getEnabled();
 
-		// Cache for any diabled trim controls
+		// Cache for any disabled trim controls
 		List disabledControls = null;
 		
 		try {
