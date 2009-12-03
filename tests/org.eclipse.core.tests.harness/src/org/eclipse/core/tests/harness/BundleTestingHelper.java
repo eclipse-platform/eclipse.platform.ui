@@ -96,16 +96,17 @@ public class BundleTestingHelper {
 		context.ungetService(packageAdminRef);
 	}
 
-	public static void resolveBundles(BundleContext context, Bundle[] bundles) {
+	public static boolean  resolveBundles(BundleContext context, Bundle[] bundles) {
 		ServiceReference packageAdminRef = context.getServiceReference(PackageAdmin.class.getName());
 		PackageAdmin packageAdmin = null;
 		if (packageAdminRef != null) {
 			packageAdmin = (PackageAdmin) context.getService(packageAdminRef);
 			if (packageAdmin == null)
-				return;
+				return false;
 		}
-		packageAdmin.resolveBundles(bundles);
+		boolean result = packageAdmin.resolveBundles(bundles);
 		context.ungetService(packageAdminRef);
+		return result;
 	}
 
 	public static void runWithBundles(String tag, Runnable runnable, BundleContext context, String[] locations, TestRegistryChangeListener listener) {
@@ -124,7 +125,8 @@ public class BundleTestingHelper {
 				}
 			if (listener != null)
 				listener.reset();
-			BundleTestingHelper.resolveBundles(context, installed);
+			if (!BundleTestingHelper.resolveBundles(context, installed))
+				Assert.fail(tag + ".setup.resolveBundles");
 			if (listener != null) {
 				// ensure the contributions were properly added
 				Assert.assertTrue(tag + ".setup.4", listener.eventReceived(installed.length * 10000));

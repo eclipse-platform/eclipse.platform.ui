@@ -69,7 +69,7 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 			return; // this is not the event we are interested in
 		events.add(newEvent);
 		simpleEvents.add(new Integer(delta.getKind()));
-		notify();
+		notifyAll();
 	}
 
 	/**
@@ -113,16 +113,20 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	 * @since 3.4
 	 */
 	public synchronized int eventTypeReceived(long timeout) {
-		if (!simpleEvents.isEmpty())
-			return ((Integer) simpleEvents.remove(0)).intValue();
-		try {
-			wait(timeout);
-		} catch (InterruptedException e) {
-			// who cares?
+		long start = System.currentTimeMillis();
+		while (simpleEvents.isEmpty()) {
+			try {
+				long sleepTime = timeout - (System.currentTimeMillis()-start);
+				if (sleepTime <= 0)
+					break;
+				wait(sleepTime);
+			} catch (InterruptedException e) {
+				// who cares?
+			}
 		}
 		return simpleEvents.isEmpty() ? NO_EVENT : ((Integer) simpleEvents.remove(0)).intValue();
 	}
-	
+
 	/**
 	 * Wait for a registry event that fits IDs specified in the constructor, blocking for 
 	 * at most <code>timeout</code> milliseconds.
