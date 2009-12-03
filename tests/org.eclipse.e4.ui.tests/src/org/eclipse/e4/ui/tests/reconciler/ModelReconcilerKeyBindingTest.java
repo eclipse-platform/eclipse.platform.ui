@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerKeyBindingTest extends ModelReconcilerTest {
@@ -56,12 +56,12 @@ public abstract class ModelReconcilerKeyBindingTest extends ModelReconcilerTest 
 		keyBinding.setCommand(command);
 		application.getBindings().add(keyBinding);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, keyBinding.getKeySequence());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, keyBinding.getKeySequence());
 	}

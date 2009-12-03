@@ -19,7 +19,7 @@ import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
@@ -59,12 +59,12 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		part.setId(partId);
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, part.getMenus().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, part.getMenus().size());
 
@@ -113,14 +113,14 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		menu.setId(menuId);
 		part.getMenus().add(menu);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, part.getMenus().size());
 		assertEquals(menu, part.getMenus().get(0));
 		assertEquals(menuId, part.getMenus().get(0).getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, part.getMenus().size());
 	}
@@ -168,12 +168,12 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		menu.setId(menuId);
 		part.getMenus().add(menu);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, menu.isVisible());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, menu.isVisible());
 	}
@@ -229,12 +229,12 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		part.setId(partId);
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertNull(part.getToolbar());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		toolBar = part.getToolbar();
 		assertNotNull(toolBar);
@@ -282,13 +282,13 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		toolBar.setId(toolBarId);
 		part.setToolbar(toolBar);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(toolBar, part.getToolbar());
 		assertEquals(toolBarId, part.getToolbar().getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertNull(part.getToolbar());
 	}
@@ -336,12 +336,12 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		toolBar.setId(toolBarId);
 		part.setToolbar(toolBar);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, toolBar.isVisible());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, toolBar.isVisible());
 	}

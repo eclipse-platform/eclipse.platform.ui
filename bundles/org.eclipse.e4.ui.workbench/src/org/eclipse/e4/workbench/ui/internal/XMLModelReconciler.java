@@ -38,7 +38,7 @@ import org.eclipse.e4.ui.model.application.MView;
 import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.SideValue;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.EMap;
@@ -67,151 +67,6 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private static final String UNSET_ATTNAME = "unset"; //$NON-NLS-1$
 	private static final String UNSET_ATTVALUE_TRUE = "true"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MApplications (value is <code>commands</code>).
-	 */
-	private static final String COMMANDS_ATTNAME = "commands"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MContributions (value is <code>persistedState</code>).
-	 */
-	private static final String PERSISTEDSTATE_ATTNAME = "persistedState"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MHandlerContainers (value is <code>handlers</code>).
-	 */
-	private static final String HANDLERS_ATTNAME = "handlers"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MUIItems (value is <code>name</code>).
-	 */
-	private static final String NAME_ATTNAME = "name"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MUIItems (value is <code>tooltip</code>).
-	 */
-	private static final String TOOLTIP_ATTNAME = "tooltip"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MUIItems (value is <code>iconURI</code>).
-	 */
-	private static final String ICONURI_ATTNAME = "iconURI"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MUIElements (value is <code>visible</code>).
-	 */
-	private static final String VISIBLE_ATTNAME = "visible"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MUIElements (value is <code>parent</code>).
-	 */
-	private static final String PARENT_ATTNAME = "parent"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MElementContainers (value is <code>children</code>).
-	 */
-	private static final String CHILDREN_ATTNAME = "children"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MElementContainers (value is <code>activeChild</code>).
-	 */
-	private static final String ACTIVECHILD_ATTNAME = "activeChild"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MWindows (value is <code>x</code>).
-	 */
-	private static final String X_ATTNAME = "x"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MWindows (value is <code>y</code>).
-	 */
-	private static final String Y_ATTNAME = "y"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MWindows (value is <code>width</code>).
-	 */
-	private static final String WIDTH_ATTNAME = "width"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MWindows (value is <code>height</code>).
-	 */
-	private static final String HEIGHT_ATTNAME = "height"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MWindows (value is <code>mainMenu</code>).
-	 */
-	private static final String MAINMENU_ATTNAME = "mainMenu"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MCommands and MHandledItems (value is <code>commandName</code>).
-	 */
-	private static final String COMMANDNAME_ATTNAME = "commandName"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MCommands (value is <code>description</code>).
-	 */
-	private static final String DESCRIPTION_ATTNAME = "description"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MKeySequences (value is <code>keySequence</code>).
-	 */
-	private static final String KEYSEQUENCE_ATTNAME = "keySequence"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MParts (value is <code>menus</code>).
-	 */
-	private static final String MENUS_ATTNAME = "menus"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MParts (value is <code>toolbar</code>).
-	 */
-	private static final String TOOLBAR_ATTNAME = "toolbar"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MGenericTiles and MTrimContainers (value is <code>horizontal</code>).
-	 */
-	private static final String HORIZONTAL_ATTNAME = "horizontal"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MGenericTiles (value is <code>weights</code>).
-	 */
-	private static final String WEIGHTS_ATTNAME = "weights"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MTrimContainers (value is <code>side</code>).
-	 */
-	private static final String SIDE_ATTNAME = "side"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MBindingContainers (value is <code>bindings</code>).
-	 */
-	private static final String BINDINGS_ATTNAME = "bindings"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MHandlers and MKeyBindings (value is <code>command</code>).
-	 */
-	private static final String COMMAND_ATTNAME = "command"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MCommands (value is <code>parameters</code>).
-	 */
-	private static final String PARAMETERS_ATTNAME = "parameters"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MItems (value is <code>enabled</code>).
-	 */
-	private static final String ENABLED_ATTNAME = "enabled"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MItems (value is <code>selected</code>).
-	 */
-	private static final String SELECTED_ATTNAME = "selected"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MItems (value is <code>separator</code>).
-	 */
-	private static final String SEPARATOR_ATTNAME = "separator"; //$NON-NLS-1$
 
 	private ChangeRecorder changeRecorder;
 
@@ -292,14 +147,14 @@ public class XMLModelReconciler extends ModelReconciler {
 		return references;
 	}
 
-	public Collection<ModelDeltaOperation> applyDeltas(Object object, Object serializedState) {
+	public Collection<ModelDelta> constructDeltas(Object object, Object serializedState) {
 		rootObject = (EObject) object;
 		List<Object> references = getReferences(new LinkedList<Object>(), rootObject);
 
 		Document document = (Document) serializedState;
 		Element root = document.getDocumentElement();
 
-		Collection<ModelDeltaOperation> operations = new LinkedList<ModelDeltaOperation>();
+		Collection<ModelDelta> operations = new LinkedList<ModelDelta>();
 
 		NodeList rootNodeList = (NodeList) root;
 		for (int i = 0; i < rootNodeList.getLength(); i++) {
@@ -424,7 +279,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return null;
 	}
 
-	private void applyDeltas(Collection<ModelDeltaOperation> operations, List<Object> references,
+	private void applyDeltas(Collection<ModelDelta> operations, List<Object> references,
 			EObject eObject, Element element) {
 		String id = element.getAttribute(ID_ATTNAME);
 		if (eObject instanceof MApplicationElement || eObject instanceof MKeyBinding) {
@@ -476,7 +331,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 	}
 
-	private void applyDelta(Collection<ModelDeltaOperation> deltaOperations,
+	private void applyDelta(Collection<ModelDelta> deltaOperations,
 			List<Object> references, EObject eObject, Element element) {
 		Collection<EStructuralFeature> features = collectFeatures(eObject);
 
@@ -485,11 +340,11 @@ public class XMLModelReconciler extends ModelReconciler {
 			Element node = (Element) nodeList.item(i);
 			String featureName = node.getNodeName();
 			if (isSingleReference(featureName)) {
-				ModelDeltaOperation operation = createSingleReferenceDeltaOperation(references,
+				ModelDelta operation = createSingleReferenceDeltaOperation(references,
 						eObject, features, node, featureName);
 				deltaOperations.add(operation);
 			} else if (isChainedReference(featureName)) {
-				ModelDeltaOperation operation = createMultiReferenceDeltaOperation(references,
+				ModelDelta operation = createMultiReferenceDeltaOperation(references,
 						eObject, features, node, featureName);
 				deltaOperations.add(operation);
 			} else if (isChainedAttribute(featureName)) {
@@ -503,18 +358,18 @@ public class XMLModelReconciler extends ModelReconciler {
 					values.add(value);
 				}
 
-				ModelDeltaOperation operation = new EMFModelDeltaSetOperation(eObject, feature,
+				ModelDelta operation = new EMFModelDeltaSet(eObject, feature,
 						values);
 				deltaOperations.add(operation);
 			} else {
-				ModelDeltaOperation operation = createAttributeDeltaOperation(references, eObject,
+				ModelDelta operation = createAttributeDeltaOperation(references, eObject,
 						features, node, featureName);
 				deltaOperations.add(operation);
 			}
 		}
 	}
 
-	private ModelDeltaOperation createSingleReferenceDeltaOperation(List<Object> references,
+	private ModelDelta createSingleReferenceDeltaOperation(List<Object> references,
 			EObject eObject, Collection<EStructuralFeature> features, Element node,
 			String featureName) {
 		Object match = null;
@@ -538,7 +393,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
 		features.remove(feature);
 
-		ModelDeltaOperation operation = new EMFModelDeltaSetOperation(eObject, feature, match);
+		ModelDelta operation = new EMFModelDeltaSet(eObject, feature, match);
 		return operation;
 	}
 
@@ -570,7 +425,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return collectedReferences;
 	}
 
-	private ModelDeltaOperation createMultiReferenceDeltaOperation(List<Object> references,
+	private ModelDelta createMultiReferenceDeltaOperation(List<Object> references,
 			EObject eObject, Collection<EStructuralFeature> features, Element node,
 			String featureName) {
 		NodeList referencedIds = (NodeList) node;
@@ -583,7 +438,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return applyIdentifiedReferenceDeltas(references, eObject, features, referencedIds, feature);
 	}
 
-	private ModelDeltaOperation applyBindingReferenceDeltas(List<Object> references,
+	private ModelDelta applyBindingReferenceDeltas(List<Object> references,
 			EObject eObject, Collection<EStructuralFeature> features, NodeList referencedIds,
 			EStructuralFeature feature) {
 		List<Object> originalReferences = new ArrayList<Object>();
@@ -610,7 +465,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		features.remove(feature);
 
 		Object merged = threeWayMerge(originalReferences, userReferences, currentReferences);
-		ModelDeltaOperation operation = new EMFModelDeltaSetOperation(eObject, feature, merged);
+		ModelDelta operation = new EMFModelDeltaSet(eObject, feature, merged);
 		return operation;
 	}
 
@@ -673,7 +528,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return createObject(reference.getAttribute(TYPE_ATTNAME), reference, references);
 	}
 
-	private ModelDeltaOperation applyIdentifiedReferenceDeltas(List<Object> references,
+	private ModelDelta applyIdentifiedReferenceDeltas(List<Object> references,
 			EObject eObject, Collection<EStructuralFeature> features, NodeList referencedIds,
 			EStructuralFeature feature) {
 		List<Object> originalReferences = new ArrayList<Object>();
@@ -700,27 +555,27 @@ public class XMLModelReconciler extends ModelReconciler {
 		features.remove(feature);
 
 		Object merged = threeWayMerge(originalReferences, userReferences, currentReferences);
-		ModelDeltaOperation operation = new EMFModelDeltaSetOperation(eObject, feature, merged);
+		ModelDelta operation = new EMFModelDeltaSet(eObject, feature, merged);
 		return operation;
 	}
 
-	private ModelDeltaOperation createAttributeDeltaOperation(List<Object> references,
+	private ModelDelta createAttributeDeltaOperation(List<Object> references,
 			EObject eObject, Collection<EStructuralFeature> features, Element node,
 			String featureName) {
 		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
 		features.remove(feature);
 
 		if (Boolean.parseBoolean(node.getAttribute(UNSET_ATTNAME))) {
-			return new EMFModelDeltaUnsetOperation(eObject, feature);
+			return new EMFModelDeltaUnset(eObject, feature);
 		}
 
 		if (isReference(feature)) {
 			Object reference = findReference(references, node.getAttribute(ID_ATTNAME));
-			return new EMFModelDeltaSetOperation(eObject, feature, reference);
+			return new EMFModelDeltaSet(eObject, feature, reference);
 		}
 
 		Object value = getValue(feature, node.getAttribute(featureName));
-		return new EMFModelDeltaSetOperation(eObject, feature, value);
+		return new EMFModelDeltaSet(eObject, feature, value);
 	}
 
 	private Document createDocument() {

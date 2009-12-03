@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerHandlerContainerTest extends
@@ -42,12 +42,12 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		application = createApplication();
 		application.setId(applicationId);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, application.getHandlers().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, application.getHandlers().size());
 
@@ -85,12 +85,12 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		command.setId(commandId);
 		application.getCommands().add(command);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, application.getHandlers().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, application.getHandlers().size());
 
@@ -124,7 +124,7 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		handler.setId(handlerId);
 		application.getHandlers().add(handler);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, application.getHandlers().size());
@@ -132,7 +132,7 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		handler = application.getHandlers().get(0);
 		assertEquals(handlerId, handler.getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, application.getHandlers().size());
 	}
@@ -173,7 +173,7 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		handler.setCommand(command);
 		application.getHandlers().add(handler);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, application.getHandlers().size());
@@ -182,7 +182,7 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		assertEquals(handlerId, handler.getId());
 		assertEquals(command, handler.getCommand());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, application.getHandlers().size());
 	}

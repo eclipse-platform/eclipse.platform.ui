@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
@@ -57,12 +57,12 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		part.setId(partId);
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, part.isVisible());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, part.isVisible());
 	}
@@ -122,13 +122,13 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		part.setId(partId);
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(!defaultValue, part.isVisible());
 		assertEquals("name", part.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(!defaultValue, part.isVisible());
 		assertEquals("newName", part.getName());
@@ -159,12 +159,12 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setWidget(before);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, window.getWidget());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		// no change, 'factory' is a transient attribute
 		assertEquals(before, window.getWidget());
@@ -211,12 +211,12 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setFactory(before);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, window.getFactory());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		// no change, 'factory' is a transient attribute
 		assertEquals(before, window.getFactory());

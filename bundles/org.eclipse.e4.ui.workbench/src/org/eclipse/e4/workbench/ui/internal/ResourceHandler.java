@@ -27,7 +27,7 @@ import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -150,9 +150,9 @@ public class ResourceHandler {
 					Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 							.parse(file);
 					XMLModelReconciler deltaReconciler = new XMLModelReconciler();
-					Collection<ModelDeltaOperation> operations = deltaReconciler.applyDeltas(
+					Collection<ModelDelta> operations = deltaReconciler.constructDeltas(
 							resource.getContents().get(0), document);
-					for (ModelDeltaOperation operation : operations) {
+					for (ModelDelta operation : operations) {
 						operation.apply();
 					}
 				}

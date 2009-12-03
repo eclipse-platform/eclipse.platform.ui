@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.e4.ui.model.application.SideValue;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerTrimContainerTest extends
@@ -63,12 +63,12 @@ public abstract class ModelReconcilerTrimContainerTest extends
 
 		windowTrim.setHorizontal(newApplicationState);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(newApplicationState, windowTrim.isHorizontal());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied
@@ -150,12 +150,12 @@ public abstract class ModelReconcilerTrimContainerTest extends
 
 		windowTrim.setSide(newApplicationState);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				serialize);
 
 		assertEquals(newApplicationState, windowTrim.getSide());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied

@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerBindingContainerTest extends
@@ -43,12 +43,12 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		application = createApplication();
 		application.setId(applicationId);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, application.getBindings().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, application.getBindings().size());
 
@@ -96,7 +96,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		keyBinding.setKeySequence(keySequence);
 		application.getBindings().add(keyBinding);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, application.getBindings().size());
@@ -106,7 +106,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		assertEquals(keySequence, keyBinding.getKeySequence());
 		assertEquals(0, keyBinding.getParameters().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, application.getBindings().size());
 	}
@@ -154,12 +154,12 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		command.setId(commandId);
 		application.getCommands().add(command);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, application.getBindings().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, application.getBindings().size());
 
@@ -220,7 +220,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		keyBinding.setCommand(command);
 		application.getBindings().add(keyBinding);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, application.getBindings().size());
@@ -230,7 +230,7 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		assertEquals(keySequence, keyBinding.getKeySequence());
 		assertEquals(0, keyBinding.getParameters().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, application.getBindings().size());
 	}

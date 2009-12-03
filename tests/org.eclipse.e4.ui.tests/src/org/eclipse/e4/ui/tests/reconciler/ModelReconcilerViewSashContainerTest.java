@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MViewSashContainer;
 import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerViewSashContainerTest extends
@@ -61,12 +61,12 @@ public abstract class ModelReconcilerViewSashContainerTest extends
 		viewSashContainer.setId(viewSashContainerId);
 		window.getChildren().add(viewSashContainer);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, viewSashContainer.getChildren().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, viewSashContainer.getChildren().size());
 
@@ -117,14 +117,14 @@ public abstract class ModelReconcilerViewSashContainerTest extends
 		viewStack.setId(viewStackId);
 		viewSashContainer.getChildren().add(viewStack);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, viewSashContainer.getChildren().size());
 		assertEquals(viewStack, viewSashContainer.getChildren().get(0));
 		assertEquals(viewStackId, viewStack.getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, viewSashContainer.getChildren().size());
 	}

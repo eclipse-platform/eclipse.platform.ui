@@ -19,7 +19,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerElementContainerTest extends
@@ -53,12 +53,12 @@ public abstract class ModelReconcilerElementContainerTest extends
 		window = createWindow(application);
 		window.setId(windowId);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, window.getChildren().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, window.getChildren().size());
 
@@ -105,7 +105,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part.setId(part1Id);
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, window.getChildren().size());
@@ -114,7 +114,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part = (MPart) window.getChildren().get(0);
 		assertEquals(part1Id, part.getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(2, window.getChildren().size());
 		assertEquals(part, window.getChildren().get(0));
@@ -163,12 +163,12 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		window.getChildren().add(stack);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, stack.getChildren().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, stack.getChildren().size());
 
@@ -210,7 +210,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part.setId(partId);
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, window.getChildren().size());
@@ -218,7 +218,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part = (MPart) window.getChildren().get(0);
 		assertEquals(partId, part.getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, window.getChildren().size());
 	}
@@ -265,7 +265,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part2.setId(part2Id);
 		window.getChildren().add(part2);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(2, window.getChildren().size());
@@ -275,7 +275,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part2 = (MPart) window.getChildren().get(1);
 		assertEquals(part2Id, part2.getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, window.getChildren().size());
 		assertEquals(part2, window.getChildren().get(0));
@@ -325,7 +325,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part.setId(partId);
 		stack.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, stack.getChildren().size());
@@ -333,7 +333,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part = stack.getChildren().get(0);
 		assertEquals(partId, part.getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, stack.getChildren().size());
 	}
@@ -391,14 +391,14 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part2.setId(part2Id);
 		stack.getChildren().add(part2);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(2, stack.getChildren().size());
 		assertEquals(part1, stack.getChildren().get(0));
 		assertEquals(part2, stack.getChildren().get(1));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, stack.getChildren().size());
 		assertEquals(part2, stack.getChildren().get(0));
@@ -467,7 +467,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part2.setId(part2Id);
 		stack2.getChildren().add(part2);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, stack1.getChildren().size());
@@ -475,7 +475,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, stack2.getChildren().size());
 		assertEquals(part2, stack2.getChildren().get(0));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, stack1.getChildren().size());
 
@@ -538,14 +538,14 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part2.setId(part2Id);
 		stack.getChildren().add(part2);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(2, stack.getChildren().size());
 		assertEquals(part1, stack.getChildren().get(0));
 		assertEquals(part2, stack.getChildren().get(1));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(2, stack.getChildren().size());
 		assertEquals(part2, stack.getChildren().get(0));
@@ -605,12 +605,12 @@ public abstract class ModelReconcilerElementContainerTest extends
 		part2.setId(part2Id);
 		stack.getChildren().add(part2);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertNull(stack.getActiveChild());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(part1, stack.getActiveChild());
 	}
@@ -672,12 +672,12 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		stack.setActiveChild(part1);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(part1, stack.getActiveChild());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(part2, stack.getActiveChild());
 	}

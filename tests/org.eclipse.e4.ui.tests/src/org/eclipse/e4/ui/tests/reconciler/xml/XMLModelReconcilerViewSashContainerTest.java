@@ -12,15 +12,29 @@
 package org.eclipse.e4.ui.tests.reconciler.xml;
 
 import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerViewSashContainerTest;
-import org.eclipse.e4.workbench.modeling.ModelReconciler;
-import org.eclipse.e4.workbench.ui.internal.XMLModelReconciler;
+import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
+import org.eclipse.e4.workbench.ui.internal.ModelReconcilingService;
 
 public class XMLModelReconcilerViewSashContainerTest extends
 		ModelReconcilerViewSashContainerTest {
 
+	private IModelReconcilingService modelReconcilingService;
+
 	@Override
-	protected ModelReconciler createModelReconciler() {
-		return new XMLModelReconciler();
+	protected void setUp() throws Exception {
+		modelReconcilingService = new ModelReconcilingService();
+		super.setUp();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		modelReconcilingService = null;
+	}
+
+	@Override
+	protected IModelReconcilingService getModelReconcilingService() {
+		return modelReconcilingService;
 	}
 
 }

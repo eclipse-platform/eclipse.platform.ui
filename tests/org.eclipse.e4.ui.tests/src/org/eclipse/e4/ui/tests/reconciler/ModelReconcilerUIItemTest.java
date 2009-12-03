@@ -15,7 +15,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
@@ -47,13 +47,13 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setName("name");
 		window.setIconURI("iconURI");
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals("iconURI", window.getIconURI());
 		assertEquals("name", window.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals("iconURI", window.getIconURI());
 		assertEquals("name2", window.getName());
@@ -82,12 +82,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setIconURI(iconURI);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(iconURI, window.getIconURI());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(iconURI, window.getIconURI());
 	}
@@ -129,12 +129,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setIconURI(before);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
 		assertEquals(before, window.getIconURI());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, window.getIconURI());
 	}
@@ -206,13 +206,13 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setName("name");
 		window.setTooltip("toolTip");
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
 		assertEquals("toolTip", window.getTooltip());
 		assertEquals("name", window.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals("toolTip", window.getTooltip());
 		assertEquals("name2", window.getName());
@@ -241,12 +241,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setTooltip(toolTip);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(toolTip, window.getTooltip());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(toolTip, window.getTooltip());
 	}
@@ -288,12 +288,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setTooltip(before);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, window.getTooltip());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, window.getTooltip());
 	}
@@ -365,13 +365,13 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setName("name");
 		window.setTooltip("toolTip");
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals("toolTip", window.getTooltip());
 		assertEquals("name", window.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals("toolTip2", window.getTooltip());
 		assertEquals("name", window.getName());
@@ -400,12 +400,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setName(name);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(name, window.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(name, window.getName());
 	}
@@ -447,12 +447,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setName(before);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, window.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, window.getName());
 	}

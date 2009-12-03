@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerContributionTest extends
@@ -60,12 +60,12 @@ public abstract class ModelReconcilerContributionTest extends
 		part.setPersistedState(newApplicationState);
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(newApplicationState, part.getPersistedState());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		if (applicationState == null) {
 			if (userChange == null) {

@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandler;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
@@ -56,13 +56,13 @@ public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 		handler.setId(handlerId);
 		application.getHandlers().add(handler);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		handler = application.getHandlers().get(0);
 		assertNull(handler.getCommand());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		handler = application.getHandlers().get(0);
 		assertEquals(command, handler.getCommand());
@@ -104,13 +104,13 @@ public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 		handler.setCommand(command);
 		application.getHandlers().add(handler);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		handler = application.getHandlers().get(0);
 		assertEquals(command, handler.getCommand());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		handler = application.getHandlers().get(0);
 		assertNull(handler.getCommand());

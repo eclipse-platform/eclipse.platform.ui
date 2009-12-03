@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
@@ -70,12 +70,12 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		item.setEnabled(newApplicationState);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(newApplicationState, item.isEnabled());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied
@@ -165,12 +165,12 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		item.setSelected(newApplicationState);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(newApplicationState, item.isSelected());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied
@@ -260,12 +260,12 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		item.setSeparator(newApplicationState);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(newApplicationState, item.isSeparator());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied

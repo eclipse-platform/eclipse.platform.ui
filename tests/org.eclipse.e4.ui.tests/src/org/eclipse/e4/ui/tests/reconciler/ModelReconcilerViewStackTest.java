@@ -19,7 +19,7 @@ import org.eclipse.e4.ui.model.application.MView;
 import org.eclipse.e4.ui.model.application.MViewSashContainer;
 import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerViewStackTest extends ModelReconcilerTest {
@@ -70,12 +70,12 @@ public abstract class ModelReconcilerViewStackTest extends ModelReconcilerTest {
 		viewStack.setId(viewStackId);
 		viewSashContainer.getChildren().add(viewStack);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, viewStack.getChildren().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(1, viewStack.getChildren().size());
 
@@ -135,13 +135,13 @@ public abstract class ModelReconcilerViewStackTest extends ModelReconcilerTest {
 		view.setId(viewId);
 		viewStack.getChildren().add(view);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, viewStack.getChildren().size());
 		assertEquals(viewId, viewStack.getChildren().get(0).getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, viewStack.getChildren().size());
 	}

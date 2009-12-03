@@ -20,7 +20,7 @@ import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.EList;
 
@@ -71,12 +71,12 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
 		assertEquals("name2", part.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals("customName", part.getName());
 	}
@@ -129,13 +129,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertFalse(part.isVisible());
 		assertEquals("name2", part.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		// the user's change should not have made this part visible
 		assertFalse(part.isVisible());
@@ -191,13 +191,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		window.getChildren().add(part);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
 		assertTrue(part.isVisible());
 		assertEquals("name2", part.getName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertFalse(part.isVisible());
 		// the application's change should not have been overridden
@@ -263,7 +263,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		window.getChildren().add(partC);
 		window.getChildren().add(partD);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
 		assertTrue(partA.isVisible());
@@ -271,7 +271,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertTrue(partC.isVisible());
 		assertTrue(partD.isVisible());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertTrue(partA.isVisible());
 		assertFalse(partB.isVisible());
@@ -340,7 +340,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		window.getChildren().add(partC);
 		window.getChildren().add(partD);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		EList<MPSCElement> children = window.getChildren();
@@ -350,7 +350,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(partC, children.get(2));
 		assertEquals(partD, children.get(3));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		children = window.getChildren();
 		assertEquals(3, children.size());
@@ -414,7 +414,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		window.getChildren().add(partB);
 		window.getChildren().add(partC);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
 		assertEquals(3, window.getChildren().size());
@@ -422,7 +422,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(partB, window.getChildren().get(1));
 		assertEquals(partC, window.getChildren().get(2));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		EList<MPSCElement> children = window.getChildren();
 		assertEquals(1, children.size());
@@ -451,13 +451,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application = createApplication();
 		application.setId(applicationId);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, application.getChildren().size());
 		assertEquals(0, application.getBindings().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		window = application.getChildren().get(0);
 		assertEquals(windowId, window.getId());
@@ -549,7 +549,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application.getBindings().add(applicationKeyBinding);
 		window.getBindings().add(windowKeyBinding);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(originalApplicationKeyBindingSequence,
@@ -557,7 +557,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(originalWindowKeyBindingSequence, windowKeyBinding
 				.getKeySequence());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(userApplicationKeyBindingSequence, applicationKeyBinding
 				.getKeySequence());

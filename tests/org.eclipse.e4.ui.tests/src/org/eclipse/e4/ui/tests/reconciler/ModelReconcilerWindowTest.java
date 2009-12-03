@@ -17,7 +17,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
@@ -47,12 +47,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setX(100);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(100, window.getX());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(200, window.getX());
 	}
@@ -82,12 +82,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setY(100);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(100, window.getY());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(200, window.getY());
 	}
@@ -117,12 +117,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setWidth(100);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(100, window.getWidth());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(200, window.getWidth());
 	}
@@ -152,12 +152,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setHeight(100);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(100, window.getHeight());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(200, window.getHeight());
 	}
@@ -188,12 +188,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window = createWindow(application);
 		window.setId(windowId);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertNull(window.getMainMenu());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		menu = window.getMainMenu();
 		assertNotNull(menu);
@@ -232,13 +232,13 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		menu.setId(menuId);
 		window.setMainMenu(menu);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(menu, window.getMainMenu());
 		assertEquals(menuId, window.getMainMenu().getId());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertNull(window.getMainMenu());
 	}
@@ -277,12 +277,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		menu.setVisible(before);
 		window.setMainMenu(menu);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, menu.isVisible());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, menu.isVisible());
 	}

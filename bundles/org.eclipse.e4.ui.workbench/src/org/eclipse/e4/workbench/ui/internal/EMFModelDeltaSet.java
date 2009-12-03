@@ -13,22 +13,22 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EStructuralFeature;
 
-public final class EMFModelDeltaSetOperation extends ModelDeltaOperation {
+public final class EMFModelDeltaSet extends ModelDelta {
 
 	private final EStructuralFeature feature;
 
-	public EMFModelDeltaSetOperation(Object object, EStructuralFeature feature, Object value) {
-		super(object, value);
+	public EMFModelDeltaSet(Object object, EStructuralFeature feature, Object value) {
+		super(object, feature.getName(), value);
 		this.feature = feature;
 	}
 
 	public IStatus apply() {
 		EObject eObject = (EObject) getObject();
-		eObject.eSet(feature, getValue());
+		eObject.eSet(feature, getAttributeValue());
 		return Status.OK_STATUS;
 	}
 

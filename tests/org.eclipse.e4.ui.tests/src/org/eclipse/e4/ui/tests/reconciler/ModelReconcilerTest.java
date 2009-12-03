@@ -26,34 +26,38 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.w3c.dom.Node;
 
 public abstract class ModelReconcilerTest extends TestCase {
 
-	protected abstract ModelReconciler createModelReconciler();
+	protected abstract IModelReconcilingService getModelReconcilingService();
 
-	protected Collection<ModelDeltaOperation> applyDeltas(Object object,
-			Object serializedState) {
-		return applyDeltas(createModelReconciler(), object, serializedState);
+	protected ModelReconciler createModelReconciler() {
+		return getModelReconcilingService().createModelReconciler();
 	}
 
-	protected Collection<ModelDeltaOperation> applyDeltas(
+	protected Collection<ModelDelta> constructDeltas(Object object,
+			Object serializedState) {
+		return constructDeltas(createModelReconciler(), object, serializedState);
+	}
+
+	protected Collection<ModelDelta> constructDeltas(
 			ModelReconciler reconciler, Object object, Object serializedState) {
-		return reconciler.applyDeltas(object, serializedState);
+		return reconciler.constructDeltas(object, serializedState);
 	}
 
 	protected String createId() {
 		return null;
 	}
 
-	protected void applyAll(Collection<ModelDeltaOperation> operations) {
-		for (ModelDeltaOperation operation : operations) {
-			IStatus status = operation.apply();
-			assertNotNull(status);
-			assertEquals(IStatus.OK, status.getCode());
-		}
+	protected void applyAll(Collection<ModelDelta> deltas) {
+		IModelReconcilingService modelReconcilingService = getModelReconcilingService();
+		IStatus status = modelReconcilingService.applyDeltas(deltas);
+		assertNotNull(status);
+		assertEquals(IStatus.OK, status.getCode());
 	}
 
 	protected MApplication createApplication() {

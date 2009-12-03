@@ -16,7 +16,7 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
@@ -48,12 +48,12 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 		command.setCommandName(before);
 		application.getCommands().add(command);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, command.getCommandName());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, command.getCommandName());
 	}
@@ -123,12 +123,12 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 		command.setDescription(before);
 		application.getCommands().add(command);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(before, command.getDescription());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(after, command.getDescription());
 	}

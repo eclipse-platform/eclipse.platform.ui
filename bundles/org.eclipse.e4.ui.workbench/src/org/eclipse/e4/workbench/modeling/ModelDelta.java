@@ -14,23 +14,31 @@ package org.eclipse.e4.workbench.modeling;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
 
-public abstract class ModelDeltaOperation {
+public abstract class ModelDelta {
 
 	private final Object object;
-	private final Object value;
+	private final String attributeName;
+	private final Object attributeValue;
 
-	public ModelDeltaOperation(Object object, Object value) {
+	public ModelDelta(Object object, String attributeName, Object attributeValue) {
 		Assert.isNotNull(object);
+		Assert.isNotNull(attributeName);
+
 		this.object = object;
-		this.value = value;
+		this.attributeName = attributeName;
+		this.attributeValue = attributeValue;
 	}
 
 	public Object getObject() {
 		return object;
 	}
 
-	public Object getValue() {
-		return value;
+	public String getAttributeName() {
+		return attributeName;
+	}
+
+	public Object getAttributeValue() {
+		return attributeValue;
 	}
 
 	public abstract IStatus apply();

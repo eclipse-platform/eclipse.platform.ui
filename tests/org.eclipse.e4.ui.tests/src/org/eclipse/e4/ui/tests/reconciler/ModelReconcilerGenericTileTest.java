@@ -18,7 +18,7 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerGenericTileTest extends
@@ -59,12 +59,12 @@ public abstract class ModelReconcilerGenericTileTest extends
 		partSashContainer.setId(partSashContainerId);
 		window.getChildren().add(partSashContainer);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(0, partSashContainer.getWeights().size());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		List<Integer> weights = partSashContainer.getWeights();
 		assertEquals(1, weights.size());
@@ -108,13 +108,13 @@ public abstract class ModelReconcilerGenericTileTest extends
 		partSashContainer.getWeights().add(new Integer(50));
 		window.getChildren().add(partSashContainer);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, partSashContainer.getWeights().size());
 		assertEquals(new Integer(50), partSashContainer.getWeights().get(0));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		List<Integer> weights = partSashContainer.getWeights();
 		assertEquals(2, weights.size());
@@ -161,13 +161,13 @@ public abstract class ModelReconcilerGenericTileTest extends
 
 		partSashContainer.getWeights().add(new Integer(50));
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(1, partSashContainer.getWeights().size());
 		assertEquals(new Integer(50), partSashContainer.getWeights().get(0));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(0, partSashContainer.getWeights().size());
 	}
@@ -211,14 +211,14 @@ public abstract class ModelReconcilerGenericTileTest extends
 		partSashContainer.getWeights().add(new Integer(100));
 		window.getChildren().add(partSashContainer);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(2, partSashContainer.getWeights().size());
 		assertEquals(new Integer(50), partSashContainer.getWeights().get(0));
 		assertEquals(new Integer(100), partSashContainer.getWeights().get(1));
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		List<Integer> weights = partSashContainer.getWeights();
 		assertEquals(1, weights.size());
@@ -265,12 +265,12 @@ public abstract class ModelReconcilerGenericTileTest extends
 
 		partSashContainer.setHorizontal(newApplicationState);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(newApplicationState, partSashContainer.isHorizontal());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied

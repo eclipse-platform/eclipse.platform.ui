@@ -19,7 +19,7 @@ import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.e4.workbench.modeling.ModelDeltaOperation;
+import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerHandledItemTest extends
@@ -85,8 +85,12 @@ public abstract class ModelReconcilerHandledItemTest extends
 	// handledToolItem.setId(handledToolItemId);
 	// toolBar.getChildren().add(handledToolItem);
 	//
-	// Collection<ModelDeltaOperation> operations = applyDeltas(application,
+	// Collection<ModelDeltaOperation> deltas = applyDeltas(application,
 	// state);
+	//
+	// assertNull(handledToolItem.getCommand());
+	//
+	// applyAll(deltas);
 	//
 	// assertEquals(command, handledToolItem.getCommand());
 	// }
@@ -150,10 +154,15 @@ public abstract class ModelReconcilerHandledItemTest extends
 	//
 	// handledToolItem = MApplicationFactory.eINSTANCE.createHandledToolItem();
 	// handledToolItem.setId(handledToolItemId);
+	// handledToolItem.setCommand(command);
 	// toolBar.getChildren().add(handledToolItem);
 	//
-	// Collection<ModelDeltaOperation> operations = applyDeltas(application,
+	// Collection<ModelDeltaOperation> deltas = applyDeltas(application,
 	// state);
+	//
+	// assertEquals(command, handledToolItem.getCommand());
+	//
+	// applyAll(deltas);
 	//
 	// assertNull(handledToolItem.getCommand());
 	// }
@@ -209,12 +218,12 @@ public abstract class ModelReconcilerHandledItemTest extends
 		handledMenuItem.setId(handledMenuItemId);
 		menu.getChildren().add(handledMenuItem);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertNull(handledMenuItem.getCommand());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertEquals(command, handledMenuItem.getCommand());
 	}
@@ -272,12 +281,12 @@ public abstract class ModelReconcilerHandledItemTest extends
 		handledMenuItem.setCommand(command);
 		menu.getChildren().add(handledMenuItem);
 
-		Collection<ModelDeltaOperation> operations = applyDeltas(application,
+		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
 		assertEquals(command, handledMenuItem.getCommand());
 
-		applyAll(operations);
+		applyAll(deltas);
 
 		assertNull(handledMenuItem.getCommand());
 	}
