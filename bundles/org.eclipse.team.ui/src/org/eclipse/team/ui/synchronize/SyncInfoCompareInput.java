@@ -42,7 +42,6 @@ import org.eclipse.ui.progress.UIJob;
  * </p>
  * @see SyncInfo
  * @since 3.0 
- * @noextend This class cannot be subclassed by clients.
  */
 public final class SyncInfoCompareInput extends SaveableCompareEditorInput implements IResourceChangeListener {
 
@@ -126,7 +125,7 @@ public final class SyncInfoCompareInput extends SaveableCompareEditorInput imple
 	 */
 	public Object getAdapter(Class adapter) {
 		if (IFile.class.equals(adapter) && resource.getType() == IResource.FILE) {
-			return (IFile)resource;
+			return resource;
 		}
 		return super.getAdapter(adapter);
 	}
