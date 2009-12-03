@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,11 +18,11 @@ import org.eclipse.core.runtime.SubProgressMonitor;
 
 /**
  * Abstract super class for all refactorings. Refactorings are used to perform
- * behavior preserving work space transformations. A refactoring offers two
+ * behavior-preserving workspace transformations. A refactoring offers two
  * different kind of methods:
  * <ol>
  *   <li>methods to check conditions to determine if the refactoring can be carried out
- *       in general and if transformation will be behavioral persevering.
+ *       in general and if transformation will be behavior-preserving.
  *       </li>
  *   <li>a method to create a {@link org.eclipse.ltk.core.refactoring.Change} object
  *       that represents the actual work space modifications.
