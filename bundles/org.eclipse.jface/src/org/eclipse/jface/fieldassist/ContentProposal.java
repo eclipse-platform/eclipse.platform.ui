@@ -14,7 +14,7 @@ package org.eclipse.jface.fieldassist;
 import org.eclipse.core.runtime.Assert;
 
 /**
- * A default implementation of {{@link IContentProposal} that allows clients to
+ * A default implementation of {@link IContentProposal} that allows clients to
  * specify a content proposal using simple constructors.
  * 
  * @since 3.6
