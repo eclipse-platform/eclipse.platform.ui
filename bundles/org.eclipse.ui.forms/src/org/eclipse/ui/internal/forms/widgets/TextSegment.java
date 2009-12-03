@@ -292,6 +292,7 @@ public class TextSegment extends ParagraphSegment {
 			}
 			lineExtent.x += textFragment.length;
 			lineExtent.y = Math.max(lineHeight, lineExtent.y);
+			width = Math.max (width, locator.x + lineExtent.x);
 		}
 		int lineWidth = lineExtent.x;
 		if (isSelectable())
