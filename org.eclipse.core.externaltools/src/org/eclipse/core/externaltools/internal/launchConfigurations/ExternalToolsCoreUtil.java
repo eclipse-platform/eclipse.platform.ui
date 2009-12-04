@@ -234,8 +234,16 @@ public class ExternalToolsCoreUtil {
 				return projects;
 			}
 		} else if (scope.equals("${project}")) { //$NON-NLS-1$
-			if(configuration.getFile()!=null)
-				return new IProject[]{((IResource)configuration.getFile()).getProject()};
+			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
+			try {
+				String pathString = manager.performStringSubstitution("${selected_resource_path}"); //$NON-NLS-1$
+				IResource res = ResourcesPlugin.getWorkspace().getRoot().findMember(new Path(pathString));
+				if (res != null && res.getProject() != null) {
+					return new IProject[]{res.getProject()};
+				}
+			} catch (CoreException e) {
+				// unable to resolve a selection
+			}
 		}
 		return new IProject[0];
 	}
