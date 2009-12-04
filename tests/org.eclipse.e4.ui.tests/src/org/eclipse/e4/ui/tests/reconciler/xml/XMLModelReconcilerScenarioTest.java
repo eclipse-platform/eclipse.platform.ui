@@ -17,22 +17,8 @@ import org.eclipse.e4.workbench.ui.internal.ModelReconcilingService;
 
 public class XMLModelReconcilerScenarioTest extends ModelReconcilerScenarioTest {
 
-	private IModelReconcilingService modelReconcilingService;
-
-	@Override
-	protected void setUp() throws Exception {
-		modelReconcilingService = new ModelReconcilingService();
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-		modelReconcilingService = null;
-	}
-
 	@Override
 	protected IModelReconcilingService getModelReconcilingService() {
-		return modelReconcilingService;
+		return new ModelReconcilingService();
 	}
 }

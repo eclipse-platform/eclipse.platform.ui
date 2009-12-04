@@ -11,11 +11,11 @@
 
 package org.eclipse.e4.ui.tests.reconciler.xml;
 
-import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerUIItemTest;
+import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerMenuTest;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.workbench.ui.internal.ModelReconcilingService;
 
-public class XMLModelReconcilerUIItemTest extends ModelReconcilerUIItemTest {
+public class XMLModelReconcilerMenuTest extends ModelReconcilerMenuTest {
 
 	@Override
 	protected IModelReconcilingService getModelReconcilingService() {

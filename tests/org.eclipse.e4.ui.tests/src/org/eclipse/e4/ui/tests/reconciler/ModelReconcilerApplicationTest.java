@@ -42,8 +42,7 @@ public abstract class ModelReconcilerApplicationTest extends
 		application = createApplication();
 		application.setId(applicationId);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, application.getCommands().size());
 
@@ -81,9 +80,9 @@ public abstract class ModelReconcilerApplicationTest extends
 		command.setId(commandId);
 		application.getCommands().add(command);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
+		assertEquals(1, application.getCommands().size());
 		command = application.getCommands().get(0);
 		assertEquals(commandId, command.getId());
 

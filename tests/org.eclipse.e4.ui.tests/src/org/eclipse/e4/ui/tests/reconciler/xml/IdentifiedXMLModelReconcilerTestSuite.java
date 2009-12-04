@@ -33,6 +33,7 @@ public class IdentifiedXMLModelReconcilerTestSuite extends TestSuite {
 		addTestSuite(IdentifiedXMLModelReconcilerItemTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerKeyBindingTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerKeySequenceTest.class);
+		addTestSuite(IdentifiedXMLModelReconcilerMenuTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerPartTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerTrimContainerTest.class);
 		addTestSuite(IdentifiedXMLModelReconcilerViewSashContainerTest.class);
@@ -42,6 +43,8 @@ public class IdentifiedXMLModelReconcilerTestSuite extends TestSuite {
 		addTestSuite(IdentifiedXMLModelReconcilerWindowTest.class);
 
 		addTestSuite(IdentifiedXMLModelReconcilerScenarioTest.class);
+
+		addTestSuite(IdentifiedModelReconcilingServiceTest.class);
 	}
 
 }

@@ -33,10 +33,24 @@ import org.w3c.dom.Node;
 
 public abstract class ModelReconcilerTest extends TestCase {
 
+	protected IModelReconcilingService service;
+
+	@Override
+	protected void setUp() throws Exception {
+		service = getModelReconcilingService();
+		super.setUp();
+	}
+
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		service = null;
+	}
+
 	protected abstract IModelReconcilingService getModelReconcilingService();
 
 	protected ModelReconciler createModelReconciler() {
-		return getModelReconcilingService().createModelReconciler();
+		return service.createModelReconciler();
 	}
 
 	protected Collection<ModelDelta> constructDeltas(Object object,
@@ -54,8 +68,11 @@ public abstract class ModelReconcilerTest extends TestCase {
 	}
 
 	protected void applyAll(Collection<ModelDelta> deltas) {
-		IModelReconcilingService modelReconcilingService = getModelReconcilingService();
-		IStatus status = modelReconcilingService.applyDeltas(deltas);
+		applyAll(deltas, new String[0]);
+	}
+
+	protected void applyAll(Collection<ModelDelta> deltas, String[] filters) {
+		IStatus status = service.applyDeltas(deltas, filters);
 		assertNotNull(status);
 		assertEquals(IStatus.OK, status.getCode());
 	}

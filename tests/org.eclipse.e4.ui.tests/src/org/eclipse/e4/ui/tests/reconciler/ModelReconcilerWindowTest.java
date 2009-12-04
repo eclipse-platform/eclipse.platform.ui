@@ -22,6 +22,44 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 
+	// public void testWindow() {
+	// String applicationId = createId();
+	// String windowId = createId();
+	//
+	// MApplication application = createApplication();
+	// application.setId(applicationId);
+	//
+	// MWindow window = createWindow(application);
+	// window.setId(windowId);
+	// window.setX(100);
+	//
+	// XMLResourceImpl resource = new XMLResourceImpl() {
+	// @Override
+	// protected boolean useUUIDs() {
+	// return true;
+	// }
+	// };
+	// resource.getContents().add((EObject) application);
+	//
+	// String id = resource.getID((EObject) application);
+	// System.out.print(id + "\t");
+	// id = resource.getID((EObject) window);
+	// System.out.println(id);
+	//
+	// resource = new XMLResourceImpl() {
+	// @Override
+	// protected boolean useUUIDs() {
+	// return true;
+	// }
+	// };
+	// resource.getContents().add((EObject) application);
+	//
+	// id = resource.getID((EObject) application);
+	// System.out.print(id + "\t");
+	// id = resource.getID((EObject) window);
+	// System.out.println(id);
+	// }
+
 	public void testWindow_X() {
 		String applicationId = createId();
 		String windowId = createId();
@@ -47,8 +85,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setX(100);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(100, window.getX());
 
@@ -82,8 +119,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setY(100);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(100, window.getY());
 
@@ -117,8 +153,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setWidth(100);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(100, window.getWidth());
 
@@ -152,8 +187,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window.setId(windowId);
 		window.setHeight(100);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(100, window.getHeight());
 
@@ -188,8 +222,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		window = createWindow(application);
 		window.setId(windowId);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertNull(window.getMainMenu());
 
@@ -232,8 +265,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		menu.setId(menuId);
 		window.setMainMenu(menu);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(menu, window.getMainMenu());
 		assertEquals(menuId, window.getMainMenu().getId());
@@ -277,8 +309,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		menu.setVisible(before);
 		window.setMainMenu(menu);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(before, menu.isVisible());
 
