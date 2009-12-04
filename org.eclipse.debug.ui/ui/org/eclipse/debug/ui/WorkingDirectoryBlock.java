@@ -75,7 +75,7 @@ public abstract class WorkingDirectoryBlock extends AbstractLaunchConfigurationT
 	 */
 	private class WidgetListener extends SelectionAdapter implements ModifyListener {
 		public void modifyText(ModifyEvent e) {
-			updateLaunchConfigurationDialog();
+			scheduleUpdateJob();
 		}
 		public void widgetSelected(SelectionEvent e) {
 			Object source= e.getSource();

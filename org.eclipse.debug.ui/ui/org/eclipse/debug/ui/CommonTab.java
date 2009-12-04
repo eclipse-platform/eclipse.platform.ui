@@ -134,7 +134,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	 */
 	private ModifyListener fBasicModifyListener = new ModifyListener() {
 		public void modifyText(ModifyEvent evt) {
-			updateLaunchConfigurationDialog();
+			scheduleUpdateJob();
 		}
 	};
     
