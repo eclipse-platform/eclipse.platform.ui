@@ -4,7 +4,9 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextFunction;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MWindow;
 
 /**
  *
@@ -22,11 +24,14 @@ public class ActivePartLookupFunction extends ContextFunction {
 		/**
 		 * This is the specific implementation. TODO: generalize it
 		 */
-		MApplication app = (MApplication) context.get(MApplication.class.getName());
-		if (app == null) {
-			return null;
+		MContext window = (MContext) context.get(MWindow.class.getName());
+		if (window == null) {
+			window = (MContext) context.get(MApplication.class.getName());
+			if (window == null) {
+				return null;
+			}
 		}
-		IEclipseContext current = app.getContext();
+		IEclipseContext current = window.getContext();
 		if (current == null) {
 			return null;
 		}

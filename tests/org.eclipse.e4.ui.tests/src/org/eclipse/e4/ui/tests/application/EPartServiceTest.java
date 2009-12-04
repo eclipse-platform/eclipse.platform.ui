@@ -633,6 +633,61 @@ public class EPartServiceTest extends TestCase {
 		assertEquals(partBackB, partServiceB.getActivePart());
 	}
 
+	public void testSwitchWindows() {
+		// create an application with two windows
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		MWindow window1 = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window1);
+		application.getChildren().add(window2);
+
+		// place a part in the first window
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		window1.getChildren().add(part);
+
+		// setup the context
+		applicationContext.set(MApplication.class.getName(), application);
+		application.setContext(applicationContext);
+
+		// render the windows
+		engine.createGui(window1);
+		engine.createGui(window2);
+
+		EPartService windowService1 = (EPartService) window1.getContext().get(
+				EPartService.class.getName());
+		EPartService windowService2 = (EPartService) window2.getContext().get(
+				EPartService.class.getName());
+
+		assertNotNull(windowService1);
+		assertNotNull(windowService2);
+
+		assertNotNull("The first part is active in the first window",
+				windowService1.getActivePart());
+		assertNull("There should be nothing active in the second window",
+				windowService2.getActivePart());
+
+		// activate the part
+		windowService1.activate(part);
+
+		assertEquals("The part should have been activated", part,
+				windowService1.getActivePart());
+		assertNull("The second window has no parts, this should be null",
+				windowService2.getActivePart());
+
+		// now move the part over from the first window to the second window
+		windowService1.deactivate(part);
+		window2.getChildren().add(part);
+		part.getContext().set(IContextConstants.PARENT, window2.getContext());
+		// activate the part
+		windowService2.activate(part);
+
+		assertNull("No parts in this window, this should be null",
+				windowService1.getActivePart());
+		assertEquals("We activated it just now, this should be active", part,
+				windowService2.getActivePart());
+	}
+
 	private MApplication createApplication(String partId) {
 		return createApplication(new String[] { partId });
 	}

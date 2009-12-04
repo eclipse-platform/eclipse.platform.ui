@@ -34,8 +34,7 @@ public class PartServiceImpl implements EPartService {
 	private MWindow windowContainer;
 
 	@Inject
-	@Optional
-	void setPart(@Named(IServiceConstants.ACTIVE_PART) MPart p) {
+	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
 		activePart = p;
 	}
 
@@ -65,8 +64,24 @@ public class PartServiceImpl implements EPartService {
 
 	private void internalBringToTop(MPart part) {
 		MElementContainer<MUIElement> parent = part.getParent();
-		if (parent.getActiveChild() != part) {
+		MPart oldActiveChild = (MPart) parent.getActiveChild();
+		if (oldActiveChild != part) {
 			parent.setActiveChild(part);
+			internalFixContext(part, oldActiveChild);
+		}
+	}
+
+	private void internalFixContext(MPart part, MPart oldActiveChild) {
+		MContext parentPart = getParentWithContext(oldActiveChild);
+		if (parentPart == null) {
+			return;
+		}
+		IEclipseContext parentContext = parentPart.getContext();
+		IEclipseContext oldContext = oldActiveChild.getContext();
+		Object child = parentContext.get(IContextConstants.ACTIVE_CHILD);
+		if (child == oldContext) {
+			parentContext.set(IContextConstants.ACTIVE_CHILD, part == null ? null : part
+					.getContext());
 		}
 	}
 
@@ -174,5 +189,22 @@ public class PartServiceImpl implements EPartService {
 	 */
 	public MPart getActivePart() {
 		return activePart;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.eclipse.e4.workbench.modeling.EPartService#deactivate(org.eclipse.e4.ui.model.application
+	 * .MPart)
+	 */
+	public void deactivate(MPart part) {
+		MElementContainer<MUIElement> parent = part.getParent();
+		MPart oldActiveChild = (MPart) parent.getActiveChild();
+		if (oldActiveChild == part) {
+			parent.setActiveChild(null);
+			internalFixContext(null, oldActiveChild);
+		}
+
 	}
 }

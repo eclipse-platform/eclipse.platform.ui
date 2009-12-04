@@ -17,6 +17,8 @@ public interface EPartService {
 
 	public void activate(MPart part);
 
+	public void deactivate(MPart part);
+
 	public void bringToTop(MPart part);
 
 	public MPart findPart(String id);
@@ -24,7 +26,7 @@ public interface EPartService {
 	public Collection<MPart> getParts();
 
 	public MPart getActivePart();
-	
+
 	public boolean isPartVisible(MPart part);
 
 	// public MPart showPart(String id);
