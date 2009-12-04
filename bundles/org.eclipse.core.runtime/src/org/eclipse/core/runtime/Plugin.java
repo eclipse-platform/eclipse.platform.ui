@@ -550,8 +550,11 @@ public abstract class Plugin implements BundleActivator {
 		final DebugOptions options = getDebugOptions();
 		if (options == null)
 			this.debug = value;
-		else
+		else {
+			if (!options.isDebugEnabled())
+				options.setDebugEnabled(true);
 			options.setOption(key, value ? Boolean.TRUE.toString() : Boolean.FALSE.toString());
+		}
 	}
 
 	/**
