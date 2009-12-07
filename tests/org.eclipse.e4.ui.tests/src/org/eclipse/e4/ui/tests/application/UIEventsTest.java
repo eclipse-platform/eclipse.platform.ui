@@ -175,8 +175,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	public class UIElementTester extends EventTester {
 		UIElementTester(IEventBroker eventBroker) {
 			super("UIElement", UIElement.TOPIC, new String[] {
-					UIElement.FACTORY, UIElement.PARENT, UIElement.VISIBLE,
-					UIElement.WIDGET }, eventBroker);
+					UIElement.RENDERER, UIElement.TOBERENDERED,
+					UIElement.PARENT, UIElement.VISIBLE, UIElement.WIDGET },
+					eventBroker);
 		}
 	}
 
@@ -295,9 +296,10 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		MTestHarness newParent = MApplicationFactory.eINSTANCE
 				.createTestHarness();
-		allData.setRenderer("New Factory");
+		allData.setRenderer("New Renderer");
 		allData.setParent(newParent);
 		allData.setToBeRendered(!allData.isToBeRendered());
+		allData.setVisible(!allData.isVisible());
 		allData.setWidget("New Widget");
 		checkForFailures(allTesters, uiElementTester);
 
@@ -360,7 +362,10 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 	private void ensureAllSet(EventTester tester) {
 		String[] unfiredIds = tester.getAttIds(false);
 		if (unfiredIds.length > 0) {
-			String msg = "No event fired: " + unfiredIds;
+			String msg = "No event fired:" + unfiredIds;
+			for (int i = 0; i < unfiredIds.length; i++) {
+				msg += ' ' + unfiredIds[i];
+			}
 			fail(msg);
 		}
 	}

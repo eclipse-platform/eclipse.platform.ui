@@ -50,7 +50,7 @@ public abstract class ModelReconciler {
 	/**
 	 * Attribute defined by MUIElements (value is <code>visible</code>).
 	 */
-	public static final String VISIBLE_ATTNAME = "visible"; //$NON-NLS-1$
+	public static final String TOBERENDERED_ATTNAME = "toBeRendered"; //$NON-NLS-1$
 
 	/**
 	 * Attribute defined by MUIElements (value is <code>parent</code>).

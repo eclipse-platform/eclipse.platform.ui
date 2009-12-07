@@ -93,7 +93,8 @@ public class UIEvents {
 	public static interface UIElement {
 		public static final String TOPIC = UITopicBase + "/application/UIElement"; //$NON-NLS-1$
 		public static final String WIDGET = "widget"; //$NON-NLS-1$
-		public static final String FACTORY = "factory"; //$NON-NLS-1$
+		public static final String TOBERENDERED = "toBeRendered"; //$NON-NLS-1$
+		public static final String RENDERER = "renderer"; //$NON-NLS-1$
 		public static final String VISIBLE = "visible"; //$NON-NLS-1$
 		public static final String PARENT = "parent"; //$NON-NLS-1$
 	}

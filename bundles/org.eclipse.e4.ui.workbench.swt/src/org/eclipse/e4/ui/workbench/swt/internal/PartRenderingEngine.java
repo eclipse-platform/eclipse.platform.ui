@@ -95,7 +95,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			if (parentFactory == null)
 				return;
 
-			if (changedElement.isVisible()) {
+			if (changedElement.isToBeRendered()) {
 				Activator.trace(Policy.DEBUG_RENDERER, "visible -> true", null); //$NON-NLS-1$
 
 				// Note that the 'createGui' protocol calls 'childAdded'
@@ -142,7 +142,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						.getProperty(UIEvents.EventTags.OLD_VALUE);
 				// Removing invisible elements is a NO-OP as far as the
 				// renderer is concerned
-				if (!removed.isVisible())
+				if (!removed.isToBeRendered())
 					return;
 
 				factory.hideChild(changedElement, removed);
@@ -236,7 +236,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	}
 
 	public Object createGui(MUIElement element, Object parent) {
-		if (!element.isVisible())
+		if (!element.isToBeRendered())
 			return null;
 
 		if (element instanceof MContext) {
@@ -386,7 +386,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		if (element.getId() != null && element.getId().length() > 0) {
 			RenderingRecord record = renderedWidgets.get(element.getId());
 			if (record != null) {
-				element.setFactory(record.renderer);
+				element.setRenderer(record.renderer);
 				record.renderer.bindWidget(element, record.widget);
 				if (element instanceof MContribution)
 					((MContribution) element).setObject(record.implementation);
@@ -413,11 +413,11 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	protected void setFactoryFor(MUIElement element,
 			AbstractPartRenderer factory) {
-		element.setFactory(factory);
+		element.setRenderer(factory);
 	}
 
 	protected AbstractPartRenderer getFactoryFor(MUIElement element) {
-		return (AbstractPartRenderer) element.getFactory();
+		return (AbstractPartRenderer) element.getRenderer();
 	}
 
 	/*

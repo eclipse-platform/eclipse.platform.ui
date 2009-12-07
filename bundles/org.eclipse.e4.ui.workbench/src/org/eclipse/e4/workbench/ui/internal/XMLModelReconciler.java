@@ -177,7 +177,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getUIItem_Tooltip();
 		} else if (featureName.equals(ICONURI_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIItem_IconURI();
-		} else if (featureName.equals(VISIBLE_ATTNAME)) {
+		} else if (featureName.equals(TOBERENDERED_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIElement_ToBeRendered();
 		} else if (featureName.equals(CHILDREN_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getElementContainer_Children();
