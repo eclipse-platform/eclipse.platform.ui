@@ -10,6 +10,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - concept of ViewerRow,
  *                                                 refactoring (bug 153993), bug 167323, 191468, 205419
  *     Matthew Hall - bug 221988
+ *     Pawel Piech, WindRiver - bug 296573
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
