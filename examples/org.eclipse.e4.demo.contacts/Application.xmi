@@ -8,7 +8,7 @@
         <children xsi:type="application:HandledToolItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/bright.png" tooltip="Light" command="//@commands.2"/>
         <children xsi:type="application:HandledToolItem" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/dark.png" tooltip="Dark" command="//@commands.1"/>
         <children xsi:type="application:ToolItem" separator="true"/>
-        <children xsi:type="application:HandledToolItem" name="Exit" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/door_in.png" tooltip="Exit" command="//@commands.3"/>
+        <children xsi:type="application:HandledToolItem" name="Exit" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/door_in.png" tooltip="Exit" command="//@commands.0"/>
       </children>
     </children>
     <children xsi:type="application:PartSashContainer" horizontal="true">
