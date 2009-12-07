@@ -760,13 +760,7 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			if (document == null)
 				return;
 			
-			// Add a position updater to the document
-			document.addPositionCategory(DIFF_RANGE_CATEGORY);
-			if (this.fViewer.fPositionUpdater == null)
-				this.fViewer.fPositionUpdater= this.fViewer.new ChildPositionUpdater(DIFF_RANGE_CATEGORY);
-			else
-				document.removePositionUpdater(this.fViewer.fPositionUpdater);
-			document.addPositionUpdater(this.fViewer.fPositionUpdater);
+			connectPositionUpdater(document);
 
 			// install new document
 			tp.setRegion(range);
@@ -780,6 +774,15 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 				tp.getSourceViewer().setDocument(document);
 							
 			tp.rememberDocument(document);
+		}
+
+		void connectPositionUpdater(IDocument document) {
+			document.addPositionCategory(DIFF_RANGE_CATEGORY);
+			if (this.fViewer.fPositionUpdater == null)
+				this.fViewer.fPositionUpdater= this.fViewer.new ChildPositionUpdater(DIFF_RANGE_CATEGORY);
+			else
+				document.removePositionUpdater(this.fViewer.fPositionUpdater);
+			document.addPositionUpdater(this.fViewer.fPositionUpdater);
 		}
 		
 		private void unsetDocument(MergeSourceViewer tp) {
@@ -2821,9 +2824,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		fAncestorContributor.setEncodingIfAbsent(fLeftContributor);
 
 		if (!isConfigured) {
-			configureSourceViewer(fAncestor.getSourceViewer(), false);
-			configureSourceViewer(fLeft.getSourceViewer(), cc.isLeftEditable() && cp.isLeftEditable(input));
-			configureSourceViewer(fRight.getSourceViewer(), cc.isRightEditable() && cp.isRightEditable(input));
+			configureSourceViewer(fAncestor.getSourceViewer(), false, null);
+			configureSourceViewer(fLeft.getSourceViewer(), cc.isLeftEditable() && cp.isLeftEditable(input), fLeftContributor);
+			configureSourceViewer(fRight.getSourceViewer(), cc.isRightEditable() && cp.isRightEditable(input), fRightContributor);
 			isConfigured = true; // configure once
 		} 
 
@@ -2878,9 +2881,14 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 		
 	}
 
-	private void configureSourceViewer(SourceViewer sourceViewer, boolean editable) {
+	private void configureSourceViewer(SourceViewer sourceViewer, boolean editable, ContributorInfo contributor) {
 		setEditable(sourceViewer, editable);
 		configureTextViewer(sourceViewer);
+		if (editable && contributor != null) {
+			IDocument document = sourceViewer.getDocument();
+			if (document != null)
+				contributor.connectPositionUpdater(document);
+		}
 		if (!isCursorLinePainterInstalled(sourceViewer))
 			getSourceViewerDecorationSupport(sourceViewer).install(fPreferenceStore);
 	}
