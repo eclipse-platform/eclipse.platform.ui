@@ -1,5 +1,5 @@
 <%--
- Copyright (c) 2005, 2007 Intel Corporation and others.
+ Copyright (c) 2005, 2009 Intel Corporation and others.
  All rights reserved. This program and the accompanying materials 
  are made available under the terms of the Eclipse Public License v1.0
  which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
      IBM Corporation - 122967 [Help] Remote help system (improve responsiveness)
      IBM Corporation - 166695 [Webapp] Index View truncates button if large fonts are used
      IBM Corporation 2006, refactored index view into a single frame
+     IBM Corporation 2009, css changes
 --%>
 <%@ include file="fheader.jsp"%>
 
@@ -27,6 +28,17 @@
 <style type="text/css">
 <%@ include file="indexView.css"%>
 </style>
+<% 
+    if (requestData.isMacMozilla()) {
+%>
+<style type="text/css">
+#button {
+    background:GrayText;
+}
+</style>
+<%
+    }
+%>
 
 <base target="ContentViewFrame">
 
