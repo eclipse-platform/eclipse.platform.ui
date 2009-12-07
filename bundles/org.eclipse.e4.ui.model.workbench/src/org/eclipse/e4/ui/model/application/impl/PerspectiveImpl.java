@@ -47,7 +47,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getWidget <em>Widget</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getFactory <em>Factory</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getRenderer <em>Renderer</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isToBeRendered <em>To Be Rendered</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getChildren <em>Children</em>}</li>
@@ -101,24 +102,44 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	protected Object widget = WIDGET_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The default value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Object FACTORY_EDEFAULT = null;
+	protected static final Object RENDERER_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The cached value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected Object factory = FACTORY_EDEFAULT;
+	protected Object renderer = RENDERER_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean TO_BE_RENDERED_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -128,7 +149,7 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean VISIBLE_EDEFAULT = true;
+	protected static final boolean VISIBLE_EDEFAULT = false;
 
 	/**
 	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -256,8 +277,8 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getFactory() {
-		return factory;
+	public Object getRenderer() {
+		return renderer;
 	}
 
 	/**
@@ -265,11 +286,32 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setFactory(Object newFactory) {
-		Object oldFactory = factory;
-		factory = newFactory;
+	public void setRenderer(Object newRenderer) {
+		Object oldRenderer = renderer;
+		renderer = newRenderer;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__FACTORY, oldFactory, factory));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__RENDERER, oldRenderer, renderer));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isToBeRendered() {
+		return toBeRendered;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setToBeRendered(boolean newToBeRendered) {
+		boolean oldToBeRendered = toBeRendered;
+		toBeRendered = newToBeRendered;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED, oldToBeRendered, toBeRendered));
 	}
 
 	/**
@@ -479,8 +521,10 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 				return getId();
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				return getWidget();
-			case MApplicationPackage.PERSPECTIVE__FACTORY:
-				return getFactory();
+			case MApplicationPackage.PERSPECTIVE__RENDERER:
+				return getRenderer();
+			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
+				return isToBeRendered();
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				return isVisible();
 			case MApplicationPackage.PERSPECTIVE__PARENT:
@@ -513,8 +557,11 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				setWidget(newValue);
 				return;
-			case MApplicationPackage.PERSPECTIVE__FACTORY:
-				setFactory(newValue);
+			case MApplicationPackage.PERSPECTIVE__RENDERER:
+				setRenderer(newValue);
+				return;
+			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
+				setToBeRendered((Boolean)newValue);
 				return;
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				setVisible((Boolean)newValue);
@@ -554,8 +601,11 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
-			case MApplicationPackage.PERSPECTIVE__FACTORY:
-				setFactory(FACTORY_EDEFAULT);
+			case MApplicationPackage.PERSPECTIVE__RENDERER:
+				setRenderer(RENDERER_EDEFAULT);
+				return;
+			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
+				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
 				return;
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				setVisible(VISIBLE_EDEFAULT);
@@ -591,8 +641,10 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.PERSPECTIVE__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
-			case MApplicationPackage.PERSPECTIVE__FACTORY:
-				return FACTORY_EDEFAULT == null ? factory != null : !FACTORY_EDEFAULT.equals(factory);
+			case MApplicationPackage.PERSPECTIVE__RENDERER:
+				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
+			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
+				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.PERSPECTIVE__PARENT:
@@ -625,7 +677,8 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 		if (baseClass == MUIElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PERSPECTIVE__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
-				case MApplicationPackage.PERSPECTIVE__FACTORY: return MApplicationPackage.UI_ELEMENT__FACTORY;
+				case MApplicationPackage.PERSPECTIVE__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
+				case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
 				case MApplicationPackage.PERSPECTIVE__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.PERSPECTIVE__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
 				default: return -1;
@@ -669,7 +722,8 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 		if (baseClass == MUIElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.PERSPECTIVE__WIDGET;
-				case MApplicationPackage.UI_ELEMENT__FACTORY: return MApplicationPackage.PERSPECTIVE__FACTORY;
+				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.PERSPECTIVE__RENDERER;
+				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.PERSPECTIVE__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.PERSPECTIVE__PARENT;
 				default: return -1;
@@ -711,8 +765,10 @@ public class PerspectiveImpl extends UIItemImpl implements MPerspective {
 		result.append(id);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
-		result.append(", factory: "); //$NON-NLS-1$
-		result.append(factory);
+		result.append(", renderer: "); //$NON-NLS-1$
+		result.append(renderer);
+		result.append(", toBeRendered: "); //$NON-NLS-1$
+		result.append(toBeRendered);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
 		result.append(", context: "); //$NON-NLS-1$

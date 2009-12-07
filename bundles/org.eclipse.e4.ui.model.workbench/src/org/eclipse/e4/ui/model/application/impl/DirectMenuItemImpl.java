@@ -44,7 +44,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getWidget <em>Widget</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getFactory <em>Factory</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getRenderer <em>Renderer</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#isToBeRendered <em>To Be Rendered</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getChildren <em>Children</em>}</li>
@@ -82,24 +83,44 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	protected Object widget = WIDGET_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The default value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Object FACTORY_EDEFAULT = null;
+	protected static final Object RENDERER_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The cached value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected Object factory = FACTORY_EDEFAULT;
+	protected Object renderer = RENDERER_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean TO_BE_RENDERED_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -109,7 +130,7 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean VISIBLE_EDEFAULT = true;
+	protected static final boolean VISIBLE_EDEFAULT = false;
 
 	/**
 	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -306,8 +327,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getFactory() {
-		return factory;
+	public Object getRenderer() {
+		return renderer;
 	}
 
 	/**
@@ -315,11 +336,32 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setFactory(Object newFactory) {
-		Object oldFactory = factory;
-		factory = newFactory;
+	public void setRenderer(Object newRenderer) {
+		Object oldRenderer = renderer;
+		renderer = newRenderer;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_MENU_ITEM__FACTORY, oldFactory, factory));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_MENU_ITEM__RENDERER, oldRenderer, renderer));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isToBeRendered() {
+		return toBeRendered;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setToBeRendered(boolean newToBeRendered) {
+		boolean oldToBeRendered = toBeRendered;
+		toBeRendered = newToBeRendered;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_MENU_ITEM__TO_BE_RENDERED, oldToBeRendered, toBeRendered));
 	}
 
 	/**
@@ -620,8 +662,10 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		switch (featureID) {
 			case MApplicationPackage.DIRECT_MENU_ITEM__WIDGET:
 				return getWidget();
-			case MApplicationPackage.DIRECT_MENU_ITEM__FACTORY:
-				return getFactory();
+			case MApplicationPackage.DIRECT_MENU_ITEM__RENDERER:
+				return getRenderer();
+			case MApplicationPackage.DIRECT_MENU_ITEM__TO_BE_RENDERED:
+				return isToBeRendered();
 			case MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE:
 				return isVisible();
 			case MApplicationPackage.DIRECT_MENU_ITEM__PARENT:
@@ -659,8 +703,11 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 			case MApplicationPackage.DIRECT_MENU_ITEM__WIDGET:
 				setWidget(newValue);
 				return;
-			case MApplicationPackage.DIRECT_MENU_ITEM__FACTORY:
-				setFactory(newValue);
+			case MApplicationPackage.DIRECT_MENU_ITEM__RENDERER:
+				setRenderer(newValue);
+				return;
+			case MApplicationPackage.DIRECT_MENU_ITEM__TO_BE_RENDERED:
+				setToBeRendered((Boolean)newValue);
 				return;
 			case MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE:
 				setVisible((Boolean)newValue);
@@ -708,8 +755,11 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 			case MApplicationPackage.DIRECT_MENU_ITEM__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
-			case MApplicationPackage.DIRECT_MENU_ITEM__FACTORY:
-				setFactory(FACTORY_EDEFAULT);
+			case MApplicationPackage.DIRECT_MENU_ITEM__RENDERER:
+				setRenderer(RENDERER_EDEFAULT);
+				return;
+			case MApplicationPackage.DIRECT_MENU_ITEM__TO_BE_RENDERED:
+				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
 				return;
 			case MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE:
 				setVisible(VISIBLE_EDEFAULT);
@@ -755,8 +805,10 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		switch (featureID) {
 			case MApplicationPackage.DIRECT_MENU_ITEM__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
-			case MApplicationPackage.DIRECT_MENU_ITEM__FACTORY:
-				return FACTORY_EDEFAULT == null ? factory != null : !FACTORY_EDEFAULT.equals(factory);
+			case MApplicationPackage.DIRECT_MENU_ITEM__RENDERER:
+				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
+			case MApplicationPackage.DIRECT_MENU_ITEM__TO_BE_RENDERED:
+				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
 			case MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE:
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.DIRECT_MENU_ITEM__PARENT:
@@ -791,7 +843,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		if (baseClass == MUIElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.DIRECT_MENU_ITEM__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
-				case MApplicationPackage.DIRECT_MENU_ITEM__FACTORY: return MApplicationPackage.UI_ELEMENT__FACTORY;
+				case MApplicationPackage.DIRECT_MENU_ITEM__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
+				case MApplicationPackage.DIRECT_MENU_ITEM__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
 				case MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.DIRECT_MENU_ITEM__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
 				default: return -1;
@@ -843,7 +896,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		if (baseClass == MUIElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.DIRECT_MENU_ITEM__WIDGET;
-				case MApplicationPackage.UI_ELEMENT__FACTORY: return MApplicationPackage.DIRECT_MENU_ITEM__FACTORY;
+				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.DIRECT_MENU_ITEM__RENDERER;
+				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.DIRECT_MENU_ITEM__TO_BE_RENDERED;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.DIRECT_MENU_ITEM__PARENT;
 				default: return -1;
@@ -897,8 +951,10 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (widget: "); //$NON-NLS-1$
 		result.append(widget);
-		result.append(", factory: "); //$NON-NLS-1$
-		result.append(factory);
+		result.append(", renderer: "); //$NON-NLS-1$
+		result.append(renderer);
+		result.append(", toBeRendered: "); //$NON-NLS-1$
+		result.append(toBeRendered);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
 		result.append(", name: "); //$NON-NLS-1$

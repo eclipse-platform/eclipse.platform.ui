@@ -142,14 +142,14 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		window.getChildren().add(part);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setVisible(before);
+		menu.setToBeRendered(before);
 		menu.setId(menuId);
 		part.getMenus().add(menu);
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		menu.setVisible(after);
+		menu.setToBeRendered(after);
 
 		Object state = reconciler.serialize();
 
@@ -164,18 +164,18 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		window.getChildren().add(part);
 
 		menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setVisible(before);
+		menu.setToBeRendered(before);
 		menu.setId(menuId);
 		part.getMenus().add(menu);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
-		assertEquals(before, menu.isVisible());
+		assertEquals(before, menu.isToBeRendered());
 
 		applyAll(deltas);
 
-		assertEquals(after, menu.isVisible());
+		assertEquals(after, menu.isToBeRendered());
 	}
 
 	public void testPart_Menu_Visible_TrueTrue() {
@@ -310,14 +310,14 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		window.getChildren().add(part);
 
 		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
-		toolBar.setVisible(before);
+		toolBar.setToBeRendered(before);
 		toolBar.setId(toolBarId);
 		part.setToolbar(toolBar);
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		toolBar.setVisible(after);
+		toolBar.setToBeRendered(after);
 
 		Object state = reconciler.serialize();
 
@@ -332,18 +332,18 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		window.getChildren().add(part);
 
 		toolBar = MApplicationFactory.eINSTANCE.createToolBar();
-		toolBar.setVisible(before);
+		toolBar.setToBeRendered(before);
 		toolBar.setId(toolBarId);
 		part.setToolbar(toolBar);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
-		assertEquals(before, toolBar.isVisible());
+		assertEquals(before, toolBar.isToBeRendered());
 
 		applyAll(deltas);
 
-		assertEquals(after, toolBar.isVisible());
+		assertEquals(after, toolBar.isToBeRendered());
 	}
 
 	public void testPart_ToolBar_Visible_TrueTrue() {

@@ -105,7 +105,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setName("name");
 		part.setId(partId);
-		part.setVisible(true);
+		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
 
@@ -125,20 +125,20 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		part = MApplicationFactory.eINSTANCE.createPart();
 		part.setName("name2");
 		part.setId(partId);
-		part.setVisible(false);
+		part.setToBeRendered(false);
 
 		window.getChildren().add(part);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				state);
 
-		assertFalse(part.isVisible());
+		assertFalse(part.isToBeRendered());
 		assertEquals("name2", part.getName());
 
 		applyAll(deltas);
 
 		// the user's change should not have made this part visible
-		assertFalse(part.isVisible());
+		assertFalse(part.isToBeRendered());
 		// the user's change should have been applied
 		assertEquals("customName", part.getName());
 	}
@@ -167,14 +167,14 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setName("name");
 		part.setId(partId);
-		part.setVisible(true);
+		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		part.setVisible(false);
+		part.setToBeRendered(false);
 
 		Object serializedState = reconciler.serialize();
 
@@ -187,19 +187,19 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		part = MApplicationFactory.eINSTANCE.createPart();
 		part.setName("name2");
 		part.setId(partId);
-		part.setVisible(true);
+		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
-		assertTrue(part.isVisible());
+		assertTrue(part.isToBeRendered());
 		assertEquals("name2", part.getName());
 
 		applyAll(deltas);
 
-		assertFalse(part.isVisible());
+		assertFalse(part.isToBeRendered());
 		// the application's change should not have been overridden
 		assertEquals("name2", part.getName());
 	}
@@ -220,13 +220,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		MPart partA = MApplicationFactory.eINSTANCE.createPart();
 		partA.setId(partAId);
-		partA.setVisible(true);
+		partA.setToBeRendered(true);
 		MPart partB = MApplicationFactory.eINSTANCE.createPart();
 		partB.setId(partBId);
-		partB.setVisible(true);
+		partB.setToBeRendered(true);
 		MPart partD = MApplicationFactory.eINSTANCE.createPart();
 		partD.setId(partDId);
-		partD.setVisible(true);
+		partD.setToBeRendered(true);
 
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
@@ -235,7 +235,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		partB.setVisible(false);
+		partB.setToBeRendered(false);
 
 		Object serializedState = reconciler.serialize();
 
@@ -247,16 +247,16 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		partA = MApplicationFactory.eINSTANCE.createPart();
 		partA.setId(partAId);
-		partA.setVisible(true);
+		partA.setToBeRendered(true);
 		partB = MApplicationFactory.eINSTANCE.createPart();
 		partB.setId(partBId);
-		partB.setVisible(true);
+		partB.setToBeRendered(true);
 		MPart partC = MApplicationFactory.eINSTANCE.createPart();
 		partC.setId(partCId);
-		partC.setVisible(true);
+		partC.setToBeRendered(true);
 		partD = MApplicationFactory.eINSTANCE.createPart();
 		partD.setId(partDId);
-		partD.setVisible(true);
+		partD.setToBeRendered(true);
 
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
@@ -266,17 +266,17 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
-		assertTrue(partA.isVisible());
-		assertTrue(partB.isVisible());
-		assertTrue(partC.isVisible());
-		assertTrue(partD.isVisible());
+		assertTrue(partA.isToBeRendered());
+		assertTrue(partB.isToBeRendered());
+		assertTrue(partC.isToBeRendered());
+		assertTrue(partD.isToBeRendered());
 
 		applyAll(deltas);
 
-		assertTrue(partA.isVisible());
-		assertFalse(partB.isVisible());
-		assertTrue(partC.isVisible());
-		assertTrue(partD.isVisible());
+		assertTrue(partA.isToBeRendered());
+		assertFalse(partB.isToBeRendered());
+		assertTrue(partC.isToBeRendered());
+		assertTrue(partD.isToBeRendered());
 	}
 
 	/**

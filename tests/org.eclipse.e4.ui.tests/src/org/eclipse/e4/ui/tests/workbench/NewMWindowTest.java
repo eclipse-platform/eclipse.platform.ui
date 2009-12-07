@@ -135,7 +135,7 @@ public class NewMWindowTest extends TestCase {
 		// "activate" the part, same as (in theory) an
 		// SWT.Activate event.
 		AbstractPartRenderer factory = (AbstractPartRenderer) modelPart
-				.getFactory();
+				.getRenderer();
 		factory.activate(modelPart);
 
 		IEclipseContext next = (IEclipseContext) child
@@ -177,12 +177,12 @@ public class NewMWindowTest extends TestCase {
 		MMenu mainMenu = window.getMainMenu();
 		final MMenuItem item2Model = mainMenu.getChildren().get(0)
 				.getChildren().get(0);
-		item2Model.setVisible(false);
+		item2Model.setToBeRendered(false);
 		fileMenu.notifyListeners(SWT.Show, null);
 		assertEquals(1, fileMenu.getItemCount());
 		fileMenu.notifyListeners(SWT.Hide, null);
 
-		item2Model.setVisible(true);
+		item2Model.setToBeRendered(true);
 		fileMenu.notifyListeners(SWT.Show, null);
 		assertEquals(2, fileMenu.getItemCount());
 		fileMenu.notifyListeners(SWT.Hide, null);

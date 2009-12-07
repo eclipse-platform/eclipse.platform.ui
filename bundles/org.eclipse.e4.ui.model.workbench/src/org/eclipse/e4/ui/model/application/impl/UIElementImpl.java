@@ -33,7 +33,8 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#getWidget <em>Widget</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#getFactory <em>Factory</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#getRenderer <em>Renderer</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#isToBeRendered <em>To Be Rendered</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#getParent <em>Parent</em>}</li>
  * </ul>
@@ -63,24 +64,44 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	protected Object widget = WIDGET_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The default value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Object FACTORY_EDEFAULT = null;
+	protected static final Object RENDERER_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The cached value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected Object factory = FACTORY_EDEFAULT;
+	protected Object renderer = RENDERER_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean TO_BE_RENDERED_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -90,7 +111,7 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean VISIBLE_EDEFAULT = true;
+	protected static final boolean VISIBLE_EDEFAULT = false;
 
 	/**
 	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -147,8 +168,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getFactory() {
-		return factory;
+	public Object getRenderer() {
+		return renderer;
 	}
 
 	/**
@@ -156,11 +177,32 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setFactory(Object newFactory) {
-		Object oldFactory = factory;
-		factory = newFactory;
+	public void setRenderer(Object newRenderer) {
+		Object oldRenderer = renderer;
+		renderer = newRenderer;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_ELEMENT__FACTORY, oldFactory, factory));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_ELEMENT__RENDERER, oldRenderer, renderer));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isToBeRendered() {
+		return toBeRendered;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setToBeRendered(boolean newToBeRendered) {
+		boolean oldToBeRendered = toBeRendered;
+		toBeRendered = newToBeRendered;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED, oldToBeRendered, toBeRendered));
 	}
 
 	/**
@@ -281,8 +323,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		switch (featureID) {
 			case MApplicationPackage.UI_ELEMENT__WIDGET:
 				return getWidget();
-			case MApplicationPackage.UI_ELEMENT__FACTORY:
-				return getFactory();
+			case MApplicationPackage.UI_ELEMENT__RENDERER:
+				return getRenderer();
+			case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED:
+				return isToBeRendered();
 			case MApplicationPackage.UI_ELEMENT__VISIBLE:
 				return isVisible();
 			case MApplicationPackage.UI_ELEMENT__PARENT:
@@ -303,8 +347,11 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case MApplicationPackage.UI_ELEMENT__WIDGET:
 				setWidget(newValue);
 				return;
-			case MApplicationPackage.UI_ELEMENT__FACTORY:
-				setFactory(newValue);
+			case MApplicationPackage.UI_ELEMENT__RENDERER:
+				setRenderer(newValue);
+				return;
+			case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED:
+				setToBeRendered((Boolean)newValue);
 				return;
 			case MApplicationPackage.UI_ELEMENT__VISIBLE:
 				setVisible((Boolean)newValue);
@@ -327,8 +374,11 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case MApplicationPackage.UI_ELEMENT__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
-			case MApplicationPackage.UI_ELEMENT__FACTORY:
-				setFactory(FACTORY_EDEFAULT);
+			case MApplicationPackage.UI_ELEMENT__RENDERER:
+				setRenderer(RENDERER_EDEFAULT);
+				return;
+			case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED:
+				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
 				return;
 			case MApplicationPackage.UI_ELEMENT__VISIBLE:
 				setVisible(VISIBLE_EDEFAULT);
@@ -350,8 +400,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		switch (featureID) {
 			case MApplicationPackage.UI_ELEMENT__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
-			case MApplicationPackage.UI_ELEMENT__FACTORY:
-				return FACTORY_EDEFAULT == null ? factory != null : !FACTORY_EDEFAULT.equals(factory);
+			case MApplicationPackage.UI_ELEMENT__RENDERER:
+				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
+			case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED:
+				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
 			case MApplicationPackage.UI_ELEMENT__VISIBLE:
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.UI_ELEMENT__PARENT:
@@ -372,8 +424,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (widget: "); //$NON-NLS-1$
 		result.append(widget);
-		result.append(", factory: "); //$NON-NLS-1$
-		result.append(factory);
+		result.append(", renderer: "); //$NON-NLS-1$
+		result.append(renderer);
+		result.append(", toBeRendered: "); //$NON-NLS-1$
+		result.append(toBeRendered);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
 		result.append(')');

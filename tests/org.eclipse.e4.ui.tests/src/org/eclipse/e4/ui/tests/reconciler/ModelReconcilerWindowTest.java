@@ -288,13 +288,13 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
 		menu.setId(menuId);
-		menu.setVisible(before);
+		menu.setToBeRendered(before);
 		window.setMainMenu(menu);
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		menu.setVisible(after);
+		menu.setToBeRendered(after);
 
 		Object state = reconciler.serialize();
 
@@ -306,16 +306,16 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 
 		menu = MApplicationFactory.eINSTANCE.createMenu();
 		menu.setId(menuId);
-		menu.setVisible(before);
+		menu.setToBeRendered(before);
 		window.setMainMenu(menu);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(before, menu.isVisible());
+		assertEquals(before, menu.isToBeRendered());
 
 		applyAll(deltas);
 
-		assertEquals(after, menu.isVisible());
+		assertEquals(after, menu.isToBeRendered());
 	}
 
 	public void testMenu_Visible_TrueTrue() {

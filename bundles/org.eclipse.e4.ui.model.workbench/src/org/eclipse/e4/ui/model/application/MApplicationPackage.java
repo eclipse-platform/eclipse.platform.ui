@@ -546,13 +546,22 @@ public interface MApplicationPackage extends EPackage {
 	int UI_ELEMENT__WIDGET = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ELEMENT__FACTORY = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int UI_ELEMENT__RENDERER = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int UI_ELEMENT__TO_BE_RENDERED = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -561,7 +570,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ELEMENT__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int UI_ELEMENT__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -570,7 +579,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ELEMENT__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int UI_ELEMENT__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>UI Element</em>' class.
@@ -579,7 +588,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ELEMENT_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int UI_ELEMENT_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContextImpl <em>Context</em>}' class.
@@ -766,13 +775,22 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS__WIDGET = APPLICATION_ELEMENT_FEATURE_COUNT + 8;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__FACTORY = APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+	int TEST_HARNESS__RENDERER = APPLICATION_ELEMENT_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TEST_HARNESS__TO_BE_RENDERED = APPLICATION_ELEMENT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -781,7 +799,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 10;
+	int TEST_HARNESS__VISIBLE = APPLICATION_ELEMENT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -790,7 +808,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 11;
+	int TEST_HARNESS__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -799,7 +817,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 12;
+	int TEST_HARNESS__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -808,7 +826,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 13;
+	int TEST_HARNESS__ACTIVE_CHILD = APPLICATION_ELEMENT_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Tag</b></em>' attribute.
@@ -817,7 +835,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 14;
+	int TEST_HARNESS__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -826,7 +844,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 15;
+	int TEST_HARNESS__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 16;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -835,7 +853,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__INPUT_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 16;
+	int TEST_HARNESS__INPUT_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -844,7 +862,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 17;
+	int TEST_HARNESS__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -853,7 +871,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ICON_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
+	int TEST_HARNESS__ICON_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 19;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -862,7 +880,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__TOOLTIP = APPLICATION_ELEMENT_FEATURE_COUNT + 19;
+	int TEST_HARNESS__TOOLTIP = APPLICATION_ELEMENT_FEATURE_COUNT + 20;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -871,7 +889,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__ENABLED = APPLICATION_ELEMENT_FEATURE_COUNT + 20;
+	int TEST_HARNESS__ENABLED = APPLICATION_ELEMENT_FEATURE_COUNT + 21;
 
 	/**
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
@@ -880,7 +898,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SELECTED = APPLICATION_ELEMENT_FEATURE_COUNT + 21;
+	int TEST_HARNESS__SELECTED = APPLICATION_ELEMENT_FEATURE_COUNT + 22;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -889,7 +907,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SEPARATOR = APPLICATION_ELEMENT_FEATURE_COUNT + 22;
+	int TEST_HARNESS__SEPARATOR = APPLICATION_ELEMENT_FEATURE_COUNT + 23;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -898,7 +916,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__DIRTY = APPLICATION_ELEMENT_FEATURE_COUNT + 23;
+	int TEST_HARNESS__DIRTY = APPLICATION_ELEMENT_FEATURE_COUNT + 24;
 
 	/**
 	 * The number of structural features of the '<em>Test Harness</em>' class.
@@ -907,7 +925,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 24;
+	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 25;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}' class.
@@ -957,13 +975,22 @@ public interface MApplicationPackage extends EPackage {
 	int ELEMENT_CONTAINER__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ELEMENT_CONTAINER__FACTORY = UI_ELEMENT__FACTORY;
+	int ELEMENT_CONTAINER__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1039,13 +1066,22 @@ public interface MApplicationPackage extends EPackage {
 	int GENERIC_TILE__WIDGET = ELEMENT_CONTAINER__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int GENERIC_TILE__FACTORY = ELEMENT_CONTAINER__FACTORY;
+	int GENERIC_TILE__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1139,13 +1175,22 @@ public interface MApplicationPackage extends EPackage {
 	int TRIM_CONTAINER__WIDGET = ELEMENT_CONTAINER__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_CONTAINER__FACTORY = ELEMENT_CONTAINER__FACTORY;
+	int TRIM_CONTAINER__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1276,13 +1321,22 @@ public interface MApplicationPackage extends EPackage {
 	int APPLICATION__WIDGET = CONTEXT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__FACTORY = CONTEXT_FEATURE_COUNT + 2;
+	int APPLICATION__RENDERER = CONTEXT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__TO_BE_RENDERED = CONTEXT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1291,7 +1345,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__VISIBLE = CONTEXT_FEATURE_COUNT + 3;
+	int APPLICATION__VISIBLE = CONTEXT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -1300,7 +1354,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__PARENT = CONTEXT_FEATURE_COUNT + 4;
+	int APPLICATION__PARENT = CONTEXT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1309,7 +1363,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__CHILDREN = CONTEXT_FEATURE_COUNT + 5;
+	int APPLICATION__CHILDREN = CONTEXT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -1318,7 +1372,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__ACTIVE_CHILD = CONTEXT_FEATURE_COUNT + 6;
+	int APPLICATION__ACTIVE_CHILD = CONTEXT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -1327,7 +1381,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__HANDLERS = CONTEXT_FEATURE_COUNT + 7;
+	int APPLICATION__HANDLERS = CONTEXT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -1336,7 +1390,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__BINDINGS = CONTEXT_FEATURE_COUNT + 8;
+	int APPLICATION__BINDINGS = CONTEXT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
@@ -1345,7 +1399,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 9;
+	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 10;
 
 	/**
 	 * The number of structural features of the '<em>Application</em>' class.
@@ -1354,7 +1408,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 10;
+	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 11;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ItemImpl <em>Item</em>}' class.
@@ -1385,13 +1439,22 @@ public interface MApplicationPackage extends EPackage {
 	int ITEM__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__FACTORY = UI_ELEMENT__FACTORY;
+	int ITEM__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1503,13 +1566,22 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM__WIDGET = ITEM__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__FACTORY = ITEM__FACTORY;
+	int HANDLED_ITEM__RENDERER = ITEM__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__TO_BE_RENDERED = ITEM__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1648,13 +1720,22 @@ public interface MApplicationPackage extends EPackage {
 	int MENU__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MENU__FACTORY = UI_ELEMENT__FACTORY;
+	int MENU__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1730,13 +1811,22 @@ public interface MApplicationPackage extends EPackage {
 	int MENU_ITEM__WIDGET = MENU__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__FACTORY = MENU__FACTORY;
+	int MENU_ITEM__RENDERER = MENU__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__TO_BE_RENDERED = MENU__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -1866,13 +1956,22 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_MENU_ITEM__WIDGET = MENU_ITEM__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_MENU_ITEM__FACTORY = MENU_ITEM__FACTORY;
+	int HANDLED_MENU_ITEM__RENDERER = MENU_ITEM__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__TO_BE_RENDERED = MENU_ITEM__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2056,13 +2155,22 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_MENU_ITEM__WIDGET = CONTRIBUTION_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__FACTORY = CONTRIBUTION_FEATURE_COUNT + 1;
+	int DIRECT_MENU_ITEM__RENDERER = CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2071,7 +2179,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 2;
+	int DIRECT_MENU_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -2080,7 +2188,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 3;
+	int DIRECT_MENU_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -2089,7 +2197,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 4;
+	int DIRECT_MENU_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -2098,7 +2206,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 5;
+	int DIRECT_MENU_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2107,7 +2215,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__NAME = CONTRIBUTION_FEATURE_COUNT + 6;
+	int DIRECT_MENU_ITEM__NAME = CONTRIBUTION_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2116,7 +2224,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 7;
+	int DIRECT_MENU_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -2125,7 +2233,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 8;
+	int DIRECT_MENU_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -2134,7 +2242,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 9;
+	int DIRECT_MENU_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
@@ -2143,7 +2251,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 10;
+	int DIRECT_MENU_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -2152,7 +2260,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 11;
+	int DIRECT_MENU_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The number of structural features of the '<em>Direct Menu Item</em>' class.
@@ -2161,7 +2269,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 12;
+	int DIRECT_MENU_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl <em>Tool Item</em>}' class.
@@ -2192,13 +2300,22 @@ public interface MApplicationPackage extends EPackage {
 	int TOOL_ITEM__WIDGET = ITEM__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__FACTORY = ITEM__FACTORY;
+	int TOOL_ITEM__RENDERER = ITEM__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__TO_BE_RENDERED = ITEM__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2328,13 +2445,22 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_TOOL_ITEM__WIDGET = ELEMENT_CONTAINER__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_TOOL_ITEM__FACTORY = ELEMENT_CONTAINER__FACTORY;
+	int HANDLED_TOOL_ITEM__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2518,13 +2644,22 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_TOOL_ITEM__WIDGET = CONTRIBUTION_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__FACTORY = CONTRIBUTION_FEATURE_COUNT + 1;
+	int DIRECT_TOOL_ITEM__RENDERER = CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2533,7 +2668,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 2;
+	int DIRECT_TOOL_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -2542,7 +2677,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 3;
+	int DIRECT_TOOL_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2551,7 +2686,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__NAME = CONTRIBUTION_FEATURE_COUNT + 4;
+	int DIRECT_TOOL_ITEM__NAME = CONTRIBUTION_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2560,7 +2695,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 5;
+	int DIRECT_TOOL_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -2569,7 +2704,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 6;
+	int DIRECT_TOOL_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
@@ -2578,7 +2713,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 7;
+	int DIRECT_TOOL_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Selected</b></em>' attribute.
@@ -2587,7 +2722,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 8;
+	int DIRECT_TOOL_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Separator</b></em>' attribute.
@@ -2596,7 +2731,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 9;
+	int DIRECT_TOOL_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -2605,7 +2740,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 10;
+	int DIRECT_TOOL_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -2614,7 +2749,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 11;
+	int DIRECT_TOOL_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The number of structural features of the '<em>Direct Tool Item</em>' class.
@@ -2623,7 +2758,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 12;
+	int DIRECT_TOOL_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl <em>Tool Bar</em>}' class.
@@ -2654,13 +2789,22 @@ public interface MApplicationPackage extends EPackage {
 	int TOOL_BAR__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_BAR__FACTORY = UI_ELEMENT__FACTORY;
+	int TOOL_BAR__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2736,13 +2880,22 @@ public interface MApplicationPackage extends EPackage {
 	int PSC_ELEMENT__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PSC_ELEMENT__FACTORY = UI_ELEMENT__FACTORY;
+	int PSC_ELEMENT__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2845,13 +2998,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART__WIDGET = CONTRIBUTION_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART__FACTORY = CONTRIBUTION_FEATURE_COUNT + 3;
+	int PART__RENDERER = CONTRIBUTION_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -2860,7 +3022,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 4;
+	int PART__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -2869,7 +3031,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__PARENT = CONTRIBUTION_FEATURE_COUNT + 5;
+	int PART__PARENT = CONTRIBUTION_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2878,7 +3040,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__NAME = CONTRIBUTION_FEATURE_COUNT + 6;
+	int PART__NAME = CONTRIBUTION_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2887,7 +3049,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 7;
+	int PART__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -2896,7 +3058,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 8;
+	int PART__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -2905,7 +3067,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__HANDLERS = CONTRIBUTION_FEATURE_COUNT + 9;
+	int PART__HANDLERS = CONTRIBUTION_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -2914,7 +3076,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__BINDINGS = CONTRIBUTION_FEATURE_COUNT + 10;
+	int PART__BINDINGS = CONTRIBUTION_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
@@ -2923,7 +3085,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 11;
+	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
@@ -2932,7 +3094,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 12;
+	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
 	 * The number of structural features of the '<em>Part</em>' class.
@@ -2941,7 +3103,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
+	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 14;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.SaveablePartImpl <em>Saveable Part</em>}' class.
@@ -3017,13 +3179,22 @@ public interface MApplicationPackage extends EPackage {
 	int SAVEABLE_PART__WIDGET = PART__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SAVEABLE_PART__FACTORY = PART__FACTORY;
+	int SAVEABLE_PART__RENDERER = PART__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__TO_BE_RENDERED = PART__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3153,13 +3324,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART_STACK__WIDGET = ELEMENT_CONTAINER__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART_STACK__FACTORY = ELEMENT_CONTAINER__FACTORY;
+	int PART_STACK__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3235,13 +3415,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART_SASH_CONTAINER__WIDGET = GENERIC_TILE__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART_SASH_CONTAINER__FACTORY = GENERIC_TILE__FACTORY;
+	int PART_SASH_CONTAINER__RENDERER = GENERIC_TILE__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__TO_BE_RENDERED = GENERIC_TILE__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3362,13 +3551,22 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW__WIDGET = UI_ITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__FACTORY = UI_ITEM_FEATURE_COUNT + 2;
+	int WINDOW__RENDERER = UI_ITEM_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__TO_BE_RENDERED = UI_ITEM_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3377,7 +3575,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__VISIBLE = UI_ITEM_FEATURE_COUNT + 3;
+	int WINDOW__VISIBLE = UI_ITEM_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -3386,7 +3584,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__PARENT = UI_ITEM_FEATURE_COUNT + 4;
+	int WINDOW__PARENT = UI_ITEM_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -3395,7 +3593,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__CHILDREN = UI_ITEM_FEATURE_COUNT + 5;
+	int WINDOW__CHILDREN = UI_ITEM_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -3404,7 +3602,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__ACTIVE_CHILD = UI_ITEM_FEATURE_COUNT + 6;
+	int WINDOW__ACTIVE_CHILD = UI_ITEM_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -3413,7 +3611,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__CONTEXT = UI_ITEM_FEATURE_COUNT + 7;
+	int WINDOW__CONTEXT = UI_ITEM_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -3422,7 +3620,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__VARIABLES = UI_ITEM_FEATURE_COUNT + 8;
+	int WINDOW__VARIABLES = UI_ITEM_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -3431,7 +3629,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HANDLERS = UI_ITEM_FEATURE_COUNT + 9;
+	int WINDOW__HANDLERS = UI_ITEM_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -3440,7 +3638,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__BINDINGS = UI_ITEM_FEATURE_COUNT + 10;
+	int WINDOW__BINDINGS = UI_ITEM_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
@@ -3449,7 +3647,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 11;
+	int WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -3458,7 +3656,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__X = UI_ITEM_FEATURE_COUNT + 12;
+	int WINDOW__X = UI_ITEM_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -3467,7 +3665,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__Y = UI_ITEM_FEATURE_COUNT + 13;
+	int WINDOW__Y = UI_ITEM_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -3476,7 +3674,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__WIDTH = UI_ITEM_FEATURE_COUNT + 14;
+	int WINDOW__WIDTH = UI_ITEM_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -3485,7 +3683,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HEIGHT = UI_ITEM_FEATURE_COUNT + 15;
+	int WINDOW__HEIGHT = UI_ITEM_FEATURE_COUNT + 16;
 
 	/**
 	 * The number of structural features of the '<em>Window</em>' class.
@@ -3494,7 +3692,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 16;
+	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 17;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
@@ -3525,13 +3723,22 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW_TRIM__WIDGET = TRIM_CONTAINER__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW_TRIM__FACTORY = TRIM_CONTAINER__FACTORY;
+	int WINDOW_TRIM__RENDERER = TRIM_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__TO_BE_RENDERED = TRIM_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3718,13 +3925,22 @@ public interface MApplicationPackage extends EPackage {
 	int VSC_ELEMENT__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VSC_ELEMENT__FACTORY = UI_ELEMENT__FACTORY;
+	int VSC_ELEMENT__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VSC_ELEMENT__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3827,13 +4043,22 @@ public interface MApplicationPackage extends EPackage {
 	int VIEW__WIDGET = PART__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VIEW__FACTORY = PART__FACTORY;
+	int VIEW__RENDERER = PART__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VIEW__TO_BE_RENDERED = PART__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3954,13 +4179,22 @@ public interface MApplicationPackage extends EPackage {
 	int VIEW_STACK__WIDGET = ELEMENT_CONTAINER__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VIEW_STACK__FACTORY = ELEMENT_CONTAINER__FACTORY;
+	int VIEW_STACK__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VIEW_STACK__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4045,13 +4279,22 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR__WIDGET = INPUT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__FACTORY = INPUT_FEATURE_COUNT + 2;
+	int EDITOR__RENDERER = INPUT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__TO_BE_RENDERED = INPUT_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4060,7 +4303,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__VISIBLE = INPUT_FEATURE_COUNT + 3;
+	int EDITOR__VISIBLE = INPUT_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -4069,7 +4312,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__PARENT = INPUT_FEATURE_COUNT + 4;
+	int EDITOR__PARENT = INPUT_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>URI</b></em>' attribute.
@@ -4078,7 +4321,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__URI = INPUT_FEATURE_COUNT + 5;
+	int EDITOR__URI = INPUT_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Object</b></em>' attribute.
@@ -4087,7 +4330,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__OBJECT = INPUT_FEATURE_COUNT + 6;
+	int EDITOR__OBJECT = INPUT_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
@@ -4096,7 +4339,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__PERSISTED_STATE = INPUT_FEATURE_COUNT + 7;
+	int EDITOR__PERSISTED_STATE = INPUT_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -4105,7 +4348,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__CONTEXT = INPUT_FEATURE_COUNT + 8;
+	int EDITOR__CONTEXT = INPUT_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -4114,7 +4357,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__VARIABLES = INPUT_FEATURE_COUNT + 9;
+	int EDITOR__VARIABLES = INPUT_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -4123,7 +4366,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__NAME = INPUT_FEATURE_COUNT + 10;
+	int EDITOR__NAME = INPUT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -4132,7 +4375,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__ICON_URI = INPUT_FEATURE_COUNT + 11;
+	int EDITOR__ICON_URI = INPUT_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -4141,7 +4384,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__TOOLTIP = INPUT_FEATURE_COUNT + 12;
+	int EDITOR__TOOLTIP = INPUT_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -4150,7 +4393,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__HANDLERS = INPUT_FEATURE_COUNT + 13;
+	int EDITOR__HANDLERS = INPUT_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -4159,7 +4402,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__BINDINGS = INPUT_FEATURE_COUNT + 14;
+	int EDITOR__BINDINGS = INPUT_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Menus</b></em>' reference list.
@@ -4168,7 +4411,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__MENUS = INPUT_FEATURE_COUNT + 15;
+	int EDITOR__MENUS = INPUT_FEATURE_COUNT + 16;
 
 	/**
 	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
@@ -4177,7 +4420,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__TOOLBAR = INPUT_FEATURE_COUNT + 16;
+	int EDITOR__TOOLBAR = INPUT_FEATURE_COUNT + 17;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -4186,7 +4429,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__DIRTY = INPUT_FEATURE_COUNT + 17;
+	int EDITOR__DIRTY = INPUT_FEATURE_COUNT + 18;
 
 	/**
 	 * The number of structural features of the '<em>Editor</em>' class.
@@ -4195,7 +4438,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR_FEATURE_COUNT = INPUT_FEATURE_COUNT + 18;
+	int EDITOR_FEATURE_COUNT = INPUT_FEATURE_COUNT + 19;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl <em>View Sash Container</em>}' class.
@@ -4226,13 +4469,22 @@ public interface MApplicationPackage extends EPackage {
 	int VIEW_SASH_CONTAINER__WIDGET = GENERIC_TILE__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VIEW_SASH_CONTAINER__FACTORY = GENERIC_TILE__FACTORY;
+	int VIEW_SASH_CONTAINER__RENDERER = GENERIC_TILE__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VIEW_SASH_CONTAINER__TO_BE_RENDERED = GENERIC_TILE__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4371,13 +4623,22 @@ public interface MApplicationPackage extends EPackage {
 	int MULTI_EDITOR__WIDGET = SAVEABLE_PART__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MULTI_EDITOR__FACTORY = SAVEABLE_PART__FACTORY;
+	int MULTI_EDITOR__RENDERER = SAVEABLE_PART__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MULTI_EDITOR__TO_BE_RENDERED = SAVEABLE_PART__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4525,13 +4786,22 @@ public interface MApplicationPackage extends EPackage {
 	int ESC_ELEMENT__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ESC_ELEMENT__FACTORY = UI_ELEMENT__FACTORY;
+	int ESC_ELEMENT__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ESC_ELEMENT__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4589,13 +4859,22 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR_STACK__WIDGET = ELEMENT_CONTAINER__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR_STACK__FACTORY = ELEMENT_CONTAINER__FACTORY;
+	int EDITOR_STACK__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR_STACK__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4680,13 +4959,22 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR_SASH_CONTAINER__WIDGET = GENERIC_TILE__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR_SASH_CONTAINER__FACTORY = GENERIC_TILE__FACTORY;
+	int EDITOR_SASH_CONTAINER__RENDERER = GENERIC_TILE__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR_SASH_CONTAINER__TO_BE_RENDERED = GENERIC_TILE__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4807,13 +5095,22 @@ public interface MApplicationPackage extends EPackage {
 	int PERSPECTIVE__WIDGET = UI_ITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__FACTORY = UI_ITEM_FEATURE_COUNT + 2;
+	int PERSPECTIVE__RENDERER = UI_ITEM_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__TO_BE_RENDERED = UI_ITEM_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -4822,7 +5119,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__VISIBLE = UI_ITEM_FEATURE_COUNT + 3;
+	int PERSPECTIVE__VISIBLE = UI_ITEM_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -4831,7 +5128,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__PARENT = UI_ITEM_FEATURE_COUNT + 4;
+	int PERSPECTIVE__PARENT = UI_ITEM_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -4840,7 +5137,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__CHILDREN = UI_ITEM_FEATURE_COUNT + 5;
+	int PERSPECTIVE__CHILDREN = UI_ITEM_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -4849,7 +5146,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__ACTIVE_CHILD = UI_ITEM_FEATURE_COUNT + 6;
+	int PERSPECTIVE__ACTIVE_CHILD = UI_ITEM_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -4858,7 +5155,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__CONTEXT = UI_ITEM_FEATURE_COUNT + 7;
+	int PERSPECTIVE__CONTEXT = UI_ITEM_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -4867,7 +5164,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__VARIABLES = UI_ITEM_FEATURE_COUNT + 8;
+	int PERSPECTIVE__VARIABLES = UI_ITEM_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>Perspective</em>' class.
@@ -4876,7 +5173,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 9;
+	int PERSPECTIVE_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
@@ -4907,13 +5204,22 @@ public interface MApplicationPackage extends EPackage {
 	int PERSPECTIVE_STACK__WIDGET = UI_ELEMENT__WIDGET;
 
 	/**
-	 * The feature id for the '<em><b>Factory</b></em>' attribute.
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE_STACK__FACTORY = UI_ELEMENT__FACTORY;
+	int PERSPECTIVE_STACK__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -5423,15 +5729,26 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getUIElement_Widget();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#getFactory <em>Factory</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#getRenderer <em>Renderer</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Factory</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement#getFactory()
+	 * @return the meta object for the attribute '<em>Renderer</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement#getRenderer()
 	 * @see #getUIElement()
 	 * @generated
 	 */
-	EAttribute getUIElement_Factory();
+	EAttribute getUIElement_Renderer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered <em>To Be Rendered</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>To Be Rendered</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered()
+	 * @see #getUIElement()
+	 * @generated
+	 */
+	EAttribute getUIElement_ToBeRendered();
 
 	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#isVisible <em>Visible</em>}'.
@@ -6518,12 +6835,20 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute UI_ELEMENT__WIDGET = eINSTANCE.getUIElement_Widget();
 
 		/**
-		 * The meta object literal for the '<em><b>Factory</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Renderer</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute UI_ELEMENT__FACTORY = eINSTANCE.getUIElement_Factory();
+		EAttribute UI_ELEMENT__RENDERER = eINSTANCE.getUIElement_Renderer();
+
+		/**
+		 * The meta object literal for the '<em><b>To Be Rendered</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute UI_ELEMENT__TO_BE_RENDERED = eINSTANCE.getUIElement_ToBeRendered();
 
 		/**
 		 * The meta object literal for the '<em><b>Visible</b></em>' attribute feature.

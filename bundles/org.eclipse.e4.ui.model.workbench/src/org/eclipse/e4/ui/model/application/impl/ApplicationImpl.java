@@ -49,7 +49,8 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getWidget <em>Widget</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getFactory <em>Factory</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getRenderer <em>Renderer</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#isToBeRendered <em>To Be Rendered</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getChildren <em>Children</em>}</li>
@@ -104,24 +105,44 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	protected Object widget = WIDGET_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The default value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final Object FACTORY_EDEFAULT = null;
+	protected static final Object RENDERER_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getFactory() <em>Factory</em>}' attribute.
+	 * The cached value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getFactory()
+	 * @see #getRenderer()
 	 * @generated
 	 * @ordered
 	 */
-	protected Object factory = FACTORY_EDEFAULT;
+	protected Object renderer = RENDERER_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean TO_BE_RENDERED_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -131,7 +152,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean VISIBLE_EDEFAULT = true;
+	protected static final boolean VISIBLE_EDEFAULT = false;
 
 	/**
 	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -259,8 +280,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public Object getFactory() {
-		return factory;
+	public Object getRenderer() {
+		return renderer;
 	}
 
 	/**
@@ -268,11 +289,32 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setFactory(Object newFactory) {
-		Object oldFactory = factory;
-		factory = newFactory;
+	public void setRenderer(Object newRenderer) {
+		Object oldRenderer = renderer;
+		renderer = newRenderer;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__FACTORY, oldFactory, factory));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__RENDERER, oldRenderer, renderer));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isToBeRendered() {
+		return toBeRendered;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setToBeRendered(boolean newToBeRendered) {
+		boolean oldToBeRendered = toBeRendered;
+		toBeRendered = newToBeRendered;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__TO_BE_RENDERED, oldToBeRendered, toBeRendered));
 	}
 
 	/**
@@ -491,8 +533,10 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return getId();
 			case MApplicationPackage.APPLICATION__WIDGET:
 				return getWidget();
-			case MApplicationPackage.APPLICATION__FACTORY:
-				return getFactory();
+			case MApplicationPackage.APPLICATION__RENDERER:
+				return getRenderer();
+			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
+				return isToBeRendered();
 			case MApplicationPackage.APPLICATION__VISIBLE:
 				return isVisible();
 			case MApplicationPackage.APPLICATION__PARENT:
@@ -527,8 +571,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(newValue);
 				return;
-			case MApplicationPackage.APPLICATION__FACTORY:
-				setFactory(newValue);
+			case MApplicationPackage.APPLICATION__RENDERER:
+				setRenderer(newValue);
+				return;
+			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
+				setToBeRendered((Boolean)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__VISIBLE:
 				setVisible((Boolean)newValue);
@@ -573,8 +620,11 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
-			case MApplicationPackage.APPLICATION__FACTORY:
-				setFactory(FACTORY_EDEFAULT);
+			case MApplicationPackage.APPLICATION__RENDERER:
+				setRenderer(RENDERER_EDEFAULT);
+				return;
+			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
+				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
 				return;
 			case MApplicationPackage.APPLICATION__VISIBLE:
 				setVisible(VISIBLE_EDEFAULT);
@@ -613,8 +663,10 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.APPLICATION__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
-			case MApplicationPackage.APPLICATION__FACTORY:
-				return FACTORY_EDEFAULT == null ? factory != null : !FACTORY_EDEFAULT.equals(factory);
+			case MApplicationPackage.APPLICATION__RENDERER:
+				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
+			case MApplicationPackage.APPLICATION__TO_BE_RENDERED:
+				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
 			case MApplicationPackage.APPLICATION__VISIBLE:
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.APPLICATION__PARENT:
@@ -649,7 +701,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MUIElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.APPLICATION__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
-				case MApplicationPackage.APPLICATION__FACTORY: return MApplicationPackage.UI_ELEMENT__FACTORY;
+				case MApplicationPackage.APPLICATION__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
+				case MApplicationPackage.APPLICATION__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
 				case MApplicationPackage.APPLICATION__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.APPLICATION__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
 				default: return -1;
@@ -693,7 +746,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MUIElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.APPLICATION__WIDGET;
-				case MApplicationPackage.UI_ELEMENT__FACTORY: return MApplicationPackage.APPLICATION__FACTORY;
+				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.APPLICATION__RENDERER;
+				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.APPLICATION__TO_BE_RENDERED;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.APPLICATION__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.APPLICATION__PARENT;
 				default: return -1;
@@ -735,8 +789,10 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		result.append(id);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
-		result.append(", factory: "); //$NON-NLS-1$
-		result.append(factory);
+		result.append(", renderer: "); //$NON-NLS-1$
+		result.append(renderer);
+		result.append(", toBeRendered: "); //$NON-NLS-1$
+		result.append(toBeRendered);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
 		result.append(')');

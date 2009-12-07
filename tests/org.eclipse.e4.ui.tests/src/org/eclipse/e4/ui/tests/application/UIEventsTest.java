@@ -295,9 +295,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		MTestHarness newParent = MApplicationFactory.eINSTANCE
 				.createTestHarness();
-		allData.setFactory("New Factory");
+		allData.setRenderer("New Factory");
 		allData.setParent(newParent);
-		allData.setVisible(!allData.isVisible());
+		allData.setToBeRendered(!allData.isToBeRendered());
 		allData.setWidget("New Widget");
 		checkForFailures(allTesters, uiElementTester);
 

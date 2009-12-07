@@ -59,7 +59,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	public void bindWidget(MUIElement me, Object widget) {
 		me.setWidget(widget);
 		((Widget) widget).setData(OWNING_ME, me);
-		me.setFactory(this);
+		me.setRenderer(this);
 
 		final IStylingEngine engine = (IStylingEngine) getContext(me).get(
 				IStylingEngine.SERVICE_NAME);
@@ -80,7 +80,7 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 		}
 
 		// Clear the factory reference
-		me.setFactory(null);
+		me.setRenderer(null);
 
 		return widget;
 	}

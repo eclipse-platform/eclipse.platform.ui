@@ -843,7 +843,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getUIElement_Factory() {
+	public EAttribute getUIElement_Renderer() {
 		return (EAttribute)uiElementEClass.getEStructuralFeatures().get(1);
 	}
 
@@ -852,7 +852,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getUIElement_Visible() {
+	public EAttribute getUIElement_ToBeRendered() {
 		return (EAttribute)uiElementEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -861,8 +861,17 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getUIElement_Visible() {
+		return (EAttribute)uiElementEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EReference getUIElement_Parent() {
-		return (EReference)uiElementEClass.getEStructuralFeatures().get(3);
+		return (EReference)uiElementEClass.getEStructuralFeatures().get(4);
 	}
 
 	/**
@@ -1593,7 +1602,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		uiElementEClass = createEClass(UI_ELEMENT);
 		createEAttribute(uiElementEClass, UI_ELEMENT__WIDGET);
-		createEAttribute(uiElementEClass, UI_ELEMENT__FACTORY);
+		createEAttribute(uiElementEClass, UI_ELEMENT__RENDERER);
+		createEAttribute(uiElementEClass, UI_ELEMENT__TO_BE_RENDERED);
 		createEAttribute(uiElementEClass, UI_ELEMENT__VISIBLE);
 		createEReference(uiElementEClass, UI_ELEMENT__PARENT);
 
@@ -1996,8 +2006,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(uiElementEClass, MUIElement.class, "UIElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getUIElement_Widget(), ecorePackage.getEJavaObject(), "widget", null, 0, 1, MUIElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getUIElement_Factory(), ecorePackage.getEJavaObject(), "factory", null, 0, 1, MUIElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getUIElement_Visible(), ecorePackage.getEBoolean(), "visible", "true", 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getUIElement_Renderer(), ecorePackage.getEJavaObject(), "renderer", null, 0, 1, MUIElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUIElement_ToBeRendered(), ecorePackage.getEBoolean(), "toBeRendered", "true", 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
+		initEAttribute(getUIElement_Visible(), ecorePackage.getEBoolean(), "visible", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getUIElement());
 		g1.getETypeArguments().add(g2);

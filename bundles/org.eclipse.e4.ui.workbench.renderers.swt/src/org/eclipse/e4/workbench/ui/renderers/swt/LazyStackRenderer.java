@@ -88,7 +88,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		// Lazy Loading: here we only process the contents through childAdded,
 		// we specifically do not render them
 		for (MUIElement part : me.getChildren()) {
-			if (part.isVisible())
+			if (part.isToBeRendered())
 				showChild(me, part);
 		}
 	}

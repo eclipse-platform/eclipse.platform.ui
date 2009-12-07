@@ -86,7 +86,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 				// Is this listener interested ?
 				MWindow windowModel = (MWindow) objElement;
-				if (windowModel.getFactory() != WBWRenderer.this)
+				if (windowModel.getRenderer() != WBWRenderer.this)
 					return;
 
 				// No widget == nothing to update

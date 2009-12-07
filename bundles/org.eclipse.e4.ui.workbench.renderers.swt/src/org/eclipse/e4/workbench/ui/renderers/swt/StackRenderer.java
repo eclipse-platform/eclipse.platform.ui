@@ -82,7 +82,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 				// This listener only updates stacks -it- rendered
 				MElementContainer<MUIElement> parent = uiElement.getParent();
-				if (!(parent.getFactory() == StackRenderer.this))
+				if (!(parent.getRenderer() == StackRenderer.this))
 					return;
 
 				// Is this Item visible
@@ -127,7 +127,7 @@ public class StackRenderer extends LazyStackRenderer {
 
 				// This listener only updates stacks -it- rendered
 				MElementContainer<MUIElement> parent = uiElement.getParent();
-				if (!(parent.getFactory() == StackRenderer.this)) {
+				if (!(parent.getRenderer() == StackRenderer.this)) {
 					return;
 				}
 
@@ -321,7 +321,7 @@ public class StackRenderer extends LazyStackRenderer {
 		for (MUIElement mPart : stack.getChildren()) {
 			if (mPart == part)
 				return index;
-			if (mPart.isVisible())
+			if (mPart.isToBeRendered())
 				index++;
 		}
 		return index;
@@ -387,7 +387,7 @@ public class StackRenderer extends LazyStackRenderer {
 		boolean isEditorStack = child instanceof MEditor;
 		if (ctf.getItemCount() == 0 && !isEditorStack) {
 			final Shell sh = ctf.getShell();
-			parentElement.setVisible(false);
+			parentElement.setToBeRendered(false);
 			sh.getDisplay().asyncExec(new Runnable() {
 				public void run() {
 					sh.layout(true, true);
@@ -441,7 +441,7 @@ public class StackRenderer extends LazyStackRenderer {
 					event.doit = false;
 					return;
 				}
-				part.setVisible(false);
+				part.setToBeRendered(false);
 			}
 		};
 		ctf.addCTabFolder2Listener(closeListener);

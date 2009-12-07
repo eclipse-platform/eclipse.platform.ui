@@ -20,7 +20,8 @@ package org.eclipse.e4.ui.model.application;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getWidget <em>Widget</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getFactory <em>Factory</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getRenderer <em>Renderer</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered <em>To Be Rendered</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getParent <em>Parent</em>}</li>
  * </ul>
@@ -58,34 +59,60 @@ public interface MUIElement extends MApplicationElement {
 	void setWidget(Object value);
 
 	/**
-	 * Returns the value of the '<em><b>Factory</b></em>' attribute.
+	 * Returns the value of the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Factory</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Factory</em>' attribute.
-	 * @see #setFactory(Object)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIElement_Factory()
+	 * @return the value of the '<em>Renderer</em>' attribute.
+	 * @see #setRenderer(Object)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIElement_Renderer()
 	 * @model transient="true"
 	 * @generated
 	 */
-	Object getFactory();
+	Object getRenderer();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIElement#getFactory <em>Factory</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIElement#getRenderer <em>Renderer</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Factory</em>' attribute.
-	 * @see #getFactory()
+	 * @param value the new value of the '<em>Renderer</em>' attribute.
+	 * @see #getRenderer()
 	 * @generated
 	 */
-	void setFactory(Object value);
+	void setRenderer(Object value);
+
+	/**
+	 * Returns the value of the '<em><b>To Be Rendered</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Visible</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>To Be Rendered</em>' attribute.
+	 * @see #setToBeRendered(boolean)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIElement_ToBeRendered()
+	 * @model default="true"
+	 * @generated
+	 */
+	boolean isToBeRendered();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>To Be Rendered</em>' attribute.
+	 * @see #isToBeRendered()
+	 * @generated
+	 */
+	void setToBeRendered(boolean value);
 
 	/**
 	 * Returns the value of the '<em><b>Visible</b></em>' attribute.
-	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Visible</em>' attribute isn't clear,
@@ -95,7 +122,7 @@ public interface MUIElement extends MApplicationElement {
 	 * @return the value of the '<em>Visible</em>' attribute.
 	 * @see #setVisible(boolean)
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIElement_Visible()
-	 * @model default="true"
+	 * @model
 	 * @generated
 	 */
 	boolean isVisible();
