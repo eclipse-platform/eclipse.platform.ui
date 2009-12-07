@@ -883,11 +883,12 @@ public class TreeViewer extends AbstractTreeViewer {
 							TreeItem item = parentItem.getItem(index);
 							
 							if (item.getData() == null) {
-								// If getData()==null and index == 0, we are
+								// If getData()==null and index == 0, and the 
+								// parent item is collapsed, then we are
 								// being asked to remove the dummy node. We'll
 								// just ignore the request to remove the dummy
-								// node.
-								if (index > 0) {
+								// node (bug 292322 and bug 296573).
+								if (index > 0 || parentItem.getExpanded()) {
 									item.dispose();
 								}
 							} else {
