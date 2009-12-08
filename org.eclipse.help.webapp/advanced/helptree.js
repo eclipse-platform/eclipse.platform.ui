@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -206,12 +206,22 @@ function focusOnItem(treeItem, isHighlighted) {
         if (isHighlighted) {
             highlightItem(treeItem);
   		}
-  		var expander = getExpander(treeItem);
+  		positionToItem(treeItem);
+    }
+}
+
+// Scroll so the item is visible and it's parent is not scrolled off horizontally
+function positionToItem(treeItem) {
+    var anchor = findAnchor(treeItem);
+    if (anchor) {
+        var parentItem = getTreeItem(treeItem.parentNode)
+  		var expander = getExpander(parentItem);
   		if (expander !== null) {
-  		    scrollUntilVisible(anchor.parentNode, SCROLL_HORIZONTAL_AND_VERTICAL);
+  		    scrollUntilVisible(parentItem.parentNode, SCROLL_HORIZONTAL);
   		} else {
-  		    scrollUntilVisible(anchor, SCROLL_HORIZONTAL_AND_VERTICAL);
+  		    scrollUntilVisible(parentItem, SCROLL_HORIZONTAL);
   		}
+  		scrollUntilVisible(anchor, SCROLL_VERTICAL);
     }
 }
 
@@ -228,7 +238,7 @@ function highlightItem(treeItem) {
     }
 }
 
-// Force an items parents to be visible
+// Force an items parents to be visible by expanding if necessary
 function makeVisible(treeItem) {
     var parent = getTreeItem(treeItem.parentNode);
     if (!parent) {
@@ -378,7 +388,7 @@ function toggleExpandState(node) {
     setWAIExpansionState(treeItem, newChildClass == "visible");
     
     if (newChildClass == "visible") {
-        scrollUntilVisible(treeItem, SCROLL_HORIZONTAL_AND_VERTICAL); 
+        positionToItem(treeItem);
     } 
 }
 
