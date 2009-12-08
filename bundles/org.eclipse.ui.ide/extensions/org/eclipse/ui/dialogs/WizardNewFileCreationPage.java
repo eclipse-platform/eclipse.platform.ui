@@ -681,6 +681,7 @@ public class WizardNewFileCreationPage extends WizardPage implements Listener {
 		if (status.getSeverity() == IStatus.ERROR) {
 			if (firstLinkCheck) {
 				setMessage(status.getMessage());
+				setErrorMessage(null);
 			} else {
 				setErrorMessage(status.getMessage());
 			}
