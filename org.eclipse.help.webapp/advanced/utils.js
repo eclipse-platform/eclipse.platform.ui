@@ -82,8 +82,19 @@ function scrollUntilVisible(node, flags)
 	    }
 	}
 	
-	if (flags & SCROLL_HORIZONTAL && isScrollLeft) {
-	    if (nodeLeft < pageLeft) {
+	if ((flags & SCROLL_HORIZONTAL ) && isRTL) {
+	    // In RTL mode aligning the right edge is more important than aligning the left
+	    if (nodeRight > pageRight && isScrollRight) {
+		    hScroll = nodeRight - pageRight; 
+	    } else {            
+	        if (nodeLeft < pageLeft && isScrollLeft) {
+		        hScroll = Math.max(nodeLeft - pageLeft, nodeRight - pageRight);
+		    } else {
+		        hScroll = 0; // already in view
+		    } 	
+	    }
+    } else if (flags & SCROLL_HORIZONTAL ) {
+	    if (nodeLeft < pageLeft && isScrollLeft) {
 		    hScroll = nodeLeft - pageLeft; 
 	    } else {
 	        if (nodeRight > pageRight && isScrollRight) {

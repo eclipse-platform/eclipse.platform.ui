@@ -62,6 +62,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 var cookiesRequired = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("cookiesRequired", request))%>";
 
 var isIE = navigator.userAgent.indexOf('MSIE') != -1;
+var isRTL = <%=isRTL%>;
 
 var tocTitle = "";
 var tocId = "";
