@@ -1224,7 +1224,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	public long getLocalTimeStamp() {
 		ResourceInfo info = getResourceInfo(false, false);
-		return info == null ? IResource.NULL_STAMP : info.getLocalSyncInfo();
+		return (info == null || isGroup()) ? IResource.NULL_STAMP : info.getLocalSyncInfo();
 	}
 
 	/* (non-Javadoc)
@@ -1342,7 +1342,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 * @see IResource#getResourceAttributes()
 	 */
 	public ResourceAttributes getResourceAttributes() {
-		if (!isAccessible())
+		if (!isAccessible() || isGroup())
 			return null;
 		return getLocalManager().attributes(this);
 	}
