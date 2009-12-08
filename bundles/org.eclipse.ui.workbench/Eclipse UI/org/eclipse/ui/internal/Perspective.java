@@ -1104,8 +1104,9 @@ public class Perspective {
 			String newDescId = NLS.bind(
 					WorkbenchMessages.Perspective_localCopyLabel, descriptor
 							.getLabel());
-			while (reg.findPerspectiveWithId(newDescId) != null)
-				newDescId = '<' + newDescId + '>';
+			while (reg.findPerspectiveWithId(newDescId) != null) {
+				newDescId = NLS.bind(WorkbenchMessages.Perspective_localCopyLabel, newDescId);
+			}
 			PerspectiveDescriptor newDesc = reg.createPerspective(newDescId, descriptor);
 			page.savePerspectiveAs(newDesc);
 		}
