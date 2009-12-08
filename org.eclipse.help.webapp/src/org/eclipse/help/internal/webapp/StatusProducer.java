@@ -25,6 +25,7 @@ import org.eclipse.help.IHelpContentProducer;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
+import org.eclipse.help.internal.util.ProductPreferences;
 import org.eclipse.help.internal.webapp.data.WebappPreferences;
 
 
@@ -48,8 +49,6 @@ public class StatusProducer implements IHelpContentProducer {
 		+ tab(2)+"<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/>\n"; //$NON-NLS-1$
 	
 	private static final String END_HEAD_HTML = tab(1)+"</head>\n"; //$NON-NLS-1$
-	
-	private static final String BEGIN_BODY_HTML = tab(1)+"<body>\n"; //$NON-NLS-1$
 
 	private static final String END_BODY_HTML = tab(2)+"</div>\n"+tab(1)+"</body>\n</html>"; //$NON-NLS-1$ //$NON-NLS-2$
 	
@@ -220,7 +219,15 @@ public class StatusProducer implements IHelpContentProducer {
 	 */
 	private String getBeginHtmlBody()
 	{
-		return BEGIN_BODY_HTML + '\n'
+		String body = tab(1);
+		
+		if (ProductPreferences.isRTL())
+			body += "<body dir=\"rtl\">"; //$NON-NLS-1$
+		else
+			body += "<body>"; //$NON-NLS-1$
+		
+		
+		return body + '\n'
 			+ tab(2) + "<div id=\"banner\"><img src=\"PLUGINS_ROOT/org.eclipse.help.base/doc/help_banner.jpg\" alt=\"Help banner\" width=\"1600\" height=\"36\"></div>\n" //$NON-NLS-1$
 			+ tab(2) + "<div id=\"content\">\n"; //$NON-NLS-1$
 	}
