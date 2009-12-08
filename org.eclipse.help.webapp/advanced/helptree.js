@@ -89,13 +89,22 @@ function treeKeyDownHandler(e)
 	var clickedNode = getEventTarget(e);
 	var treeItem = getTreeItem(clickedNode);
     if (!treeItem && key >= 37) { return true; }
-	 	
-  	if (key == 37) { // Left arrow, collapse
-  	    goLeft(treeItem);
-  	} else if (key == 38 ) { // Up arrow, go up
+	 
+	if (isRTL) {	
+  	    if (key == 39) { // Right arrow, collapse
+  	        goLeft(treeItem);
+  	    } else if (key == 37) { // Left arrow, expand
+  	        goRight(treeItem);
+  	    }
+  	} else {	
+  	    if (key == 37) { // Left arrow, collapse
+  	        goLeft(treeItem);
+  	    } else if (key == 39) { // Right arrow, expand
+  	        goRight(treeItem);
+  	    }
+  	}
+  	if (key == 38 ) { // Up arrow, go up
   	    goUp(treeItem);
-  	} if (key == 39) { // Right arrow, expand
-  	    goRight(treeItem);
   	} else if (key == 40 ) { // Down arrow, go down
   		goDown(treeItem);
   	}
