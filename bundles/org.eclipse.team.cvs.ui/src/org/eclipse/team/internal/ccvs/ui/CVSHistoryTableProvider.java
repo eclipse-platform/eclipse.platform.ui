@@ -560,11 +560,14 @@ public class CVSHistoryTableProvider {
 	}
 
 	public void loadColumnLayout(TableLayout layout) {
-		layout.addColumnData(getWeightData(settings.get(COL_REVISIONID_NAME)));
-		layout.addColumnData(getWeightData(settings.get(COL_TAGS_NAME)));
-		layout.addColumnData(getWeightData(settings.get(COL_DATE_NAME)));
-		layout.addColumnData(getWeightData(settings.get(COL_AUTHOR_NAME)));
-		layout.addColumnData(getWeightData(settings.get(COL_COMMENT_NAME)));
+		int weights[] = new int[] { getSettingsInt(COL_REVISIONID_NAME),
+				getSettingsInt(COL_TAGS_NAME), getSettingsInt(COL_DATE_NAME),
+				getSettingsInt(COL_AUTHOR_NAME),
+				getSettingsInt(COL_COMMENT_NAME) };
+		ColumnLayoutData weightData[] = getWeightData(weights);
+		for (int i = 0; i < weightData.length; i++) {
+			layout.addColumnData(weightData[i]);
+		}
 
 		String sortName = settings.get(SORT_COL_NAME);
 		if (sortName == null) {
@@ -591,13 +594,34 @@ public class CVSHistoryTableProvider {
 		sorter.setReversed(sortDirection == SWT.DOWN);
 		viewer.setComparator(sorter);
 	}
- 
-	private ColumnLayoutData getWeightData(String value) {
+	
+	private int getSettingsInt(String key) {
+		String value = settings.get(key);
+		int ret = 0;
 		try {
-			return new ColumnPixelData(Integer.parseInt(value), true);
+			ret = Integer.parseInt(value);
 		} catch (NumberFormatException e) {
-			return new ColumnWeightData(20, true);
+			// Nothing to do
 		}
+		return ret;
+	}
+
+	private ColumnLayoutData[] getWeightData(int[] widths) {
+		boolean onlyZeroes = true;
+		for (int i = 0; i < widths.length; i++) {
+			if (widths[i] > 0) {
+				onlyZeroes = false;
+			}
+		}
+		ColumnLayoutData[] ret = new ColumnLayoutData[widths.length];
+		for (int i = 0; i < widths.length; i++) {
+			if (onlyZeroes) {
+				ret[i] = new ColumnWeightData(20, true);
+			} else {
+				ret[i] = new ColumnPixelData(widths[i]);
+			}
+		}
+		return ret;
 	}
 
 	public void saveColumnLayout() {
