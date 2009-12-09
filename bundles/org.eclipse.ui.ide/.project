@@ -31,11 +31,4 @@
 		<nature>org.eclipse.jdt.core.javanature</nature>
 		<nature>org.eclipse.pde.api.tools.apiAnalysisNature</nature>
 	</natures>
-	<linkedResources>
-		<link>
-			<name>eeee</name>
-			<type>2</type>
-			<locationURI></locationURI>
-		</link>
-	</linkedResources>
 </projectDescription>
