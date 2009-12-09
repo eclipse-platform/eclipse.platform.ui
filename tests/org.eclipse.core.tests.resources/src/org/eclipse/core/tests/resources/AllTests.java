@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2007 IBM Corporation and others.
+ *  Copyright (c) 2000, 2009 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -28,6 +28,7 @@ public class AllTests extends TestCase {
 		suite.addTest(ContentDescriptionManagerTest.suite());
 		suite.addTest(FilteredResourceTest.suite());
 		suite.addTest(HiddenResourceTest.suite());
+		suite.addTest(VirtualFolderTest.suite());
 		suite.addTest(IFileTest.suite());
 		suite.addTest(IFolderTest.suite());
 		suite.addTest(IPathVariableTest.suite());
