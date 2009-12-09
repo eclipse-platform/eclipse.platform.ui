@@ -142,7 +142,7 @@ public interface ILaunchManager {
 	 * some suffix that guarantees uniqueness.
 	 * <p>
 	 * If the name prefix does not pass name validation any illegal parts of the name will be removed
-	 * during the name generation. Illegal characters will be replaced with '_' and illegal names wil be 
+	 * during the name generation. Illegal characters will be replaced with '_' and illegal names will be 
 	 * replaced with "_reserved_".
 	 * </p>
 	 * @param namePrefix the string that the returned name should begin with
