@@ -82,6 +82,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String showAdvanced;
 	public static String hideAdvanced;
 	public static String editfilters;
+	public static String useDefaultLocation;
+	public static String createLinkedFolder;
+	public static String createVirtualFolder;
 	
 	// ==============================================================================
 	// Workbench Actions

@@ -145,6 +145,28 @@ public class CreateLinkedResourceGroup {
 	 * @return the widget group
 	 */
 	public Composite createContents(Composite parent) {
+		return createContents(parent, true);
+	}
+
+	/**
+	 * Creates the widgets without the checkbox button
+	 * 
+	 * @param parent
+	 *            parent composite of the widget group
+	 * @return the widget group
+	 */
+	public Composite createTextOnlyContents(Composite parent) {
+		return createContents(parent, false);
+	}
+
+	/**
+	 * Creates the widgets
+	 * 
+	 * @param parent
+	 *            parent composite of the widget group
+	 * @return the widget group
+	 */
+	private Composite createContents(Composite parent, boolean createCheckbox) {
 		Font font = parent.getFont();
 		initializeDialogUnits(parent);
 		// top level group
@@ -155,37 +177,55 @@ public class CreateLinkedResourceGroup {
 				| GridData.FILL_HORIZONTAL));
 		groupComposite.setFont(font);
 
-		final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
-		if (type == IResource.FILE) {
-			createLinkButton
-					.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFileButton);
-		} else {
-			createLinkButton
-					.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFolderButton);
-		}
-		createLinkButton.setSelection(createLink);
-		createLinkButton.setFont(font);
-		SelectionListener selectionListener = new SelectionAdapter() {
-			public void widgetSelected(SelectionEvent e) {
-				createLink = createLinkButton.getSelection();
-				browseButton.setEnabled(createLink);
-				variablesButton.setEnabled(createLink);
-				// Set the required field color if the field is enabled
-				linkTargetField.setEnabled(createLink);
-				if (fileSystemSelectionArea != null)
-					fileSystemSelectionArea.setEnabled(createLink);
-
-				if (listener != null) {
-					listener.handleEvent(new Event());
-				}
+		if (createCheckbox) {
+			final Button createLinkButton = new Button(groupComposite, SWT.CHECK);
+			if (type == IResource.FILE) {
+				createLinkButton
+						.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFileButton);
+			} else {
+				createLinkButton
+						.setText(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkFolderButton);
 			}
-		};
-		createLinkButton.addSelectionListener(selectionListener);
+			createLinkButton.setSelection(createLink);
+			createLinkButton.setFont(font);
+			SelectionListener selectionListener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					setEnabled(createLinkButton.getSelection());
+				}
+			};
+			createLinkButton.addSelectionListener(selectionListener);
+		}
 
 		createLinkLocationGroup(groupComposite, createLink);
 		return groupComposite;
 	}
 
+	/**
+	 * Set the group enabled state
+	 * @param value true if enabled, false otherwise
+	 */
+	public void setEnabled(boolean value) {
+		createLink = value;
+		browseButton.setEnabled(createLink);
+		variablesButton.setEnabled(createLink);
+		// Set the required field color if the field is enabled
+		linkTargetField.setEnabled(createLink);
+		if (fileSystemSelectionArea != null)
+			fileSystemSelectionArea.setEnabled(createLink);
+
+		if (listener != null) {
+			listener.handleEvent(new Event());
+		}
+	}
+
+	/**
+	 * Return the group enabled state
+	 * @return if the group is enabled
+	 */
+	public boolean isEnabled() {
+		return createLink;
+	}
+	
 	/**
 	 * Creates the link target location widgets.
 	 * 
@@ -590,11 +630,6 @@ public class CreateLinkedResourceGroup {
 	public IStatus validateLinkLocation(IResource linkHandle) {
 		if (linkTargetField == null || linkTargetField.isDisposed()
 				|| !createLink) {
-			if (linkHandle.getParent().isGroup()) {
-				return createStatus(
-						IStatus.ERROR,
-						IDEWorkbenchMessages.CreateLinkedResourceGroup_linkRequiredUnderAGroup);
-			} 
 			return Status.OK_STATUS;
 		}
 		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();

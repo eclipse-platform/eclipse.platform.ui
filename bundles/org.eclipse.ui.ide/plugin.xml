@@ -177,19 +177,6 @@
                class="org.eclipse.core.resources.IResource">
          </selection>
       </wizard>
-      <wizard
-            name="%NewWizards.group"
-            icon="$nl$/icons/full/etool16/newgroup_wiz.gif"
-            category="org.eclipse.ui.Basic"
-        	class="org.eclipse.ui.wizards.newresource.BasicNewGroupResourceWizard"
-            id="org.eclipse.ui.wizards.new.group">
-         <description>
-            %NewWizards.group.description
-         </description>
-         <selection
-               class="org.eclipse.core.resources.IResource">
-         </selection>
-      </wizard>
    </extension>
    <extension
          point="org.eclipse.ui.editors">
