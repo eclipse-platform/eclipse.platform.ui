@@ -12,30 +12,23 @@
 package org.eclipse.core.resources;
 
 /**
- * Interface for resource filters.  A filter determines which file system
- * objects will be visible when a local refresh is performed for an IContainer.
- * 
- * @see IFolder#getFilters()
+ * @see IContainer#createFilter(int, IFileInfoMatcherDescription, int, org.eclipse.core.runtime.IProgressMonitor)
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 3.6
  */
 public interface IFileInfoMatcherDescription {
 
-	/*====================================================================
-	 * Constants defining which members are wanted:
-	 *====================================================================*/
-
 	/**
-	 * Return the filter id, which matches the resource filter provider ID.
+	 * Return the matcher id.
 	 * 
-	 * @return the resource filter provider id.
+	 * @return the file info matcher id.
 	 */
 	public String getId();
 
 	public void setId(String id);
 
 	/**
-	 * Return the filter arguments, or null if no arguments exist.
+	 * Return the matcher arguments, or null if no arguments exist.
 	 * 
 	 * @return the argument string, or null
 	 */

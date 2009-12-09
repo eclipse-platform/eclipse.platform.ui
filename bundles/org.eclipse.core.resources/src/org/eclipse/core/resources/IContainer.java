@@ -468,7 +468,7 @@ public interface IContainer extends IResource, IAdaptable {
 	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Adds a new filter matching the arguments to this folder's filter list  
+	 * Adds a new filter matching the arguments to this container's filter list  
 	 * 
 	 * @param type (IResourceFilter.INCLUDE_ONLY or IResourceFilter.EXCLUDE_ALL) and/or IResourceFilter.INHERITABLE
 	 * @param updateFlags bit-wise or of update flag constants
@@ -489,7 +489,7 @@ public interface IContainer extends IResource, IAdaptable {
 	public IResourceFilterDescription createFilter(int type, IFileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Remove the filter matching the arguments from this folder's filter list  
+	 * Remove the filter matching the arguments from this container's filter list  
 	 * 
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   ({@link IResource#BACKGROUND_REFRESH})
@@ -509,10 +509,10 @@ public interface IContainer extends IResource, IAdaptable {
 	public void removeFilter(IResourceFilterDescription filterDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Retrieve the filters for this folder.
+	 * Retrieve the filters for this container.
 	 * If no filters exist for this resource, an empty array is returned.
 	 * 
-	 * @return this folder resources, or IResourceFilter[0] if no filters exist
+	 * @return an array of filters
 	 * @exception CoreException if this resource's filters could not be retrieved. Reasons include:
 	 * <ul>
 	 * <li> This resource is not a folder.</li>

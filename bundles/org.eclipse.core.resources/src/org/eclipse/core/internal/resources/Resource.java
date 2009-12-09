@@ -712,6 +712,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 		}
 	}
 
+	/**
+	 * @see IContainer#createFilter(int, IFileInfoMatcherDescription, int, IProgressMonitor)
+	 */
 	public IResourceFilterDescription createFilter(int type, IFileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(getProject());
 		monitor = Policy.monitorFor(monitor);
