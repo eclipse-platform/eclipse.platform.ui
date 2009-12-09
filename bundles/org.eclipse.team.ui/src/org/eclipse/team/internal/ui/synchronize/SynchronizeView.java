@@ -275,8 +275,6 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		}			
 		fParticipantToPart = null;
 		fPartToParticipant = null;
-		// Remove 'Link with Editor' listener, even if we didn't register it
-		getSite().getPage().removePartListener(fLinkWithEditorListener);
 	}
 
     /**
@@ -344,6 +342,12 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 										return;
 									}
 									display(p);
+								} else {
+									/*
+									 * Remove 'Link with Editor' listener if
+									 * there are no more participants available.
+									 */
+									getSite().getPage().removePartListener(fLinkWithEditorListener);
 								}
 							}
 						}
@@ -904,7 +908,13 @@ public class SynchronizeView extends PageBookView implements ISynchronizeView, I
 		if (currentPage instanceof ISynchronizePage) {
 			return (TreeViewer) ((ISynchronizePage)currentPage).getViewer();
 		}
-		// TODO: nobody expects null!
+		/*
+		 * We should never get here. fLinkWithEditorListener is removed when no
+		 * participants are available and the method should not be called
+		 * afterwards. See participantsRemoved method for the listener's
+		 * removal.
+		 */
+		Assert.isTrue(false);
 		return null;
 	}
 

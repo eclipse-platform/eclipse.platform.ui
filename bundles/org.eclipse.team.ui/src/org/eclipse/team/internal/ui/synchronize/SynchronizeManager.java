@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,12 +11,7 @@
 package org.eclipse.team.internal.ui.synchronize;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -132,7 +127,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 			Object[] copiedListeners = fListeners.getListeners();
 			for (int i = 0; i < copiedListeners.length; i++) {
 				fListener = (ISynchronizeParticipantListener) copiedListeners[i];
-				Platform.run(this);
+				SafeRunner.run(this);
 			}
 			fChanged = null;
 			fListener = null;
@@ -140,7 +135,7 @@ public class SynchronizeManager implements ISynchronizeManager {
 	}
 
 	/**
-	 * Represents a paticipant instance and allows lazy initialization of the instance
+	 * Represents a participant instance and allows lazy initialization of the instance
 	 * only when the participant is required.
 	 */
 	private class ParticipantInstance implements ISynchronizeParticipantReference {
@@ -651,13 +646,18 @@ public class SynchronizeManager implements ISynchronizeManager {
 
 	private File getStateFile() {
 		IPath pluginStateLocation = TeamUIPlugin.getPlugin().getStateLocation();
-		return pluginStateLocation.append(FILENAME).toFile(); //	
+		return pluginStateLocation.append(FILENAME).toFile();	
 	}
 	
 	/**
 	 * Fires notification.
-	 * @param participants participants added/removed
-	 * @param type ADD or REMOVE
+	 * 
+	 * @param participants
+	 *            participants added/removed
+	 * @param type
+	 *            ADDED or REMOVED
+	 * @see SynchronizeManager#ADDED
+	 * @see SynchronizeManager#REMOVED
 	 */
 	private void fireUpdate(ISynchronizeParticipant[] participants, int type) {
 		new SynchronizeViewPageNotifier().notify(participants, type);
