@@ -467,6 +467,17 @@ public interface IFileStore extends IAdaptable {
 	 * on the provided file info are ignored.
 	 * </p>
 	 * <p>
+	 * Since Eclipse 3.6, implementations shall also make a best effort
+	 * to consult UNIX umask in order to set the same attributes for other access groups. 
+	 * This setting of attributes for others may change the file system state even if an attribute
+	 * appears to be set for the current user already.
+	 * </p>
+	 * <p>
+	 * Clearing an attribute causes clearing it for all access groups. This means setting
+	 * and clearing an attribute might not restore previous file system state as these
+	 * operations are not symmetrical.
+	 * </p>
+	 * <p>
 	 * The {@link EFS#SET_LAST_MODIFIED} update flag controls 
 	 * whether the file's last modified time is changed.  When this flag is specified,
 	 * the last modified time for the file in the underlying file system is updated
