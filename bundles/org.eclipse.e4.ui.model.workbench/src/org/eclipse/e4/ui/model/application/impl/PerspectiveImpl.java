@@ -60,7 +60,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class PerspectiveImpl extends UIItemImpl implements MPerspective {
+public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->

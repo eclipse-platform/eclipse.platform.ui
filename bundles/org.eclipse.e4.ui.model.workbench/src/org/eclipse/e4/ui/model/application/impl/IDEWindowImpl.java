@@ -55,7 +55,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class IDEWindowImpl extends UIItemImpl implements MIDEWindow {
+public class IDEWindowImpl extends UILabelImpl implements MIDEWindow {
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
 	 * <!-- begin-user-doc -->

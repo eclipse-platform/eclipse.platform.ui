@@ -29,7 +29,7 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MItem extends MUIElement, MUIItem {
+public interface MItem extends MUIElement, MUILabel {
 	/**
 	 * Returns the value of the '<em><b>Enabled</b></em>' attribute.
 	 * The default value is <code>"true"</code>.

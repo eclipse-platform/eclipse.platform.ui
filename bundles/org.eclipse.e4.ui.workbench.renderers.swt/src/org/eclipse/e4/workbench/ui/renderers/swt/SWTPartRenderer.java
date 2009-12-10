@@ -14,7 +14,7 @@ import java.util.Iterator;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.ui.workbench.swt.util.ISWTResourceUtiltities;
@@ -117,17 +117,17 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
 		// add an accessibility listener (not sure if this is in the wrong place
 		// (factory?)
-		if (widget instanceof Control && me instanceof MUIItem) {
+		if (widget instanceof Control && me instanceof MUILabel) {
 			((Control) widget).getAccessible().addAccessibleListener(
 					new AccessibleAdapter() {
 						public void getName(AccessibleEvent e) {
-							e.result = ((MUIItem) me).getName();
+							e.result = ((MUILabel) me).getLabel();
 						}
 					});
 		}
 	}
 
-	protected Image getImage(MUIItem element) {
+	protected Image getImage(MUILabel element) {
 		IEclipseContext localContext = context;
 		String iconURI = element.getIconURI();
 		if (iconURI != null && !iconURI.equals("null")) { //$NON-NLS-1$

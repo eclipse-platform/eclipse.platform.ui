@@ -21,7 +21,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -72,13 +72,13 @@ public class StackRenderer extends LazyStackRenderer {
 				Object objElement = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
 				// Ensure that this event is for a MMenuItem
-				if (!(objElement instanceof MUIItem)
+				if (!(objElement instanceof MUILabel)
 						|| !(objElement instanceof MUIElement))
 					return;
 
 				// Extract the data bits
 				MUIElement uiElement = (MUIElement) objElement;
-				MUIItem modelItem = (MUIItem) objElement;
+				MUILabel modelItem = (MUILabel) objElement;
 
 				// This listener only updates stacks -it- rendered
 				MElementContainer<MUIElement> parent = uiElement.getParent();
@@ -95,13 +95,13 @@ public class StackRenderer extends LazyStackRenderer {
 				String attName = (String) event
 						.getProperty(UIEvents.EventTags.ATTNAME);
 
-				if (UIEvents.UIItem.NAME.equals(attName)) {
+				if (UIEvents.UILabel.LABEL.equals(attName)) {
 					String newName = (String) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					item.setText(getLabel((MPart) uiElement, newName));
-				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
+				} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 					item.setImage(getImage(modelItem));
-				} else if (UIEvents.UIItem.TOOLTIP.equals(attName)) {
+				} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
 					String newTTip = (String) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					item.setToolTipText(newTTip);
@@ -109,7 +109,7 @@ public class StackRenderer extends LazyStackRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC),
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
 
 		EventHandler dirtyUpdater = new EventHandler() {
@@ -157,7 +157,7 @@ public class StackRenderer extends LazyStackRenderer {
 				UIEvents.Dirtyable.DIRTY), dirtyUpdater);
 	}
 
-	private String getLabel(MUIItem itemPart, String newName) {
+	private String getLabel(MUILabel itemPart, String newName) {
 		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()) {
 			newName = '*' + newName;
 		}
@@ -282,7 +282,7 @@ public class StackRenderer extends LazyStackRenderer {
 		// TODO Auto-generated method stub
 		super.showChild(stack, part);
 
-		MUIItem itemPart = (MUIItem) part;
+		MUILabel itemPart = (MUILabel) part;
 		CTabFolder ctf = (CTabFolder) stack.getWidget();
 		int createFlags = 0;
 
@@ -294,7 +294,7 @@ public class StackRenderer extends LazyStackRenderer {
 			cti = new ETabItem((ETabFolder) ctf, createFlags, index);
 
 			cti.setData(OWNING_ME, part);
-			cti.setText(getLabel(itemPart, itemPart.getName()));
+			cti.setText(getLabel(itemPart, itemPart.getLabel()));
 			cti.setImage(getImage(itemPart));
 			cti.setToolTipText(itemPart.getTooltip());
 

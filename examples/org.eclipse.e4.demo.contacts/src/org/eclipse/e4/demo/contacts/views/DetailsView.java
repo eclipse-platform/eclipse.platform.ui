@@ -29,7 +29,7 @@ import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.demo.contacts.handlers.ThemeUtil;
 import org.eclipse.e4.demo.contacts.model.Contact;
 import org.eclipse.e4.ui.model.application.MDirtyable;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -55,7 +55,7 @@ public class DetailsView {
 	private IStylingEngine engine;
 
 	@Inject
-	private MUIItem uiItem;
+	private MUILabel uiItem;
 
 	@Inject
 	public DetailsView(Composite parent, MDirtyable dirtyable) {
@@ -198,7 +198,7 @@ public class DetailsView {
 		StringBuffer title = new StringBuffer("Details of ");
 		title.append(contact.getFirstName()).append(' ').append(
 				contact.getLastName());
-		uiItem.setName(title.toString());
+		uiItem.setLabel(title.toString());
 	}
 
 	@Inject
@@ -223,7 +223,7 @@ public class DetailsView {
 
 			updatePartTitle(contact);
 		} else {
-			uiItem.setName("Details");
+			uiItem.setLabel("Details");
 		}
 		dirtyable.setDirty(false);
 		detailComposite.update(contact);

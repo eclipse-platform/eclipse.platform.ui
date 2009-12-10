@@ -11,7 +11,7 @@
 package org.eclipse.e4.ui.model.application.impl;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 
 import org.eclipse.emf.common.notify.Notification;
 
@@ -22,39 +22,39 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>UI Item</b></em>'.
+ * An implementation of the model object '<em><b>UI Label</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIItemImpl#getName <em>Name</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIItemImpl#getIconURI <em>Icon URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIItemImpl#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl#getIconURI <em>Icon URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl#getTooltip <em>Tooltip</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
+public abstract class UILabelImpl extends EObjectImpl implements MUILabel {
 	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getLabel()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String NAME_EDEFAULT = null;
+	protected static final String LABEL_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getLabel()
 	 * @generated
 	 * @ordered
 	 */
-	protected String name = NAME_EDEFAULT;
+	protected String label = LABEL_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
@@ -101,7 +101,7 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected UIItemImpl() {
+	protected UILabelImpl() {
 		super();
 	}
 
@@ -112,7 +112,7 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.UI_ITEM;
+		return MApplicationPackage.Literals.UI_LABEL;
 	}
 
 	/**
@@ -120,8 +120,8 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getName() {
-		return name;
+	public String getLabel() {
+		return label;
 	}
 
 	/**
@@ -129,11 +129,11 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
+	public void setLabel(String newLabel) {
+		String oldLabel = label;
+		label = newLabel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_ITEM__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_LABEL__LABEL, oldLabel, label));
 	}
 
 	/**
@@ -154,7 +154,7 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 		String oldIconURI = iconURI;
 		iconURI = newIconURI;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_ITEM__ICON_URI, oldIconURI, iconURI));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_LABEL__ICON_URI, oldIconURI, iconURI));
 	}
 
 	/**
@@ -175,7 +175,7 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 		String oldTooltip = tooltip;
 		tooltip = newTooltip;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_ITEM__TOOLTIP, oldTooltip, tooltip));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_LABEL__TOOLTIP, oldTooltip, tooltip));
 	}
 
 	/**
@@ -186,11 +186,11 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.UI_ITEM__NAME:
-				return getName();
-			case MApplicationPackage.UI_ITEM__ICON_URI:
+			case MApplicationPackage.UI_LABEL__LABEL:
+				return getLabel();
+			case MApplicationPackage.UI_LABEL__ICON_URI:
 				return getIconURI();
-			case MApplicationPackage.UI_ITEM__TOOLTIP:
+			case MApplicationPackage.UI_LABEL__TOOLTIP:
 				return getTooltip();
 		}
 		return super.eGet(featureID, resolve, coreType);
@@ -204,13 +204,13 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.UI_ITEM__NAME:
-				setName((String)newValue);
+			case MApplicationPackage.UI_LABEL__LABEL:
+				setLabel((String)newValue);
 				return;
-			case MApplicationPackage.UI_ITEM__ICON_URI:
+			case MApplicationPackage.UI_LABEL__ICON_URI:
 				setIconURI((String)newValue);
 				return;
-			case MApplicationPackage.UI_ITEM__TOOLTIP:
+			case MApplicationPackage.UI_LABEL__TOOLTIP:
 				setTooltip((String)newValue);
 				return;
 		}
@@ -225,13 +225,13 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.UI_ITEM__NAME:
-				setName(NAME_EDEFAULT);
+			case MApplicationPackage.UI_LABEL__LABEL:
+				setLabel(LABEL_EDEFAULT);
 				return;
-			case MApplicationPackage.UI_ITEM__ICON_URI:
+			case MApplicationPackage.UI_LABEL__ICON_URI:
 				setIconURI(ICON_URI_EDEFAULT);
 				return;
-			case MApplicationPackage.UI_ITEM__TOOLTIP:
+			case MApplicationPackage.UI_LABEL__TOOLTIP:
 				setTooltip(TOOLTIP_EDEFAULT);
 				return;
 		}
@@ -246,11 +246,11 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.UI_ITEM__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
-			case MApplicationPackage.UI_ITEM__ICON_URI:
+			case MApplicationPackage.UI_LABEL__LABEL:
+				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
+			case MApplicationPackage.UI_LABEL__ICON_URI:
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
-			case MApplicationPackage.UI_ITEM__TOOLTIP:
+			case MApplicationPackage.UI_LABEL__TOOLTIP:
 				return TOOLTIP_EDEFAULT == null ? tooltip != null : !TOOLTIP_EDEFAULT.equals(tooltip);
 		}
 		return super.eIsSet(featureID);
@@ -266,8 +266,8 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (name: "); //$NON-NLS-1$
-		result.append(name);
+		result.append(" (label: "); //$NON-NLS-1$
+		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$
@@ -276,4 +276,4 @@ public abstract class UIItemImpl extends EObjectImpl implements MUIItem {
 		return result.toString();
 	}
 
-} //UIItemImpl
+} //UILabelImpl

@@ -19,7 +19,7 @@ import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -48,7 +48,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isToBeRendered <em>To Be Rendered</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getParent <em>Parent</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isEnabled <em>Enabled</em>}</li>
@@ -143,24 +143,24 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	protected boolean visible = VISIBLE_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getLabel()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String NAME_EDEFAULT = null;
+	protected static final String LABEL_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getLabel()
 	 * @generated
 	 * @ordered
 	 */
-	protected String name = NAME_EDEFAULT;
+	protected String label = LABEL_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
@@ -432,8 +432,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getName() {
-		return name;
+	public String getLabel() {
+		return label;
 	}
 
 	/**
@@ -441,11 +441,11 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
+	public void setLabel(String newLabel) {
+		String oldLabel = label;
+		label = newLabel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_TOOL_ITEM__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_TOOL_ITEM__LABEL, oldLabel, label));
 	}
 
 	/**
@@ -670,8 +670,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return isVisible();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				return getParent();
-			case MApplicationPackage.DIRECT_TOOL_ITEM__NAME:
-				return getName();
+			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
+				return getLabel();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI:
 				return getIconURI();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__TOOLTIP:
@@ -715,8 +715,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
 				return;
-			case MApplicationPackage.DIRECT_TOOL_ITEM__NAME:
-				setName((String)newValue);
+			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
+				setLabel((String)newValue);
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI:
 				setIconURI((String)newValue);
@@ -767,8 +767,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
-			case MApplicationPackage.DIRECT_TOOL_ITEM__NAME:
-				setName(NAME_EDEFAULT);
+			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
+				setLabel(LABEL_EDEFAULT);
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI:
 				setIconURI(ICON_URI_EDEFAULT);
@@ -813,8 +813,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				return getParent() != null;
-			case MApplicationPackage.DIRECT_TOOL_ITEM__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
+				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI:
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MApplicationPackage.DIRECT_TOOL_ITEM__TOOLTIP:
@@ -850,11 +850,11 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				default: return -1;
 			}
 		}
-		if (baseClass == MUIItem.class) {
+		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.DIRECT_TOOL_ITEM__NAME: return MApplicationPackage.UI_ITEM__NAME;
-				case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI: return MApplicationPackage.UI_ITEM__ICON_URI;
-				case MApplicationPackage.DIRECT_TOOL_ITEM__TOOLTIP: return MApplicationPackage.UI_ITEM__TOOLTIP;
+				case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL: return MApplicationPackage.UI_LABEL__LABEL;
+				case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI: return MApplicationPackage.UI_LABEL__ICON_URI;
+				case MApplicationPackage.DIRECT_TOOL_ITEM__TOOLTIP: return MApplicationPackage.UI_LABEL__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -898,11 +898,11 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				default: return -1;
 			}
 		}
-		if (baseClass == MUIItem.class) {
+		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.UI_ITEM__NAME: return MApplicationPackage.DIRECT_TOOL_ITEM__NAME;
-				case MApplicationPackage.UI_ITEM__ICON_URI: return MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI;
-				case MApplicationPackage.UI_ITEM__TOOLTIP: return MApplicationPackage.DIRECT_TOOL_ITEM__TOOLTIP;
+				case MApplicationPackage.UI_LABEL__LABEL: return MApplicationPackage.DIRECT_TOOL_ITEM__LABEL;
+				case MApplicationPackage.UI_LABEL__ICON_URI: return MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI;
+				case MApplicationPackage.UI_LABEL__TOOLTIP: return MApplicationPackage.DIRECT_TOOL_ITEM__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -947,8 +947,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 		result.append(toBeRendered);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
-		result.append(", name: "); //$NON-NLS-1$
-		result.append(name);
+		result.append(", label: "); //$NON-NLS-1$
+		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$

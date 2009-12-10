@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
 
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
@@ -38,6 +39,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getKeySequence <em>Key Sequence</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl#getParameters <em>Parameters</em>}</li>
  * </ul>
@@ -65,6 +67,26 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * @ordered
 	 */
 	protected String keySequence = KEY_SEQUENCE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String ID_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getId()
+	 * @generated
+	 * @ordered
+	 */
+	protected String id = ID_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
@@ -131,6 +153,27 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getId() {
+		return id;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setId(String newId) {
+		String oldId = id;
+		id = newId;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.KEY_BINDING__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MCommand getCommand() {
 		if (command != null && ((EObject)command).eIsProxy()) {
 			InternalEObject oldCommand = (InternalEObject)command;
@@ -186,6 +229,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		switch (featureID) {
 			case MApplicationPackage.KEY_BINDING__KEY_SEQUENCE:
 				return getKeySequence();
+			case MApplicationPackage.KEY_BINDING__ID:
+				return getId();
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				if (resolve) return getCommand();
 				return basicGetCommand();
@@ -206,6 +251,9 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		switch (featureID) {
 			case MApplicationPackage.KEY_BINDING__KEY_SEQUENCE:
 				setKeySequence((String)newValue);
+				return;
+			case MApplicationPackage.KEY_BINDING__ID:
+				setId((String)newValue);
 				return;
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)newValue);
@@ -229,6 +277,9 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 			case MApplicationPackage.KEY_BINDING__KEY_SEQUENCE:
 				setKeySequence(KEY_SEQUENCE_EDEFAULT);
 				return;
+			case MApplicationPackage.KEY_BINDING__ID:
+				setId(ID_EDEFAULT);
+				return;
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				setCommand((MCommand)null);
 				return;
@@ -249,6 +300,8 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 		switch (featureID) {
 			case MApplicationPackage.KEY_BINDING__KEY_SEQUENCE:
 				return KEY_SEQUENCE_EDEFAULT == null ? keySequence != null : !KEY_SEQUENCE_EDEFAULT.equals(keySequence);
+			case MApplicationPackage.KEY_BINDING__ID:
+				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
 			case MApplicationPackage.KEY_BINDING__COMMAND:
 				return command != null;
 			case MApplicationPackage.KEY_BINDING__PARAMETERS:
@@ -263,12 +316,46 @@ public class KeyBindingImpl extends EObjectImpl implements MKeyBinding {
 	 * @generated
 	 */
 	@Override
+	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == MApplicationElement.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.KEY_BINDING__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
+				default: return -1;
+			}
+		}
+		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == MApplicationElement.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.KEY_BINDING__ID;
+				default: return -1;
+			}
+		}
+		return super.eDerivedStructuralFeatureID(baseFeatureID, baseClass);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
 	public String toString() {
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (keySequence: "); //$NON-NLS-1$
 		result.append(keySequence);
+		result.append(", id: "); //$NON-NLS-1$
+		result.append(id);
 		result.append(')');
 		return result.toString();
 	}

@@ -174,12 +174,12 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getApplicationElement_Id();
 		} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplication_Commands();
-		} else if (featureName.equals(UIITEM_NAME_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUIItem_Name();
-		} else if (featureName.equals(UIITEM_TOOLTIP_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUIItem_Tooltip();
-		} else if (featureName.equals(UIITEM_ICONURI_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getUIItem_IconURI();
+		} else if (featureName.equals(UILABEL_LABEL_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getUILabel_Label();
+		} else if (featureName.equals(UILABEL_TOOLTIP_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getUILabel_Tooltip();
+		} else if (featureName.equals(UILABEL_ICONURI_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getUILabel_IconURI();
 		} else if (featureName.equals(UIELEMENT_TOBERENDERED_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIElement_ToBeRendered();
 		} else if (featureName.equals(UIELEMENT_VISIBLE_ATTNAME)) {

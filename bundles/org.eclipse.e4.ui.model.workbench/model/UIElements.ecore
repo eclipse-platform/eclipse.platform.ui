@@ -51,8 +51,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tag" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="value" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="UIItem" abstract="true">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
@@ -97,7 +97,7 @@
     <eGenericSuperTypes eClassifier="#//Parameter"/>
     <eGenericSuperTypes eClassifier="#//Input"/>
     <eGenericSuperTypes eClassifier="#//Item"/>
-    <eGenericSuperTypes eClassifier="#//UIItem"/>
+    <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//Dirtyable"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V_________AbstractContainers__________V"
@@ -147,7 +147,7 @@
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//BindingContainer"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//UIElement #//UIItem">
+  <eClassifiers xsi:type="ecore:EClass" name="Item" eSuperTypes="#//UIElement #//UILabel">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
@@ -191,7 +191,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PSCElement" abstract="true" interface="true"
       eSuperTypes="#//UIElement"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UIItem #//HandlerContainer #//BindingContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UILabel #//HandlerContainer #//BindingContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
         eType="#//Menu"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"/>
@@ -217,7 +217,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="y" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="width" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="height" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eGenericSuperTypes eClassifier="#//UIItem"/>
+    <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//PSCElement"/>
     </eGenericSuperTypes>
@@ -232,7 +232,7 @@
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//KeySequence">
+  <eClassifiers xsi:type="ecore:EClass" name="KeyBinding" eSuperTypes="#//KeySequence #//ApplicationElement">
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
         eType="#//Command"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
@@ -286,7 +286,7 @@
     <eGenericSuperTypes eClassifier="#//VSCElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Perspective">
-    <eGenericSuperTypes eClassifier="#//UIItem"/>
+    <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//PSCElement"/>
     </eGenericSuperTypes>
@@ -301,7 +301,7 @@
     <eGenericSuperTypes eClassifier="#//VSCElement"/>
     <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="IDEWindow" eSuperTypes="#//UIItem #//Context #//HandlerContainer #//BindingContainer">
+  <eClassifiers xsi:type="ecore:EClass" name="IDEWindow" eSuperTypes="#//UILabel #//Context #//HandlerContainer #//BindingContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="mainMenu" eType="#//Menu"/>
   </eClassifiers>
 </ecore:EPackage>

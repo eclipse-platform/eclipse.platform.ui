@@ -42,7 +42,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MWindow window = createWindow(application);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setName("name");
+		part.setLabel("name");
 
 		window.getChildren().add(part);
 
@@ -51,7 +51,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		part.setName("customName");
+		part.setLabel("customName");
 
 		Object serializedState = reconciler.serialize();
 
@@ -59,18 +59,18 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		window = application.getChildren().get(0);
 
 		part = (MPart) window.getChildren().get(0);
-		part.setName("name2");
+		part.setLabel("name2");
 
 		window.getChildren().add(part);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
 
-		assertEquals("name2", part.getName());
+		assertEquals("name2", part.getLabel());
 
 		applyAll(deltas);
 
-		assertEquals("customName", part.getName());
+		assertEquals("customName", part.getLabel());
 	}
 
 	/**
@@ -89,7 +89,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MWindow window = createWindow(application);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setName("name");
+		part.setLabel("name");
 		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
@@ -99,14 +99,14 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		part.setName("customName");
+		part.setLabel("customName");
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
 		window = application.getChildren().get(0);
 		part = (MPart) window.getChildren().get(0);
-		part.setName("name2");
+		part.setLabel("name2");
 		part.setToBeRendered(false);
 
 		window.getChildren().add(part);
@@ -114,14 +114,14 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertFalse(part.isToBeRendered());
-		assertEquals("name2", part.getName());
+		assertEquals("name2", part.getLabel());
 
 		applyAll(deltas);
 
 		// the user's change should not have made this part visible
 		assertFalse(part.isToBeRendered());
 		// the user's change should have been applied
-		assertEquals("customName", part.getName());
+		assertEquals("customName", part.getLabel());
 	}
 
 	/**
@@ -140,7 +140,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		MWindow window = createWindow(application);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setName("name");
+		part.setLabel("name");
 		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
@@ -158,7 +158,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		window = application.getChildren().get(0);
 
 		part = (MPart) window.getChildren().get(0);
-		part.setName("name2");
+		part.setLabel("name2");
 
 		window.getChildren().add(part);
 
@@ -166,13 +166,13 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 				serializedState);
 
 		assertTrue(part.isToBeRendered());
-		assertEquals("name2", part.getName());
+		assertEquals("name2", part.getLabel());
 
 		applyAll(deltas);
 
 		assertFalse(part.isToBeRendered());
 		// the application's change should not have been overridden
-		assertEquals("name2", part.getName());
+		assertEquals("name2", part.getLabel());
 	}
 
 	public void testPart_Addition_PlacedAfterHiddenPart_UserWins() {

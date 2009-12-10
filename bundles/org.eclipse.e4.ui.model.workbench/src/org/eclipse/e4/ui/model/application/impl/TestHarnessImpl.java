@@ -26,7 +26,7 @@ import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -70,7 +70,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTag <em>Tag</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getInputURI <em>Input URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isEnabled <em>Enabled</em>}</li>
@@ -384,24 +384,24 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	protected String inputURI = INPUT_URI_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getLabel()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final String NAME_EDEFAULT = null;
+	protected static final String LABEL_EDEFAULT = null;
 
 	/**
-	 * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
+	 * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getName()
+	 * @see #getLabel()
 	 * @generated
 	 * @ordered
 	 */
-	protected String name = NAME_EDEFAULT;
+	protected String label = LABEL_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getIconURI() <em>Icon URI</em>}' attribute.
@@ -936,8 +936,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public String getName() {
-		return name;
+	public String getLabel() {
+		return label;
 	}
 
 	/**
@@ -945,11 +945,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setName(String newName) {
-		String oldName = name;
-		name = newName;
+	public void setLabel(String newLabel) {
+		String oldLabel = label;
+		label = newLabel;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__NAME, oldName, name));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__LABEL, oldLabel, label));
 	}
 
 	/**
@@ -1174,8 +1174,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return getValue();
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				return getInputURI();
-			case MApplicationPackage.TEST_HARNESS__NAME:
-				return getName();
+			case MApplicationPackage.TEST_HARNESS__LABEL:
+				return getLabel();
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
 				return getIconURI();
 			case MApplicationPackage.TEST_HARNESS__TOOLTIP:
@@ -1258,8 +1258,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				setInputURI((String)newValue);
 				return;
-			case MApplicationPackage.TEST_HARNESS__NAME:
-				setName((String)newValue);
+			case MApplicationPackage.TEST_HARNESS__LABEL:
+				setLabel((String)newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
 				setIconURI((String)newValue);
@@ -1345,8 +1345,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				setInputURI(INPUT_URI_EDEFAULT);
 				return;
-			case MApplicationPackage.TEST_HARNESS__NAME:
-				setName(NAME_EDEFAULT);
+			case MApplicationPackage.TEST_HARNESS__LABEL:
+				setLabel(LABEL_EDEFAULT);
 				return;
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
 				setIconURI(ICON_URI_EDEFAULT);
@@ -1414,8 +1414,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
 			case MApplicationPackage.TEST_HARNESS__INPUT_URI:
 				return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
-			case MApplicationPackage.TEST_HARNESS__NAME:
-				return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+			case MApplicationPackage.TEST_HARNESS__LABEL:
+				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case MApplicationPackage.TEST_HARNESS__ICON_URI:
 				return ICON_URI_EDEFAULT == null ? iconURI != null : !ICON_URI_EDEFAULT.equals(iconURI);
 			case MApplicationPackage.TEST_HARNESS__TOOLTIP:
@@ -1492,11 +1492,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				default: return -1;
 			}
 		}
-		if (baseClass == MUIItem.class) {
+		if (baseClass == MUILabel.class) {
 			switch (derivedFeatureID) {
-				case MApplicationPackage.TEST_HARNESS__NAME: return MApplicationPackage.UI_ITEM__NAME;
-				case MApplicationPackage.TEST_HARNESS__ICON_URI: return MApplicationPackage.UI_ITEM__ICON_URI;
-				case MApplicationPackage.TEST_HARNESS__TOOLTIP: return MApplicationPackage.UI_ITEM__TOOLTIP;
+				case MApplicationPackage.TEST_HARNESS__LABEL: return MApplicationPackage.UI_LABEL__LABEL;
+				case MApplicationPackage.TEST_HARNESS__ICON_URI: return MApplicationPackage.UI_LABEL__ICON_URI;
+				case MApplicationPackage.TEST_HARNESS__TOOLTIP: return MApplicationPackage.UI_LABEL__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -1577,11 +1577,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				default: return -1;
 			}
 		}
-		if (baseClass == MUIItem.class) {
+		if (baseClass == MUILabel.class) {
 			switch (baseFeatureID) {
-				case MApplicationPackage.UI_ITEM__NAME: return MApplicationPackage.TEST_HARNESS__NAME;
-				case MApplicationPackage.UI_ITEM__ICON_URI: return MApplicationPackage.TEST_HARNESS__ICON_URI;
-				case MApplicationPackage.UI_ITEM__TOOLTIP: return MApplicationPackage.TEST_HARNESS__TOOLTIP;
+				case MApplicationPackage.UI_LABEL__LABEL: return MApplicationPackage.TEST_HARNESS__LABEL;
+				case MApplicationPackage.UI_LABEL__ICON_URI: return MApplicationPackage.TEST_HARNESS__ICON_URI;
+				case MApplicationPackage.UI_LABEL__TOOLTIP: return MApplicationPackage.TEST_HARNESS__TOOLTIP;
 				default: return -1;
 			}
 		}
@@ -1640,8 +1640,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(value);
 		result.append(", inputURI: "); //$NON-NLS-1$
 		result.append(inputURI);
-		result.append(", name: "); //$NON-NLS-1$
-		result.append(name);
+		result.append(", label: "); //$NON-NLS-1$
+		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$
 		result.append(iconURI);
 		result.append(", tooltip: "); //$NON-NLS-1$

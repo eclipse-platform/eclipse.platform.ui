@@ -6,19 +6,19 @@
         <children xsi:type="application:PartSashContainer" horizontal="true">
           <children xsi:type="application:PartSashContainer">
             <children xsi:type="application:PartStack">
-              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" name="Library"/>
+              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library"/>
             </children>
             <children xsi:type="application:PartStack">
-              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" name="Location"/>
+              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
             </children>
             <weights>60</weights>
             <weights>40</weights>
           </children>
           <children xsi:type="application:PartSashContainer">
-            <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" name="Preview" iconURI=""/>
+            <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" label="Preview" iconURI=""/>
             <children xsi:type="application:PartStack">
-              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" name="Thumbnails"/>
-              <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" name="Exif"/>
+              <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
+              <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
             </children>
             <weights>70</weights>
             <weights>30</weights>
@@ -29,9 +29,9 @@
       </children>
       <children xsi:type="application:Perspective" id="Simple">
         <children xsi:type="application:PartSashContainer">
-          <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" name="Location"/>
+          <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
           <children xsi:type="application:PartStack">
-            <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" name="Exif"/>
+            <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
           </children>
           <weights>30</weights>
           <weights>70</weights>
@@ -41,17 +41,17 @@
     <variables>selection</variables>
     <variables>exif</variables>
     <mainMenu>
-      <children xsi:type="application:MenuItem" name="File">
-        <children xsi:type="application:HandledMenuItem" name="Create Album" command="//@commands.1"/>
-        <children xsi:type="application:HandledMenuItem" name="Switch Perspective" command="//@commands.2"/>
-        <children xsi:type="application:MenuItem" name="Create Album" separator="true"/>
-        <children xsi:type="application:HandledMenuItem" name="Exit" command="//@commands.0"/>
+      <children xsi:type="application:MenuItem" label="File">
+        <children xsi:type="application:HandledMenuItem" label="Create Album" command="//@commands.1"/>
+        <children xsi:type="application:HandledMenuItem" label="Switch Perspective" command="//@commands.2"/>
+        <children xsi:type="application:MenuItem" label="Create Album" separator="true"/>
+        <children xsi:type="application:HandledMenuItem" label="Exit" command="//@commands.0"/>
       </children>
-      <children xsi:type="application:MenuItem" name="Edit">
-        <children xsi:type="application:HandledMenuItem" name="Exit" command="//@commands.0"/>
+      <children xsi:type="application:MenuItem" label="Edit">
+        <children xsi:type="application:HandledMenuItem" label="Exit" command="//@commands.0"/>
       </children>
-      <children xsi:type="application:MenuItem" name="Exit">
-        <children xsi:type="application:HandledMenuItem" name="Exit" command="//@commands.0"/>
+      <children xsi:type="application:MenuItem" label="Exit">
+        <children xsi:type="application:HandledMenuItem" label="Exit" command="//@commands.0"/>
       </children>
     </mainMenu>
   </children>

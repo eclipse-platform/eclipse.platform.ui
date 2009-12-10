@@ -32,7 +32,7 @@ import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.emf.common.util.EList;
@@ -73,11 +73,11 @@ public class ToolItemRenderer extends SWTPartRenderer {
 
 				String attName = (String) event
 						.getProperty(UIEvents.EventTags.ATTNAME);
-				if (UIEvents.UIItem.NAME.equals(attName)) {
+				if (UIEvents.UILabel.LABEL.equals(attName)) {
 					setItemText(itemModel, toolItem);
-				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
+				} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 					toolItem.setImage(getImage(itemModel));
-				} else if (UIEvents.UIItem.TOOLTIP.equals(attName)) {
+				} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
 					if (itemModel.getTooltip() != null)
 						toolItem.setToolTipText(itemModel.getTooltip());
 					toolItem.setImage(getImage(itemModel));
@@ -85,7 +85,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC),
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
 	}
 
@@ -114,7 +114,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 
 	private void setItemText(MToolItem model, ToolItem item) {
 		if (model instanceof MHandledItem) {
-			String text = model.getName();
+			String text = model.getLabel();
 			MHandledItem handledItem = (MHandledItem) model;
 			IEclipseContext context = getContext(model);
 			EBindingService bs = (EBindingService) context
@@ -130,8 +130,8 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			}
 			item.setText(text);
 		} else {
-			if (model.getName() != null)
-				item.setText(model.getName());
+			if (model.getLabel() != null)
+				item.setText(model.getLabel());
 		}
 	}
 
@@ -150,13 +150,13 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		if (itemModel.getChildren().size() > 0)
 			flags = SWT.DROP_DOWN;
 		ToolItem newItem = new ToolItem((ToolBar) parent, flags);
-		if (itemModel.getName() != null)
-			newItem.setText(itemModel.getName());
+		if (itemModel.getLabel() != null)
+			newItem.setText(itemModel.getLabel());
 
 		if (itemModel.getTooltip() != null)
 			newItem.setToolTipText(itemModel.getTooltip());
 
-		newItem.setImage(getImage((MUIItem) element));
+		newItem.setImage(getImage((MUILabel) element));
 
 		newItem.setEnabled(itemModel.isEnabled());
 		newItem.setSelection(itemModel.isSelected());

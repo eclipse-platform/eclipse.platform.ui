@@ -83,9 +83,9 @@ public class UIEvents {
 		public static final String VALUE = "value"; //$NON-NLS-1$
 	}
 
-	public static interface UIItem {
-		public static final String TOPIC = UITopicBase + "/application/UIItem"; //$NON-NLS-1$
-		public static final String NAME = "name"; //$NON-NLS-1$
+	public static interface UILabel {
+		public static final String TOPIC = UITopicBase + "/application/UILabel"; //$NON-NLS-1$
+		public static final String LABEL = "label"; //$NON-NLS-1$
 		public static final String ICONURI = "iconURI"; //$NON-NLS-1$
 		public static final String TOOLTIP = "tooltip"; //$NON-NLS-1$
 	}

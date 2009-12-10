@@ -97,13 +97,13 @@ public class WBWRenderer extends SWTPartRenderer {
 				String attName = (String) event
 						.getProperty(UIEvents.EventTags.ATTNAME);
 
-				if (UIEvents.UIItem.NAME.equals(attName)) {
+				if (UIEvents.UILabel.LABEL.equals(attName)) {
 					String newTitle = (String) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					theShell.setText(newTitle);
-				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
+				} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 					theShell.setImage(getImage(windowModel));
-				} else if (UIEvents.UIItem.TOOLTIP.equals(attName)) {
+				} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
 					String newTTip = (String) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					theShell.setToolTipText(newTTip);
@@ -111,7 +111,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC),
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				shellUpdater);
 	}
 
@@ -161,8 +161,8 @@ public class WBWRenderer extends SWTPartRenderer {
 		} else {
 			wbwShell.setLayout(new FillLayout());
 		}
-		if (wbwModel.getName() != null)
-			wbwShell.setText(wbwModel.getName());
+		if (wbwModel.getLabel() != null)
+			wbwShell.setText(wbwModel.getLabel());
 		String uri = wbwModel.getIconURI();
 		if (uri != null) {
 			try {
@@ -378,7 +378,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			tableViewer.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {
-					return ((MSaveablePart) element).getName();
+					return ((MSaveablePart) element).getLabel();
 				}
 			});
 			tableViewer.setContentProvider(ArrayContentProvider.getInstance());

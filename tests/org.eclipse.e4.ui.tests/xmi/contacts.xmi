@@ -3,10 +3,10 @@
   <children xsi:type="application:Window">
     <children xsi:type="application:PartSashContainer" horizontal="true">
       <children xsi:type="application:PartStack">
-        <children xsi:type="application:Part" id="ContactsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" name="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+        <children xsi:type="application:Part" id="ContactsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
       <children xsi:type="application:PartStack">
-        <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" name="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
+        <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
       <weights>30</weights>
       <weights>70</weights>
@@ -14,12 +14,12 @@
     <variables>selection</variables>
     <variables>input</variables>
     <mainMenu>
-      <children xsi:type="application:MenuItem" name="File">
-        <children xsi:type="application:HandledMenuItem" name="Exit" command="//@commands.0"/>
+      <children xsi:type="application:MenuItem" label="File">
+        <children xsi:type="application:HandledMenuItem" label="Exit" command="//@commands.0"/>
       </children>
-      <children xsi:type="application:MenuItem" name="Theme">
-        <children xsi:type="application:HandledMenuItem" name="Dark Theme" command="//@commands.1"/>
-        <children xsi:type="application:HandledMenuItem" name="Bright Theme" command="//@commands.2"/>
+      <children xsi:type="application:MenuItem" label="Theme">
+        <children xsi:type="application:HandledMenuItem" label="Dark Theme" command="//@commands.1"/>
+        <children xsi:type="application:HandledMenuItem" label="Bright Theme" command="//@commands.2"/>
       </children>
     </mainMenu>
   </children>

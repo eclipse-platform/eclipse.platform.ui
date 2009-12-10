@@ -157,9 +157,9 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case MApplicationPackage.UI_ITEM: {
-				MUIItem uiItem = (MUIItem)theEObject;
-				T1 result = caseUIItem(uiItem);
+			case MApplicationPackage.UI_LABEL: {
+				MUILabel uiLabel = (MUILabel)theEObject;
+				T1 result = caseUILabel(uiLabel);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -200,7 +200,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseItem(testHarness);
 				if (result == null) result = caseDirtyable(testHarness);
 				if (result == null) result = caseUIElement(testHarness);
-				if (result == null) result = caseUIItem(testHarness);
+				if (result == null) result = caseUILabel(testHarness);
 				if (result == null) result = caseApplicationElement(testHarness);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -259,7 +259,7 @@ public class ApplicationSwitch<T1> {
 				MItem item = (MItem)theEObject;
 				T1 result = caseItem(item);
 				if (result == null) result = caseUIElement(item);
-				if (result == null) result = caseUIItem(item);
+				if (result == null) result = caseUILabel(item);
 				if (result == null) result = caseApplicationElement(item);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -269,7 +269,7 @@ public class ApplicationSwitch<T1> {
 				T1 result = caseHandledItem(handledItem);
 				if (result == null) result = caseItem(handledItem);
 				if (result == null) result = caseUIElement(handledItem);
-				if (result == null) result = caseUIItem(handledItem);
+				if (result == null) result = caseUILabel(handledItem);
 				if (result == null) result = caseApplicationElement(handledItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -280,7 +280,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseMenu(menuItem);
 				if (result == null) result = caseItem(menuItem);
 				if (result == null) result = caseElementContainer(menuItem);
-				if (result == null) result = caseUIItem(menuItem);
+				if (result == null) result = caseUILabel(menuItem);
 				if (result == null) result = caseUIElement(menuItem);
 				if (result == null) result = caseApplicationElement(menuItem);
 				if (result == null) result = defaultCase(theEObject);
@@ -294,7 +294,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseMenu(handledMenuItem);
 				if (result == null) result = caseItem(handledMenuItem);
 				if (result == null) result = caseElementContainer(handledMenuItem);
-				if (result == null) result = caseUIItem(handledMenuItem);
+				if (result == null) result = caseUILabel(handledMenuItem);
 				if (result == null) result = caseUIElement(handledMenuItem);
 				if (result == null) result = caseApplicationElement(handledMenuItem);
 				if (result == null) result = defaultCase(theEObject);
@@ -308,7 +308,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseMenu(directMenuItem);
 				if (result == null) result = caseItem(directMenuItem);
 				if (result == null) result = caseElementContainer(directMenuItem);
-				if (result == null) result = caseUIItem(directMenuItem);
+				if (result == null) result = caseUILabel(directMenuItem);
 				if (result == null) result = caseApplicationElement(directMenuItem);
 				if (result == null) result = caseUIElement(directMenuItem);
 				if (result == null) result = defaultCase(theEObject);
@@ -329,7 +329,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseItem(toolItem);
 				if (result == null) result = caseElementContainer(toolItem);
 				if (result == null) result = caseUIElement(toolItem);
-				if (result == null) result = caseUIItem(toolItem);
+				if (result == null) result = caseUILabel(toolItem);
 				if (result == null) result = caseApplicationElement(toolItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -343,7 +343,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseItem(handledToolItem);
 				if (result == null) result = caseUIElement(handledToolItem);
 				if (result == null) result = caseApplicationElement(handledToolItem);
-				if (result == null) result = caseUIItem(handledToolItem);
+				if (result == null) result = caseUILabel(handledToolItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -355,7 +355,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseItem(directToolItem);
 				if (result == null) result = caseElementContainer(directToolItem);
 				if (result == null) result = caseUIElement(directToolItem);
-				if (result == null) result = caseUIItem(directToolItem);
+				if (result == null) result = caseUILabel(directToolItem);
 				if (result == null) result = caseApplicationElement(directToolItem);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
@@ -383,7 +383,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContribution(part);
 				if (result == null) result = caseContext(part);
 				if (result == null) result = casePSCElement(part);
-				if (result == null) result = caseUIItem(part);
+				if (result == null) result = caseUILabel(part);
 				if (result == null) result = caseHandlerContainer(part);
 				if (result == null) result = caseBindingContainer(part);
 				if (result == null) result = caseUIElement(part);
@@ -399,7 +399,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContribution(saveablePart);
 				if (result == null) result = caseContext(saveablePart);
 				if (result == null) result = casePSCElement(saveablePart);
-				if (result == null) result = caseUIItem(saveablePart);
+				if (result == null) result = caseUILabel(saveablePart);
 				if (result == null) result = caseHandlerContainer(saveablePart);
 				if (result == null) result = caseBindingContainer(saveablePart);
 				if (result == null) result = caseUIElement(saveablePart);
@@ -431,7 +431,7 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.WINDOW: {
 				MWindow window = (MWindow)theEObject;
 				T1 result = caseWindow(window);
-				if (result == null) result = caseUIItem(window);
+				if (result == null) result = caseUILabel(window);
 				if (result == null) result = caseElementContainer(window);
 				if (result == null) result = caseContext(window);
 				if (result == null) result = caseHandlerContainer(window);
@@ -456,6 +456,7 @@ public class ApplicationSwitch<T1> {
 				MKeyBinding keyBinding = (MKeyBinding)theEObject;
 				T1 result = caseKeyBinding(keyBinding);
 				if (result == null) result = caseKeySequence(keyBinding);
+				if (result == null) result = caseApplicationElement(keyBinding);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -487,7 +488,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContribution(view);
 				if (result == null) result = caseContext(view);
 				if (result == null) result = casePSCElement(view);
-				if (result == null) result = caseUIItem(view);
+				if (result == null) result = caseUILabel(view);
 				if (result == null) result = caseHandlerContainer(view);
 				if (result == null) result = caseBindingContainer(view);
 				if (result == null) result = caseUIElement(view);
@@ -516,7 +517,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContribution(editor);
 				if (result == null) result = caseContext(editor);
 				if (result == null) result = casePSCElement(editor);
-				if (result == null) result = caseUIItem(editor);
+				if (result == null) result = caseUILabel(editor);
 				if (result == null) result = caseHandlerContainer(editor);
 				if (result == null) result = caseBindingContainer(editor);
 				if (result == null) result = caseUIElement(editor);
@@ -546,7 +547,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseContribution(multiEditor);
 				if (result == null) result = caseContext(multiEditor);
 				if (result == null) result = casePSCElement(multiEditor);
-				if (result == null) result = caseUIItem(multiEditor);
+				if (result == null) result = caseUILabel(multiEditor);
 				if (result == null) result = caseHandlerContainer(multiEditor);
 				if (result == null) result = caseBindingContainer(multiEditor);
 				if (result == null) result = caseUIElement(multiEditor);
@@ -587,7 +588,7 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.PERSPECTIVE: {
 				MPerspective perspective = (MPerspective)theEObject;
 				T1 result = casePerspective(perspective);
-				if (result == null) result = caseUIItem(perspective);
+				if (result == null) result = caseUILabel(perspective);
 				if (result == null) result = caseElementContainer(perspective);
 				if (result == null) result = caseContext(perspective);
 				if (result == null) result = casePSCElement(perspective);
@@ -610,7 +611,7 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.IDE_WINDOW: {
 				MIDEWindow ideWindow = (MIDEWindow)theEObject;
 				T1 result = caseIDEWindow(ideWindow);
-				if (result == null) result = caseUIItem(ideWindow);
+				if (result == null) result = caseUILabel(ideWindow);
 				if (result == null) result = caseContext(ideWindow);
 				if (result == null) result = caseHandlerContainer(ideWindow);
 				if (result == null) result = caseBindingContainer(ideWindow);
@@ -772,17 +773,17 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>UI Item</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>UI Label</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>UI Item</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>UI Label</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseUIItem(MUIItem object) {
+	public T1 caseUILabel(MUILabel object) {
 		return null;
 	}
 

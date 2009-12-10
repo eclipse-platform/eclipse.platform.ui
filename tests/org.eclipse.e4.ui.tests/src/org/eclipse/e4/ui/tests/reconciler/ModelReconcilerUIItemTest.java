@@ -24,7 +24,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setName("name");
+		window.setLabel("name");
 		window.setIconURI("iconURI");
 
 		saveModel();
@@ -32,7 +32,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.setName("name2");
+		window.setLabel("name2");
 
 		Object state = reconciler.serialize();
 
@@ -42,12 +42,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals("iconURI", window.getIconURI());
-		assertEquals("name", window.getName());
+		assertEquals("name", window.getLabel());
 
 		applyAll(deltas);
 
 		assertEquals("iconURI", window.getIconURI());
-		assertEquals("name2", window.getName());
+		assertEquals("name2", window.getLabel());
 	}
 
 	private void testUIItem_IconURIUnchanged(String iconURI) {
@@ -159,7 +159,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setName("name");
+		window.setLabel("name");
 		window.setTooltip("toolTip");
 
 		saveModel();
@@ -167,7 +167,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.setName("name2");
+		window.setLabel("name2");
 
 		Object serializedState = reconciler.serialize();
 
@@ -178,12 +178,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 				serializedState);
 
 		assertEquals("toolTip", window.getTooltip());
-		assertEquals("name", window.getName());
+		assertEquals("name", window.getLabel());
 
 		applyAll(deltas);
 
 		assertEquals("toolTip", window.getTooltip());
-		assertEquals("name2", window.getName());
+		assertEquals("name2", window.getLabel());
 	}
 
 	private void testUIItem_TooltipUnchanged(String toolTip) {
@@ -294,7 +294,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setName("name");
+		window.setLabel("name");
 		window.setTooltip("toolTip");
 
 		saveModel();
@@ -312,19 +312,19 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals("toolTip", window.getTooltip());
-		assertEquals("name", window.getName());
+		assertEquals("name", window.getLabel());
 
 		applyAll(deltas);
 
 		assertEquals("toolTip2", window.getTooltip());
-		assertEquals("name", window.getName());
+		assertEquals("name", window.getLabel());
 	}
 
 	private void testUIItem_NameUnchanged(String name) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setName(name);
+		window.setLabel(name);
 
 		saveModel();
 
@@ -338,11 +338,11 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(name, window.getName());
+		assertEquals(name, window.getLabel());
 
 		applyAll(deltas);
 
-		assertEquals(name, window.getName());
+		assertEquals(name, window.getLabel());
 	}
 
 	public void testUIItem_NameUnchanged_Null() {
@@ -361,14 +361,14 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setName(before);
+		window.setLabel(before);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.setName(after);
+		window.setLabel(after);
 
 		Object state = reconciler.serialize();
 
@@ -377,11 +377,11 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(before, window.getName());
+		assertEquals(before, window.getLabel());
 
 		applyAll(deltas);
 
-		assertEquals(after, window.getName());
+		assertEquals(after, window.getLabel());
 	}
 
 	public void testUIItem_Name_NullNull() {

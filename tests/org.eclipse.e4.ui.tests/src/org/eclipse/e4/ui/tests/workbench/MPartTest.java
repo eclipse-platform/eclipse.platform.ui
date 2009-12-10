@@ -97,7 +97,7 @@ public class MPartTest extends TestCase {
 		MPartStack stack = (MPartStack) container.getChildren().get(0);
 		MPart part = stack.getChildren().get(0);
 
-		part.setName("Another Name");
+		part.setLabel("Another Name");
 		assertEquals("Another Name", item.getText());
 	}
 
@@ -222,7 +222,7 @@ public class MPartTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
-		window.setName("MyWindow");
+		window.setLabel("MyWindow");
 		MPartSashContainer sash = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(sash);
@@ -230,7 +230,7 @@ public class MPartTest extends TestCase {
 		sash.getChildren().add(stack);
 		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
-		contributedPart.setName(partName);
+		contributedPart.setLabel(partName);
 		contributedPart.setTooltip(toolTip);
 		contributedPart
 				.setIconURI("platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.gif");

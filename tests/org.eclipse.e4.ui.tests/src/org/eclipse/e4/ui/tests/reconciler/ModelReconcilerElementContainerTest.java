@@ -36,7 +36,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		reconciler.recordChanges(application);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setName("newPart");
+		part.setLabel("newPart");
 		window.getChildren().add(part);
 
 		Object state = reconciler.serialize();
@@ -53,7 +53,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, window.getChildren().size());
 
 		part = (MPart) window.getChildren().get(0);
-		assertEquals("newPart", part.getName());
+		assertEquals("newPart", part.getLabel());
 	}
 
 	public void testElementContainer_Children_Add2() {
@@ -70,7 +70,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		reconciler.recordChanges(application);
 
 		part = MApplicationFactory.eINSTANCE.createPart();
-		part.setName("newPart");
+		part.setLabel("newPart");
 		window.getChildren().add(part);
 
 		Object state = reconciler.serialize();
@@ -91,7 +91,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part, window.getChildren().get(0));
 
 		part = (MPart) window.getChildren().get(1);
-		assertEquals("newPart", part.getName());
+		assertEquals("newPart", part.getLabel());
 	}
 
 	public void testElementContainer_Children_Add3() {
@@ -109,7 +109,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		reconciler.recordChanges(application);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setName("newPart");
+		part.setLabel("newPart");
 		stack.getChildren().add(part);
 
 		Object state = reconciler.serialize();
@@ -127,7 +127,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(1, stack.getChildren().size());
 
 		part = stack.getChildren().get(0);
-		assertEquals("newPart", part.getName());
+		assertEquals("newPart", part.getLabel());
 	}
 
 	public void testElementContainer_Children_Remove() {

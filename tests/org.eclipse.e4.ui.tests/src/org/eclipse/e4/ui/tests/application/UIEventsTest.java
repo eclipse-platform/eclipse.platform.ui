@@ -34,7 +34,7 @@ import org.eclipse.e4.workbench.ui.UIEvents.EventTags;
 import org.eclipse.e4.workbench.ui.UIEvents.Input;
 import org.eclipse.e4.workbench.ui.UIEvents.Parameter;
 import org.eclipse.e4.workbench.ui.UIEvents.UIElement;
-import org.eclipse.e4.workbench.ui.UIEvents.UIItem;
+import org.eclipse.e4.workbench.ui.UIEvents.UILabel;
 import org.eclipse.e4.workbench.ui.UIEvents.Window;
 import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
 import org.eclipse.emf.common.notify.Notifier;
@@ -183,8 +183,8 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	public class UIItemTester extends EventTester {
 		UIItemTester(IEventBroker eventBroker) {
-			super("UIItem", UIItem.TOPIC, new String[] { UIItem.NAME,
-					UIItem.ICONURI, UIItem.TOOLTIP }, eventBroker);
+			super("UIItem", UILabel.TOPIC, new String[] { UILabel.LABEL,
+					UILabel.ICONURI, UILabel.TOOLTIP }, eventBroker);
 		}
 	}
 
@@ -305,7 +305,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 		// UIItem
 		reset(allTesters);
-		allData.setName("New Name");
+		allData.setLabel("New Name");
 		allData.setIconURI("New Icon URI");
 		allData.setTooltip("New Tooltip");
 		checkForFailures(allTesters, uiItemTester);

@@ -159,14 +159,14 @@ public class MSashTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(401);
-		window.setName("MyWindow");
+		window.setLabel("MyWindow");
 		MPartSashContainer sash = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(sash);
 
 		for (int i = 0; i < n; i++) {
 			MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
-			contributedPart.setName("Sample View" + i);
+			contributedPart.setLabel("Sample View" + i);
 			contributedPart
 					.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 			sash.getChildren().add(contributedPart);

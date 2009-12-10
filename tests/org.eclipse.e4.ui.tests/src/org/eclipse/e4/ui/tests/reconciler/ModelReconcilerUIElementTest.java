@@ -127,7 +127,7 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setToBeRendered(!defaultValue);
-		part.setName("name");
+		part.setLabel("name");
 		window.getChildren().add(part);
 
 		saveModel();
@@ -135,7 +135,7 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		part.setName("newName");
+		part.setLabel("newName");
 
 		Object state = reconciler.serialize();
 
@@ -146,12 +146,12 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(!defaultValue, part.isToBeRendered());
-		assertEquals("name", part.getName());
+		assertEquals("name", part.getLabel());
 
 		applyAll(deltas);
 
 		assertEquals(!defaultValue, part.isToBeRendered());
-		assertEquals("newName", part.getName());
+		assertEquals("newName", part.getLabel());
 	}
 
 	private void testUIElement_Widget(Object before, Object after) {

@@ -29,7 +29,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface MKeyBinding extends MKeySequence {
+public interface MKeyBinding extends MKeySequence, MApplicationElement {
 	/**
 	 * Returns the value of the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->

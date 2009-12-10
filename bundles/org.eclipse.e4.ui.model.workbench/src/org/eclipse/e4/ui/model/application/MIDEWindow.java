@@ -27,7 +27,7 @@ package org.eclipse.e4.ui.model.application;
  * @model
  * @generated
  */
-public interface MIDEWindow extends MUIItem, MContext, MHandlerContainer, MBindingContainer {
+public interface MIDEWindow extends MUILabel, MContext, MHandlerContainer, MBindingContainer {
 	/**
 	 * Returns the value of the '<em><b>Main Menu</b></em>' reference.
 	 * <!-- begin-user-doc -->

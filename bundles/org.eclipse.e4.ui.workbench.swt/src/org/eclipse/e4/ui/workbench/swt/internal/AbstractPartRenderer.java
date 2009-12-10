@@ -15,7 +15,7 @@ import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.workbench.modeling.EPartService;
 
 public abstract class AbstractPartRenderer {
@@ -49,7 +49,7 @@ public abstract class AbstractPartRenderer {
 			MUIElement child) {
 	}
 
-	protected abstract Object getImage(MUIItem element);
+	protected abstract Object getImage(MUILabel element);
 
 	//
 	// public Object createMenu(Object widgetObject, MMenu menu) {

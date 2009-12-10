@@ -109,7 +109,7 @@ public class MSaveablePartTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
-		window.setName("MyWindow");
+		window.setLabel("MyWindow");
 		MPartSashContainer sash = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(sash);
@@ -118,7 +118,7 @@ public class MSaveablePartTest extends TestCase {
 		MPart contributedPart = MApplicationFactory.eINSTANCE
 				.createSaveablePart();
 		stack.getChildren().add(contributedPart);
-		contributedPart.setName(partName);
+		contributedPart.setLabel(partName);
 		contributedPart
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 

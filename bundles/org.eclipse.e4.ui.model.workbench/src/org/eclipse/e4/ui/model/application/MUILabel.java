@@ -19,42 +19,42 @@ package org.eclipse.e4.ui.model.application;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MUIItem#getName <em>Name</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MUIItem#getIconURI <em>Icon URI</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MUIItem#getTooltip <em>Tooltip</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MUILabel#getLabel <em>Label</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MUILabel#getIconURI <em>Icon URI</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MUILabel#getTooltip <em>Tooltip</em>}</li>
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIItem()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUILabel()
  * @model abstract="true"
  * @generated
  */
-public interface MUIItem {
+public interface MUILabel {
 	/**
-	 * Returns the value of the '<em><b>Name</b></em>' attribute.
+	 * Returns the value of the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Name</em>' attribute.
-	 * @see #setName(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIItem_Name()
+	 * @return the value of the '<em>Label</em>' attribute.
+	 * @see #setLabel(String)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUILabel_Label()
 	 * @model
 	 * @generated
 	 */
-	String getName();
+	String getLabel();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIItem#getName <em>Name</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUILabel#getLabel <em>Label</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Name</em>' attribute.
-	 * @see #getName()
+	 * @param value the new value of the '<em>Label</em>' attribute.
+	 * @see #getLabel()
 	 * @generated
 	 */
-	void setName(String value);
+	void setLabel(String value);
 
 	/**
 	 * Returns the value of the '<em><b>Icon URI</b></em>' attribute.
@@ -66,14 +66,14 @@ public interface MUIItem {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Icon URI</em>' attribute.
 	 * @see #setIconURI(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIItem_IconURI()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUILabel_IconURI()
 	 * @model
 	 * @generated
 	 */
 	String getIconURI();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIItem#getIconURI <em>Icon URI</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUILabel#getIconURI <em>Icon URI</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Icon URI</em>' attribute.
@@ -92,14 +92,14 @@ public interface MUIItem {
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Tooltip</em>' attribute.
 	 * @see #setTooltip(String)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIItem_Tooltip()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUILabel_Tooltip()
 	 * @model
 	 * @generated
 	 */
 	String getTooltip();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIItem#getTooltip <em>Tooltip</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUILabel#getTooltip <em>Tooltip</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Tooltip</em>' attribute.

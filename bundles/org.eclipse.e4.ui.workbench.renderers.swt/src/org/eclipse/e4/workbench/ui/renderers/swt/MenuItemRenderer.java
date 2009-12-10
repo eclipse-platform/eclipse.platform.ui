@@ -71,15 +71,15 @@ public class MenuItemRenderer extends SWTPartRenderer {
 
 				String attName = (String) event
 						.getProperty(UIEvents.EventTags.ATTNAME);
-				if (UIEvents.UIItem.NAME.equals(attName)) {
+				if (UIEvents.UILabel.LABEL.equals(attName)) {
 					setItemText(itemModel, menuItem);
-				} else if (UIEvents.UIItem.ICONURI.equals(attName)) {
+				} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 					menuItem.setImage(getImage(itemModel));
 				}
 			}
 		};
 
-		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIItem.TOPIC),
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
 	}
 
@@ -113,7 +113,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 
 	private void setItemText(MMenuItem model, MenuItem item) {
 		if (model instanceof MHandledItem) {
-			String text = model.getName();
+			String text = model.getLabel();
 			MHandledItem handledItem = (MHandledItem) model;
 			IEclipseContext context = getContext(model);
 			EBindingService bs = (EBindingService) context
@@ -129,7 +129,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			}
 			item.setText(text);
 		} else {
-			item.setText(model.getName());
+			item.setText(model.getLabel());
 		}
 	}
 

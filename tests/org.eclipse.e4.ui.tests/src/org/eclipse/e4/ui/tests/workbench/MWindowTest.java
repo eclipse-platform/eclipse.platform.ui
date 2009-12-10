@@ -82,7 +82,7 @@ public class MWindowTest extends TestCase {
 
 	public void testCreateWindow() {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		window.setName("MyWindow");
+		window.setLabel("MyWindow");
 		wb = new E4Workbench(window, appContext);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -196,7 +196,7 @@ public class MWindowTest extends TestCase {
 
 	public void testWindow_Name() {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		window.setName("windowName");
+		window.setLabel("windowName");
 
 		wb = new E4Workbench(window, appContext);
 
@@ -204,12 +204,12 @@ public class MWindowTest extends TestCase {
 		assertTrue(widget instanceof Shell);
 
 		Shell shell = (Shell) widget;
-		assertEquals(shell.getText(), window.getName());
+		assertEquals(shell.getText(), window.getLabel());
 		assertEquals("windowName", shell.getText());
 
 		// the shell's name should have been updated
-		window.setName("windowName2");
-		assertEquals(shell.getText(), window.getName());
+		window.setLabel("windowName2");
+		assertEquals(shell.getText(), window.getLabel());
 		assertEquals("windowName2", shell.getText());
 	}
 
@@ -226,7 +226,7 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
 		window.setWidth(400);
-		window.setName("MyWindow");
+		window.setLabel("MyWindow");
 		MPartSashContainer sash = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(sash);
@@ -234,7 +234,7 @@ public class MWindowTest extends TestCase {
 		sash.getChildren().add(stack);
 		MPart contributedPart = MApplicationFactory.eINSTANCE.createPart();
 		stack.getChildren().add(contributedPart);
-		contributedPart.setName("Sample View");
+		contributedPart.setLabel("Sample View");
 		contributedPart
 				.setURI("platform:/plugin/org.eclipse.e4.ui.tests/org.eclipse.e4.ui.tests.workbench.SampleView");
 
@@ -247,17 +247,17 @@ public class MWindowTest extends TestCase {
 		window.setMainMenu(menuBar);
 		final MMenuItem fileItem = MApplicationFactory.eINSTANCE
 				.createMenuItem();
-		fileItem.setName("File");
+		fileItem.setLabel("File");
 		fileItem.setId("file");
 		menuBar.getChildren().add(fileItem);
 
 		final MMenuItem item1 = MApplicationFactory.eINSTANCE.createMenuItem();
 		item1.setId("item1");
-		item1.setName("item1");
+		item1.setLabel("item1");
 		fileItem.getChildren().add(item1);
 		final MMenuItem item2 = MApplicationFactory.eINSTANCE.createMenuItem();
 		item2.setId("item2");
-		item2.setName("item2");
+		item2.setLabel("item2");
 		fileItem.getChildren().add(item2);
 
 		return window;

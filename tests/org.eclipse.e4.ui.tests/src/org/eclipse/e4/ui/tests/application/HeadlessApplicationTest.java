@@ -370,7 +370,7 @@ public abstract class HeadlessApplicationTest extends
 
 		for (int i = 0; i < parts.length; i++) {
 			MPart part = MApplicationFactory.eINSTANCE.createPart();
-			part.setName(parts[i].getAttribute("label")); //$NON-NLS-1$
+			part.setLabel(parts[i].getAttribute("label")); //$NON-NLS-1$
 			part.setIconURI("platform:/plugin/" //$NON-NLS-1$
 					+ parts[i].getContributor().getName() + "/" //$NON-NLS-1$
 					+ parts[i].getAttribute("icon")); //$NON-NLS-1$

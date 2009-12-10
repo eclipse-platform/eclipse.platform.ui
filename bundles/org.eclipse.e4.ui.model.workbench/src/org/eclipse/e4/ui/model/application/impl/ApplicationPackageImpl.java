@@ -58,7 +58,7 @@ import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MTrimContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MUIItem;
+import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.ui.model.application.MVSCElement;
 import org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V;
 import org.eclipse.e4.ui.model.application.MV_________Testing__________V;
@@ -165,7 +165,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass uiItemEClass = null;
+	private EClass uiLabelEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -789,8 +789,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EClass getUIItem() {
-		return uiItemEClass;
+	public EClass getUILabel() {
+		return uiLabelEClass;
 	}
 
 	/**
@@ -798,8 +798,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getUIItem_Name() {
-		return (EAttribute)uiItemEClass.getEStructuralFeatures().get(0);
+	public EAttribute getUILabel_Label() {
+		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -807,8 +807,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getUIItem_IconURI() {
-		return (EAttribute)uiItemEClass.getEStructuralFeatures().get(1);
+	public EAttribute getUILabel_IconURI() {
+		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(1);
 	}
 
 	/**
@@ -816,8 +816,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getUIItem_Tooltip() {
-		return (EAttribute)uiItemEClass.getEStructuralFeatures().get(2);
+	public EAttribute getUILabel_Tooltip() {
+		return (EAttribute)uiLabelEClass.getEStructuralFeatures().get(2);
 	}
 
 	/**
@@ -1595,10 +1595,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(parameterEClass, PARAMETER__TAG);
 		createEAttribute(parameterEClass, PARAMETER__VALUE);
 
-		uiItemEClass = createEClass(UI_ITEM);
-		createEAttribute(uiItemEClass, UI_ITEM__NAME);
-		createEAttribute(uiItemEClass, UI_ITEM__ICON_URI);
-		createEAttribute(uiItemEClass, UI_ITEM__TOOLTIP);
+		uiLabelEClass = createEClass(UI_LABEL);
+		createEAttribute(uiLabelEClass, UI_LABEL__LABEL);
+		createEAttribute(uiLabelEClass, UI_LABEL__ICON_URI);
+		createEAttribute(uiLabelEClass, UI_LABEL__TOOLTIP);
 
 		uiElementEClass = createEClass(UI_ELEMENT);
 		createEAttribute(uiElementEClass, UI_ELEMENT__WIDGET);
@@ -1788,7 +1788,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getItem());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getUIItem());
+		g1 = createEGenericType(this.getUILabel());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getDirtyable());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
@@ -1812,7 +1812,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(this.getBindingContainer());
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		itemEClass.getESuperTypes().add(this.getUIElement());
-		itemEClass.getESuperTypes().add(this.getUIItem());
+		itemEClass.getESuperTypes().add(this.getUILabel());
 		handledItemEClass.getESuperTypes().add(this.getItem());
 		menuItemEClass.getESuperTypes().add(this.getMenu());
 		menuItemEClass.getESuperTypes().add(this.getItem());
@@ -1852,7 +1852,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass.getESuperTypes().add(this.getContribution());
 		partEClass.getESuperTypes().add(this.getContext());
 		partEClass.getESuperTypes().add(this.getPSCElement());
-		partEClass.getESuperTypes().add(this.getUIItem());
+		partEClass.getESuperTypes().add(this.getUILabel());
 		partEClass.getESuperTypes().add(this.getHandlerContainer());
 		partEClass.getESuperTypes().add(this.getBindingContainer());
 		saveablePartEClass.getESuperTypes().add(this.getPart());
@@ -1871,7 +1871,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partSashContainerEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPSCElement());
 		partSashContainerEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getUIItem());
+		g1 = createEGenericType(this.getUILabel());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getPSCElement());
@@ -1892,6 +1892,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(this.getPSCElement());
 		windowTrimEClass.getEGenericSuperTypes().add(g1);
 		keyBindingEClass.getESuperTypes().add(this.getKeySequence());
+		keyBindingEClass.getESuperTypes().add(this.getApplicationElement());
 		vscElementEClass.getESuperTypes().add(this.getUIElement());
 		viewEClass.getESuperTypes().add(this.getPart());
 		viewEClass.getESuperTypes().add(this.getVSCElement());
@@ -1937,7 +1938,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		editorSashContainerEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getVSCElement());
 		editorSashContainerEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getUIItem());
+		g1 = createEGenericType(this.getUILabel());
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
 		g2 = createEGenericType(this.getPSCElement());
@@ -1957,7 +1958,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPSCElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
-		ideWindowEClass.getESuperTypes().add(this.getUIItem());
+		ideWindowEClass.getESuperTypes().add(this.getUILabel());
 		ideWindowEClass.getESuperTypes().add(this.getContext());
 		ideWindowEClass.getESuperTypes().add(this.getHandlerContainer());
 		ideWindowEClass.getESuperTypes().add(this.getBindingContainer());
@@ -1999,10 +2000,10 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getParameter_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getParameter_Value(), ecorePackage.getEString(), "value", null, 0, 1, MParameter.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
-		initEClass(uiItemEClass, MUIItem.class, "UIItem", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getUIItem_Name(), ecorePackage.getEString(), "name", null, 0, 1, MUIItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getUIItem_IconURI(), ecorePackage.getEString(), "iconURI", null, 0, 1, MUIItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getUIItem_Tooltip(), ecorePackage.getEString(), "tooltip", null, 0, 1, MUIItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEClass(uiLabelEClass, MUILabel.class, "UILabel", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getUILabel_Label(), ecorePackage.getEString(), "label", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUILabel_IconURI(), ecorePackage.getEString(), "iconURI", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUILabel_Tooltip(), ecorePackage.getEString(), "tooltip", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(uiElementEClass, MUIElement.class, "UIElement", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getUIElement_Widget(), ecorePackage.getEJavaObject(), "widget", null, 0, 1, MUIElement.class, IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$

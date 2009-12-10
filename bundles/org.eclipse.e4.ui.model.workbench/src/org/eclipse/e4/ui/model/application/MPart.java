@@ -29,7 +29,7 @@ import org.eclipse.emf.common.util.EList;
  * @model
  * @generated
  */
-public interface MPart extends MContribution, MContext, MPSCElement, MUIItem, MHandlerContainer, MBindingContainer {
+public interface MPart extends MContribution, MContext, MPSCElement, MUILabel, MHandlerContainer, MBindingContainer {
 	/**
 	 * Returns the value of the '<em><b>Menus</b></em>' reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MMenu}.

@@ -472,23 +472,23 @@ public interface MApplicationPackage extends EPackage {
 	int PARAMETER_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.UIItemImpl <em>UI Item</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl <em>UI Label</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.UIItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUIItem()
+	 * @see org.eclipse.e4.ui.model.application.impl.UILabelImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUILabel()
 	 * @generated
 	 */
-	int UI_ITEM = 10;
+	int UI_LABEL = 10;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ITEM__NAME = 0;
+	int UI_LABEL__LABEL = 0;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -497,7 +497,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ITEM__ICON_URI = 1;
+	int UI_LABEL__ICON_URI = 1;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -506,16 +506,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ITEM__TOOLTIP = 2;
+	int UI_LABEL__TOOLTIP = 2;
 
 	/**
-	 * The number of structural features of the '<em>UI Item</em>' class.
+	 * The number of structural features of the '<em>UI Label</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int UI_ITEM_FEATURE_COUNT = 3;
+	int UI_LABEL_FEATURE_COUNT = 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl <em>UI Element</em>}' class.
@@ -856,13 +856,13 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS__INPUT_URI = APPLICATION_ELEMENT_FEATURE_COUNT + 17;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
+	int TEST_HARNESS__LABEL = APPLICATION_ELEMENT_FEATURE_COUNT + 18;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1475,13 +1475,13 @@ public interface MApplicationPackage extends EPackage {
 	int ITEM__PARENT = UI_ELEMENT__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__NAME = UI_ELEMENT_FEATURE_COUNT + 0;
+	int ITEM__LABEL = UI_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1602,13 +1602,13 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM__PARENT = ITEM__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__NAME = ITEM__NAME;
+	int HANDLED_ITEM__LABEL = ITEM__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -1865,13 +1865,13 @@ public interface MApplicationPackage extends EPackage {
 	int MENU_ITEM__ACTIVE_CHILD = MENU__ACTIVE_CHILD;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__NAME = MENU_FEATURE_COUNT + 0;
+	int MENU_ITEM__LABEL = MENU_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2010,13 +2010,13 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_MENU_ITEM__ACTIVE_CHILD = MENU_ITEM__ACTIVE_CHILD;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_MENU_ITEM__NAME = MENU_ITEM__NAME;
+	int HANDLED_MENU_ITEM__LABEL = MENU_ITEM__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2209,13 +2209,13 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_MENU_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 6;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__NAME = CONTRIBUTION_FEATURE_COUNT + 7;
+	int DIRECT_MENU_ITEM__LABEL = CONTRIBUTION_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2336,13 +2336,13 @@ public interface MApplicationPackage extends EPackage {
 	int TOOL_ITEM__PARENT = ITEM__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__NAME = ITEM__NAME;
+	int TOOL_ITEM__LABEL = ITEM__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2499,13 +2499,13 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_TOOL_ITEM__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_TOOL_ITEM__NAME = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+	int HANDLED_TOOL_ITEM__LABEL = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -2680,13 +2680,13 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_TOOL_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__NAME = CONTRIBUTION_FEATURE_COUNT + 5;
+	int DIRECT_TOOL_ITEM__LABEL = CONTRIBUTION_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -3034,13 +3034,13 @@ public interface MApplicationPackage extends EPackage {
 	int PART__PARENT = CONTRIBUTION_FEATURE_COUNT + 6;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART__NAME = CONTRIBUTION_FEATURE_COUNT + 7;
+	int PART__LABEL = CONTRIBUTION_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -3215,13 +3215,13 @@ public interface MApplicationPackage extends EPackage {
 	int SAVEABLE_PART__PARENT = PART__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SAVEABLE_PART__NAME = PART__NAME;
+	int SAVEABLE_PART__LABEL = PART__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -3506,13 +3506,13 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW = 37;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__NAME = UI_ITEM__NAME;
+	int WINDOW__LABEL = UI_LABEL__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -3521,7 +3521,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__ICON_URI = UI_ITEM__ICON_URI;
+	int WINDOW__ICON_URI = UI_LABEL__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -3530,7 +3530,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__TOOLTIP = UI_ITEM__TOOLTIP;
+	int WINDOW__TOOLTIP = UI_LABEL__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3539,7 +3539,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__ID = UI_ITEM_FEATURE_COUNT + 0;
+	int WINDOW__ID = UI_LABEL_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -3548,7 +3548,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__WIDGET = UI_ITEM_FEATURE_COUNT + 1;
+	int WINDOW__WIDGET = UI_LABEL_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -3557,7 +3557,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__RENDERER = UI_ITEM_FEATURE_COUNT + 2;
+	int WINDOW__RENDERER = UI_LABEL_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -3566,7 +3566,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__TO_BE_RENDERED = UI_ITEM_FEATURE_COUNT + 3;
+	int WINDOW__TO_BE_RENDERED = UI_LABEL_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -3575,7 +3575,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__VISIBLE = UI_ITEM_FEATURE_COUNT + 4;
+	int WINDOW__VISIBLE = UI_LABEL_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -3584,7 +3584,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__PARENT = UI_ITEM_FEATURE_COUNT + 5;
+	int WINDOW__PARENT = UI_LABEL_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -3593,7 +3593,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__CHILDREN = UI_ITEM_FEATURE_COUNT + 6;
+	int WINDOW__CHILDREN = UI_LABEL_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -3602,7 +3602,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__ACTIVE_CHILD = UI_ITEM_FEATURE_COUNT + 7;
+	int WINDOW__ACTIVE_CHILD = UI_LABEL_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -3611,7 +3611,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__CONTEXT = UI_ITEM_FEATURE_COUNT + 8;
+	int WINDOW__CONTEXT = UI_LABEL_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -3620,7 +3620,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__VARIABLES = UI_ITEM_FEATURE_COUNT + 9;
+	int WINDOW__VARIABLES = UI_LABEL_FEATURE_COUNT + 9;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -3629,7 +3629,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HANDLERS = UI_ITEM_FEATURE_COUNT + 10;
+	int WINDOW__HANDLERS = UI_LABEL_FEATURE_COUNT + 10;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -3638,7 +3638,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__BINDINGS = UI_ITEM_FEATURE_COUNT + 11;
+	int WINDOW__BINDINGS = UI_LABEL_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
@@ -3647,7 +3647,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 12;
+	int WINDOW__MAIN_MENU = UI_LABEL_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>X</b></em>' attribute.
@@ -3656,7 +3656,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__X = UI_ITEM_FEATURE_COUNT + 13;
+	int WINDOW__X = UI_LABEL_FEATURE_COUNT + 13;
 
 	/**
 	 * The feature id for the '<em><b>Y</b></em>' attribute.
@@ -3665,7 +3665,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__Y = UI_ITEM_FEATURE_COUNT + 14;
+	int WINDOW__Y = UI_LABEL_FEATURE_COUNT + 14;
 
 	/**
 	 * The feature id for the '<em><b>Width</b></em>' attribute.
@@ -3674,7 +3674,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__WIDTH = UI_ITEM_FEATURE_COUNT + 15;
+	int WINDOW__WIDTH = UI_LABEL_FEATURE_COUNT + 15;
 
 	/**
 	 * The feature id for the '<em><b>Height</b></em>' attribute.
@@ -3683,7 +3683,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW__HEIGHT = UI_ITEM_FEATURE_COUNT + 16;
+	int WINDOW__HEIGHT = UI_LABEL_FEATURE_COUNT + 16;
 
 	/**
 	 * The number of structural features of the '<em>Window</em>' class.
@@ -3692,7 +3692,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 17;
+	int WINDOW_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 17;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
@@ -3823,13 +3823,22 @@ public interface MApplicationPackage extends EPackage {
 	int KEY_BINDING__KEY_SEQUENCE = KEY_SEQUENCE__KEY_SEQUENCE;
 
 	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING__ID = KEY_SEQUENCE_FEATURE_COUNT + 0;
+
+	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int KEY_BINDING__COMMAND = KEY_SEQUENCE_FEATURE_COUNT + 0;
+	int KEY_BINDING__COMMAND = KEY_SEQUENCE_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
@@ -3838,7 +3847,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KEY_BINDING__PARAMETERS = KEY_SEQUENCE_FEATURE_COUNT + 1;
+	int KEY_BINDING__PARAMETERS = KEY_SEQUENCE_FEATURE_COUNT + 2;
 
 	/**
 	 * The number of structural features of the '<em>Key Binding</em>' class.
@@ -3847,7 +3856,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int KEY_BINDING_FEATURE_COUNT = KEY_SEQUENCE_FEATURE_COUNT + 2;
+	int KEY_BINDING_FEATURE_COUNT = KEY_SEQUENCE_FEATURE_COUNT + 3;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
@@ -4079,13 +4088,13 @@ public interface MApplicationPackage extends EPackage {
 	int VIEW__PARENT = PART__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int VIEW__NAME = PART__NAME;
+	int VIEW__LABEL = PART__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -4360,13 +4369,13 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR__VARIABLES = INPUT_FEATURE_COUNT + 10;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int EDITOR__NAME = INPUT_FEATURE_COUNT + 11;
+	int EDITOR__LABEL = INPUT_FEATURE_COUNT + 11;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -4659,13 +4668,13 @@ public interface MApplicationPackage extends EPackage {
 	int MULTI_EDITOR__PARENT = SAVEABLE_PART__PARENT;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MULTI_EDITOR__NAME = SAVEABLE_PART__NAME;
+	int MULTI_EDITOR__LABEL = SAVEABLE_PART__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -5050,13 +5059,13 @@ public interface MApplicationPackage extends EPackage {
 	int PERSPECTIVE = 51;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__NAME = UI_ITEM__NAME;
+	int PERSPECTIVE__LABEL = UI_LABEL__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -5065,7 +5074,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__ICON_URI = UI_ITEM__ICON_URI;
+	int PERSPECTIVE__ICON_URI = UI_LABEL__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -5074,7 +5083,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__TOOLTIP = UI_ITEM__TOOLTIP;
+	int PERSPECTIVE__TOOLTIP = UI_LABEL__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -5083,7 +5092,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__ID = UI_ITEM_FEATURE_COUNT + 0;
+	int PERSPECTIVE__ID = UI_LABEL_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Widget</b></em>' attribute.
@@ -5092,7 +5101,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__WIDGET = UI_ITEM_FEATURE_COUNT + 1;
+	int PERSPECTIVE__WIDGET = UI_LABEL_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
@@ -5101,7 +5110,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__RENDERER = UI_ITEM_FEATURE_COUNT + 2;
+	int PERSPECTIVE__RENDERER = UI_LABEL_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
@@ -5110,7 +5119,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__TO_BE_RENDERED = UI_ITEM_FEATURE_COUNT + 3;
+	int PERSPECTIVE__TO_BE_RENDERED = UI_LABEL_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Visible</b></em>' attribute.
@@ -5119,7 +5128,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__VISIBLE = UI_ITEM_FEATURE_COUNT + 4;
+	int PERSPECTIVE__VISIBLE = UI_LABEL_FEATURE_COUNT + 4;
 
 	/**
 	 * The feature id for the '<em><b>Parent</b></em>' container reference.
@@ -5128,7 +5137,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__PARENT = UI_ITEM_FEATURE_COUNT + 5;
+	int PERSPECTIVE__PARENT = UI_LABEL_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -5137,7 +5146,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__CHILDREN = UI_ITEM_FEATURE_COUNT + 6;
+	int PERSPECTIVE__CHILDREN = UI_LABEL_FEATURE_COUNT + 6;
 
 	/**
 	 * The feature id for the '<em><b>Active Child</b></em>' reference.
@@ -5146,7 +5155,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__ACTIVE_CHILD = UI_ITEM_FEATURE_COUNT + 7;
+	int PERSPECTIVE__ACTIVE_CHILD = UI_LABEL_FEATURE_COUNT + 7;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -5155,7 +5164,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__CONTEXT = UI_ITEM_FEATURE_COUNT + 8;
+	int PERSPECTIVE__CONTEXT = UI_LABEL_FEATURE_COUNT + 8;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -5164,7 +5173,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE__VARIABLES = UI_ITEM_FEATURE_COUNT + 9;
+	int PERSPECTIVE__VARIABLES = UI_LABEL_FEATURE_COUNT + 9;
 
 	/**
 	 * The number of structural features of the '<em>Perspective</em>' class.
@@ -5173,7 +5182,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int PERSPECTIVE_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 10;
+	int PERSPECTIVE_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 10;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
@@ -5277,13 +5286,13 @@ public interface MApplicationPackage extends EPackage {
 	int IDE_WINDOW = 53;
 
 	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__NAME = UI_ITEM__NAME;
+	int IDE_WINDOW__LABEL = UI_LABEL__LABEL;
 
 	/**
 	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
@@ -5292,7 +5301,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__ICON_URI = UI_ITEM__ICON_URI;
+	int IDE_WINDOW__ICON_URI = UI_LABEL__ICON_URI;
 
 	/**
 	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
@@ -5301,7 +5310,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__TOOLTIP = UI_ITEM__TOOLTIP;
+	int IDE_WINDOW__TOOLTIP = UI_LABEL__TOOLTIP;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -5310,7 +5319,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__CONTEXT = UI_ITEM_FEATURE_COUNT + 0;
+	int IDE_WINDOW__CONTEXT = UI_LABEL_FEATURE_COUNT + 0;
 
 	/**
 	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
@@ -5319,7 +5328,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__VARIABLES = UI_ITEM_FEATURE_COUNT + 1;
+	int IDE_WINDOW__VARIABLES = UI_LABEL_FEATURE_COUNT + 1;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -5328,7 +5337,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__HANDLERS = UI_ITEM_FEATURE_COUNT + 2;
+	int IDE_WINDOW__HANDLERS = UI_LABEL_FEATURE_COUNT + 2;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -5337,7 +5346,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__BINDINGS = UI_ITEM_FEATURE_COUNT + 3;
+	int IDE_WINDOW__BINDINGS = UI_LABEL_FEATURE_COUNT + 3;
 
 	/**
 	 * The feature id for the '<em><b>Main Menu</b></em>' reference.
@@ -5346,7 +5355,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW__MAIN_MENU = UI_ITEM_FEATURE_COUNT + 4;
+	int IDE_WINDOW__MAIN_MENU = UI_LABEL_FEATURE_COUNT + 4;
 
 	/**
 	 * The number of structural features of the '<em>IDE Window</em>' class.
@@ -5355,7 +5364,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int IDE_WINDOW_FEATURE_COUNT = UI_ITEM_FEATURE_COUNT + 5;
+	int IDE_WINDOW_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.
@@ -5665,47 +5674,47 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getParameter_Value();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MUIItem <em>UI Item</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MUILabel <em>UI Label</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>UI Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIItem
+	 * @return the meta object for class '<em>UI Label</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUILabel
 	 * @generated
 	 */
-	EClass getUIItem();
+	EClass getUILabel();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIItem#getName <em>Name</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getLabel <em>Label</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Name</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIItem#getName()
-	 * @see #getUIItem()
+	 * @return the meta object for the attribute '<em>Label</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUILabel#getLabel()
+	 * @see #getUILabel()
 	 * @generated
 	 */
-	EAttribute getUIItem_Name();
+	EAttribute getUILabel_Label();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIItem#getIconURI <em>Icon URI</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getIconURI <em>Icon URI</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Icon URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIItem#getIconURI()
-	 * @see #getUIItem()
+	 * @see org.eclipse.e4.ui.model.application.MUILabel#getIconURI()
+	 * @see #getUILabel()
 	 * @generated
 	 */
-	EAttribute getUIItem_IconURI();
+	EAttribute getUILabel_IconURI();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIItem#getTooltip <em>Tooltip</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getTooltip <em>Tooltip</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Tooltip</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIItem#getTooltip()
-	 * @see #getUIItem()
+	 * @see org.eclipse.e4.ui.model.application.MUILabel#getTooltip()
+	 * @see #getUILabel()
 	 * @generated
 	 */
-	EAttribute getUIItem_Tooltip();
+	EAttribute getUILabel_Tooltip();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MUIElement <em>UI Element</em>}'.
@@ -6783,22 +6792,22 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute PARAMETER__VALUE = eINSTANCE.getParameter_Value();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.UIItemImpl <em>UI Item</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl <em>UI Label</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.UIItemImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUIItem()
+		 * @see org.eclipse.e4.ui.model.application.impl.UILabelImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUILabel()
 		 * @generated
 		 */
-		EClass UI_ITEM = eINSTANCE.getUIItem();
+		EClass UI_LABEL = eINSTANCE.getUILabel();
 
 		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute UI_ITEM__NAME = eINSTANCE.getUIItem_Name();
+		EAttribute UI_LABEL__LABEL = eINSTANCE.getUILabel_Label();
 
 		/**
 		 * The meta object literal for the '<em><b>Icon URI</b></em>' attribute feature.
@@ -6806,7 +6815,7 @@ public interface MApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute UI_ITEM__ICON_URI = eINSTANCE.getUIItem_IconURI();
+		EAttribute UI_LABEL__ICON_URI = eINSTANCE.getUILabel_IconURI();
 
 		/**
 		 * The meta object literal for the '<em><b>Tooltip</b></em>' attribute feature.
@@ -6814,7 +6823,7 @@ public interface MApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute UI_ITEM__TOOLTIP = eINSTANCE.getUIItem_Tooltip();
+		EAttribute UI_LABEL__TOOLTIP = eINSTANCE.getUILabel_Tooltip();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl <em>UI Element</em>}' class.

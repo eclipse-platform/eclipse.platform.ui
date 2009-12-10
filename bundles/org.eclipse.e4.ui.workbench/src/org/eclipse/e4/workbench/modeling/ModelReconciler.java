@@ -45,20 +45,20 @@ public abstract class ModelReconciler {
 	/**
 	 * Attribute defined by MUIItems (value is <code>name</code>).
 	 */
-	public static final String UIITEM_NAME_ATTNAME = MApplicationPackage.eINSTANCE.getUIItem_Name()
-			.getName();
+	public static final String UILABEL_LABEL_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUILabel_Label().getName();
 
 	/**
 	 * Attribute defined by MUIItems (value is <code>tooltip</code>).
 	 */
-	public static final String UIITEM_TOOLTIP_ATTNAME = MApplicationPackage.eINSTANCE
-			.getUIItem_Tooltip().getName();
+	public static final String UILABEL_TOOLTIP_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUILabel_Tooltip().getName();
 
 	/**
 	 * Attribute defined by MUIItems (value is <code>iconURI</code>).
 	 */
-	public static final String UIITEM_ICONURI_ATTNAME = MApplicationPackage.eINSTANCE
-			.getUIItem_IconURI().getName();
+	public static final String UILABEL_ICONURI_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUILabel_IconURI().getName();
 
 	/**
 	 * Attribute defined by MUIElements (value is <code>toBeRendered</code>).

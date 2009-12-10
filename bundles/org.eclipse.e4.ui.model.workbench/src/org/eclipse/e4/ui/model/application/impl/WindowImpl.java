@@ -73,7 +73,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *
  * @generated
  */
-public class WindowImpl extends UIItemImpl implements MWindow {
+public class WindowImpl extends UILabelImpl implements MWindow {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->

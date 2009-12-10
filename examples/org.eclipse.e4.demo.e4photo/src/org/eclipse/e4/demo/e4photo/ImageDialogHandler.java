@@ -102,12 +102,12 @@ public class ImageDialogHandler {
 			// Create the 'Library' part
 			MPart library = MApplicationFactory.eINSTANCE.createPart();
 			library.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library");
-			library.setName("Library");
+			library.setLabel("Library");
 			
 			// Create the 'Preview' part
 			MPart preview = MApplicationFactory.eINSTANCE.createPart();
 			preview.setURI("platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview");
-			preview.setName("Preview");
+			preview.setLabel("Preview");
 			
 			// Add them to the sash, library first
 			sash.getChildren().add(library);
