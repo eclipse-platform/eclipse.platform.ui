@@ -563,7 +563,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_project;
 	public static String ResourceInfo_linkedFile;
 	public static String ResourceInfo_linkedFolder;
-	public static String ResourceInfo_groupFolder;
+	public static String ResourceInfo_virtualFolder;
 	public static String ResourceInfo_unknown;
 	public static String ResourceInfo_notLocal;
 	public static String ResourceInfo_undefinedPathVariable;
