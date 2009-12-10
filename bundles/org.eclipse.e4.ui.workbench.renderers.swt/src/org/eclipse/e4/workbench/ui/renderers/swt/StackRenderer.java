@@ -15,14 +15,12 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MEditor;
-import org.eclipse.e4.ui.model.application.MEditorStack;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
-import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.widgets.CTabFolder;
@@ -171,9 +169,6 @@ public class StackRenderer extends LazyStackRenderer {
 			return null;
 
 		Widget parentWidget = (Widget) parent;
-		boolean showCloseAlways = element instanceof MEditorStack;
-		int styleModifier = (element instanceof MEditorStack)
-				|| (element instanceof MViewStack) ? SWT.CLOSE : 0;
 
 		Composite stylingWrapper = createWrapperForStyling(
 				(Composite) parentWidget, getContext(element));
@@ -182,12 +177,16 @@ public class StackRenderer extends LazyStackRenderer {
 		// TODO see bug #282901 - [UI] Need better support for switching
 		// renderer to use
 
+		// TBD: need to define attributes to handle this
+		int styleModifier = 0; // SWT.CLOSE
 		final CTabFolder ctf = new ETabFolder(stylingWrapper, SWT.BORDER
 				| styleModifier);
 
 		configureForStyling(ctf);
 
-		ctf.setUnselectedCloseVisible(showCloseAlways);
+		// TBD: need to handle this
+		// boolean showCloseAlways = element instanceof MEditorStack;
+		ctf.setUnselectedCloseVisible(false);
 
 		newWidget = ctf;
 

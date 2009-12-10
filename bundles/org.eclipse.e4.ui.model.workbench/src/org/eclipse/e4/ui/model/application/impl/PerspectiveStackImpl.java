@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MVSCElement;
 
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
@@ -252,11 +251,6 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 				default: return -1;
 			}
 		}
-		if (baseClass == MVSCElement.class) {
-			switch (derivedFeatureID) {
-				default: return -1;
-			}
-		}
 		if (baseClass == MPSCElement.class) {
 			switch (derivedFeatureID) {
 				default: return -1;
@@ -276,11 +270,6 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.PERSPECTIVE_STACK__CHILDREN;
 				case MApplicationPackage.ELEMENT_CONTAINER__ACTIVE_CHILD: return MApplicationPackage.PERSPECTIVE_STACK__ACTIVE_CHILD;
-				default: return -1;
-			}
-		}
-		if (baseClass == MVSCElement.class) {
-			switch (baseFeatureID) {
 				default: return -1;
 			}
 		}

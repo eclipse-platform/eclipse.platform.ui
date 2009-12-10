@@ -13,7 +13,7 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>UI Item</b></em>'.
+ * A representation of the model object '<em><b>UI Label</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
@@ -34,7 +34,7 @@ public interface MUILabel {
 	 * Returns the value of the '<em><b>Label</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Name</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Label</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
@@ -108,4 +108,4 @@ public interface MUILabel {
 	 */
 	void setTooltip(String value);
 
-} // MUIItem
+} // MUILabel

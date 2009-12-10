@@ -66,6 +66,25 @@ public interface MApplicationPackage extends EPackage {
 	MApplicationPackage eINSTANCE = org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl.init();
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V <em>VConstants And Types V</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV____________ConstantsAndTypes_____________V()
+	 * @generated
+	 */
+	int VCONSTANTS_AND_TYPES_V = 0;
+
+	/**
+	 * The number of structural features of the '<em>VConstants And Types V</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VCONSTANTS_AND_TYPES_V_FEATURE_COUNT = 0;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV____________Abstract_____________V <em>VAbstract V</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -73,7 +92,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV____________Abstract_____________V()
 	 * @generated
 	 */
-	int VABSTRACT_V = 0;
+	int VABSTRACT_V = 1;
 
 	/**
 	 * The number of structural features of the '<em>VAbstract V</em>' class.
@@ -92,7 +111,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplicationElement()
 	 * @generated
 	 */
-	int APPLICATION_ELEMENT = 1;
+	int APPLICATION_ELEMENT = 2;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -120,7 +139,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContribution()
 	 * @generated
 	 */
-	int CONTRIBUTION = 2;
+	int CONTRIBUTION = 3;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -168,116 +187,6 @@ public interface MApplicationPackage extends EPackage {
 	int CONTRIBUTION_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.CommandImpl <em>Command</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.CommandImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommand()
-	 * @generated
-	 */
-	int COMMAND = 3;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND__ID = APPLICATION_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Command Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND__COMMAND_NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Description</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND__DESCRIPTION = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND__PARAMETERS = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Command</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.CommandParameterImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommandParameter()
-	 * @generated
-	 */
-	int COMMAND_PARAMETER = 4;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND_PARAMETER__ID = APPLICATION_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Name</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND_PARAMETER__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND_PARAMETER__TYPE_ID = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Optional</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND_PARAMETER__OPTIONAL = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Command Parameter</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int COMMAND_PARAMETER_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.DirtyableImpl <em>Dirtyable</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -285,7 +194,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getDirtyable()
 	 * @generated
 	 */
-	int DIRTYABLE = 5;
+	int DIRTYABLE = 4;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -306,98 +215,6 @@ public interface MApplicationPackage extends EPackage {
 	int DIRTYABLE_FEATURE_COUNT = 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.HandlerImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
-	 * @generated
-	 */
-	int HANDLER = 6;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER__ID = CONTRIBUTION__ID;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER__URI = CONTRIBUTION__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER__OBJECT = CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Command</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER__COMMAND = CONTRIBUTION_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Handler</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
-	 * @generated
-	 */
-	int HANDLER_CONTAINER = 7;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER_CONTAINER__HANDLERS = 0;
-
-	/**
-	 * The number of structural features of the '<em>Handler Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLER_CONTAINER_FEATURE_COUNT = 1;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.InputImpl <em>Input</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -405,7 +222,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getInput()
 	 * @generated
 	 */
-	int INPUT = 8;
+	int INPUT = 5;
 
 	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
@@ -426,98 +243,6 @@ public interface MApplicationPackage extends EPackage {
 	int INPUT_FEATURE_COUNT = 1;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl <em>Parameter</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ParameterImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
-	 * @generated
-	 */
-	int PARAMETER = 9;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PARAMETER__ID = APPLICATION_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Tag</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PARAMETER__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Value</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PARAMETER__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Parameter</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PARAMETER_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl <em>UI Label</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.UILabelImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUILabel()
-	 * @generated
-	 */
-	int UI_LABEL = 10;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int UI_LABEL__LABEL = 0;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int UI_LABEL__ICON_URI = 1;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int UI_LABEL__TOOLTIP = 2;
-
-	/**
-	 * The number of structural features of the '<em>UI Label</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int UI_LABEL_FEATURE_COUNT = 3;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl <em>UI Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -525,7 +250,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUIElement()
 	 * @generated
 	 */
-	int UI_ELEMENT = 11;
+	int UI_ELEMENT = 6;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -591,6 +316,52 @@ public interface MApplicationPackage extends EPackage {
 	int UI_ELEMENT_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl <em>UI Label</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.UILabelImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUILabel()
+	 * @generated
+	 */
+	int UI_LABEL = 7;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int UI_LABEL__LABEL = 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int UI_LABEL__ICON_URI = 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int UI_LABEL__TOOLTIP = 2;
+
+	/**
+	 * The number of structural features of the '<em>UI Label</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int UI_LABEL_FEATURE_COUNT = 3;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ContextImpl <em>Context</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -598,7 +369,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getContext()
 	 * @generated
 	 */
-	int CONTEXT = 12;
+	int CONTEXT = 8;
 
 	/**
 	 * The feature id for the '<em><b>Context</b></em>' attribute.
@@ -628,6 +399,3131 @@ public interface MApplicationPackage extends EPackage {
 	int CONTEXT_FEATURE_COUNT = 2;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________AbstractContainers__________V()
+	 * @generated
+	 */
+	int VABSTRACT_CONTAINERS_V = 9;
+
+	/**
+	 * The number of structural features of the '<em>VAbstract Containers V</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VABSTRACT_CONTAINERS_V_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ElementContainerImpl <em>Element Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ElementContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getElementContainer()
+	 * @generated
+	 */
+	int ELEMENT_CONTAINER = 10;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__ID = UI_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__WIDGET = UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__VISIBLE = UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__PARENT = UI_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Element Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ELEMENT_CONTAINER_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.GenericTileImpl <em>Generic Tile</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.GenericTileImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getGenericTile()
+	 * @generated
+	 */
+	int GENERIC_TILE = 11;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__ID = ELEMENT_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__WIDGET = ELEMENT_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__PARENT = ELEMENT_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__WEIGHTS = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE__HORIZONTAL = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Generic Tile</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int GENERIC_TILE_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V <em>VMenus And TBs V</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________MenusAndTBs_______________V()
+	 * @generated
+	 */
+	int VMENUS_AND_TBS_V = 12;
+
+	/**
+	 * The number of structural features of the '<em>VMenus And TBs V</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VMENUS_AND_TBS_V_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ItemImpl <em>Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItem()
+	 * @generated
+	 */
+	int ITEM = 13;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__ID = UI_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__WIDGET = UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__VISIBLE = UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__PARENT = UI_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__LABEL = UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__ICON_URI = UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__TOOLTIP = UI_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__ENABLED = UI_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__SELECTED = UI_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM__SEPARATOR = UI_ELEMENT_FEATURE_COUNT + 5;
+
+	/**
+	 * The number of structural features of the '<em>Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int ITEM_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 6;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuImpl <em>Menu</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.MenuImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenu()
+	 * @generated
+	 */
+	int MENU = 16;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__ID = UI_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__WIDGET = UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__VISIBLE = UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__PARENT = UI_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Menu</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl <em>Menu Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.MenuItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenuItem()
+	 * @generated
+	 */
+	int MENU_ITEM = 14;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__ID = MENU__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__WIDGET = MENU__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__RENDERER = MENU__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__TO_BE_RENDERED = MENU__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__VISIBLE = MENU__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__PARENT = MENU__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__CHILDREN = MENU__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__ACTIVE_CHILD = MENU__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__LABEL = MENU_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__ICON_URI = MENU_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__TOOLTIP = MENU_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__ENABLED = MENU_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__SELECTED = MENU_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM__SEPARATOR = MENU_FEATURE_COUNT + 5;
+
+	/**
+	 * The number of structural features of the '<em>Menu Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MENU_ITEM_FEATURE_COUNT = MENU_FEATURE_COUNT + 6;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getDirectMenuItem()
+	 * @generated
+	 */
+	int DIRECT_MENU_ITEM = 15;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__ID = CONTRIBUTION__ID;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__URI = CONTRIBUTION__URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__OBJECT = CONTRIBUTION__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__WIDGET = CONTRIBUTION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__RENDERER = CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__LABEL = CONTRIBUTION_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 12;
+
+	/**
+	 * The number of structural features of the '<em>Direct Menu Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_MENU_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl <em>Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolItem()
+	 * @generated
+	 */
+	int TOOL_ITEM = 17;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ID = ITEM__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__WIDGET = ITEM__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__RENDERER = ITEM__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__TO_BE_RENDERED = ITEM__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__VISIBLE = ITEM__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__PARENT = ITEM__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__LABEL = ITEM__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ICON_URI = ITEM__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__TOOLTIP = ITEM__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ENABLED = ITEM__ENABLED;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__SELECTED = ITEM__SELECTED;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__SEPARATOR = ITEM__SEPARATOR;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__CHILDREN = ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM__ACTIVE_CHILD = ITEM_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Tool Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl <em>Direct Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getDirectToolItem()
+	 * @generated
+	 */
+	int DIRECT_TOOL_ITEM = 18;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__ID = CONTRIBUTION__ID;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__URI = CONTRIBUTION__URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__OBJECT = CONTRIBUTION__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__WIDGET = CONTRIBUTION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__RENDERER = CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__LABEL = CONTRIBUTION_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 12;
+
+	/**
+	 * The number of structural features of the '<em>Direct Tool Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int DIRECT_TOOL_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl <em>Tool Bar</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ToolBarImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolBar()
+	 * @generated
+	 */
+	int TOOL_BAR = 19;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__ID = UI_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__WIDGET = UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__VISIBLE = UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__PARENT = UI_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Tool Bar</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TOOL_BAR_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________RCP_______________V()
+	 * @generated
+	 */
+	int VRCP_V = 20;
+
+	/**
+	 * The number of structural features of the '<em>VRCP V</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VRCP_V_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl <em>Application</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
+	 * @generated
+	 */
+	int APPLICATION = 21;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__CONTEXT = CONTEXT__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__VARIABLES = CONTEXT__VARIABLES;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__ID = CONTEXT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__WIDGET = CONTEXT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__RENDERER = CONTEXT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__TO_BE_RENDERED = CONTEXT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__VISIBLE = CONTEXT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__PARENT = CONTEXT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__CHILDREN = CONTEXT_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__ACTIVE_CHILD = CONTEXT_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__HANDLERS = CONTEXT_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__BINDINGS = CONTEXT_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 10;
+
+	/**
+	 * The number of structural features of the '<em>Application</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 11;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MPSCElement <em>PSC Element</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MPSCElement
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPSCElement()
+	 * @generated
+	 */
+	int PSC_ELEMENT = 22;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT__ID = UI_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT__WIDGET = UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT__VISIBLE = UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT__PARENT = UI_ELEMENT__PARENT;
+
+	/**
+	 * The number of structural features of the '<em>PSC Element</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PSC_ELEMENT_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartImpl <em>Part</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.PartImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPart()
+	 * @generated
+	 */
+	int PART = 23;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__ID = CONTRIBUTION__ID;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__URI = CONTRIBUTION__URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__OBJECT = CONTRIBUTION__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__CONTEXT = CONTRIBUTION_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__VARIABLES = CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__WIDGET = CONTRIBUTION_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__RENDERER = CONTRIBUTION_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__PARENT = CONTRIBUTION_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__LABEL = CONTRIBUTION_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__HANDLERS = CONTRIBUTION_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__BINDINGS = CONTRIBUTION_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Menus</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 12;
+
+	/**
+	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 13;
+
+	/**
+	 * The number of structural features of the '<em>Part</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 14;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.SaveablePartImpl <em>Saveable Part</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.SaveablePartImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSaveablePart()
+	 * @generated
+	 */
+	int SAVEABLE_PART = 24;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__ID = PART__ID;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__URI = PART__URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__OBJECT = PART__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__PERSISTED_STATE = PART__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__CONTEXT = PART__CONTEXT;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__VARIABLES = PART__VARIABLES;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__WIDGET = PART__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__RENDERER = PART__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__TO_BE_RENDERED = PART__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__VISIBLE = PART__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__PARENT = PART__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__LABEL = PART__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__ICON_URI = PART__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__TOOLTIP = PART__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__HANDLERS = PART__HANDLERS;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__BINDINGS = PART__BINDINGS;
+
+	/**
+	 * The feature id for the '<em><b>Menus</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__MENUS = PART__MENUS;
+
+	/**
+	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__TOOLBAR = PART__TOOLBAR;
+
+	/**
+	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART__DIRTY = PART_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Saveable Part</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int SAVEABLE_PART_FEATURE_COUNT = PART_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
+	 * @generated
+	 */
+	int EDITOR = 25;
+
+	/**
+	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__INPUT_URI = INPUT__INPUT_URI;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__ID = INPUT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__URI = INPUT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__OBJECT = INPUT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__PERSISTED_STATE = INPUT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__CONTEXT = INPUT_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__VARIABLES = INPUT_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__WIDGET = INPUT_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__RENDERER = INPUT_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__TO_BE_RENDERED = INPUT_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__VISIBLE = INPUT_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__PARENT = INPUT_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__LABEL = INPUT_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__ICON_URI = INPUT_FEATURE_COUNT + 12;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__TOOLTIP = INPUT_FEATURE_COUNT + 13;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__HANDLERS = INPUT_FEATURE_COUNT + 14;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__BINDINGS = INPUT_FEATURE_COUNT + 15;
+
+	/**
+	 * The feature id for the '<em><b>Menus</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__MENUS = INPUT_FEATURE_COUNT + 16;
+
+	/**
+	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__TOOLBAR = INPUT_FEATURE_COUNT + 17;
+
+	/**
+	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR__DIRTY = INPUT_FEATURE_COUNT + 18;
+
+	/**
+	 * The number of structural features of the '<em>Editor</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int EDITOR_FEATURE_COUNT = INPUT_FEATURE_COUNT + 19;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.PartStackImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartStack()
+	 * @generated
+	 */
+	int PART_STACK = 26;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__ID = ELEMENT_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__WIDGET = ELEMENT_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__PARENT = ELEMENT_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
+
+	/**
+	 * The number of structural features of the '<em>Part Stack</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_STACK_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.PartSashContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartSashContainer()
+	 * @generated
+	 */
+	int PART_SASH_CONTAINER = 27;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__ID = GENERIC_TILE__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__WIDGET = GENERIC_TILE__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__RENDERER = GENERIC_TILE__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__TO_BE_RENDERED = GENERIC_TILE__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__VISIBLE = GENERIC_TILE__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__PARENT = GENERIC_TILE__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__CHILDREN = GENERIC_TILE__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__ACTIVE_CHILD = GENERIC_TILE__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__WEIGHTS = GENERIC_TILE__WEIGHTS;
+
+	/**
+	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER__HORIZONTAL = GENERIC_TILE__HORIZONTAL;
+
+	/**
+	 * The number of structural features of the '<em>Part Sash Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_SASH_CONTAINER_FEATURE_COUNT = GENERIC_TILE_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowImpl <em>Window</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.WindowImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindow()
+	 * @generated
+	 */
+	int WINDOW = 28;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__LABEL = UI_LABEL__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__ICON_URI = UI_LABEL__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__TOOLTIP = UI_LABEL__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__ID = UI_LABEL_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__WIDGET = UI_LABEL_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__RENDERER = UI_LABEL_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__TO_BE_RENDERED = UI_LABEL_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__VISIBLE = UI_LABEL_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__PARENT = UI_LABEL_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__CHILDREN = UI_LABEL_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__ACTIVE_CHILD = UI_LABEL_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__CONTEXT = UI_LABEL_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__VARIABLES = UI_LABEL_FEATURE_COUNT + 9;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__HANDLERS = UI_LABEL_FEATURE_COUNT + 10;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__BINDINGS = UI_LABEL_FEATURE_COUNT + 11;
+
+	/**
+	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__MAIN_MENU = UI_LABEL_FEATURE_COUNT + 12;
+
+	/**
+	 * The feature id for the '<em><b>X</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__X = UI_LABEL_FEATURE_COUNT + 13;
+
+	/**
+	 * The feature id for the '<em><b>Y</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__Y = UI_LABEL_FEATURE_COUNT + 14;
+
+	/**
+	 * The feature id for the '<em><b>Width</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__WIDTH = UI_LABEL_FEATURE_COUNT + 15;
+
+	/**
+	 * The feature id for the '<em><b>Height</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW__HEIGHT = UI_LABEL_FEATURE_COUNT + 16;
+
+	/**
+	 * The number of structural features of the '<em>Window</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 17;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MV______________Commands_______________V
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Commands_______________V()
+	 * @generated
+	 */
+	int VCOMMANDS_V = 29;
+
+	/**
+	 * The number of structural features of the '<em>VCommands V</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VCOMMANDS_V_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
+	 * @generated
+	 */
+	int BINDING_CONTAINER = 30;
+
+	/**
+	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTAINER__BINDINGS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Binding Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int BINDING_CONTAINER_FEATURE_COUNT = 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.CommandImpl <em>Command</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.CommandImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommand()
+	 * @generated
+	 */
+	int COMMAND = 31;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__ID = APPLICATION_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Command Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__COMMAND_NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Description</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__DESCRIPTION = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND__PARAMETERS = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Command</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.CommandParameterImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommandParameter()
+	 * @generated
+	 */
+	int COMMAND_PARAMETER = 32;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_PARAMETER__ID = APPLICATION_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Name</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_PARAMETER__NAME = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Type Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_PARAMETER__TYPE_ID = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Optional</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_PARAMETER__OPTIONAL = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Command Parameter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int COMMAND_PARAMETER_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.HandlerImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
+	 * @generated
+	 */
+	int HANDLER = 33;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__ID = CONTRIBUTION__ID;
+
+	/**
+	 * The feature id for the '<em><b>URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__URI = CONTRIBUTION__URI;
+
+	/**
+	 * The feature id for the '<em><b>Object</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__OBJECT = CONTRIBUTION__OBJECT;
+
+	/**
+	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER__COMMAND = CONTRIBUTION_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Handler</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
+	 * @generated
+	 */
+	int HANDLER_CONTAINER = 34;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER_CONTAINER__HANDLERS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Handler Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLER_CONTAINER_FEATURE_COUNT = 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl <em>Handled Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.HandledItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
+	 * @generated
+	 */
+	int HANDLED_ITEM = 35;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__ID = ITEM__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__WIDGET = ITEM__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__RENDERER = ITEM__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__TO_BE_RENDERED = ITEM__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__VISIBLE = ITEM__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__PARENT = ITEM__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__LABEL = ITEM__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__ICON_URI = ITEM__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__TOOLTIP = ITEM__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__ENABLED = ITEM__ENABLED;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__SELECTED = ITEM__SELECTED;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__SEPARATOR = ITEM__SEPARATOR;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__COMMAND = ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__WB_COMMAND = ITEM_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM__PARAMETERS = ITEM_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Handled Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
+	 * @generated
+	 */
+	int HANDLED_MENU_ITEM = 36;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__ID = MENU_ITEM__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__WIDGET = MENU_ITEM__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__RENDERER = MENU_ITEM__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__TO_BE_RENDERED = MENU_ITEM__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__VISIBLE = MENU_ITEM__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__PARENT = MENU_ITEM__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__CHILDREN = MENU_ITEM__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__ACTIVE_CHILD = MENU_ITEM__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__LABEL = MENU_ITEM__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__ICON_URI = MENU_ITEM__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__TOOLTIP = MENU_ITEM__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__ENABLED = MENU_ITEM__ENABLED;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__SELECTED = MENU_ITEM__SELECTED;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__SEPARATOR = MENU_ITEM__SEPARATOR;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__COMMAND = MENU_ITEM_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__WB_COMMAND = MENU_ITEM_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM__PARAMETERS = MENU_ITEM_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Handled Menu Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
+	 * @generated
+	 */
+	int HANDLED_TOOL_ITEM = 37;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__ID = ELEMENT_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__WIDGET = ELEMENT_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__PARENT = ELEMENT_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__LABEL = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__ICON_URI = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__TOOLTIP = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__ENABLED = ELEMENT_CONTAINER_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Selected</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__SELECTED = ELEMENT_CONTAINER_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__SEPARATOR = ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__COMMAND = ELEMENT_CONTAINER_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__WB_COMMAND = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM__PARAMETERS = ELEMENT_CONTAINER_FEATURE_COUNT + 8;
+
+	/**
+	 * The number of structural features of the '<em>Handled Tool Item</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int HANDLED_TOOL_ITEM_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 9;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -635,7 +3531,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
 	 * @generated
 	 */
-	int KEY_SEQUENCE = 13;
+	int KEY_SEQUENCE = 39;
 
 	/**
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
@@ -656,6 +3552,590 @@ public interface MApplicationPackage extends EPackage {
 	int KEY_SEQUENCE_FEATURE_COUNT = 1;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.KeyBindingImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
+	 * @generated
+	 */
+	int KEY_BINDING = 38;
+
+	/**
+	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING__KEY_SEQUENCE = KEY_SEQUENCE__KEY_SEQUENCE;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING__ID = KEY_SEQUENCE_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Command</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING__COMMAND = KEY_SEQUENCE_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING__PARAMETERS = KEY_SEQUENCE_FEATURE_COUNT + 2;
+
+	/**
+	 * The number of structural features of the '<em>Key Binding</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int KEY_BINDING_FEATURE_COUNT = KEY_SEQUENCE_FEATURE_COUNT + 3;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl <em>Parameter</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ParameterImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
+	 * @generated
+	 */
+	int PARAMETER = 40;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER__ID = APPLICATION_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Tag</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER__TAG = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Value</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER__VALUE = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Parameter</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PARAMETER_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________Trim_______________V <em>VTrim V</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MV______________Trim_______________V
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Trim_______________V()
+	 * @generated
+	 */
+	int VTRIM_V = 41;
+
+	/**
+	 * The number of structural features of the '<em>VTrim V</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VTRIM_V_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.TrimContainerImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
+	 * @generated
+	 */
+	int TRIM_CONTAINER = 42;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__ID = ELEMENT_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__WIDGET = ELEMENT_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__RENDERER = ELEMENT_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__PARENT = ELEMENT_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__HORIZONTAL = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Side</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER__SIDE = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Trim Container</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int TRIM_CONTAINER_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.WindowTrimImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
+	 * @generated
+	 */
+	int WINDOW_TRIM = 43;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__ID = TRIM_CONTAINER__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__WIDGET = TRIM_CONTAINER__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__RENDERER = TRIM_CONTAINER__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__TO_BE_RENDERED = TRIM_CONTAINER__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__VISIBLE = TRIM_CONTAINER__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__PARENT = TRIM_CONTAINER__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__CHILDREN = TRIM_CONTAINER__CHILDREN;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__ACTIVE_CHILD = TRIM_CONTAINER__ACTIVE_CHILD;
+
+	/**
+	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__HORIZONTAL = TRIM_CONTAINER__HORIZONTAL;
+
+	/**
+	 * The feature id for the '<em><b>Side</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM__SIDE = TRIM_CONTAINER__SIDE;
+
+	/**
+	 * The number of structural features of the '<em>Window Trim</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int WINDOW_TRIM_FEATURE_COUNT = TRIM_CONTAINER_FEATURE_COUNT + 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________SharedElements_______________V()
+	 * @generated
+	 */
+	int VSHARED_ELEMENTS_V = 44;
+
+	/**
+	 * The number of structural features of the '<em>VShared Elements V</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int VSHARED_ELEMENTS_V_FEATURE_COUNT = 0;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl <em>Perspective</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.PerspectiveImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
+	 * @generated
+	 */
+	int PERSPECTIVE = 45;
+
+	/**
+	 * The feature id for the '<em><b>Label</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__LABEL = UI_LABEL__LABEL;
+
+	/**
+	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__ICON_URI = UI_LABEL__ICON_URI;
+
+	/**
+	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__TOOLTIP = UI_LABEL__TOOLTIP;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__ID = UI_LABEL_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__WIDGET = UI_LABEL_FEATURE_COUNT + 1;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__RENDERER = UI_LABEL_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__TO_BE_RENDERED = UI_LABEL_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__VISIBLE = UI_LABEL_FEATURE_COUNT + 4;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__PARENT = UI_LABEL_FEATURE_COUNT + 5;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__CHILDREN = UI_LABEL_FEATURE_COUNT + 6;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__ACTIVE_CHILD = UI_LABEL_FEATURE_COUNT + 7;
+
+	/**
+	 * The feature id for the '<em><b>Context</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__CONTEXT = UI_LABEL_FEATURE_COUNT + 8;
+
+	/**
+	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE__VARIABLES = UI_LABEL_FEATURE_COUNT + 9;
+
+	/**
+	 * The number of structural features of the '<em>Perspective</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 10;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
+	 * @generated
+	 */
+	int PERSPECTIVE_STACK = 46;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__ID = UI_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__WIDGET = UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__VISIBLE = UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__PARENT = UI_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The feature id for the '<em><b>Active Child</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
+	 * The number of structural features of the '<em>Perspective Stack</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PERSPECTIVE_STACK_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -663,7 +4143,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 	 * @generated
 	 */
-	int VTESTING_V = 14;
+	int VTESTING_V = 47;
 
 	/**
 	 * The number of structural features of the '<em>VTesting V</em>' class.
@@ -682,7 +4162,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 	 * @generated
 	 */
-	int TEST_HARNESS = 15;
+	int TEST_HARNESS = 48;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -928,4445 +4408,6 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 25;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________AbstractContainers__________V()
-	 * @generated
-	 */
-	int VABSTRACT_CONTAINERS_V = 16;
-
-	/**
-	 * The number of structural features of the '<em>VAbstract Containers V</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VABSTRACT_CONTAINERS_V_FEATURE_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ElementContainerImpl <em>Element Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ElementContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getElementContainer()
-	 * @generated
-	 */
-	int ELEMENT_CONTAINER = 17;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Element Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ELEMENT_CONTAINER_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.GenericTileImpl <em>Generic Tile</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.GenericTileImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getGenericTile()
-	 * @generated
-	 */
-	int GENERIC_TILE = 18;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__ID = ELEMENT_CONTAINER__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__WIDGET = ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__RENDERER = ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__PARENT = ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__WEIGHTS = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE__HORIZONTAL = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Generic Tile</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_TILE_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.TrimContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
-	 * @generated
-	 */
-	int TRIM_CONTAINER = 19;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__ID = ELEMENT_CONTAINER__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__WIDGET = ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__RENDERER = ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__PARENT = ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__HORIZONTAL = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Side</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__SIDE = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Trim Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________RCP_______________V()
-	 * @generated
-	 */
-	int VRCP_V = 20;
-
-	/**
-	 * The number of structural features of the '<em>VRCP V</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VRCP_V_FEATURE_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl <em>Application</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
-	 * @generated
-	 */
-	int APPLICATION = 21;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__CONTEXT = CONTEXT__CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__VARIABLES = CONTEXT__VARIABLES;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__ID = CONTEXT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__WIDGET = CONTEXT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__RENDERER = CONTEXT_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__TO_BE_RENDERED = CONTEXT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__VISIBLE = CONTEXT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__PARENT = CONTEXT_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__CHILDREN = CONTEXT_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__ACTIVE_CHILD = CONTEXT_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__HANDLERS = CONTEXT_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__BINDINGS = CONTEXT_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION__COMMANDS = CONTEXT_FEATURE_COUNT + 10;
-
-	/**
-	 * The number of structural features of the '<em>Application</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int APPLICATION_FEATURE_COUNT = CONTEXT_FEATURE_COUNT + 11;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ItemImpl <em>Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItem()
-	 * @generated
-	 */
-	int ITEM = 22;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__LABEL = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__ICON_URI = UI_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__TOOLTIP = UI_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__ENABLED = UI_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__SELECTED = UI_ELEMENT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM__SEPARATOR = UI_ELEMENT_FEATURE_COUNT + 5;
-
-	/**
-	 * The number of structural features of the '<em>Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ITEM_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 6;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl <em>Handled Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.HandledItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
-	 * @generated
-	 */
-	int HANDLED_ITEM = 23;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__ID = ITEM__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__WIDGET = ITEM__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__RENDERER = ITEM__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__TO_BE_RENDERED = ITEM__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__VISIBLE = ITEM__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__PARENT = ITEM__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__LABEL = ITEM__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__ICON_URI = ITEM__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__TOOLTIP = ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__ENABLED = ITEM__ENABLED;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__SELECTED = ITEM__SELECTED;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__SEPARATOR = ITEM__SEPARATOR;
-
-	/**
-	 * The feature id for the '<em><b>Command</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__COMMAND = ITEM_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__WB_COMMAND = ITEM_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM__PARAMETERS = ITEM_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Handled Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 3;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuImpl <em>Menu</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.MenuImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenu()
-	 * @generated
-	 */
-	int MENU = 27;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Menu</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl <em>Menu Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.MenuItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMenuItem()
-	 * @generated
-	 */
-	int MENU_ITEM = 24;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ID = MENU__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__WIDGET = MENU__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__RENDERER = MENU__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__TO_BE_RENDERED = MENU__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__VISIBLE = MENU__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__PARENT = MENU__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__CHILDREN = MENU__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ACTIVE_CHILD = MENU__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__LABEL = MENU_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ICON_URI = MENU_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__TOOLTIP = MENU_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__ENABLED = MENU_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__SELECTED = MENU_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM__SEPARATOR = MENU_FEATURE_COUNT + 5;
-
-	/**
-	 * The number of structural features of the '<em>Menu Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MENU_ITEM_FEATURE_COUNT = MENU_FEATURE_COUNT + 6;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
-	 * @generated
-	 */
-	int HANDLED_MENU_ITEM = 25;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__ID = MENU_ITEM__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__WIDGET = MENU_ITEM__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__RENDERER = MENU_ITEM__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__TO_BE_RENDERED = MENU_ITEM__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__VISIBLE = MENU_ITEM__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__PARENT = MENU_ITEM__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__CHILDREN = MENU_ITEM__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__ACTIVE_CHILD = MENU_ITEM__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__LABEL = MENU_ITEM__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__ICON_URI = MENU_ITEM__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__TOOLTIP = MENU_ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__ENABLED = MENU_ITEM__ENABLED;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__SELECTED = MENU_ITEM__SELECTED;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__SEPARATOR = MENU_ITEM__SEPARATOR;
-
-	/**
-	 * The feature id for the '<em><b>Command</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__COMMAND = MENU_ITEM_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__WB_COMMAND = MENU_ITEM_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM__PARAMETERS = MENU_ITEM_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Handled Menu Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_MENU_ITEM_FEATURE_COUNT = MENU_ITEM_FEATURE_COUNT + 3;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getDirectMenuItem()
-	 * @generated
-	 */
-	int DIRECT_MENU_ITEM = 26;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__ID = CONTRIBUTION__ID;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__URI = CONTRIBUTION__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__OBJECT = CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__WIDGET = CONTRIBUTION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__RENDERER = CONTRIBUTION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__LABEL = CONTRIBUTION_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 10;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 11;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 12;
-
-	/**
-	 * The number of structural features of the '<em>Direct Menu Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_MENU_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolItemImpl <em>Tool Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ToolItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolItem()
-	 * @generated
-	 */
-	int TOOL_ITEM = 28;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__ID = ITEM__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__WIDGET = ITEM__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__RENDERER = ITEM__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__TO_BE_RENDERED = ITEM__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__VISIBLE = ITEM__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__PARENT = ITEM__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__LABEL = ITEM__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__ICON_URI = ITEM__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__TOOLTIP = ITEM__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__ENABLED = ITEM__ENABLED;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__SELECTED = ITEM__SELECTED;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__SEPARATOR = ITEM__SEPARATOR;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__CHILDREN = ITEM_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM__ACTIVE_CHILD = ITEM_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Tool Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_ITEM_FEATURE_COUNT = ITEM_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
-	 * @generated
-	 */
-	int HANDLED_TOOL_ITEM = 29;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__ID = ELEMENT_CONTAINER__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__WIDGET = ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__RENDERER = ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__PARENT = ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__LABEL = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__ICON_URI = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__TOOLTIP = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__ENABLED = ELEMENT_CONTAINER_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__SELECTED = ELEMENT_CONTAINER_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__SEPARATOR = ELEMENT_CONTAINER_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Command</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__COMMAND = ELEMENT_CONTAINER_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Wb Command</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__WB_COMMAND = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM__PARAMETERS = ELEMENT_CONTAINER_FEATURE_COUNT + 8;
-
-	/**
-	 * The number of structural features of the '<em>Handled Tool Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int HANDLED_TOOL_ITEM_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 9;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl <em>Direct Tool Item</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getDirectToolItem()
-	 * @generated
-	 */
-	int DIRECT_TOOL_ITEM = 30;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__ID = CONTRIBUTION__ID;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__URI = CONTRIBUTION__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__OBJECT = CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__WIDGET = CONTRIBUTION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__RENDERER = CONTRIBUTION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__PARENT = CONTRIBUTION_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__LABEL = CONTRIBUTION_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Enabled</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__ENABLED = CONTRIBUTION_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Selected</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 10;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__CHILDREN = CONTRIBUTION_FEATURE_COUNT + 11;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM__ACTIVE_CHILD = CONTRIBUTION_FEATURE_COUNT + 12;
-
-	/**
-	 * The number of structural features of the '<em>Direct Tool Item</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int DIRECT_TOOL_ITEM_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 13;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ToolBarImpl <em>Tool Bar</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ToolBarImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getToolBar()
-	 * @generated
-	 */
-	int TOOL_BAR = 31;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Tool Bar</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TOOL_BAR_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MPSCElement <em>PSC Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MPSCElement
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPSCElement()
-	 * @generated
-	 */
-	int PSC_ELEMENT = 32;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PSC_ELEMENT__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PSC_ELEMENT__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PSC_ELEMENT__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PSC_ELEMENT__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PSC_ELEMENT__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PSC_ELEMENT__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The number of structural features of the '<em>PSC Element</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PSC_ELEMENT_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartImpl <em>Part</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.PartImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPart()
-	 * @generated
-	 */
-	int PART = 33;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__ID = CONTRIBUTION__ID;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__URI = CONTRIBUTION__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__OBJECT = CONTRIBUTION__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__PERSISTED_STATE = CONTRIBUTION__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__CONTEXT = CONTRIBUTION_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__VARIABLES = CONTRIBUTION_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__WIDGET = CONTRIBUTION_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__RENDERER = CONTRIBUTION_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__TO_BE_RENDERED = CONTRIBUTION_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__VISIBLE = CONTRIBUTION_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__PARENT = CONTRIBUTION_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__LABEL = CONTRIBUTION_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__ICON_URI = CONTRIBUTION_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__TOOLTIP = CONTRIBUTION_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__HANDLERS = CONTRIBUTION_FEATURE_COUNT + 10;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__BINDINGS = CONTRIBUTION_FEATURE_COUNT + 11;
-
-	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 12;
-
-	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART__TOOLBAR = CONTRIBUTION_FEATURE_COUNT + 13;
-
-	/**
-	 * The number of structural features of the '<em>Part</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_FEATURE_COUNT = CONTRIBUTION_FEATURE_COUNT + 14;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.SaveablePartImpl <em>Saveable Part</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.SaveablePartImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSaveablePart()
-	 * @generated
-	 */
-	int SAVEABLE_PART = 34;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__ID = PART__ID;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__URI = PART__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__OBJECT = PART__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__PERSISTED_STATE = PART__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__CONTEXT = PART__CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__VARIABLES = PART__VARIABLES;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__WIDGET = PART__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__RENDERER = PART__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__TO_BE_RENDERED = PART__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__VISIBLE = PART__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__PARENT = PART__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__LABEL = PART__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__ICON_URI = PART__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__TOOLTIP = PART__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__HANDLERS = PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__BINDINGS = PART__BINDINGS;
-
-	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__MENUS = PART__MENUS;
-
-	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__TOOLBAR = PART__TOOLBAR;
-
-	/**
-	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART__DIRTY = PART_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Saveable Part</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SAVEABLE_PART_FEATURE_COUNT = PART_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.PartStackImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartStack()
-	 * @generated
-	 */
-	int PART_STACK = 35;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__ID = ELEMENT_CONTAINER__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__WIDGET = ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__RENDERER = ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__PARENT = ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The number of structural features of the '<em>Part Stack</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.PartSashContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPartSashContainer()
-	 * @generated
-	 */
-	int PART_SASH_CONTAINER = 36;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__ID = GENERIC_TILE__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__WIDGET = GENERIC_TILE__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__RENDERER = GENERIC_TILE__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__TO_BE_RENDERED = GENERIC_TILE__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__VISIBLE = GENERIC_TILE__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__PARENT = GENERIC_TILE__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__CHILDREN = GENERIC_TILE__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__ACTIVE_CHILD = GENERIC_TILE__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__WEIGHTS = GENERIC_TILE__WEIGHTS;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER__HORIZONTAL = GENERIC_TILE__HORIZONTAL;
-
-	/**
-	 * The number of structural features of the '<em>Part Sash Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_SASH_CONTAINER_FEATURE_COUNT = GENERIC_TILE_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowImpl <em>Window</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.WindowImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindow()
-	 * @generated
-	 */
-	int WINDOW = 37;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__LABEL = UI_LABEL__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__ICON_URI = UI_LABEL__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__TOOLTIP = UI_LABEL__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__ID = UI_LABEL_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__WIDGET = UI_LABEL_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__RENDERER = UI_LABEL_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__TO_BE_RENDERED = UI_LABEL_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__VISIBLE = UI_LABEL_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__PARENT = UI_LABEL_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__CHILDREN = UI_LABEL_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__ACTIVE_CHILD = UI_LABEL_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__CONTEXT = UI_LABEL_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__VARIABLES = UI_LABEL_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__HANDLERS = UI_LABEL_FEATURE_COUNT + 10;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__BINDINGS = UI_LABEL_FEATURE_COUNT + 11;
-
-	/**
-	 * The feature id for the '<em><b>Main Menu</b></em>' containment reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__MAIN_MENU = UI_LABEL_FEATURE_COUNT + 12;
-
-	/**
-	 * The feature id for the '<em><b>X</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__X = UI_LABEL_FEATURE_COUNT + 13;
-
-	/**
-	 * The feature id for the '<em><b>Y</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__Y = UI_LABEL_FEATURE_COUNT + 14;
-
-	/**
-	 * The feature id for the '<em><b>Width</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__WIDTH = UI_LABEL_FEATURE_COUNT + 15;
-
-	/**
-	 * The feature id for the '<em><b>Height</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW__HEIGHT = UI_LABEL_FEATURE_COUNT + 16;
-
-	/**
-	 * The number of structural features of the '<em>Window</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 17;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.WindowTrimImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
-	 * @generated
-	 */
-	int WINDOW_TRIM = 38;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__ID = TRIM_CONTAINER__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__WIDGET = TRIM_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__RENDERER = TRIM_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__TO_BE_RENDERED = TRIM_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__VISIBLE = TRIM_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__PARENT = TRIM_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__CHILDREN = TRIM_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__ACTIVE_CHILD = TRIM_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__HORIZONTAL = TRIM_CONTAINER__HORIZONTAL;
-
-	/**
-	 * The feature id for the '<em><b>Side</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__SIDE = TRIM_CONTAINER__SIDE;
-
-	/**
-	 * The number of structural features of the '<em>Window Trim</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM_FEATURE_COUNT = TRIM_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.KeyBindingImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
-	 * @generated
-	 */
-	int KEY_BINDING = 39;
-
-	/**
-	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KEY_BINDING__KEY_SEQUENCE = KEY_SEQUENCE__KEY_SEQUENCE;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KEY_BINDING__ID = KEY_SEQUENCE_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Command</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KEY_BINDING__COMMAND = KEY_SEQUENCE_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KEY_BINDING__PARAMETERS = KEY_SEQUENCE_FEATURE_COUNT + 2;
-
-	/**
-	 * The number of structural features of the '<em>Key Binding</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int KEY_BINDING_FEATURE_COUNT = KEY_SEQUENCE_FEATURE_COUNT + 3;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MBindingContainer
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
-	 * @generated
-	 */
-	int BINDING_CONTAINER = 40;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int BINDING_CONTAINER__BINDINGS = 0;
-
-	/**
-	 * The number of structural features of the '<em>Binding Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int BINDING_CONTAINER_FEATURE_COUNT = 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MV______________IDE_______________V
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________IDE_______________V()
-	 * @generated
-	 */
-	int VIDE_V = 41;
-
-	/**
-	 * The number of structural features of the '<em>VIDE V</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIDE_V_FEATURE_COUNT = 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MVSCElement <em>VSC Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MVSCElement
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getVSCElement()
-	 * @generated
-	 */
-	int VSC_ELEMENT = 42;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VSC_ELEMENT__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VSC_ELEMENT__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VSC_ELEMENT__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VSC_ELEMENT__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VSC_ELEMENT__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VSC_ELEMENT__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The number of structural features of the '<em>VSC Element</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VSC_ELEMENT_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ViewImpl <em>View</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ViewImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getView()
-	 * @generated
-	 */
-	int VIEW = 43;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__ID = PART__ID;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__URI = PART__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__OBJECT = PART__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__PERSISTED_STATE = PART__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__CONTEXT = PART__CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__VARIABLES = PART__VARIABLES;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__WIDGET = PART__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__RENDERER = PART__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__TO_BE_RENDERED = PART__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__VISIBLE = PART__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__PARENT = PART__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__LABEL = PART__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__ICON_URI = PART__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__TOOLTIP = PART__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__HANDLERS = PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__BINDINGS = PART__BINDINGS;
-
-	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__MENUS = PART__MENUS;
-
-	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW__TOOLBAR = PART__TOOLBAR;
-
-	/**
-	 * The number of structural features of the '<em>View</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_FEATURE_COUNT = PART_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ViewStackImpl <em>View Stack</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ViewStackImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewStack()
-	 * @generated
-	 */
-	int VIEW_STACK = 44;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__ID = ELEMENT_CONTAINER__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__WIDGET = ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__RENDERER = ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__PARENT = ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The number of structural features of the '<em>View Stack</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_STACK_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
-	 * @generated
-	 */
-	int EDITOR = 45;
-
-	/**
-	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__INPUT_URI = INPUT__INPUT_URI;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__ID = INPUT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__WIDGET = INPUT_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__RENDERER = INPUT_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__TO_BE_RENDERED = INPUT_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__VISIBLE = INPUT_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__PARENT = INPUT_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__URI = INPUT_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__OBJECT = INPUT_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__PERSISTED_STATE = INPUT_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__CONTEXT = INPUT_FEATURE_COUNT + 9;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__VARIABLES = INPUT_FEATURE_COUNT + 10;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__LABEL = INPUT_FEATURE_COUNT + 11;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__ICON_URI = INPUT_FEATURE_COUNT + 12;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__TOOLTIP = INPUT_FEATURE_COUNT + 13;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__HANDLERS = INPUT_FEATURE_COUNT + 14;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__BINDINGS = INPUT_FEATURE_COUNT + 15;
-
-	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__MENUS = INPUT_FEATURE_COUNT + 16;
-
-	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__TOOLBAR = INPUT_FEATURE_COUNT + 17;
-
-	/**
-	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR__DIRTY = INPUT_FEATURE_COUNT + 18;
-
-	/**
-	 * The number of structural features of the '<em>Editor</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_FEATURE_COUNT = INPUT_FEATURE_COUNT + 19;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl <em>View Sash Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
-	 * @generated
-	 */
-	int VIEW_SASH_CONTAINER = 46;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__ID = GENERIC_TILE__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__WIDGET = GENERIC_TILE__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__RENDERER = GENERIC_TILE__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__TO_BE_RENDERED = GENERIC_TILE__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__VISIBLE = GENERIC_TILE__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__PARENT = GENERIC_TILE__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__CHILDREN = GENERIC_TILE__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__ACTIVE_CHILD = GENERIC_TILE__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__WEIGHTS = GENERIC_TILE__WEIGHTS;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER__HORIZONTAL = GENERIC_TILE__HORIZONTAL;
-
-	/**
-	 * The number of structural features of the '<em>View Sash Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int VIEW_SASH_CONTAINER_FEATURE_COUNT = GENERIC_TILE_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.MultiEditorImpl <em>Multi Editor</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.MultiEditorImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMultiEditor()
-	 * @generated
-	 */
-	int MULTI_EDITOR = 47;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__ID = SAVEABLE_PART__ID;
-
-	/**
-	 * The feature id for the '<em><b>URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__URI = SAVEABLE_PART__URI;
-
-	/**
-	 * The feature id for the '<em><b>Object</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__OBJECT = SAVEABLE_PART__OBJECT;
-
-	/**
-	 * The feature id for the '<em><b>Persisted State</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__PERSISTED_STATE = SAVEABLE_PART__PERSISTED_STATE;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__CONTEXT = SAVEABLE_PART__CONTEXT;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__VARIABLES = SAVEABLE_PART__VARIABLES;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__WIDGET = SAVEABLE_PART__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__RENDERER = SAVEABLE_PART__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__TO_BE_RENDERED = SAVEABLE_PART__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__VISIBLE = SAVEABLE_PART__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__PARENT = SAVEABLE_PART__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__LABEL = SAVEABLE_PART__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__ICON_URI = SAVEABLE_PART__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__TOOLTIP = SAVEABLE_PART__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__HANDLERS = SAVEABLE_PART__HANDLERS;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__BINDINGS = SAVEABLE_PART__BINDINGS;
-
-	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__MENUS = SAVEABLE_PART__MENUS;
-
-	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__TOOLBAR = SAVEABLE_PART__TOOLBAR;
-
-	/**
-	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__DIRTY = SAVEABLE_PART__DIRTY;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__CHILDREN = SAVEABLE_PART_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR__ACTIVE_CHILD = SAVEABLE_PART_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Multi Editor</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int MULTI_EDITOR_FEATURE_COUNT = SAVEABLE_PART_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MESCElement <em>ESC Element</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.MESCElement
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getESCElement()
-	 * @generated
-	 */
-	int ESC_ELEMENT = 48;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESC_ELEMENT__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESC_ELEMENT__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESC_ELEMENT__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESC_ELEMENT__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESC_ELEMENT__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESC_ELEMENT__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The number of structural features of the '<em>ESC Element</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int ESC_ELEMENT_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.EditorStackImpl <em>Editor Stack</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.EditorStackImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorStack()
-	 * @generated
-	 */
-	int EDITOR_STACK = 49;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__ID = ELEMENT_CONTAINER__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__WIDGET = ELEMENT_CONTAINER__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__RENDERER = ELEMENT_CONTAINER__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__TO_BE_RENDERED = ELEMENT_CONTAINER__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__VISIBLE = ELEMENT_CONTAINER__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__PARENT = ELEMENT_CONTAINER__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__CHILDREN = ELEMENT_CONTAINER__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK__INPUT_URI = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The number of structural features of the '<em>Editor Stack</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_STACK_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.EditorSashContainerImpl <em>Editor Sash Container</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.EditorSashContainerImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorSashContainer()
-	 * @generated
-	 */
-	int EDITOR_SASH_CONTAINER = 50;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__ID = GENERIC_TILE__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__WIDGET = GENERIC_TILE__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__RENDERER = GENERIC_TILE__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__TO_BE_RENDERED = GENERIC_TILE__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__VISIBLE = GENERIC_TILE__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__PARENT = GENERIC_TILE__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__CHILDREN = GENERIC_TILE__CHILDREN;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__ACTIVE_CHILD = GENERIC_TILE__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__WEIGHTS = GENERIC_TILE__WEIGHTS;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER__HORIZONTAL = GENERIC_TILE__HORIZONTAL;
-
-	/**
-	 * The number of structural features of the '<em>Editor Sash Container</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int EDITOR_SASH_CONTAINER_FEATURE_COUNT = GENERIC_TILE_FEATURE_COUNT + 0;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl <em>Perspective</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.PerspectiveImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
-	 * @generated
-	 */
-	int PERSPECTIVE = 51;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__LABEL = UI_LABEL__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__ICON_URI = UI_LABEL__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__TOOLTIP = UI_LABEL__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__ID = UI_LABEL_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__WIDGET = UI_LABEL_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__RENDERER = UI_LABEL_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__TO_BE_RENDERED = UI_LABEL_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__VISIBLE = UI_LABEL_FEATURE_COUNT + 4;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__PARENT = UI_LABEL_FEATURE_COUNT + 5;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__CHILDREN = UI_LABEL_FEATURE_COUNT + 6;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__ACTIVE_CHILD = UI_LABEL_FEATURE_COUNT + 7;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__CONTEXT = UI_LABEL_FEATURE_COUNT + 8;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE__VARIABLES = UI_LABEL_FEATURE_COUNT + 9;
-
-	/**
-	 * The number of structural features of the '<em>Perspective</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 10;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl <em>Perspective Stack</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.PerspectiveStackImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
-	 * @generated
-	 */
-	int PERSPECTIVE_STACK = 52;
-
-	/**
-	 * The feature id for the '<em><b>Id</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__ID = UI_ELEMENT__ID;
-
-	/**
-	 * The feature id for the '<em><b>Widget</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__WIDGET = UI_ELEMENT__WIDGET;
-
-	/**
-	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__RENDERER = UI_ELEMENT__RENDERER;
-
-	/**
-	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
-
-	/**
-	 * The feature id for the '<em><b>Visible</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__VISIBLE = UI_ELEMENT__VISIBLE;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' container reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__PARENT = UI_ELEMENT__PARENT;
-
-	/**
-	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__CHILDREN = UI_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Active Child</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
-
-	/**
-	 * The number of structural features of the '<em>Perspective Stack</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PERSPECTIVE_STACK_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl <em>IDE Window</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.IDEWindowImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIDEWindow()
-	 * @generated
-	 */
-	int IDE_WINDOW = 53;
-
-	/**
-	 * The feature id for the '<em><b>Label</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__LABEL = UI_LABEL__LABEL;
-
-	/**
-	 * The feature id for the '<em><b>Icon URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__ICON_URI = UI_LABEL__ICON_URI;
-
-	/**
-	 * The feature id for the '<em><b>Tooltip</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__TOOLTIP = UI_LABEL__TOOLTIP;
-
-	/**
-	 * The feature id for the '<em><b>Context</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__CONTEXT = UI_LABEL_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Variables</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__VARIABLES = UI_LABEL_FEATURE_COUNT + 1;
-
-	/**
-	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__HANDLERS = UI_LABEL_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__BINDINGS = UI_LABEL_FEATURE_COUNT + 3;
-
-	/**
-	 * The feature id for the '<em><b>Main Menu</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW__MAIN_MENU = UI_LABEL_FEATURE_COUNT + 4;
-
-	/**
-	 * The number of structural features of the '<em>IDE Window</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int IDE_WINDOW_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 5;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5374,7 +4415,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSideValue()
 	 * @generated
 	 */
-	int SIDE_VALUE = 54;
+	int SIDE_VALUE = 49;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -5384,7 +4425,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 55;
+	int IECLIPSE_CONTEXT = 50;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -5394,8 +4435,18 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	int PARAMETERIZED_COMMAND = 56;
+	int PARAMETERIZED_COMMAND = 51;
 
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V <em>VConstants And Types V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>VConstants And Types V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V
+	 * @generated
+	 */
+	EClass getV____________ConstantsAndTypes_____________V();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV____________Abstract_____________V <em>VAbstract V</em>}'.
@@ -5470,6 +4521,584 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EAttribute getContribution_PersistedState();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MDirtyable <em>Dirtyable</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Dirtyable</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MDirtyable
+	 * @generated
+	 */
+	EClass getDirtyable();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MDirtyable#isDirty <em>Dirty</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Dirty</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MDirtyable#isDirty()
+	 * @see #getDirtyable()
+	 * @generated
+	 */
+	EAttribute getDirtyable_Dirty();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MInput <em>Input</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Input</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MInput
+	 * @generated
+	 */
+	EClass getInput();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MInput#getInputURI <em>Input URI</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Input URI</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MInput#getInputURI()
+	 * @see #getInput()
+	 * @generated
+	 */
+	EAttribute getInput_InputURI();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MUIElement <em>UI Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>UI Element</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement
+	 * @generated
+	 */
+	EClass getUIElement();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#getWidget <em>Widget</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Widget</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement#getWidget()
+	 * @see #getUIElement()
+	 * @generated
+	 */
+	EAttribute getUIElement_Widget();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#getRenderer <em>Renderer</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Renderer</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement#getRenderer()
+	 * @see #getUIElement()
+	 * @generated
+	 */
+	EAttribute getUIElement_Renderer();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered <em>To Be Rendered</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>To Be Rendered</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered()
+	 * @see #getUIElement()
+	 * @generated
+	 */
+	EAttribute getUIElement_ToBeRendered();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#isVisible <em>Visible</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Visible</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement#isVisible()
+	 * @see #getUIElement()
+	 * @generated
+	 */
+	EAttribute getUIElement_Visible();
+
+	/**
+	 * Returns the meta object for the container reference '{@link org.eclipse.e4.ui.model.application.MUIElement#getParent <em>Parent</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the container reference '<em>Parent</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUIElement#getParent()
+	 * @see #getUIElement()
+	 * @generated
+	 */
+	EReference getUIElement_Parent();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MUILabel <em>UI Label</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>UI Label</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUILabel
+	 * @generated
+	 */
+	EClass getUILabel();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getLabel <em>Label</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Label</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUILabel#getLabel()
+	 * @see #getUILabel()
+	 * @generated
+	 */
+	EAttribute getUILabel_Label();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getIconURI <em>Icon URI</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Icon URI</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUILabel#getIconURI()
+	 * @see #getUILabel()
+	 * @generated
+	 */
+	EAttribute getUILabel_IconURI();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getTooltip <em>Tooltip</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Tooltip</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MUILabel#getTooltip()
+	 * @see #getUILabel()
+	 * @generated
+	 */
+	EAttribute getUILabel_Tooltip();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContext
+	 * @generated
+	 */
+	EClass getContext();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContext#getContext <em>Context</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Context</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContext#getContext()
+	 * @see #getContext()
+	 * @generated
+	 */
+	EAttribute getContext_Context();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MContext#getVariables <em>Variables</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Variables</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MContext#getVariables()
+	 * @see #getContext()
+	 * @generated
+	 */
+	EAttribute getContext_Variables();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>VAbstract Containers V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V
+	 * @generated
+	 */
+	EClass getV_________AbstractContainers__________V();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MElementContainer <em>Element Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Element Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MElementContainer
+	 * @generated
+	 */
+	EClass getElementContainer();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MElementContainer#getChildren <em>Children</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Children</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MElementContainer#getChildren()
+	 * @see #getElementContainer()
+	 * @generated
+	 */
+	EReference getElementContainer_Children();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MElementContainer#getActiveChild <em>Active Child</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Active Child</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MElementContainer#getActiveChild()
+	 * @see #getElementContainer()
+	 * @generated
+	 */
+	EReference getElementContainer_ActiveChild();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MGenericTile <em>Generic Tile</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Generic Tile</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MGenericTile
+	 * @generated
+	 */
+	EClass getGenericTile();
+
+	/**
+	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MGenericTile#getWeights <em>Weights</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute list '<em>Weights</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MGenericTile#getWeights()
+	 * @see #getGenericTile()
+	 * @generated
+	 */
+	EAttribute getGenericTile_Weights();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MGenericTile#isHorizontal <em>Horizontal</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Horizontal</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MGenericTile#isHorizontal()
+	 * @see #getGenericTile()
+	 * @generated
+	 */
+	EAttribute getGenericTile_Horizontal();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V <em>VMenus And TBs V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>VMenus And TBs V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V
+	 * @generated
+	 */
+	EClass getV______________MenusAndTBs_______________V();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MItem <em>Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItem
+	 * @generated
+	 */
+	EClass getItem();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#isEnabled <em>Enabled</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Enabled</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItem#isEnabled()
+	 * @see #getItem()
+	 * @generated
+	 */
+	EAttribute getItem_Enabled();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#isSelected <em>Selected</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Selected</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItem#isSelected()
+	 * @see #getItem()
+	 * @generated
+	 */
+	EAttribute getItem_Selected();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#isSeparator <em>Separator</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Separator</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItem#isSeparator()
+	 * @see #getItem()
+	 * @generated
+	 */
+	EAttribute getItem_Separator();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>Menu Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Menu Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MMenuItem
+	 * @generated
+	 */
+	EClass getMenuItem();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MDirectMenuItem <em>Direct Menu Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Direct Menu Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MDirectMenuItem
+	 * @generated
+	 */
+	EClass getDirectMenuItem();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenu <em>Menu</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Menu</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MMenu
+	 * @generated
+	 */
+	EClass getMenu();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolItem <em>Tool Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Tool Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MToolItem
+	 * @generated
+	 */
+	EClass getToolItem();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MDirectToolItem <em>Direct Tool Item</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Direct Tool Item</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MDirectToolItem
+	 * @generated
+	 */
+	EClass getDirectToolItem();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolBar <em>Tool Bar</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Tool Bar</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MToolBar
+	 * @generated
+	 */
+	EClass getToolBar();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>VRCP V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
+	 * @generated
+	 */
+	EClass getV______________RCP_______________V();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplication <em>Application</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Application</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplication
+	 * @generated
+	 */
+	EClass getApplication();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getCommands <em>Commands</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Commands</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MApplication#getCommands()
+	 * @see #getApplication()
+	 * @generated
+	 */
+	EReference getApplication_Commands();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPSCElement <em>PSC Element</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>PSC Element</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPSCElement
+	 * @generated
+	 */
+	EClass getPSCElement();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPart <em>Part</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Part</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart
+	 * @generated
+	 */
+	EClass getPart();
+
+	/**
+	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.MPart#getMenus <em>Menus</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference list '<em>Menus</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getMenus()
+	 * @see #getPart()
+	 * @generated
+	 */
+	EReference getPart_Menus();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MPart#getToolbar <em>Toolbar</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Toolbar</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPart#getToolbar()
+	 * @see #getPart()
+	 * @generated
+	 */
+	EReference getPart_Toolbar();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MSaveablePart <em>Saveable Part</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Saveable Part</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MSaveablePart
+	 * @generated
+	 */
+	EClass getSaveablePart();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Editor</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MEditor
+	 * @generated
+	 */
+	EClass getEditor();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartStack <em>Part Stack</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Part Stack</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPartStack
+	 * @generated
+	 */
+	EClass getPartStack();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartSashContainer <em>Part Sash Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Part Sash Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPartSashContainer
+	 * @generated
+	 */
+	EClass getPartSashContainer();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MWindow <em>Window</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Window</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindow
+	 * @generated
+	 */
+	EClass getWindow();
+
+	/**
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MWindow#getMainMenu <em>Main Menu</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference '<em>Main Menu</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getMainMenu()
+	 * @see #getWindow()
+	 * @generated
+	 */
+	EReference getWindow_MainMenu();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getX <em>X</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>X</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getX()
+	 * @see #getWindow()
+	 * @generated
+	 */
+	EAttribute getWindow_X();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getY <em>Y</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Y</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getY()
+	 * @see #getWindow()
+	 * @generated
+	 */
+	EAttribute getWindow_Y();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getWidth <em>Width</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Width</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getWidth()
+	 * @see #getWindow()
+	 * @generated
+	 */
+	EAttribute getWindow_Width();
+
+	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getHeight <em>Height</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Height</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindow#getHeight()
+	 * @see #getWindow()
+	 * @generated
+	 */
+	EAttribute getWindow_Height();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>VCommands V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV______________Commands_______________V
+	 * @generated
+	 */
+	EClass getV______________Commands_______________V();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Binding Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+	 * @generated
+	 */
+	EClass getBindingContainer();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MBindingContainer#getBindings <em>Bindings</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MBindingContainer#getBindings()
+	 * @see #getBindingContainer()
+	 * @generated
+	 */
+	EReference getBindingContainer_Bindings();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MCommand <em>Command</em>}'.
@@ -5558,27 +5187,6 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getCommandParameter_Optional();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MDirtyable <em>Dirtyable</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Dirtyable</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MDirtyable
-	 * @generated
-	 */
-	EClass getDirtyable();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MDirtyable#isDirty <em>Dirty</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Dirty</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MDirtyable#isDirty()
-	 * @see #getDirtyable()
-	 * @generated
-	 */
-	EAttribute getDirtyable_Dirty();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandler <em>Handler</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5619,420 +5227,6 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EReference getHandlerContainer_Handlers();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MInput <em>Input</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Input</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MInput
-	 * @generated
-	 */
-	EClass getInput();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MInput#getInputURI <em>Input URI</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Input URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MInput#getInputURI()
-	 * @see #getInput()
-	 * @generated
-	 */
-	EAttribute getInput_InputURI();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MParameter <em>Parameter</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Parameter</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MParameter
-	 * @generated
-	 */
-	EClass getParameter();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MParameter#getTag <em>Tag</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Tag</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MParameter#getTag()
-	 * @see #getParameter()
-	 * @generated
-	 */
-	EAttribute getParameter_Tag();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MParameter#getValue <em>Value</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Value</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MParameter#getValue()
-	 * @see #getParameter()
-	 * @generated
-	 */
-	EAttribute getParameter_Value();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MUILabel <em>UI Label</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>UI Label</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUILabel
-	 * @generated
-	 */
-	EClass getUILabel();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getLabel <em>Label</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Label</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUILabel#getLabel()
-	 * @see #getUILabel()
-	 * @generated
-	 */
-	EAttribute getUILabel_Label();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getIconURI <em>Icon URI</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Icon URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUILabel#getIconURI()
-	 * @see #getUILabel()
-	 * @generated
-	 */
-	EAttribute getUILabel_IconURI();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUILabel#getTooltip <em>Tooltip</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Tooltip</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUILabel#getTooltip()
-	 * @see #getUILabel()
-	 * @generated
-	 */
-	EAttribute getUILabel_Tooltip();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MUIElement <em>UI Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>UI Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement
-	 * @generated
-	 */
-	EClass getUIElement();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#getWidget <em>Widget</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Widget</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement#getWidget()
-	 * @see #getUIElement()
-	 * @generated
-	 */
-	EAttribute getUIElement_Widget();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#getRenderer <em>Renderer</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Renderer</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement#getRenderer()
-	 * @see #getUIElement()
-	 * @generated
-	 */
-	EAttribute getUIElement_Renderer();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered <em>To Be Rendered</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>To Be Rendered</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered()
-	 * @see #getUIElement()
-	 * @generated
-	 */
-	EAttribute getUIElement_ToBeRendered();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MUIElement#isVisible <em>Visible</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Visible</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement#isVisible()
-	 * @see #getUIElement()
-	 * @generated
-	 */
-	EAttribute getUIElement_Visible();
-
-	/**
-	 * Returns the meta object for the container reference '{@link org.eclipse.e4.ui.model.application.MUIElement#getParent <em>Parent</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the container reference '<em>Parent</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement#getParent()
-	 * @see #getUIElement()
-	 * @generated
-	 */
-	EReference getUIElement_Parent();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MContext <em>Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Context</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContext
-	 * @generated
-	 */
-	EClass getContext();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MContext#getContext <em>Context</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Context</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContext#getContext()
-	 * @see #getContext()
-	 * @generated
-	 */
-	EAttribute getContext_Context();
-
-	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MContext#getVariables <em>Variables</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Variables</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MContext#getVariables()
-	 * @see #getContext()
-	 * @generated
-	 */
-	EAttribute getContext_Variables();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Key Sequence</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MKeySequence
-	 * @generated
-	 */
-	EClass getKeySequence();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MKeySequence#getKeySequence <em>Key Sequence</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Key Sequence</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MKeySequence#getKeySequence()
-	 * @see #getKeySequence()
-	 * @generated
-	 */
-	EAttribute getKeySequence_KeySequence();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>VTesting V</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MV_________Testing__________V
-	 * @generated
-	 */
-	EClass getV_________Testing__________V();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTestHarness <em>Test Harness</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Test Harness</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTestHarness
-	 * @generated
-	 */
-	EClass getTestHarness();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>VAbstract Containers V</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V
-	 * @generated
-	 */
-	EClass getV_________AbstractContainers__________V();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MElementContainer <em>Element Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Element Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MElementContainer
-	 * @generated
-	 */
-	EClass getElementContainer();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MElementContainer#getChildren <em>Children</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Children</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MElementContainer#getChildren()
-	 * @see #getElementContainer()
-	 * @generated
-	 */
-	EReference getElementContainer_Children();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MElementContainer#getActiveChild <em>Active Child</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Active Child</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MElementContainer#getActiveChild()
-	 * @see #getElementContainer()
-	 * @generated
-	 */
-	EReference getElementContainer_ActiveChild();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MGenericTile <em>Generic Tile</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Generic Tile</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MGenericTile
-	 * @generated
-	 */
-	EClass getGenericTile();
-
-	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MGenericTile#getWeights <em>Weights</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Weights</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MGenericTile#getWeights()
-	 * @see #getGenericTile()
-	 * @generated
-	 */
-	EAttribute getGenericTile_Weights();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MGenericTile#isHorizontal <em>Horizontal</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Horizontal</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MGenericTile#isHorizontal()
-	 * @see #getGenericTile()
-	 * @generated
-	 */
-	EAttribute getGenericTile_Horizontal();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTrimContainer <em>Trim Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Trim Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimContainer
-	 * @generated
-	 */
-	EClass getTrimContainer();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal <em>Horizontal</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Horizontal</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal()
-	 * @see #getTrimContainer()
-	 * @generated
-	 */
-	EAttribute getTrimContainer_Horizontal();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#getSide <em>Side</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Side</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimContainer#getSide()
-	 * @see #getTrimContainer()
-	 * @generated
-	 */
-	EAttribute getTrimContainer_Side();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>VRCP V</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
-	 * @generated
-	 */
-	EClass getV______________RCP_______________V();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MApplication <em>Application</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Application</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplication
-	 * @generated
-	 */
-	EClass getApplication();
-
-	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getCommands <em>Commands</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Commands</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplication#getCommands()
-	 * @see #getApplication()
-	 * @generated
-	 */
-	EReference getApplication_Commands();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MItem <em>Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MItem
-	 * @generated
-	 */
-	EClass getItem();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#isEnabled <em>Enabled</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Enabled</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MItem#isEnabled()
-	 * @see #getItem()
-	 * @generated
-	 */
-	EAttribute getItem_Enabled();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#isSelected <em>Selected</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Selected</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MItem#isSelected()
-	 * @see #getItem()
-	 * @generated
-	 */
-	EAttribute getItem_Selected();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#isSeparator <em>Separator</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Separator</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MItem#isSeparator()
-	 * @see #getItem()
-	 * @generated
-	 */
-	EAttribute getItem_Separator();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandledItem <em>Handled Item</em>}'.
@@ -6078,16 +5272,6 @@ public interface MApplicationPackage extends EPackage {
 	EReference getHandledItem_Parameters();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>Menu Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Menu Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MMenuItem
-	 * @generated
-	 */
-	EClass getMenuItem();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandledMenuItem <em>Handled Menu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6098,36 +5282,6 @@ public interface MApplicationPackage extends EPackage {
 	EClass getHandledMenuItem();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MDirectMenuItem <em>Direct Menu Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Direct Menu Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MDirectMenuItem
-	 * @generated
-	 */
-	EClass getDirectMenuItem();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenu <em>Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MMenu
-	 * @generated
-	 */
-	EClass getMenu();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolItem <em>Tool Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Tool Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MToolItem
-	 * @generated
-	 */
-	EClass getToolItem();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MHandledToolItem <em>Handled Tool Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6136,173 +5290,6 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getHandledToolItem();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MDirectToolItem <em>Direct Tool Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Direct Tool Item</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MDirectToolItem
-	 * @generated
-	 */
-	EClass getDirectToolItem();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MToolBar <em>Tool Bar</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Tool Bar</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MToolBar
-	 * @generated
-	 */
-	EClass getToolBar();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPSCElement <em>PSC Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>PSC Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MPSCElement
-	 * @generated
-	 */
-	EClass getPSCElement();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPart <em>Part</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Part</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MPart
-	 * @generated
-	 */
-	EClass getPart();
-
-	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.MPart#getMenus <em>Menus</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Menus</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MPart#getMenus()
-	 * @see #getPart()
-	 * @generated
-	 */
-	EReference getPart_Menus();
-
-	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MPart#getToolbar <em>Toolbar</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Toolbar</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MPart#getToolbar()
-	 * @see #getPart()
-	 * @generated
-	 */
-	EReference getPart_Toolbar();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MSaveablePart <em>Saveable Part</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Saveable Part</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MSaveablePart
-	 * @generated
-	 */
-	EClass getSaveablePart();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartStack <em>Part Stack</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Part Stack</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MPartStack
-	 * @generated
-	 */
-	EClass getPartStack();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartSashContainer <em>Part Sash Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Part Sash Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MPartSashContainer
-	 * @generated
-	 */
-	EClass getPartSashContainer();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MWindow <em>Window</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Window</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MWindow
-	 * @generated
-	 */
-	EClass getWindow();
-
-	/**
-	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MWindow#getMainMenu <em>Main Menu</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference '<em>Main Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MWindow#getMainMenu()
-	 * @see #getWindow()
-	 * @generated
-	 */
-	EReference getWindow_MainMenu();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getX <em>X</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>X</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MWindow#getX()
-	 * @see #getWindow()
-	 * @generated
-	 */
-	EAttribute getWindow_X();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getY <em>Y</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Y</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MWindow#getY()
-	 * @see #getWindow()
-	 * @generated
-	 */
-	EAttribute getWindow_Y();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getWidth <em>Width</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Width</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MWindow#getWidth()
-	 * @see #getWindow()
-	 * @generated
-	 */
-	EAttribute getWindow_Width();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MWindow#getHeight <em>Height</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Height</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MWindow#getHeight()
-	 * @see #getWindow()
-	 * @generated
-	 */
-	EAttribute getWindow_Height();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MWindowTrim <em>Window Trim</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Window Trim</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MWindowTrim
-	 * @generated
-	 */
-	EClass getWindowTrim();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MKeyBinding <em>Key Binding</em>}'.
@@ -6337,136 +5324,119 @@ public interface MApplicationPackage extends EPackage {
 	EReference getKeyBinding_Parameters();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Binding Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+	 * @return the meta object for class '<em>Key Sequence</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MKeySequence
 	 * @generated
 	 */
-	EClass getBindingContainer();
+	EClass getKeySequence();
 
 	/**
-	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MBindingContainer#getBindings <em>Bindings</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MKeySequence#getKeySequence <em>Key Sequence</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the containment reference list '<em>Bindings</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MBindingContainer#getBindings()
-	 * @see #getBindingContainer()
+	 * @return the meta object for the attribute '<em>Key Sequence</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MKeySequence#getKeySequence()
+	 * @see #getKeySequence()
 	 * @generated
 	 */
-	EReference getBindingContainer_Bindings();
+	EAttribute getKeySequence_KeySequence();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MParameter <em>Parameter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>VIDE V</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MV______________IDE_______________V
+	 * @return the meta object for class '<em>Parameter</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MParameter
 	 * @generated
 	 */
-	EClass getV______________IDE_______________V();
+	EClass getParameter();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MVSCElement <em>VSC Element</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MParameter#getTag <em>Tag</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>VSC Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MVSCElement
+	 * @return the meta object for the attribute '<em>Tag</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MParameter#getTag()
+	 * @see #getParameter()
 	 * @generated
 	 */
-	EClass getVSCElement();
+	EAttribute getParameter_Tag();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MView <em>View</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MParameter#getValue <em>Value</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>View</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MView
+	 * @return the meta object for the attribute '<em>Value</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MParameter#getValue()
+	 * @see #getParameter()
 	 * @generated
 	 */
-	EClass getView();
+	EAttribute getParameter_Value();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MViewStack <em>View Stack</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________Trim_______________V <em>VTrim V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>View Stack</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MViewStack
+	 * @return the meta object for class '<em>VTrim V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV______________Trim_______________V
 	 * @generated
 	 */
-	EClass getViewStack();
+	EClass getV______________Trim_______________V();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTrimContainer <em>Trim Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Editor</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MEditor
+	 * @return the meta object for class '<em>Trim Container</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer
 	 * @generated
 	 */
-	EClass getEditor();
+	EClass getTrimContainer();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MViewSashContainer <em>View Sash Container</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal <em>Horizontal</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>View Sash Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MViewSashContainer
+	 * @return the meta object for the attribute '<em>Horizontal</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal()
+	 * @see #getTrimContainer()
 	 * @generated
 	 */
-	EClass getViewSashContainer();
+	EAttribute getTrimContainer_Horizontal();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMultiEditor <em>Multi Editor</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#getSide <em>Side</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Multi Editor</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MMultiEditor
+	 * @return the meta object for the attribute '<em>Side</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer#getSide()
+	 * @see #getTrimContainer()
 	 * @generated
 	 */
-	EClass getMultiEditor();
+	EAttribute getTrimContainer_Side();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MESCElement <em>ESC Element</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MWindowTrim <em>Window Trim</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>ESC Element</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MESCElement
+	 * @return the meta object for class '<em>Window Trim</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MWindowTrim
 	 * @generated
 	 */
-	EClass getESCElement();
+	EClass getWindowTrim();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MEditorStack <em>Editor Stack</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Editor Stack</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MEditorStack
+	 * @return the meta object for class '<em>VShared Elements V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V
 	 * @generated
 	 */
-	EClass getEditorStack();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MEditorStack#getInputURI <em>Input URI</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Input URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MEditorStack#getInputURI()
-	 * @see #getEditorStack()
-	 * @generated
-	 */
-	EAttribute getEditorStack_InputURI();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MEditorSashContainer <em>Editor Sash Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Editor Sash Container</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MEditorSashContainer
-	 * @generated
-	 */
-	EClass getEditorSashContainer();
+	EClass getV______________SharedElements_______________V();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPerspective <em>Perspective</em>}'.
@@ -6489,25 +5459,24 @@ public interface MApplicationPackage extends EPackage {
 	EClass getPerspectiveStack();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MIDEWindow <em>IDE Window</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>IDE Window</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MIDEWindow
+	 * @return the meta object for class '<em>VTesting V</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MV_________Testing__________V
 	 * @generated
 	 */
-	EClass getIDEWindow();
+	EClass getV_________Testing__________V();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MIDEWindow#getMainMenu <em>Main Menu</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MTestHarness <em>Test Harness</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Main Menu</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MIDEWindow#getMainMenu()
-	 * @see #getIDEWindow()
+	 * @return the meta object for class '<em>Test Harness</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MTestHarness
 	 * @generated
 	 */
-	EReference getIDEWindow_MainMenu();
+	EClass getTestHarness();
 
 	/**
 	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}'.
@@ -6563,6 +5532,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	interface Literals {
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V <em>VConstants And Types V</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV____________ConstantsAndTypes_____________V()
+		 * @generated
+		 */
+		EClass VCONSTANTS_AND_TYPES_V = eINSTANCE.getV____________ConstantsAndTypes_____________V();
+
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV____________Abstract_____________V <em>VAbstract V</em>}' class.
 		 * <!-- begin-user-doc -->
@@ -6626,74 +5605,6 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute CONTRIBUTION__PERSISTED_STATE = eINSTANCE.getContribution_PersistedState();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.CommandImpl <em>Command</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.CommandImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommand()
-		 * @generated
-		 */
-		EClass COMMAND = eINSTANCE.getCommand();
-
-		/**
-		 * The meta object literal for the '<em><b>Command Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND__COMMAND_NAME = eINSTANCE.getCommand_CommandName();
-
-		/**
-		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND__DESCRIPTION = eINSTANCE.getCommand_Description();
-
-		/**
-		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference COMMAND__PARAMETERS = eINSTANCE.getCommand_Parameters();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.CommandParameterImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommandParameter()
-		 * @generated
-		 */
-		EClass COMMAND_PARAMETER = eINSTANCE.getCommandParameter();
-
-		/**
-		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND_PARAMETER__NAME = eINSTANCE.getCommandParameter_Name();
-
-		/**
-		 * The meta object literal for the '<em><b>Type Id</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND_PARAMETER__TYPE_ID = eINSTANCE.getCommandParameter_TypeId();
-
-		/**
-		 * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute COMMAND_PARAMETER__OPTIONAL = eINSTANCE.getCommandParameter_Optional();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.DirtyableImpl <em>Dirtyable</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6712,42 +5623,6 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute DIRTYABLE__DIRTY = eINSTANCE.getDirtyable_Dirty();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.HandlerImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
-		 * @generated
-		 */
-		EClass HANDLER = eINSTANCE.getHandler();
-
-		/**
-		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference HANDLER__COMMAND = eINSTANCE.getHandler_Command();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
-		 * @generated
-		 */
-		EClass HANDLER_CONTAINER = eINSTANCE.getHandlerContainer();
-
-		/**
-		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference HANDLER_CONTAINER__HANDLERS = eINSTANCE.getHandlerContainer_Handlers();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.InputImpl <em>Input</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6764,66 +5639,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute INPUT__INPUT_URI = eINSTANCE.getInput_InputURI();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl <em>Parameter</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ParameterImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
-		 * @generated
-		 */
-		EClass PARAMETER = eINSTANCE.getParameter();
-
-		/**
-		 * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute PARAMETER__TAG = eINSTANCE.getParameter_Tag();
-
-		/**
-		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute PARAMETER__VALUE = eINSTANCE.getParameter_Value();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl <em>UI Label</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.UILabelImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUILabel()
-		 * @generated
-		 */
-		EClass UI_LABEL = eINSTANCE.getUILabel();
-
-		/**
-		 * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute UI_LABEL__LABEL = eINSTANCE.getUILabel_Label();
-
-		/**
-		 * The meta object literal for the '<em><b>Icon URI</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute UI_LABEL__ICON_URI = eINSTANCE.getUILabel_IconURI();
-
-		/**
-		 * The meta object literal for the '<em><b>Tooltip</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute UI_LABEL__TOOLTIP = eINSTANCE.getUILabel_Tooltip();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl <em>UI Element</em>}' class.
@@ -6876,6 +5691,40 @@ public interface MApplicationPackage extends EPackage {
 		EReference UI_ELEMENT__PARENT = eINSTANCE.getUIElement_Parent();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.UILabelImpl <em>UI Label</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.UILabelImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getUILabel()
+		 * @generated
+		 */
+		EClass UI_LABEL = eINSTANCE.getUILabel();
+
+		/**
+		 * The meta object literal for the '<em><b>Label</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute UI_LABEL__LABEL = eINSTANCE.getUILabel_Label();
+
+		/**
+		 * The meta object literal for the '<em><b>Icon URI</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute UI_LABEL__ICON_URI = eINSTANCE.getUILabel_IconURI();
+
+		/**
+		 * The meta object literal for the '<em><b>Tooltip</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute UI_LABEL__TOOLTIP = eINSTANCE.getUILabel_Tooltip();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ContextImpl <em>Context</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -6900,44 +5749,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute CONTEXT__VARIABLES = eINSTANCE.getContext_Variables();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MKeySequence
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
-		 * @generated
-		 */
-		EClass KEY_SEQUENCE = eINSTANCE.getKeySequence();
-
-		/**
-		 * The meta object literal for the '<em><b>Key Sequence</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute KEY_SEQUENCE__KEY_SEQUENCE = eINSTANCE.getKeySequence_KeySequence();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MV_________Testing__________V
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
-		 * @generated
-		 */
-		EClass VTESTING_V = eINSTANCE.getV_________Testing__________V();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl <em>Test Harness</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.TestHarnessImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
-		 * @generated
-		 */
-		EClass TEST_HARNESS = eINSTANCE.getTestHarness();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV_________AbstractContainers__________V <em>VAbstract Containers V</em>}' class.
@@ -7002,58 +5813,14 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute GENERIC_TILE__HORIZONTAL = eINSTANCE.getGenericTile_Horizontal();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V <em>VMenus And TBs V</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.TrimContainerImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
+		 * @see org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________MenusAndTBs_______________V()
 		 * @generated
 		 */
-		EClass TRIM_CONTAINER = eINSTANCE.getTrimContainer();
-
-		/**
-		 * The meta object literal for the '<em><b>Horizontal</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TRIM_CONTAINER__HORIZONTAL = eINSTANCE.getTrimContainer_Horizontal();
-
-		/**
-		 * The meta object literal for the '<em><b>Side</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TRIM_CONTAINER__SIDE = eINSTANCE.getTrimContainer_Side();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________RCP_______________V()
-		 * @generated
-		 */
-		EClass VRCP_V = eINSTANCE.getV______________RCP_______________V();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl <em>Application</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
-		 * @generated
-		 */
-		EClass APPLICATION = eINSTANCE.getApplication();
-
-		/**
-		 * The meta object literal for the '<em><b>Commands</b></em>' containment reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference APPLICATION__COMMANDS = eINSTANCE.getApplication_Commands();
+		EClass VMENUS_AND_TBS_V = eINSTANCE.getV______________MenusAndTBs_______________V();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ItemImpl <em>Item</em>}' class.
@@ -7090,40 +5857,6 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute ITEM__SEPARATOR = eINSTANCE.getItem_Separator();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl <em>Handled Item</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.HandledItemImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
-		 * @generated
-		 */
-		EClass HANDLED_ITEM = eINSTANCE.getHandledItem();
-
-		/**
-		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
-
-		/**
-		 * The meta object literal for the '<em><b>Wb Command</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute HANDLED_ITEM__WB_COMMAND = eINSTANCE.getHandledItem_WbCommand();
-
-		/**
-		 * The meta object literal for the '<em><b>Parameters</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EReference HANDLED_ITEM__PARAMETERS = eINSTANCE.getHandledItem_Parameters();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl <em>Menu Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -7132,16 +5865,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass MENU_ITEM = eINSTANCE.getMenuItem();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
-		 * @generated
-		 */
-		EClass HANDLED_MENU_ITEM = eINSTANCE.getHandledMenuItem();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl <em>Direct Menu Item</em>}' class.
@@ -7174,16 +5897,6 @@ public interface MApplicationPackage extends EPackage {
 		EClass TOOL_ITEM = eINSTANCE.getToolItem();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
-		 * @generated
-		 */
-		EClass HANDLED_TOOL_ITEM = eINSTANCE.getHandledToolItem();
-
-		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl <em>Direct Tool Item</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -7202,6 +5915,34 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass TOOL_BAR = eINSTANCE.getToolBar();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________RCP_______________V()
+		 * @generated
+		 */
+		EClass VRCP_V = eINSTANCE.getV______________RCP_______________V();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl <em>Application</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getApplication()
+		 * @generated
+		 */
+		EClass APPLICATION = eINSTANCE.getApplication();
+
+		/**
+		 * The meta object literal for the '<em><b>Commands</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference APPLICATION__COMMANDS = eINSTANCE.getApplication_Commands();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MPSCElement <em>PSC Element</em>}' class.
@@ -7248,6 +5989,16 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass SAVEABLE_PART = eINSTANCE.getSaveablePart();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
+		 * @generated
+		 */
+		EClass EDITOR = eINSTANCE.getEditor();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -7320,14 +6071,190 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute WINDOW__HEIGHT = eINSTANCE.getWindow_Height();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.WindowTrimImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
+		 * @see org.eclipse.e4.ui.model.application.MV______________Commands_______________V
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Commands_______________V()
 		 * @generated
 		 */
-		EClass WINDOW_TRIM = eINSTANCE.getWindowTrim();
+		EClass VCOMMANDS_V = eINSTANCE.getV______________Commands_______________V();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MBindingContainer
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
+		 * @generated
+		 */
+		EClass BINDING_CONTAINER = eINSTANCE.getBindingContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference BINDING_CONTAINER__BINDINGS = eINSTANCE.getBindingContainer_Bindings();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.CommandImpl <em>Command</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.CommandImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommand()
+		 * @generated
+		 */
+		EClass COMMAND = eINSTANCE.getCommand();
+
+		/**
+		 * The meta object literal for the '<em><b>Command Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMMAND__COMMAND_NAME = eINSTANCE.getCommand_CommandName();
+
+		/**
+		 * The meta object literal for the '<em><b>Description</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMMAND__DESCRIPTION = eINSTANCE.getCommand_Description();
+
+		/**
+		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference COMMAND__PARAMETERS = eINSTANCE.getCommand_Parameters();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.CommandParameterImpl <em>Command Parameter</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.CommandParameterImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommandParameter()
+		 * @generated
+		 */
+		EClass COMMAND_PARAMETER = eINSTANCE.getCommandParameter();
+
+		/**
+		 * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMMAND_PARAMETER__NAME = eINSTANCE.getCommandParameter_Name();
+
+		/**
+		 * The meta object literal for the '<em><b>Type Id</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMMAND_PARAMETER__TYPE_ID = eINSTANCE.getCommandParameter_TypeId();
+
+		/**
+		 * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute COMMAND_PARAMETER__OPTIONAL = eINSTANCE.getCommandParameter_Optional();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandlerImpl <em>Handler</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.HandlerImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
+		 * @generated
+		 */
+		EClass HANDLER = eINSTANCE.getHandler();
+
+		/**
+		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLER__COMMAND = eINSTANCE.getHandler_Command();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
+		 * @generated
+		 */
+		EClass HANDLER_CONTAINER = eINSTANCE.getHandlerContainer();
+
+		/**
+		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLER_CONTAINER__HANDLERS = eINSTANCE.getHandlerContainer_Handlers();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandledItemImpl <em>Handled Item</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.HandledItemImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
+		 * @generated
+		 */
+		EClass HANDLED_ITEM = eINSTANCE.getHandledItem();
+
+		/**
+		 * The meta object literal for the '<em><b>Command</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLED_ITEM__COMMAND = eINSTANCE.getHandledItem_Command();
+
+		/**
+		 * The meta object literal for the '<em><b>Wb Command</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute HANDLED_ITEM__WB_COMMAND = eINSTANCE.getHandledItem_WbCommand();
+
+		/**
+		 * The meta object literal for the '<em><b>Parameters</b></em>' reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference HANDLED_ITEM__PARAMETERS = eINSTANCE.getHandledItem_Parameters();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl <em>Handled Menu Item</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.HandledMenuItemImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
+		 * @generated
+		 */
+		EClass HANDLED_MENU_ITEM = eINSTANCE.getHandledMenuItem();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl <em>Handled Tool Item</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
+		 * @generated
+		 */
+		EClass HANDLED_TOOL_ITEM = eINSTANCE.getHandledToolItem();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.KeyBindingImpl <em>Key Binding</em>}' class.
@@ -7356,130 +6283,104 @@ public interface MApplicationPackage extends EPackage {
 		EReference KEY_BINDING__PARAMETERS = eINSTANCE.getKeyBinding_Parameters();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MBindingContainer <em>Binding Container</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MBindingContainer
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
+		 * @see org.eclipse.e4.ui.model.application.MKeySequence
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
 		 * @generated
 		 */
-		EClass BINDING_CONTAINER = eINSTANCE.getBindingContainer();
+		EClass KEY_SEQUENCE = eINSTANCE.getKeySequence();
 
 		/**
-		 * The meta object literal for the '<em><b>Bindings</b></em>' containment reference list feature.
+		 * The meta object literal for the '<em><b>Key Sequence</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference BINDING_CONTAINER__BINDINGS = eINSTANCE.getBindingContainer_Bindings();
+		EAttribute KEY_SEQUENCE__KEY_SEQUENCE = eINSTANCE.getKeySequence_KeySequence();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ParameterImpl <em>Parameter</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MV______________IDE_______________V
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________IDE_______________V()
+		 * @see org.eclipse.e4.ui.model.application.impl.ParameterImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
 		 * @generated
 		 */
-		EClass VIDE_V = eINSTANCE.getV______________IDE_______________V();
+		EClass PARAMETER = eINSTANCE.getParameter();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MVSCElement <em>VSC Element</em>}' class.
+		 * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MVSCElement
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getVSCElement()
 		 * @generated
 		 */
-		EClass VSC_ELEMENT = eINSTANCE.getVSCElement();
+		EAttribute PARAMETER__TAG = eINSTANCE.getParameter_Tag();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ViewImpl <em>View</em>}' class.
+		 * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ViewImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getView()
 		 * @generated
 		 */
-		EClass VIEW = eINSTANCE.getView();
+		EAttribute PARAMETER__VALUE = eINSTANCE.getParameter_Value();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ViewStackImpl <em>View Stack</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________Trim_______________V <em>VTrim V</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ViewStackImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewStack()
+		 * @see org.eclipse.e4.ui.model.application.MV______________Trim_______________V
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Trim_______________V()
 		 * @generated
 		 */
-		EClass VIEW_STACK = eINSTANCE.getViewStack();
+		EClass VTRIM_V = eINSTANCE.getV______________Trim_______________V();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl <em>Trim Container</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
+		 * @see org.eclipse.e4.ui.model.application.impl.TrimContainerImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
 		 * @generated
 		 */
-		EClass EDITOR = eINSTANCE.getEditor();
+		EClass TRIM_CONTAINER = eINSTANCE.getTrimContainer();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl <em>View Sash Container</em>}' class.
+		 * The meta object literal for the '<em><b>Horizontal</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.ViewSashContainerImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getViewSashContainer()
 		 * @generated
 		 */
-		EClass VIEW_SASH_CONTAINER = eINSTANCE.getViewSashContainer();
+		EAttribute TRIM_CONTAINER__HORIZONTAL = eINSTANCE.getTrimContainer_Horizontal();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.MultiEditorImpl <em>Multi Editor</em>}' class.
+		 * The meta object literal for the '<em><b>Side</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.MultiEditorImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getMultiEditor()
 		 * @generated
 		 */
-		EClass MULTI_EDITOR = eINSTANCE.getMultiEditor();
+		EAttribute TRIM_CONTAINER__SIDE = eINSTANCE.getTrimContainer_Side();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MESCElement <em>ESC Element</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.MESCElement
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getESCElement()
+		 * @see org.eclipse.e4.ui.model.application.impl.WindowTrimImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
 		 * @generated
 		 */
-		EClass ESC_ELEMENT = eINSTANCE.getESCElement();
+		EClass WINDOW_TRIM = eINSTANCE.getWindowTrim();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.EditorStackImpl <em>Editor Stack</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.EditorStackImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorStack()
+		 * @see org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________SharedElements_______________V()
 		 * @generated
 		 */
-		EClass EDITOR_STACK = eINSTANCE.getEditorStack();
-
-		/**
-		 * The meta object literal for the '<em><b>Input URI</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute EDITOR_STACK__INPUT_URI = eINSTANCE.getEditorStack_InputURI();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.EditorSashContainerImpl <em>Editor Sash Container</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.EditorSashContainerImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditorSashContainer()
-		 * @generated
-		 */
-		EClass EDITOR_SASH_CONTAINER = eINSTANCE.getEditorSashContainer();
+		EClass VSHARED_ELEMENTS_V = eINSTANCE.getV______________SharedElements_______________V();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl <em>Perspective</em>}' class.
@@ -7502,22 +6403,24 @@ public interface MApplicationPackage extends EPackage {
 		EClass PERSPECTIVE_STACK = eINSTANCE.getPerspectiveStack();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.IDEWindowImpl <em>IDE Window</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.IDEWindowImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIDEWindow()
+		 * @see org.eclipse.e4.ui.model.application.MV_________Testing__________V
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 		 * @generated
 		 */
-		EClass IDE_WINDOW = eINSTANCE.getIDEWindow();
+		EClass VTESTING_V = eINSTANCE.getV_________Testing__________V();
 
 		/**
-		 * The meta object literal for the '<em><b>Main Menu</b></em>' reference feature.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl <em>Test Harness</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.TestHarnessImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 		 * @generated
 		 */
-		EReference IDE_WINDOW__MAIN_MENU = eINSTANCE.getIDEWindow_MainMenu();
+		EClass TEST_HARNESS = eINSTANCE.getTestHarness();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.

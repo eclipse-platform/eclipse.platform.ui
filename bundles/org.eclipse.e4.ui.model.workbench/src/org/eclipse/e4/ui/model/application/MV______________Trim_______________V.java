@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>View Sash Container</b></em>'.
+ * A representation of the model object '<em><b>VTrim V</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getViewSashContainer()
- * @model
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getV______________Trim_______________V()
+ * @model interface="true" abstract="true"
  * @generated
  */
-public interface MViewSashContainer extends MGenericTile<MVSCElement>, MVSCElement, MPSCElement {
-} // MViewSashContainer
+public interface MV______________Trim_______________V {
+} // MV______________Trim_______________V

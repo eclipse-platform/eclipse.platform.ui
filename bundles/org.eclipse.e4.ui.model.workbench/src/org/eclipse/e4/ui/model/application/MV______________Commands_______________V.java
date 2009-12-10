@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>VIDE V</b></em>'.
+ * A representation of the model object '<em><b>VCommands V</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getV______________IDE_______________V()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getV______________Commands_______________V()
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface MV______________IDE_______________V {
-} // MV______________IDE_______________V
+public interface MV______________Commands_______________V {
+} // MV______________Commands_______________V

@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>VSC Element</b></em>'.
+ * A representation of the model object '<em><b>VConstants And Types V</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getVSCElement()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getV____________ConstantsAndTypes_____________V()
  * @model interface="true" abstract="true"
  * @generated
  */
-public interface MVSCElement extends MUIElement {
-} // MVSCElement
+public interface MV____________ConstantsAndTypes_____________V {
+} // MV____________ConstantsAndTypes_____________V

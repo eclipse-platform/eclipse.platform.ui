@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Editor Sash Container</b></em>'.
+ * A representation of the model object '<em><b>VShared Elements V</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getEditorSashContainer()
- * @model
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getV______________SharedElements_______________V()
+ * @model interface="true" abstract="true"
  * @generated
  */
-public interface MEditorSashContainer extends MGenericTile<MESCElement>, MESCElement, MVSCElement {
-} // MEditorSashContainer
+public interface MV______________SharedElements_______________V {
+} // MV______________SharedElements_______________V

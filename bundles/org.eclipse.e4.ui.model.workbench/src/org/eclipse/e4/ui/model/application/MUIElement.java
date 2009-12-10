@@ -62,7 +62,7 @@ public interface MUIElement extends MApplicationElement {
 	 * Returns the value of the '<em><b>Renderer</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Factory</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Renderer</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
@@ -89,7 +89,7 @@ public interface MUIElement extends MApplicationElement {
 	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Visible</em>' attribute isn't clear,
+	 * If the meaning of the '<em>To Be Rendered</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->

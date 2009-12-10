@@ -39,24 +39,6 @@ public interface MApplicationFactory extends EFactory {
 	MApplicationElement createApplicationElement();
 
 	/**
-	 * Returns a new object of class '<em>Command</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Command</em>'.
-	 * @generated
-	 */
-	MCommand createCommand();
-
-	/**
-	 * Returns a new object of class '<em>Command Parameter</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Command Parameter</em>'.
-	 * @generated
-	 */
-	MCommandParameter createCommandParameter();
-
-	/**
 	 * Returns a new object of class '<em>Dirtyable</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -64,15 +46,6 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MDirtyable createDirtyable();
-
-	/**
-	 * Returns a new object of class '<em>Handler</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Handler</em>'.
-	 * @generated
-	 */
-	MHandler createHandler();
 
 	/**
 	 * Returns a new object of class '<em>Input</em>'.
@@ -84,15 +57,6 @@ public interface MApplicationFactory extends EFactory {
 	MInput createInput();
 
 	/**
-	 * Returns a new object of class '<em>Parameter</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Parameter</em>'.
-	 * @generated
-	 */
-	MParameter createParameter();
-
-	/**
 	 * Returns a new object of class '<em>Context</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -100,24 +64,6 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MContext createContext();
-
-	/**
-	 * Returns a new object of class '<em>Test Harness</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Test Harness</em>'.
-	 * @generated
-	 */
-	MTestHarness createTestHarness();
-
-	/**
-	 * Returns a new object of class '<em>Application</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Application</em>'.
-	 * @generated
-	 */
-	MApplication createApplication();
 
 	/**
 	 * Returns a new object of class '<em>Item</em>'.
@@ -129,15 +75,6 @@ public interface MApplicationFactory extends EFactory {
 	MItem createItem();
 
 	/**
-	 * Returns a new object of class '<em>Handled Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Handled Item</em>'.
-	 * @generated
-	 */
-	MHandledItem createHandledItem();
-
-	/**
 	 * Returns a new object of class '<em>Menu Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -145,15 +82,6 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MMenuItem createMenuItem();
-
-	/**
-	 * Returns a new object of class '<em>Handled Menu Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Handled Menu Item</em>'.
-	 * @generated
-	 */
-	MHandledMenuItem createHandledMenuItem();
 
 	/**
 	 * Returns a new object of class '<em>Direct Menu Item</em>'.
@@ -183,15 +111,6 @@ public interface MApplicationFactory extends EFactory {
 	MToolItem createToolItem();
 
 	/**
-	 * Returns a new object of class '<em>Handled Tool Item</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Handled Tool Item</em>'.
-	 * @generated
-	 */
-	MHandledToolItem createHandledToolItem();
-
-	/**
 	 * Returns a new object of class '<em>Direct Tool Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -210,6 +129,15 @@ public interface MApplicationFactory extends EFactory {
 	MToolBar createToolBar();
 
 	/**
+	 * Returns a new object of class '<em>Application</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Application</em>'.
+	 * @generated
+	 */
+	MApplication createApplication();
+
+	/**
 	 * Returns a new object of class '<em>Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -226,6 +154,15 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MSaveablePart createSaveablePart();
+
+	/**
+	 * Returns a new object of class '<em>Editor</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Editor</em>'.
+	 * @generated
+	 */
+	MEditor createEditor();
 
 	/**
 	 * Returns a new object of class '<em>Part Stack</em>'.
@@ -255,13 +192,58 @@ public interface MApplicationFactory extends EFactory {
 	MWindow createWindow();
 
 	/**
-	 * Returns a new object of class '<em>Window Trim</em>'.
+	 * Returns a new object of class '<em>Command</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Window Trim</em>'.
+	 * @return a new object of class '<em>Command</em>'.
 	 * @generated
 	 */
-	MWindowTrim createWindowTrim();
+	MCommand createCommand();
+
+	/**
+	 * Returns a new object of class '<em>Command Parameter</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Command Parameter</em>'.
+	 * @generated
+	 */
+	MCommandParameter createCommandParameter();
+
+	/**
+	 * Returns a new object of class '<em>Handler</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handler</em>'.
+	 * @generated
+	 */
+	MHandler createHandler();
+
+	/**
+	 * Returns a new object of class '<em>Handled Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handled Item</em>'.
+	 * @generated
+	 */
+	MHandledItem createHandledItem();
+
+	/**
+	 * Returns a new object of class '<em>Handled Menu Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handled Menu Item</em>'.
+	 * @generated
+	 */
+	MHandledMenuItem createHandledMenuItem();
+
+	/**
+	 * Returns a new object of class '<em>Handled Tool Item</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Handled Tool Item</em>'.
+	 * @generated
+	 */
+	MHandledToolItem createHandledToolItem();
 
 	/**
 	 * Returns a new object of class '<em>Key Binding</em>'.
@@ -273,67 +255,22 @@ public interface MApplicationFactory extends EFactory {
 	MKeyBinding createKeyBinding();
 
 	/**
-	 * Returns a new object of class '<em>View</em>'.
+	 * Returns a new object of class '<em>Parameter</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>View</em>'.
+	 * @return a new object of class '<em>Parameter</em>'.
 	 * @generated
 	 */
-	MView createView();
+	MParameter createParameter();
 
 	/**
-	 * Returns a new object of class '<em>View Stack</em>'.
+	 * Returns a new object of class '<em>Window Trim</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>View Stack</em>'.
+	 * @return a new object of class '<em>Window Trim</em>'.
 	 * @generated
 	 */
-	MViewStack createViewStack();
-
-	/**
-	 * Returns a new object of class '<em>Editor</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Editor</em>'.
-	 * @generated
-	 */
-	MEditor createEditor();
-
-	/**
-	 * Returns a new object of class '<em>View Sash Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>View Sash Container</em>'.
-	 * @generated
-	 */
-	MViewSashContainer createViewSashContainer();
-
-	/**
-	 * Returns a new object of class '<em>Multi Editor</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Multi Editor</em>'.
-	 * @generated
-	 */
-	MMultiEditor createMultiEditor();
-
-	/**
-	 * Returns a new object of class '<em>Editor Stack</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Editor Stack</em>'.
-	 * @generated
-	 */
-	MEditorStack createEditorStack();
-
-	/**
-	 * Returns a new object of class '<em>Editor Sash Container</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Editor Sash Container</em>'.
-	 * @generated
-	 */
-	MEditorSashContainer createEditorSashContainer();
+	MWindowTrim createWindowTrim();
 
 	/**
 	 * Returns a new object of class '<em>Perspective</em>'.
@@ -354,13 +291,13 @@ public interface MApplicationFactory extends EFactory {
 	MPerspectiveStack createPerspectiveStack();
 
 	/**
-	 * Returns a new object of class '<em>IDE Window</em>'.
+	 * Returns a new object of class '<em>Test Harness</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>IDE Window</em>'.
+	 * @return a new object of class '<em>Test Harness</em>'.
 	 * @generated
 	 */
-	MIDEWindow createIDEWindow();
+	MTestHarness createTestHarness();
 
 	/**
 	 * Returns the package supported by this factory.

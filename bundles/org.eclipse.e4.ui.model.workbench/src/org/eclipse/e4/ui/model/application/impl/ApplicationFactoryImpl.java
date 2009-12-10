@@ -66,42 +66,35 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
 			case MApplicationPackage.APPLICATION_ELEMENT: return (EObject)createApplicationElement();
-			case MApplicationPackage.COMMAND: return (EObject)createCommand();
-			case MApplicationPackage.COMMAND_PARAMETER: return (EObject)createCommandParameter();
 			case MApplicationPackage.DIRTYABLE: return (EObject)createDirtyable();
-			case MApplicationPackage.HANDLER: return (EObject)createHandler();
 			case MApplicationPackage.INPUT: return (EObject)createInput();
-			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
 			case MApplicationPackage.CONTEXT: return (EObject)createContext();
-			case MApplicationPackage.TEST_HARNESS: return (EObject)createTestHarness();
-			case MApplicationPackage.APPLICATION: return (EObject)createApplication();
 			case MApplicationPackage.ITEM: return (EObject)createItem();
-			case MApplicationPackage.HANDLED_ITEM: return (EObject)createHandledItem();
 			case MApplicationPackage.MENU_ITEM: return (EObject)createMenuItem();
-			case MApplicationPackage.HANDLED_MENU_ITEM: return (EObject)createHandledMenuItem();
 			case MApplicationPackage.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
 			case MApplicationPackage.MENU: return (EObject)createMenu();
 			case MApplicationPackage.TOOL_ITEM: return (EObject)createToolItem();
-			case MApplicationPackage.HANDLED_TOOL_ITEM: return (EObject)createHandledToolItem();
 			case MApplicationPackage.DIRECT_TOOL_ITEM: return (EObject)createDirectToolItem();
 			case MApplicationPackage.TOOL_BAR: return (EObject)createToolBar();
+			case MApplicationPackage.APPLICATION: return (EObject)createApplication();
 			case MApplicationPackage.PART: return (EObject)createPart();
 			case MApplicationPackage.SAVEABLE_PART: return (EObject)createSaveablePart();
+			case MApplicationPackage.EDITOR: return (EObject)createEditor();
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
 			case MApplicationPackage.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
-			case MApplicationPackage.WINDOW_TRIM: return (EObject)createWindowTrim();
+			case MApplicationPackage.COMMAND: return (EObject)createCommand();
+			case MApplicationPackage.COMMAND_PARAMETER: return (EObject)createCommandParameter();
+			case MApplicationPackage.HANDLER: return (EObject)createHandler();
+			case MApplicationPackage.HANDLED_ITEM: return (EObject)createHandledItem();
+			case MApplicationPackage.HANDLED_MENU_ITEM: return (EObject)createHandledMenuItem();
+			case MApplicationPackage.HANDLED_TOOL_ITEM: return (EObject)createHandledToolItem();
 			case MApplicationPackage.KEY_BINDING: return (EObject)createKeyBinding();
-			case MApplicationPackage.VIEW: return (EObject)createView();
-			case MApplicationPackage.VIEW_STACK: return (EObject)createViewStack();
-			case MApplicationPackage.EDITOR: return (EObject)createEditor();
-			case MApplicationPackage.VIEW_SASH_CONTAINER: return (EObject)createViewSashContainer();
-			case MApplicationPackage.MULTI_EDITOR: return (EObject)createMultiEditor();
-			case MApplicationPackage.EDITOR_STACK: return (EObject)createEditorStack();
-			case MApplicationPackage.EDITOR_SASH_CONTAINER: return (EObject)createEditorSashContainer();
+			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
+			case MApplicationPackage.WINDOW_TRIM: return (EObject)createWindowTrim();
 			case MApplicationPackage.PERSPECTIVE: return (EObject)createPerspective();
 			case MApplicationPackage.PERSPECTIVE_STACK: return (EObject)createPerspectiveStack();
-			case MApplicationPackage.IDE_WINDOW: return (EObject)createIDEWindow();
+			case MApplicationPackage.TEST_HARNESS: return (EObject)createTestHarness();
 			default:
 				throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -152,39 +145,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MCommand createCommand() {
-		CommandImpl command = new CommandImpl();
-		return command;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MCommandParameter createCommandParameter() {
-		CommandParameterImpl commandParameter = new CommandParameterImpl();
-		return commandParameter;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MDirtyable createDirtyable() {
 		DirtyableImpl dirtyable = new DirtyableImpl();
 		return dirtyable;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MHandler createHandler() {
-		HandlerImpl handler = new HandlerImpl();
-		return handler;
 	}
 
 	/**
@@ -202,39 +165,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MParameter createParameter() {
-		ParameterImpl parameter = new ParameterImpl();
-		return parameter;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MContext createContext() {
 		ContextImpl context = new ContextImpl();
 		return context;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MTestHarness createTestHarness() {
-		TestHarnessImpl testHarness = new TestHarnessImpl();
-		return testHarness;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MApplication createApplication() {
-		ApplicationImpl application = new ApplicationImpl();
-		return application;
 	}
 
 	/**
@@ -252,29 +185,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MHandledItem createHandledItem() {
-		HandledItemImpl handledItem = new HandledItemImpl();
-		return handledItem;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MMenuItem createMenuItem() {
 		MenuItemImpl menuItem = new MenuItemImpl();
 		return menuItem;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MHandledMenuItem createHandledMenuItem() {
-		HandledMenuItemImpl handledMenuItem = new HandledMenuItemImpl();
-		return handledMenuItem;
 	}
 
 	/**
@@ -312,16 +225,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MHandledToolItem createHandledToolItem() {
-		HandledToolItemImpl handledToolItem = new HandledToolItemImpl();
-		return handledToolItem;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public MDirectToolItem createDirectToolItem() {
 		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
 		return directToolItem;
@@ -342,6 +245,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MApplication createApplication() {
+		ApplicationImpl application = new ApplicationImpl();
+		return application;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MPart createPart() {
 		PartImpl part = new PartImpl();
 		return part;
@@ -355,6 +268,16 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MSaveablePart createSaveablePart() {
 		SaveablePartImpl saveablePart = new SaveablePartImpl();
 		return saveablePart;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MEditor createEditor() {
+		EditorImpl editor = new EditorImpl();
+		return editor;
 	}
 
 	/**
@@ -392,9 +315,59 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MWindowTrim createWindowTrim() {
-		WindowTrimImpl windowTrim = new WindowTrimImpl();
-		return windowTrim;
+	public MCommand createCommand() {
+		CommandImpl command = new CommandImpl();
+		return command;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MCommandParameter createCommandParameter() {
+		CommandParameterImpl commandParameter = new CommandParameterImpl();
+		return commandParameter;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MHandler createHandler() {
+		HandlerImpl handler = new HandlerImpl();
+		return handler;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MHandledItem createHandledItem() {
+		HandledItemImpl handledItem = new HandledItemImpl();
+		return handledItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MHandledMenuItem createHandledMenuItem() {
+		HandledMenuItemImpl handledMenuItem = new HandledMenuItemImpl();
+		return handledMenuItem;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MHandledToolItem createHandledToolItem() {
+		HandledToolItemImpl handledToolItem = new HandledToolItemImpl();
+		return handledToolItem;
 	}
 
 	/**
@@ -412,9 +385,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MView createView() {
-		ViewImpl view = new ViewImpl();
-		return view;
+	public MParameter createParameter() {
+		ParameterImpl parameter = new ParameterImpl();
+		return parameter;
 	}
 
 	/**
@@ -422,59 +395,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MViewStack createViewStack() {
-		ViewStackImpl viewStack = new ViewStackImpl();
-		return viewStack;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MEditor createEditor() {
-		EditorImpl editor = new EditorImpl();
-		return editor;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MViewSashContainer createViewSashContainer() {
-		ViewSashContainerImpl viewSashContainer = new ViewSashContainerImpl();
-		return viewSashContainer;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MMultiEditor createMultiEditor() {
-		MultiEditorImpl multiEditor = new MultiEditorImpl();
-		return multiEditor;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MEditorStack createEditorStack() {
-		EditorStackImpl editorStack = new EditorStackImpl();
-		return editorStack;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MEditorSashContainer createEditorSashContainer() {
-		EditorSashContainerImpl editorSashContainer = new EditorSashContainerImpl();
-		return editorSashContainer;
+	public MWindowTrim createWindowTrim() {
+		WindowTrimImpl windowTrim = new WindowTrimImpl();
+		return windowTrim;
 	}
 
 	/**
@@ -502,9 +425,9 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MIDEWindow createIDEWindow() {
-		IDEWindowImpl ideWindow = new IDEWindowImpl();
-		return ideWindow;
+	public MTestHarness createTestHarness() {
+		TestHarnessImpl testHarness = new TestHarnessImpl();
+		return testHarness;
 	}
 
 	/**

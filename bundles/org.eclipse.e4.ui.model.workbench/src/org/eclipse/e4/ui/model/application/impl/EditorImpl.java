@@ -20,7 +20,6 @@ import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MDirtyable;
-import org.eclipse.e4.ui.model.application.MESCElement;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
@@ -59,16 +58,16 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getWidget <em>Widget</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getRenderer <em>Renderer</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#isToBeRendered <em>To Be Rendered</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#isVisible <em>Visible</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getURI <em>URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getObject <em>Object</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getPersistedState <em>Persisted State</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getContext <em>Context</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getVariables <em>Variables</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getWidget <em>Widget</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getRenderer <em>Renderer</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#isToBeRendered <em>To Be Rendered</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#isVisible <em>Visible</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getTooltip <em>Tooltip</em>}</li>
@@ -102,86 +101,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 	 * @ordered
 	 */
 	protected String id = ID_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getWidget()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object WIDGET_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getWidget() <em>Widget</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getWidget()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object widget = WIDGET_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRenderer()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final Object RENDERER_EDEFAULT = null;
-
-	/**
-	 * The cached value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getRenderer()
-	 * @generated
-	 * @ordered
-	 */
-	protected Object renderer = RENDERER_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isToBeRendered()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean TO_BE_RENDERED_EDEFAULT = true;
-
-	/**
-	 * The cached value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isToBeRendered()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
-
-	/**
-	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isVisible()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean VISIBLE_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isVisible()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean visible = VISIBLE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getURI() <em>URI</em>}' attribute.
@@ -272,6 +191,86 @@ public class EditorImpl extends InputImpl implements MEditor {
 	 * @ordered
 	 */
 	protected EList<String> variables;
+
+	/**
+	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWidget()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object WIDGET_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getWidget() <em>Widget</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getWidget()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object widget = WIDGET_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getRenderer()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final Object RENDERER_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getRenderer() <em>Renderer</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getRenderer()
+	 * @generated
+	 * @ordered
+	 */
+	protected Object renderer = RENDERER_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean TO_BE_RENDERED_EDEFAULT = true;
+
+	/**
+	 * The cached value of the '{@link #isToBeRendered() <em>To Be Rendered</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isToBeRendered()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isVisible()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean VISIBLE_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isVisible()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean visible = VISIBLE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -438,6 +437,102 @@ public class EditorImpl extends InputImpl implements MEditor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getURI() {
+		return uri;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setURI(String newURI) {
+		String oldURI = uri;
+		uri = newURI;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__URI, oldURI, uri));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public Object getObject() {
+		return object;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setObject(Object newObject) {
+		Object oldObject = object;
+		object = newObject;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__OBJECT, oldObject, object));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getPersistedState() {
+		return persistedState;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setPersistedState(String newPersistedState) {
+		String oldPersistedState = persistedState;
+		persistedState = newPersistedState;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__PERSISTED_STATE, oldPersistedState, persistedState));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public IEclipseContext getContext() {
+		return context;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContext(IEclipseContext newContext) {
+		IEclipseContext oldContext = context;
+		context = newContext;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__CONTEXT, oldContext, context));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EList<String> getVariables() {
+		if (variables == null) {
+			variables = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.EDITOR__VARIABLES);
+		}
+		return variables;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public Object getWidget() {
 		return widget;
 	}
@@ -557,102 +652,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 		}
 		else if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__PARENT, newParent, newParent));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getURI() {
-		return uri;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setURI(String newURI) {
-		String oldURI = uri;
-		uri = newURI;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__URI, oldURI, uri));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public Object getObject() {
-		return object;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setObject(Object newObject) {
-		Object oldObject = object;
-		object = newObject;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__OBJECT, oldObject, object));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String getPersistedState() {
-		return persistedState;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setPersistedState(String newPersistedState) {
-		String oldPersistedState = persistedState;
-		persistedState = newPersistedState;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__PERSISTED_STATE, oldPersistedState, persistedState));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public IEclipseContext getContext() {
-		return context;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setContext(IEclipseContext newContext) {
-		IEclipseContext oldContext = context;
-		context = newContext;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__CONTEXT, oldContext, context));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EList<String> getVariables() {
-		if (variables == null) {
-			variables = new EDataTypeUniqueEList<String>(String.class, this, MApplicationPackage.EDITOR__VARIABLES);
-		}
-		return variables;
 	}
 
 	/**
@@ -872,16 +871,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__ID:
 				return getId();
-			case MApplicationPackage.EDITOR__WIDGET:
-				return getWidget();
-			case MApplicationPackage.EDITOR__RENDERER:
-				return getRenderer();
-			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
-				return isToBeRendered();
-			case MApplicationPackage.EDITOR__VISIBLE:
-				return isVisible();
-			case MApplicationPackage.EDITOR__PARENT:
-				return getParent();
 			case MApplicationPackage.EDITOR__URI:
 				return getURI();
 			case MApplicationPackage.EDITOR__OBJECT:
@@ -892,6 +881,16 @@ public class EditorImpl extends InputImpl implements MEditor {
 				return getContext();
 			case MApplicationPackage.EDITOR__VARIABLES:
 				return getVariables();
+			case MApplicationPackage.EDITOR__WIDGET:
+				return getWidget();
+			case MApplicationPackage.EDITOR__RENDERER:
+				return getRenderer();
+			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
+				return isToBeRendered();
+			case MApplicationPackage.EDITOR__VISIBLE:
+				return isVisible();
+			case MApplicationPackage.EDITOR__PARENT:
+				return getParent();
 			case MApplicationPackage.EDITOR__LABEL:
 				return getLabel();
 			case MApplicationPackage.EDITOR__ICON_URI:
@@ -925,21 +924,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 			case MApplicationPackage.EDITOR__ID:
 				setId((String)newValue);
 				return;
-			case MApplicationPackage.EDITOR__WIDGET:
-				setWidget(newValue);
-				return;
-			case MApplicationPackage.EDITOR__RENDERER:
-				setRenderer(newValue);
-				return;
-			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
-				setToBeRendered((Boolean)newValue);
-				return;
-			case MApplicationPackage.EDITOR__VISIBLE:
-				setVisible((Boolean)newValue);
-				return;
-			case MApplicationPackage.EDITOR__PARENT:
-				setParent((MElementContainer<MUIElement>)newValue);
-				return;
 			case MApplicationPackage.EDITOR__URI:
 				setURI((String)newValue);
 				return;
@@ -955,6 +939,21 @@ public class EditorImpl extends InputImpl implements MEditor {
 			case MApplicationPackage.EDITOR__VARIABLES:
 				getVariables().clear();
 				getVariables().addAll((Collection<? extends String>)newValue);
+				return;
+			case MApplicationPackage.EDITOR__WIDGET:
+				setWidget(newValue);
+				return;
+			case MApplicationPackage.EDITOR__RENDERER:
+				setRenderer(newValue);
+				return;
+			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
+				setToBeRendered((Boolean)newValue);
+				return;
+			case MApplicationPackage.EDITOR__VISIBLE:
+				setVisible((Boolean)newValue);
+				return;
+			case MApplicationPackage.EDITOR__PARENT:
+				setParent((MElementContainer<MUIElement>)newValue);
 				return;
 			case MApplicationPackage.EDITOR__LABEL:
 				setLabel((String)newValue);
@@ -998,21 +997,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 			case MApplicationPackage.EDITOR__ID:
 				setId(ID_EDEFAULT);
 				return;
-			case MApplicationPackage.EDITOR__WIDGET:
-				setWidget(WIDGET_EDEFAULT);
-				return;
-			case MApplicationPackage.EDITOR__RENDERER:
-				setRenderer(RENDERER_EDEFAULT);
-				return;
-			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
-				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
-				return;
-			case MApplicationPackage.EDITOR__VISIBLE:
-				setVisible(VISIBLE_EDEFAULT);
-				return;
-			case MApplicationPackage.EDITOR__PARENT:
-				setParent((MElementContainer<MUIElement>)null);
-				return;
 			case MApplicationPackage.EDITOR__URI:
 				setURI(URI_EDEFAULT);
 				return;
@@ -1027,6 +1011,21 @@ public class EditorImpl extends InputImpl implements MEditor {
 				return;
 			case MApplicationPackage.EDITOR__VARIABLES:
 				getVariables().clear();
+				return;
+			case MApplicationPackage.EDITOR__WIDGET:
+				setWidget(WIDGET_EDEFAULT);
+				return;
+			case MApplicationPackage.EDITOR__RENDERER:
+				setRenderer(RENDERER_EDEFAULT);
+				return;
+			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
+				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
+				return;
+			case MApplicationPackage.EDITOR__VISIBLE:
+				setVisible(VISIBLE_EDEFAULT);
+				return;
+			case MApplicationPackage.EDITOR__PARENT:
+				setParent((MElementContainer<MUIElement>)null);
 				return;
 			case MApplicationPackage.EDITOR__LABEL:
 				setLabel(LABEL_EDEFAULT);
@@ -1066,16 +1065,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-			case MApplicationPackage.EDITOR__WIDGET:
-				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
-			case MApplicationPackage.EDITOR__RENDERER:
-				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
-			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
-				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
-			case MApplicationPackage.EDITOR__VISIBLE:
-				return visible != VISIBLE_EDEFAULT;
-			case MApplicationPackage.EDITOR__PARENT:
-				return getParent() != null;
 			case MApplicationPackage.EDITOR__URI:
 				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
 			case MApplicationPackage.EDITOR__OBJECT:
@@ -1086,6 +1075,16 @@ public class EditorImpl extends InputImpl implements MEditor {
 				return CONTEXT_EDEFAULT == null ? context != null : !CONTEXT_EDEFAULT.equals(context);
 			case MApplicationPackage.EDITOR__VARIABLES:
 				return variables != null && !variables.isEmpty();
+			case MApplicationPackage.EDITOR__WIDGET:
+				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
+			case MApplicationPackage.EDITOR__RENDERER:
+				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
+			case MApplicationPackage.EDITOR__TO_BE_RENDERED:
+				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
+			case MApplicationPackage.EDITOR__VISIBLE:
+				return visible != VISIBLE_EDEFAULT;
+			case MApplicationPackage.EDITOR__PARENT:
+				return getParent() != null;
 			case MApplicationPackage.EDITOR__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case MApplicationPackage.EDITOR__ICON_URI:
@@ -1119,21 +1118,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 				default: return -1;
 			}
 		}
-		if (baseClass == MUIElement.class) {
-			switch (derivedFeatureID) {
-				case MApplicationPackage.EDITOR__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
-				case MApplicationPackage.EDITOR__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
-				case MApplicationPackage.EDITOR__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
-				case MApplicationPackage.EDITOR__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
-				case MApplicationPackage.EDITOR__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
-				default: return -1;
-			}
-		}
-		if (baseClass == MESCElement.class) {
-			switch (derivedFeatureID) {
-				default: return -1;
-			}
-		}
 		if (baseClass == MContribution.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.EDITOR__URI: return MApplicationPackage.CONTRIBUTION__URI;
@@ -1146,6 +1130,16 @@ public class EditorImpl extends InputImpl implements MEditor {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.EDITOR__CONTEXT: return MApplicationPackage.CONTEXT__CONTEXT;
 				case MApplicationPackage.EDITOR__VARIABLES: return MApplicationPackage.CONTEXT__VARIABLES;
+				default: return -1;
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.EDITOR__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
+				case MApplicationPackage.EDITOR__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
+				case MApplicationPackage.EDITOR__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
+				case MApplicationPackage.EDITOR__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
+				case MApplicationPackage.EDITOR__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
 				default: return -1;
 			}
 		}
@@ -1208,21 +1202,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 				default: return -1;
 			}
 		}
-		if (baseClass == MUIElement.class) {
-			switch (baseFeatureID) {
-				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.EDITOR__WIDGET;
-				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.EDITOR__RENDERER;
-				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.EDITOR__TO_BE_RENDERED;
-				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.EDITOR__VISIBLE;
-				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.EDITOR__PARENT;
-				default: return -1;
-			}
-		}
-		if (baseClass == MESCElement.class) {
-			switch (baseFeatureID) {
-				default: return -1;
-			}
-		}
 		if (baseClass == MContribution.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTRIBUTION__URI: return MApplicationPackage.EDITOR__URI;
@@ -1235,6 +1214,16 @@ public class EditorImpl extends InputImpl implements MEditor {
 			switch (baseFeatureID) {
 				case MApplicationPackage.CONTEXT__CONTEXT: return MApplicationPackage.EDITOR__CONTEXT;
 				case MApplicationPackage.CONTEXT__VARIABLES: return MApplicationPackage.EDITOR__VARIABLES;
+				default: return -1;
+			}
+		}
+		if (baseClass == MUIElement.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.EDITOR__WIDGET;
+				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.EDITOR__RENDERER;
+				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.EDITOR__TO_BE_RENDERED;
+				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.EDITOR__VISIBLE;
+				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.EDITOR__PARENT;
 				default: return -1;
 			}
 		}
@@ -1296,14 +1285,6 @@ public class EditorImpl extends InputImpl implements MEditor {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: "); //$NON-NLS-1$
 		result.append(id);
-		result.append(", widget: "); //$NON-NLS-1$
-		result.append(widget);
-		result.append(", renderer: "); //$NON-NLS-1$
-		result.append(renderer);
-		result.append(", toBeRendered: "); //$NON-NLS-1$
-		result.append(toBeRendered);
-		result.append(", visible: "); //$NON-NLS-1$
-		result.append(visible);
 		result.append(", URI: "); //$NON-NLS-1$
 		result.append(uri);
 		result.append(", object: "); //$NON-NLS-1$
@@ -1314,6 +1295,14 @@ public class EditorImpl extends InputImpl implements MEditor {
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$
 		result.append(variables);
+		result.append(", widget: "); //$NON-NLS-1$
+		result.append(widget);
+		result.append(", renderer: "); //$NON-NLS-1$
+		result.append(renderer);
+		result.append(", toBeRendered: "); //$NON-NLS-1$
+		result.append(toBeRendered);
+		result.append(", visible: "); //$NON-NLS-1$
+		result.append(visible);
 		result.append(", label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$

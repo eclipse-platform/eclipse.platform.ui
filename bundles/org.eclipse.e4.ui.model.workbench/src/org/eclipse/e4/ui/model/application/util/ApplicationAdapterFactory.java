@@ -76,6 +76,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	protected ApplicationSwitch<Adapter> modelSwitch =
 		new ApplicationSwitch<Adapter>() {
 			@Override
+			public Adapter caseV____________ConstantsAndTypes_____________V(MV____________ConstantsAndTypes_____________V object) {
+				return createV____________ConstantsAndTypes_____________VAdapter();
+			}
+			@Override
 			public Adapter caseV____________Abstract_____________V(MV____________Abstract_____________V object) {
 				return createV____________Abstract_____________VAdapter();
 			}
@@ -88,56 +92,24 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createContributionAdapter();
 			}
 			@Override
-			public Adapter caseCommand(MCommand object) {
-				return createCommandAdapter();
-			}
-			@Override
-			public Adapter caseCommandParameter(MCommandParameter object) {
-				return createCommandParameterAdapter();
-			}
-			@Override
 			public Adapter caseDirtyable(MDirtyable object) {
 				return createDirtyableAdapter();
-			}
-			@Override
-			public Adapter caseHandler(MHandler object) {
-				return createHandlerAdapter();
-			}
-			@Override
-			public Adapter caseHandlerContainer(MHandlerContainer object) {
-				return createHandlerContainerAdapter();
 			}
 			@Override
 			public Adapter caseInput(MInput object) {
 				return createInputAdapter();
 			}
 			@Override
-			public Adapter caseParameter(MParameter object) {
-				return createParameterAdapter();
+			public Adapter caseUIElement(MUIElement object) {
+				return createUIElementAdapter();
 			}
 			@Override
 			public Adapter caseUILabel(MUILabel object) {
 				return createUILabelAdapter();
 			}
 			@Override
-			public Adapter caseUIElement(MUIElement object) {
-				return createUIElementAdapter();
-			}
-			@Override
 			public Adapter caseContext(MContext object) {
 				return createContextAdapter();
-			}
-			@Override
-			public Adapter caseKeySequence(MKeySequence object) {
-				return createKeySequenceAdapter();
-			}
-			@Override
-			public Adapter caseV_________Testing__________V(MV_________Testing__________V object) {
-				return createV_________Testing__________VAdapter();
-			}
-			@Override
-			public Adapter caseTestHarness(MTestHarness object) {
-				return createTestHarnessAdapter();
 			}
 			@Override
 			public Adapter caseV_________AbstractContainers__________V(MV_________AbstractContainers__________V object) {
@@ -152,32 +124,16 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createGenericTileAdapter();
 			}
 			@Override
-			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
-				return createTrimContainerAdapter();
-			}
-			@Override
-			public Adapter caseV______________RCP_______________V(MV______________RCP_______________V object) {
-				return createV______________RCP_______________VAdapter();
-			}
-			@Override
-			public Adapter caseApplication(MApplication object) {
-				return createApplicationAdapter();
+			public Adapter caseV______________MenusAndTBs_______________V(MV______________MenusAndTBs_______________V object) {
+				return createV______________MenusAndTBs_______________VAdapter();
 			}
 			@Override
 			public Adapter caseItem(MItem object) {
 				return createItemAdapter();
 			}
 			@Override
-			public Adapter caseHandledItem(MHandledItem object) {
-				return createHandledItemAdapter();
-			}
-			@Override
 			public Adapter caseMenuItem(MMenuItem object) {
 				return createMenuItemAdapter();
-			}
-			@Override
-			public Adapter caseHandledMenuItem(MHandledMenuItem object) {
-				return createHandledMenuItemAdapter();
 			}
 			@Override
 			public Adapter caseDirectMenuItem(MDirectMenuItem object) {
@@ -192,16 +148,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createToolItemAdapter();
 			}
 			@Override
-			public Adapter caseHandledToolItem(MHandledToolItem object) {
-				return createHandledToolItemAdapter();
-			}
-			@Override
 			public Adapter caseDirectToolItem(MDirectToolItem object) {
 				return createDirectToolItemAdapter();
 			}
 			@Override
 			public Adapter caseToolBar(MToolBar object) {
 				return createToolBarAdapter();
+			}
+			@Override
+			public Adapter caseV______________RCP_______________V(MV______________RCP_______________V object) {
+				return createV______________RCP_______________VAdapter();
+			}
+			@Override
+			public Adapter caseApplication(MApplication object) {
+				return createApplicationAdapter();
 			}
 			@Override
 			public Adapter casePSCElement(MPSCElement object) {
@@ -216,6 +176,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createSaveablePartAdapter();
 			}
 			@Override
+			public Adapter caseEditor(MEditor object) {
+				return createEditorAdapter();
+			}
+			@Override
 			public Adapter casePartStack(MPartStack object) {
 				return createPartStackAdapter();
 			}
@@ -228,56 +192,68 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createWindowAdapter();
 			}
 			@Override
-			public Adapter caseWindowTrim(MWindowTrim object) {
-				return createWindowTrimAdapter();
-			}
-			@Override
-			public Adapter caseKeyBinding(MKeyBinding object) {
-				return createKeyBindingAdapter();
+			public Adapter caseV______________Commands_______________V(MV______________Commands_______________V object) {
+				return createV______________Commands_______________VAdapter();
 			}
 			@Override
 			public Adapter caseBindingContainer(MBindingContainer object) {
 				return createBindingContainerAdapter();
 			}
 			@Override
-			public Adapter caseV______________IDE_______________V(MV______________IDE_______________V object) {
-				return createV______________IDE_______________VAdapter();
+			public Adapter caseCommand(MCommand object) {
+				return createCommandAdapter();
 			}
 			@Override
-			public Adapter caseVSCElement(MVSCElement object) {
-				return createVSCElementAdapter();
+			public Adapter caseCommandParameter(MCommandParameter object) {
+				return createCommandParameterAdapter();
 			}
 			@Override
-			public Adapter caseView(MView object) {
-				return createViewAdapter();
+			public Adapter caseHandler(MHandler object) {
+				return createHandlerAdapter();
 			}
 			@Override
-			public Adapter caseViewStack(MViewStack object) {
-				return createViewStackAdapter();
+			public Adapter caseHandlerContainer(MHandlerContainer object) {
+				return createHandlerContainerAdapter();
 			}
 			@Override
-			public Adapter caseEditor(MEditor object) {
-				return createEditorAdapter();
+			public Adapter caseHandledItem(MHandledItem object) {
+				return createHandledItemAdapter();
 			}
 			@Override
-			public Adapter caseViewSashContainer(MViewSashContainer object) {
-				return createViewSashContainerAdapter();
+			public Adapter caseHandledMenuItem(MHandledMenuItem object) {
+				return createHandledMenuItemAdapter();
 			}
 			@Override
-			public Adapter caseMultiEditor(MMultiEditor object) {
-				return createMultiEditorAdapter();
+			public Adapter caseHandledToolItem(MHandledToolItem object) {
+				return createHandledToolItemAdapter();
 			}
 			@Override
-			public Adapter caseESCElement(MESCElement object) {
-				return createESCElementAdapter();
+			public Adapter caseKeyBinding(MKeyBinding object) {
+				return createKeyBindingAdapter();
 			}
 			@Override
-			public Adapter caseEditorStack(MEditorStack object) {
-				return createEditorStackAdapter();
+			public Adapter caseKeySequence(MKeySequence object) {
+				return createKeySequenceAdapter();
 			}
 			@Override
-			public Adapter caseEditorSashContainer(MEditorSashContainer object) {
-				return createEditorSashContainerAdapter();
+			public Adapter caseParameter(MParameter object) {
+				return createParameterAdapter();
+			}
+			@Override
+			public Adapter caseV______________Trim_______________V(MV______________Trim_______________V object) {
+				return createV______________Trim_______________VAdapter();
+			}
+			@Override
+			public <T extends MUIElement> Adapter caseTrimContainer(MTrimContainer<T> object) {
+				return createTrimContainerAdapter();
+			}
+			@Override
+			public Adapter caseWindowTrim(MWindowTrim object) {
+				return createWindowTrimAdapter();
+			}
+			@Override
+			public Adapter caseV______________SharedElements_______________V(MV______________SharedElements_______________V object) {
+				return createV______________SharedElements_______________VAdapter();
 			}
 			@Override
 			public Adapter casePerspective(MPerspective object) {
@@ -288,8 +264,12 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createPerspectiveStackAdapter();
 			}
 			@Override
-			public Adapter caseIDEWindow(MIDEWindow object) {
-				return createIDEWindowAdapter();
+			public Adapter caseV_________Testing__________V(MV_________Testing__________V object) {
+				return createV_________Testing__________VAdapter();
+			}
+			@Override
+			public Adapter caseTestHarness(MTestHarness object) {
+				return createTestHarnessAdapter();
 			}
 			@Override
 			public Adapter defaultCase(EObject object) {
@@ -310,6 +290,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 		return modelSwitch.doSwitch((EObject)target);
 	}
 
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V <em>VConstants And Types V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MV____________ConstantsAndTypes_____________V
+	 * @generated
+	 */
+	public Adapter createV____________ConstantsAndTypes_____________VAdapter() {
+		return null;
+	}
 
 	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV____________Abstract_____________V <em>VAbstract V</em>}'.
@@ -354,34 +348,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MCommand <em>Command</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MCommand
-	 * @generated
-	 */
-	public Adapter createCommandAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MCommandParameter <em>Command Parameter</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MCommandParameter
-	 * @generated
-	 */
-	public Adapter createCommandParameterAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MDirtyable <em>Dirtyable</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -392,34 +358,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createDirtyableAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandler <em>Handler</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MHandler
-	 * @generated
-	 */
-	public Adapter createHandlerAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
-	 * @generated
-	 */
-	public Adapter createHandlerContainerAdapter() {
 		return null;
 	}
 
@@ -438,16 +376,16 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MParameter <em>Parameter</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MUIElement <em>UI Element</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MParameter
+	 * @see org.eclipse.e4.ui.model.application.MUIElement
 	 * @generated
 	 */
-	public Adapter createParameterAdapter() {
+	public Adapter createUIElementAdapter() {
 		return null;
 	}
 
@@ -466,20 +404,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MUIElement <em>UI Element</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MUIElement
-	 * @generated
-	 */
-	public Adapter createUIElementAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MContext <em>Context</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -490,48 +414,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createContextAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MKeySequence
-	 * @generated
-	 */
-	public Adapter createKeySequenceAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MV_________Testing__________V
-	 * @generated
-	 */
-	public Adapter createV_________Testing__________VAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTestHarness <em>Test Harness</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MTestHarness
-	 * @generated
-	 */
-	public Adapter createTestHarnessAdapter() {
 		return null;
 	}
 
@@ -578,44 +460,16 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTrimContainer <em>Trim Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V <em>VMenus And TBs V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MTrimContainer
+	 * @see org.eclipse.e4.ui.model.application.MV______________MenusAndTBs_______________V
 	 * @generated
 	 */
-	public Adapter createTrimContainerAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
-	 * @generated
-	 */
-	public Adapter createV______________RCP_______________VAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MApplication <em>Application</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MApplication
-	 * @generated
-	 */
-	public Adapter createApplicationAdapter() {
+	public Adapter createV______________MenusAndTBs_______________VAdapter() {
 		return null;
 	}
 
@@ -634,20 +488,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledItem <em>Handled Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MHandledItem
-	 * @generated
-	 */
-	public Adapter createHandledItemAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>Menu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -658,20 +498,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createMenuItemAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledMenuItem <em>Handled Menu Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MHandledMenuItem
-	 * @generated
-	 */
-	public Adapter createHandledMenuItemAdapter() {
 		return null;
 	}
 
@@ -718,20 +544,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledToolItem <em>Handled Tool Item</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MHandledToolItem
-	 * @generated
-	 */
-	public Adapter createHandledToolItemAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MDirectToolItem <em>Direct Tool Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -756,6 +568,34 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createToolBarAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________RCP_______________V <em>VRCP V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MV______________RCP_______________V
+	 * @generated
+	 */
+	public Adapter createV______________RCP_______________VAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MApplication <em>Application</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MApplication
+	 * @generated
+	 */
+	public Adapter createApplicationAdapter() {
 		return null;
 	}
 
@@ -802,6 +642,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MEditor
+	 * @generated
+	 */
+	public Adapter createEditorAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPartStack <em>Part Stack</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -844,30 +698,16 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MWindowTrim <em>Window Trim</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MWindowTrim
+	 * @see org.eclipse.e4.ui.model.application.MV______________Commands_______________V
 	 * @generated
 	 */
-	public Adapter createWindowTrimAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MKeyBinding <em>Key Binding</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MKeyBinding
-	 * @generated
-	 */
-	public Adapter createKeyBindingAdapter() {
+	public Adapter createV______________Commands_______________VAdapter() {
 		return null;
 	}
 
@@ -886,142 +726,198 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________IDE_______________V <em>VIDE V</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MCommand <em>Command</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MV______________IDE_______________V
+	 * @see org.eclipse.e4.ui.model.application.MCommand
 	 * @generated
 	 */
-	public Adapter createV______________IDE_______________VAdapter() {
+	public Adapter createCommandAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MVSCElement <em>VSC Element</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MCommandParameter <em>Command Parameter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MVSCElement
+	 * @see org.eclipse.e4.ui.model.application.MCommandParameter
 	 * @generated
 	 */
-	public Adapter createVSCElementAdapter() {
+	public Adapter createCommandParameterAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MView <em>View</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandler <em>Handler</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MView
+	 * @see org.eclipse.e4.ui.model.application.MHandler
 	 * @generated
 	 */
-	public Adapter createViewAdapter() {
+	public Adapter createHandlerAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MViewStack <em>View Stack</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandlerContainer <em>Handler Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MViewStack
+	 * @see org.eclipse.e4.ui.model.application.MHandlerContainer
 	 * @generated
 	 */
-	public Adapter createViewStackAdapter() {
+	public Adapter createHandlerContainerAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledItem <em>Handled Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MEditor
+	 * @see org.eclipse.e4.ui.model.application.MHandledItem
 	 * @generated
 	 */
-	public Adapter createEditorAdapter() {
+	public Adapter createHandledItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MViewSashContainer <em>View Sash Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledMenuItem <em>Handled Menu Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MViewSashContainer
+	 * @see org.eclipse.e4.ui.model.application.MHandledMenuItem
 	 * @generated
 	 */
-	public Adapter createViewSashContainerAdapter() {
+	public Adapter createHandledMenuItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MMultiEditor <em>Multi Editor</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MHandledToolItem <em>Handled Tool Item</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MMultiEditor
+	 * @see org.eclipse.e4.ui.model.application.MHandledToolItem
 	 * @generated
 	 */
-	public Adapter createMultiEditorAdapter() {
+	public Adapter createHandledToolItemAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MESCElement <em>ESC Element</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MKeyBinding <em>Key Binding</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MESCElement
+	 * @see org.eclipse.e4.ui.model.application.MKeyBinding
 	 * @generated
 	 */
-	public Adapter createESCElementAdapter() {
+	public Adapter createKeyBindingAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditorStack <em>Editor Stack</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MKeySequence <em>Key Sequence</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MEditorStack
+	 * @see org.eclipse.e4.ui.model.application.MKeySequence
 	 * @generated
 	 */
-	public Adapter createEditorStackAdapter() {
+	public Adapter createKeySequenceAdapter() {
 		return null;
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditorSashContainer <em>Editor Sash Container</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MParameter <em>Parameter</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MEditorSashContainer
+	 * @see org.eclipse.e4.ui.model.application.MParameter
 	 * @generated
 	 */
-	public Adapter createEditorSashContainerAdapter() {
+	public Adapter createParameterAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________Trim_______________V <em>VTrim V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MV______________Trim_______________V
+	 * @generated
+	 */
+	public Adapter createV______________Trim_______________VAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTrimContainer <em>Trim Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MTrimContainer
+	 * @generated
+	 */
+	public Adapter createTrimContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MWindowTrim <em>Window Trim</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MWindowTrim
+	 * @generated
+	 */
+	public Adapter createWindowTrimAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V
+	 * @generated
+	 */
+	public Adapter createV______________SharedElements_______________VAdapter() {
 		return null;
 	}
 
@@ -1054,16 +950,30 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MIDEWindow <em>IDE Window</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV_________Testing__________V <em>VTesting V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MIDEWindow
+	 * @see org.eclipse.e4.ui.model.application.MV_________Testing__________V
 	 * @generated
 	 */
-	public Adapter createIDEWindowAdapter() {
+	public Adapter createV_________Testing__________VAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MTestHarness <em>Test Harness</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MTestHarness
+	 * @generated
+	 */
+	public Adapter createTestHarnessAdapter() {
 		return null;
 	}
 

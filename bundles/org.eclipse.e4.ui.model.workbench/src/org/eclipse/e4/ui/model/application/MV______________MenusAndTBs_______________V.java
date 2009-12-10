@@ -13,13 +13,13 @@ package org.eclipse.e4.ui.model.application;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>View Stack</b></em>'.
+ * A representation of the model object '<em><b>VMenus And TBs V</b></em>'.
  * <!-- end-user-doc -->
  *
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getViewStack()
- * @model
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getV______________MenusAndTBs_______________V()
+ * @model interface="true" abstract="true"
  * @generated
  */
-public interface MViewStack extends MElementContainer<MView>, MVSCElement, MUIElement {
-} // MViewStack
+public interface MV______________MenusAndTBs_______________V {
+} // MV______________MenusAndTBs_______________V
