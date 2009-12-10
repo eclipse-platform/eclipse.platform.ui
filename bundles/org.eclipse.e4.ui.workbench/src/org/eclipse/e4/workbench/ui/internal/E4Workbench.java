@@ -109,6 +109,10 @@ public class E4Workbench implements IWorkbench {
 			cs.defineCommand(id, name, null, cat, parms);
 		}
 
+		// Add model items described in the model extension point
+		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
+		extProcessor.addModelExtensions();
+
 		// Do a top level processHierarchy for the application?
 		Workbench.processHierarchy(appElement);
 	}
