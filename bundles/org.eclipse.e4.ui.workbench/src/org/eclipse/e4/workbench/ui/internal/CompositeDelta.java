@@ -11,25 +11,34 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
+import java.util.LinkedList;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.e4.workbench.modeling.ModelDelta;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EStructuralFeature;
+import org.eclipse.e4.workbench.modeling.IDelta;
 
-public class EMFModelDeltaSet extends ModelDelta {
+public class CompositeDelta implements IDelta {
 
-	private final EStructuralFeature feature;
+	private final Object object;
 
-	public EMFModelDeltaSet(Object object, EStructuralFeature feature, Object value) {
-		super(object, feature.getName(), value);
-		this.feature = feature;
+	private final LinkedList<IDelta> deltas = new LinkedList<IDelta>();
+
+	public CompositeDelta(Object object) {
+		this.object = object;
+	}
+
+	public void add(IDelta delta) {
+		deltas.add(delta);
 	}
 
 	public IStatus apply() {
-		EObject eObject = (EObject) getObject();
-		eObject.eSet(feature, getAttributeValue());
+		for (IDelta delta : deltas) {
+			delta.apply();
+		}
 		return Status.OK_STATUS;
+	}
+
+	public Object getObject() {
+		return object;
 	}
 
 }

@@ -25,15 +25,12 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 	}
 
 	public void testApplyDeltasUnfiltered() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setX(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
@@ -43,11 +40,7 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setX(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -59,15 +52,12 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 	}
 
 	public void testApplyDeltasUnfiltered2() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setX(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
@@ -77,11 +67,7 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setX(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -93,15 +79,12 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 	}
 
 	public void testApplyDeltasUnfiltered3() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setX(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
@@ -111,11 +94,7 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setX(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -127,15 +106,12 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 	}
 
 	public void testApplyDeltasFiltered() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setX(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
@@ -145,17 +121,13 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setX(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(100, window.getX());
 
-		service.applyDeltas(deltas, new String[] { ModelReconciler.X_ATTNAME });
+		service.applyDeltas(deltas, new String[] { ModelReconciler.WINDOW_X_ATTNAME });
 
 		assertEquals(100, window.getX());
 	}

@@ -21,16 +21,13 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 
 	public void testUIItem_IconURI_Unmodified() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setName("name");
 		window.setIconURI("iconURI");
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -40,15 +37,9 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setName("name");
-		window.setIconURI("iconURI");
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals("iconURI", window.getIconURI());
 		assertEquals("name", window.getName());
@@ -60,15 +51,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	private void testUIItem_IconURIUnchanged(String iconURI) {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setIconURI(iconURI);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -76,14 +64,9 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setIconURI(iconURI);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(iconURI, window.getIconURI());
 
@@ -105,15 +88,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	private void testUIItem_IconURI(String before, String after) {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setIconURI(before);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -123,11 +103,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object serializedState = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setIconURI(before);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
@@ -180,16 +156,13 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	public void testUIItem_Tooltip_Unmodified() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setName("name");
 		window.setTooltip("toolTip");
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -199,12 +172,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object serializedState = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setName("name");
-		window.setTooltip("toolTip");
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
@@ -219,30 +187,22 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	private void testUIItem_TooltipUnchanged(String toolTip) {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setTooltip(toolTip);
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
+		saveModel();
+
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setTooltip(toolTip);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(toolTip, window.getTooltip());
 
@@ -264,15 +224,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	private void testUIItem_Tooltip(String before, String after) {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setTooltip(before);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -282,14 +239,9 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setTooltip(before);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(before, window.getTooltip());
 
@@ -339,16 +291,13 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	public void testUIItem_Name_Unmodified() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setName("name");
 		window.setTooltip("toolTip");
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -358,15 +307,9 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setName("name");
-		window.setTooltip("toolTip");
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals("toolTip", window.getTooltip());
 		assertEquals("name", window.getName());
@@ -378,15 +321,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	private void testUIItem_NameUnchanged(String name) {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setName(name);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -394,14 +334,9 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setName(name);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(name, window.getName());
 
@@ -423,15 +358,12 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 	}
 
 	private void testUIItem_Name(String before, String after) {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setName(before);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -441,14 +373,9 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setName(before);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(before, window.getName());
 

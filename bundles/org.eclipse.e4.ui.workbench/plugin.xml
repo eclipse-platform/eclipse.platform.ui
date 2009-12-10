@@ -23,4 +23,11 @@
          </adapter>
       </factory>
    </extension>
+   <extension
+         point="org.eclipse.emf.ecore.extension_parser">
+      <parser
+            class="org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory"
+            type="e4xmi">
+      </parser>
+   </extension>
 </plugin>

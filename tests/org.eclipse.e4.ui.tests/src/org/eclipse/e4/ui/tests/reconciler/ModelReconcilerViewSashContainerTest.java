@@ -25,44 +25,29 @@ public abstract class ModelReconcilerViewSashContainerTest extends
 		ModelReconcilerTest {
 
 	public void testViewSashContainer_Children_Add() {
-		String applicationId = createId();
-		String windowId = createId();
-		String viewSashContainerId = createId();
-		String viewStackId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MViewSashContainer viewSashContainer = MApplicationFactory.eINSTANCE
 				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
 		window.getChildren().add(viewSashContainer);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
 		MViewStack viewStack = MApplicationFactory.eINSTANCE.createViewStack();
-		viewStack.setId(viewStackId);
 		viewSashContainer.getChildren().add(viewStack);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		viewSashContainer = (MViewSashContainer) window.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		viewSashContainer = MApplicationFactory.eINSTANCE
-				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
-		window.getChildren().add(viewSashContainer);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, viewSashContainer.getChildren().size());
 
@@ -70,30 +55,22 @@ public abstract class ModelReconcilerViewSashContainerTest extends
 
 		assertEquals(1, viewSashContainer.getChildren().size());
 
-		viewStack = (MViewStack) viewSashContainer.getChildren().get(0);
-		assertEquals(viewStackId, viewStack.getId());
+		assertNotNull(viewSashContainer.getChildren().get(0));
 	}
 
 	public void testViewStack_Children_Remove() {
-		String applicationId = createId();
-		String windowId = createId();
-		String viewSashContainerId = createId();
-		String viewStackId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MViewSashContainer viewSashContainer = MApplicationFactory.eINSTANCE
 				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
 		window.getChildren().add(viewSashContainer);
 
 		MViewStack viewStack = MApplicationFactory.eINSTANCE.createViewStack();
-		viewStack.setId(viewStackId);
 		viewSashContainer.getChildren().add(viewStack);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -103,26 +80,14 @@ public abstract class ModelReconcilerViewSashContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		viewSashContainer = (MViewSashContainer) window.getChildren().get(0);
+		viewStack = (MViewStack) viewSashContainer.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		viewSashContainer = MApplicationFactory.eINSTANCE
-				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
-		window.getChildren().add(viewSashContainer);
-
-		viewStack = MApplicationFactory.eINSTANCE.createViewStack();
-		viewStack.setId(viewStackId);
-		viewSashContainer.getChildren().add(viewStack);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, viewSashContainer.getChildren().size());
 		assertEquals(viewStack, viewSashContainer.getChildren().get(0));
-		assertEquals(viewStackId, viewStack.getId());
 
 		applyAll(deltas);
 

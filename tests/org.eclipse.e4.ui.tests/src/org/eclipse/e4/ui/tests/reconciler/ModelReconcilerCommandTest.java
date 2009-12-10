@@ -22,16 +22,13 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 
 	private void testCommand_CommandName(String before, String after) {
-		String applicationId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		command.setCommandName(before);
 		application.getCommands().add(command);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -41,15 +38,9 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		command.setCommandName(before);
-		application.getCommands().add(command);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(before, command.getCommandName());
 
@@ -99,15 +90,12 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 	}
 
 	private void testCommand_Description(String before, String after) {
-		String applicationId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		command.setDescription(before);
 		application.getCommands().add(command);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -117,14 +105,9 @@ public abstract class ModelReconcilerCommandTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		command.setDescription(before);
-		application.getCommands().add(command);
+		command = application.getCommands().get(0);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(before, command.getDescription());
 

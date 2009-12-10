@@ -25,10 +25,9 @@ public abstract class ModelReconcilerBindingContainerTest extends
 
 	private void testBindingContainer_Add_KeyBinding(String keySequence)
 			throws Exception {
-		String applicationId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -41,10 +40,8 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, application.getBindings().size());
 
@@ -72,15 +69,14 @@ public abstract class ModelReconcilerBindingContainerTest extends
 
 	private void testBindingContainer_Remove_KeyBinding(String keySequence)
 			throws Exception {
-		String applicationId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
 		keyBinding.setKeySequence(keySequence);
 		application.getBindings().add(keyBinding);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -90,14 +86,8 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
 
-		keyBinding = MApplicationFactory.eINSTANCE.createKeyBinding();
-		keyBinding.setKeySequence(keySequence);
-		application.getBindings().add(keyBinding);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getBindings().size());
 
@@ -126,15 +116,12 @@ public abstract class ModelReconcilerBindingContainerTest extends
 
 	private void testBindingContainer_Add_BoundKeyBinding(String keySequence)
 			throws Exception {
-		String applicationId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -148,14 +135,9 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, application.getBindings().size());
 
@@ -185,14 +167,9 @@ public abstract class ModelReconcilerBindingContainerTest extends
 
 	private void testBindingContainer_Remove_BoundKeyBinding(String keySequence)
 			throws Exception {
-		String applicationId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
@@ -200,6 +177,8 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		keyBinding.setKeySequence(keySequence);
 		keyBinding.setCommand(command);
 		application.getBindings().add(keyBinding);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -209,19 +188,9 @@ public abstract class ModelReconcilerBindingContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
-
-		keyBinding = MApplicationFactory.eINSTANCE.createKeyBinding();
-		keyBinding.setKeySequence(keySequence);
-		keyBinding.setCommand(command);
-		application.getBindings().add(keyBinding);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getBindings().size());
 

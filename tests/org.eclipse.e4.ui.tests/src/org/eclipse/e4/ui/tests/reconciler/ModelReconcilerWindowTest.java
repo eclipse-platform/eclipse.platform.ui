@@ -22,54 +22,13 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 
-	// public void testWindow() {
-	// String applicationId = createId();
-	// String windowId = createId();
-	//
-	// MApplication application = createApplication();
-	// application.setId(applicationId);
-	//
-	// MWindow window = createWindow(application);
-	// window.setId(windowId);
-	// window.setX(100);
-	//
-	// XMLResourceImpl resource = new XMLResourceImpl() {
-	// @Override
-	// protected boolean useUUIDs() {
-	// return true;
-	// }
-	// };
-	// resource.getContents().add((EObject) application);
-	//
-	// String id = resource.getID((EObject) application);
-	// System.out.print(id + "\t");
-	// id = resource.getID((EObject) window);
-	// System.out.println(id);
-	//
-	// resource = new XMLResourceImpl() {
-	// @Override
-	// protected boolean useUUIDs() {
-	// return true;
-	// }
-	// };
-	// resource.getContents().add((EObject) application);
-	//
-	// id = resource.getID((EObject) application);
-	// System.out.print(id + "\t");
-	// id = resource.getID((EObject) window);
-	// System.out.println(id);
-	// }
-
 	public void testWindow_X() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setX(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -79,11 +38,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setX(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -95,15 +50,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 	}
 
 	public void testWindow_Y() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setY(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -113,11 +65,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setY(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -129,15 +77,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 	}
 
 	public void testWindow_Width() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setWidth(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -147,11 +92,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setWidth(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -163,15 +104,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 	}
 
 	public void testWindow_Height() {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setHeight(100);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -181,11 +119,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setHeight(100);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -197,30 +131,22 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 	}
 
 	public void testMenu_Set() {
-		String applicationId = createId();
-		String windowId = createId();
-		String menuId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
 		window.setMainMenu(menu);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
+		window = application.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -230,23 +156,17 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 
 		menu = window.getMainMenu();
 		assertNotNull(menu);
-		assertEquals(menuId, menu.getId());
 	}
 
 	public void testMenu_Unset() {
-		String applicationId = createId();
-		String windowId = createId();
-		String menuId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
 		window.setMainMenu(menu);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -256,19 +176,12 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
-		window.setMainMenu(menu);
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(menu, window.getMainMenu());
-		assertEquals(menuId, window.getMainMenu().getId());
 
 		applyAll(deltas);
 
@@ -276,20 +189,15 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 	}
 
 	private void testMenu_Visible(boolean before, boolean after) {
-		String applicationId = createId();
-		String windowId = createId();
-		String menuId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
 		menu.setToBeRendered(before);
 		window.setMainMenu(menu);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -299,15 +207,8 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
-		menu.setToBeRendered(before);
-		window.setMainMenu(menu);
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 

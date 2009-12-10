@@ -25,48 +25,31 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 
 	public void testPartMenu_Children_Add() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-		String menuId = createId();
-		String menuItemId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId(partId);
 		window.getChildren().add(part);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
 		part.getMenus().add(menu);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
 		MMenuItem menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
-		menuItem.setId(menuItemId);
 		menu.getChildren().add(menuItem);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId(partId);
-		window.getChildren().add(part);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
-		part.getMenus().add(menu);
+		part = (MPart) window.getChildren().get(0);
+		menu = part.getMenus().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -75,35 +58,23 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 		applyAll(deltas);
 
 		assertEquals(1, menu.getChildren().size());
-
-		menuItem = menu.getChildren().get(0);
-		assertEquals(menuItemId, menuItem.getId());
 	}
 
 	public void testPartMenu_Children_Remove() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-		String menuId = createId();
-		String menuItemId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId(partId);
 		window.getChildren().add(part);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
 		part.getMenus().add(menu);
 
 		MMenuItem menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
-		menuItem.setId(menuItemId);
 		menu.getChildren().add(menuItem);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -113,29 +84,18 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
+		menu = part.getMenus().get(0);
 
-		part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId(partId);
-		window.getChildren().add(part);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
-		part.getMenus().add(menu);
-
-		menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
-		menuItem.setId(menuItemId);
-		menu.getChildren().add(menuItem);
+		menuItem = menu.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, menu.getChildren().size());
 
-		menuItem = menu.getChildren().get(0);
-		assertEquals(menuItemId, menuItem.getId());
+		assertEquals(menuItem, menu.getChildren().get(0));
 
 		applyAll(deltas);
 

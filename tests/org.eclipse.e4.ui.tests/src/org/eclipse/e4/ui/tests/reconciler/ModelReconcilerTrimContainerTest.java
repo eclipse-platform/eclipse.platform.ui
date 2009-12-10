@@ -26,23 +26,17 @@ public abstract class ModelReconcilerTrimContainerTest extends
 
 	private void testTrimContainer_Horizontal(boolean applicationState,
 			boolean userChange, boolean newApplicationState) {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String partSashContainerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
 				.createWindowTrim();
-		windowTrim.setId(partSashContainerId);
 		window.getChildren().add(windowTrim);
 
 		windowTrim.setHorizontal(applicationState);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -52,19 +46,12 @@ public abstract class ModelReconcilerTrimContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		windowTrim = MApplicationFactory.eINSTANCE.createWindowTrim();
-		windowTrim.setId(partSashContainerId);
-		window.getChildren().add(windowTrim);
+		window = application.getChildren().get(0);
+		windowTrim = (MWindowTrim) window.getChildren().get(0);
 
 		windowTrim.setHorizontal(newApplicationState);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(newApplicationState, windowTrim.isHorizontal());
 
@@ -113,23 +100,17 @@ public abstract class ModelReconcilerTrimContainerTest extends
 
 	private void testTrimContainer_Side(SideValue applicationState,
 			SideValue userChange, SideValue newApplicationState) {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String partSashContainerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
 				.createWindowTrim();
-		windowTrim.setId(partSashContainerId);
 		window.getChildren().add(windowTrim);
 
 		windowTrim.setSide(applicationState);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -139,19 +120,12 @@ public abstract class ModelReconcilerTrimContainerTest extends
 		Object serialize = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		windowTrim = MApplicationFactory.eINSTANCE.createWindowTrim();
-		windowTrim.setId(partSashContainerId);
-		window.getChildren().add(windowTrim);
+		window = application.getChildren().get(0);
+		windowTrim = (MWindowTrim) window.getChildren().get(0);
 
 		windowTrim.setSide(newApplicationState);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				serialize);
+		Collection<ModelDelta> deltas = constructDeltas(application, serialize);
 
 		assertEquals(newApplicationState, windowTrim.getSide());
 

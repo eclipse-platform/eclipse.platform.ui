@@ -23,13 +23,8 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerKeyBindingTest extends ModelReconcilerTest {
 
 	private void testKeySequence_KeySequence(String before, String after) {
-		String applicationId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
@@ -37,6 +32,8 @@ public abstract class ModelReconcilerKeyBindingTest extends ModelReconcilerTest 
 		keyBinding.setKeySequence(before);
 		keyBinding.setCommand(command);
 		application.getBindings().add(keyBinding);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -46,18 +43,10 @@ public abstract class ModelReconcilerKeyBindingTest extends ModelReconcilerTest 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
+		command = application.getCommands().get(0);
+		keyBinding = application.getBindings().get(0);
 
-		keyBinding = MApplicationFactory.eINSTANCE.createKeyBinding();
-		keyBinding.setKeySequence(before);
-		keyBinding.setCommand(command);
-		application.getBindings().add(keyBinding);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(before, keyBinding.getKeySequence());
 
@@ -98,7 +87,11 @@ public abstract class ModelReconcilerKeyBindingTest extends ModelReconcilerTest 
 		testKeySequence_KeySequence("Ctrl+S", "");
 	}
 
-	public void testKeySequence_KeySequence_StringString() {
+	public void testKeySequence_KeySequence_StringStringUnchanged() {
+		testKeySequence_KeySequence("Ctrl+S", "Ctrl+S");
+	}
+
+	public void testKeySequence_KeySequence_StringStringChanged() {
 		testKeySequence_KeySequence("Ctrl+S", "Ctrl+D");
 	}
 

@@ -23,15 +23,14 @@ public abstract class ModelReconcilerKeySequenceTest extends
 		ModelReconcilerTest {
 
 	private void testKeySequence_KeySequence(String before, String after) {
-		String applicationId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
 		keyBinding.setKeySequence(before);
 		application.getBindings().add(keyBinding);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -41,14 +40,9 @@ public abstract class ModelReconcilerKeySequenceTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		keyBinding = application.getBindings().get(0);
 
-		keyBinding = MApplicationFactory.eINSTANCE.createKeyBinding();
-		keyBinding.setKeySequence(before);
-		application.getBindings().add(keyBinding);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(before, keyBinding.getKeySequence());
 

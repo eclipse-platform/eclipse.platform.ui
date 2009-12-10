@@ -9,16 +9,14 @@
  *     IBM Corporation - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.e4.ui.tests.reconciler.xml;
+package org.eclipse.e4.workbench.modeling;
 
-import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.core.runtime.IStatus;
 
-public class IdentifiedXMLModelReconcilerScenarioTest extends
-		XMLModelReconcilerScenarioTest {
+public interface IDelta {
 
-	@Override
-	protected String createId() {
-		return EcoreUtil.generateUUID();
-	}
+	public Object getObject();
+
+	public IStatus apply();
 
 }

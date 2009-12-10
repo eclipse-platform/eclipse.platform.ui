@@ -23,24 +23,20 @@ public abstract class ModelReconcilerApplicationTest extends
 		ModelReconcilerTest {
 
 	public void testApplication_Commands_Add() {
-		String applicationId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		String commandId = createId();
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		command.setCommandName("newCommand");
 		application.getCommands().add(command);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -51,20 +47,16 @@ public abstract class ModelReconcilerApplicationTest extends
 		assertEquals(1, application.getCommands().size());
 
 		command = application.getCommands().get(0);
-		assertEquals(commandId, command.getId());
 		assertEquals("newCommand", command.getCommandName());
 	}
 
 	public void testApplication_Commands_Remove() {
-		String applicationId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -74,17 +66,11 @@ public abstract class ModelReconcilerApplicationTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getCommands().size());
 		command = application.getCommands().get(0);
-		assertEquals(commandId, command.getId());
 
 		applyAll(deltas);
 

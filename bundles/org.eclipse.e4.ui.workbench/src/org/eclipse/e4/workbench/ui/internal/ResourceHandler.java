@@ -27,6 +27,7 @@ import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
+import org.eclipse.e4.workbench.modeling.IDelta;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.URI;
@@ -49,7 +50,7 @@ public class ResourceHandler {
 	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
 	 */
-	private static final boolean RESTORE_VIA_DELTAS = true;
+	private static final boolean RESTORE_VIA_DELTAS = false;
 
 	private File workbenchData;
 	private URI applicationDefinitionInstance;
@@ -150,9 +151,9 @@ public class ResourceHandler {
 					Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 							.parse(file);
 					XMLModelReconciler deltaReconciler = new XMLModelReconciler();
-					Collection<ModelDelta> operations = deltaReconciler.constructDeltas(
-							resource.getContents().get(0), document);
-					for (ModelDelta operation : operations) {
+					Collection<ModelDelta> operations = deltaReconciler.constructDeltas(resource
+							.getContents().get(0), document);
+					for (IDelta operation : operations) {
 						operation.apply();
 					}
 				}

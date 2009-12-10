@@ -13,154 +13,212 @@ package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MContribution;
 
 public abstract class ModelReconciler {
 
 	/**
+	 * Attribute defined by MApplicationElements (value is <code>id</code>).
+	 */
+	public static final String APPLICATIONELEMENT_ID_ATTNAME = MApplicationPackage.eINSTANCE
+			.getApplicationElement_Id().getName();
+
+	/**
 	 * Attribute defined by MApplications (value is <code>commands</code>).
 	 */
-	public static final String COMMANDS_ATTNAME = "commands"; //$NON-NLS-1$
+	public static final String APPLICATION_COMMANDS_ATTNAME = MApplicationPackage.eINSTANCE
+			.getApplication_Commands().getName();
 
 	/**
 	 * Attribute defined by MContributions (value is <code>persistedState</code>).
 	 */
-	public static final String PERSISTEDSTATE_ATTNAME = "persistedState"; //$NON-NLS-1$
+	public static final String CONTRIBUTION_PERSISTEDSTATE_ATTNAME = MApplicationPackage.eINSTANCE
+			.getContribution_PersistedState().getName();
 
 	/**
 	 * Attribute defined by MHandlerContainers (value is <code>handlers</code>).
 	 */
-	public static final String HANDLERS_ATTNAME = "handlers"; //$NON-NLS-1$
+	public static final String HANDLERCONTAINER_HANDLERS_ATTNAME = MApplicationPackage.eINSTANCE
+			.getHandlerContainer_Handlers().getName();
 
 	/**
 	 * Attribute defined by MUIItems (value is <code>name</code>).
 	 */
-	public static final String NAME_ATTNAME = "name"; //$NON-NLS-1$
+	public static final String UIITEM_NAME_ATTNAME = MApplicationPackage.eINSTANCE.getUIItem_Name()
+			.getName();
 
 	/**
 	 * Attribute defined by MUIItems (value is <code>tooltip</code>).
 	 */
-	public static final String TOOLTIP_ATTNAME = "tooltip"; //$NON-NLS-1$
+	public static final String UIITEM_TOOLTIP_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUIItem_Tooltip().getName();
 
 	/**
 	 * Attribute defined by MUIItems (value is <code>iconURI</code>).
 	 */
-	public static final String ICONURI_ATTNAME = "iconURI"; //$NON-NLS-1$
+	public static final String UIITEM_ICONURI_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUIItem_IconURI().getName();
+
+	/**
+	 * Attribute defined by MUIElements (value is <code>toBeRendered</code>).
+	 */
+	public static final String UIELEMENT_TOBERENDERED_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUIElement_ToBeRendered().getName();
 
 	/**
 	 * Attribute defined by MUIElements (value is <code>visible</code>).
 	 */
-	public static final String TOBERENDERED_ATTNAME = "toBeRendered"; //$NON-NLS-1$
+	public static final String UIELEMENT_VISIBLE_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUIElement_Visible().getName();
 
 	/**
 	 * Attribute defined by MUIElements (value is <code>parent</code>).
 	 */
-	public static final String PARENT_ATTNAME = "parent"; //$NON-NLS-1$
+	public static final String UIELEMENT_PARENT_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUIElement_Parent().getName();
 
 	/**
 	 * Attribute defined by MElementContainers (value is <code>children</code>).
 	 */
-	public static final String CHILDREN_ATTNAME = "children"; //$NON-NLS-1$
+	public static final String ELEMENTCONTAINER_CHILDREN_ATTNAME = MApplicationPackage.eINSTANCE
+			.getElementContainer_Children().getName();
 
 	/**
 	 * Attribute defined by MElementContainers (value is <code>activeChild</code>).
 	 */
-	public static final String ACTIVECHILD_ATTNAME = "activeChild"; //$NON-NLS-1$
+	public static final String ELEMENTCONTAINER_ACTIVECHILD_ATTNAME = MApplicationPackage.eINSTANCE
+			.getElementContainer_ActiveChild().getName();
 
 	/**
 	 * Attribute defined by MWindows (value is <code>x</code>).
 	 */
-	public static final String X_ATTNAME = "x"; //$NON-NLS-1$
+	public static final String WINDOW_X_ATTNAME = MApplicationPackage.eINSTANCE.getWindow_X()
+			.getName();
 
 	/**
 	 * Attribute defined by MWindows (value is <code>y</code>).
 	 */
-	public static final String Y_ATTNAME = "y"; //$NON-NLS-1$
+	public static final String WINDOW_Y_ATTNAME = MApplicationPackage.eINSTANCE.getWindow_Y()
+			.getName();
 
 	/**
 	 * Attribute defined by MWindows (value is <code>width</code>).
 	 */
-	public static final String WIDTH_ATTNAME = "width"; //$NON-NLS-1$
+	public static final String WINDOW_WIDTH_ATTNAME = MApplicationPackage.eINSTANCE
+			.getWindow_Width().getName();
 
 	/**
 	 * Attribute defined by MWindows (value is <code>height</code>).
 	 */
-	public static final String HEIGHT_ATTNAME = "height"; //$NON-NLS-1$
+	public static final String WINDOW_HEIGHT_ATTNAME = MApplicationPackage.eINSTANCE
+			.getWindow_Height().getName();
 
 	/**
 	 * Attribute defined by MWindows (value is <code>mainMenu</code>).
 	 */
-	public static final String MAINMENU_ATTNAME = "mainMenu"; //$NON-NLS-1$
+	public static final String WINDOW_MAINMENU_ATTNAME = MApplicationPackage.eINSTANCE
+			.getWindow_MainMenu().getName();
 
 	/**
-	 * Attribute defined by MCommands and MHandledItems (value is <code>commandName</code>).
+	 * Attribute defined by MCommands (value is <code>commandName</code>).
 	 */
-	public static final String COMMANDNAME_ATTNAME = "commandName"; //$NON-NLS-1$
+	public static final String COMMAND_COMMANDNAME_ATTNAME = MApplicationPackage.eINSTANCE
+			.getCommand_CommandName().getName();
 
 	/**
 	 * Attribute defined by MCommands (value is <code>description</code>).
 	 */
-	public static final String DESCRIPTION_ATTNAME = "description"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MKeySequences (value is <code>keySequence</code>).
-	 */
-	public static final String KEYSEQUENCE_ATTNAME = "keySequence"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MParts (value is <code>menus</code>).
-	 */
-	public static final String MENUS_ATTNAME = "menus"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MParts (value is <code>toolbar</code>).
-	 */
-	public static final String TOOLBAR_ATTNAME = "toolbar"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MGenericTiles and MTrimContainers (value is <code>horizontal</code>).
-	 */
-	public static final String HORIZONTAL_ATTNAME = "horizontal"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MGenericTiles (value is <code>weights</code>).
-	 */
-	public static final String WEIGHTS_ATTNAME = "weights"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MTrimContainers (value is <code>side</code>).
-	 */
-	public static final String SIDE_ATTNAME = "side"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MBindingContainers (value is <code>bindings</code>).
-	 */
-	public static final String BINDINGS_ATTNAME = "bindings"; //$NON-NLS-1$
-
-	/**
-	 * Attribute defined by MHandlers and MKeyBindings (value is <code>command</code>).
-	 */
-	public static final String COMMAND_ATTNAME = "command"; //$NON-NLS-1$
+	public static final String COMMAND_DESCRIPTION_ATTNAME = MApplicationPackage.eINSTANCE
+			.getCommand_Description().getName();
 
 	/**
 	 * Attribute defined by MCommands (value is <code>parameters</code>).
 	 */
-	public static final String PARAMETERS_ATTNAME = "parameters"; //$NON-NLS-1$
+	public static final String COMMAND_PARAMETERS_ATTNAME = MApplicationPackage.eINSTANCE
+			.getCommand_Parameters().getName();
+
+	/**
+	 * Attribute defined by MKeySequences (value is <code>keySequence</code>).
+	 */
+	public static final String KEYSEQUENCE_KEYSEQUENCE_ATTNAME = MApplicationPackage.eINSTANCE
+			.getKeySequence_KeySequence().getName();
+
+	/**
+	 * Attribute defined by MParts (value is <code>menus</code>).
+	 */
+	public static final String PART_MENUS_ATTNAME = MApplicationPackage.eINSTANCE.getPart_Menus()
+			.getName();
+
+	/**
+	 * Attribute defined by MParts (value is <code>toolbar</code>).
+	 */
+	public static final String PART_TOOLBAR_ATTNAME = MApplicationPackage.eINSTANCE
+			.getPart_Toolbar().getName();
+
+	/**
+	 * Attribute defined by MGenericTiles (value is <code>horizontal</code>).
+	 * 
+	 * @see #TRIMCONTAINER_HORIZONTAL_ATTNAME
+	 */
+	public static final String GENERICTILE_HORIZONTAL_ATTNAME = MApplicationPackage.eINSTANCE
+			.getGenericTile_Horizontal().getName();
+
+	/**
+	 * Attribute defined by MGenericTiles (value is <code>weights</code>).
+	 */
+	public static final String GENERICTILE_WEIGHTS_ATTNAME = MApplicationPackage.eINSTANCE
+			.getGenericTile_Weights().getName();
+
+	/**
+	 * Attribute defined by MTrimContainers (value is <code>horizontal</code>).
+	 * 
+	 * @see #GENERICTILE_HORIZONTAL_ATTNAME
+	 */
+	public static final String TRIMCONTAINER_HORIZONTAL_ATTNAME = MApplicationPackage.eINSTANCE
+			.getTrimContainer_Horizontal().getName();
+
+	/**
+	 * Attribute defined by MTrimContainers (value is <code>side</code>).
+	 */
+	public static final String TRIMCONTAINER_SIDE_ATTNAME = MApplicationPackage.eINSTANCE
+			.getTrimContainer_Side().getName();
+
+	/**
+	 * Attribute defined by MBindingContainers (value is <code>bindings</code>).
+	 */
+	public static final String BINDINGCONTAINER_BINDINGS_ATTNAME = MApplicationPackage.eINSTANCE
+			.getBindingContainer_Bindings().getName();
+
+	/**
+	 * Attribute defined by MHandlers (value is <code>command</code>).
+	 */
+	public static final String HANDLER_COMMAND_ATTNAME = MApplicationPackage.eINSTANCE
+			.getHandler_Command().getName();
+
+	/**
+	 * Attribute defined by MKeyBindings (value is <code>command</code>).
+	 */
+	public static final String KEYBINDING_COMMAND_ATTNAME = MApplicationPackage.eINSTANCE
+			.getKeyBinding_Command().getName();
 
 	/**
 	 * Attribute defined by MItems (value is <code>enabled</code>).
 	 */
-	public static final String ENABLED_ATTNAME = "enabled"; //$NON-NLS-1$
+	public static final String ITEM_ENABLED_ATTNAME = MApplicationPackage.eINSTANCE
+			.getItem_Enabled().getName();
 
 	/**
 	 * Attribute defined by MItems (value is <code>selected</code>).
 	 */
-	public static final String SELECTED_ATTNAME = "selected"; //$NON-NLS-1$
+	public static final String ITEM_SELECTED_ATTNAME = MApplicationPackage.eINSTANCE
+			.getItem_Selected().getName();
 
 	/**
 	 * Attribute defined by MItems (value is <code>separator</code>).
 	 */
-	public static final String SEPARATOR_ATTNAME = "separator"; //$NON-NLS-1$
+	public static final String ITEM_SEPARATOR_ATTNAME = MApplicationPackage.eINSTANCE
+			.getItem_Separator().getName();
 
 	/**
 	 * Begin recording changes on the specified object. All changes contained within child elements

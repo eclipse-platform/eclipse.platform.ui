@@ -25,21 +25,16 @@ public abstract class ModelReconcilerContributionTest extends
 
 	private void testContribution_PersistedState(String applicationState,
 			String userChange, String newApplicationState) {
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
-		window.setId(windowId);
 		application.getChildren().add(window);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId(partId);
 		part.setPersistedState(applicationState);
 		window.getChildren().add(part);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -49,19 +44,11 @@ public abstract class ModelReconcilerContributionTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = MApplicationFactory.eINSTANCE.createWindow();
-		window.setId(windowId);
-		application.getChildren().add(window);
-
-		part = MApplicationFactory.eINSTANCE.createPart();
-		part.setId(partId);
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
 		part.setPersistedState(newApplicationState);
-		window.getChildren().add(part);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(newApplicationState, part.getPersistedState());
 

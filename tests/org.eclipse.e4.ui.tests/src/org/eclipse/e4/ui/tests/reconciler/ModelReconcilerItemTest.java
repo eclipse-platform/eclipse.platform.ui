@@ -25,27 +25,19 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 	private void testItem_Enabled(boolean applicationState, boolean userChange,
 			boolean newApplicationState) {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String menuId = createId();
-		String menuItemId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
 		MMenuItem item = MApplicationFactory.eINSTANCE.createMenuItem();
-		menu.setId(menuId);
-		item.setId(menuItemId);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
 
 		item.setEnabled(applicationState);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -55,23 +47,13 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		item = MApplicationFactory.eINSTANCE.createMenuItem();
-		menu.setId(menuId);
-		item.setId(menuItemId);
-
-		menu.getChildren().add(item);
-		window.setMainMenu(menu);
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+		item = menu.getChildren().get(0);
 
 		item.setEnabled(newApplicationState);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(newApplicationState, item.isEnabled());
 
@@ -120,27 +102,19 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 	private void testItem_Selected(boolean applicationState,
 			boolean userChange, boolean newApplicationState) {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String menuId = createId();
-		String menuItemId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
 		MMenuItem item = MApplicationFactory.eINSTANCE.createMenuItem();
-		menu.setId(menuId);
-		item.setId(menuItemId);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
 
 		item.setSelected(applicationState);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -150,23 +124,16 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		item = MApplicationFactory.eINSTANCE.createMenuItem();
-		menu.setId(menuId);
-		item.setId(menuItemId);
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+		item = menu.getChildren().get(0);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
 
 		item.setSelected(newApplicationState);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(newApplicationState, item.isSelected());
 
@@ -215,22 +182,12 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 	private void testItem_Separator(boolean applicationState,
 			boolean userChange, boolean newApplicationState) {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String menuId = createId();
-		String menuItemId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
 		MMenuItem item = MApplicationFactory.eINSTANCE.createMenuItem();
-		menu.setId(menuId);
-		item.setId(menuItemId);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
@@ -242,26 +199,21 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 
 		item.setSeparator(userChange);
 
+		saveModel();
+
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		item = MApplicationFactory.eINSTANCE.createMenuItem();
-		menu.setId(menuId);
-		item.setId(menuItemId);
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+		item = menu.getChildren().get(0);
 
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
 
 		item.setSeparator(newApplicationState);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(newApplicationState, item.isSeparator());
 

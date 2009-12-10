@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
@@ -36,21 +37,16 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	 * </ol>
 	 */
 	public void testPart_Name_NameChangeFromUser_UserWins() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setName("name");
-		part.setId(partId);
 
 		window.getChildren().add(part);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -60,14 +56,10 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object serializedState = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		part = MApplicationFactory.eINSTANCE.createPart();
+		part = (MPart) window.getChildren().get(0);
 		part.setName("name2");
-		part.setId(partId);
 
 		window.getChildren().add(part);
 
@@ -92,22 +84,17 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	 * </ol>
 	 */
 	public void testPart_Visibility_TrueFalseFromApplication_ApplicationWins() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setName("name");
-		part.setId(partId);
 		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -117,20 +104,14 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		part = MApplicationFactory.eINSTANCE.createPart();
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
 		part.setName("name2");
-		part.setId(partId);
 		part.setToBeRendered(false);
 
 		window.getChildren().add(part);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertFalse(part.isToBeRendered());
 		assertEquals("name2", part.getName());
@@ -154,22 +135,17 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	 * </ol>
 	 */
 	public void testPart_Visibility_TrueFalseFromUser_UserWins() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setName("name");
-		part.setId(partId);
 		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -179,15 +155,10 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object serializedState = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		part = MApplicationFactory.eINSTANCE.createPart();
+		part = (MPart) window.getChildren().get(0);
 		part.setName("name2");
-		part.setId(partId);
-		part.setToBeRendered(true);
 
 		window.getChildren().add(part);
 
@@ -205,32 +176,22 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	}
 
 	public void testPart_Addition_PlacedAfterHiddenPart_UserWins() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partAId = createId();
-		String partBId = createId();
-		String partCId = createId();
-		String partDId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId(partAId);
 		partA.setToBeRendered(true);
 		MPart partB = MApplicationFactory.eINSTANCE.createPart();
-		partB.setId(partBId);
 		partB.setToBeRendered(true);
 		MPart partD = MApplicationFactory.eINSTANCE.createPart();
-		partD.setId(partDId);
 		partD.setToBeRendered(true);
 
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
 		window.getChildren().add(partD);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -240,28 +201,16 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object serializedState = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
+		partA = (MPart) window.getChildren().get(0);
+		partB = (MPart) window.getChildren().get(1);
+		partD = (MPart) window.getChildren().get(2);
 
-		partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId(partAId);
-		partA.setToBeRendered(true);
-		partB = MApplicationFactory.eINSTANCE.createPart();
-		partB.setId(partBId);
-		partB.setToBeRendered(true);
 		MPart partC = MApplicationFactory.eINSTANCE.createPart();
-		partC.setId(partCId);
 		partC.setToBeRendered(true);
-		partD = MApplicationFactory.eINSTANCE.createPart();
-		partD.setId(partDId);
-		partD.setToBeRendered(true);
 
-		window.getChildren().add(partA);
-		window.getChildren().add(partB);
-		window.getChildren().add(partC);
-		window.getChildren().add(partD);
+		window.getChildren().add(2, partC);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
 				serializedState);
@@ -289,29 +238,19 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	 * </ol>
 	 */
 	public void testPart_Addition_PlacedAfterRemovedPart_UserWins() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partAId = createId();
-		String partBId = createId();
-		String partCId = createId();
-		String partDId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId(partAId);
 		MPart partB = MApplicationFactory.eINSTANCE.createPart();
-		partB.setId(partBId);
 		MPart partC = MApplicationFactory.eINSTANCE.createPart();
-		partC.setId(partCId);
 
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
 		window.getChildren().add(partC);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -321,27 +260,16 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
+		partA = (MPart) window.getChildren().get(0);
+		partB = (MPart) window.getChildren().get(1);
+		partC = (MPart) window.getChildren().get(2);
 
-		partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId(partAId);
-		partB = MApplicationFactory.eINSTANCE.createPart();
-		partB.setId(partBId);
-		partC = MApplicationFactory.eINSTANCE.createPart();
-		partC.setId(partCId);
 		MPart partD = MApplicationFactory.eINSTANCE.createPart();
-		partD.setId(partDId);
-
-		window.getChildren().add(partA);
-		window.getChildren().add(partB);
-		window.getChildren().add(partC);
 		window.getChildren().add(partD);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		EList<MPSCElement> children = window.getChildren();
 		assertEquals(4, children.size());
@@ -369,25 +297,17 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	 * </ol>
 	 */
 	public void testPart_Addition_PlacedAfterRemovedPart_UserWins2() {
-		String applicationId = createId();
-		String windowId = createId();
-		String partAId = createId();
-		String partBId = createId();
-		String partCId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId(partAId);
 		MPart partB = MApplicationFactory.eINSTANCE.createPart();
-		partB.setId(partBId);
 
 		window.getChildren().add(partA);
 		window.getChildren().add(partB);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -398,20 +318,12 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object serializedState = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
+		partA = (MPart) window.getChildren().get(0);
+		partB = (MPart) window.getChildren().get(1);
 
-		partA = MApplicationFactory.eINSTANCE.createPart();
-		partA.setId(partAId);
-		partB = MApplicationFactory.eINSTANCE.createPart();
-		partB.setId(partBId);
 		MPart partC = MApplicationFactory.eINSTANCE.createPart();
-		partC.setId(partCId);
-
-		window.getChildren().add(partA);
-		window.getChildren().add(partB);
 		window.getChildren().add(partC);
 
 		Collection<ModelDelta> deltas = constructDeltas(application,
@@ -429,18 +341,62 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(partC, children.get(0));
 	}
 
-	public void testBindingContainer_NewWithBindings() {
-		String applicationId = createId();
-		String windowId = createId();
-
+	public void testPartStack_Addition_ContainsExistingPart() {
 		MApplication application = createApplication();
-		application.setId(applicationId);
+		MWindow window = createWindow(application);
+
+		MPartStack stack1 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack1);
+
+		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		stack1.getChildren().add(part1);
+		stack1.getChildren().add(part2);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPartStack stack2 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(0, stack2);
+		stack2.getChildren().add(part1);
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		stack1 = (MPartStack) window.getChildren().get(0);
+		part1 = stack1.getChildren().get(0);
+		part2 = stack1.getChildren().get(1);
+
+		Object state = reconciler.serialize();
+		print(state);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(2, stack1.getChildren().size());
+		assertEquals(part1, stack1.getChildren().get(0));
+		assertEquals(part2, stack1.getChildren().get(1));
+
+		applyAll(deltas);
+
+		assertEquals(1, stack1.getChildren().size());
+		assertEquals(part2, stack1.getChildren().get(0));
+
+		assertEquals(2, window.getChildren().size());
+
+		stack2 = (MPartStack) window.getChildren().get(0);
+		assertEquals(part1, stack2.getChildren().get(0));
+	}
+
+	public void testBindingContainer_NewWithBindings() {
+		MApplication application = createApplication();
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MKeyBinding keyBinding = MApplicationFactory.eINSTANCE
 				.createKeyBinding();
@@ -449,10 +405,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, application.getChildren().size());
 		assertEquals(0, application.getBindings().size());
@@ -460,7 +414,6 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		applyAll(deltas);
 
 		window = application.getChildren().get(0);
-		assertEquals(windowId, window.getId());
 		assertEquals(1, window.getBindings().size());
 	}
 
@@ -492,17 +445,10 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 			String userApplicationKeyBindingSequence,
 			String originalWindowKeyBindingSequence,
 			String userWindowKeyBindingSequence) {
-		String applicationId = createId();
-		String windowId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MKeyBinding applicationKeyBinding = MApplicationFactory.eINSTANCE
@@ -519,6 +465,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		application.getBindings().add(applicationKeyBinding);
 		window.getBindings().add(windowKeyBinding);
 
+		saveModel();
+
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
@@ -528,29 +476,14 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-		window = createWindow(application);
-		window.setId(windowId);
+		window = application.getChildren().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
+		command = application.getCommands().get(0);
 
-		applicationKeyBinding = MApplicationFactory.eINSTANCE
-				.createKeyBinding();
-		applicationKeyBinding.setCommand(command);
-		applicationKeyBinding
-				.setKeySequence(originalApplicationKeyBindingSequence);
+		applicationKeyBinding = application.getBindings().get(0);
+		windowKeyBinding = window.getBindings().get(0);
 
-		windowKeyBinding = MApplicationFactory.eINSTANCE.createKeyBinding();
-		windowKeyBinding.setCommand(command);
-		windowKeyBinding.setKeySequence(originalWindowKeyBindingSequence);
-
-		application.getBindings().add(applicationKeyBinding);
-		window.getBindings().add(windowKeyBinding);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(originalApplicationKeyBindingSequence,
 				applicationKeyBinding.getKeySequence());

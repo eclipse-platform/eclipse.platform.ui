@@ -11,10 +11,11 @@
 
 package org.eclipse.e4.workbench.modeling;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IStatus;
 
-public abstract class ModelDelta {
+public abstract class ModelDelta implements IDelta {
 
 	private final Object object;
 	private final String attributeName;
@@ -37,10 +38,32 @@ public abstract class ModelDelta {
 		return attributeName;
 	}
 
-	public Object getAttributeValue() {
-		return attributeValue;
+	protected Object convert(Object value) {
+		if (value instanceof IDelta) {
+			IDelta delta = (IDelta) value;
+			delta.apply();
+			return delta.getObject();
+		} else if (value instanceof List<?>) {
+			List<?> values = (List<?>) value;
+			List<Object> objects = new ArrayList<Object>(values.size());
+			for (int i = 0; i < values.size(); i++) {
+				Object object = values.get(i);
+				if (object instanceof IDelta) {
+					IDelta delta = (IDelta) object;
+					delta.apply();
+					object = delta.getObject();
+				}
+				objects.add(object);
+			}
+
+			return objects;
+		}
+
+		return value;
 	}
 
-	public abstract IStatus apply();
+	public Object getAttributeValue() {
+		return convert(attributeValue);
+	}
 
 }

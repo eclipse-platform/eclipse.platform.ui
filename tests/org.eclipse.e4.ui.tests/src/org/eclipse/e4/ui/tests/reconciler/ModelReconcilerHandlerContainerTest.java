@@ -24,26 +24,21 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		ModelReconcilerTest {
 
 	public void testHandlerContainer_Handlers_Add_UnboundHandler() {
-		String applicationId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		String handlerId = createId();
 		MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
 		application.getHandlers().add(handler);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, application.getHandlers().size());
 
@@ -52,41 +47,30 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		assertEquals(1, application.getHandlers().size());
 
 		handler = application.getHandlers().get(0);
-		assertEquals(handlerId, handler.getId());
 		assertEquals(null, handler.getCommand());
 	}
 
 	public void testHandlerContainer_Handlers_Add_BoundHandler() {
-		String applicationId = createId();
-		String commandId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		String handlerId = createId();
 		MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
 		handler.setCommand(command);
 		application.getHandlers().add(handler);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, application.getHandlers().size());
 
@@ -95,20 +79,16 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		assertEquals(1, application.getHandlers().size());
 
 		handler = application.getHandlers().get(0);
-		assertEquals(handlerId, handler.getId());
 		assertEquals(command, handler.getCommand());
 	}
 
 	public void testHandlerContainer_Handlers_Remove_UnboundHandler() {
-		String applicationId = createId();
-		String handlerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
 		application.getHandlers().add(handler);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -118,19 +98,13 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		handler = application.getHandlers().get(0);
 
-		handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
-		application.getHandlers().add(handler);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getHandlers().size());
 
-		handler = application.getHandlers().get(0);
-		assertEquals(handlerId, handler.getId());
+		assertEquals(handler, application.getHandlers().get(0));
 
 		applyAll(deltas);
 
@@ -138,21 +112,16 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 	}
 
 	public void testHandlerContainer_Handlers_Remove_BoundHandler() {
-		String applicationId = createId();
-		String commandId = createId();
-		String handlerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
 		handler.setCommand(command);
 		application.getHandlers().add(handler);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -162,24 +131,14 @@ public abstract class ModelReconcilerHandlerContainerTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
+		handler = application.getHandlers().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
-
-		handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
-		handler.setCommand(command);
-		application.getHandlers().add(handler);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, application.getHandlers().size());
 
 		handler = application.getHandlers().get(0);
-		assertEquals(handlerId, handler.getId());
 		assertEquals(command, handler.getCommand());
 
 		applyAll(deltas);

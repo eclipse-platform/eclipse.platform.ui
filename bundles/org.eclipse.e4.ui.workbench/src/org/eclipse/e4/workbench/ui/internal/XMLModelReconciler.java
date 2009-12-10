@@ -33,12 +33,14 @@ import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MView;
 import org.eclipse.e4.ui.model.application.MViewStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.SideValue;
+import org.eclipse.e4.workbench.modeling.IDelta;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.EList;
@@ -49,6 +51,8 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.change.ChangeDescription;
 import org.eclipse.emf.ecore.change.FeatureChange;
 import org.eclipse.emf.ecore.change.util.ChangeRecorder;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -62,7 +66,6 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static final String CHANGES_ATTNAME = "changes"; //$NON-NLS-1$
 
 	private static final String CONTAINER_ATTNAME = "container"; //$NON-NLS-1$
-	private static final String ID_ATTNAME = "id"; //$NON-NLS-1$
 
 	private static final String TYPE_ATTNAME = "type"; //$NON-NLS-1$
 
@@ -166,74 +169,78 @@ public class XMLModelReconciler extends ModelReconciler {
 		return deltas;
 	}
 
-	private EStructuralFeature getStructuralFeature(EObject object, String featureName) {
-		if (featureName.equals(ID_ATTNAME)) {
+	private static EStructuralFeature getStructuralFeature(EObject object, String featureName) {
+		if (featureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplicationElement_Id();
-		} else if (featureName.equals(COMMANDS_ATTNAME)) {
+		} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplication_Commands();
-		} else if (featureName.equals(NAME_ATTNAME)) {
+		} else if (featureName.equals(UIITEM_NAME_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIItem_Name();
-		} else if (featureName.equals(TOOLTIP_ATTNAME)) {
+		} else if (featureName.equals(UIITEM_TOOLTIP_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIItem_Tooltip();
-		} else if (featureName.equals(ICONURI_ATTNAME)) {
+		} else if (featureName.equals(UIITEM_ICONURI_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIItem_IconURI();
-		} else if (featureName.equals(TOBERENDERED_ATTNAME)) {
+		} else if (featureName.equals(UIELEMENT_TOBERENDERED_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIElement_ToBeRendered();
-		} else if (featureName.equals(CHILDREN_ATTNAME)) {
+		} else if (featureName.equals(UIELEMENT_VISIBLE_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getUIElement_Visible();
+		} else if (featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getElementContainer_Children();
-		} else if (featureName.equals(PARENT_ATTNAME)) {
+		} else if (featureName.equals(UIELEMENT_PARENT_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIElement_Parent();
-		} else if (featureName.equals(ACTIVECHILD_ATTNAME)) {
+		} else if (featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getElementContainer_ActiveChild();
-		} else if (featureName.equals(X_ATTNAME)) {
+		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_X();
-		} else if (featureName.equals(Y_ATTNAME)) {
+		} else if (featureName.equals(WINDOW_Y_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_Y();
-		} else if (featureName.equals(WIDTH_ATTNAME)) {
+		} else if (featureName.equals(WINDOW_WIDTH_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_Width();
-		} else if (featureName.equals(HEIGHT_ATTNAME)) {
+		} else if (featureName.equals(WINDOW_HEIGHT_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_Height();
-		} else if (featureName.equals(COMMANDNAME_ATTNAME)) {
+		} else if (featureName.equals(COMMAND_COMMANDNAME_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getCommand_CommandName();
-		} else if (featureName.equals(DESCRIPTION_ATTNAME)) {
+		} else if (featureName.equals(COMMAND_DESCRIPTION_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getCommand_Description();
-		} else if (featureName.equals(KEYSEQUENCE_ATTNAME)) {
+		} else if (featureName.equals(KEYSEQUENCE_KEYSEQUENCE_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getKeySequence_KeySequence();
-		} else if (featureName.equals(BINDINGS_ATTNAME)) {
+		} else if (featureName.equals(BINDINGCONTAINER_BINDINGS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getBindingContainer_Bindings();
-		} else if (featureName.equals(COMMAND_ATTNAME)) {
+		} else if (featureName.equals(HANDLER_COMMAND_ATTNAME)) {
 			if (object instanceof MKeyBinding) {
 				return MApplicationPackage.eINSTANCE.getKeyBinding_Command();
 			} else if (object instanceof MHandler) {
 				return MApplicationPackage.eINSTANCE.getHandler_Command();
 			}
 			return MApplicationPackage.eINSTANCE.getHandledItem_Command();
-		} else if (featureName.equals(PARAMETERS_ATTNAME)) {
+		} else if (featureName.equals(COMMAND_PARAMETERS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getKeyBinding_Parameters();
-		} else if (featureName.equals(ENABLED_ATTNAME)) {
+		} else if (featureName.equals(ITEM_ENABLED_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getItem_Enabled();
-		} else if (featureName.equals(SELECTED_ATTNAME)) {
+		} else if (featureName.equals(ITEM_SELECTED_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getItem_Selected();
-		} else if (featureName.equals(SEPARATOR_ATTNAME)) {
+		} else if (featureName.equals(ITEM_SEPARATOR_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getItem_Separator();
-		} else if (featureName.equals(MENUS_ATTNAME)) {
+		} else if (featureName.equals(PART_MENUS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getPart_Menus();
-		} else if (featureName.equals(TOOLBAR_ATTNAME)) {
+		} else if (featureName.equals(PART_TOOLBAR_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getPart_Toolbar();
-		} else if (featureName.equals(HORIZONTAL_ATTNAME)) {
+		} else if (featureName.equals(GENERICTILE_HORIZONTAL_ATTNAME)
+				|| featureName.equals(TRIMCONTAINER_HORIZONTAL_ATTNAME)) {
+			// technically the values are identical
 			if (object instanceof MGenericTile<?>) {
 				return MApplicationPackage.eINSTANCE.getGenericTile_Horizontal();
 			}
 			return MApplicationPackage.eINSTANCE.getTrimContainer_Horizontal();
-		} else if (featureName.equals(SIDE_ATTNAME)) {
+		} else if (featureName.equals(TRIMCONTAINER_SIDE_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getTrimContainer_Side();
-		} else if (featureName.equals(HANDLERS_ATTNAME)) {
+		} else if (featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getHandlerContainer_Handlers();
-		} else if (featureName.equals(PERSISTEDSTATE_ATTNAME)) {
+		} else if (featureName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getContribution_PersistedState();
-		} else if (featureName.equals(MAINMENU_ATTNAME)) {
+		} else if (featureName.equals(WINDOW_MAINMENU_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_MainMenu();
-		} else if (featureName.equals(WEIGHTS_ATTNAME)) {
+		} else if (featureName.equals(GENERICTILE_WEIGHTS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getGenericTile_Weights();
 		}
 		return null;
@@ -282,7 +289,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private boolean constructDeltas(Collection<ModelDelta> deltas, List<Object> references,
 			EObject eObject, Element element) {
-		String id = element.getAttribute(ID_ATTNAME);
+		String id = element.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
 		if (eObject instanceof MApplicationElement || eObject instanceof MKeyBinding) {
 			if (getLocalId(eObject).equals(id)) {
 				constructObjectDeltas(deltas, references, eObject, element);
@@ -394,7 +401,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			NodeList referencedIds = (NodeList) node;
 			for (int j = 0; j < referencedIds.getLength(); j++) {
 				Element reference = (Element) referencedIds.item(j);
-				String referenceId = reference.getAttribute(ID_ATTNAME);
+				String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
 				match = findReference(references, referenceId);
 				if (match != null) {
 					break;
@@ -412,7 +419,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return new EMFModelDeltaSet(eObject, feature, match);
 	}
 
-	private static Object threeWayMerge(List<?> originalReferences, List<?> userReferences,
+	public static Object threeWayMerge(List<?> originalReferences, List<?> userReferences,
 			List<?> currentReferences) {
 		int userSize = userReferences.size();
 		int originalSize = originalReferences.size();
@@ -461,28 +468,28 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		for (int i = 0; i < referencedIds.getLength(); i++) {
 			Element reference = (Element) referencedIds.item(i);
-			String referenceId = reference.getAttribute(ID_ATTNAME);
+			String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
 			Object match = findReference(references, referenceId);
 			if (match != null) {
 				if (reference.getNodeName().equals(REFERENCE_ELEMENT_NAME)) {
-					EObject eKeyBinding = createObject(reference, references);
+					Object eKeyBinding = createObject(reference, references);
 					userReferences.add(eKeyBinding);
 				} else {
 					originalReferences.add(match);
 				}
 			} else {
-				EObject eKeyBinding = createObject(reference, references);
+				Object eKeyBinding = createObject(reference, references);
 				userReferences.add(eKeyBinding);
 			}
 		}
 
 		features.remove(feature);
 
-		Object merged = threeWayMerge(originalReferences, userReferences, currentReferences);
-		return new EMFModelDeltaSet(eObject, feature, merged);
+		return new EMFModelDeltaThreeWayDelayedSet(eObject, feature, originalReferences,
+				userReferences, currentReferences);
 	}
 
-	private EObject createObject(String type) {
+	private static EObject createObject(String type) {
 		if (type.equals(MPart.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createPart();
 		} else if (type.equals(MCommand.class.getSimpleName())) {
@@ -503,12 +510,23 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createToolBar();
 		} else if (type.equals(MMenuItem.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createMenuItem();
+		} else if (type.equals(MPartStack.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createPartStack();
 		}
 		return null;
 	}
 
-	private EObject createObject(String typeName, Element reference, List<Object> references) {
+	private Object getReference(Element element, List<Object> references) {
+		String id = element.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+		if (!id.equals("")) { //$NON-NLS-1$
+			return findReference(references, id);
+		}
+		return createObject(element, references);
+	}
+
+	private IDelta createObject(String typeName, Element reference, List<Object> references) {
 		EObject object = createObject(typeName);
+		CompositeDelta compositeDelta = new CompositeDelta(object);
 
 		NodeList elementAttributes = (NodeList) reference;
 		for (int i = 0; i < elementAttributes.getLength(); i++) {
@@ -519,27 +537,32 @@ public class XMLModelReconciler extends ModelReconciler {
 				if (isSingleReference(attributeName)) {
 					String id = item.getAttribute(attributeName);
 					Object objectReference = findReference(references, id);
-					object.eSet(attributeFeature, objectReference);
+
+					IDelta delta = new EMFModelDeltaSet(object, attributeFeature, objectReference);
+					compositeDelta.add(delta);
 				} else if (isChainedReference(attributeName)) {
 					List<Object> objectReferences = new ArrayList<Object>();
 					NodeList objectReferenceNodes = (NodeList) item;
+
 					for (int j = 0; j < objectReferenceNodes.getLength(); j++) {
 						Node node = objectReferenceNodes.item(j);
-						Object o = createObject((Element) node, references);
+						Object o = getReference((Element) node, references);
 						objectReferences.add(o);
 					}
 
-					object.eSet(attributeFeature, objectReferences);
+					IDelta delta = new EMFModelDeltaSet(object, attributeFeature, objectReferences);
+					compositeDelta.add(delta);
 				} else {
 					object.eSet(attributeFeature, getValue(attributeFeature, item
 							.getAttribute(attributeName)));
 				}
 			}
 		}
-		return object;
+
+		return compositeDelta;
 	}
 
-	private EObject createObject(Element reference, List<Object> references) {
+	private Object createObject(Element reference, List<Object> references) {
 		return createObject(reference.getAttribute(TYPE_ATTNAME), reference, references);
 	}
 
@@ -555,7 +578,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (UNSET_ATTVALUE_TRUE.equals(reference.getAttribute(UNSET_ATTNAME))) {
 				userReferences.add(createObject(reference, references));
 			} else {
-				String referenceId = reference.getAttribute(ID_ATTNAME);
+				String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
 				Object match = findReference(references, referenceId);
 				if (match != null) {
 					if (reference.getNodeName().equals(REFERENCE_ELEMENT_NAME)) {
@@ -569,8 +592,10 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		features.remove(feature);
 
-		Object merged = threeWayMerge(originalReferences, userReferences, currentReferences);
-		return new EMFModelDeltaSet(eObject, feature, merged);
+		// Object merged = threeWayMerge(originalReferences, userReferences, currentReferences);
+		// return new EMFModelDeltaSet(eObject, feature, merged);
+		return new EMFModelDeltaThreeWayDelayedSet(eObject, feature, originalReferences,
+				userReferences, currentReferences);
 	}
 
 	private ModelDelta createAttributeDelta(List<Object> references, EObject eObject,
@@ -583,7 +608,8 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		if (isReference(feature)) {
-			Object reference = findReference(references, node.getAttribute(ID_ATTNAME));
+			Object reference = findReference(references, node
+					.getAttribute(APPLICATIONELEMENT_ID_ATTNAME));
 			return new EMFModelDeltaSet(eObject, feature, reference);
 		}
 
@@ -658,7 +684,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		Class<?> rootInterface = object.getClass().getInterfaces()[0];
 
 		Element modelChange = document.createElement(rootInterface.getSimpleName());
-		modelChange.setAttribute(ID_ATTNAME, id);
+		modelChange.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, id);
 
 		EObject container = object.eContainer();
 		if (!(container instanceof ChangeDescription)) {
@@ -668,9 +694,29 @@ public class XMLModelReconciler extends ModelReconciler {
 		return modelChange;
 	}
 
+	private String getResourceId(EObject object, EObject container) {
+		Resource resource = object.eResource();
+		if (resource instanceof XMLResource) {
+			return ((XMLResource) resource).getID(object);
+		}
+
+		resource = container.eResource();
+		if (resource instanceof XMLResource) {
+			return ((XMLResource) resource).getID(object);
+		}
+
+		return null;
+	}
+
 	private String getLocalId(Object object) {
 		EObject reference = (EObject) object;
-		String id = getModelId(reference);
+
+		String id = getResourceId(reference, reference.eContainer());
+		if (id != null) {
+			return id;
+		}
+
+		id = getModelId(reference);
 		if (id != null) {
 			return id;
 		}
@@ -895,7 +941,7 @@ public class XMLModelReconciler extends ModelReconciler {
 				EObject key = entry.getKey();
 				if (key == rootObject) {
 					for (FeatureChange change : entry.getValue()) {
-						if (change.getFeatureName().equals(COMMANDS_ATTNAME)) {
+						if (change.getFeatureName().equals(APPLICATION_COMMANDS_ATTNAME)) {
 							List<?> commands = (List<?>) change.getValue();
 							for (Object command : commands) {
 								if (command == reference) {
@@ -926,7 +972,7 @@ public class XMLModelReconciler extends ModelReconciler {
 				EObject key = entry.getKey();
 				if (key instanceof MHandlerContainer) {
 					for (FeatureChange change : entry.getValue()) {
-						if (change.getFeatureName().equals(HANDLERS_ATTNAME)) {
+						if (change.getFeatureName().equals(HANDLERCONTAINER_HANDLERS_ATTNAME)) {
 							List<?> commands = (List<?>) change.getValue();
 							for (Object command : commands) {
 								if (command == reference) {
@@ -956,7 +1002,7 @@ public class XMLModelReconciler extends ModelReconciler {
 				EObject key = entry.getKey();
 				if (key instanceof MBindingContainer) {
 					for (FeatureChange change : entry.getValue()) {
-						if (change.getFeatureName().equals(BINDINGS_ATTNAME)) {
+						if (change.getFeatureName().equals(BINDINGCONTAINER_BINDINGS_ATTNAME)) {
 							List<?> commands = (List<?>) change.getValue();
 							for (Object command : commands) {
 								if (command == reference) {
@@ -980,13 +1026,11 @@ public class XMLModelReconciler extends ModelReconciler {
 			EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription
 					.getObjectChanges();
 
-			boolean parentChanged = false;
-
 			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
 				EObject key = entry.getKey();
 				if (key == reference) {
 					for (FeatureChange change : entry.getValue()) {
-						if (change.getFeatureName().equals(PARENT_ATTNAME)) {
+						if (change.getFeatureName().equals(UIELEMENT_PARENT_ATTNAME)) {
 							return (EObject) change.getValue();
 						}
 					}
@@ -999,7 +1043,7 @@ public class XMLModelReconciler extends ModelReconciler {
 					EObject key = entry.getKey();
 					if (key instanceof MPart) {
 						for (FeatureChange change : entry.getValue()) {
-							if (change.getFeatureName().equals(MENUS_ATTNAME)) {
+							if (change.getFeatureName().equals(PART_MENUS_ATTNAME)) {
 								List<?> originalMenus = (List<?>) change.getValue();
 								if (originalMenus.contains(reference)) {
 									return key;
@@ -1017,7 +1061,7 @@ public class XMLModelReconciler extends ModelReconciler {
 					EObject key = entry.getKey();
 					if (key instanceof MWindow) {
 						for (FeatureChange change : entry.getValue()) {
-							if (change.getFeatureName().equals(MAINMENU_ATTNAME)) {
+							if (change.getFeatureName().equals(WINDOW_MAINMENU_ATTNAME)) {
 								Object oldMenu = change.getValue();
 								if (oldMenu == reference) {
 									return key;
@@ -1037,7 +1081,26 @@ public class XMLModelReconciler extends ModelReconciler {
 				}
 			}
 
-			if (!parentChanged) {
+			boolean newElement = false;
+
+			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+				EObject key = entry.getKey();
+				if (key == reference.eContainer()) {
+					for (FeatureChange change : entry.getValue()) {
+						if (change.getFeatureName().equals(ELEMENTCONTAINER_CHILDREN_ATTNAME)) {
+							EList<?> value = (EList<?>) change.getValue();
+							if (value.contains(reference)) {
+								return key;
+							}
+							newElement = true;
+							break;
+						}
+					}
+					break;
+				}
+			}
+
+			if (!newElement) {
 				return reference instanceof MApplication ? changeDescription : reference
 						.eContainer();
 			}
@@ -1085,6 +1148,11 @@ public class XMLModelReconciler extends ModelReconciler {
 			return null;
 		}
 
+		String id = getResourceId(reference, container);
+		if (id != null) {
+			return id;
+		}
+
 		if (changeDescription != null) {
 			return getOriginalId(object, reference, container);
 		}
@@ -1099,7 +1167,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (key == container) {
 				for (FeatureChange change : entry.getValue()) {
 					String featureName = change.getFeatureName();
-					if (featureName.equals(CHILDREN_ATTNAME) && reference instanceof MUIElement) {
+					if (featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME)
+							&& reference instanceof MUIElement) {
 						EList<?> originalChildren = (EList<?>) change.getValue();
 						EList<?> currentChildren = ((MElementContainer<?>) container).getChildren();
 
@@ -1120,7 +1189,7 @@ public class XMLModelReconciler extends ModelReconciler {
 							builder.insert(0, localId);
 							return builder.toString();
 						}
-					} else if (featureName.equals(COMMANDS_ATTNAME)
+					} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)
 							&& reference instanceof MCommand) {
 						EList<?> originalCommands = (EList<?>) change.getValue();
 						EList<?> currentCommands = ((MApplication) container).getCommands();
@@ -1142,7 +1211,7 @@ public class XMLModelReconciler extends ModelReconciler {
 							builder.insert(0, localId);
 							return builder.toString();
 						}
-					} else if (featureName.equals(HANDLERS_ATTNAME)
+					} else if (featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME)
 							&& reference instanceof MHandler) {
 						EList<?> originalHandlers = (EList<?>) change.getValue();
 						EList<?> currentHandlers = ((MHandlerContainer) container).getHandlers();
@@ -1164,7 +1233,7 @@ public class XMLModelReconciler extends ModelReconciler {
 							builder.insert(0, localId);
 							return builder.toString();
 						}
-					} else if (featureName.equals(BINDINGS_ATTNAME)
+					} else if (featureName.equals(BINDINGCONTAINER_BINDINGS_ATTNAME)
 							&& reference instanceof MKeyBinding) {
 						EList<?> originalBindings = (EList<?>) change.getValue();
 						EList<?> currentBindings = ((MBindingContainer) container).getBindings();
@@ -1186,7 +1255,7 @@ public class XMLModelReconciler extends ModelReconciler {
 							builder.insert(0, originalId);
 							return builder.toString();
 						}
-					} else if (featureName.equals(MENUS_ATTNAME) && reference instanceof MMenu) {
+					} else if (featureName.equals(PART_MENUS_ATTNAME) && reference instanceof MMenu) {
 						EList<?> originalMenus = (EList<?>) change.getValue();
 						EList<?> currentMenus = ((MPart) container).getMenus();
 
@@ -1237,7 +1306,8 @@ public class XMLModelReconciler extends ModelReconciler {
 				for (Object reference : references) {
 					Element referenceElement = document
 							.createElement(ORIGINALREFERENCE_ELEMENT_NAME);
-					referenceElement.setAttribute(ID_ATTNAME, getOriginalId(reference));
+					referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME,
+							getOriginalId(reference));
 					featureElement.appendChild(referenceElement);
 				}
 			} else if (isChainedAttribute(featureName)) {
@@ -1256,7 +1326,8 @@ public class XMLModelReconciler extends ModelReconciler {
 				for (Object reference : references) {
 					Element referenceElement = document
 							.createElement(ORIGINALREFERENCE_ELEMENT_NAME);
-					referenceElement.setAttribute(ID_ATTNAME, getOriginalId(reference));
+					referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME,
+							getOriginalId(reference));
 					featureElement.appendChild(referenceElement);
 				}
 			} else {
@@ -1280,7 +1351,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 			populateNewReferenceElement(document, eObject, referenceElement);
 		} else {
-			referenceElement.setAttribute(ID_ATTNAME, id);
+			referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, id);
 		}
 
 		return referenceElement;
@@ -1293,7 +1364,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (!collectedFeature.isTransient() && shouldPersist(collectedFeatureName)) {
 				Element referenceAttributeElement = document.createElement(collectedFeatureName);
 				if (eObject.eIsSet(collectedFeature)) {
-					if (collectedFeatureName.equals(ID_ATTNAME)) {
+					if (collectedFeatureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
 						referenceAttributeElement.setAttribute(collectedFeatureName,
 								getLocalId(eObject));
 					} else {
@@ -1319,38 +1390,40 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 	}
 
-	private boolean isSingleReference(String featureName) {
+	private static boolean isSingleReference(String featureName) {
 		// an ElementContainer has a single reference to its active child
-		return featureName.equals(ACTIVECHILD_ATTNAME) ||
-		// a HandledItem/KeyBinding has a single reference to a command
-				featureName.equals(COMMAND_ATTNAME) ||
+		return featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME) ||
+		// a Handler has a single reference to a command
+				featureName.equals(HANDLER_COMMAND_ATTNAME) ||
+				// a KeyBinding has a single reference to a command
+				featureName.equals(KEYBINDING_COMMAND_ATTNAME) ||
 				// a Window has a single reference to a menu
-				featureName.equals(MAINMENU_ATTNAME) ||
+				featureName.equals(WINDOW_MAINMENU_ATTNAME) ||
 				// a Part has a single reference to a tool bar
-				featureName.equals(TOOLBAR_ATTNAME);
+				featureName.equals(PART_TOOLBAR_ATTNAME);
 	}
 
-	private boolean isChainedReference(String featureName) {
+	private static boolean isChainedReference(String featureName) {
 		// an ElementContainer has multiple children
-		return featureName.equals(CHILDREN_ATTNAME) ||
+		return featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME) ||
 		// a BindingContainer has multiple bindings
-				featureName.equals(BINDINGS_ATTNAME) ||
+				featureName.equals(BINDINGCONTAINER_BINDINGS_ATTNAME) ||
 				// a Part has multiple menus
-				featureName.equals(MENUS_ATTNAME) ||
+				featureName.equals(PART_MENUS_ATTNAME) ||
 				// an Application has multiple commands
-				featureName.equals(COMMANDS_ATTNAME) ||
+				featureName.equals(APPLICATION_COMMANDS_ATTNAME) ||
 				// a HandlerContainer has multiple handlers
-				featureName.equals(HANDLERS_ATTNAME);
+				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME);
 	}
 
 	private boolean isChainedAttribute(String featureName) {
 		// a GenericTile has multiple integer weights
-		return featureName.equals(WEIGHTS_ATTNAME);
+		return featureName.equals(GENERICTILE_WEIGHTS_ATTNAME);
 	}
 
 	private boolean shouldPersist(String featureName) {
 		// parent changes are captured by children changes already
-		return !featureName.equals(PARENT_ATTNAME);
+		return !featureName.equals(UIELEMENT_PARENT_ATTNAME);
 	}
 
 	private ChangeDescription calculateDeltas() {

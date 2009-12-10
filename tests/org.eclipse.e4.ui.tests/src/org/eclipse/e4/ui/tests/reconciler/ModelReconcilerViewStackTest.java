@@ -25,89 +25,58 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerViewStackTest extends ModelReconcilerTest {
 
 	public void testViewStack_Children_Add() {
-		String applicationId = createId();
-		String windowId = createId();
-		String viewSashContainerId = createId();
-		String viewStackId = createId();
-		String viewId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MViewSashContainer viewSashContainer = MApplicationFactory.eINSTANCE
 				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
 		window.getChildren().add(viewSashContainer);
 
 		MViewStack viewStack = MApplicationFactory.eINSTANCE.createViewStack();
-		viewStack.setId(viewStackId);
 		viewSashContainer.getChildren().add(viewStack);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
 		MView view = MApplicationFactory.eINSTANCE.createView();
-		view.setId(viewId);
 		viewStack.getChildren().add(view);
 
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		viewSashContainer = (MViewSashContainer) window.getChildren().get(0);
+		viewStack = (MViewStack) viewSashContainer.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		viewSashContainer = MApplicationFactory.eINSTANCE
-				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
-		window.getChildren().add(viewSashContainer);
-
-		viewStack = MApplicationFactory.eINSTANCE.createViewStack();
-		viewStack.setId(viewStackId);
-		viewSashContainer.getChildren().add(viewStack);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, viewStack.getChildren().size());
 
 		applyAll(deltas);
 
 		assertEquals(1, viewStack.getChildren().size());
-
-		view = viewStack.getChildren().get(0);
-		assertEquals(viewId, view.getId());
+		assertNotNull(viewStack.getChildren().get(0));
 	}
 
 	public void testViewStack_Children_Remove() {
-		String applicationId = createId();
-		String windowId = createId();
-		String viewSashContainerId = createId();
-		String viewStackId = createId();
-		String viewId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MViewSashContainer viewSashContainer = MApplicationFactory.eINSTANCE
 				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
 		window.getChildren().add(viewSashContainer);
 
 		MViewStack viewStack = MApplicationFactory.eINSTANCE.createViewStack();
-		viewStack.setId(viewStackId);
 		viewSashContainer.getChildren().add(viewStack);
 
 		MView view = MApplicationFactory.eINSTANCE.createView();
-		view.setId(viewId);
 		viewStack.getChildren().add(view);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -117,29 +86,15 @@ public abstract class ModelReconcilerViewStackTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		viewSashContainer = (MViewSashContainer) window.getChildren().get(0);
+		viewStack = (MViewStack) viewSashContainer.getChildren().get(0);
+		view = viewStack.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		viewSashContainer = MApplicationFactory.eINSTANCE
-				.createViewSashContainer();
-		viewSashContainer.setId(viewSashContainerId);
-		window.getChildren().add(viewSashContainer);
-
-		viewStack = MApplicationFactory.eINSTANCE.createViewStack();
-		viewStack.setId(viewStackId);
-		viewSashContainer.getChildren().add(viewStack);
-
-		view = MApplicationFactory.eINSTANCE.createView();
-		view.setId(viewId);
-		viewStack.getChildren().add(view);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, viewStack.getChildren().size());
-		assertEquals(viewId, viewStack.getChildren().get(0).getId());
+		assertEquals(view, viewStack.getChildren().get(0));
 
 		applyAll(deltas);
 

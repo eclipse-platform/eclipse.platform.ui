@@ -11,6 +11,8 @@
 
 package org.eclipse.e4.ui.tests.reconciler;
 
+import java.io.File;
+import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Collection;
 
@@ -29,21 +31,43 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
+import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.Resource.Factory;
 import org.w3c.dom.Node;
 
 public abstract class ModelReconcilerTest extends TestCase {
 
 	protected IModelReconcilingService service;
 
+	private File temporaryFile;
+
+	private URI temporaryURI;
+
+	private Factory factory;
+
+	private Resource resource;
+
 	@Override
 	protected void setUp() throws Exception {
 		service = getModelReconcilingService();
+		temporaryFile = new File(System.getProperty("java.io.tmpdir"),
+				getClass().getSimpleName() + ".e4x");
+		temporaryFile.delete();
+		temporaryURI = URI.createFileURI(temporaryFile.getAbsolutePath());
+		factory = new E4XMIResourceFactory();
 		super.setUp();
 	}
 
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();
+		factory = null;
+		temporaryFile.delete();
+		temporaryFile = null;
+		temporaryURI = null;
 		service = null;
 	}
 
@@ -63,10 +87,6 @@ public abstract class ModelReconcilerTest extends TestCase {
 		return reconciler.constructDeltas(object, serializedState);
 	}
 
-	protected String createId() {
-		return null;
-	}
-
 	protected void applyAll(Collection<ModelDelta> deltas) {
 		applyAll(deltas, new String[0]);
 	}
@@ -77,9 +97,29 @@ public abstract class ModelReconcilerTest extends TestCase {
 		assertEquals(IStatus.OK, status.getCode());
 	}
 
+	protected void saveModel() {
+		try {
+			resource.save(null);
+		} catch (IOException e) {
+			throw new RuntimeException(e);
+		}
+	}
+
 	protected MApplication createApplication() {
+		resource = factory.createResource(temporaryURI);
+		if (temporaryFile.exists()) {
+			try {
+				resource.load(null);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+
+			return (MApplication) resource.getContents().get(0);
+		}
+
 		MApplication application = MApplicationFactory.eINSTANCE
 				.createApplication();
+		resource.getContents().add((EObject) application);
 		return application;
 	}
 

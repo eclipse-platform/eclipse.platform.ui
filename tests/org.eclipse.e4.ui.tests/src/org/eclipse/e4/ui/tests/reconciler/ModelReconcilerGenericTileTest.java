@@ -25,21 +25,15 @@ public abstract class ModelReconcilerGenericTileTest extends
 		ModelReconcilerTest {
 
 	public void testGenericTile_Weights_Add() {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String partSashContainerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
 		window.getChildren().add(partSashContainer);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -49,18 +43,10 @@ public abstract class ModelReconcilerGenericTileTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		partSashContainer = (MPartSashContainer) window.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		partSashContainer = MApplicationFactory.eINSTANCE
-				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
-		window.getChildren().add(partSashContainer);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(0, partSashContainer.getWeights().size());
 
@@ -72,22 +58,16 @@ public abstract class ModelReconcilerGenericTileTest extends
 	}
 
 	public void testGenericTile_Weights_Add2() {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String partSashContainerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
 		partSashContainer.getWeights().add(new Integer(50));
 		window.getChildren().add(partSashContainer);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -97,19 +77,10 @@ public abstract class ModelReconcilerGenericTileTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		partSashContainer = (MPartSashContainer) window.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		partSashContainer = MApplicationFactory.eINSTANCE
-				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
-		partSashContainer.getWeights().add(new Integer(50));
-		window.getChildren().add(partSashContainer);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, partSashContainer.getWeights().size());
 		assertEquals(new Integer(50), partSashContainer.getWeights().get(0));
@@ -123,23 +94,17 @@ public abstract class ModelReconcilerGenericTileTest extends
 	}
 
 	public void testGenericTile_Weights_Remove() {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String partSashContainerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
 		window.getChildren().add(partSashContainer);
 
 		partSashContainer.getWeights().add(new Integer(50));
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -149,20 +114,10 @@ public abstract class ModelReconcilerGenericTileTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		partSashContainer = (MPartSashContainer) window.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		partSashContainer = MApplicationFactory.eINSTANCE
-				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
-		window.getChildren().add(partSashContainer);
-
-		partSashContainer.getWeights().add(new Integer(50));
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(1, partSashContainer.getWeights().size());
 		assertEquals(new Integer(50), partSashContainer.getWeights().get(0));
@@ -173,23 +128,17 @@ public abstract class ModelReconcilerGenericTileTest extends
 	}
 
 	public void testGenericTile_Weights_Remove2() {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String partSashContainerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
 		partSashContainer.getWeights().add(new Integer(50));
 		partSashContainer.getWeights().add(new Integer(100));
 		window.getChildren().add(partSashContainer);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -199,20 +148,10 @@ public abstract class ModelReconcilerGenericTileTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		window = application.getChildren().get(0);
+		partSashContainer = (MPartSashContainer) window.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		partSashContainer = MApplicationFactory.eINSTANCE
-				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
-		partSashContainer.getWeights().add(new Integer(50));
-		partSashContainer.getWeights().add(new Integer(100));
-		window.getChildren().add(partSashContainer);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(2, partSashContainer.getWeights().size());
 		assertEquals(new Integer(50), partSashContainer.getWeights().get(0));
@@ -227,23 +166,17 @@ public abstract class ModelReconcilerGenericTileTest extends
 
 	private void testGenericTile_Horizontal(boolean applicationState,
 			boolean userChange, boolean newApplicationState) {
-		String applicationId = createId();
-		String windowId = createId();
-
-		String partSashContainerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
 		window.getChildren().add(partSashContainer);
 
 		partSashContainer.setHorizontal(applicationState);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -253,20 +186,12 @@ public abstract class ModelReconcilerGenericTileTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		partSashContainer = MApplicationFactory.eINSTANCE
-				.createPartSashContainer();
-		partSashContainer.setId(partSashContainerId);
-		window.getChildren().add(partSashContainer);
+		window = application.getChildren().get(0);
+		partSashContainer = (MPartSashContainer) window.getChildren().get(0);
 
 		partSashContainer.setHorizontal(newApplicationState);
 
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(newApplicationState, partSashContainer.isHorizontal());
 

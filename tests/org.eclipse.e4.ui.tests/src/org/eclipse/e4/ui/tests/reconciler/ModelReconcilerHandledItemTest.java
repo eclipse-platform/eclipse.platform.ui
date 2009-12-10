@@ -168,30 +168,21 @@ public abstract class ModelReconcilerHandledItemTest extends
 	// }
 
 	public void testHandledMenuItem_Command_Set() {
-		String applicationId = createId();
-		String windowId = createId();
-		String commandId = createId();
-		String menuId = createId();
-		String handledMenuItemId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
 		window.setMainMenu(menu);
 
 		MHandledMenuItem handledMenuItem = MApplicationFactory.eINSTANCE
 				.createHandledMenuItem();
-		handledMenuItem.setId(handledMenuItemId);
 		menu.getChildren().add(handledMenuItem);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -201,25 +192,13 @@ public abstract class ModelReconcilerHandledItemTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
+		window = application.getChildren().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
+		menu = window.getMainMenu();
+		handledMenuItem = (MHandledMenuItem) menu.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
-		window.setMainMenu(menu);
-
-		handledMenuItem = MApplicationFactory.eINSTANCE.createHandledMenuItem();
-		handledMenuItem.setId(handledMenuItemId);
-		menu.getChildren().add(handledMenuItem);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertNull(handledMenuItem.getCommand());
 
@@ -229,31 +208,22 @@ public abstract class ModelReconcilerHandledItemTest extends
 	}
 
 	public void testHandledMenuItem_Command_Unset() {
-		String applicationId = createId();
-		String windowId = createId();
-		String commandId = createId();
-		String menuId = createId();
-		String handledMenuItemId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
 		window.setMainMenu(menu);
 
 		MHandledMenuItem handledMenuItem = MApplicationFactory.eINSTANCE
 				.createHandledMenuItem();
-		handledMenuItem.setId(handledMenuItemId);
 		handledMenuItem.setCommand(command);
 		menu.getChildren().add(handledMenuItem);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -263,26 +233,13 @@ public abstract class ModelReconcilerHandledItemTest extends
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
+		window = application.getChildren().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
+		menu = window.getMainMenu();
+		handledMenuItem = (MHandledMenuItem) menu.getChildren().get(0);
 
-		window = createWindow(application);
-		window.setId(windowId);
-
-		menu = MApplicationFactory.eINSTANCE.createMenu();
-		menu.setId(menuId);
-		window.setMainMenu(menu);
-
-		handledMenuItem = MApplicationFactory.eINSTANCE.createHandledMenuItem();
-		handledMenuItem.setId(handledMenuItemId);
-		handledMenuItem.setCommand(command);
-		menu.getChildren().add(handledMenuItem);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		assertEquals(command, handledMenuItem.getCommand());
 

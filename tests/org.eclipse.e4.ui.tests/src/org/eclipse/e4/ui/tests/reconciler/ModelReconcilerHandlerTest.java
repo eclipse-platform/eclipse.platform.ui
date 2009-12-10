@@ -23,20 +23,15 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 
 	public void testHandler_Command_Set() {
-		String applicationId = createId();
-		String commandId = createId();
-		String handlerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
 		application.getHandlers().add(handler);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -46,18 +41,10 @@ public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
+		handler = application.getHandlers().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
-
-		handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
-		application.getHandlers().add(handler);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		handler = application.getHandlers().get(0);
 		assertNull(handler.getCommand());
@@ -69,21 +56,16 @@ public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 	}
 
 	public void testHandler_Command_Unset() {
-		String applicationId = createId();
-		String commandId = createId();
-		String handlerId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MCommand command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
 		application.getCommands().add(command);
 
 		MHandler handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
 		handler.setCommand(command);
 		application.getHandlers().add(handler);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -93,19 +75,10 @@ public abstract class ModelReconcilerHandlerTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
+		command = application.getCommands().get(0);
+		handler = application.getHandlers().get(0);
 
-		command = MApplicationFactory.eINSTANCE.createCommand();
-		command.setId(commandId);
-		application.getCommands().add(command);
-
-		handler = MApplicationFactory.eINSTANCE.createHandler();
-		handler.setId(handlerId);
-		handler.setCommand(command);
-		application.getHandlers().add(handler);
-
-		Collection<ModelDelta> deltas = constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
 		handler = application.getHandlers().get(0);
 		assertEquals(command, handler.getCommand());

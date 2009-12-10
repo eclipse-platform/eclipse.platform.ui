@@ -23,21 +23,16 @@ import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
 public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
-	private void testUIElement_Visible(boolean before, boolean after) {
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-
+	private void testUIElement_ToBeRendered(boolean before, boolean after) {
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setToBeRendered(before);
-		part.setId(partId);
 		window.getChildren().add(part);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -47,15 +42,8 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		part = MApplicationFactory.eINSTANCE.createPart();
-		part.setToBeRendered(before);
-		part.setId(partId);
-		window.getChildren().add(part);
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -64,6 +52,53 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		applyAll(deltas);
 
 		assertEquals(after, part.isToBeRendered());
+	}
+
+	public void testUIElement_ToBeRendered_TrueTrue() {
+		testUIElement_ToBeRendered(true, true);
+	}
+
+	public void testUIElement_ToBeRendered_TrueFalse() {
+		testUIElement_ToBeRendered(true, false);
+	}
+
+	public void testUIElement_ToBeRendered_FalseTrue() {
+		testUIElement_ToBeRendered(false, true);
+	}
+
+	public void testUIElement_ToBeRendered_FalseFalse() {
+		testUIElement_ToBeRendered(false, false);
+	}
+
+	private void testUIElement_Visible(boolean before, boolean after) {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setVisible(before);
+		window.getChildren().add(part);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		part.setVisible(after);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(before, part.isVisible());
+
+		applyAll(deltas);
+
+		assertEquals(after, part.isVisible());
 	}
 
 	public void testUIElement_Visible_TrueTrue() {
@@ -86,21 +121,16 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		boolean defaultValue = ((Boolean) MApplicationPackage.eINSTANCE
 				.getUIElement_ToBeRendered().getDefaultValue()).booleanValue();
 
-		String applicationId = createId();
-		String windowId = createId();
-		String partId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		part.setToBeRendered(!defaultValue);
 		part.setName("name");
-		part.setId(partId);
 		window.getChildren().add(part);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -110,16 +140,8 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-
-		part = MApplicationFactory.eINSTANCE.createPart();
-		part.setToBeRendered(!defaultValue);
-		part.setName("name");
-		part.setId(partId);
-		window.getChildren().add(part);
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -133,15 +155,12 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 	}
 
 	private void testUIElement_Widget(Object before, Object after) {
-		String applicationId = createId();
-		String windowId = createId();
-
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setWidget(before);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -151,11 +170,8 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setWidget(before);
+		window = application.getChildren().get(0);
+		before = window.getWidget();
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -183,16 +199,13 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		testUIElement_Widget(new Object(), new Object());
 	}
 
-	private void testUIElement_Factory(Object before, Object after) {
-		String applicationId = createId();
-		String windowId = createId();
-
+	private void testUIElement_Renderer(Object before, Object after) {
 		MApplication application = createApplication();
-		application.setId(applicationId);
 
 		MWindow window = createWindow(application);
-		window.setId(windowId);
 		window.setRenderer(before);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
@@ -202,11 +215,8 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		Object state = reconciler.serialize();
 
 		application = createApplication();
-		application.setId(applicationId);
-
-		window = createWindow(application);
-		window.setId(windowId);
-		window.setRenderer(before);
+		window = application.getChildren().get(0);
+		before = window.getRenderer();
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
@@ -214,23 +224,23 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 
 		applyAll(deltas);
 
-		// no change, 'factory' is a transient attribute
+		// no change, 'renderer' is a transient attribute
 		assertEquals(before, window.getRenderer());
 	}
 
-	public void testUIElement_Factory_NullNull() {
-		testUIElement_Factory(null, null);
+	public void testUIElement_Renderer_NullNull() {
+		testUIElement_Renderer(null, null);
 	}
 
-	public void testUIElement_Factory_NullObject() {
-		testUIElement_Factory(null, new Object());
+	public void testUIElement_Renderer_NullObject() {
+		testUIElement_Renderer(null, new Object());
 	}
 
-	public void testUIElement_Factory_ObjectNull() {
-		testUIElement_Factory(new Object(), null);
+	public void testUIElement_Renderer_ObjectNull() {
+		testUIElement_Renderer(new Object(), null);
 	}
 
-	public void testUIElement_Factory_ObjectObject() {
-		testUIElement_Factory(new Object(), new Object());
+	public void testUIElement_Renderer_ObjectObject() {
+		testUIElement_Renderer(new Object(), new Object());
 	}
 }
