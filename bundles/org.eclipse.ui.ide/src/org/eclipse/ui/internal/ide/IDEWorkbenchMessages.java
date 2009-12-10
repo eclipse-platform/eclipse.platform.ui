@@ -427,16 +427,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_title;
 	public static String WizardNewFolder_internalError;
 
-	// --- New Group ---
-	public static String WizardNewGroupMainPage_groupName;
-	public static String WizardNewGroupMainPage_groupLabel;
-	public static String WizardNewGroupMainPage_description;
-	public static String WizardNewGroupCreationPage_progress;
-	public static String WizardNewGroupCreationPage_errorTitle;
-	public static String WizardNewGroupCreationPage_internalErrorTitle;
-	public static String WizardNewGroupCreationPage_title;
-	public static String WizardNewGroup_internalError;
-
 	// --- New File ---
 	public static String WizardNewFileCreationPage_progress;
 	public static String WizardNewFileCreationPage_errorTitle;
