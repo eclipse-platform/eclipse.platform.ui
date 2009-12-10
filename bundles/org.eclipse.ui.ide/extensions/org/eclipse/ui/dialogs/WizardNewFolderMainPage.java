@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Leon J. Breedt - Added multiple folder creation support (in WizardNewFolderMainPage)
- *     
+ * 
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -225,8 +225,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	 *                if the operation fails
 	 * @exception OperationCanceledException
 	 *                if the operation is canceled
-	 *                
-	 * @deprecated As of 3.3, use {@link #createNewFolder()} which uses the 
+	 * 
+	 * @deprecated As of 3.3, use {@link #createNewFolder()} which uses the
 	 *   undoable operation support.
 	 */
 	protected void createFolder(IFolder folderHandle, IProgressMonitor monitor)
@@ -293,13 +293,13 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	}
 
 	/**
-	 * Creates a container resource handle for the container with the given workspace
-	 * path. This method does not create the resource.
+	 * Creates a container resource handle for the container with the given workspace path. This
+	 * method does not create the resource.
 	 * 
-	 * @param containerPath
-	 *            the path of the container resource to create a handle for
+	 * @param containerPath the path of the container resource to create a handle for
 	 * @return the new container resource handle
 	 * @see #createFolder
+	 * @since 3.6
 	 */
 	protected IContainer createContainerHandle(IPath containerPath) {
 		if (containerPath.segmentCount() == 1)
@@ -656,12 +656,12 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 
 		if ((useDefaultLocation == null) || useDefaultLocation.getSelection()) {
 			IPath containerPath = resourceGroup.getContainerFullPath();
-			if (containerPath != null && 
+			if (containerPath != null &&
 					createContainerHandle(containerPath).isGroup()) {
 				valid = false;
 				setErrorMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkRequiredUnderAGroup);
 			}
-		} 
+		}
 
 		IStatus linkedResourceStatus = null;
 		if (valid) {
