@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.ui.texteditor;
 import java.util.ResourceBundle;
 
 import org.eclipse.osgi.util.NLS;
+
 
 /**
  * Helper class to get NLSed messages.
@@ -112,6 +113,7 @@ final class EditorMessages extends NLS {
 	public static String FindReplace_Status_noMatch_label;
 	public static String FindReplace_Status_replacement_label;
 	public static String FindReplace_Status_replacements_label;
+	public static String FindReplace_Status_wrapped_label;
 	public static String FindNext_Status_noMatch_label;
 	public static String AbstractDocumentProvider_ok;
 	public static String AbstractDocumentProvider_error;

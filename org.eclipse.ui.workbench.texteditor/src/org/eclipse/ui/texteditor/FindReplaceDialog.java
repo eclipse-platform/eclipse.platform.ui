@@ -752,31 +752,34 @@ class FindReplaceDialog extends Dialog {
 	// ------- action invocation ---------------------------------------
 
 	/**
-	 * Returns the position of the specified search string, or <code>-1</code> if the string can
-	 * not be found when searching using the given options.
-	 *
+	 * Returns the position of the specified search string, or <code>-1</code> if the string can not
+	 * be found when searching using the given options.
+	 * 
 	 * @param findString the string to search for
 	 * @param startPosition the position at which to start the search
 	 * @param forwardSearch the direction of the search
-	 * @param caseSensitive	should the search be case sensitive
-	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
+	 * @param caseSensitive should the search be case sensitive
+	 * @param wrapSearch should the search wrap to the start/end if arrived at the end/start
 	 * @param wholeWord does the search string represent a complete word
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * @param beepOnWrap if <code>true</code> beeps when search needs to wrap
-	 * @return the occurrence of the find string following the options or <code>-1</code> if nothing found
+	 * @param beep if <code>true</code> beeps when search does not find a match or needs to wrap
+	 * @return the occurrence of the find string following the options or <code>-1</code> if nothing
+	 *         found
 	 * @since 3.0
 	 */
-	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch, boolean beepOnWrap) {
+	private int findIndex(String findString, int startPosition, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean regExSearch, boolean beep) {
 
 		if (forwardSearch) {
 			int index= findAndSelect(startPosition, findString, true, caseSensitive, wholeWord, regExSearch);
 			if (index == -1) {
-				if (beepOnWrap && okToUse(getShell()))
+
+				if (beep && okToUse(getShell()))
 					getShell().getDisplay().beep();
 
-				if (wrapSearch)
+				if (wrapSearch) {
+					statusMessage(EditorMessages.FindReplace_Status_wrapped_label);
 					index= findAndSelect(-1, findString, true, caseSensitive, wholeWord, regExSearch);
-
+				}
 			}
 			return index;
 		}
@@ -784,11 +787,14 @@ class FindReplaceDialog extends Dialog {
 		// backward
 		int index= startPosition == 0 ? -1 : findAndSelect(startPosition - 1, findString, false, caseSensitive, wholeWord, regExSearch);
 		if (index == -1) {
-			if (beepOnWrap && okToUse(getShell()))
+
+			if (beep && okToUse(getShell()))
 				getShell().getDisplay().beep();
 
-			if (wrapSearch)
+			if (wrapSearch) {
+				statusMessage(EditorMessages.FindReplace_Status_wrapped_label);
 				index= findAndSelect(-1, findString, false, caseSensitive, wholeWord, regExSearch);
+			}
 		}
 		return index;
 	}
@@ -838,20 +844,20 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Returns whether the specified search string can be found using the given options.
-	 *
+	 * 
 	 * @param findString the string to search for
 	 * @param forwardSearch the direction of the search
-	 * @param caseSensitive	should the search be case sensitive
-	 * @param wrapSearch	should the search wrap to the start/end if arrived at the end/start
+	 * @param caseSensitive should the search be case sensitive
+	 * @param wrapSearch should the search wrap to the start/end if arrived at the end/start
 	 * @param wholeWord does the search string represent a complete word
 	 * @param incremental is this an incremental search
 	 * @param regExSearch if <code>true</code> findString represents a regular expression
-	 * @param beepOnWrap if <code>true</code> beeps when search needs to wrap
+	 * @param beep if <code>true</code> beeps when search does not find a match or needs to wrap
 	 * @return <code>true</code> if the search string can be found using the given options
-	 *
+	 * 
 	 * @since 3.0
 	 */
-	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch, boolean beepOnWrap) {
+	private boolean findNext(String findString, boolean forwardSearch, boolean caseSensitive, boolean wrapSearch, boolean wholeWord, boolean incremental, boolean regExSearch, boolean beep) {
 
 		if (fTarget == null)
 			return false;
@@ -868,12 +874,17 @@ class FindReplaceDialog extends Dialog {
 
 		fNeedsInitialFindBeforeReplace= false;
 
-		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch, beepOnWrap);
+		int index= findIndex(findString, findReplacePosition, forwardSearch, caseSensitive, wrapSearch, wholeWord, regExSearch, beep);
 
-		if (index != -1)
-			return true;
+		if (index == -1) {
+			statusMessage(EditorMessages.FindReplace_Status_noMatch_label);
+			return false;
+		}
 
-		return false;
+		if (forwardSearch && index >= findReplacePosition || !forwardSearch && index <= findReplacePosition)
+			statusMessage(""); //$NON-NLS-1$
+
+		return true;
 	}
 
 	/**
@@ -1342,12 +1353,12 @@ class FindReplaceDialog extends Dialog {
 
 	/**
 	 * Locates the user's findString in the text of the target.
-	 *
+	 * 
 	 * @param mustInitIncrementalBaseLocation <code>true</code> if base location must be initialized
-	 * @param beepOnWrap if <code>true</code> beeps when search needs to wrap
+	 * @param beep if <code>true</code> beeps when search does not find a match or needs to wrap
 	 * @since 3.0
 	 */
-	private void performSearch(boolean mustInitIncrementalBaseLocation, boolean beepOnWrap) {
+	private void performSearch(boolean mustInitIncrementalBaseLocation, boolean beep) {
 
 		if (mustInitIncrementalBaseLocation)
 			initIncrementalBaseLocation();
@@ -1358,12 +1369,7 @@ class FindReplaceDialog extends Dialog {
 		if (findString != null && findString.length() > 0) {
 
 			try {
-				somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beepOnWrap);
-				if (somethingFound) {
-					statusMessage(""); //$NON-NLS-1$
-				} else {
-					statusMessage(EditorMessages.FindReplace_Status_noMatch_label);
-				}
+				somethingFound= findNext(findString, isForwardSearch(), isCaseSensitiveSearch(), isWrapSearch(), isWholeWordSearch(), isIncrementalSearch() && !isRegExSearchAvailableAndChecked(), isRegExSearchAvailableAndChecked(), beep);
 			} catch (PatternSyntaxException ex) {
 				statusError(ex.getLocalizedMessage());
 			} catch (IllegalStateException ex) {
