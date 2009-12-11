@@ -43,19 +43,19 @@ public abstract class ModelReconciler {
 			.getHandlerContainer_Handlers().getName();
 
 	/**
-	 * Attribute defined by MUIItems (value is <code>name</code>).
+	 * Attribute defined by MUILabels (value is <code>label</code>).
 	 */
 	public static final String UILABEL_LABEL_ATTNAME = MApplicationPackage.eINSTANCE
 			.getUILabel_Label().getName();
 
 	/**
-	 * Attribute defined by MUIItems (value is <code>tooltip</code>).
+	 * Attribute defined by MUILabels (value is <code>tooltip</code>).
 	 */
 	public static final String UILABEL_TOOLTIP_ATTNAME = MApplicationPackage.eINSTANCE
 			.getUILabel_Tooltip().getName();
 
 	/**
-	 * Attribute defined by MUIItems (value is <code>iconURI</code>).
+	 * Attribute defined by MUILabels (value is <code>iconURI</code>).
 	 */
 	public static final String UILABEL_ICONURI_ATTNAME = MApplicationPackage.eINSTANCE
 			.getUILabel_IconURI().getName();

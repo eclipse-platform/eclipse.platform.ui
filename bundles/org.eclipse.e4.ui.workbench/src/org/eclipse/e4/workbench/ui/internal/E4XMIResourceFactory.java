@@ -12,7 +12,6 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -34,13 +33,17 @@ public class E4XMIResourceFactory extends XMIResourceFactoryImpl {
 
 			@Override
 			public void setID(EObject eObject, String id) {
-				if (eObject instanceof MKeyBinding) {
-					if (id != null) {
-						super.setID(eObject, id);
-					}
-				} else {
-					super.setID(eObject, id);
+				super.setID(eObject, id);
+
+				if (id != null) {
+					count++;
 				}
+			}
+
+			private String createId() {
+				String id = "element." + count; //$NON-NLS-1$
+				count++;
+				return id;
 			}
 
 			@Override
@@ -50,25 +53,16 @@ public class E4XMIResourceFactory extends XMIResourceFactoryImpl {
 					return id;
 				}
 
-				if (eObject instanceof MApplicationElement) {
-					MApplicationElement element = (MApplicationElement) eObject;
-					id = element.getId();
-					if (id != null) {
-						setID((EObject) element, id);
-						return id;
-					}
-
-					id = "element." + count; //$NON-NLS-1$
-					element.setId(id);
-					setID((EObject) element, id);
-					count++;
+				MApplicationElement element = (MApplicationElement) eObject;
+				id = element.getId();
+				if (id != null) {
+					super.setID((EObject) element, id);
 					return id;
 				}
 
-				MKeyBinding keyBinding = (MKeyBinding) eObject;
-				id = "element." + count; //$NON-NLS-1$
-				setID((EObject) keyBinding, id);
-				count++;
+				id = createId();
+				element.setId(id);
+				super.setID((EObject) element, id);
 				return id;
 			}
 		};

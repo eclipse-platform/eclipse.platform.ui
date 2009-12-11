@@ -436,12 +436,22 @@ public class XMLModelReconciler extends ModelReconciler {
 			return userReferences;
 		}
 
+		if (originalReferences.containsAll(userReferences)
+				&& !userReferences.containsAll(originalReferences)) {
+			List<Object> collectedReferences2 = new ArrayList<Object>(originalReferences);
+			collectedReferences2.removeAll(userReferences);
+
+			List<Object> collectedReferences = new ArrayList<Object>(currentReferences);
+			collectedReferences.removeAll(collectedReferences2);
+
+			return collectedReferences;
+		}
+
 		List<Object> collectedReferences2 = new ArrayList<Object>(currentReferences);
 		collectedReferences2.removeAll(originalReferences);
 
 		List<Object> collectedReferences = new ArrayList<Object>(userReferences);
 		collectedReferences.addAll(collectedReferences2);
-
 		return collectedReferences;
 	}
 
@@ -586,8 +596,6 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		features.remove(feature);
 
-		// Object merged = threeWayMerge(originalReferences, userReferences, currentReferences);
-		// return new EMFModelDeltaSet(eObject, feature, merged);
 		return new EMFModelDeltaThreeWayDelayedSet(eObject, feature, originalReferences,
 				userReferences, currentReferences);
 	}

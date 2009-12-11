@@ -290,7 +290,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		testUIItem_Tooltip("toolTip", "toolTip2");
 	}
 
-	public void testUIItem_Name_Unmodified() {
+	public void testUIItem_Label_Unmodified() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -320,7 +320,7 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals("name", window.getLabel());
 	}
 
-	private void testUIItem_NameUnchanged(String name) {
+	private void testUIItem_LabelUnchanged(String name) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -345,19 +345,19 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(name, window.getLabel());
 	}
 
-	public void testUIItem_NameUnchanged_Null() {
-		testUIItem_NameUnchanged(null);
+	public void testUIItem_LabelUnchanged_Null() {
+		testUIItem_LabelUnchanged(null);
 	}
 
-	public void testUIItem_NameUnchanged_Empty() {
-		testUIItem_NameUnchanged("");
+	public void testUIItem_LabelUnchanged_Empty() {
+		testUIItem_LabelUnchanged("");
 	}
 
-	public void testUIItem_NameUnchanged_String() {
-		testUIItem_NameUnchanged("name");
+	public void testUIItem_LabelUnchanged_String() {
+		testUIItem_LabelUnchanged("name");
 	}
 
-	private void testUIItem_Name(String before, String after) {
+	private void testUIItem_Label(String before, String after) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -384,43 +384,43 @@ public abstract class ModelReconcilerUIItemTest extends ModelReconcilerTest {
 		assertEquals(after, window.getLabel());
 	}
 
-	public void testUIItem_Name_NullNull() {
-		testUIItem_Name(null, null);
+	public void testUIItem_Label_NullNull() {
+		testUIItem_Label(null, null);
 	}
 
-	public void testUIItem_Name_NullEmpty() {
-		testUIItem_Name(null, "");
+	public void testUIItem_Label_NullEmpty() {
+		testUIItem_Label(null, "");
 	}
 
-	public void testUIItem_Name_NullString() {
-		testUIItem_Name(null, "name");
+	public void testUIItem_Label_NullString() {
+		testUIItem_Label(null, "name");
 	}
 
-	public void testUIItem_Name_EmptyNull() {
-		testUIItem_Name("", null);
+	public void testUIItem_Label_EmptyNull() {
+		testUIItem_Label("", null);
 	}
 
-	public void testUIItem_Name_EmptyEmpty() {
-		testUIItem_Name("", "");
+	public void testUIItem_Label_EmptyEmpty() {
+		testUIItem_Label("", "");
 	}
 
-	public void testUIItem_Name_EmptyString() {
-		testUIItem_Name("", "name");
+	public void testUIItem_Label_EmptyString() {
+		testUIItem_Label("", "name");
 	}
 
-	public void testUIItem_Name_StringNull() {
-		testUIItem_Name("name", null);
+	public void testUIItem_Label_StringNull() {
+		testUIItem_Label("name", null);
 	}
 
-	public void testUIItem_Name_StringEmpty() {
-		testUIItem_Name("name", "");
+	public void testUIItem_Label_StringEmpty() {
+		testUIItem_Label("name", "");
 	}
 
-	public void testUIItem_Name_StringStringUnchanged() {
-		testUIItem_Name("name", "name");
+	public void testUIItem_Label_StringStringUnchanged() {
+		testUIItem_Label("name", "name");
 	}
 
-	public void testUIItem_Name_StringStringChanged() {
-		testUIItem_Name("name", "name2");
+	public void testUIItem_Label_StringStringChanged() {
+		testUIItem_Label("name", "name2");
 	}
 }
