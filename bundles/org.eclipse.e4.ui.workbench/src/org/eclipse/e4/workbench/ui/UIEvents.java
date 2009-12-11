@@ -43,33 +43,9 @@ public class UIEvents {
 		public static final String PERSISTEDSTATE = "persistedState"; //$NON-NLS-1$
 	}
 
-	public static interface Command {
-		public static final String TOPIC = UITopicBase + "/application/Command"; //$NON-NLS-1$
-		public static final String COMMANDNAME = "commandName"; //$NON-NLS-1$
-		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
-		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
-	}
-
-	public static interface CommandParameter {
-		public static final String TOPIC = UITopicBase + "/application/CommandParameter"; //$NON-NLS-1$
-		public static final String NAME = "name"; //$NON-NLS-1$
-		public static final String TYPEID = "typeId"; //$NON-NLS-1$
-		public static final String OPTIONAL = "optional"; //$NON-NLS-1$
-	}
-
 	public static interface Dirtyable {
 		public static final String TOPIC = UITopicBase + "/application/Dirtyable"; //$NON-NLS-1$
 		public static final String DIRTY = "dirty"; //$NON-NLS-1$
-	}
-
-	public static interface Handler {
-		public static final String TOPIC = UITopicBase + "/application/Handler"; //$NON-NLS-1$
-		public static final String COMMAND = "command"; //$NON-NLS-1$
-	}
-
-	public static interface HandlerContainer {
-		public static final String TOPIC = UITopicBase + "/application/HandlerContainer"; //$NON-NLS-1$
-		public static final String HANDLERS = "handlers"; //$NON-NLS-1$
 	}
 
 	public static interface Input {
@@ -77,10 +53,13 @@ public class UIEvents {
 		public static final String INPUTURI = "inputURI"; //$NON-NLS-1$
 	}
 
-	public static interface Parameter {
-		public static final String TOPIC = UITopicBase + "/application/Parameter"; //$NON-NLS-1$
-		public static final String TAG = "tag"; //$NON-NLS-1$
-		public static final String VALUE = "value"; //$NON-NLS-1$
+	public static interface UIElement {
+		public static final String TOPIC = UITopicBase + "/application/UIElement"; //$NON-NLS-1$
+		public static final String WIDGET = "widget"; //$NON-NLS-1$
+		public static final String RENDERER = "renderer"; //$NON-NLS-1$
+		public static final String TOBERENDERED = "toBeRendered"; //$NON-NLS-1$
+		public static final String VISIBLE = "visible"; //$NON-NLS-1$
+		public static final String PARENT = "parent"; //$NON-NLS-1$
 	}
 
 	public static interface UILabel {
@@ -90,24 +69,10 @@ public class UIEvents {
 		public static final String TOOLTIP = "tooltip"; //$NON-NLS-1$
 	}
 
-	public static interface UIElement {
-		public static final String TOPIC = UITopicBase + "/application/UIElement"; //$NON-NLS-1$
-		public static final String WIDGET = "widget"; //$NON-NLS-1$
-		public static final String TOBERENDERED = "toBeRendered"; //$NON-NLS-1$
-		public static final String RENDERER = "renderer"; //$NON-NLS-1$
-		public static final String VISIBLE = "visible"; //$NON-NLS-1$
-		public static final String PARENT = "parent"; //$NON-NLS-1$
-	}
-
 	public static interface Context {
 		public static final String TOPIC = UITopicBase + "/application/Context"; //$NON-NLS-1$
 		public static final String CONTEXT = "context"; //$NON-NLS-1$
 		public static final String VARIABLES = "variables"; //$NON-NLS-1$
-	}
-
-	public static interface KeySequence {
-		public static final String TOPIC = UITopicBase + "/application/KeySequence"; //$NON-NLS-1$
-		public static final String KEYSEQUENCE = "keySequence"; //$NON-NLS-1$
 	}
 
 	public static interface ElementContainer {
@@ -122,17 +87,6 @@ public class UIEvents {
 		public static final String HORIZONTAL = "horizontal"; //$NON-NLS-1$
 	}
 
-	public static interface TrimContainer {
-		public static final String TOPIC = UITopicBase + "/application/TrimContainer"; //$NON-NLS-1$
-		public static final String HORIZONTAL = "horizontal"; //$NON-NLS-1$
-		public static final String SIDE = "side"; //$NON-NLS-1$
-	}
-
-	public static interface Application {
-		public static final String TOPIC = UITopicBase + "/application/Application"; //$NON-NLS-1$
-		public static final String COMMANDS = "commands"; //$NON-NLS-1$
-	}
-
 	public static interface Item {
 		public static final String TOPIC = UITopicBase + "/application/Item"; //$NON-NLS-1$
 		public static final String ENABLED = "enabled"; //$NON-NLS-1$
@@ -140,11 +94,9 @@ public class UIEvents {
 		public static final String SEPARATOR = "separator"; //$NON-NLS-1$
 	}
 
-	public static interface HandledItem {
-		public static final String TOPIC = UITopicBase + "/application/HandledItem"; //$NON-NLS-1$
-		public static final String COMMAND = "command"; //$NON-NLS-1$
-		public static final String WBCOMMAND = "wbCommand"; //$NON-NLS-1$
-		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
+	public static interface Application {
+		public static final String TOPIC = UITopicBase + "/application/Application"; //$NON-NLS-1$
+		public static final String COMMANDS = "commands"; //$NON-NLS-1$
 	}
 
 	public static interface Part {
@@ -162,25 +114,63 @@ public class UIEvents {
 		public static final String HEIGHT = "height"; //$NON-NLS-1$
 	}
 
+	public static interface BindingContainer {
+		public static final String TOPIC = UITopicBase + "/application/BindingContainer"; //$NON-NLS-1$
+		public static final String BINDINGS = "bindings"; //$NON-NLS-1$
+	}
+
+	public static interface Command {
+		public static final String TOPIC = UITopicBase + "/application/Command"; //$NON-NLS-1$
+		public static final String COMMANDNAME = "commandName"; //$NON-NLS-1$
+		public static final String DESCRIPTION = "description"; //$NON-NLS-1$
+		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
+	}
+
+	public static interface CommandParameter {
+		public static final String TOPIC = UITopicBase + "/application/CommandParameter"; //$NON-NLS-1$
+		public static final String NAME = "name"; //$NON-NLS-1$
+		public static final String TYPEID = "typeId"; //$NON-NLS-1$
+		public static final String OPTIONAL = "optional"; //$NON-NLS-1$
+	}
+
+	public static interface Handler {
+		public static final String TOPIC = UITopicBase + "/application/Handler"; //$NON-NLS-1$
+		public static final String COMMAND = "command"; //$NON-NLS-1$
+	}
+
+	public static interface HandlerContainer {
+		public static final String TOPIC = UITopicBase + "/application/HandlerContainer"; //$NON-NLS-1$
+		public static final String HANDLERS = "handlers"; //$NON-NLS-1$
+	}
+
+	public static interface HandledItem {
+		public static final String TOPIC = UITopicBase + "/application/HandledItem"; //$NON-NLS-1$
+		public static final String COMMAND = "command"; //$NON-NLS-1$
+		public static final String WBCOMMAND = "wbCommand"; //$NON-NLS-1$
+		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
+	}
+
 	public static interface KeyBinding {
 		public static final String TOPIC = UITopicBase + "/application/KeyBinding"; //$NON-NLS-1$
 		public static final String COMMAND = "command"; //$NON-NLS-1$
 		public static final String PARAMETERS = "parameters"; //$NON-NLS-1$
 	}
 
-	public static interface BindingContainer {
-		public static final String TOPIC = UITopicBase + "/application/BindingContainer"; //$NON-NLS-1$
-		public static final String BINDINGS = "bindings"; //$NON-NLS-1$
+	public static interface KeySequence {
+		public static final String TOPIC = UITopicBase + "/application/KeySequence"; //$NON-NLS-1$
+		public static final String KEYSEQUENCE = "keySequence"; //$NON-NLS-1$
 	}
 
-	public static interface EditorStack {
-		public static final String TOPIC = UITopicBase + "/application/EditorStack"; //$NON-NLS-1$
-		public static final String INPUTURI = "inputURI"; //$NON-NLS-1$
+	public static interface Parameter {
+		public static final String TOPIC = UITopicBase + "/application/Parameter"; //$NON-NLS-1$
+		public static final String TAG = "tag"; //$NON-NLS-1$
+		public static final String VALUE = "value"; //$NON-NLS-1$
 	}
 
-	public static interface IDEWindow {
-		public static final String TOPIC = UITopicBase + "/application/IDEWindow"; //$NON-NLS-1$
-		public static final String MAINMENU = "mainMenu"; //$NON-NLS-1$
+	public static interface TrimContainer {
+		public static final String TOPIC = UITopicBase + "/application/TrimContainer"; //$NON-NLS-1$
+		public static final String HORIZONTAL = "horizontal"; //$NON-NLS-1$
+		public static final String SIDE = "side"; //$NON-NLS-1$
 	}
 
 	public static String buildTopic(String topic) {
