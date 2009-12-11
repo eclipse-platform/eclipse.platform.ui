@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
+ *     Tom Hofmann (Perspectix AG) - bug 297572  
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
@@ -664,7 +665,7 @@ public class SourceViewer extends TextViewer implements ISourceViewer, ISourceVi
 	 */
 	public IQuickAssistInvocationContext getQuickAssistInvocationContext() {
 		Point selection= getSelectedRange();
-		return new TextInvocationContext(this, selection.x, selection.x);
+		return new TextInvocationContext(this, selection.x, selection.y);
 	}
 
 	/*
