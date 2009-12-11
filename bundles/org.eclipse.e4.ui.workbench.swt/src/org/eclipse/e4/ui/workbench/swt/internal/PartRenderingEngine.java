@@ -205,7 +205,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		IEventBroker eventBroker = (IEventBroker) context
 				.get(IEventBroker.class.getName());
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.VISIBLE), visibilityHandler);
+				UIEvents.UIElement.TOBERENDERED), visibilityHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), childrenHandler);
