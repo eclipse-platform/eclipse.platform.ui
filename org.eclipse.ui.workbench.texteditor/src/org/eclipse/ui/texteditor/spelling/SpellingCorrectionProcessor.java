@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -46,7 +46,7 @@ public final class SpellingCorrectionProcessor implements IQuickAssistProcessor 
 		ISourceViewer viewer= quickAssistContext.getSourceViewer();
 		int documentOffset= quickAssistContext.getOffset();
 
-		int length= viewer != null ? viewer.getSelectedRange().y : 0;
+		int length= viewer != null ? viewer.getSelectedRange().y : -1;
 		TextInvocationContext context= new TextInvocationContext(viewer, documentOffset, length);
 
 
