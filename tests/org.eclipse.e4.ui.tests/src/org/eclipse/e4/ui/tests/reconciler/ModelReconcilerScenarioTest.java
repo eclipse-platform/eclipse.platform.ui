@@ -449,6 +449,95 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(part1, stack2.getChildren().get(0));
 	}
 
+	private void testPartStack_AdditionInBack_ApplicationHasNewStackInFront(
+			boolean performMoveFirst) {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		MPartStack stack1 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack1);
+
+		// stack with three children in it
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		MPart partC = MApplicationFactory.eINSTANCE.createPart();
+		stack1.getChildren().add(partA);
+		stack1.getChildren().add(partB);
+		stack1.getChildren().add(partC);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPartStack stack2 = MApplicationFactory.eINSTANCE.createPartStack();
+		// add a new stack at the end of the existing stack
+		window.getChildren().add(stack2);
+		// put A in it
+		stack2.getChildren().add(partA);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		stack1 = (MPartStack) window.getChildren().get(0);
+		partA = stack1.getChildren().get(0);
+		partB = stack1.getChildren().get(1);
+		partC = stack1.getChildren().get(2);
+
+		// create a new stack
+		MPartStack stack3 = MApplicationFactory.eINSTANCE.createPartStack();
+
+		if (performMoveFirst) {
+			// place part C in the new stack first
+			stack3.getChildren().add(partC);
+			// now add the new stack to the window
+			window.getChildren().add(0, stack3);
+		} else {
+			// add the new stack first
+			window.getChildren().add(0, stack3);
+			// now place part C in the new stack
+			stack3.getChildren().add(partC);
+		}
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(stack3, window.getChildren().get(0));
+		assertEquals(stack1, window.getChildren().get(1));
+
+		assertEquals(1, stack3.getChildren().size());
+		assertEquals(partC, stack3.getChildren().get(0));
+
+		assertEquals(2, stack1.getChildren().size());
+		assertEquals(partA, stack1.getChildren().get(0));
+		assertEquals(partB, stack1.getChildren().get(1));
+
+		applyAll(deltas);
+
+		assertEquals(3, window.getChildren().size());
+
+		assertEquals(stack1, window.getChildren().get(0));
+		assertEquals(stack3, window.getChildren().get(2));
+
+		assertEquals(1, stack1.getChildren().size());
+		assertEquals(partB, stack1.getChildren().get(0));
+
+		assertEquals(1, stack3.getChildren().size());
+		assertEquals(partC, stack3.getChildren().get(0));
+
+		stack2 = (MPartStack) window.getChildren().get(1);
+		assertEquals(partA, stack2.getChildren().get(0));
+	}
+
+	public void testPartStack_AdditionInBack_ApplicationHasNewStackInFront_True() {
+		testPartStack_AdditionInBack_ApplicationHasNewStackInFront(true);
+	}
+
+	public void testPartStack_AdditionInBack_ApplicationHasNewStackInFront_False() {
+		testPartStack_AdditionInBack_ApplicationHasNewStackInFront(false);
+	}
+
 	/**
 	 * <ol>
 	 * <li>The application has a window with a stack that houses three parts, A,
@@ -461,7 +550,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 	 * one of them from left to right.</li>
 	 * </ol>
 	 */
-	private void testPartStack_Addition_ApplicationHasNewStack(
+	private void testPartStack_AdditionInFront_ApplicationHasNewStackInBack(
 			boolean performMoveFirst) {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -542,12 +631,12 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(partC, stack3.getChildren().get(0));
 	}
 
-	public void testPartStack_Addition_ApplicationHasNewStack_True() {
-		testPartStack_Addition_ApplicationHasNewStack(true);
+	public void testPartStack_AdditionInFront_ApplicationHasNewStackInBack_True() {
+		testPartStack_AdditionInFront_ApplicationHasNewStackInBack(true);
 	}
 
-	public void testPartStack_Addition_ApplicationHasNewStack_False() {
-		testPartStack_Addition_ApplicationHasNewStack(false);
+	public void testPartStack_AdditionInFront_ApplicationHasNewStackInBack_False() {
+		testPartStack_AdditionInFront_ApplicationHasNewStackInBack(false);
 	}
 
 	public void testBindingContainer_NewWithBindings() {
