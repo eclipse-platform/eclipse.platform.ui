@@ -57,7 +57,7 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	 * 
 	 * @since 3.6
 	 */
-	private class InputData {
+	private class InputData implements IPropertyChangeListener{
 		/**
 		 * Breakpoint manager input
 		 */
@@ -82,6 +82,11 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 		final private BreakpointContainer fContainer;
 		
 		/**
+		 * Known current breakpoint organizers.
+		 */
+		private IBreakpointOrganizer[] fOrganizers;
+		
+		/**
 		 * Constructor
 		 *  
 		 * @param input the breakpoint manager input
@@ -95,12 +100,14 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 			fComparator = (ElementComparator)
 			    input.getContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ELEMENT_COMPARATOR);
 			
-            IBreakpointOrganizer[] organizers = (IBreakpointOrganizer[])
+            fOrganizers = (IBreakpointOrganizer[])
                 input.getContext().getProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS);
 
             // Create the initial container.
             ModelDelta initialDelta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
-            fContainer = createRootContainer(initialDelta, fInput, organizers, fBpManager);
+            fContainer = createRootContainer(initialDelta, fInput, fOrganizers, fBpManager);
+            
+            registerOrganizersListener(null, fOrganizers);
 		}
 		
 		synchronized void proxyInstalled(AbstractModelProxy proxy) {
@@ -117,36 +124,64 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 		    fProxies.remove(proxy);
 		}
 
+		public void propertyChange(PropertyChangeEvent event) {
+		    // For any property changes in breakpiont organizers, refresh the containers.
+		    updateContainers();
+		}
+		
 		/**
 		 * Change the breakpoint organizers for the root container.
 		 * 
 		 * @param organizers the new organizers.
 		 */
-		synchronized void setOrganizers(IBreakpointOrganizer[] organizers) {
-			// create a reference container, use for deleting elements and adding elements
-			ModelDelta dummyDelta = new ModelDelta(null, IModelDelta.NO_CHANGE);				
-			BreakpointContainer refContainer = createRootContainer(dummyDelta, fInput, organizers, fBpManager);
-
-			// delete the removed elements
-			ModelDelta deletedDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
-			deleteRemovedElements(fContainer, refContainer, deletedDelta);
-			fireModelChanged(fInput, deletedDelta, "setOrganizers - Delete removed elements"); //$NON-NLS-1$
-			
-			// adjust the old organizer with the reference organizer
-			BreakpointContainer.copyOrganizers(fContainer, refContainer);
-			
-			// insert the added elements
-			ModelDelta addedDelta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
-			IBreakpoint newBreakpoint = insertAddedElements(fContainer, refContainer, addedDelta);
-			addedDelta.setChildCount(fContainer.getChildren().length);
-			
-			// select the new breakpoint
-			if (newBreakpoint != null)
-				appendModelDeltaToElement(addedDelta, newBreakpoint, IModelDelta.SELECT);
-			
-			fireModelChanged(fInput, addedDelta, "setOrganizers - Insert added elements"); //$NON-NLS-1$
+		void setOrganizers(IBreakpointOrganizer[] organizers) {
+		    IBreakpointOrganizer[] oldOrganizers = null;
+		    synchronized(this) {
+	            oldOrganizers = fOrganizers;
+		        fOrganizers = organizers;
+		    }
+		    registerOrganizersListener(oldOrganizers, organizers);
+		    updateContainers();
 		}
 
+		private void registerOrganizersListener(IBreakpointOrganizer[] oldOrganizers, IBreakpointOrganizer[] newOrganizers) {
+		    if (oldOrganizers != null) {
+		        for (int i = 0; i < oldOrganizers.length; i++) {
+		            oldOrganizers[i].removePropertyChangeListener(this);
+		        }
+		    }
+            if (newOrganizers != null) {
+                for (int i = 0; i < newOrganizers.length; i++) {
+                    newOrganizers[i].addPropertyChangeListener(this);
+                }
+            }
+		}
+		
+		synchronized void updateContainers() {
+            // create a reference container, use for deleting elements and adding elements
+            ModelDelta dummyDelta = new ModelDelta(null, IModelDelta.NO_CHANGE);                
+            BreakpointContainer refContainer = createRootContainer(dummyDelta, fInput, fOrganizers, fBpManager);
+
+            // delete the removed elements
+            ModelDelta deletedDelta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
+            deleteRemovedElements(fContainer, refContainer, deletedDelta);
+            fireModelChanged(fInput, deletedDelta, "setOrganizers - Delete removed elements"); //$NON-NLS-1$
+            
+            // adjust the old organizer with the reference organizer
+            BreakpointContainer.copyOrganizers(fContainer, refContainer);
+            
+            // insert the added elements
+            ModelDelta addedDelta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
+            IBreakpoint newBreakpoint = insertAddedElements(fContainer, refContainer, addedDelta);
+            addedDelta.setChildCount(fContainer.getChildren().length);
+            
+            // select the new breakpoint
+            if (newBreakpoint != null)
+                appendModelDeltaToElement(addedDelta, newBreakpoint, IModelDelta.SELECT);
+            
+            fireModelChanged(fInput, addedDelta, "setOrganizers - Insert added elements"); //$NON-NLS-1$
+		}
+		
 		  /*
 	     * (non-Javadoc)
 	     * @see org.eclipse.debug.internal.ui.actions.breakpoints.IBreakpointFilterContentProvider#setFilterSelection(java.lang.Object, org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext, org.eclipse.jface.viewers.IStructuredSelection)

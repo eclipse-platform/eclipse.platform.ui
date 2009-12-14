@@ -42,7 +42,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
 import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
-import org.eclipse.debug.ui.IBreakpointOrganizerDelegate;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -50,7 +49,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
@@ -526,16 +524,8 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
 	 * @param organizers the organizers, can be <code>null</code>.
 	 */
 	public void setBreakpointOrganizers(IBreakpointOrganizer[] organizers) {
-		if (fOrganizers != null) {
-			for (int i = 0; fOrganizers != null && i < fOrganizers.length; i++)
-				fOrganizers[i].removePropertyChangeListener(this);
-		}
-		
 		fOrganizers = organizers;
 		
-		for (int i = 0; fOrganizers != null && i < fOrganizers.length; i++)
-			fOrganizers[i].addPropertyChangeListener(this);
-				
 		TreeModelViewer viewer = getTreeModelViewer();
 		if (viewer != null) {
 			// update the presentation context organizer
@@ -845,19 +835,4 @@ public class BreakpointsView extends VariablesView implements ISelectionListener
     	}
     	return true;
     }
-    
-    /*
-     * (non-Javadoc)
-     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-     */
-    public void propertyChange(PropertyChangeEvent event) {
-    	super.propertyChange(event);
-    	
-    	if (event.getProperty().equals(IBreakpointOrganizerDelegate.P_CATEGORY_CHANGED)) {
-    		final TreeModelViewer viewer = getTreeModelViewer();
-    		if (viewer != null) {
-	    		setBreakpointOrganizers(fOrganizers);    		
-    		}
-    	}
-    } 
 }
