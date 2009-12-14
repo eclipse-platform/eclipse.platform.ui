@@ -60,9 +60,7 @@ public class E4XMIResourceFactoryTest extends ModelReconcilerTest {
 		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window2);
 
-		reconciler = createModelReconciler();
-		Collection<ModelDelta> deltas = reconciler.constructDeltas(application,
-				state);
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
 		applyAll(deltas);
 
 		window1 = application.getChildren().get(0);
