@@ -15,6 +15,7 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
@@ -41,9 +42,10 @@ public class E4XMIResourceFactory extends XMIResourceFactoryImpl {
 			}
 
 			private String createId() {
-				String id = "element." + count; //$NON-NLS-1$
-				count++;
-				return id;
+				//				String id = "element." + count; //$NON-NLS-1$
+				// count++;
+				// return id;
+				return EcoreUtil.generateUUID();
 			}
 
 			@Override
@@ -61,6 +63,11 @@ public class E4XMIResourceFactory extends XMIResourceFactoryImpl {
 				}
 
 				id = createId();
+
+				while (getEObjectByID(id) != null) {
+					id = createId();
+				}
+
 				element.setId(id);
 				super.setID((EObject) element, id);
 				return id;

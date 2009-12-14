@@ -639,6 +639,87 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		testPartStack_AdditionInFront_ApplicationHasNewStackInBack(false);
 	}
 
+	/**
+	 * <ol>
+	 * <li>The application has a window two stacks, the first stack houses parts
+	 * A and B, the second stack houses part C.</li>
+	 * <li>The user moves part B from the first stack to the second stack, after
+	 * part C.</li>
+	 * <li>The new version of the application is identical to the original
+	 * except that the second stack now has a new part, so it houses parts C and
+	 * the new part, part D.</li>
+	 * <li>The merged outcome should be two stacks with A in the first one, and
+	 * the second stack has C, B, and D, in that order from left to right.</li>
+	 * </ol>
+	 */
+	public void testPart_MoveFromExistingStackToExistingStack_ToStackHasNewPart() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		MPartStack stack1 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack1);
+
+		MPart partA = MApplicationFactory.eINSTANCE.createPart();
+		MPart partB = MApplicationFactory.eINSTANCE.createPart();
+		stack1.getChildren().add(partA);
+		stack1.getChildren().add(partB);
+
+		MPartStack stack2 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(stack2);
+
+		MPart partC = MApplicationFactory.eINSTANCE.createPart();
+		stack2.getChildren().add(partC);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		stack2.getChildren().add(partB);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		stack1 = (MPartStack) window.getChildren().get(0);
+		partA = stack1.getChildren().get(0);
+		partB = stack1.getChildren().get(1);
+
+		stack2 = (MPartStack) window.getChildren().get(1);
+		partC = stack2.getChildren().get(0);
+
+		MPart partD = MApplicationFactory.eINSTANCE.createPart();
+		stack2.getChildren().add(partD);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(stack1, window.getChildren().get(0));
+		assertEquals(stack2, window.getChildren().get(1));
+
+		assertEquals(2, stack1.getChildren().size());
+		assertEquals(partA, stack1.getChildren().get(0));
+		assertEquals(partB, stack1.getChildren().get(1));
+
+		assertEquals(2, stack2.getChildren().size());
+		assertEquals(partC, stack2.getChildren().get(0));
+		assertEquals(partD, stack2.getChildren().get(1));
+
+		applyAll(deltas);
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(stack1, window.getChildren().get(0));
+		assertEquals(stack2, window.getChildren().get(1));
+
+		assertEquals(1, stack1.getChildren().size());
+		assertEquals(partA, stack1.getChildren().get(0));
+
+		assertEquals(3, stack2.getChildren().size());
+		assertEquals(partC, stack2.getChildren().get(0));
+		assertEquals(partB, stack2.getChildren().get(1));
+		assertEquals(partD, stack2.getChildren().get(2));
+	}
+
 	public void testBindingContainer_NewWithBindings() {
 		MApplication application = createApplication();
 
