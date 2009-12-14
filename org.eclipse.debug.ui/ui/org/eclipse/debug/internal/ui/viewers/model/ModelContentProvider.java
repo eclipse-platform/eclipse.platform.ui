@@ -676,9 +676,9 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
         // markers are used by the restore logic to know when a delta node can
         // be removed.
         delta.accept(new IModelDeltaVisitor() {
-            public boolean visit(IModelDelta delta, int depth) {
-                if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
-                    ((ModelDelta) delta).setFlags(delta.getFlags() | IModelDelta.CONTENT);
+            public boolean visit(IModelDelta d, int depth) {
+                if ((d.getFlags() & IModelDelta.EXPAND) != 0) {
+                    ((ModelDelta) d).setFlags(d.getFlags() | IModelDelta.CONTENT);
                 }
                 return true;
             }
@@ -2059,11 +2059,13 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 priority = next.getPriority();
             }
         }
-        waiting.remove(next);
-        if (waiting.isEmpty()) {
-            fWaitingRequests.remove(key);
+        if (next != null) {
+	        waiting.remove(next);
+	        if (waiting.isEmpty()) {
+	            fWaitingRequests.remove(key);
+	        }
+	        next.start();
         }
-        next.start();
     }
 
     /**
