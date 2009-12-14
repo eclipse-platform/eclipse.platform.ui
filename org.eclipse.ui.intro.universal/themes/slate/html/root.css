@@ -156,11 +156,6 @@ html, body {
 #page-links a#webresources:active .content-img,
 #page-links a#webresources:focus .content-img { background-image : url("../graphics/rootpage/webresources48_hov.png"); }
 
-#page-links a#workbench .content-img { background-image : url("../graphics/rootpage/workbench48.png"); }
-#page-links a#workbench:hover .content-img,
-#page-links a#workbench:active .content-img,
-#page-links a#workbench:focus .content-img { background-image : url("../graphics/rootpage/workbench48_hov.png"); }
-
 /* Hack for IE6, which cannot display png files with alpha channel transparency */
 
 * html #page-links a#overview .content-img { background-image : url("../graphics/rootpage/overview48.gif"); }
@@ -198,10 +193,6 @@ html, body {
 * html #page-links a#webresources:active .content-img,
 * html #page-links a#webresources:focus .content-img { background-image : url("../graphics/rootpage/webresources48_hov.gif"); }
 
-* html #page-links a#workbench .content-img { background-image : url("../graphics/rootpage/workbench48.gif"); }
-* html #page-links a#workbench:hover .content-img,
-* html #page-links a#workbench:active .content-img,
-* html #page-links a#workbench:focus .content-img { background-image : url("../graphics/rootpage/workbench48_hov.gif"); }
 /* End hack for IE6 */
 
 /*
@@ -209,4 +200,60 @@ html, body {
  */
 #action-links {
 	display: none;
+}
+
+/*
+* Workbench
+*/
+
+#page-links a#workbench:hover .link-label
+{
+    color : #FFEC89;
+    text-decoration : none;
+}
+
+#workbench p span {
+    display : none;
+}
+
+* html #page-links a#workbench .content-img {
+    background-image:url(../graphics/icons/ctool/wb_nav_32.gif);
+}
+
+#page-links a#workbench .content-img {
+    background-image:url(../graphics/icons/ctool/wb_nav_32.gif);
+    display:block;
+    color : white;
+    height:32px;
+    margin:5px auto 0;
+    width:32px;
+    background-repeat:no-repeat;
+    border-width:0;
+}
+
+#page-links a#workbench .link-label {
+   position : static;
+   margin-right : 0px;
+   font-weight : bold;	
+   color : white;
+   font-family:Arial,sans-serif;
+}
+
+#page-links a#workbench .text {
+   display : none;
+}
+
+#page-links a#workbench {
+    position : absolute;
+    right : 20px;
+    top : 0px;
+    width : auto;
+    text-align:center;
+}
+
+#page-links a#workbench .link-label {
+    font-size:8pt;
+    color:white;
+    font-weight:bold;
+    text-align:center;
 }
