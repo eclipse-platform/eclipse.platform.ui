@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
@@ -15,10 +16,11 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.actions.SelectAllAction;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.swt.widgets.Tree;
 
 public class SelectAllBreakpointsAction extends SelectAllAction implements IBreakpointsListener {
 
@@ -29,12 +31,9 @@ public class SelectAllBreakpointsAction extends SelectAllAction implements IBrea
 		return DebugPlugin.getDefault().getBreakpointManager().hasBreakpoints();
 	}
 
-	public void run(IAction action) {
-		if (!(getView() instanceof BreakpointsView)) {
-			return;
-		}
-		CheckboxTreeViewer viewer = ((BreakpointsView) getView()).getCheckboxViewer();
-		viewer.getTree().selectAll();
+	public void run(IAction action) {	
+		Viewer viewer = ((AbstractDebugView) getView()).getViewer();
+		((Tree) viewer.getControl()).selectAll();
 		// ensure that the selection change callback is fired
 		viewer.setSelection(viewer.getSelection());
 	}

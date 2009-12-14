@@ -490,8 +490,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                             final ModelDelta stateDelta = (ModelDelta) fViewerStates.get(keyMementoString);
                             if (stateDelta != null) {
                                 if (DEBUG_STATE_SAVE_RESTORE
-                                    && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
-                                        .getId()))) {
+                                    && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                                     System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - MATCHING STATE FOUND"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
 
@@ -524,9 +523,7 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                                 job.setSystem(true);
                                 job.schedule();
                             } else {
-                                if (DEBUG_STATE_SAVE_RESTORE
-                                    && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext()
-                                        .getId()))) {
+                                if (DEBUG_STATE_SAVE_RESTORE && (DEBUG_PRESENTATION_ID == null || DEBUG_PRESENTATION_ID.equals(getPresentationContext().getId()))) {
                                     System.out.println("STATE RESTORE INPUT COMARE ENDED : " + fRequest + " - NO MATCHING STATE"); //$NON-NLS-1$ //$NON-NLS-2$
                                 }
                             }
@@ -1293,7 +1290,8 @@ abstract class ModelContentProvider implements IContentProvider, IModelChangedLi
                 return proxy;
             }
 
-            proxy = (IModelProxy) fModelProxies.get(path.getLastSegment());
+            Object element = path.getSegmentCount() == 0 ? getViewer().getInput() : path.getLastSegment();
+            proxy = (IModelProxy) fModelProxies.get(element);
             if (proxy != null) {
                 return proxy;
             }

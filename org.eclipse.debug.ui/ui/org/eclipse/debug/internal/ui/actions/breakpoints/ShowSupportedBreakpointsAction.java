@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,9 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
+ *     										This class should be obsoleted for the new async breakpoints view.
+ *     										@see ShowTargetBreakpointsAction
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
@@ -25,8 +28,8 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.ToggleFilterAction;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
+import org.eclipse.debug.ui.AbstractDebugView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -46,13 +49,12 @@ import org.eclipse.ui.PlatformUI;
  * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(IBreakpoint)
  * 
  */
-public class ShowSupportedBreakpointsAction extends ToggleFilterAction implements ISelectionListener {
-
+public class ShowSupportedBreakpointsAction extends ToggleFilterAction implements ISelectionListener {	
 	/**
 	 * The view associated with this action
 	 */
-	private BreakpointsView fView;
-	
+	private AbstractDebugView fView;
+		
 	/**
 	 * The list of identifiers for the current state
 	 */
@@ -68,9 +70,9 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		 * @see ViewerFilter#select(Viewer, Object, Object)
 		 */
 		public boolean select(Viewer viewer, Object parentElement, Object element) {
-			if (element instanceof BreakpointContainer) {
+			if (element instanceof IBreakpointContainer) {
 				// Breakpoint containers are visible if any of their children are visible.
-				IBreakpoint[] breakpoints = ((BreakpointContainer) element).getBreakpoints();
+				IBreakpoint[] breakpoints = ((IBreakpointContainer) element).getBreakpoints();
 				for (int i = 0; i < breakpoints.length; i++) {
 					if (select(viewer, element, breakpoints[i])) {
 						return true;
@@ -180,8 +182,8 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 		return fView;
 	}
 
-	protected void setView(IViewPart view) {
-		fView = (BreakpointsView) view;
+	protected void setView(IViewPart view) {	
+		fView = (AbstractDebugView) view;
 	}
 	
 	protected List getDebugTargets(IStructuredSelection ss) {

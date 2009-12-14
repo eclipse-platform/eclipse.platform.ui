@@ -8,6 +8,7 @@
     
      Contributors:
          IBM Corporation - initial API and implementation
+         Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
  -->
 
 <plugin>
@@ -1276,7 +1277,7 @@
             id="org.eclipse.debug.ui.breakpointview.breakpointGroupActions">
          <visibility>
             <objectClass
-               name="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
+               name="org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer">
             </objectClass>
          </visibility>
          <action
@@ -2265,7 +2266,7 @@ M4 = Platform-specific fourth key
          </factory>
          <factory 
             class="org.eclipse.debug.internal.ui.DebugUIAdapterFactory"
-            adaptableType="org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer">
+            adaptableType="org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer">
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter"/>
             <adapter type="org.eclipse.ui.model.IWorkbenchAdapter2"/>
          </factory>
@@ -2479,6 +2480,48 @@ M4 = Platform-specific fourth key
                   type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
             </adapter>
          </factory>
+		 <factory
+               adaptableType="org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput"
+               class="org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory">
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
+            </adapter>
+         </factory>
+		 <factory
+               adaptableType="org.eclipse.debug.core.model.IBreakpoint"
+               class="org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory">
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementContentProvider">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
+            </adapter>
+         </factory>
+         <factory
+               adaptableType="org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer"
+               class="org.eclipse.debug.internal.ui.views.launch.DebugElementAdapterFactory">
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementLabelProvider">
+            </adapter>
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IElementMementoProvider">
+            </adapter>            
+            <adapter
+                  type="org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxyFactory">
+            </adapter>
+         </factory>      
          <factory
                adaptableType="org.eclipse.debug.core.ILaunch"
                class="org.eclipse.debug.internal.ui.contexts.SuspendTriggerAdapterFactory">
@@ -2804,6 +2847,8 @@ M4 = Platform-specific fourth key
 	        		    <or>
 					    	<instanceof value="org.eclipse.debug.core.model.IVariable"/>
 					    	<instanceof value="org.eclipse.debug.core.model.IExpression"/>
+					    	<instanceof value="org.eclipse.debug.core.model.IBreakpoint"/>
+					    	<instanceof value="org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer"/>
 					    	<instanceof value="java.lang.String"/>
 					    </or>
 	        		</iterate>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
@@ -125,7 +126,8 @@ public class CopyBreakpointsAction extends BreakpointSelectionAction {
         }
         Iterator iterator = selection.iterator();
         while (iterator.hasNext()) {
-            if (!(iterator.next() instanceof IBreakpoint)) {
+            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(iterator.next(), IBreakpoint.class);            
+            if (breakpoint == null) {
                 return false;
             }
         }

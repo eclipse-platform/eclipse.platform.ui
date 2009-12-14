@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
@@ -22,6 +23,8 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointManager;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
 import org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -129,7 +132,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * @return the first found container that includes the breakpoint that allows removal, or <code>null</code> if none found
      * @since 3.3
      */
-    public BreakpointContainer getRemovableContainer(Item item) {
+    public IBreakpointContainer getRemovableContainer(Item item) {
     	if(item == null) {
     		return null;
     	}
@@ -137,9 +140,9 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	    	TreePath path = getTreePathFromItem(item);
 	    	if(path != null) {
 		    	IBreakpoint breakpoint = (IBreakpoint) path.getLastSegment();
-		    	BreakpointContainer container = null;
+		    	IBreakpointContainer container = null;
 		    	for(int i = path.getSegmentCount()-2; i > -1; i--) {
-		    		container = (BreakpointContainer) path.getSegment(i);
+		    		container = (IBreakpointContainer) path.getSegment(i);
 		    		if(container.contains(breakpoint) && container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
 		    			return container;
 		    		}
@@ -155,15 +158,15 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
      * @return the first found addable container for the specified breakpoint or <code>null</code> if none found
      * @since 3.3
      */
-    public BreakpointContainer getAddableContainer(Item item) {
+    public IBreakpointContainer getAddableContainer(Item item) {
     	TreePath path = getTreePathFromItem(item);
     	if(path != null) {
 	    	Object element = path.getLastSegment();
 	    	if(element instanceof IBreakpoint) {
-		    	BreakpointContainer container = null;
+		    	IBreakpointContainer container = null;
 		    	IBreakpoint breakpoint = (IBreakpoint) element;
 		    	for(int i = path.getSegmentCount()-2; i > -1; i--) {
-		    		container = (BreakpointContainer) path.getSegment(i);
+		    		container = (IBreakpointContainer) path.getSegment(i);
 		    		if(container.contains(breakpoint) && container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
 		    			return container;
 		    		}
@@ -211,7 +214,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     		return;
     	}
     	Map containersToBreakpoints = new HashMap();
-		BreakpointContainer container = null;
+		IBreakpointContainer container = null;
     	IBreakpoint breakpoint = null;
     	for(int i = 0; i < items.length; i++) {
     		if(!items[i].isDisposed()) {
@@ -230,7 +233,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	Iterator iterator = containersToBreakpoints.entrySet().iterator();
     	while (iterator.hasNext()) {
     		Entry entry = (Entry) iterator.next();
-    		container = (BreakpointContainer) entry.getKey();
+    		container = (IBreakpointContainer) entry.getKey();
     		List list = (List) entry.getValue();
     		IBreakpointOrganizer organizer = container.getOrganizer();
     		IBreakpoint[] breakpoints = (IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]);
@@ -283,14 +286,14 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
 	 * @return
 	 */
 	private boolean checkAddableParentContainers(Item target, IBreakpoint breakpoint) {
-		BreakpointContainer container = null;
+		IBreakpointContainer container = null;
 		TreePath path = getTreePathFromItem(target);
 		if(path != null) {
 			Object element = null;
 			for(int i = path.getSegmentCount()-1; i > -1; i--) {
 				element = path.getSegment(i);
-				if(element instanceof BreakpointContainer) {
-					container = (BreakpointContainer) element;
+				if(element instanceof IBreakpointContainer) {
+					container = (IBreakpointContainer) element;
 					if(container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
 		    			return false;
 		    		}
@@ -313,7 +316,7 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
     	}
     	IBreakpoint breakpoint = null;
     	Object element = target.getData();
-    	BreakpointContainer container = (element instanceof BreakpointContainer ? (BreakpointContainer)element : getAddableContainer(target));
+    	IBreakpointContainer container = (element instanceof IBreakpointContainer ? (IBreakpointContainer)element : getAddableContainer(target));
     	if(container == null) {
 			return false;
 		}
@@ -411,8 +414,8 @@ public class BreakpointsViewer extends CheckboxTreeViewer {
             } catch (CoreException e) {
                 DebugUIPlugin.log(e);
             }
-        } else if (element instanceof BreakpointContainer) {
-            IBreakpoint[] breakpoints = ((BreakpointContainer) element).getBreakpoints();
+        } else if (element instanceof IBreakpointContainer) {
+            IBreakpoint[] breakpoints = ((IBreakpointContainer) element).getBreakpoints();
             int enabledChildren= 0;
             for (int i = 0; i < breakpoints.length; i++) {
                 IBreakpoint breakpoint = breakpoints[i];

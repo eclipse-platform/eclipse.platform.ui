@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Wind River Systems - support for alternative expression view content providers
+ *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.launch;
 
@@ -15,6 +16,7 @@ import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
@@ -25,7 +27,9 @@ import org.eclipse.debug.core.model.IRegisterGroup;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IThread;
 import org.eclipse.debug.core.model.IVariable;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.elements.adapters.AsynchronousDebugLabelAdapter;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
 import org.eclipse.debug.internal.ui.elements.adapters.DefaultViewerInputProvider;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockContentAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.MemoryBlockLabelAdapter;
@@ -34,6 +38,13 @@ import org.eclipse.debug.internal.ui.elements.adapters.MemorySegmentLabelAdapter
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameSourceDisplayAdapter;
 import org.eclipse.debug.internal.ui.elements.adapters.StackFrameViewerInputProvider;
 import org.eclipse.debug.internal.ui.elements.adapters.VariableColumnFactoryAdapter;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointContainerLabelProvider;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointContainerMementoProvider;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointLabelProvider;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointManagerContentProvider;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointManagerInputMementoProvider;
+import org.eclipse.debug.internal.ui.model.elements.BreakpointMementoProvider;
 import org.eclipse.debug.internal.ui.model.elements.DebugElementLabelProvider;
 import org.eclipse.debug.internal.ui.model.elements.DebugTargetContentProvider;
 import org.eclipse.debug.internal.ui.model.elements.ExpressionContentProvider;
@@ -89,8 +100,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementLabelProvider fgLPVariable = new VariableLabelProvider();
     private static IElementLabelProvider fgLPExpression = new ExpressionLabelProvider();
     private static IElementLabelProvider fgLPRegisterGroup = new RegisterGroupLabelProvider();
-    private static IElementLabelProvider fgLPMemoryBlock = new MemoryBlockLabelProvider();
-    
+    private static IElementLabelProvider fgLPMemoryBlock = new MemoryBlockLabelProvider();     
+    private static IElementLabelProvider fgLPBreakpoint = new BreakpointLabelProvider();
+    private static IElementLabelProvider fgLPBreakpointContainer = new BreakpointContainerLabelProvider(); 
     private static IElementEditor fgEEVariable = new VariableEditor();
     
     private static IAsynchronousContentAdapter fgAsyncMemoryRetrieval = new MemoryRetrievalContentAdapter();
@@ -102,11 +114,13 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementContentProvider fgCPThread = new ThreadContentProvider();
     private static IElementContentProvider fgCPFrame = new StackFrameContentProvider();
     private static IElementContentProvider fgCPVariable = new VariableContentProvider();
-    private static IElementContentProvider fgCPExpressionManager = new ExpressionManagerContentProvider();
+    private static IElementContentProvider fgCPExpressionManager = new ExpressionManagerContentProvider();  
     private static IElementContentProvider fgCPExpression = new ExpressionContentProvider();
     private static IElementContentProvider fgCPRegisterGroup = new RegisterGroupContentProvider();
     private static IElementContentProvider fgCPMemoryRetrieval = new MemoryRetrievalContentProvider();
-    private static IElementContentProvider fgCPMemoryBlock = new MemoryBlockContentProvider();
+    private static IElementContentProvider fgCPMemoryBlock = new MemoryBlockContentProvider();   
+    private static IElementContentProvider fgCPBreakpointManager = new BreakpointManagerContentProvider();
+    private static IElementContentProvider fgCPBreakpoint = new BreakpointContentProvider();
     
     private static IElementMementoProvider fgMPFrame = new StackFrameMementoProvider();
     private static IElementMementoProvider fgMPVariable = new VariableMementoProvider();
@@ -114,6 +128,9 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
     private static IElementMementoProvider fgMPRegisterGroup = new RegisterGroupMementoProvider();
     private static IElementMementoProvider fgMPExpressionManager = new ExpressionManagerMementoProvider();
     private static IElementMementoProvider fgMPMemory = new MemoryViewElementMementoProvider();
+    private static IElementMementoProvider fgMPBreakpointManagerInput = new BreakpointManagerInputMementoProvider();
+    private static IElementMementoProvider fgMPBreakpointContainer = new BreakpointContainerMementoProvider();
+    private static IElementMementoProvider fgMPBreakpoint = new BreakpointMementoProvider();
     
     private static IColumnPresentationFactory fgVariableColumnFactory = new VariableColumnFactoryAdapter();
     
@@ -162,7 +179,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             }
             if (adaptableObject instanceof IExpressionManager) {
             	return fgCPExpressionManager;
-            }
+            }           
             if (adaptableObject instanceof IExpression) {
             	return fgCPExpression;
             }
@@ -171,6 +188,12 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
             }
             if (adaptableObject instanceof IMemoryBlock) {
             	return fgCPMemoryBlock;
+            }            
+            if (adaptableObject instanceof DefaultBreakpointManagerInput) {
+            	return fgCPBreakpointManager;
+            }
+            if (adaptableObject instanceof IBreakpoint) {
+            	return fgCPBreakpoint;
             }
         }        
         
@@ -197,7 +220,13 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	}
         	if (adaptableObject instanceof IMemoryBlock) {
         		return fgLPMemoryBlock;
+        	} 
+        	if (adaptableObject instanceof IBreakpoint) {
+        		return fgLPBreakpoint;
         	}
+        	if (adaptableObject instanceof IBreakpointContainer) {
+        		return fgLPBreakpointContainer;
+        	}     	
         	return fgLPDebugElement;
         }        
         
@@ -206,7 +235,10 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         			adaptableObject instanceof IProcess || adaptableObject instanceof ILaunchManager ||
         			adaptableObject instanceof IStackFrame || adaptableObject instanceof IExpressionManager ||
         			adaptableObject instanceof IExpression || adaptableObject instanceof IMemoryBlockRetrieval ||
-        			adaptableObject instanceof IMemoryBlock)
+        			adaptableObject instanceof IMemoryBlock ||
+        			adaptableObject instanceof DefaultBreakpointManagerInput ||
+        			adaptableObject instanceof IBreakpoint ||
+        			adaptableObject instanceof IBreakpointContainer)
         	return fgModelProxyFactoryAdapter;
         }
         
@@ -247,6 +279,15 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	if (adaptableObject instanceof IMemoryBlockRetrieval) {
         		return fgMPMemory;
         	}
+        	if (adaptableObject instanceof IBreakpoint) {
+        		return fgMPBreakpoint;
+        	}
+        	if (adaptableObject instanceof IBreakpointContainer) {
+        		return fgMPBreakpointContainer;
+        	}
+        	if (adaptableObject instanceof DefaultBreakpointManagerInput) {
+        		return fgMPBreakpointManagerInput;
+        	}
         }
         
         if (adapterType.equals(IElementEditor.class)) {
@@ -261,7 +302,7 @@ public class DebugElementAdapterFactory implements IAdapterFactory {
         	} else {
         	    return fgDefaultViewerInputProvider;
         	}
-        }
+        }         
         
         return null;
     }

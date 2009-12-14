@@ -1,207 +1,354 @@
-/*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+/*****************************************************************
+ * Copyright (c) 2009 Texas Instruments and others
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
  * http://www.eclipse.org/legal/epl-v10.html
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Brock Janiczak - bug 78494
- *******************************************************************************/
+ *     Patrick Chuong (Texas Instruments) - Initial API and implementation (Bug 238956)
+ *     IBM Corporation - ongoing enhancements and bug fixing
+ *****************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
- 
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import com.ibm.icu.text.MessageFormat;
-
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.model.IBreakpoint;
+import org.eclipse.debug.core.model.IStackFrame;
+import org.eclipse.debug.core.model.IThread;
+import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
+import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveFromWorkingSetAction;
+import org.eclipse.debug.internal.ui.actions.breakpoints.OpenBreakpointMarkerAction;
+import org.eclipse.debug.internal.ui.actions.breakpoints.ShowTargetBreakpointsAction;
+import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointUIConstants;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
+import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IPresentationContext;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
+import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
+import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
+import org.eclipse.debug.internal.ui.views.variables.VariablesView;
+import org.eclipse.debug.internal.ui.views.variables.details.AvailableDetailPanesAction;
+import org.eclipse.debug.ui.IBreakpointOrganizerDelegate;
+import org.eclipse.debug.ui.IBreakpointOrganizerDelegateExtension;
+import org.eclipse.debug.ui.IDebugModelPresentation;
+import org.eclipse.debug.ui.IDebugUIConstants;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
-
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
-import org.eclipse.core.runtime.jobs.Job;
-
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IToolBarManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IBaseLabelProvider;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.ITreeViewerListener;
-import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.viewers.StructuredViewer;
-import org.eclipse.jface.viewers.TreeExpansionEvent;
-import org.eclipse.jface.viewers.Viewer;
-
 import org.eclipse.ui.IMemento;
-import org.eclipse.ui.IPerspectiveDescriptor;
-import org.eclipse.ui.IPerspectiveListener2;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.IWorkbenchCommandConstants;
-import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
-import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.SelectionListenerAction;
-import org.eclipse.ui.contexts.IContextActivation;
-import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
 
-import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IBreakpointManagerListener;
-import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.core.model.IStackFrame;
-import org.eclipse.debug.core.model.IThread;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
-import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
-import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.LazyModelPresentation;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.CopyBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.PasteBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.breakpointGroups.RemoveFromWorkingSetAction;
-import org.eclipse.debug.internal.ui.actions.breakpoints.OpenBreakpointMarkerAction;
-import org.eclipse.debug.internal.ui.actions.breakpoints.ShowSupportedBreakpointsAction;
-import org.eclipse.debug.internal.ui.actions.breakpoints.SkipAllBreakpointsAction;
-import org.eclipse.debug.internal.ui.views.DebugUIViewsMessages;
-
-import org.eclipse.debug.ui.AbstractDebugView;
-import org.eclipse.debug.ui.IDebugModelPresentation;
-import org.eclipse.debug.ui.IDebugUIConstants;
-
 /**
- * This view shows the breakpoints registered with the breakpoint manager
+ * This class implements the breakpoints view.
  */
-public class BreakpointsView extends AbstractDebugView implements ISelectionListener, IBreakpointManagerListener, IPerspectiveListener2 {
-
-    private BreakpointsViewEventHandler fEventHandler;
-	private ICheckStateListener fCheckListener= new ICheckStateListener() {
-		public void checkStateChanged(CheckStateChangedEvent event) {
-			Object source = event.getElement();
-			if (source instanceof BreakpointContainer) {
-				handleContainerChecked(event, (BreakpointContainer) source);
-			} else if (source instanceof IBreakpoint) {
-				handleBreakpointChecked(event, (IBreakpoint) source);
-			}
-		}
-	};
-	private boolean fIsTrackingSelection= false;
-	// Persistence constants
-	private static String KEY_IS_TRACKING_SELECTION= "isTrackingSelection"; //$NON-NLS-1$
-	private static String KEY_VALUE="value"; //$NON-NLS-1$
-    private static final String ACTION_REMOVE_FROM_GROUP = "RemoveFromGroup"; //$NON-NLS-1$
-	private BreakpointsContentProvider fContentProvider;
-    private Clipboard fClipboard;
-    private IContextActivation fActivatedContext;
-    
-	/**
-	 * This memento allows the Breakpoints view to save and restore state
-	 * when it is closed and opened within a session. A different
-	 * memento is supplied by the platform for persistence at
-	 * workbench shutdown.
-	 */
-	private static IMemento fgMemento;
+public class BreakpointsView extends VariablesView implements ISelectionListener {	
+	private static final String ACTION_GOTO_MARKER				= "GotoMarker";				//$NON-NLS-1$
+	private static final String ACTION_SKIP_BREAKPOINTS			= "SkipBreakpoints";		//$NON-NLS-1$
+	private static final String ACTION_SHOW_MODEL_BREAKPOINT	= "ShowBreakpointsForModel";//$NON-NLS-1$
+	private static final String ACTION_REMOVE_FROM_GROUP 		= "RemoveFromGroup"; 		//$NON-NLS-1$
 	
-	/**
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
+	
+	private static final String KEY_IS_TRACKING_SELECTION		= "isTrackingSelection"; 	//$NON-NLS-1$
+	private static final String KEY_VALUE						= "value";					//$NON-NLS-1$
+
+	private boolean fIsTrackingSelection 						= false;
+	
+	private Clipboard fClipboard;	
+	private IBreakpointOrganizer[] fOrganizers;
+	private IStructuredSelection fFilterSelection;
+
+	public void dispose() {
+		if (fClipboard != null)
+			fClipboard.dispose();		
+		super.dispose();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getDetailPanePreferenceKey()
 	 */
-	public void createPartControl(Composite parent) {
-		super.createPartControl(parent);
-		DebugPlugin.getDefault().getBreakpointManager().addBreakpointManagerListener(this);
-		getSite().getWorkbenchWindow().addPerspectiveListener(this);
+	protected String getDetailPanePreferenceKey() {
+		return IDebugPreferenceConstants.BREAKPOINTS_DETAIL_PANE_ORIENTATION;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getHelpContextId()
+	 */
+	protected String getHelpContextId() {
+		return IDebugHelpContextIds.BREAKPOINT_VIEW;
 	}
 
-	/**
-	 * @see AbstractDebugView#createViewer(Composite)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getViewerStyle()
 	 */
-	protected Viewer createViewer(Composite parent) {
-		fContentProvider= new BreakpointsContentProvider();
-		CheckboxTreeViewer viewer = new BreakpointsViewer(new Tree(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.CHECK));
-        setViewer(viewer);
-        viewer.setUseHashlookup(true);
-		viewer.setContentProvider(fContentProvider);
-		viewer.setComparator(new BreakpointsComparator());
-		viewer.setInput(DebugPlugin.getDefault().getBreakpointManager());
-		viewer.addCheckStateListener(fCheckListener);
-		viewer.addTreeListener(new ITreeViewerListener() {
-			public void treeExpanded(TreeExpansionEvent event) {
-				((BreakpointsViewer)getViewer()).updateCheckedState(event.getElement());
-			}
-			public void treeCollapsed(TreeExpansionEvent event) {
-			}
-		});
-	    viewer.setLabelProvider(new BreakpointsLabelProvider());
-		// Necessary so that the PropertySheetView hears about selections in this view
-		getSite().setSelectionProvider(viewer);
-		initIsTrackingSelection();
-		initBreakpointOrganizers();
-		setEventHandler(new BreakpointsViewEventHandler(this));
-        initDragAndDrop();
+	protected int getViewerStyle() {
+		return SWT.MULTI | SWT.V_SCROLL | SWT.H_SCROLL | SWT.VIRTUAL | SWT.FULL_SELECTION | SWT.CHECK;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createViewer(org.eclipse.swt.widgets.Composite)
+	 */
+	public Viewer createViewer(Composite parent) {
+		TreeModelViewer viewer = (TreeModelViewer) super.createViewer(parent);		
+		
+		initBreakpointOrganizers(getMemento());
+		initIsTrackingSelection(getMemento());
+		
 		return viewer;
 	}
-    
-    /**
-     * Initializes drag and drop for the breakpoints viewer
-     */
-    private void initDragAndDrop() {
-        BreakpointsViewer viewer = (BreakpointsViewer) getViewer();
-        int ops = DND.DROP_MOVE | DND.DROP_COPY;
-        // drop
-        viewer.addDropSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDropAdapter(viewer));
-        // Drag
-        viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDragAdapter(viewer));
-    }
-	
-	/**
-	 * Initializes whether this view tracks selection in the
-	 * debug view from the persisted state.
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getModelPresentation()
 	 */
-	private void initIsTrackingSelection() {
-		IMemento memento= getMemento();
-		if (memento != null) {
-			IMemento node= memento.getChild(KEY_IS_TRACKING_SELECTION);
-			if (node != null) {
-				setTrackSelection(Boolean.valueOf(node.getString(KEY_VALUE)).booleanValue());
-				return;
-			}
+	protected IDebugModelPresentation getModelPresentation() {
+		if (fModelPresentation == null) {
+			fModelPresentation = new VariablesViewModelPresentation() {
+				/**
+				 * Undo double slashes.
+				 */
+				public String getText(Object element) {					
+			    	IDebugModelPresentation lp= getConfiguredPresentation(element);
+			    	if (lp != null) {
+			    		return lp.getText(element);
+			    	}
+			    	return getDefaultText(element);
+				}
+			};
 		}
-		setTrackSelection(false);
+		return fModelPresentation;
 	}
 	
 	/**
-	 * Initializes the persisted breakpoints organizers
+	 * Returns the tree model viewer.
+	 * @return
 	 */
-	private void initBreakpointOrganizers() {
-		IMemento memento = getMemento();
+	public TreeModelViewer getTreeModelViewer() {
+		return (TreeModelViewer) getViewer();
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#configureToolBar(org.eclipse.jface.action.IToolBarManager)
+	 */
+	protected void configureToolBar(IToolBarManager tbm) {
+		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
+		tbm.add(getAction(ACTION_SHOW_MODEL_BREAKPOINT)); 
+		tbm.add(getAction(ACTION_GOTO_MARKER));
+		tbm.add(getAction(ACTION_SKIP_BREAKPOINTS));
+		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#fillContextMenu(org.eclipse.jface.action.IMenuManager)
+	 */
+	protected void fillContextMenu(IMenuManager menu) {
+		updateObjects();
+		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
+		menu.add(new Separator(IDebugUIConstants.NAVIGATION_GROUP));
+		menu.add(getAction(ACTION_GOTO_MARKER));
+		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
+		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
+		menu.add(getAction(ActionFactory.COPY.getCommandId()));
+		menu.add(getAction(ActionFactory.PASTE.getCommandId()));
+		IAction action = getAction(ACTION_REMOVE_FROM_GROUP);
+		if (action != null && action.isEnabled()) {
+			menu.add(action);
+		}
+		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
+		action = new AvailableDetailPanesAction(this);
+		if (isDetailPaneVisible() && action.isEnabled()) {
+			menu.add(action);
+		}
+		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP_GROUP));
+
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#createActions()
+	 */
+	protected void createActions() {
+		IAction action = new OpenBreakpointMarkerAction(getViewer());
+		setAction(ACTION_GOTO_MARKER, action);
+		setAction(DOUBLE_CLICK_ACTION, action);
+		setAction(ACTION_SHOW_MODEL_BREAKPOINT, new ShowTargetBreakpointsAction(this));
+		setAction(ACTION_SKIP_BREAKPOINTS, new SkipAllBreakpointsAction(this));
+
+		fClipboard = new Clipboard(getSite().getShell().getDisplay());
+		        
+		PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
+		configure(paste, ActionFactory.PASTE.getCommandId(), ActionFactory.PASTE.getCommandId(), ISharedImages.IMG_TOOL_PASTE);
+		SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
+		configure(copy, ActionFactory.COPY.getCommandId(), ActionFactory.COPY.getCommandId(), ISharedImages.IMG_TOOL_COPY);
+		        
+		SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
+		setAction(ACTION_REMOVE_FROM_GROUP, remove);
+		getViewer().addSelectionChangedListener(remove);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @seeorg.eclipse.debug.internal.ui.views.variables.VariablesView#getToggleActionLabel()
+	 */
+	protected String getToggleActionLabel() {
+		return DebugUIViewsMessages.BreakpointsView_12;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#getPresentationContextId()
+	 */
+	protected String getPresentationContextId() {
+		return IDebugUIConstants.ID_BREAKPOINT_VIEW;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#contextActivated(org.eclipse.jface.viewers.ISelection)
+	 */
+	protected void contextActivated(ISelection selection) {
+		if (selection == null || selection.isEmpty()) {
+			Object input = new DefaultBreakpointManagerInput(getTreeModelViewer().getPresentationContext());
+			super.contextActivated(new StructuredSelection(input));
+		} else {
+			super.contextActivated(selection);
+		}
+		if (isAvailable() && isVisible()) {
+			updateAction("ContentAssist"); //$NON-NLS-1$
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#setViewerInput(java.lang.Object)
+	 */
+	protected void setViewerInput(Object context) {
+		Object current = getViewer().getInput();
+		if (current == null && context == null) {
+			return;
+		}
+
+		if (current != null && current.equals(context)) {
+			return;
+		}
+		
+		final TreeModelViewer viewer = getTreeModelViewer();
+		final IPresentationContext presentationContext = viewer.getPresentationContext();		
+		
+		// set the view organizer - if there is an organizer override per input, than set the organizer to null
+		Object organizerInputAdapter = null;
+		if (context instanceof IAdaptable) {
+			organizerInputAdapter = ((IAdaptable) context).getAdapter(IBreakpointOrganizerInputProvider.class);
+		}
+		presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS, organizerInputAdapter != null ? null : fOrganizers);
+		
+		// set the view filter selection
+		presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION, fFilterSelection);
+
+		// set the element comparator 
+		presentationContext.setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ELEMENT_COMPARATOR, new ElementComparator(presentationContext));
+		
+		showViewer();
+		getViewer().setInput(context);
+	}
+		
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#viewerInputUpdateComplete(org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate)
+	 */
+	protected void viewerInputUpdateComplete(IViewerInputUpdate update) {		
+		// handles non-standard debug model
+        if (update.getElement() != null) {
+            setViewerInput(update.getInputElement());
+        } else {
+            setViewerInput(new DefaultBreakpointManagerInput(getTreeModelViewer().getPresentationContext()));
+        }
+	}
+	
+	
+	/**
+	 * Returns whether this view is currently tracking the selection from the debug view.
+	 * 
+	 * @return whether this view is currently tracking the debug view's selection
+	 */
+	public boolean isTrackingSelection() {
+		return fIsTrackingSelection;
+	}
+
+	/**
+	 * Sets whether this view should track the selection from the debug view.
+	 * 
+	 * @param trackSelection whether or not this view should track the debug view's selection.
+	 */
+	public void setTrackSelection(boolean trackSelection) {
+		fIsTrackingSelection = trackSelection;
+		if (trackSelection) {
+			getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		} else {
+			getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
+		}
+		
+		// set the track selection property for non-standard model to track the debug context
+		final TreeModelViewer viewer = getTreeModelViewer();
+		if (viewer != null) {
+			viewer.getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_TRACK_SELECTION, new Boolean(fIsTrackingSelection));
+		}
+	}
+	
+	/**
+	 * Initializes the persisted breakpoints organizers.
+	 */
+	private void initBreakpointOrganizers(IMemento memento) {
 		if (memento != null) {
 			IMemento node = memento.getChild(IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
 			if (node == null) {
-                fContentProvider.setOrganizers(null);
+				fOrganizers = null;
             } else {
 				String value = node.getString(KEY_VALUE);
                 if (value != null) {
@@ -214,170 +361,21 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
                             organziers.add(organizer);
                         }
                     }
-    				fContentProvider.setOrganizers((IBreakpointOrganizer[]) organziers.toArray(new IBreakpointOrganizer[organziers.size()]));
+                    fOrganizers = (IBreakpointOrganizer[]) organziers.toArray(new IBreakpointOrganizer[organziers.size()]);
+                    
+                    for (int i = 0; i < fOrganizers.length; i++)
+        				fOrganizers[i].addPropertyChangeListener(this);
                 }
 			}
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.ui.AbstractDebugView#getMemento()
-	 */
-	protected IMemento getMemento() {
-		if (fgMemento != null) {
-		    return fgMemento;
-		}
-		return super.getMemento();
-	}
-	
-    /**
-     * Update the checked state up the given element and all of its children.
-     * 
-     * @param element
-     */
-	public void updateCheckedState(Object element) {
-        ((BreakpointsViewer)getViewer()).updateCheckedState(element);
-	}
-		
-	/**
-	 * Returns this view's viewer as a checkbox tree viewer.
-	 * @return this view's viewer as a checkbox tree viewer
-	 */
-	public CheckboxTreeViewer getCheckboxViewer() {
-		return (CheckboxTreeViewer) getViewer();
-	}
-	
-	/**
-	 * Returns this view's content provider as a tree content provider.
-	 * @return this view's content provider as a tree content provider
-	 */
-	public ITreeContentProvider getTreeContentProvider() {
-	    return fContentProvider;
-	}
-
-	/**
-	 * A breakpoint has been checked/unchecked. Update the group
-	 * element's checked/grayed state as appropriate.
-	 */
-	private void handleBreakpointChecked(final CheckStateChangedEvent event, final IBreakpoint breakpoint) {
-		final boolean enable= event.getChecked();
-        String jobName = enable ? DebugUIViewsMessages.BreakpointsView_0 : DebugUIViewsMessages.BreakpointsView_1; //
-        new Job(jobName) {
-            protected IStatus run(IProgressMonitor monitor) {
-                try {
-                    breakpoint.setEnabled(enable);
-                    return Status.OK_STATUS;
-                } catch (final CoreException e) {
-                    Display.getDefault().asyncExec(new Runnable() {
-                        public void run() {
-                            String titleState= enable ? DebugUIViewsMessages.BreakpointsView_6 : DebugUIViewsMessages.BreakpointsView_7; //
-                            String messageState= enable ? DebugUIViewsMessages.BreakpointsView_8 : DebugUIViewsMessages.BreakpointsView_9;  //
-                            DebugUIPlugin.errorDialog(DebugUIPlugin.getShell(), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_10, new String[] { titleState }), MessageFormat.format(DebugUIViewsMessages.BreakpointsView_11, new String[] { messageState }), e); //
-                            // If the breakpoint fails to update, reset its check state.
-                            getCheckboxViewer().removeCheckStateListener(fCheckListener);
-                            event.getCheckable().setChecked(breakpoint, !event.getChecked());
-                            getCheckboxViewer().addCheckStateListener(fCheckListener);
-                        }
-                    });
-                }
-                return Status.CANCEL_STATUS;
-            }
-        }.schedule();
-    }
-
-	/**
-	 * A group has been checked or unchecked. Enable/disable all of the
-	 * breakpoints in that group to match.
-	 */
-	private void handleContainerChecked(CheckStateChangedEvent event, BreakpointContainer container) {
-		final IBreakpoint[] breakpoints = container.getBreakpoints();
-		final boolean enable= event.getChecked();
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-            public void run(IProgressMonitor monitor) {
-                try {
-                    for (int i = 0; i < breakpoints.length; i++) {
-                        IBreakpoint breakpoint = breakpoints[i];
-                        breakpoint.setEnabled(enable);
-                    }
-                } catch (CoreException e) {
-                    DebugUIPlugin.log(e);
-                }
-            }
-        };
-        // TODO: should use scheduling rule
-        IProgressService progressService = PlatformUI.getWorkbench().getProgressService();
-        try {
-            progressService.busyCursorWhile(runnable);
-        }
-        catch (InvocationTargetException e) {}
-        catch (InterruptedException e) {}
-	}
-
-	/**
-	 * @see AbstractDebugView#getHelpContextId()
-	 */
-	protected String getHelpContextId() {
-		return IDebugHelpContextIds.BREAKPOINT_VIEW;
-	}
-
-	/**
-	 * @see IWorkbenchPart#dispose()
-	 */
-	public void dispose() {
-        disposeAction(IWorkbenchCommandConstants.EDIT_COPY);
-        disposeAction(IWorkbenchCommandConstants.EDIT_PASTE);
-        disposeAction(ACTION_REMOVE_FROM_GROUP);
-        
-	    if (getCheckboxViewer() != null) {
-	        getCheckboxViewer().removeCheckStateListener(fCheckListener);
-	    }
-		IAction action= getAction("ShowBreakpointsForModel"); //$NON-NLS-1$
-		if (action != null) {
-			((ShowSupportedBreakpointsAction)action).dispose();
-		}
-		getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		DebugPlugin.getDefault().getBreakpointManager().removeBreakpointManagerListener(this);
-		super.dispose();
-		
-		if (getEventHandler() != null) {
-			getEventHandler().dispose();
-		}
-        
-        if (fClipboard != null) {
-            fClipboard.dispose();
-        }
-        
-		getSite().getWorkbenchWindow().removePerspectiveListener(this);
-	}
-
-	/**
-	 * @see AbstractDebugView#createActions()
-	 */
-	protected void createActions() {
-		IAction action = new OpenBreakpointMarkerAction(getViewer());
-		setAction("GotoMarker", action); //$NON-NLS-1$
-		setAction(DOUBLE_CLICK_ACTION, action);
-		setAction("ShowBreakpointsForModel", new ShowSupportedBreakpointsAction(getStructuredViewer(),this)); //$NON-NLS-1$
-		setAction("SkipBreakpoints", new SkipAllBreakpointsAction(this)); //$NON-NLS-1$
-        
-        fClipboard= new Clipboard(getSite().getShell().getDisplay());
-        
-        PasteBreakpointsAction paste = new PasteBreakpointsAction(this);
-        configure(paste, ActionFactory.PASTE.getCommandId(), ActionFactory.PASTE.getId(), ISharedImages.IMG_TOOL_PASTE);
-        SelectionListenerAction copy = new CopyBreakpointsAction(this, fClipboard, paste);
-        configure(copy, ActionFactory.COPY.getCommandId(), ActionFactory.COPY.getId(), ISharedImages.IMG_TOOL_COPY);
-        
-        SelectionListenerAction remove = new RemoveFromWorkingSetAction(this);
-        setAction(ACTION_REMOVE_FROM_GROUP, remove);
-        getViewer().addSelectionChangedListener(remove);
-	}
-
 	/**
      * Configures the action to override the global action, registers
      * the action for selection change notification, and registers
      * the action with this view.
      * 
-     * @param sla action
+     * @param action selection action
      * @param defId action definition id
      * @param globalId global action id
      * @param imgId image identifier
@@ -389,314 +387,187 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
         getViewer().addSelectionChangedListener(action);
         action.setImageDescriptor(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imgId));
     }
-    
+	
+	/**
+	 * Initializes whether this view tracks selection in the debug view from the persisted state.
+	 */
+	private void initIsTrackingSelection(IMemento memento) {
+		if (memento != null) {
+			IMemento node = memento.getChild(KEY_IS_TRACKING_SELECTION);
+			if (node != null) {
+				setTrackSelection(Boolean.valueOf(node.getString(KEY_VALUE)).booleanValue());
+				return;
+			}
+		}
+		setTrackSelection(false);
+	}
+	
     /**
-     * Cleans up selection listener action
-     * 
-     * @param id action id
+     * Initializes drag and drop for the breakpoints viewer
      */
-    private void disposeAction(String id) {
-        IAction action = getAction(id);
-        if (action instanceof SelectionListenerAction) {
-            SelectionListenerAction sla = (SelectionListenerAction) action;
-            if (getViewer() != null) {
-                getViewer().removeSelectionChangedListener(sla);
-            }
-        }
+	protected void initDragAndDrop(TreeModelViewer viewer) {
+        int ops = DND.DROP_MOVE | DND.DROP_COPY;
+        // drop
+        viewer.addDropSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDropAdapter(viewer, this));
+        // Drag
+        viewer.addDragSupport(ops, new Transfer[] {LocalSelectionTransfer.getInstance()}, new BreakpointsDragAdapter(viewer, this));
+        // Drag only
+//        viewer.addDragSupport(DND.DROP_COPY, new Transfer[] {LocalSelectionTransfer.getTransfer()}, new SelectionDragAdapter(viewer));
     }
-
-    /**
-	 * Adds items to the context menu.
-	 * 
-	 * @param menu The menu to contribute to
+ 
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#saveViewerState(org.eclipse.ui.IMemento)
 	 */
-	protected void fillContextMenu(IMenuManager menu) {
-		updateObjects();
-		menu.add(new Separator(IDebugUIConstants.EMPTY_NAVIGATION_GROUP));
-		menu.add(new Separator(IDebugUIConstants.NAVIGATION_GROUP));
-		menu.add(getAction("GotoMarker")); //$NON-NLS-1$
-		menu.add(new Separator(IDebugUIConstants.EMPTY_BREAKPOINT_GROUP));
-		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-        menu.add(getAction(IWorkbenchCommandConstants.EDIT_COPY));
-        menu.add(getAction(IWorkbenchCommandConstants.EDIT_PASTE));
-        IAction action = getAction(ACTION_REMOVE_FROM_GROUP);
-        if (action.isEnabled()) {
-            menu.add(action);
-        }
-		menu.add(new Separator(IDebugUIConstants.EMPTY_RENDER_GROUP));
-		menu.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP_GROUP));
-		
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-	}
-	
-	/**
-	 * @see AbstractDebugView#configureToolBar(IToolBarManager)
-	 */
-	protected void configureToolBar(IToolBarManager tbm) {
-		tbm.add(new Separator(IDebugUIConstants.BREAKPOINT_GROUP));
-		tbm.add(getAction("ShowBreakpointsForModel")); //$NON-NLS-1$
-		tbm.add(getAction("GotoMarker")); //$NON-NLS-1$
-		tbm.add(getAction("SkipBreakpoints")); //$NON-NLS-1$
-		tbm.add(new Separator(IDebugUIConstants.RENDER_GROUP));
-	}
-	
-	/**
-	 * Returns this view's event handler
-	 * 
-	 * @return a breakpoint view event handler
-	 */
-	protected BreakpointsViewEventHandler getEventHandler() {
-		return fEventHandler;
-	}
-
-	/**
-	 * Sets this view's event handler.
-	 * 
-	 * @param eventHandler a breakpoint view event handler
-	 */
-	private void setEventHandler(BreakpointsViewEventHandler eventHandler) {
-		fEventHandler = eventHandler;
-	}
-	/**
-	 * @see org.eclipse.debug.ui.AbstractDebugView#becomesVisible()
-	 */
-	protected void becomesVisible() {
-		super.becomesVisible();
-        CheckboxTreeViewer viewer = getCheckboxViewer();
-        ISelection selection = viewer.getSelection();
-        viewer.getControl().setRedraw(false);
-        ((BreakpointsContentProvider)viewer.getContentProvider()).reorganize();
-        viewer.setSelection(new StructuredSelection(selection));
-        viewer.getControl().setRedraw(true);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
-	 */
-	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-		if (sel.isEmpty() || !isTrackingSelection()) {
-			return;
-		}
-		IStructuredSelection selection= (IStructuredSelection) sel;
-		Iterator iter= selection.iterator();
-		Object firstElement= iter.next();
-		if (firstElement == null || iter.hasNext()) {
-			return;
-		}
-		IThread thread= null;
-		if (firstElement instanceof IStackFrame) {
-			thread= ((IStackFrame) firstElement).getThread();
-		} else if (firstElement instanceof IThread) {
-			thread= (IThread) firstElement;
-		} else {
-			return;
-		}
-		IBreakpoint[] breakpoints= thread.getBreakpoints();
-		getViewer().setSelection(new StructuredSelection(breakpoints), true);
-	}
-	
-	/**
-	 * Returns whether this view is currently tracking the
-	 * selection from the debug view.
-	 * 
-	 * @return whether this view is currently tracking the
-	 *   debug view's selection
-	 */
-	public boolean isTrackingSelection() {
-		return fIsTrackingSelection;
-	}
-	
-	/**
-	 * Sets whether this view should track the selection from
-	 * the debug view.
-	 * 
-	 * @param trackSelection whether or not this view should
-	 *   track the debug view's selection.
-	 */
-	public void setTrackSelection(boolean trackSelection) {
-		fIsTrackingSelection= trackSelection;
-		if (trackSelection) {
-			getSite().getPage().addSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		} else {
-			getSite().getPage().removeSelectionListener(IDebugUIConstants.ID_DEBUG_VIEW, this);
-		}
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
-	public void saveState(IMemento memento) {
-		super.saveState(memento);
-		IMemento node= memento.createChild(KEY_IS_TRACKING_SELECTION);
+	public void saveViewerState(IMemento memento) {
+		IMemento node = memento.createChild(KEY_IS_TRACKING_SELECTION);
 		node.putString(KEY_VALUE, String.valueOf(fIsTrackingSelection));
 		
-		StringBuffer buffer= new StringBuffer();
-		IBreakpointOrganizer[] organizers = fContentProvider.getOrganizers();
-        if (organizers != null) {
-            for (int i = 0; i < organizers.length; i++) {
-                IBreakpointOrganizer organizer = organizers[i];
+		StringBuffer buffer = new StringBuffer();
+        if (fOrganizers != null) {
+            for (int i = 0; i < fOrganizers.length; i++) {
+                IBreakpointOrganizer organizer = fOrganizers[i];
                 buffer.append(organizer.getIdentifier());
-                if (i < (organizers.length - 1)) {
+                if (i < (fOrganizers.length - 1)) {
                     buffer.append(',');
                 }
             }
             node = memento.createChild(IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
             node.putString(KEY_VALUE, buffer.toString());
         }
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
-	 */
-	public void breakpointManagerEnablementChanged(boolean enabled) {
-		DebugUIPlugin.getStandardDisplay().asyncExec(new Runnable() {
-			public void run() {
-				IAction action = getAction("SkipBreakpoints"); //$NON-NLS-1$
-				if (action != null) {
-					((SkipAllBreakpointsAction) action).updateActionCheckedState();
-				}
-			}
-		});
+		super.saveViewerState(memento);
 	}
 	
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.IDoubleClickListener#doubleClick(org.eclipse.jface.viewers.DoubleClickEvent)
+	/*
+	 * (non-Javadoc)
+	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart, org.eclipse.jface.viewers.ISelection)
 	 */
-	public void doubleClick(DoubleClickEvent event) {
-		  IStructuredSelection selection= (IStructuredSelection) event.getSelection();
-          if (selection.size() == 1) {
-              Object element = selection.getFirstElement();
-              if (element instanceof BreakpointContainer) {
-                  getCheckboxViewer().setExpandedState(element, !getCheckboxViewer().getExpandedState(element));
-                  return;
-              }
-          }
-		super.doubleClick(event);
-	}
-
-	/**
-	 * @param selectedContainers
-	 */
-	public void setBreakpointOrganizers(IBreakpointOrganizer[] organizers) {
-        Viewer viewer = getViewer();
-        ISelection selection = viewer.getSelection();
-		fContentProvider.setOrganizers(organizers);
-		viewer.setSelection(selection);
-	}
-	
-	/**
-	 * returns the complete listing of breakpoints organizers
-	 * @return the complete listing of breakpoint organizers
-	 */
-	public IBreakpointOrganizer[] getBreakpointOrganizers() {
-		return fContentProvider.getOrganizers();
-	}
-
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
-     */
-    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
-		if (partRef instanceof IViewReference && changeId.equals(IWorkbenchPage.CHANGE_VIEW_HIDE)) {
-			String id = ((IViewReference) partRef).getId();
-			if (id.equals(getViewSite().getId())) {
-				// BreakpointsView closed. Persist settings.
-				fgMemento= XMLMemento.createWriteRoot("BreakpointsViewMemento"); //$NON-NLS-1$
-				saveState(fgMemento);
-			}
+	public void selectionChanged(IWorkbenchPart part, ISelection sel) {
+		if (sel.isEmpty() || !isTrackingSelection()) {
+			return;
 		}
-    }
+		IStructuredSelection selection = (IStructuredSelection) sel;
+		Iterator iter = selection.iterator();
+		Object firstElement = iter.next();
+		if (firstElement == null || iter.hasNext()) {
+			return;
+		}
+		IThread thread = null;
+		if (firstElement instanceof IStackFrame) {
+			thread = ((IStackFrame) firstElement).getThread();
+		} else if (firstElement instanceof IThread) {
+			thread = (IThread) firstElement;
+		} else {
+			return;
+		}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-     */
-    public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
-    }
+		IBreakpoint[] breakpoints = thread.getBreakpoints();
+		Viewer viewer = getViewer();
+		if (viewer != null)
+			viewer.setSelection(new StructuredSelection(breakpoints), true);
+	}
 
-    /* (non-Javadoc)
-     * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor, java.lang.String)
-     */
-    public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
-    }
-    
-    /* (non-Javadoc)
-     * @see org.eclipse.debug.ui.IDebugView#getPresentation(java.lang.String)
-     */
-    public IDebugModelPresentation getPresentation(String id) {
-        if (getViewer() instanceof StructuredViewer) {
-            IBaseLabelProvider lp = ((StructuredViewer)getViewer()).getLabelProvider();
-            if (lp instanceof BreakpointsLabelProvider) {
-                BreakpointsLabelProvider blp = (BreakpointsLabelProvider) lp;
-                lp = blp.getPresentation();
-            }
-            if (lp instanceof DelegatingModelPresentation) {
-                return ((DelegatingModelPresentation)lp).getPresentation(id);
-            }
-            if (lp instanceof LazyModelPresentation) {
-                if (((LazyModelPresentation)lp).getDebugModelIdentifier().equals(id)) {
-                    return (IDebugModelPresentation)lp;
-                }
-            }
-        }
-        return null;
-    }
-    
-    /**
-	 * This method is used solely to preserve the selection state of the viewer in the event that the current selection is to be removed
-	 * @param selection the selection to be removed
+	/**
+	 * Preserves the selection.
 	 * 
-	 * @since 3.3
+	 * @param selection the selection
 	 */
 	public void preserveSelection(IStructuredSelection selection) {
-		if(selection != null && !selection.isEmpty()) {
-	    	TreeItem item = (TreeItem) ((BreakpointsViewer)getCheckboxViewer()).searchItem(selection.getFirstElement());
-	    	Object toselect = null;
-	    	if(item != null) {
-	    		TreeItem parent = item.getParentItem();
-	    		if(parent != null) {
-	    			int idx = 0;
-	    			if(parent.getItemCount() == 1) {
-	    				toselect = parent.getData();
-	    			}
-	    			idx = parent.indexOf(item);
-	    			if(idx == 0) {
-	    				if(parent.getItemCount() > 1) {
-	    					toselect = parent.getItem(1).getData();
-	    				}
-	    				else {
-	    					toselect = parent.getItem(0).getData();
-	    				}
-	    			}
-	    			if(idx > 0) {
-	    				toselect = parent.getItem(idx-1).getData();
-	    			}
-	    		}
-	    		else {
-	    			Tree tree = item.getParent();
-	    			TreeItem[] items = tree.getItems();
-	    			if (items.length > 1){
-		    			for(int i = 0; i < items.length; i++) {
-		    				if(item.equals(items[i])) {
-		    					if(i+1 >= items.length){
-		    						toselect = items[i-1].getData();
-		    						break;
-		    					} else {
-		    						toselect = items[i+1].getData();
-		    						break;
-		    					}
-		    					
-		    				}
-		    			}
-	    			}
-	    		}
-	    	}
-	    	if(toselect != null) {
-	    		getViewer().setSelection(new StructuredSelection(toselect), true);
-	    	}
+		if (selection instanceof ITreeSelection && !selection.isEmpty()) {
+			TreePath path = ((ITreeSelection) selection).getPaths()[0];
+			TreeItem item = (TreeItem) ((TreeModelViewer) getViewer()).findItem(path);
+			Object toselect = null;
+			if (item != null) {
+				TreeItem parent = item.getParentItem();
+				if (parent != null) {
+					int idx = 0;
+					if (parent.getItemCount() == 1) {
+						toselect = parent.getData();
+					}
+					idx = parent.indexOf(item);
+					if (idx == 0) {
+						if (parent.getItemCount() > 1) {
+							toselect = parent.getItem(1).getData();
+						} else {
+							toselect = parent.getItem(0).getData();
+						}
+					}
+					if (idx > 0) {
+						toselect = parent.getItem(idx - 1).getData();
+					}
+				} else {
+					Tree tree = item.getParent();
+					TreeItem[] items = tree.getItems();
+					if (items.length > 1) {
+						for (int i = 0; i < items.length; i++) {
+							if (item.equals(items[i])) {
+								if (i + 1 >= items.length) {
+									toselect = items[i - 1].getData();
+									break;
+								} else {
+									toselect = items[i + 1].getData();
+									break;
+								}
+
+							}
+						}
+					}
+				}
+			}
+			if (toselect != null) {
+				getViewer().setSelection(new StructuredSelection(toselect),true);
+			}
 		}
-    }
-    
-    /**
+	}
+
+	/**
+	 * Sets the breakpoint organizers for this view.
+	 * 
+	 * @param organizers the organizers, can be <code>null</code>.
+	 */
+	public void setBreakpointOrganizers(IBreakpointOrganizer[] organizers) {
+		if (fOrganizers != null) {
+			for (int i = 0; fOrganizers != null && i < fOrganizers.length; i++)
+				fOrganizers[i].removePropertyChangeListener(this);
+		}
+		
+		fOrganizers = organizers;
+		
+		for (int i = 0; fOrganizers != null && i < fOrganizers.length; i++)
+			fOrganizers[i].addPropertyChangeListener(this);
+				
+		TreeModelViewer viewer = getTreeModelViewer();
+		if (viewer != null) {
+			// update the presentation context organizer
+			viewer.getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS, fOrganizers);			
+		}
+	}
+
+	/**
+	 * Sets the breakpoint filter for this view.
+	 * 
+	 * @param ss the selection, can be <code>null</code>.
+	 */
+	public void setFilterSelection(IStructuredSelection ss) {
+		fFilterSelection = ss;
+		
+		TreeModelViewer viewer = getTreeModelViewer();
+		if (viewer != null) {
+			// update the presentation context filter
+			viewer.getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_FILTER_SELECTION, fFilterSelection);
+		}
+	}
+	
+	/**
+	 * Returns the breakpoint organizers for this view.
+	 * 
+	 * @return the breakpoint organizers.
+	 */
+	public IBreakpointOrganizer[] getBreakpointOrganizers() {
+		return fOrganizers;
+	}
+	
+	/**
      * Returns whether the given selection can be pasted into the given target.
      * <p>
      * Scheme:
@@ -711,81 +582,282 @@ public class BreakpointsView extends AbstractDebugView implements ISelectionList
      * @param selection the selection to paste
      * @return whether the given selection can be pasted into the given target
      * 
-     * TODO Remove in favour of using <code>TreeItem</code>s and <code>TreePath</code>s to determine paste targets
+     * TODO Remove in favor of using <code>TreeItem</code>s and <code>TreePath</code>s to determine paste targets
      */
     public boolean canPaste(Object target, ISelection selection) {
-    	if(!(target instanceof BreakpointContainer)) {
+    	if(!(target instanceof IBreakpointContainer) || !(selection instanceof IStructuredSelection)) {
     		return false;
     	}
-    	if(selection.isEmpty()) {
+    	if(selection == null || selection.isEmpty()) {
     		return false;
     	}
     	IStructuredSelection ss = (IStructuredSelection) selection;
-    	BreakpointContainer container = (BreakpointContainer) target;
-    	IBreakpoint breakpoint = null;
-    	Object element = null;
+    	IBreakpointContainer container = (IBreakpointContainer) target;
     	for(Iterator iter = ss.iterator(); iter.hasNext();) {
-    		element = iter.next();
-    		if(!(element instanceof IBreakpoint)) {
-    			return false;
-    		}
-    		breakpoint = (IBreakpoint) element;
-    		if (container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
+    		IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(iter.next(), IBreakpoint.class);
+    		if (breakpoint == null || container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
                 return false;
             }
     	}
         return true;
-    }
+    }   
 	
-    /**
+    /** 
      * Pastes the selection into the given target
      * 
-     * @param target target of the paste, either a BreakpointContainer,
-     * or a Breakpoint within a BreakpointContainer
+     * @param target target of the paste, either a IBreakpointContainer,
+     * or a Breakpoint within a IBreakpointContainer
      * @param selection breakpoints
      * @return whether successful
      * 
-     * TODO remove in favour of using <code>TreeItem</code> as paste target
+     * TODO remove in favor of using <code>TreeItem</code> as paste target 
      */
     public boolean performPaste(Object target, ISelection selection) {
-        if (target instanceof BreakpointContainer && selection instanceof IStructuredSelection) {
-            BreakpointContainer container = (BreakpointContainer) target;
+        if (target instanceof IBreakpointContainer && selection instanceof IStructuredSelection) {
+            IBreakpointContainer container = (IBreakpointContainer) target;            
             Object[] objects = ((IStructuredSelection)selection).toArray();
             for (int i = 0; i < objects.length; i++) {
-                container.getOrganizer().addBreakpoint((IBreakpoint)objects[i], container.getCategory());
+                IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(objects[i], IBreakpoint.class);
+                if (breakpoint != null) {
+                    container.getOrganizer().addBreakpoint(breakpoint, container.getCategory());
+                }
             }
             return true;
         }
         return false;
     }
     
-    /**
-     * Returns if the breakpoints view is currently showing groups or not
-     * @return true of the breakpoints view showing groups, false otherwise
+	/**
+     * Returns the container from within the specified path that is the container the breakpoint can be removed from
+     * @param breakpoint the breakpoint to get the container for
+     * @return the first found container that includes the breakpoint that allows removal, or <code>null</code> if none found
+     * @since 3.3
      */
-    public boolean isShowingGroups() {
-        return fContentProvider.isShowingGroups();
+    public IBreakpointContainer getRemovableContainer(TreePath path) {
+    	if (path != null) {
+            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(path.getLastSegment(), IBreakpoint.class);
+        	if (breakpoint != null) {
+		    	IBreakpointContainer container = null;
+		    	for(int i = path.getSegmentCount()-2; i > -1; i--) {
+		    	    Object segment = path.getSegment(i); 
+		    	    if (segment instanceof IBreakpointContainer) {
+    		    		container = (IBreakpointContainer) segment;
+    		    		if(container.contains(breakpoint) && 
+    		    			container.getOrganizer() != null && 
+    		    			container.getOrganizer().canRemove(breakpoint, container.getCategory())) {
+    		    			return container;
+    		    		}
+		    	    }
+		    	}
+        	}
+    	}
+    	return null;
     }
 
+    /**
+     * Returns the addable breakpoint container of the specified tree path
+     * @param breakpoint the breakpoint to get the container for
+     * @return the first found addable container for the specified tree path or <code>null</code> if none found
+     * @since 3.3
+     */
+    protected IBreakpointContainer getAddableContainer(TreePath path) {
+    	if (path != null) {
+	    	Object element = path.getLastSegment();
+	    	if (element instanceof IBreakpointContainer) {
+	    		return (IBreakpointContainer)element;
+	    	}
+            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(element, IBreakpoint.class);
+	    	if (breakpoint != null) {
+		    	IBreakpointContainer container = null;
+		    	for (int i = path.getSegmentCount()-2; i > -1; i--) {
+                    Object segment = path.getSegment(i); 
+                    if (segment instanceof IBreakpointContainer) {
+                        container = (IBreakpointContainer) segment;
+    		    		if (container.contains(breakpoint) && container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
+    		    			return container;
+    		    		}
+                    }
+		    	}
+	    	}
+    	}
+    	return null;
+    }
 	/**
-	 * @see org.eclipse.ui.part.PageBookView#partActivated(org.eclipse.ui.IWorkbenchPart)
+	 * This method is used to determine if there is an addable parent container available for the specified drop target.
+	 * <p>
+	 * A drop target can be either a <code>IBreakpointContainer</code> or an <code>IBreakpoint</code>. This method always checks the entire heirarchy
+	 * of the tree path for the specified target in the event one of the parent element does not support dropping. 
+	 * </p>
+	 * @param target
+	 * @param breakpoint
+	 * @return
 	 */
-	public void partActivated(IWorkbenchPart part) {
-		if (part.equals(this)) {
-			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
-			fActivatedContext = contextService.activateContext(IDebugUIConstants.ID_BREAKPOINT_VIEW);
+	private boolean checkAddableParentContainers(TreePath path, IBreakpoint breakpoint) {
+		if (path != null) {
+			Object element = null;
+			for (int i = path.getSegmentCount()-1; i > -1; i--) {
+				element = path.getSegment(i);
+				if (element instanceof IBreakpointContainer) {
+					IBreakpointContainer container = (IBreakpointContainer) element;
+					if (container.contains(breakpoint) || !container.getOrganizer().canAdd(breakpoint, container.getCategory())) {
+		    			return false;
+		    		}
+				}
+			}
 		}
-		super.partActivated(part);
+		return true;
 	}
+	
+    /**
+     * Returns if the selected item in the tree can be dragged
+     * <p>
+     * Scheme:
+     * <ul>
+     * <li>breakpoint containers cannot be dragged</li>
+     * <li>breakpoints can be dragged iff the container they reside in supports the removal of breakpoints</li>
+     * </ul>
+     * </p>
+     * @param element the element to test if it can be dragged
+     * @return true if the selected element can be dragged, false otherwise
+     * @since 3.3
+     */
+    boolean canDrag(TreePath[] items) {
+    	if(items == null) {
+    		return false;
+    	}
+    	if (items.length == 0) {
+    		return false;
+    	}
+    	for (int i = 0; i < items.length; i++) {
+    		if (getRemovableContainer(items[i]) == null) {
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    /**
+     * Performs the actual removal of breakpoints from their respective (removable) containers on a successful drag operation
+     * @param selection the selection of breakpoints involved in the drag
+     * @since 3.3
+     */
+    void performDrag(TreePath[] paths) {
+    	if (paths == null) {
+    		return;
+    	}
 
+    	Map containersToBreakpoints = new HashMap();
+    	for (int i = 0; i < paths.length; i++) {
+            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(paths[i].getLastSegment(), IBreakpoint.class);
+    		if (breakpoint != null) {
+	    		IBreakpointContainer container = getRemovableContainer(paths[i]);
+	    		if(container != null) {
+	    			List list = (List) containersToBreakpoints.get(container);
+	    			if (list == null) {
+	    				list = new ArrayList();
+	    				containersToBreakpoints.put(container, list);
+	    			}
+	    			list.add(breakpoint);
+	    		}
+    		}
+    	}
+    	Iterator iterator = containersToBreakpoints.entrySet().iterator();
+    	while (iterator.hasNext()) {
+    		Entry entry = (Entry) iterator.next();
+    		IBreakpointContainer container = (IBreakpointContainer) entry.getKey();
+    		List list = (List) entry.getValue();
+    		IBreakpointOrganizer organizer = container.getOrganizer();
+    		IBreakpoint[] breakpoints = (IBreakpoint[]) list.toArray(new IBreakpoint[list.size()]);
+    		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
+				IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
+				extension.removeBreakpoints(breakpoints, container.getCategory());
+			} else {
+				for (int i = 0; i < breakpoints.length; i++) {
+					organizer.removeBreakpoint(breakpoints[i], container.getCategory());
+				}
+			}
+    	}
+    }	
+    
 	/**
-	 * @see org.eclipse.ui.part.PageBookView#partDeactivated(org.eclipse.ui.IWorkbenchPart)
-	 */
-	public void partDeactivated(IWorkbenchPart part) {
-		if (part.equals(this)) {
-			IContextService contextService = (IContextService)getSite().getService(IContextService.class);
-		    contextService.deactivateContext(fActivatedContext);
+     * Performs the actual addition of the selected breakpoints to the specified target
+     * @param target the target to add the selection of breakpoints to
+     * @param selection the selection of breakpoints
+     * @return true if the drop occurred, false otherwise
+     * @since 3.3
+     */
+    protected boolean performDrop(TreePath target, ITreeSelection selection) {
+		if(target == null || selection == null) {
+    		return false;
+    	}
+    	IBreakpointContainer container = getAddableContainer(target);
+    	if (container == null) {
+			return false;
 		}
-		super.partDeactivated(part);
-	}
+    	
+    	IBreakpointOrganizer organizer = container.getOrganizer();
+        List breakpoints = new ArrayList(selection.size());
+        for (Iterator iter = selection.iterator(); iter.hasNext();) {
+            IBreakpoint breakpoint = (IBreakpoint) DebugPlugin.getAdapter(iter.next(), IBreakpoint.class);
+            if (breakpoint != null) {
+                breakpoints.add(breakpoint);
+            }
+        }
+    	if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
+    		IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
+    		extension.addBreakpoints(
+    		    (IBreakpoint[])breakpoints.toArray(new IBreakpoint[breakpoints.size()]), 
+    		    container.getCategory());
+    	} else {
+	    	for (int i = 0; i < breakpoints.size(); i++) {
+	    	    organizer.addBreakpoint((IBreakpoint)breakpoints.get(i), container.getCategory());
+	    	}
+    	}
+    	// TODO expandToLevel(target.getData(), ALL_LEVELS);
+    	
+    	return true;
+    }
+
+    /**
+     * Determines if the specified element can be dropped into the specified target
+     * <p>
+     * Scheme:
+     * <ul>
+     * <li>Breakpoints can be dropped into working sets</li>
+     * <li>Breakpoints can be dropped into breakpoints, provided there is a drop-able parent of the target breakpoint</li>
+     * </ul>
+     * </p>
+     * @param target the target for the drop
+     * @param element the element we want to drop
+     * @return true if the specified element can be dropped into the specified target, false otherwise
+     * @since 3.3
+     */
+    boolean canDrop(TreePath target, ITreeSelection selection) {
+    	if (selection == null  || target == null) {
+    		return false;
+    	}
+    	for(Iterator iter = selection.iterator(); iter.hasNext();) {
+            IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(iter.next(), IBreakpoint.class);
+
+    		if (breakpoint == null || !checkAddableParentContainers(target, breakpoint)){
+    			return false;
+    		}
+    	}
+    	return true;
+    }
+    
+    /*
+     * (non-Javadoc)
+     * @see org.eclipse.debug.internal.ui.views.variables.VariablesView#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
+     */
+    public void propertyChange(PropertyChangeEvent event) {
+    	super.propertyChange(event);
+    	
+    	if (event.getProperty().equals(IBreakpointOrganizerDelegate.P_CATEGORY_CHANGED)) {
+    		final TreeModelViewer viewer = getTreeModelViewer();
+    		if (viewer != null) {
+	    		setBreakpointOrganizers(fOrganizers);    		
+    		}
+    	}
+    } 
 }

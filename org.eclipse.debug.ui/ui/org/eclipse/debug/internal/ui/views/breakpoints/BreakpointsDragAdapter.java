@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,16 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.util.TransferDragSourceListener;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.ITreeSelection;
+import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.dnd.DND;
 import org.eclipse.swt.dnd.DragSourceAdapter;
 import org.eclipse.swt.dnd.DragSourceEvent;
@@ -28,8 +32,11 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     /**
      * the associated viewer for the adapter
      */
-    private BreakpointsViewer fViewer;
+    private AbstractTreeViewer fViewer;
     private Item[] fItems = null;
+
+    private BreakpointsView fView;
+    private TreePath[] fTreePaths = null;
     
     /**
      * Constructor
@@ -38,6 +45,11 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     public BreakpointsDragAdapter(BreakpointsViewer viewer) {
         Assert.isNotNull(viewer);
         fViewer = viewer;
+    }
+    public BreakpointsDragAdapter(AbstractTreeViewer viewer, BreakpointsView view) {
+        Assert.isNotNull(view);
+        fViewer = viewer;
+        fView = view;
     }
 
     /**
@@ -54,8 +66,18 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
         ISelection selection = fViewer.getSelection();
         LocalSelectionTransfer.getInstance().setSelection(selection);
         LocalSelectionTransfer.getInstance().setSelectionSetTime(event.time & 0xFFFFFFFFL);
-        event.doit = fViewer.canDrag(fViewer.getSelectedItems());
-        fItems = fViewer.getSelectedItems();
+        if (fViewer instanceof BreakpointsViewer) {
+        	BreakpointsViewer viewer = (BreakpointsViewer)fViewer; 
+	        fItems = viewer.getSelectedItems();
+	        event.doit = viewer.canDrag(fItems);
+        } else {
+        	if (selection instanceof ITreeSelection) {
+            	fTreePaths = ((ITreeSelection) selection).getPaths();
+        	} else {
+        		fTreePaths = new TreePath[0];
+        	}
+	        event.doit = fView.canDrag(fTreePaths); 	
+        }
     }
    
     /* non Java-doc
@@ -74,7 +96,12 @@ public class BreakpointsDragAdapter extends DragSourceAdapter implements Transfe
     public void dragFinished(DragSourceEvent event) {
         if (event.detail == DND.DROP_MOVE) {
             // remove from source on move operation
-        	fViewer.performDrag(fItems);
+            if (fViewer instanceof BreakpointsViewer) {
+            	BreakpointsViewer viewer = (BreakpointsViewer)fViewer; 
+            	viewer.performDrag(fItems);
+            } else {
+            	fView.performDrag(fTreePaths);            	
+            }
         }
         fItems = null;
         LocalSelectionTransfer.getInstance().setSelection(null);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,7 @@ package org.eclipse.debug.internal.ui;
  
 import org.eclipse.core.runtime.IAdapterFactory;
 import org.eclipse.debug.core.model.IBreakpoint;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainerWorkbenchAdapter;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointPersistableElementAdapter;
 import org.eclipse.ui.IPersistableElement;
@@ -37,13 +37,13 @@ public class DebugUIAdapterFactory implements IAdapterFactory {
 		}
         
         if (adapterType == IWorkbenchAdapter.class) {
-            if (obj instanceof BreakpointContainer) {
+            if (obj instanceof IBreakpointContainer) {
                 return new BreakpointContainerWorkbenchAdapter();
             }
         }
 		
         if (adapterType == IWorkbenchAdapter2.class) {
-            if (obj instanceof BreakpointContainer) {
+            if (obj instanceof IBreakpointContainer) {
                 return new BreakpointContainerWorkbenchAdapter();
             }
         }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -24,6 +24,18 @@ import org.eclipse.debug.internal.ui.viewers.model.ViewerInputUpdate;
  */
 public class ViewerInputService {
 	
+    /**
+     * An input object which will yield a null input element. 
+     * 
+     * @since 3.6
+     */
+    public final static Object NULL_INPUT = new IViewerInputProvider() {
+        public void update(IViewerInputUpdate update) {
+            update.setInputElement(null);
+            update.done();
+        }
+    };
+    
 	// previous update request, cancelled when a new request comes in
 	private IViewerInputUpdate fPendingUpdate = null;
 	
@@ -70,7 +82,7 @@ public class ViewerInputService {
 		}
 		if (provdier == null) {
 			fPendingUpdate.setInputElement(source);
-			fRequestor.viewerInputComplete(fPendingUpdate);
+            fPendingUpdate.done();
 		} else {
 			provdier.update(fPendingUpdate);
 		}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2005 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,7 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -91,10 +91,11 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 					Object element= itr.next();
 					try {
 						IBreakpoint[] breakpoints= null;
-						if (element instanceof IBreakpoint) {
-							breakpoints= new IBreakpoint[] { (IBreakpoint) element };
-						} else if (element instanceof BreakpointContainer) {
-							breakpoints= ((BreakpointContainer) element).getBreakpoints();
+						IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(element, IBreakpoint.class); 
+						if (breakpoint != null) {
+							breakpoints= new IBreakpoint[] { breakpoint };
+						} else if (element instanceof IBreakpointContainer) {
+							breakpoints= ((IBreakpointContainer) element).getBreakpoints();
 						}
 						if (breakpoints != null) {
 							setEnabled(breakpoints);
@@ -147,8 +148,21 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 		boolean allDisabled= true;
 		while (itr.hasNext()) {
 			Object selected= itr.next();
-			if (selected instanceof BreakpointContainer) {
-				IBreakpoint[] breakpoints = ((BreakpointContainer) selected).getBreakpoints();
+            IBreakpoint bp = (IBreakpoint)DebugPlugin.getAdapter(selected, IBreakpoint.class);
+			
+            if (bp != null) {
+                try {
+                    if (bp.isEnabled()) {
+                        allDisabled= false;
+                    } else {
+                        allEnabled= false;
+                    }
+                } catch (CoreException ce) {
+                    handleException(ce);
+                }
+            } 
+            else if (selected instanceof IBreakpointContainer) {
+				IBreakpoint[] breakpoints = ((IBreakpointContainer) selected).getBreakpoints();
 				for (int i = 0; i < breakpoints.length; i++) {
 					try {
 						if (breakpoints[i].isEnabled()) {
@@ -159,17 +173,6 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 					} catch (CoreException ce) {
 						handleException(ce);
 					}
-				}
-			} else if (selected instanceof IBreakpoint) {
-				IBreakpoint bp= (IBreakpoint)selected;
-				try {
-					if (bp.isEnabled()) {
-						allDisabled= false;
-					} else {
-						allEnabled= false;
-					}
-				} catch (CoreException ce) {
-					handleException(ce);
 				}
 			} else {
 				return;

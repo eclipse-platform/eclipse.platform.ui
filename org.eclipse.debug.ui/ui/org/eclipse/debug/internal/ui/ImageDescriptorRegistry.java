@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Bug 292411
  *******************************************************************************/
 package org.eclipse.debug.internal.ui;
 
  
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -24,7 +27,7 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ImageDescriptorRegistry {
 
-	private HashMap fRegistry= new HashMap(10);
+	private Map fRegistry= Collections.synchronizedMap(new HashMap(10));
 	private Display fDisplay;
 	
 	/**
@@ -81,10 +84,15 @@ public class ImageDescriptorRegistry {
 	}
 	
 	private void hookDisplay() {
-		fDisplay.disposeExec(new Runnable() {
+		fDisplay.asyncExec(new Runnable() {
 			public void run() {
-				dispose();
-			}	
+				fDisplay.disposeExec(new Runnable() {
+
+					public void run() {
+						dispose();
+					}
+				});
+			}
 		});
 	}
 }

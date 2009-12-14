@@ -115,6 +115,16 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
 	 */
 	public void propertyChange(PropertyChangeEvent event) {
+		String property = event.getProperty();
+		if (property.equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
+			IWorkingSet defaultWorkingSet = getDefaultWorkingSet();
+			if (defaultWorkingSet != null) {
+				fireCategoryChanged(new WorkingSetCategory(defaultWorkingSet));
+			} else {
+				fireCategoryChanged(null);
+			}
+		}
+
 		IWorkingSet set = null;
 		Object newValue = event.getNewValue();
 		if (newValue instanceof IWorkingSet) {
@@ -126,7 +136,6 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		if(set == null) {
 			return;
 		}
-		String property = event.getProperty();
 		//fix for bug 103731
 		if (property.equals(IWorkingSetManager.CHANGE_WORKING_SET_NAME_CHANGE)) {
 			if (newValue.equals(fDefaultWorkingSet)) {
@@ -150,14 +159,6 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 		}
 		if (set != null	&& IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId())) {
 			fireCategoryChanged(new WorkingSetCategory(set));
-		}
-		if (property.equals(IInternalDebugUIConstants.MEMENTO_BREAKPOINT_WORKING_SET_NAME)) {
-			IWorkingSet defaultWorkingSet = getDefaultWorkingSet();
-			if (defaultWorkingSet != null) {
-				fireCategoryChanged(new WorkingSetCategory(defaultWorkingSet));
-			} else {
-				fireCategoryChanged(null);
-			}
 		}
 	}
 

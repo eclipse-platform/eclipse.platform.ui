@@ -9,6 +9,7 @@
  *     IBM Corporation - initial API and implementation
  *     QNX Software Systems - Mikhail Khodjaiants - Registers View (Bug 53640)
  *     Wind River - Anton Leherbauer - Fix selection provider (Bug 254442)
+ *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables.details;
 
@@ -16,7 +17,7 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 
 import org.eclipse.core.commands.operations.IUndoContext;
-
+import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -24,6 +25,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugException;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IValue;
@@ -37,6 +39,7 @@ import org.eclipse.debug.internal.ui.VariablesViewModelPresentation;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneAssignValueAction;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneMaxLengthAction;
 import org.eclipse.debug.internal.ui.actions.variables.details.DetailPaneWordWrapAction;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.views.variables.IndexedValuePartition;
 import org.eclipse.debug.ui.IDebugModelPresentation;
@@ -92,11 +95,11 @@ import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.actions.TextViewerAction;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.operations.OperationHistoryActionHandler;
 import org.eclipse.ui.operations.RedoActionHandler;
 import org.eclipse.ui.operations.UndoActionHandler;
 import org.eclipse.ui.progress.WorkbenchJob;
-
 import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
@@ -198,6 +201,20 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 					}
 				} else if (element instanceof IExpression) {
 					val = ((IExpression)element).getValue();
+				} else if (element instanceof IBreakpoint) {
+					IBreakpoint bp = (IBreakpoint) element;
+					message = bp.getMarker().getAttribute(IMarker.MESSAGE, ""); //$NON-NLS-1$
+				} else if (element instanceof IBreakpointContainer) {
+					IBreakpointContainer c = (IBreakpointContainer) element;
+		            IAdaptable category = c.getCategory();
+		            if (category != null) {
+			            IWorkbenchAdapter adapter = (IWorkbenchAdapter) category.getAdapter(IWorkbenchAdapter.class);
+			            if (adapter != null) {
+			                message = adapter.getLabel(category);
+			            } else {
+			            	message = c.getOrganizer().getLabel();
+			            }
+		            }					
 				}
 				// When selecting a index partition, clear the pane
 				if (val instanceof IndexedValuePartition) {

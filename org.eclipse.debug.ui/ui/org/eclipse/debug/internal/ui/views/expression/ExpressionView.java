@@ -37,6 +37,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -101,7 +102,7 @@ public class ExpressionView extends VariablesView {
 	 */
 	protected void contextActivated(ISelection selection) {
 		if (selection == null || selection.isEmpty()) {
-			setViewerInput(DebugPlugin.getDefault().getExpressionManager());
+            super.contextActivated(new StructuredSelection(DebugPlugin.getDefault().getExpressionManager()));
 		} else {
 			super.contextActivated(selection);
 		}

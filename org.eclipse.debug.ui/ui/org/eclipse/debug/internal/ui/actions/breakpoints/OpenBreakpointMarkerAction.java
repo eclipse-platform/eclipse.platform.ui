@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.breakpoints;
 
+import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.DelegatingModelPresentation;
@@ -85,9 +86,8 @@ public class OpenBreakpointMarkerAction extends SelectionProviderAction {
 	 */
 	public void selectionChanged(IStructuredSelection sel) {
 		if (sel.size() == 1) {
-			Object element = sel.getFirstElement();
-			if (element instanceof IBreakpoint) {
-				breakpoint= (IBreakpoint) element;
+            breakpoint = (IBreakpoint)DebugPlugin.getAdapter(sel.getFirstElement(), IBreakpoint.class);
+			if (breakpoint != null) {
 				input= fgPresentation.getEditorInput(breakpoint);
 				if (input != null) {
 					setEnabled(true);

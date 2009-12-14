@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,9 +13,9 @@ package org.eclipse.debug.internal.ui.actions.breakpointGroups;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
-import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.OtherBreakpointCategory;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
-import org.eclipse.debug.internal.ui.views.breakpoints.OtherBreakpointCategory;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.navigator.LocalSelectionTransfer;
@@ -51,7 +51,7 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
         List selectedNonResources = getSelectedNonResources();
         if (selectedNonResources.size() == 1) {
             Object target = selectedNonResources.get(0);
-            if (target instanceof BreakpointContainer) {
+            if (target instanceof IBreakpointContainer) {
                 return target;
             }
         }
@@ -74,8 +74,8 @@ public class PasteBreakpointsAction extends BreakpointSelectionAction {
     protected boolean updateSelection(IStructuredSelection selection) {
         // can't paste into "Others" (only move)
         Object target = getTarget();
-        if (target instanceof BreakpointContainer) {
-            BreakpointContainer container = (BreakpointContainer) target;
+        if (target instanceof IBreakpointContainer) {
+            IBreakpointContainer container = (IBreakpointContainer) target;
             if (container.getCategory() instanceof OtherBreakpointCategory) {
                 return false;
             }

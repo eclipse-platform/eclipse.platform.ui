@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,12 +7,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.update;
 
 import org.eclipse.debug.core.IExpressionManager;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IExpression;
 import org.eclipse.debug.core.model.IMemoryBlock;
@@ -20,6 +22,8 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.core.model.IWatchExpression;
+import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer;
+import org.eclipse.debug.internal.ui.elements.adapters.DefaultBreakpointManagerInput;
 import org.eclipse.debug.internal.ui.memory.provisional.AbstractAsyncTableRendering;
 import org.eclipse.debug.internal.ui.memory.provisional.MemoryViewPresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelProxy;
@@ -69,6 +73,15 @@ public class DefaultModelProxyFactory implements IModelProxyFactory {
 		if (IDebugUIConstants.ID_MEMORY_VIEW.equals(id)) {
 			if (element instanceof IMemoryBlockRetrieval)
 				return new MemoryRetrievalProxy((IMemoryBlockRetrieval)element);
+		}
+		if (IDebugUIConstants.ID_BREAKPOINT_VIEW.equals(id)) {
+			if (element instanceof DefaultBreakpointManagerInput) {
+				return new BreakpointManagerProxy(element, context);
+			} else if (element instanceof IBreakpoint) {
+				return new BreakpointProxy((IBreakpoint)element);
+			} else if (element instanceof IBreakpointContainer) {
+				return new BreakpointContainerProxy((IBreakpointContainer)element);
+			}
 		}
 		
 		if (context instanceof MemoryViewPresentationContext)
