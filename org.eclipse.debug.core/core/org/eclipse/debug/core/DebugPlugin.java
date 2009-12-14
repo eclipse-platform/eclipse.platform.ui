@@ -609,7 +609,7 @@ public class DebugPlugin extends Plugin {
             
 			SourceLookupUtils.shutdown();
 			setDefault(null);
-			ResourcesPlugin.getWorkspace().removeSaveParticipant(this);
+			ResourcesPlugin.getWorkspace().removeSaveParticipant(getUniqueIdentifier());
 			Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
 		} finally {
 			super.stop(context);
@@ -622,7 +622,7 @@ public class DebugPlugin extends Plugin {
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
 		DebugOptions.initDebugOptions();
-		ResourcesPlugin.getWorkspace().addSaveParticipant(this,
+		ResourcesPlugin.getWorkspace().addSaveParticipant(getUniqueIdentifier(),
 				new ISaveParticipant() {
 					public void saving(ISaveContext saveContext) throws CoreException {
 						Preferences.savePreferences(DebugPlugin.getUniqueIdentifier());
