@@ -135,7 +135,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
             }
         }
 
-        if (file != null) {
+        if (file != null && configuration != null) {
             IWorkspace workspace = ResourcesPlugin.getWorkspace();
             IWorkspaceRoot root = workspace.getRoot();
             Path path = new Path(file);

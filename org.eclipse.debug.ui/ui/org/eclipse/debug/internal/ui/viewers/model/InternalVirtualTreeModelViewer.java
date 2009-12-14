@@ -988,7 +988,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
             if (factory != null) {
                 type = factory.getColumnPresentationId(context, input);
             }
-            if (type != null) {
+            if (type != null && factory != null) {
                 if (fColumnPresentation != null) {
                     if (!fColumnPresentation.getId().equals(type)) {
                         // dispose old, create new

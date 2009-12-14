@@ -121,7 +121,7 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
                 breakpoints = fViewer.getVisibleBreakpoints();
             }
             reorganize();
-            if (isShowingGroups()) {
+            if (isShowingGroups() && breakpoints != null) {
                 // restore expansion
                 for (int i = 0; i < fElements.length; i++) {
                     BreakpointContainer container = (BreakpointContainer) fElements[i];

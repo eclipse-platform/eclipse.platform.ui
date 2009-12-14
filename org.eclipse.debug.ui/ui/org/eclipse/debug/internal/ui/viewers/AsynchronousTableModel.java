@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -146,12 +146,12 @@ public class AsynchronousTableModel extends AsynchronousModel {
     			for (int i = 0; i < childrenNodes.length; i++) {
 					kids.add(childrenNodes[i].getElement());
 				}
-    		}
-    		for (int i = 0; i < elements.length; i++) {
-    			if (kids.remove(elements[i])) {
-    				changed = true;
+    			for (int i = 0; i < elements.length; i++) {
+        			if (kids.remove(elements[i])) {
+        				changed = true;
+        			}
     			}
-			}
+    		}
 		}
     	if (changed) {
     		setChildren(getRootNode(), kids);

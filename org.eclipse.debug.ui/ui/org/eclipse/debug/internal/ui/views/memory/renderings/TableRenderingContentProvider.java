@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2008 IBM Corporation and others.
+ * Copyright (c) 2004, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -300,7 +300,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		if (target.isDisconnected() || target.isTerminated())
 			return;
 		
-		boolean error = false;
 		DebugException dbgEvt = null;
 		
 		// calculate address size
@@ -311,7 +310,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			addressSize = getAddressSize(startingAddress);
 		} catch (DebugException e1) {
 			dbgEvt = e1;
-			error = true;
 			addressSize = 4;
 		}
 		
@@ -423,7 +421,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			memoryBuffer = makeDummyContent(numberOfLines);
 			
 			// finish creating the content provider before throwing an event
-			error = true; 
 			dbgEvt = e;
 		}
 		catch (Throwable e)
@@ -432,7 +429,6 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 			memoryBuffer = makeDummyContent(numberOfLines);
 			
 			// finish creating the content provider before throwing an event
-			error = true; 
 			dbgEvt = new DebugException(DebugUIPlugin.newErrorStatus(e.getMessage(), e));
 		}
 		
@@ -481,7 +477,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// put memory information into MemoryViewLine
 		organizeLines(numberOfLines, updateDelta, addressLength, memoryBuffer, paddedString, address, manageDelta);
 		
-		if (error){
+		if (dbgEvt != null){
 			throw dbgEvt;
 		}
 	}

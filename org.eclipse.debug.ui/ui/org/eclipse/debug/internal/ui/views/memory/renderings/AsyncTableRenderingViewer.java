@@ -514,8 +514,11 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 			
 			if (getPendingSetTopIndexKey() != null)
 			{
-				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING)
-					System.out.println(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+				if (AsyncVirtualContentTableViewer.DEBUG_DYNAMIC_LOADING) {
+					if (oldTopIndexKey != null) {
+						System.out.println(getRendering() + " finished top index: " + ((BigInteger)oldTopIndexKey).toString(16)); //$NON-NLS-1$
+					}
+				}
 				setTopIndex(getPendingSetTopIndexKey());
 			}
 			else if (oldTopIndexKey != null)

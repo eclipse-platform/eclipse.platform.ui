@@ -34,6 +34,7 @@ import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.BaseLabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -499,7 +500,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
                     // full viewer.  After the drop-down's full expansion state is saved out to the tree viewer, the
                     // tree viewer will accurately reflect the state changes made by the user. 
                     if (fView.getBreadcrumbDropDownAutoExpand()) {
-                        fTreeViewer.collapseToLevel(rootPath, TreeViewer.ALL_LEVELS);
+                        fTreeViewer.collapseToLevel(rootPath, AbstractTreeViewer.ALL_LEVELS);
                     }                    
                     
                     // Save the state of the drop-down out into the tree viewer.
