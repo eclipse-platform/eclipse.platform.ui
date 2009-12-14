@@ -609,15 +609,6 @@
        </menuContribution>
    </extension>  
    
-   <extension point="org.eclipse.core.expressions.propertyTesters">
-      <propertyTester
-            class="org.eclipse.debug.internal.ui.actions.breakpoints.BreakpointTypesPropertyTester"
-            id="org.eclipse.debug.ui.breakpointTypesProperties"
-            namespace="org.eclipse.debug.ui"
-            properties="getAvailableBreakpointType,areBreakpointTypesAvailable"
-            type="org.eclipse.core.runtime.IAdaptable"/>
-   </extension>  
-         
    <extension
          point="org.eclipse.ui.viewActions">
       <viewContribution
