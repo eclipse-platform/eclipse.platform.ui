@@ -11,6 +11,10 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
 import java.lang.reflect.Field;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MApplicationPackage.Literals;
 import org.eclipse.emf.common.util.EList;
@@ -53,11 +57,15 @@ public class GenTopic implements IApplication {
 						+ "\n\t\tpublic static final String NEW_VALUE = \"NewValue\"; //$NON-NLS-1$"
 						+ "\n\t}");
 		Field[] fields = literals.getFields();
+		Map<String, EClass> classes = new TreeMap<String, EClass>();
 		for (int i = 0; i < fields.length; i++) {
 			Object value = fields[i].get(null);
 			if (value instanceof EClass) {
-				processEClass((EClass) value);
+				classes.put(((EClass) value).getName(), (EClass) value);
 			}
+		}
+		for (EClass ec : classes.values()) {
+			processEClass(ec);
 		}
 		System.out
 				.println("\n\tpublic static String buildTopic(String topic) {"
@@ -81,10 +89,14 @@ public class GenTopic implements IApplication {
 		System.out.print("\n\tpublic static interface " + className + " {"
 				+ "\n\t\tpublic static final String TOPIC = UITopicBase + \"/"
 				+ pkgName + '/' + className + "\"; //$NON-NLS-1$");
+		Set<String> names = new TreeSet<String>();
 		for (EStructuralFeature feature : features) {
+			names.add(feature.getName());
+		}
+		for (String name : names) {
 			System.out.print("\n\t\tpublic static final String "
-					+ feature.getName().toUpperCase() + " = \"");
-			System.out.print(feature.getName() + "\"; //$NON-NLS-1$");
+					+ name.toUpperCase() + " = \"");
+			System.out.print(name + "\"; //$NON-NLS-1$");
 		}
 		System.out.print("\n\t}");
 	}
