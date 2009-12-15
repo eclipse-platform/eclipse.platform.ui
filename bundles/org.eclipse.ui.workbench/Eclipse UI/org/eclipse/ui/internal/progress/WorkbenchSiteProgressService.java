@@ -15,7 +15,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -66,9 +65,10 @@ public class WorkbenchSiteProgressService implements
     
     private SiteUpdateJob updateJob;
 
-    /**
-     * Flag that keeps state from calls to {@link #showBusy(boolean)}
-     */
+	/**
+	 * Flag that keeps state from calls to {@link #incrementBusy()} and
+	 * {@link #decrementBusy()}.
+	 */
 	private int busyCount = 0;
 
     public class SiteUpdateJob extends WorkbenchJob {
@@ -221,7 +221,6 @@ public class WorkbenchSiteProgressService implements
     /**
      * Get the job change listener for this site.
      * 
-     * @param job
      * @param useHalfBusyCursor
      * @return IJobChangeListener
      */
@@ -252,13 +251,19 @@ public class WorkbenchSiteProgressService implements
 			 * .core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void done(IJobChangeEvent event) {
+				Job job = event.getJob();
+
 				if (useHalfBusyCursor) {
-					synchronized (waitCursorLock) {
-						waitCursorJobCount--;
+					synchronized (busyLock) {
+						if (busyJobs.contains(job)) {
+							// only decrement if job has been about to run
+							synchronized (waitCursorLock) {
+								waitCursorJobCount--;
+							}
+						}
 					}
 				}
 
-				Job job = event.getJob();
 				decrementBusy(job);
 				job.removeJobChangeListener(this);
 			}
