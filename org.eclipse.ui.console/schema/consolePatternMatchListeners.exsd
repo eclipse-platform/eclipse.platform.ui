@@ -104,7 +104,7 @@
          The following is an example of a console pattern match listener extension point: 
 &lt;pre&gt;
    &lt;extension
-         point=&quot;org.eclipse.ui.console.consolePatternMatchListener&quot;&gt;
+         point=&quot;org.eclipse.ui.console.consolePatternMatchListeners&quot;&gt;
       &lt;consolePatternMatchListener
             class=&quot;com.example.ExampleConsolePatternMatcher&quot;
             id=&quot;com.example.ExampleConsolePatternMatcher&quot;
