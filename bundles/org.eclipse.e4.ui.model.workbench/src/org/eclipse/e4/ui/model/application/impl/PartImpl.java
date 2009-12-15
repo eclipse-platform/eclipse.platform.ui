@@ -57,6 +57,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isToBeRendered <em>To Be Rendered</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartImpl#getLabel <em>Label</em>}</li>
@@ -163,6 +164,26 @@ public class PartImpl extends ContributionImpl implements MPart {
 	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #isOnTop() <em>On Top</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isOnTop()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean ON_TOP_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isOnTop() <em>On Top</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isOnTop()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean onTop = ON_TOP_EDEFAULT;
+
+	/**
 	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -170,7 +191,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean VISIBLE_EDEFAULT = false;
+	protected static final boolean VISIBLE_EDEFAULT = true;
 
 	/**
 	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -395,6 +416,27 @@ public class PartImpl extends ContributionImpl implements MPart {
 		toBeRendered = newToBeRendered;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__TO_BE_RENDERED, oldToBeRendered, toBeRendered));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isOnTop() {
+		return onTop;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOnTop(boolean newOnTop) {
+		boolean oldOnTop = onTop;
+		onTop = newOnTop;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__ON_TOP, oldOnTop, onTop));
 	}
 
 	/**
@@ -664,6 +706,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return getRenderer();
 			case MApplicationPackage.PART__TO_BE_RENDERED:
 				return isToBeRendered();
+			case MApplicationPackage.PART__ON_TOP:
+				return isOnTop();
 			case MApplicationPackage.PART__VISIBLE:
 				return isVisible();
 			case MApplicationPackage.PART__PARENT:
@@ -711,6 +755,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return;
 			case MApplicationPackage.PART__TO_BE_RENDERED:
 				setToBeRendered((Boolean)newValue);
+				return;
+			case MApplicationPackage.PART__ON_TOP:
+				setOnTop((Boolean)newValue);
 				return;
 			case MApplicationPackage.PART__VISIBLE:
 				setVisible((Boolean)newValue);
@@ -769,6 +816,9 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__TO_BE_RENDERED:
 				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
 				return;
+			case MApplicationPackage.PART__ON_TOP:
+				setOnTop(ON_TOP_EDEFAULT);
+				return;
 			case MApplicationPackage.PART__VISIBLE:
 				setVisible(VISIBLE_EDEFAULT);
 				return;
@@ -818,6 +868,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
 			case MApplicationPackage.PART__TO_BE_RENDERED:
 				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
+			case MApplicationPackage.PART__ON_TOP:
+				return onTop != ON_TOP_EDEFAULT;
 			case MApplicationPackage.PART__VISIBLE:
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.PART__PARENT:
@@ -859,6 +911,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case MApplicationPackage.PART__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
 				case MApplicationPackage.PART__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
 				case MApplicationPackage.PART__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
+				case MApplicationPackage.PART__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.PART__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.PART__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
 				default: return -1;
@@ -911,6 +964,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.PART__WIDGET;
 				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.PART__RENDERER;
 				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.PART__TO_BE_RENDERED;
+				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.PART__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.PART__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.PART__PARENT;
 				default: return -1;
@@ -964,6 +1018,8 @@ public class PartImpl extends ContributionImpl implements MPart {
 		result.append(renderer);
 		result.append(", toBeRendered: "); //$NON-NLS-1$
 		result.append(toBeRendered);
+		result.append(", onTop: "); //$NON-NLS-1$
+		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
 		result.append(", label: "); //$NON-NLS-1$

@@ -69,6 +69,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	private IEventBroker eventBroker;
 
 	private EventHandler shellUpdater;
+	private EventHandler visibilityHandler;
 
 	public WBWRenderer() {
 		super();
@@ -113,11 +114,44 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				shellUpdater);
+
+		visibilityHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				// Ensure that this event is for a MMenuItem
+				Object objElement = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				if (!(objElement instanceof MWindow))
+					return;
+
+				// Is this listener interested ?
+				MWindow windowModel = (MWindow) objElement;
+				if (windowModel.getRenderer() != WBWRenderer.this)
+					return;
+
+				// No widget == nothing to update
+				Shell theShell = (Shell) windowModel.getWidget();
+				if (theShell == null)
+					return;
+
+				String attName = (String) event
+						.getProperty(UIEvents.EventTags.ATTNAME);
+
+				if (UIEvents.UIElement.VISIBLE.equals(attName)) {
+					boolean isVisible = (Boolean) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setVisible(isVisible);
+				}
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.VISIBLE), visibilityHandler);
 	}
 
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(shellUpdater);
+		eventBroker.unsubscribe(visibilityHandler);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -140,7 +174,7 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell.setLocation(wbwModel.getX(), wbwModel.getY());
 			wbwShell.setSize(wbwModel.getWidth(), wbwModel.getHeight());
 		}
-		wbwShell.setVisible(true);
+		wbwShell.setVisible(element.isVisible());
 
 		wbwShell.setLayout(new FillLayout());
 		newWidget = wbwShell;

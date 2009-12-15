@@ -24,7 +24,7 @@ package org.eclipse.e4.ui.model.application;
  * </p>
  *
  * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getInput()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface MInput {

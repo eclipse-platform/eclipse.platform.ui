@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *
  * @generated
  */
-public class ApplicationElementImpl extends EObjectImpl implements MApplicationElement {
+public abstract class ApplicationElementImpl extends EObjectImpl implements MApplicationElement {
 	/**
 	 * The default value of the '{@link #getId() <em>Id</em>}' attribute.
 	 * <!-- begin-user-doc -->

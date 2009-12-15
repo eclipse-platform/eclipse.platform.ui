@@ -24,7 +24,7 @@ package org.eclipse.e4.ui.model.application;
  * </p>
  *
  * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplicationElement()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface MApplicationElement {

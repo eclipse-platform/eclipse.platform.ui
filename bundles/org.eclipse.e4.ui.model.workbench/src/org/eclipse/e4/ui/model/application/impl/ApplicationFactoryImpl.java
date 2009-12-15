@@ -65,10 +65,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public EObject create(EClass eClass) {
 		switch (eClass.getClassifierID()) {
-			case MApplicationPackage.APPLICATION_ELEMENT: return (EObject)createApplicationElement();
-			case MApplicationPackage.DIRTYABLE: return (EObject)createDirtyable();
-			case MApplicationPackage.INPUT: return (EObject)createInput();
-			case MApplicationPackage.CONTEXT: return (EObject)createContext();
 			case MApplicationPackage.ITEM: return (EObject)createItem();
 			case MApplicationPackage.MENU_ITEM: return (EObject)createMenuItem();
 			case MApplicationPackage.DIRECT_MENU_ITEM: return (EObject)createDirectMenuItem();
@@ -79,7 +75,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.APPLICATION: return (EObject)createApplication();
 			case MApplicationPackage.PART: return (EObject)createPart();
 			case MApplicationPackage.SAVEABLE_PART: return (EObject)createSaveablePart();
-			case MApplicationPackage.EDITOR: return (EObject)createEditor();
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
 			case MApplicationPackage.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
@@ -92,6 +87,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.KEY_BINDING: return (EObject)createKeyBinding();
 			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
 			case MApplicationPackage.WINDOW_TRIM: return (EObject)createWindowTrim();
+			case MApplicationPackage.EDITOR: return (EObject)createEditor();
 			case MApplicationPackage.PERSPECTIVE: return (EObject)createPerspective();
 			case MApplicationPackage.PERSPECTIVE_STACK: return (EObject)createPerspectiveStack();
 			case MApplicationPackage.TEST_HARNESS: return (EObject)createTestHarness();
@@ -128,46 +124,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MApplicationElement createApplicationElement() {
-		ApplicationElementImpl applicationElement = new ApplicationElementImpl();
-		return applicationElement;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MDirtyable createDirtyable() {
-		DirtyableImpl dirtyable = new DirtyableImpl();
-		return dirtyable;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MInput createInput() {
-		InputImpl input = new InputImpl();
-		return input;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MContext createContext() {
-		ContextImpl context = new ContextImpl();
-		return context;
 	}
 
 	/**

@@ -30,42 +30,6 @@ public interface MApplicationFactory extends EFactory {
 	MApplicationFactory eINSTANCE = org.eclipse.e4.ui.model.application.impl.ApplicationFactoryImpl.init();
 
 	/**
-	 * Returns a new object of class '<em>Element</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Element</em>'.
-	 * @generated
-	 */
-	MApplicationElement createApplicationElement();
-
-	/**
-	 * Returns a new object of class '<em>Dirtyable</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Dirtyable</em>'.
-	 * @generated
-	 */
-	MDirtyable createDirtyable();
-
-	/**
-	 * Returns a new object of class '<em>Input</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Input</em>'.
-	 * @generated
-	 */
-	MInput createInput();
-
-	/**
-	 * Returns a new object of class '<em>Context</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Context</em>'.
-	 * @generated
-	 */
-	MContext createContext();
-
-	/**
 	 * Returns a new object of class '<em>Item</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

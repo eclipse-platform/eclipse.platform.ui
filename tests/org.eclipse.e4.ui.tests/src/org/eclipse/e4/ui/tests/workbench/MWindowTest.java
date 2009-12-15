@@ -91,6 +91,37 @@ public class MWindowTest extends TestCase {
 		assertEquals(topWidget, appContext.get(IServiceConstants.ACTIVE_SHELL));
 	}
 
+	public void testWindowVisibility() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		window.setLabel("MyWindow");
+		wb = new E4Workbench(window, appContext);
+
+		Widget topWidget = (Widget) window.getWidget();
+		assertTrue(topWidget instanceof Shell);
+
+		Shell shell = (Shell) topWidget;
+		assertTrue(shell.getVisible() == true);
+
+		window.setVisible(false);
+		assertTrue(shell.getVisible() == false);
+
+		window.setVisible(true);
+		assertTrue(shell.getVisible() == true);
+	}
+
+	public void testWindowInvisibleCreate() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		window.setLabel("MyWindow");
+		window.setVisible(false);
+		wb = new E4Workbench(window, appContext);
+
+		Widget topWidget = (Widget) window.getWidget();
+		assertTrue(topWidget instanceof Shell);
+
+		Shell shell = (Shell) topWidget;
+		assertTrue(shell.getVisible() == false);
+	}
+
 	public void testCreateView() {
 		final MWindow window = createWindowWithOneView();
 		wb = new E4Workbench(window, appContext);

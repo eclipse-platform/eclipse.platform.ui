@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isToBeRendered <em>To Be Rendered</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getParent <em>Parent</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getChildren <em>Children</em>}</li>
@@ -142,6 +143,26 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	protected boolean toBeRendered = TO_BE_RENDERED_EDEFAULT;
 
 	/**
+	 * The default value of the '{@link #isOnTop() <em>On Top</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isOnTop()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final boolean ON_TOP_EDEFAULT = false;
+
+	/**
+	 * The cached value of the '{@link #isOnTop() <em>On Top</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #isOnTop()
+	 * @generated
+	 * @ordered
+	 */
+	protected boolean onTop = ON_TOP_EDEFAULT;
+
+	/**
 	 * The default value of the '{@link #isVisible() <em>Visible</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -149,7 +170,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean VISIBLE_EDEFAULT = false;
+	protected static final boolean VISIBLE_EDEFAULT = true;
 
 	/**
 	 * The cached value of the '{@link #isVisible() <em>Visible</em>}' attribute.
@@ -312,6 +333,27 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		toBeRendered = newToBeRendered;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED, oldToBeRendered, toBeRendered));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean isOnTop() {
+		return onTop;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setOnTop(boolean newOnTop) {
+		boolean oldOnTop = onTop;
+		onTop = newOnTop;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__ON_TOP, oldOnTop, onTop));
 	}
 
 	/**
@@ -525,6 +567,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return getRenderer();
 			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
 				return isToBeRendered();
+			case MApplicationPackage.PERSPECTIVE__ON_TOP:
+				return isOnTop();
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				return isVisible();
 			case MApplicationPackage.PERSPECTIVE__PARENT:
@@ -562,6 +606,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return;
 			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
 				setToBeRendered((Boolean)newValue);
+				return;
+			case MApplicationPackage.PERSPECTIVE__ON_TOP:
+				setOnTop((Boolean)newValue);
 				return;
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				setVisible((Boolean)newValue);
@@ -607,6 +654,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
 				setToBeRendered(TO_BE_RENDERED_EDEFAULT);
 				return;
+			case MApplicationPackage.PERSPECTIVE__ON_TOP:
+				setOnTop(ON_TOP_EDEFAULT);
+				return;
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				setVisible(VISIBLE_EDEFAULT);
 				return;
@@ -645,6 +695,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return RENDERER_EDEFAULT == null ? renderer != null : !RENDERER_EDEFAULT.equals(renderer);
 			case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED:
 				return toBeRendered != TO_BE_RENDERED_EDEFAULT;
+			case MApplicationPackage.PERSPECTIVE__ON_TOP:
+				return onTop != ON_TOP_EDEFAULT;
 			case MApplicationPackage.PERSPECTIVE__VISIBLE:
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.PERSPECTIVE__PARENT:
@@ -679,6 +731,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				case MApplicationPackage.PERSPECTIVE__WIDGET: return MApplicationPackage.UI_ELEMENT__WIDGET;
 				case MApplicationPackage.PERSPECTIVE__RENDERER: return MApplicationPackage.UI_ELEMENT__RENDERER;
 				case MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED: return MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED;
+				case MApplicationPackage.PERSPECTIVE__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.PERSPECTIVE__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.PERSPECTIVE__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
 				default: return -1;
@@ -724,6 +777,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				case MApplicationPackage.UI_ELEMENT__WIDGET: return MApplicationPackage.PERSPECTIVE__WIDGET;
 				case MApplicationPackage.UI_ELEMENT__RENDERER: return MApplicationPackage.PERSPECTIVE__RENDERER;
 				case MApplicationPackage.UI_ELEMENT__TO_BE_RENDERED: return MApplicationPackage.PERSPECTIVE__TO_BE_RENDERED;
+				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.PERSPECTIVE__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.PERSPECTIVE__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.PERSPECTIVE__PARENT;
 				default: return -1;
@@ -769,6 +823,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		result.append(renderer);
 		result.append(", toBeRendered: "); //$NON-NLS-1$
 		result.append(toBeRendered);
+		result.append(", onTop: "); //$NON-NLS-1$
+		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
 		result.append(", context: "); //$NON-NLS-1$

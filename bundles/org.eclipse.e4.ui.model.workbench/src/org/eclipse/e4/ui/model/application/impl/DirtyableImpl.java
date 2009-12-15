@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *
  * @generated
  */
-public class DirtyableImpl extends EObjectImpl implements MDirtyable {
+public abstract class DirtyableImpl extends EObjectImpl implements MDirtyable {
 	/**
 	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
 	 * <!-- begin-user-doc -->

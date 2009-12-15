@@ -42,7 +42,7 @@ import org.eclipse.emf.ecore.util.EDataTypeUniqueEList;
  *
  * @generated
  */
-public class ContextImpl extends EObjectImpl implements MContext {
+public abstract class ContextImpl extends EObjectImpl implements MContext {
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.
 	 * <!-- begin-user-doc -->

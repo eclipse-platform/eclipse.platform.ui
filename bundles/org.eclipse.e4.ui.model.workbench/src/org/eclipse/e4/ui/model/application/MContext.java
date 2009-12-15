@@ -28,7 +28,7 @@ import org.eclipse.emf.common.util.EList;
  * </p>
  *
  * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getContext()
- * @model
+ * @model abstract="true"
  * @generated
  */
 public interface MContext {

@@ -33,7 +33,7 @@ import org.eclipse.emf.ecore.impl.EObjectImpl;
  *
  * @generated
  */
-public class InputImpl extends EObjectImpl implements MInput {
+public abstract class InputImpl extends EObjectImpl implements MInput {
 	/**
 	 * The default value of the '{@link #getInputURI() <em>Input URI</em>}' attribute.
 	 * <!-- begin-user-doc -->

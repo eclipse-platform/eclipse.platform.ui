@@ -17,7 +17,7 @@
       serializable="false"/>
   <eClassifiers xsi:type="ecore:EClass" name="V____________Abstract_____________V"
       abstract="true" interface="true"/>
-  <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement">
+  <eClassifiers xsi:type="ecore:EClass" name="ApplicationElement" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="id" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Contribution" abstract="true" eSuperTypes="#//ApplicationElement">
@@ -26,11 +26,11 @@
         transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="persistedState" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Dirtyable">
+  <eClassifiers xsi:type="ecore:EClass" name="Dirtyable" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="dirty" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         transient="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Input">
+  <eClassifiers xsi:type="ecore:EClass" name="Input" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="inputURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="UIElement" abstract="true" eSuperTypes="#//ApplicationElement">
@@ -40,7 +40,9 @@
         transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="toBeRendered" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="onTop" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="visible" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
+        defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eOpposite="#//ElementContainer/children">
       <eGenericType eClassifier="#//ElementContainer">
         <eTypeArguments eClassifier="#//UIElement"/>
@@ -52,7 +54,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="iconURI" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tooltip" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Context">
+  <eClassifiers xsi:type="ecore:EClass" name="Context" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="context" eType="#//IEclipseContext"
         transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="variables" ordered="false"
@@ -132,7 +134,6 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SaveablePart" eSuperTypes="#//Part #//Dirtyable"/>
-  <eClassifiers xsi:type="ecore:EClass" name="Editor" eSuperTypes="#//Input #//SaveablePart"/>
   <eClassifiers xsi:type="ecore:EClass" name="PartStack">
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eClassifier="#//Part"/>
@@ -235,6 +236,9 @@
     </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="V______________Editing_______________V"
+      abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Editor" eSuperTypes="#//Input #//SaveablePart"/>
   <eClassifiers xsi:type="ecore:EClass" name="V______________SharedElements_______________V"
       abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="Perspective">

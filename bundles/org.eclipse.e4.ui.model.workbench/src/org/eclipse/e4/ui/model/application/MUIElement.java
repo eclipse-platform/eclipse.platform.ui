@@ -22,6 +22,7 @@ package org.eclipse.e4.ui.model.application;
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#isToBeRendered <em>To Be Rendered</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getParent <em>Parent</em>}</li>
  * </ul>
@@ -112,7 +113,34 @@ public interface MUIElement extends MApplicationElement {
 	void setToBeRendered(boolean value);
 
 	/**
+	 * Returns the value of the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>On Top</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>On Top</em>' attribute.
+	 * @see #setOnTop(boolean)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIElement_OnTop()
+	 * @model
+	 * @generated
+	 */
+	boolean isOnTop();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIElement#isOnTop <em>On Top</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>On Top</em>' attribute.
+	 * @see #isOnTop()
+	 * @generated
+	 */
+	void setOnTop(boolean value);
+
+	/**
 	 * Returns the value of the '<em><b>Visible</b></em>' attribute.
+	 * The default value is <code>"true"</code>.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Visible</em>' attribute isn't clear,
@@ -122,7 +150,7 @@ public interface MUIElement extends MApplicationElement {
 	 * @return the value of the '<em>Visible</em>' attribute.
 	 * @see #setVisible(boolean)
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIElement_Visible()
-	 * @model
+	 * @model default="true"
 	 * @generated
 	 */
 	boolean isVisible();
