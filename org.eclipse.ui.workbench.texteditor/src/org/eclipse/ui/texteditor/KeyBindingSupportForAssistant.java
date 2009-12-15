@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,8 +62,14 @@ public final class KeyBindingSupportForAssistant implements ICompletionListener 
 		}
 
 		void activate() {
-			if (handler != null)
-				command.setHandler(handler);
+			if (handler != null) {
+				/*
+				 *  Next check ensures that we don't overwrite newly activated editor contributions.
+				 *  For details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=297834.
+				 */
+				if (!handler.getClass().isInstance(command.getHandler()))
+					command.setHandler(handler);
+			}
 		}
 
 		private void replaceWith(IHandler newHandler) {
