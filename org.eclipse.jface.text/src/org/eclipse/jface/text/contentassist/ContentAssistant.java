@@ -1123,7 +1123,7 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 			}
 
 		} else if (fAutoAssistListener != null) {
-			// For details see: https://bugs.eclipse.org/bugs/show_bug.cgi?id=49212
+			// For details see https://bugs.eclipse.org/bugs/show_bug.cgi?id=49212
 			if (fContentAssistSubjectControlAdapter.supportsVerifyKeyListener())
 				fContentAssistSubjectControlAdapter.removeVerifyKeyListener(fAutoAssistListener);
 			else
