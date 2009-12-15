@@ -2620,6 +2620,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 		String name = generateUniqueLaunchConfigurationNameFrom(namePrefix);
 		try {
 			isValidLaunchConfigurationName(name);
+			return name;
 		}
 		catch(IllegalArgumentException iae) {
 			//blanket change all reserved names

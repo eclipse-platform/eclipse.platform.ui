@@ -50,6 +50,15 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 	
 	/**
+	 * Tests that a valid name is accepted as is.
+	 */
+	public void testGenerateValidName() {
+		String configname = "thisisavalidname";
+		String name = getLaunchManager().generateLaunchConfigurationName(configname);
+		assertEquals("Should be the same as the seed", configname, name);
+	}
+	
+	/**
 	 * Tests generating a launch configuration name using a name that is an OS reserved
 	 * name. Win 32 test only.
 	 */
