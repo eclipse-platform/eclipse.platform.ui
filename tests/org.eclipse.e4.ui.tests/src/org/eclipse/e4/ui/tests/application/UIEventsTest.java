@@ -176,8 +176,8 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		UIElementTester(IEventBroker eventBroker) {
 			super("UIElement", UIElement.TOPIC, new String[] {
 					UIElement.RENDERER, UIElement.TOBERENDERED,
-					UIElement.PARENT, UIElement.VISIBLE, UIElement.WIDGET },
-					eventBroker);
+					UIElement.PARENT, UIElement.ONTOP, UIElement.VISIBLE,
+					UIElement.WIDGET }, eventBroker);
 		}
 	}
 
@@ -300,6 +300,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		allData.setParent(newParent);
 		allData.setToBeRendered(!allData.isToBeRendered());
 		allData.setVisible(!allData.isVisible());
+		allData.setOnTop(!allData.isOnTop());
 		allData.setWidget("New Widget");
 		checkForFailures(allTesters, uiElementTester);
 
