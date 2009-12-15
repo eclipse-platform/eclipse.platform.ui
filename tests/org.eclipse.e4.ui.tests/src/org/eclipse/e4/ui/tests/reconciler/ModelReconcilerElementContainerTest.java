@@ -20,6 +20,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
@@ -434,6 +435,79 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		assertEquals(1, partSashContainer2.getChildren().size());
 		assertNotNull(partSashContainer2.getChildren().get(0));
+		assertTrue(partSashContainer2.getChildren().get(0) instanceof MPart);
+	}
+
+	public void testElementContainer_Children_Add_WindowTrim() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
+				.createWindowTrim();
+		window.getChildren().add(windowTrim);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertNotNull(window.getChildren().get(0));
+		assertTrue(window.getChildren().get(0) instanceof MWindowTrim);
+	}
+
+	public void testElementContainer_Children_Remove_WindowTrim() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
+				.createWindowTrim();
+		window.getChildren().add(windowTrim);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		window.getChildren().remove(0);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		windowTrim = (MWindowTrim) window.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(windowTrim, window.getChildren().get(0));
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
 	}
 
 	public void testElementContainer_ActiveChild() {

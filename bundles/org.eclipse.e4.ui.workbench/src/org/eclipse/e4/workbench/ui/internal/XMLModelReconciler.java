@@ -38,6 +38,7 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.e4.ui.model.application.SideValue;
 import org.eclipse.e4.workbench.modeling.IDelta;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
@@ -136,6 +137,13 @@ public class XMLModelReconciler extends ModelReconciler {
 		if (object instanceof MPart) {
 			for (Object child : ((MPart) object).getMenus()) {
 				getReferences(references, child);
+			}
+		}
+
+		if (object instanceof MWindow) {
+			MMenu mainMenu = ((MWindow) object).getMainMenu();
+			if (mainMenu != null) {
+				getReferences(references, mainMenu);
 			}
 		}
 
@@ -437,6 +445,36 @@ public class XMLModelReconciler extends ModelReconciler {
 			return userReferences;
 		}
 
+		// List<?> refs = new ArrayList<Object>(originalReferences);
+		// List<IOperation> ops = new ArrayList<IOperation>();
+		//
+		// for (int i = 0; i < originalReferences.size(); i++) {
+		// Object original = originalReferences.get(i);
+		//
+		// int index = userReferences.indexOf(original);
+		// if (index == -1) {
+		// RemoveOperation op = new RemoveOperation(refs, original);
+		// ops.add(op);
+		// } else if (i != index) {
+		// MoveOperation op = new MoveOperation(refs, original, index);
+		// ops.add(op);
+		// }
+		// }
+		//
+		// for (int i = 0; i < userReferences.size(); i++) {
+		// Object user = userReferences.get(i);
+		// if (originalReferences.indexOf(user) == -1) {
+		// AddOperation op = new AddOperation(refs, user, i);
+		// ops.add(op);
+		// }
+		// }
+		//
+		// for (IOperation op : ops) {
+		// if (op instanceof MoveOperation) {
+		// op.perform();
+		// }
+		// }
+
 		if (originalReferences.containsAll(userReferences)
 				&& !userReferences.containsAll(originalReferences)) {
 			List<Object> collectedReferences2 = new ArrayList<Object>(originalReferences);
@@ -519,6 +557,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createPartStack();
 		} else if (type.equals(MPartSashContainer.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createPartSashContainer();
+		} else if (type.equals(MWindowTrim.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createWindowTrim();
 		}
 		return null;
 	}

@@ -16,6 +16,7 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
@@ -130,7 +131,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(200, window.getHeight());
 	}
 
-	public void testMenu_Set() {
+	public void testWindow_Menu_Set() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -158,7 +159,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertNotNull(menu);
 	}
 
-	public void testMenu_Unset() {
+	public void testWindow_Menu_Unset() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -188,7 +189,7 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertNull(window.getMainMenu());
 	}
 
-	private void testMenu_Visible(boolean before, boolean after) {
+	private void testWindow_Menu_Visible(boolean before, boolean after) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -219,19 +220,102 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		assertEquals(after, menu.isToBeRendered());
 	}
 
-	public void testMenu_Visible_TrueTrue() {
-		testMenu_Visible(true, true);
+	public void testWindow_Menu_Children_Add() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		window.setMainMenu(menu);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MMenuItem menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		menuItem.setLabel("File");
+		menu.getChildren().add(menuItem);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+
+		assertEquals(0, menu.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+
+		assertEquals(1, menu.getChildren().size());
+		assertNotNull(menu.getChildren().get(0));
+		assertEquals("File", menu.getChildren().get(0).getLabel());
 	}
 
-	public void testMenu_Visible_TrueFalse() {
-		testMenu_Visible(true, false);
+	public void testWindow_Menu_Children_Remove() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		window.setMainMenu(menu);
+
+		MMenuItem menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		menuItem.setLabel("File");
+		menu.getChildren().add(menuItem);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		menu.getChildren().remove(0);
+
+		Object state = reconciler.serialize();
+		print(state);
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+
+		assertEquals(1, menu.getChildren().size());
+		assertNotNull(menu.getChildren().get(0));
+		assertEquals("File", menu.getChildren().get(0).getLabel());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+
+		assertEquals(0, menu.getChildren().size());
 	}
 
-	public void testMenu_Visible_FalseTrue() {
-		testMenu_Visible(false, true);
+	public void testWindow_Menu_Visible_TrueTrue() {
+		testWindow_Menu_Visible(true, true);
 	}
 
-	public void testMenu_Visible_FalseFalse() {
-		testMenu_Visible(false, false);
+	public void testWindow_Menu_Visible_TrueFalse() {
+		testWindow_Menu_Visible(true, false);
+	}
+
+	public void testWindow_Menu_Visible_FalseTrue() {
+		testWindow_Menu_Visible(false, true);
+	}
+
+	public void testWindow_Menu_Visible_FalseFalse() {
+		testWindow_Menu_Visible(false, false);
 	}
 }

@@ -48,6 +48,14 @@ public class E4XMIResourceFactory extends XMIResourceFactoryImpl {
 				return EcoreUtil.generateUUID();
 			}
 
+			private String getUniqueId() {
+				String id = createId();
+				while (getEObjectByID(id) != null) {
+					id = createId();
+				}
+				return id;
+			}
+
 			@Override
 			public String getID(EObject eObject) {
 				String id = super.getID(eObject);
@@ -58,15 +66,11 @@ public class E4XMIResourceFactory extends XMIResourceFactoryImpl {
 				MApplicationElement element = (MApplicationElement) eObject;
 				id = element.getId();
 				if (id != null) {
-					super.setID((EObject) element, id);
+					super.setID((EObject) element, id);// getUniqueId());
 					return id;
 				}
 
-				id = createId();
-
-				while (getEObjectByID(id) != null) {
-					id = createId();
-				}
+				id = getUniqueId();
 
 				element.setId(id);
 				super.setID((EObject) element, id);
