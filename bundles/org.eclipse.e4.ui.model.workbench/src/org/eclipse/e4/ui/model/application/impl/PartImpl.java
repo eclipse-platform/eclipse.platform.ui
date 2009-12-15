@@ -284,7 +284,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 	protected EList<MKeyBinding> bindings;
 
 	/**
-	 * The cached value of the '{@link #getMenus() <em>Menus</em>}' reference list.
+	 * The cached value of the '{@link #getMenus() <em>Menus</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getMenus()
@@ -294,7 +294,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 	protected EList<MMenu> menus;
 
 	/**
-	 * The cached value of the '{@link #getToolbar() <em>Toolbar</em>}' reference.
+	 * The cached value of the '{@link #getToolbar() <em>Toolbar</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getToolbar()
@@ -596,7 +596,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 */
 	public EList<MMenu> getMenus() {
 		if (menus == null) {
-			menus = new EObjectResolvingEList<MMenu>(MMenu.class, this, MApplicationPackage.PART__MENUS);
+			menus = new EObjectContainmentEList<MMenu>(MMenu.class, this, MApplicationPackage.PART__MENUS);
 		}
 		return menus;
 	}
@@ -607,14 +607,6 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @generated
 	 */
 	public MToolBar getToolbar() {
-		if (toolbar != null && ((EObject)toolbar).eIsProxy()) {
-			InternalEObject oldToolbar = (InternalEObject)toolbar;
-			toolbar = (MToolBar)eResolveProxy(oldToolbar);
-			if (toolbar != oldToolbar) {
-				if (eNotificationRequired())
-					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PART__TOOLBAR, oldToolbar, toolbar));
-			}
-		}
 		return toolbar;
 	}
 
@@ -623,8 +615,14 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MToolBar basicGetToolbar() {
-		return toolbar;
+	public NotificationChain basicSetToolbar(MToolBar newToolbar, NotificationChain msgs) {
+		MToolBar oldToolbar = toolbar;
+		toolbar = newToolbar;
+		if (eNotificationRequired()) {
+			ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__TOOLBAR, oldToolbar, newToolbar);
+			if (msgs == null) msgs = notification; else msgs.add(notification);
+		}
+		return msgs;
 	}
 
 	/**
@@ -633,10 +631,17 @@ public class PartImpl extends ContributionImpl implements MPart {
 	 * @generated
 	 */
 	public void setToolbar(MToolBar newToolbar) {
-		MToolBar oldToolbar = toolbar;
-		toolbar = newToolbar;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__TOOLBAR, oldToolbar, toolbar));
+		if (newToolbar != toolbar) {
+			NotificationChain msgs = null;
+			if (toolbar != null)
+				msgs = ((InternalEObject)toolbar).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.PART__TOOLBAR, null, msgs);
+			if (newToolbar != null)
+				msgs = ((InternalEObject)newToolbar).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - MApplicationPackage.PART__TOOLBAR, null, msgs);
+			msgs = basicSetToolbar(newToolbar, msgs);
+			if (msgs != null) msgs.dispatch();
+		}
+		else if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART__TOOLBAR, newToolbar, newToolbar));
 	}
 
 	/**
@@ -670,6 +675,10 @@ public class PartImpl extends ContributionImpl implements MPart {
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.PART__BINDINGS:
 				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.PART__MENUS:
+				return ((InternalEList<?>)getMenus()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.PART__TOOLBAR:
+				return basicSetToolbar(null, msgs);
 		}
 		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
@@ -725,8 +734,7 @@ public class PartImpl extends ContributionImpl implements MPart {
 			case MApplicationPackage.PART__MENUS:
 				return getMenus();
 			case MApplicationPackage.PART__TOOLBAR:
-				if (resolve) return getToolbar();
-				return basicGetToolbar();
+				return getToolbar();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}

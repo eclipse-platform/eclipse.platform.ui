@@ -130,8 +130,9 @@
       eSuperTypes="#//UIElement"/>
   <eClassifiers xsi:type="ecore:EClass" name="Part" eSuperTypes="#//Contribution #//Context #//PSCElement #//UILabel #//HandlerContainer #//BindingContainer">
     <eStructuralFeatures xsi:type="ecore:EReference" name="menus" upperBound="-1"
-        eType="#//Menu"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"/>
+        eType="#//Menu" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="toolbar" eType="#//ToolBar"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SaveablePart" eSuperTypes="#//Part #//Dirtyable"/>
   <eClassifiers xsi:type="ecore:EClass" name="PartStack">

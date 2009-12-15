@@ -31,7 +31,7 @@ import org.eclipse.emf.common.util.EList;
  */
 public interface MPart extends MContribution, MContext, MPSCElement, MUILabel, MHandlerContainer, MBindingContainer {
 	/**
-	 * Returns the value of the '<em><b>Menus</b></em>' reference list.
+	 * Returns the value of the '<em><b>Menus</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MMenu}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -39,34 +39,34 @@ public interface MPart extends MContribution, MContext, MPSCElement, MUILabel, M
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Menus</em>' reference list.
+	 * @return the value of the '<em>Menus</em>' containment reference list.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getPart_Menus()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	EList<MMenu> getMenus();
 
 	/**
-	 * Returns the value of the '<em><b>Toolbar</b></em>' reference.
+	 * Returns the value of the '<em><b>Toolbar</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
 	 * If the meaning of the '<em>Toolbar</em>' reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Toolbar</em>' reference.
+	 * @return the value of the '<em>Toolbar</em>' containment reference.
 	 * @see #setToolbar(MToolBar)
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getPart_Toolbar()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	MToolBar getToolbar();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MPart#getToolbar <em>Toolbar</em>}' reference.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MPart#getToolbar <em>Toolbar</em>}' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Toolbar</em>' reference.
+	 * @param value the new value of the '<em>Toolbar</em>' containment reference.
 	 * @see #getToolbar()
 	 * @generated
 	 */

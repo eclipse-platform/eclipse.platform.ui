@@ -2079,7 +2079,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART__BINDINGS = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
+	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2088,7 +2088,7 @@ public interface MApplicationPackage extends EPackage {
 	int PART__MENUS = CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
+	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2269,7 +2269,7 @@ public interface MApplicationPackage extends EPackage {
 	int SAVEABLE_PART__BINDINGS = PART__BINDINGS;
 
 	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
+	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -2278,7 +2278,7 @@ public interface MApplicationPackage extends EPackage {
 	int SAVEABLE_PART__MENUS = PART__MENUS;
 
 	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
+	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4080,7 +4080,7 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR__BINDINGS = INPUT_FEATURE_COUNT + 16;
 
 	/**
-	 * The feature id for the '<em><b>Menus</b></em>' reference list.
+	 * The feature id for the '<em><b>Menus</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4089,7 +4089,7 @@ public interface MApplicationPackage extends EPackage {
 	int EDITOR__MENUS = INPUT_FEATURE_COUNT + 17;
 
 	/**
-	 * The feature id for the '<em><b>Toolbar</b></em>' reference.
+	 * The feature id for the '<em><b>Toolbar</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -5207,10 +5207,10 @@ public interface MApplicationPackage extends EPackage {
 	EClass getPart();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.MPart#getMenus <em>Menus</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MPart#getMenus <em>Menus</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Menus</em>'.
+	 * @return the meta object for the containment reference list '<em>Menus</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MPart#getMenus()
 	 * @see #getPart()
 	 * @generated
@@ -5218,10 +5218,10 @@ public interface MApplicationPackage extends EPackage {
 	EReference getPart_Menus();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MPart#getToolbar <em>Toolbar</em>}'.
+	 * Returns the meta object for the containment reference '{@link org.eclipse.e4.ui.model.application.MPart#getToolbar <em>Toolbar</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Toolbar</em>'.
+	 * @return the meta object for the containment reference '<em>Toolbar</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MPart#getToolbar()
 	 * @see #getPart()
 	 * @generated
@@ -6247,7 +6247,7 @@ public interface MApplicationPackage extends EPackage {
 		EClass PART = eINSTANCE.getPart();
 
 		/**
-		 * The meta object literal for the '<em><b>Menus</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Menus</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -6255,7 +6255,7 @@ public interface MApplicationPackage extends EPackage {
 		EReference PART__MENUS = eINSTANCE.getPart_Menus();
 
 		/**
-		 * The meta object literal for the '<em><b>Toolbar</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Toolbar</b></em>' containment reference feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
