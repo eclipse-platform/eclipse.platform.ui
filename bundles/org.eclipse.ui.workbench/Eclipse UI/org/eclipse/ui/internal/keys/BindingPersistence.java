@@ -23,7 +23,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.HandleObject;
@@ -815,9 +814,10 @@ public final class BindingPersistence extends PreferencePersistence {
 			String schemeId, String contextId, String locale, List bindings,
 			String modifiedSequence, String[] platforms) throws ParseException {
 		
+
 		KeyBinding originalBinding = new KeyBinding(keySequence,
-				null, schemeId, contextId, locale,
-				null, null, Binding.SYSTEM);
+				parameterizedCommand, schemeId, contextId, locale, null, null,
+				Binding.SYSTEM);
 		bindings.add(originalBinding);
 		
 		String platform = SWT.getPlatform();
