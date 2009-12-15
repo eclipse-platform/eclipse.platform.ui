@@ -11,7 +11,7 @@
 package org.eclipse.help;
 
 /**
- * IIndexEntry2 is an index entry which may have see eleemnts as children
+ * IIndexEntry2 is an index entry which may have see elements as children
  * 
  * @since 3.5
  */
