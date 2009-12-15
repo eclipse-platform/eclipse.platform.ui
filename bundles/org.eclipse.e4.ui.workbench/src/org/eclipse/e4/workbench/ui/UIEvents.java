@@ -170,7 +170,6 @@ public class UIEvents {
 
 	public static interface TrimContainer {
 		public static final String TOPIC = UITopicBase + "/application/TrimContainer"; //$NON-NLS-1$
-		public static final String HORIZONTAL = "horizontal"; //$NON-NLS-1$
 		public static final String SIDE = "side"; //$NON-NLS-1$
 	}
 

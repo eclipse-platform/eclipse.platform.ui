@@ -1351,17 +1351,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getTrimContainer_Horizontal() {
-		return (EAttribute)trimContainerEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getTrimContainer_Side() {
-		return (EAttribute)trimContainerEClass.getEStructuralFeatures().get(1);
+		return (EAttribute)trimContainerEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1614,7 +1605,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		v______________Trim_______________VEClass = createEClass(VTRIM_V);
 
 		trimContainerEClass = createEClass(TRIM_CONTAINER);
-		createEAttribute(trimContainerEClass, TRIM_CONTAINER__HORIZONTAL);
 		createEAttribute(trimContainerEClass, TRIM_CONTAINER__SIDE);
 
 		windowTrimEClass = createEClass(WINDOW_TRIM);
@@ -1966,7 +1956,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(v______________Trim_______________VEClass, MV______________Trim_______________V.class, "V______________Trim_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(trimContainerEClass, MTrimContainer.class, "TrimContainer", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getTrimContainer_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getTrimContainer_Side(), this.getSideValue(), "side", null, 1, 1, MTrimContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(windowTrimEClass, MWindowTrim.class, "WindowTrim", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$

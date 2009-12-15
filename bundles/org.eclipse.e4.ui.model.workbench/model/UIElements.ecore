@@ -225,7 +225,6 @@
     <eTypeParameters name="T">
       <eBounds eClassifier="#//UIElement"/>
     </eTypeParameters>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="side" lowerBound="1" eType="#//SideValue"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eTypeParameter="#//TrimContainer/T"/>

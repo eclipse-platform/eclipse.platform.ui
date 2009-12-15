@@ -19,7 +19,6 @@ package org.eclipse.e4.ui.model.application;
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal <em>Horizontal</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MTrimContainer#getSide <em>Side</em>}</li>
  * </ul>
  * </p>
@@ -29,32 +28,6 @@ package org.eclipse.e4.ui.model.application;
  * @generated
  */
 public interface MTrimContainer<T extends MUIElement> extends MElementContainer<T> {
-	/**
-	 * Returns the value of the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <p>
-	 * If the meaning of the '<em>Horizontal</em>' attribute isn't clear,
-	 * there really should be more of a description here...
-	 * </p>
-	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Horizontal</em>' attribute.
-	 * @see #setHorizontal(boolean)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getTrimContainer_Horizontal()
-	 * @model
-	 * @generated
-	 */
-	boolean isHorizontal();
-
-	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal <em>Horizontal</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Horizontal</em>' attribute.
-	 * @see #isHorizontal()
-	 * @generated
-	 */
-	void setHorizontal(boolean value);
-
 	/**
 	 * Returns the value of the '<em><b>Side</b></em>' attribute.
 	 * The literals are from the enumeration {@link org.eclipse.e4.ui.model.application.SideValue}.

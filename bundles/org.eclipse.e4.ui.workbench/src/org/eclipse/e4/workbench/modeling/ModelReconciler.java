@@ -171,14 +171,6 @@ public abstract class ModelReconciler {
 			.getGenericTile_Weights().getName();
 
 	/**
-	 * Attribute defined by MTrimContainers (value is <code>horizontal</code>).
-	 * 
-	 * @see #GENERICTILE_HORIZONTAL_ATTNAME
-	 */
-	public static final String TRIMCONTAINER_HORIZONTAL_ATTNAME = MApplicationPackage.eINSTANCE
-			.getTrimContainer_Horizontal().getName();
-
-	/**
 	 * Attribute defined by MTrimContainers (value is <code>side</code>).
 	 */
 	public static final String TRIMCONTAINER_SIDE_ATTNAME = MApplicationPackage.eINSTANCE

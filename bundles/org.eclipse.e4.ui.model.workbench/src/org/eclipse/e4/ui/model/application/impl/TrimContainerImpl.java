@@ -28,7 +28,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl#isHorizontal <em>Horizontal</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TrimContainerImpl#getSide <em>Side</em>}</li>
  * </ul>
  * </p>
@@ -36,26 +35,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * @generated
  */
 public abstract class TrimContainerImpl<T extends MUIElement> extends ElementContainerImpl<T> implements MTrimContainer<T> {
-	/**
-	 * The default value of the '{@link #isHorizontal() <em>Horizontal</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isHorizontal()
-	 * @generated
-	 * @ordered
-	 */
-	protected static final boolean HORIZONTAL_EDEFAULT = false;
-
-	/**
-	 * The cached value of the '{@link #isHorizontal() <em>Horizontal</em>}' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #isHorizontal()
-	 * @generated
-	 * @ordered
-	 */
-	protected boolean horizontal = HORIZONTAL_EDEFAULT;
-
 	/**
 	 * The default value of the '{@link #getSide() <em>Side</em>}' attribute.
 	 * <!-- begin-user-doc -->
@@ -100,27 +79,6 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isHorizontal() {
-		return horizontal;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public void setHorizontal(boolean newHorizontal) {
-		boolean oldHorizontal = horizontal;
-		horizontal = newHorizontal;
-		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TRIM_CONTAINER__HORIZONTAL, oldHorizontal, horizontal));
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public SideValue getSide() {
 		return side;
 	}
@@ -145,8 +103,6 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.TRIM_CONTAINER__HORIZONTAL:
-				return isHorizontal();
 			case MApplicationPackage.TRIM_CONTAINER__SIDE:
 				return getSide();
 		}
@@ -161,9 +117,6 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.TRIM_CONTAINER__HORIZONTAL:
-				setHorizontal((Boolean)newValue);
-				return;
 			case MApplicationPackage.TRIM_CONTAINER__SIDE:
 				setSide((SideValue)newValue);
 				return;
@@ -179,9 +132,6 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.TRIM_CONTAINER__HORIZONTAL:
-				setHorizontal(HORIZONTAL_EDEFAULT);
-				return;
 			case MApplicationPackage.TRIM_CONTAINER__SIDE:
 				setSide(SIDE_EDEFAULT);
 				return;
@@ -197,8 +147,6 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.TRIM_CONTAINER__HORIZONTAL:
-				return horizontal != HORIZONTAL_EDEFAULT;
 			case MApplicationPackage.TRIM_CONTAINER__SIDE:
 				return side != SIDE_EDEFAULT;
 		}
@@ -215,9 +163,7 @@ public abstract class TrimContainerImpl<T extends MUIElement> extends ElementCon
 		if (eIsProxy()) return super.toString();
 
 		StringBuffer result = new StringBuffer(super.toString());
-		result.append(" (horizontal: "); //$NON-NLS-1$
-		result.append(horizontal);
-		result.append(", side: "); //$NON-NLS-1$
+		result.append(" (side: "); //$NON-NLS-1$
 		result.append(side);
 		result.append(')');
 		return result.toString();

@@ -26,7 +26,6 @@ import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MGenericTile;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
@@ -232,13 +231,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getPart_Menus();
 		} else if (featureName.equals(PART_TOOLBAR_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getPart_Toolbar();
-		} else if (featureName.equals(GENERICTILE_HORIZONTAL_ATTNAME)
-				|| featureName.equals(TRIMCONTAINER_HORIZONTAL_ATTNAME)) {
-			// technically the values are identical
-			if (object instanceof MGenericTile<?>) {
-				return MApplicationPackage.eINSTANCE.getGenericTile_Horizontal();
-			}
-			return MApplicationPackage.eINSTANCE.getTrimContainer_Horizontal();
+		} else if (featureName.equals(GENERICTILE_HORIZONTAL_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getGenericTile_Horizontal();
 		} else if (featureName.equals(TRIMCONTAINER_SIDE_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getTrimContainer_Side();
 		} else if (featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME)) {

@@ -3754,22 +3754,13 @@ public interface MApplicationPackage extends EPackage {
 	int TRIM_CONTAINER__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
 
 	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int TRIM_CONTAINER__HORIZONTAL = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
 	 * The feature id for the '<em><b>Side</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_CONTAINER__SIDE = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
+	int TRIM_CONTAINER__SIDE = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The number of structural features of the '<em>Trim Container</em>' class.
@@ -3778,7 +3769,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int TRIM_CONTAINER_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
+	int TRIM_CONTAINER_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.WindowTrimImpl <em>Window Trim</em>}' class.
@@ -3870,15 +3861,6 @@ public interface MApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int WINDOW_TRIM__ACTIVE_CHILD = TRIM_CONTAINER__ACTIVE_CHILD;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int WINDOW_TRIM__HORIZONTAL = TRIM_CONTAINER__HORIZONTAL;
 
 	/**
 	 * The feature id for the '<em><b>Side</b></em>' attribute.
@@ -5661,17 +5643,6 @@ public interface MApplicationPackage extends EPackage {
 	EClass getTrimContainer();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal <em>Horizontal</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Horizontal</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MTrimContainer#isHorizontal()
-	 * @see #getTrimContainer()
-	 * @generated
-	 */
-	EAttribute getTrimContainer_Horizontal();
-
-	/**
 	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MTrimContainer#getSide <em>Side</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6627,14 +6598,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass TRIM_CONTAINER = eINSTANCE.getTrimContainer();
-
-		/**
-		 * The meta object literal for the '<em><b>Horizontal</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute TRIM_CONTAINER__HORIZONTAL = eINSTANCE.getTrimContainer_Horizontal();
 
 		/**
 		 * The meta object literal for the '<em><b>Side</b></em>' attribute feature.
