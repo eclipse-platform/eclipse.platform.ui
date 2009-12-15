@@ -283,6 +283,7 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
             for (int i = 0; i < children.length; i++) {
                 ModelDelta childDelta = delta.addNode(children[i], i, IModelDelta.NO_CHANGE);
                 if (children[i] instanceof BreakpointContainer) {
+                    childDelta.setFlags(IModelDelta.INSTALL);
                     buildInstallDelta(childDelta, (BreakpointContainer)children[i]);
                 } else if (children[i] instanceof IBreakpoint) {
                     childDelta.setFlags(IModelDelta.INSTALL);
