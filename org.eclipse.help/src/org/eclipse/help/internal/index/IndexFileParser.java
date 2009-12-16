@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 Intel Corporation and others.
+ * Copyright (c) 2005, 2009 Intel Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,7 @@
  *     Intel Corporation - initial API and implementation
  *     IBM Corporation - 122967 [Help] Remote help system
  *     IBM Corporation - Use IndexDocumentReader
+ *     IBM Corporation - [Bug 297921
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -31,12 +32,16 @@ public class IndexFileParser {
 		}
 		InputStream in = indexFile.getInputStream();
 		if (in != null) {
-			Index index = (Index)reader.read(in);
-			IndexContribution contrib = new IndexContribution();
-	    	contrib.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
-			contrib.setIndex(index);
-			contrib.setLocale(indexFile.getLocale());
-			return contrib;
+			try {
+				Index index = (Index)reader.read(in);
+				IndexContribution contrib = new IndexContribution();
+		    	contrib.setId('/' + indexFile.getPluginId() + '/' + indexFile.getFile());
+				contrib.setIndex(index);
+				contrib.setLocale(indexFile.getLocale());
+				return contrib;
+			} finally {
+				in.close();
+			}
 		}
     	else {
     		throw new FileNotFoundException();

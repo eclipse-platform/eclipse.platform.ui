@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -30,16 +30,20 @@ public class TocFileParser extends DefaultHandler {
 		}
 		InputStream in = tocFile.getInputStream();
     	if (in != null) {
-			Toc toc = (Toc)reader.read(in);
-			TocContribution contribution = new TocContribution();
-			contribution.setCategoryId(tocFile.getCategory());
-			contribution.setContributorId(tocFile.getPluginId());
-			contribution.setExtraDocuments(DocumentFinder.collectExtraDocuments(tocFile));
-			contribution.setId(HrefUtil.normalizeHref(tocFile.getPluginId(), tocFile.getFile()));
-			contribution.setLocale(tocFile.getLocale());
-			contribution.setToc(toc);
-			contribution.setPrimary(tocFile.isPrimary());
-	    	return contribution;
+			try {
+				Toc toc = (Toc) reader.read(in);
+				TocContribution contribution = new TocContribution();
+				contribution.setCategoryId(tocFile.getCategory());
+				contribution.setContributorId(tocFile.getPluginId());
+				contribution.setExtraDocuments(DocumentFinder.collectExtraDocuments(tocFile));
+				contribution.setId(HrefUtil.normalizeHref(tocFile.getPluginId(), tocFile.getFile()));
+				contribution.setLocale(tocFile.getLocale());
+				contribution.setToc(toc);
+				contribution.setPrimary(tocFile.isPrimary());
+				return contribution;
+			} finally {
+				in.close();
+			}
     	}
     	else {
     		throw new FileNotFoundException();

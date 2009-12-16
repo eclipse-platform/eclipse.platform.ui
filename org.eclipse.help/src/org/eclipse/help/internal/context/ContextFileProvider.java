@@ -196,44 +196,10 @@ public class ContextFileProvider extends AbstractContextProvider {
 			// load the file
 			InputStream in = ResourceLocator.openFromPlugin(descriptor.getBundleId(), descriptor.getFile(), locale);
 	    	if (in != null) {
-				if (reader == null) {
-					reader = new DocumentReader();
-				}
-				UAElement root = reader.read(in);
-				if ("contexts".equals(root.getElementName())) { //$NON-NLS-1$
-					// process dynamic content
-					if (processor == null) {
-						processor = new DocumentProcessor(new ProcessorHandler[] {
-							new ValidationHandler(getRequiredAttributes()),
-							new NormalizeHandler(),
-							new IncludeHandler(reader, locale),
-							new ExtensionHandler(reader, locale)
-						});
-					}
-					processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
-					
-					// build map
-					IUAElement[] children = root.getChildren();
-					Map contexts = new HashMap();
-					for (int i=0;i<children.length;++i) {
-						if (children[i] instanceof Context) {
-							Context context = (Context)children[i];
-							String id = context.getId();
-							if (id != null) {
-								Object existingContext =  contexts.get(id);
-								if (existingContext != null) {
-									((Context)existingContext).mergeContext(context);									
-								} else {
-								    contexts.put(id, context);
-								}
-							}
-						}
-					}
-					return contexts;
-				}
-				else {
-					String msg = "Required root element \"contexts\" missing from context-sensitive help file \"/" + getErrorPath(descriptor, locale) + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg);
+				try {
+					return loadContextsFromInputStream(descriptor, locale, in);
+				} finally {
+					in.close();
 				}
 	    	}
 	    	else {
@@ -243,6 +209,50 @@ public class ContextFileProvider extends AbstractContextProvider {
 		catch (Throwable t) {
 			String msg = "Error reading context-sensitive help file /\"" + getErrorPath(descriptor, locale) + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
 			HelpPlugin.logError(msg, t);
+		}
+		return null;
+	}
+
+	private Map loadContextsFromInputStream(ContextFile descriptor, String locale, InputStream in)
+			throws Exception {
+		if (reader == null) {
+			reader = new DocumentReader();
+		}
+		UAElement root = reader.read(in);
+		if ("contexts".equals(root.getElementName())) { //$NON-NLS-1$
+			// process dynamic content
+			if (processor == null) {
+				processor = new DocumentProcessor(new ProcessorHandler[] {
+					new ValidationHandler(getRequiredAttributes()),
+					new NormalizeHandler(),
+					new IncludeHandler(reader, locale),
+					new ExtensionHandler(reader, locale)
+				});
+			}
+			processor.process(root, '/' + descriptor.getBundleId() + '/' + descriptor.getFile());
+			
+			// build map
+			IUAElement[] children = root.getChildren();
+			Map contexts = new HashMap();
+			for (int i=0;i<children.length;++i) {
+				if (children[i] instanceof Context) {
+					Context context = (Context)children[i];
+					String id = context.getId();
+					if (id != null) {
+						Object existingContext =  contexts.get(id);
+						if (existingContext != null) {
+							((Context)existingContext).mergeContext(context);									
+						} else {
+						    contexts.put(id, context);
+						}
+					}
+				}
+			}
+			return contexts;
+		}
+		else {
+			String msg = "Required root element \"contexts\" missing from context-sensitive help file \"/" + getErrorPath(descriptor, locale) + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
+			HelpPlugin.logError(msg);
 		}
 		return null;
 	}
