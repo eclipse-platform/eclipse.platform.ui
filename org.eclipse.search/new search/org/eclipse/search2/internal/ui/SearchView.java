@@ -43,6 +43,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -434,7 +435,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		ISearchResultPage page= getActivePage();
 		String label= ""; //$NON-NLS-1$
 		if (page != null) {
-			label= page.getLabel();
+			label= LegacyActionTools.escapeMnemonics(page.getLabel());
 		}
 		if (!fPageContent.isDisposed()) {
 			if (label.length() == 0) {
