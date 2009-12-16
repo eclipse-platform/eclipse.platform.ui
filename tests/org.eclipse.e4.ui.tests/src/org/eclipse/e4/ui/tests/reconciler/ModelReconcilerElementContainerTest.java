@@ -19,6 +19,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
@@ -508,6 +509,159 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(window, application.getChildren().get(0));
 
 		assertEquals(0, window.getChildren().size());
+	}
+
+	public void testElementContainer_Children_Add_ToolBar() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
+				.createWindowTrim();
+		window.getChildren().add(windowTrim);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		windowTrim.getChildren().add(toolBar);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		windowTrim = (MWindowTrim) window.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(windowTrim, window.getChildren().get(0));
+
+		assertEquals(0, windowTrim.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(windowTrim, window.getChildren().get(0));
+
+		assertEquals(1, windowTrim.getChildren().size());
+		assertTrue(windowTrim.getChildren().get(0) instanceof MToolBar);
+	}
+
+	public void testElementContainer_Children_Remove_ToolBar() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		MWindowTrim windowTrim = MApplicationFactory.eINSTANCE
+				.createWindowTrim();
+		window.getChildren().add(windowTrim);
+
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		windowTrim.getChildren().add(toolBar);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		windowTrim.getChildren().remove(0);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		windowTrim = (MWindowTrim) window.getChildren().get(0);
+		toolBar = (MToolBar) windowTrim.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(windowTrim, window.getChildren().get(0));
+
+		assertEquals(1, windowTrim.getChildren().size());
+		assertEquals(toolBar, windowTrim.getChildren().get(0));
+
+		assertEquals(0, toolBar.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(windowTrim, window.getChildren().get(0));
+
+		assertEquals(0, windowTrim.getChildren().size());
+	}
+
+	public void testElementContainer_Children_SwitchParent_ToolBar() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		MWindowTrim windowTrim1 = MApplicationFactory.eINSTANCE
+				.createWindowTrim();
+		window.getChildren().add(windowTrim1);
+		MWindowTrim windowTrim2 = MApplicationFactory.eINSTANCE
+				.createWindowTrim();
+		window.getChildren().add(windowTrim2);
+
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		windowTrim1.getChildren().add(toolBar);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		windowTrim2.getChildren().add(windowTrim1.getChildren().remove(0));
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		windowTrim1 = (MWindowTrim) window.getChildren().get(0);
+		windowTrim2 = (MWindowTrim) window.getChildren().get(1);
+		toolBar = (MToolBar) windowTrim1.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(windowTrim1, window.getChildren().get(0));
+		assertEquals(windowTrim2, window.getChildren().get(1));
+
+		assertEquals(1, windowTrim1.getChildren().size());
+		assertEquals(toolBar, windowTrim1.getChildren().get(0));
+		assertEquals(0, windowTrim2.getChildren().size());
+
+		assertEquals(0, toolBar.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(windowTrim1, window.getChildren().get(0));
+		assertEquals(windowTrim2, window.getChildren().get(1));
+
+		assertEquals(0, windowTrim1.getChildren().size());
+		assertEquals(1, windowTrim2.getChildren().size());
+		assertEquals(toolBar, windowTrim2.getChildren().get(0));
+
+		assertEquals(0, toolBar.getChildren().size());
 	}
 
 	public void testElementContainer_ActiveChild() {

@@ -64,8 +64,6 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private static final String CHANGES_ATTNAME = "changes"; //$NON-NLS-1$
 
-	private static final String CONTAINER_ATTNAME = "container"; //$NON-NLS-1$
-
 	private static final String TYPE_ATTNAME = "type"; //$NON-NLS-1$
 
 	private static final String UNSET_ATTNAME = "unset"; //$NON-NLS-1$
@@ -77,40 +75,10 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private EObject rootObject;
 
-	private void collect(Collection<Object> objects, MElementContainer<?> container) {
-		for (Object object : container.getChildren()) {
-			if (object instanceof MPart) {
-				MPart part = (MPart) object;
-				for (MMenu menu : part.getMenus()) {
-					objects.add(menu);
-				}
-
-				MToolBar toolBar = part.getToolbar();
-				if (toolBar != null) {
-					objects.add(toolBar);
-				}
-			}
-
-			if (object instanceof MElementContainer<?>) {
-				collect(objects, (MElementContainer<?>) object);
-			}
-		}
-	}
-
 	public void recordChanges(Object object) {
 		Assert.isNotNull(object);
 		rootObject = (EObject) object;
-
-		Collection<Object> objects = new LinkedList<Object>();
-		objects.add(object);
-
-		if (object instanceof MApplication) {
-			for (MWindow window : ((MApplication) object).getChildren()) {
-				collect(objects, window);
-			}
-		}
-
-		changeRecorder = new ChangeRecorder(objects);
+		changeRecorder = new ChangeRecorder(rootObject);
 		changeDescription = null;
 	}
 
@@ -162,11 +130,10 @@ public class XMLModelReconciler extends ModelReconciler {
 		List<Object> references = getReferences(new LinkedList<Object>(), rootObject);
 
 		Document document = (Document) serializedState;
-		Element root = document.getDocumentElement();
 
 		Collection<ModelDelta> deltas = new LinkedList<ModelDelta>();
 
-		NodeList rootNodeList = (NodeList) root;
+		NodeList rootNodeList = (NodeList) document.getDocumentElement();
 		for (int i = 0; i < rootNodeList.getLength(); i++) {
 			Element element = (Element) rootNodeList.item(i);
 			constructDeltas(deltas, references, rootObject, element);
@@ -274,10 +241,6 @@ public class XMLModelReconciler extends ModelReconciler {
 		return collectFeatures(new HashSet<EStructuralFeature>(), object.eClass());
 	}
 
-	private boolean isReference(EStructuralFeature feature) {
-		return feature == MApplicationPackage.eINSTANCE.getElementContainer_Children();
-	}
-
 	private Object findReference(List<Object> references, String id) {
 		for (Object reference : references) {
 			if (getLocalId(reference).equals(id)) {
@@ -374,8 +337,7 @@ public class XMLModelReconciler extends ModelReconciler {
 						featureName);
 				deltas.add(delta);
 			} else {
-				ModelDelta delta = createAttributeDelta(references, eObject, features, node,
-						featureName);
+				ModelDelta delta = createAttributeDelta(eObject, features, node, featureName);
 				deltas.add(delta);
 			}
 		}
@@ -383,31 +345,27 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private ModelDelta createSingleReferenceDelta(List<Object> references, EObject eObject,
 			Collection<EStructuralFeature> features, Element node, String featureName) {
-		Object match = null;
-
-		if (!Boolean.parseBoolean(node.getAttribute(UNSET_ATTNAME))) {
-			NodeList referencedIds = (NodeList) node;
-			for (int j = 0; j < referencedIds.getLength(); j++) {
-				Element reference = (Element) referencedIds.item(j);
-				String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-				match = findReference(references, referenceId);
-				if (match != null) {
-					break;
-				}
-			}
-
-			if (match == null) {
-				match = createObject((Element) referencedIds.item(0), references);
-			}
-		}
-
 		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
 		features.remove(feature);
+
+		if (isUnset(node)) {
+			return new EMFModelDeltaUnset(eObject, feature);
+		}
+
+		NodeList referencedIds = (NodeList) node;
+		Element reference = (Element) referencedIds.item(0);
+		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+
+		Object match = findReference(references, referenceId);
+		if (match == null) {
+			// couldn't find a reference, must be a new object
+			match = createObject(reference, references);
+		}
 
 		return new EMFModelDeltaSet(eObject, feature, match);
 	}
 
-	public static Object threeWayMerge(List<?> originalReferences, List<?> userReferences,
+	public static List<?> threeWayMerge(List<?> originalReferences, List<?> userReferences,
 			List<?> currentReferences) {
 		int userSize = userReferences.size();
 		int originalSize = originalReferences.size();
@@ -424,37 +382,10 @@ public class XMLModelReconciler extends ModelReconciler {
 		} else if (currentReferences.isEmpty()) {
 			// currently not referencing anything, so just return what the user had exactly
 			return userReferences;
+		} else if (originalReferences.containsAll(currentReferences)
+				&& currentReferences.containsAll(originalReferences)) {
+			return userReferences;
 		}
-
-		// List<?> refs = new ArrayList<Object>(originalReferences);
-		// List<IOperation> ops = new ArrayList<IOperation>();
-		//
-		// for (int i = 0; i < originalReferences.size(); i++) {
-		// Object original = originalReferences.get(i);
-		//
-		// int index = userReferences.indexOf(original);
-		// if (index == -1) {
-		// RemoveOperation op = new RemoveOperation(refs, original);
-		// ops.add(op);
-		// } else if (i != index) {
-		// MoveOperation op = new MoveOperation(refs, original, index);
-		// ops.add(op);
-		// }
-		// }
-		//
-		// for (int i = 0; i < userReferences.size(); i++) {
-		// Object user = userReferences.get(i);
-		// if (originalReferences.indexOf(user) == -1) {
-		// AddOperation op = new AddOperation(refs, user, i);
-		// ops.add(op);
-		// }
-		// }
-		//
-		// for (IOperation op : ops) {
-		// if (op instanceof MoveOperation) {
-		// op.perform();
-		// }
-		// }
 
 		if (originalReferences.containsAll(userReferences)
 				&& !userReferences.containsAll(originalReferences)) {
@@ -466,6 +397,73 @@ public class XMLModelReconciler extends ModelReconciler {
 
 			return collectedReferences;
 		}
+
+		// if (true) {
+		// List<?> refs = new ArrayList<Object>(userReferences);
+		// List<IOperation> ops = new ArrayList<IOperation>();
+		//
+		// for (int i = 0; i < currentReferences.size(); i++) {
+		// Object current = currentReferences.get(i);
+		//
+		// if (userReferences.indexOf(current) == -1) {
+		// AddOperation op = new AddOperation(refs, current, i);
+		// ops.add(op);
+		// }
+		// }
+		//
+		// for (IOperation op : ops) {
+		// if (op instanceof AddOperation) {
+		// op.perform();
+		// }
+		// }
+		//
+		// for (IOperation op : ops) {
+		// if (op instanceof RemoveOperation) {
+		// op.perform();
+		// }
+		// }
+		//
+		// return refs;
+		// }
+
+		// List<?> newRefs = new ArrayList<Object>(currentReferences);
+		// newRefs.removeAll(originalReferences);
+		//
+		// List<?> refs = new ArrayList<Object>(currentReferences);
+		// List<IOperation> ops = new ArrayList<IOperation>();
+		//
+		// for (int i = 0; i < currentReferences.size(); i++) {
+		// Object current = currentReferences.get(i);
+		//
+		// if (userReferences.indexOf(current) == -1 && !newRefs.contains(current)) {
+		// IOperation op = new RemoveOperation(refs, current);
+		// ops.add(op);
+		// }
+		// }
+		//
+		// for (int i = 0; i < userReferences.size(); i++) {
+		// Object user = userReferences.get(i);
+		// if (currentReferences.indexOf(user) == -1) {
+		// AddOperation op = new AddOperation(refs, user, i);
+		// ops.add(op);
+		// }
+		// }
+		//
+		// for (IOperation op : ops) {
+		// if (op instanceof AddOperation) {
+		// op.perform();
+		// }
+		// }
+		//
+		// for (IOperation op : ops) {
+		// if (op instanceof RemoveOperation) {
+		// op.perform();
+		// }
+		// }
+		//
+		// if (true) {
+		// return refs;
+		// }
 
 		List<Object> collectedReferences2 = new ArrayList<Object>(currentReferences);
 		collectedReferences2.removeAll(originalReferences);
@@ -479,35 +477,24 @@ public class XMLModelReconciler extends ModelReconciler {
 			Collection<EStructuralFeature> features, Element node, String featureName) {
 		NodeList referencedIds = (NodeList) node;
 		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
-
-		if (feature == MApplicationPackage.eINSTANCE.getBindingContainer_Bindings()) {
-			return createBindingReferenceDelta(references, eObject, features, referencedIds,
-					feature);
-		}
-		return createIdentifiedReferenceDelta(references, eObject, features, referencedIds, feature);
-	}
-
-	private ModelDelta createBindingReferenceDelta(List<Object> references, EObject eObject,
-			Collection<EStructuralFeature> features, NodeList referencedIds,
-			EStructuralFeature feature) {
 		List<Object> originalReferences = new ArrayList<Object>();
 		List<Object> userReferences = new ArrayList<Object>();
 		List<?> currentReferences = (List<?>) eObject.eGet(feature);
 
 		for (int i = 0; i < referencedIds.getLength(); i++) {
 			Element reference = (Element) referencedIds.item(i);
-			String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-			Object match = findReference(references, referenceId);
-			if (match != null) {
-				if (reference.getNodeName().equals(REFERENCE_ELEMENT_NAME)) {
-					Object eKeyBinding = createObject(reference, references);
-					userReferences.add(eKeyBinding);
-				} else {
-					originalReferences.add(match);
-				}
+			if (isUnset(reference)) {
+				userReferences.add(createObject(reference, references));
 			} else {
-				Object eKeyBinding = createObject(reference, references);
-				userReferences.add(eKeyBinding);
+				String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+				Object match = findReference(references, referenceId);
+				if (match != null) {
+					if (reference.getNodeName().equals(REFERENCE_ELEMENT_NAME)) {
+						userReferences.add(match);
+					} else {
+						originalReferences.add(match);
+					}
+				}
 			}
 		}
 
@@ -552,14 +539,14 @@ public class XMLModelReconciler extends ModelReconciler {
 		return createObject(element, references);
 	}
 
-	private IDelta createObject(String typeName, Element reference, List<Object> references) {
+	private Object createObject(String typeName, Element element, List<Object> references) {
 		EObject object = createObject(typeName);
 		CompositeDelta compositeDelta = new CompositeDelta(object);
 
-		NodeList elementAttributes = (NodeList) reference;
+		NodeList elementAttributes = (NodeList) element;
 		for (int i = 0; i < elementAttributes.getLength(); i++) {
 			Element item = (Element) elementAttributes.item(i);
-			if (!Boolean.parseBoolean(item.getAttribute(UNSET_ATTNAME))) {
+			if (!isUnset(item)) {
 				String attributeName = item.getNodeName();
 				EStructuralFeature attributeFeature = getStructuralFeature(object, attributeName);
 				if (isSingleReference(attributeName)) {
@@ -574,8 +561,8 @@ public class XMLModelReconciler extends ModelReconciler {
 
 					for (int j = 0; j < objectReferenceNodes.getLength(); j++) {
 						Node node = objectReferenceNodes.item(j);
-						Object o = getReference((Element) node, references);
-						objectReferences.add(o);
+						Object objectReference = getReference((Element) node, references);
+						objectReferences.add(objectReference);
 					}
 
 					IDelta delta = new EMFModelDeltaSet(object, attributeFeature, objectReferences);
@@ -594,49 +581,13 @@ public class XMLModelReconciler extends ModelReconciler {
 		return createObject(reference.getAttribute(TYPE_ATTNAME), reference, references);
 	}
 
-	private ModelDelta createIdentifiedReferenceDelta(List<Object> references, EObject eObject,
-			Collection<EStructuralFeature> features, NodeList referencedIds,
-			EStructuralFeature feature) {
-		List<Object> originalReferences = new ArrayList<Object>();
-		List<Object> userReferences = new ArrayList<Object>();
-		List<?> currentReferences = (List<?>) eObject.eGet(feature);
-
-		for (int i = 0; i < referencedIds.getLength(); i++) {
-			Element reference = (Element) referencedIds.item(i);
-			if (UNSET_ATTVALUE_TRUE.equals(reference.getAttribute(UNSET_ATTNAME))) {
-				userReferences.add(createObject(reference, references));
-			} else {
-				String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-				Object match = findReference(references, referenceId);
-				if (match != null) {
-					if (reference.getNodeName().equals(REFERENCE_ELEMENT_NAME)) {
-						userReferences.add(match);
-					} else {
-						originalReferences.add(match);
-					}
-				}
-			}
-		}
-
-		features.remove(feature);
-
-		return new EMFModelDeltaThreeWayDelayedSet(eObject, feature, originalReferences,
-				userReferences, currentReferences);
-	}
-
-	private ModelDelta createAttributeDelta(List<Object> references, EObject eObject,
+	private ModelDelta createAttributeDelta(EObject eObject,
 			Collection<EStructuralFeature> features, Element node, String featureName) {
 		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
 		features.remove(feature);
 
-		if (Boolean.parseBoolean(node.getAttribute(UNSET_ATTNAME))) {
+		if (isUnset(node)) {
 			return new EMFModelDeltaUnset(eObject, feature);
-		}
-
-		if (isReference(feature)) {
-			Object reference = findReference(references, node
-					.getAttribute(APPLICATIONELEMENT_ID_ATTNAME));
-			return new EMFModelDeltaSet(eObject, feature, reference);
 		}
 
 		Object value = getValue(feature, node.getAttribute(featureName));
@@ -645,17 +596,23 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private Document createDocument() {
 		try {
-			Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.newDocument();
-			return document;
+			return DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
 		} catch (Exception e) {
 			throw new RuntimeException(e);
 		}
 	}
 
+	private ChangeDescription calculateDeltas() {
+		if (changeDescription == null) {
+			changeDescription = changeRecorder.endRecording();
+		}
+		return changeDescription;
+	}
+
 	public Object serialize() {
 		calculateDeltas();
 
+		// begin construction of the XML document
 		Document document = createDocument();
 		Element root = document.createElement(CHANGES_ATTNAME);
 		document.appendChild(root);
@@ -663,19 +620,30 @@ public class XMLModelReconciler extends ModelReconciler {
 		EMap<EObject, EList<FeatureChange>> objectChanges = changeDescription.getObjectChanges();
 		for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
 			EObject object = entry.getKey();
+			// persist every change
 			Element persistedElement = persist(document, entry, object);
 			if (persistedElement != null) {
+				// append the change to the document
 				root.appendChild(persistedElement);
 			}
 		}
 
-		try {
-			return document;
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		return document;
 	}
 
+	/**
+	 * Returns an XML representation of the changes that have occurred in the specified object. Or
+	 * <code>null</code> if changes pertaining to this object should not be persisted
+	 * 
+	 * @param document
+	 *            the root XML document
+	 * @param entry
+	 *            a list of changes that have occurred to the object
+	 * @param object
+	 *            the object to persist
+	 * @return an XML representation of the changes of the object, or <code>null</code> if its
+	 *         changes should be ignored
+	 */
 	private Element persist(Document document, Entry<EObject, EList<FeatureChange>> entry,
 			EObject object) {
 		if (getOriginalId(object) == null) {
@@ -684,17 +652,21 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		Element modelChange = null;
 
-		List<FeatureChange> changes = entry.getValue();
-		for (FeatureChange change : changes) {
+		List<FeatureChange> featureChanges = entry.getValue();
+		for (FeatureChange featureChange : featureChanges) {
 			// we only want to persist deltas of non-transient features
-			if (!change.getFeature().isTransient()) {
-				String featureName = change.getFeatureName();
+			if (!featureChange.getFeature().isTransient()) {
+				String featureName = featureChange.getFeatureName();
+				// check if we're interested in this particular feature
 				if (shouldPersist(featureName)) {
 					if (modelChange == null) {
+						// create an element to record this object's changes
 						modelChange = createElement(document, object);
 					}
 
-					Element deltaElement = createDeltaElement(document, object, change, featureName);
+					// create a delta for this particular change
+					Element deltaElement = createDeltaElement(document, object, featureChange,
+							featureName);
 					modelChange.appendChild(deltaElement);
 				}
 			}
@@ -705,21 +677,25 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private Element createElement(Document document, EObject object) {
 		String id = getOriginalId(object);
-		Assert.isNotNull(id);
 
 		Class<?> rootInterface = object.getClass().getInterfaces()[0];
-
+		// this technically doesn't have to be tagged with this name, it's not parsed, but makes the
+		// XML more readable
 		Element modelChange = document.createElement(rootInterface.getSimpleName());
 		modelChange.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, id);
-
-		EObject container = object.eContainer();
-		if (!(container instanceof ChangeDescription)) {
-			modelChange.setAttribute(CONTAINER_ATTNAME, getOriginalId(container));
-		}
 
 		return modelChange;
 	}
 
+	/**
+	 * Retrieves the id of the object by querying for it from the resource.
+	 * 
+	 * @param object
+	 *            the object to retrieve the id for
+	 * @param container
+	 *            the parent container of the object
+	 * @return the object's id as recorded by the containing resource
+	 */
 	private String getResourceId(EObject object, EObject container) {
 		Resource resource = object.eResource();
 		if (resource instanceof XMLResource) {
@@ -731,7 +707,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			return ((XMLResource) resource).getID(object);
 		}
 
-		return null;
+		throw new IllegalStateException(object + " could not be identified"); //$NON-NLS-1$
 	}
 
 	private String getLocalId(Object object) {
@@ -739,8 +715,18 @@ public class XMLModelReconciler extends ModelReconciler {
 		return getResourceId(reference, reference.eContainer());
 	}
 
+	/**
+	 * Retrieves the original containing parent object of the specified reference. If
+	 * <code>null</code> is returned, the object was not initially known by the change recorder.
+	 * 
+	 * @param reference
+	 *            the object to find its original containe for
+	 * @return the original parent container of the object, or <code>null</code> if it did not
+	 *         initially exist
+	 */
 	private EObject getOriginalContainer(EObject reference) {
 		if (changeDescription == null) {
+			// no changes have been recorded, just ask the container through EMF directly
 			return reference.eContainer();
 		}
 
@@ -852,6 +838,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 
 			if (reference instanceof MMenu) {
+				boolean appendedMenu = false;
+
 				for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
 					EObject key = entry.getKey();
 					if (key instanceof MPart) {
@@ -860,6 +848,10 @@ public class XMLModelReconciler extends ModelReconciler {
 								List<?> originalMenus = (List<?>) change.getValue();
 								if (originalMenus.contains(reference)) {
 									return key;
+								}
+
+								if (((MPart) key).getMenus().contains(reference)) {
+									appendedMenu = true;
 								}
 								break;
 							}
@@ -891,6 +883,8 @@ public class XMLModelReconciler extends ModelReconciler {
 
 				if (menuChanged && menuSet) {
 					return null;
+				} else if (appendedMenu && !menuSet && !menuChanged) {
+					return null;
 				}
 			}
 
@@ -907,6 +901,12 @@ public class XMLModelReconciler extends ModelReconciler {
 							}
 							newElement = true;
 							break;
+						} else if (change.getFeatureName().equals(PART_TOOLBAR_ATTNAME)) {
+							if (reference.equals(change.getValue())) {
+								return key;
+							}
+							newElement = true;
+							break;
 						}
 					}
 					break;
@@ -919,33 +919,15 @@ public class XMLModelReconciler extends ModelReconciler {
 			}
 		}
 
-		return reference instanceof MApplication ? changeDescription : null;
+		return null;
 	}
 
 	/**
 	 * Computes and returns the original id of the specified object. The meaning of the term
 	 * "original" is defined as the state of the object prior to having its state monitored via
-	 * {@link #recordChanges(Object)}.
-	 * <p>
-	 * If the object is an MApplicationElement, the id that has already been set will be used.
-	 * However, if an id has not been set, one will be constructed and returned. As the lookup
-	 * strategy relies on an id for finding objects, it is important that should the id have to be
-	 * constructed internally that it store sufficient information for the reconciler to use for
-	 * finding the original object that it constructed the id for.
-	 * </p>
-	 * <p>
-	 * For example, in an application with two windows, the id that is constructed for the two
-	 * windows may be:
-	 * <ol>
-	 * <li><code>application/@children.0</code></li>
-	 * <li><code>application/@children.1</code></li>
-	 * </ol>
-	 * However, suppose that the positions of the windows are swapped at some point during the
-	 * lifecycle of the application by the user. If an id is constructed now it will incorrectly
-	 * point to the wrong windows. This is where the notion of an "original" id comes into play.
-	 * This method <b>must</b> accurately identify an object prior to any state changes so that a
-	 * delta can be calculated correctly.
-	 * </p>
+	 * {@link #recordChanges(Object)}. The identifier for the object will be queried from the
+	 * resource. If the object did not exist was not known when changes began recording,
+	 * <code>null</code> will be returned.
 	 * 
 	 * @param object
 	 *            the object to query an id for
@@ -983,10 +965,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 				references = (List<?>) featureChange.getValue();
 				for (Object reference : references) {
-					Element referenceElement = document
-							.createElement(ORIGINALREFERENCE_ELEMENT_NAME);
-					referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME,
-							getOriginalId(reference));
+					Element referenceElement = createOriginalReferenceElement(document, reference);
 					featureElement.appendChild(referenceElement);
 				}
 			} else {
@@ -996,10 +975,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			if (isChainedReference(featureName)) {
 				List<?> references = (List<?>) featureChange.getValue();
 				for (Object reference : references) {
-					Element referenceElement = document
-							.createElement(ORIGINALREFERENCE_ELEMENT_NAME);
-					referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME,
-							getOriginalId(reference));
+					Element referenceElement = createOriginalReferenceElement(document, reference);
 					featureElement.appendChild(referenceElement);
 				}
 			} else {
@@ -1010,49 +986,66 @@ public class XMLModelReconciler extends ModelReconciler {
 		return featureElement;
 	}
 
-	private Element createReferenceElement(Document document, EObject eObject) {
-		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
-		String id = getOriginalId(eObject);
-		if (id == null) {
-			// the object did not exist, mark it as such so it can be created during the
-			// delta application phase
-			referenceElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
-			// note what we need to create
-			referenceElement.setAttribute(TYPE_ATTNAME, eObject.getClass().getInterfaces()[0]
-					.getSimpleName());
-
-			populateNewReferenceElement(document, eObject, referenceElement);
-		} else {
-			referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, id);
-		}
-
+	private Element createOriginalReferenceElement(Document document, Object reference) {
+		Element referenceElement = document.createElement(ORIGINALREFERENCE_ELEMENT_NAME);
+		referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, getOriginalId(reference));
 		return referenceElement;
 	}
 
-	private void populateNewReferenceElement(Document document, EObject eObject,
-			Element referenceElement) {
+	/**
+	 * Creates a new element that defines a reference to another object.
+	 * 
+	 * @param document
+	 *            the root XML document
+	 * @param eObject
+	 *            the object to reference
+	 * @return an XML element that describes the reference to the provided object
+	 */
+	private Element createReferenceElement(Document document, EObject eObject) {
+		String id = getOriginalId(eObject);
+
+		if (id == null) {
+			// didn't exist originally, we need a completely new reference that describes the object
+			// and its attributes
+			return createNewReferenceElement(document, eObject);
+		}
+
+		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
+		referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, id);
+		return referenceElement;
+	}
+
+	private Element createNewReferenceElement(Document document, EObject eObject) {
+		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
+
+		// object did not exist, mark it as such so it can be created during the
+		// delta application phase
+		referenceElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
+		// note what we need to create by storing the type
+		referenceElement.setAttribute(TYPE_ATTNAME, eObject.getClass().getInterfaces()[0]
+				.getSimpleName());
+
 		for (EStructuralFeature collectedFeature : collectFeatures(eObject)) {
 			String collectedFeatureName = collectedFeature.getName();
+			// ignore transient features
 			if (!collectedFeature.isTransient() && shouldPersist(collectedFeatureName)) {
 				Element referenceAttributeElement = document.createElement(collectedFeatureName);
 				if (eObject.eIsSet(collectedFeature)) {
 					if (collectedFeatureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
 						referenceAttributeElement.setAttribute(collectedFeatureName,
 								getLocalId(eObject));
-					} else {
-						if (isSingleReference(collectedFeatureName)) {
-							referenceAttributeElement.setAttribute(collectedFeatureName,
-									getOriginalId(eObject.eGet(collectedFeature)));
-						} else if (isChainedReference(collectedFeatureName)) {
-							List<?> references = (List<?>) eObject.eGet(collectedFeature);
-							for (Object reference : references) {
-								Element ef = createReferenceElement(document, (EObject) reference);
-								referenceAttributeElement.appendChild(ef);
-							}
-						} else {
-							referenceAttributeElement.setAttribute(collectedFeatureName, String
-									.valueOf(eObject.eGet(collectedFeature)));
+					} else if (isSingleReference(collectedFeatureName)) {
+						referenceAttributeElement.setAttribute(collectedFeatureName,
+								getOriginalId(eObject.eGet(collectedFeature)));
+					} else if (isChainedReference(collectedFeatureName)) {
+						List<?> references = (List<?>) eObject.eGet(collectedFeature);
+						for (Object reference : references) {
+							Element ef = createReferenceElement(document, (EObject) reference);
+							referenceAttributeElement.appendChild(ef);
 						}
+					} else {
+						referenceAttributeElement.setAttribute(collectedFeatureName, String
+								.valueOf(eObject.eGet(collectedFeature)));
 					}
 				} else {
 					referenceAttributeElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
@@ -1060,8 +1053,18 @@ public class XMLModelReconciler extends ModelReconciler {
 				referenceElement.appendChild(referenceAttributeElement);
 			}
 		}
+
+		return referenceElement;
 	}
 
+	/**
+	 * Returns whether the feature is a reference to another object.
+	 * 
+	 * @param featureName
+	 *            the name of the feature
+	 * @return <code>true</code> if this particular feature is a reference to another object,
+	 *         <code>false</code> otherwise
+	 */
 	private static boolean isSingleReference(String featureName) {
 		// an ElementContainer has a single reference to its active child
 		return featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME) ||
@@ -1075,6 +1078,14 @@ public class XMLModelReconciler extends ModelReconciler {
 				featureName.equals(PART_TOOLBAR_ATTNAME);
 	}
 
+	/**
+	 * Returns whether the feature is a list of object references.
+	 * 
+	 * @param featureName
+	 *            the name of the feature
+	 * @return <code>true</code> if this particular feature is referring to a list of object
+	 *         references, <code>false</code> otherwise
+	 */
 	private static boolean isChainedReference(String featureName) {
 		// an ElementContainer has multiple children
 		return featureName.equals(ELEMENTCONTAINER_CHILDREN_ATTNAME) ||
@@ -1088,16 +1099,21 @@ public class XMLModelReconciler extends ModelReconciler {
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME);
 	}
 
-	private boolean shouldPersist(String featureName) {
+	/**
+	 * Returns whether this feature should be persisted.
+	 * 
+	 * @param featureName
+	 *            the name of the feature
+	 * @return <code>true</code> if this particular feature should be persisted, <code>false</code>
+	 *         otherwise
+	 */
+	private static boolean shouldPersist(String featureName) {
 		// parent changes are captured by children changes already
 		return !featureName.equals(UIELEMENT_PARENT_ATTNAME);
 	}
 
-	private ChangeDescription calculateDeltas() {
-		if (changeDescription == null) {
-			changeDescription = changeRecorder.endRecording();
-		}
-		return changeDescription;
+	private static boolean isUnset(Element element) {
+		return UNSET_ATTVALUE_TRUE.equals(element.getAttribute(UNSET_ATTNAME));
 	}
 
 }

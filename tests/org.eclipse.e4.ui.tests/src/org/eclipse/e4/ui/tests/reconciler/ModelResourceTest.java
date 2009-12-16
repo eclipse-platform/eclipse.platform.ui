@@ -38,7 +38,7 @@ public abstract class ModelResourceTest extends TestCase {
 	@Override
 	protected void setUp() throws Exception {
 		temporaryFile = new File(System.getProperty("java.io.tmpdir"),
-				getClass().getSimpleName() + ".e4xmi");
+				getClass().getSimpleName() + "_" + getName() + ".e4xmi");
 		temporaryFile.delete();
 		temporaryURI = URI.createFileURI(temporaryFile.getAbsolutePath());
 		factory = createFactory();

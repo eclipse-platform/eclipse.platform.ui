@@ -278,7 +278,6 @@ public abstract class ModelReconcilerWindowTest extends ModelReconcilerTest {
 		menu.getChildren().remove(0);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		window = application.getChildren().get(0);
