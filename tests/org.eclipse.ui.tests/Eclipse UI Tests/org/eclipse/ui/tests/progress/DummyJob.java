@@ -35,17 +35,21 @@ public class DummyJob extends Job {
 	protected IStatus run(IProgressMonitor monitor) {
 
 		monitor.beginTask(getName() + " starts now", 10);
-		for (int i = 0; i < 10; i++) {
-			try {
-				Thread.sleep(10);
-			} catch (InterruptedException e) {
-				// ignore
+		try {
+			for (int i = 0; i < 10; i++) {
+				try {
+					Thread.sleep(10);
+				} catch (InterruptedException e) {
+					// ignore
+				}
+				monitor.worked(1);
+				if (monitor.isCanceled())
+					break;
 			}
-			monitor.worked(1);
-			if (monitor.isCanceled())
-				break;
+			return status;
+		} finally {
+			monitor.done();
 		}
-		return status;
 	}
 
 }
