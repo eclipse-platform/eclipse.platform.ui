@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -26,6 +26,7 @@ import org.eclipse.swt.widgets.Label;
 
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.StatusLineLayoutData;
 import org.eclipse.jface.resource.JFaceColors;
 
@@ -261,24 +262,26 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 		if (fLabel != null && !fLabel.isDisposed()) {
 			Display display= fLabel.getDisplay();
 			if ((fErrorText != null && fErrorText.length() > 0) || fErrorImage != null) {
+				String escapedErrorText= escape(fErrorText);
 				fLabel.setForeground(JFaceColors.getErrorText(display));
-				fLabel.setText(escape(fErrorText));
+				fLabel.setText(escapedErrorText);
 				fLabel.setImage(fErrorImage);
 				if (fToolTipText != null)
 					fLabel.setToolTipText(escape(fToolTipText));
 				else if (fErrorText.length() > fWidthInChars)
-					fLabel.setToolTipText(escape(fErrorText));
+					fLabel.setToolTipText(escapedErrorText);
 				else
 					fLabel.setToolTipText(null);
-			}
-			else {
+				
+			} else {
+				String escapedText= escape(fText);
 				fLabel.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_FOREGROUND));
-				fLabel.setText(escape(fText));
+				fLabel.setText(escapedText);
 				fLabel.setImage(fImage);
 				if (fToolTipText != null)
 					fLabel.setToolTipText(escape(fToolTipText));
 				else if (fText != null && fText.length() > fWidthInChars)
-					fLabel.setToolTipText(escape(fText));
+					fLabel.setToolTipText(escapedText);
 				else
 					fLabel.setToolTipText(null);
 			}
@@ -288,14 +291,14 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	/**
 	 * Escapes '&' with '&' in the given text.
 	 *
-	 * @param text the text to escape
-	 * @return the escaped string
+	 * @param text the text to escape, can be <code>null</code>
+	 * @return the escaped string or <code>null</code> if text was <code>null</code>
 	 * @since 3.4
 	 */
 	private String escape(String text) {
-		if (text == null || text.indexOf('&') == -1)
+		if (text == null)
 			return text;
-		return text.replaceAll("&", "&&"); //$NON-NLS-1$//$NON-NLS-2$
+		return LegacyActionTools.escapeMnemonics(text);
 	}
 
 }
