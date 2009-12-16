@@ -70,6 +70,18 @@ the validation for the <code>generateLaunchConfigurationName(String namePrefix)<
 </ul>
 <p><strong>Description:</strong>The <code>RefreshUtil</code> class provides API to create and restore mementos for resource collections as well as a convenience API for refreshing resources. This support was moved to <code>org.eclipse.debug.core</code> from <code>org.eclispe.debug.ui</code> such that headless plug-ins can leverage these features. </p>
 <p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
+
+<h3>Launch Time Stamps</h3>
+<p><strong>What is affected:</strong>
+<ul>
+  <li>Constant addition: <code>DebugPlugin - public static final String ATTR_LAUNCH_TIMESTAMP</code></li>
+</ul>
+<p><strong>Description:</strong>A time stamp value is added to all launch objects representing the time a
+ launch configuration's <code>launch(...)</code> method was called. The value of the launch attribute is a 
+ <code>String</code> representing a <code>long</code> generated from <code>System.currentTimeMillis()</code>. The attribute value
+ can be obtained from <code>ILaunch.getAttrbute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP)</code>.
+<p><strong>Action required:</strong> This is a backwards compatible change. No action required. </p>
+
 <p>&nbsp;</p>
 </body>
 </html>

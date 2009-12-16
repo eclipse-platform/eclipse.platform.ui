@@ -34,6 +34,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -1044,6 +1046,23 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "test-get-location");
 		IPath location = workingCopy.getLocation();
 		assertEquals("Wrong path for local working copy", LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.append("test-get-location.launch"), location);
+	}
+	
+	/**
+	 * Tests that the framework adds time stamps to launch objects.
+	 */
+	public void testLaunchTimeStamp() throws CoreException {
+		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "test-time-stamp");
+		ILaunch launch = workingCopy.launch(ILaunchManager.DEBUG_MODE, null);
+		try {
+			String stamp = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
+			assertNotNull("missing time stamp", stamp);
+			Long.parseLong(stamp); // should be a long - will throw NumberFormatException if not
+		} finally {
+			if (launch != null) {
+				getLaunchManager().removeLaunch(launch);
+			}
+		}
 	}
 
 }

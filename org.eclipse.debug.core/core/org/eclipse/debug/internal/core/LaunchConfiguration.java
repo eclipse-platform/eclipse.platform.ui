@@ -778,6 +778,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 			if (delegate instanceof ILaunchConfigurationDelegate2) {
 				delegate2 = (ILaunchConfigurationDelegate2) delegate;
 			}
+			long timestamp = System.currentTimeMillis();
 			// allow the delegate to provide a launch implementation
 			ILaunch launch = null;
 			if (delegate2 != null) {
@@ -793,6 +794,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 					throw new CoreException(status);
 				}
 			}
+			launch.setAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP, Long.toString(timestamp));
 			boolean captureOutput = getAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, true);
 			if(!captureOutput) {
 			    launch.setAttribute(DebugPlugin.ATTR_CAPTURE_OUTPUT, "false"); //$NON-NLS-1$
