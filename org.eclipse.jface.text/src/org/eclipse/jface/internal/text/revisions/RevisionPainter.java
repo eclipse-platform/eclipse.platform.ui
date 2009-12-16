@@ -1163,15 +1163,18 @@ public final class RevisionPainter {
 
 	/**
 	 * Handles the selection of a revision and informs listeners.
-	 *
-     * @param revision the selected revision, <code>null</code> for none
-     */
-    void handleRevisionSelected(Revision revision) {
-   		fSelectedRevision= revision;
-    	fRevisionSelectionProvider.revisionSelected(revision);
-		updateOverviewAnnotations();
-    	postRedraw();
-    }
+	 * 
+	 * @param revision the selected revision, <code>null</code> for none
+	 */
+	void handleRevisionSelected(Revision revision) {
+		fSelectedRevision= revision;
+		fRevisionSelectionProvider.revisionSelected(revision);
+
+		if (isConnected())
+			updateOverviewAnnotations();
+
+		postRedraw();
+	}
 
 	/**
 	 * Handles the selection of a revision id and informs listeners
