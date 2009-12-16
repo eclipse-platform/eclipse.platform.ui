@@ -4,37 +4,29 @@
     <children xsi:type="application:PerspectiveStack" id="DefaultPerspectiveStack">
       <children xsi:type="application:Perspective" id="Default">
         <children xsi:type="application:PartSashContainer" horizontal="true">
-          <children xsi:type="application:PartSashContainer">
-            <children xsi:type="application:PartStack">
+          <children xsi:type="application:PartSashContainer" containerData="30">
+            <children xsi:type="application:PartStack" containerData="70">
               <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library"/>
             </children>
-            <children xsi:type="application:PartStack">
+            <children xsi:type="application:PartStack" containerData="30">
               <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
             </children>
-            <weights>60</weights>
-            <weights>40</weights>
           </children>
-          <children xsi:type="application:PartSashContainer">
-            <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" label="Preview" iconURI=""/>
-            <children xsi:type="application:PartStack">
+          <children xsi:type="application:PartSashContainer" containerData="70">
+            <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" containerData="70" label="Preview" iconURI=""/>
+            <children xsi:type="application:PartStack" containerData="30">
               <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
               <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
             </children>
-            <weights>70</weights>
-            <weights>30</weights>
           </children>
-          <weights>30</weights>
-          <weights>70</weights>
         </children>
       </children>
       <children xsi:type="application:Perspective" id="Simple">
         <children xsi:type="application:PartSashContainer">
-          <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
-          <children xsi:type="application:PartStack">
+          <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" containerData="70" label="Location"/>
+          <children xsi:type="application:PartStack" containerData="30">
             <children xsi:type="application:Part" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
           </children>
-          <weights>30</weights>
-          <weights>70</weights>
         </children>
       </children>
     </children>

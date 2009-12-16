@@ -79,6 +79,12 @@ public abstract class ModelReconciler {
 			.getUIElement_Parent().getName();
 
 	/**
+	 * Attribute defined by MUIElements (value is <code>parent</code>).
+	 */
+	public static final String UIELEMENT_CONTAINERDATA_ATTNAME = MApplicationPackage.eINSTANCE
+			.getUIElement_ContainerData().getName();
+
+	/**
 	 * Attribute defined by MElementContainers (value is <code>children</code>).
 	 */
 	public static final String ELEMENTCONTAINER_CHILDREN_ATTNAME = MApplicationPackage.eINSTANCE
@@ -163,12 +169,6 @@ public abstract class ModelReconciler {
 	 */
 	public static final String GENERICTILE_HORIZONTAL_ATTNAME = MApplicationPackage.eINSTANCE
 			.getGenericTile_Horizontal().getName();
-
-	/**
-	 * Attribute defined by MGenericTiles (value is <code>weights</code>).
-	 */
-	public static final String GENERICTILE_WEIGHTS_ATTNAME = MApplicationPackage.eINSTANCE
-			.getGenericTile_Weights().getName();
 
 	/**
 	 * Attribute defined by MTrimContainers (value is <code>side</code>).

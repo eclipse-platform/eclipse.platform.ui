@@ -87,7 +87,6 @@ public class UIEvents {
 	public static interface GenericTile {
 		public static final String TOPIC = UITopicBase + "/application/GenericTile"; //$NON-NLS-1$
 		public static final String HORIZONTAL = "horizontal"; //$NON-NLS-1$
-		public static final String WEIGHTS = "weights"; //$NON-NLS-1$
 	}
 
 	public static interface HandledItem {
@@ -149,6 +148,7 @@ public class UIEvents {
 
 	public static interface UIElement {
 		public static final String TOPIC = UITopicBase + "/application/UIElement"; //$NON-NLS-1$
+		public static final String CONTAINERDATA = "containerData"; //$NON-NLS-1$
 		public static final String ONTOP = "onTop"; //$NON-NLS-1$
 		public static final String PARENT = "parent"; //$NON-NLS-1$
 		public static final String RENDERER = "renderer"; //$NON-NLS-1$

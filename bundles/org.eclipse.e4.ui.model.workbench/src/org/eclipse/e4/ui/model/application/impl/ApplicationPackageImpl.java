@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MDirtyable;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MGenericTile;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MHandledMenuItem;
@@ -162,6 +163,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass elementContainerEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass genericStackEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -694,6 +702,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EAttribute getUIElement_ContainerData() {
+		return (EAttribute)uiElementEClass.getEStructuralFeatures().get(6);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getUILabel() {
 		return uiLabelEClass;
 	}
@@ -793,6 +810,33 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getGenericStack() {
+		return genericStackEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getGenericStack_Weights() {
+		return (EAttribute)genericStackEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getGenericStack_Horizontal() {
+		return (EAttribute)genericStackEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getGenericTile() {
 		return genericTileEClass;
 	}
@@ -802,17 +846,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getGenericTile_Weights() {
-		return (EAttribute)genericTileEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EAttribute getGenericTile_Horizontal() {
-		return (EAttribute)genericTileEClass.getEStructuralFeatures().get(1);
+		return (EAttribute)genericTileEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1498,6 +1533,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(uiElementEClass, UI_ELEMENT__ON_TOP);
 		createEAttribute(uiElementEClass, UI_ELEMENT__VISIBLE);
 		createEReference(uiElementEClass, UI_ELEMENT__PARENT);
+		createEAttribute(uiElementEClass, UI_ELEMENT__CONTAINER_DATA);
 
 		uiLabelEClass = createEClass(UI_LABEL);
 		createEAttribute(uiLabelEClass, UI_LABEL__LABEL);
@@ -1514,8 +1550,11 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEReference(elementContainerEClass, ELEMENT_CONTAINER__CHILDREN);
 		createEReference(elementContainerEClass, ELEMENT_CONTAINER__ACTIVE_CHILD);
 
+		genericStackEClass = createEClass(GENERIC_STACK);
+		createEAttribute(genericStackEClass, GENERIC_STACK__WEIGHTS);
+		createEAttribute(genericStackEClass, GENERIC_STACK__HORIZONTAL);
+
 		genericTileEClass = createEClass(GENERIC_TILE);
-		createEAttribute(genericTileEClass, GENERIC_TILE__WEIGHTS);
 		createEAttribute(genericTileEClass, GENERIC_TILE__HORIZONTAL);
 
 		v______________MenusAndTBs_______________VEClass = createEClass(VMENUS_AND_TBS_V);
@@ -1656,12 +1695,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		// Create type parameters
 		ETypeParameter elementContainerEClass_T = addETypeParameter(elementContainerEClass, "T"); //$NON-NLS-1$
+		ETypeParameter genericStackEClass_T = addETypeParameter(genericStackEClass, "T"); //$NON-NLS-1$
 		ETypeParameter genericTileEClass_T = addETypeParameter(genericTileEClass, "T"); //$NON-NLS-1$
 		ETypeParameter trimContainerEClass_T = addETypeParameter(trimContainerEClass, "T"); //$NON-NLS-1$
 
 		// Set bounds for type parameters
 		EGenericType g1 = createEGenericType(this.getUIElement());
 		elementContainerEClass_T.getEBounds().add(g1);
+		g1 = createEGenericType(this.getUIElement());
+		genericStackEClass_T.getEBounds().add(g1);
 		g1 = createEGenericType(this.getUIElement());
 		genericTileEClass_T.getEBounds().add(g1);
 		g1 = createEGenericType(this.getUIElement());
@@ -1672,7 +1714,11 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		uiElementEClass.getESuperTypes().add(this.getApplicationElement());
 		elementContainerEClass.getESuperTypes().add(this.getUIElement());
 		g1 = createEGenericType(this.getElementContainer());
-		EGenericType g2 = createEGenericType(genericTileEClass_T);
+		EGenericType g2 = createEGenericType(genericStackEClass_T);
+		g1.getETypeArguments().add(g2);
+		genericStackEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getElementContainer());
+		g2 = createEGenericType(genericTileEClass_T);
 		g1.getETypeArguments().add(g2);
 		genericTileEClass.getEGenericSuperTypes().add(g1);
 		itemEClass.getESuperTypes().add(this.getUIElement());
@@ -1720,13 +1766,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass.getESuperTypes().add(this.getBindingContainer());
 		saveablePartEClass.getESuperTypes().add(this.getPart());
 		saveablePartEClass.getESuperTypes().add(this.getDirtyable());
-		g1 = createEGenericType(this.getElementContainer());
-		g2 = createEGenericType(this.getPart());
-		g1.getETypeArguments().add(g2);
-		partStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getUIElement());
 		partStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getPSCElement());
+		partStackEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getGenericStack());
+		g2 = createEGenericType(this.getPart());
+		g1.getETypeArguments().add(g2);
 		partStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getGenericTile());
 		g2 = createEGenericType(this.getPSCElement());
@@ -1847,6 +1893,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g2 = createEGenericType(this.getUIElement());
 		g1.getETypeArguments().add(g2);
 		initEReference(getUIElement_Parent(), g1, this.getElementContainer_Children(), "parent", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getUIElement_ContainerData(), ecorePackage.getEString(), "containerData", null, 0, 1, MUIElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(uiLabelEClass, MUILabel.class, "UILabel", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getUILabel_Label(), ecorePackage.getEString(), "label", null, 0, 1, MUILabel.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
@@ -1865,8 +1912,11 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(elementContainerEClass_T);
 		initEReference(getElementContainer_ActiveChild(), g1, null, "activeChild", null, 0, 1, MElementContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEClass(genericStackEClass, MGenericStack.class, "GenericStack", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getGenericStack_Weights(), ecorePackage.getEInt(), "weights", null, 0, -1, MGenericStack.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getGenericStack_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MGenericStack.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(genericTileEClass, MGenericTile.class, "GenericTile", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getGenericTile_Weights(), ecorePackage.getEInt(), "weights", null, 0, -1, MGenericTile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getGenericTile_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MGenericTile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(v______________MenusAndTBs_______________VEClass, MV______________MenusAndTBs_______________V.class, "V______________MenusAndTBs_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$

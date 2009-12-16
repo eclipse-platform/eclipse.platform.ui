@@ -58,6 +58,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getContext <em>Context</em>}</li>
@@ -194,6 +195,26 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTAINER_DATA_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected String containerData = CONTAINER_DATA_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
@@ -547,6 +568,27 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContainerData() {
+		return containerData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContainerData(String newContainerData) {
+		String oldContainerData = containerData;
+		containerData = newContainerData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.WINDOW__CONTAINER_DATA, oldContainerData, containerData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MPSCElement> getChildren() {
 		if (children == null) {
 			children = new EObjectContainmentWithInverseEList<MPSCElement>(MUIElement.class, this, MApplicationPackage.WINDOW__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
@@ -853,6 +895,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				return isVisible();
 			case MApplicationPackage.WINDOW__PARENT:
 				return getParent();
+			case MApplicationPackage.WINDOW__CONTAINER_DATA:
+				return getContainerData();
 			case MApplicationPackage.WINDOW__CHILDREN:
 				return getChildren();
 			case MApplicationPackage.WINDOW__ACTIVE_CHILD:
@@ -909,6 +953,9 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				return;
 			case MApplicationPackage.WINDOW__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
+				return;
+			case MApplicationPackage.WINDOW__CONTAINER_DATA:
+				setContainerData((String)newValue);
 				return;
 			case MApplicationPackage.WINDOW__CHILDREN:
 				getChildren().clear();
@@ -980,6 +1027,9 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 			case MApplicationPackage.WINDOW__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
+			case MApplicationPackage.WINDOW__CONTAINER_DATA:
+				setContainerData(CONTAINER_DATA_EDEFAULT);
+				return;
 			case MApplicationPackage.WINDOW__CHILDREN:
 				getChildren().clear();
 				return;
@@ -1039,6 +1089,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.WINDOW__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.WINDOW__CONTAINER_DATA:
+				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.WINDOW__CHILDREN:
 				return children != null && !children.isEmpty();
 			case MApplicationPackage.WINDOW__ACTIVE_CHILD:
@@ -1086,6 +1138,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				case MApplicationPackage.WINDOW__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.WINDOW__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.WINDOW__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
+				case MApplicationPackage.WINDOW__CONTAINER_DATA: return MApplicationPackage.UI_ELEMENT__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1139,6 +1192,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.WINDOW__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.WINDOW__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.WINDOW__PARENT;
+				case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA: return MApplicationPackage.WINDOW__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1193,6 +1247,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
 		result.append(", context: "); //$NON-NLS-1$
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$

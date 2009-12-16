@@ -8,8 +8,6 @@
       <children xsi:type="application:PartStack">
         <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png"/>
       </children>
-      <weights>30</weights>
-      <weights>70</weights>
     </children>
     <variables>selection</variables>
     <variables>input</variables>

@@ -12,14 +12,12 @@
       </children>
     </children>
     <children xsi:type="application:PartSashContainer" horizontal="true">
-      <children xsi:type="application:PartStack">
+      <children xsi:type="application:PartStack" containerData="30">
         <children xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.ListView" label="Contacts List" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/folder_user.png" tooltip="List of Contacts"/>
       </children>
-      <children xsi:type="application:PartStack">
+      <children xsi:type="application:PartStack" containerData="70">
         <children xsi:type="application:SaveablePart" id="DetailsView" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.views.DetailsView" label="Details" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/report_user.png" tooltip="Contact Details"/>
       </children>
-      <weights>30</weights>
-      <weights>70</weights>
     </children>
     <variables>selection</variables>
     <variables>input</variables>

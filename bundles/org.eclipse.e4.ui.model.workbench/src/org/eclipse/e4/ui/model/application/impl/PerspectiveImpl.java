@@ -52,6 +52,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl#getContext <em>Context</em>}</li>
@@ -181,6 +182,26 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTAINER_DATA_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected String containerData = CONTAINER_DATA_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
@@ -424,6 +445,27 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContainerData() {
+		return containerData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContainerData(String newContainerData) {
+		String oldContainerData = containerData;
+		containerData = newContainerData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PERSPECTIVE__CONTAINER_DATA, oldContainerData, containerData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MPSCElement> getChildren() {
 		if (children == null) {
 			children = new EObjectContainmentWithInverseEList<MPSCElement>(MUIElement.class, this, MApplicationPackage.PERSPECTIVE__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
@@ -573,6 +615,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return isVisible();
 			case MApplicationPackage.PERSPECTIVE__PARENT:
 				return getParent();
+			case MApplicationPackage.PERSPECTIVE__CONTAINER_DATA:
+				return getContainerData();
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				return getChildren();
 			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
@@ -615,6 +659,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return;
 			case MApplicationPackage.PERSPECTIVE__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
+				return;
+			case MApplicationPackage.PERSPECTIVE__CONTAINER_DATA:
+				setContainerData((String)newValue);
 				return;
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				getChildren().clear();
@@ -663,6 +710,9 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 			case MApplicationPackage.PERSPECTIVE__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
+			case MApplicationPackage.PERSPECTIVE__CONTAINER_DATA:
+				setContainerData(CONTAINER_DATA_EDEFAULT);
+				return;
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				getChildren().clear();
 				return;
@@ -701,6 +751,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.PERSPECTIVE__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.PERSPECTIVE__CONTAINER_DATA:
+				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.PERSPECTIVE__CHILDREN:
 				return children != null && !children.isEmpty();
 			case MApplicationPackage.PERSPECTIVE__ACTIVE_CHILD:
@@ -734,6 +786,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				case MApplicationPackage.PERSPECTIVE__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.PERSPECTIVE__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.PERSPECTIVE__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
+				case MApplicationPackage.PERSPECTIVE__CONTAINER_DATA: return MApplicationPackage.UI_ELEMENT__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -780,6 +833,7 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.PERSPECTIVE__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.PERSPECTIVE__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.PERSPECTIVE__PARENT;
+				case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA: return MApplicationPackage.PERSPECTIVE__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -827,6 +881,8 @@ public class PerspectiveImpl extends UILabelImpl implements MPerspective {
 		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
 		result.append(", context: "); //$NON-NLS-1$
 		result.append(context);
 		result.append(", variables: "); //$NON-NLS-1$

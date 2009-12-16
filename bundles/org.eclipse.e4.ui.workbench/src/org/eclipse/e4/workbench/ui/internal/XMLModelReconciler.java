@@ -194,6 +194,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getElementContainer_Children();
 		} else if (featureName.equals(UIELEMENT_PARENT_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getUIElement_Parent();
+		} else if (featureName.equals(UIELEMENT_CONTAINERDATA_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getUIElement_ContainerData();
 		} else if (featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getElementContainer_ActiveChild();
 		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
@@ -241,8 +243,6 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getContribution_PersistedState();
 		} else if (featureName.equals(WINDOW_MAINMENU_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_MainMenu();
-		} else if (featureName.equals(GENERICTILE_WEIGHTS_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getGenericTile_Weights();
 		}
 		return null;
 	}
@@ -372,19 +372,6 @@ public class XMLModelReconciler extends ModelReconciler {
 			} else if (isChainedReference(featureName)) {
 				ModelDelta delta = createMultiReferenceDelta(references, eObject, features, node,
 						featureName);
-				deltas.add(delta);
-			} else if (isChainedAttribute(featureName)) {
-				EStructuralFeature feature = getStructuralFeature(eObject, featureName);
-				List<Object> values = new ArrayList<Object>();
-
-				NodeList attributes = (NodeList) node;
-				for (int j = 0; j < attributes.getLength(); j++) {
-					Element attribute = (Element) attributes.item(j);
-					Object value = getValue(feature, attribute.getAttribute(featureName));
-					values.add(value);
-				}
-
-				ModelDelta delta = new EMFModelDeltaSet(eObject, feature, values);
 				deltas.add(delta);
 			} else {
 				ModelDelta delta = createAttributeDelta(references, eObject, features, node,
@@ -1002,13 +989,6 @@ public class XMLModelReconciler extends ModelReconciler {
 							getOriginalId(reference));
 					featureElement.appendChild(referenceElement);
 				}
-			} else if (isChainedAttribute(featureName)) {
-				List<?> attributes = (List<?>) value;
-				for (Object attribute : attributes) {
-					Element attributeElement = document.createElement(featureName);
-					attributeElement.setAttribute(featureName, String.valueOf(attribute));
-					featureElement.appendChild(attributeElement);
-				}
 			} else {
 				featureElement.setAttribute(featureName, String.valueOf(value));
 			}
@@ -1106,11 +1086,6 @@ public class XMLModelReconciler extends ModelReconciler {
 				featureName.equals(APPLICATION_COMMANDS_ATTNAME) ||
 				// a HandlerContainer has multiple handlers
 				featureName.equals(HANDLERCONTAINER_HANDLERS_ATTNAME);
-	}
-
-	private boolean isChainedAttribute(String featureName) {
-		// a GenericTile has multiple integer weights
-		return featureName.equals(GENERICTILE_WEIGHTS_ATTNAME);
 	}
 
 	private boolean shouldPersist(String featureName) {

@@ -48,6 +48,7 @@
         <eTypeArguments eClassifier="#//UIElement"/>
       </eGenericType>
     </eStructuralFeatures>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="containerData" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="UILabel" abstract="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="label" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -74,12 +75,21 @@
       <eGenericType eTypeParameter="#//ElementContainer/T"/>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="GenericTile" abstract="true">
+  <eClassifiers xsi:type="ecore:EClass" name="GenericStack" abstract="true">
     <eTypeParameters name="T">
       <eBounds eClassifier="#//UIElement"/>
     </eTypeParameters>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="weights" unique="false"
         upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eGenericSuperTypes eClassifier="#//ElementContainer">
+      <eTypeArguments eTypeParameter="#//GenericStack/T"/>
+    </eGenericSuperTypes>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="GenericTile" abstract="true">
+    <eTypeParameters name="T">
+      <eBounds eClassifier="#//UIElement"/>
+    </eTypeParameters>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eTypeParameter="#//GenericTile/T"/>
@@ -136,11 +146,11 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="SaveablePart" eSuperTypes="#//Part #//Dirtyable"/>
   <eClassifiers xsi:type="ecore:EClass" name="PartStack">
-    <eGenericSuperTypes eClassifier="#//ElementContainer">
-      <eTypeArguments eClassifier="#//Part"/>
-    </eGenericSuperTypes>
     <eGenericSuperTypes eClassifier="#//UIElement"/>
     <eGenericSuperTypes eClassifier="#//PSCElement"/>
+    <eGenericSuperTypes eClassifier="#//GenericStack">
+      <eTypeArguments eClassifier="#//Part"/>
+    </eGenericSuperTypes>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PartSashContainer">
     <eGenericSuperTypes eClassifier="#//GenericTile">

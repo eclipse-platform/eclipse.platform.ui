@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getTooltip <em>Tooltip</em>}</li>
@@ -162,6 +163,26 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTAINER_DATA_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected String containerData = CONTAINER_DATA_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -474,6 +495,27 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContainerData() {
+		return containerData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContainerData(String newContainerData) {
+		String oldContainerData = containerData;
+		containerData = newContainerData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_TOOL_ITEM__CONTAINER_DATA, oldContainerData, containerData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getLabel() {
 		return label;
 	}
@@ -714,6 +756,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return isVisible();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				return getParent();
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CONTAINER_DATA:
+				return getContainerData();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
 				return getLabel();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI:
@@ -761,6 +805,9 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
+				return;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CONTAINER_DATA:
+				setContainerData((String)newValue);
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
 				setLabel((String)newValue);
@@ -817,6 +864,9 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CONTAINER_DATA:
+				setContainerData(CONTAINER_DATA_EDEFAULT);
+				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
 				setLabel(LABEL_EDEFAULT);
 				return;
@@ -865,6 +915,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__CONTAINER_DATA:
+				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.DIRECT_TOOL_ITEM__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ICON_URI:
@@ -900,6 +952,7 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				case MApplicationPackage.DIRECT_TOOL_ITEM__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.DIRECT_TOOL_ITEM__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.DIRECT_TOOL_ITEM__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
+				case MApplicationPackage.DIRECT_TOOL_ITEM__CONTAINER_DATA: return MApplicationPackage.UI_ELEMENT__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -949,6 +1002,7 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.DIRECT_TOOL_ITEM__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.DIRECT_TOOL_ITEM__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.DIRECT_TOOL_ITEM__PARENT;
+				case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA: return MApplicationPackage.DIRECT_TOOL_ITEM__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1003,6 +1057,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
 		result.append(", label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$

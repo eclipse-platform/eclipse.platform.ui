@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.UIElementImpl#getContainerData <em>Container Data</em>}</li>
  * </ul>
  * </p>
  *
@@ -143,6 +144,26 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTAINER_DATA_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected String containerData = CONTAINER_DATA_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -315,6 +336,27 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContainerData() {
+		return containerData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContainerData(String newContainerData) {
+		String oldContainerData = containerData;
+		containerData = newContainerData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.UI_ELEMENT__CONTAINER_DATA, oldContainerData, containerData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public NotificationChain eInverseAdd(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
@@ -375,6 +417,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 				return isVisible();
 			case MApplicationPackage.UI_ELEMENT__PARENT:
 				return getParent();
+			case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA:
+				return getContainerData();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -406,6 +450,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case MApplicationPackage.UI_ELEMENT__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
 				return;
+			case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA:
+				setContainerData((String)newValue);
+				return;
 		}
 		super.eSet(featureID, newValue);
 	}
@@ -436,6 +483,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			case MApplicationPackage.UI_ELEMENT__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
+			case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA:
+				setContainerData(CONTAINER_DATA_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -460,6 +510,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.UI_ELEMENT__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA:
+				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -484,6 +536,8 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
 		result.append(')');
 		return result.toString();
 	}

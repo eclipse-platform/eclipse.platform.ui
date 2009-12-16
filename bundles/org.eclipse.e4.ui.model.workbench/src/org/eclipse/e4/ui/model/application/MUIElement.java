@@ -25,6 +25,7 @@ package org.eclipse.e4.ui.model.application;
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MUIElement#getContainerData <em>Container Data</em>}</li>
  * </ul>
  * </p>
  *
@@ -192,5 +193,31 @@ public interface MUIElement extends MApplicationElement {
 	 * @generated
 	 */
 	void setParent(MElementContainer<MUIElement> value);
+
+	/**
+	 * Returns the value of the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Container Data</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Container Data</em>' attribute.
+	 * @see #setContainerData(String)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getUIElement_ContainerData()
+	 * @model
+	 * @generated
+	 */
+	String getContainerData();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MUIElement#getContainerData <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Container Data</em>' attribute.
+	 * @see #getContainerData()
+	 * @generated
+	 */
+	void setContainerData(String value);
 
 } // MUIElement

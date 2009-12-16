@@ -120,6 +120,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createElementContainerAdapter();
 			}
 			@Override
+			public <T extends MUIElement> Adapter caseGenericStack(MGenericStack<T> object) {
+				return createGenericStackAdapter();
+			}
+			@Override
 			public <T extends MUIElement> Adapter caseGenericTile(MGenericTile<T> object) {
 				return createGenericTileAdapter();
 			}
@@ -446,6 +450,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createElementContainerAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MGenericStack <em>Generic Stack</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MGenericStack
+	 * @generated
+	 */
+	public Adapter createGenericStackAdapter() {
 		return null;
 	}
 

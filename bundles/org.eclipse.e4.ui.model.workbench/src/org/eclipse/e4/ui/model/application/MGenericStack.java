@@ -14,21 +14,38 @@ import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the model object '<em><b>Generic Tile</b></em>'.
+ * A representation of the model object '<em><b>Generic Stack</b></em>'.
  * <!-- end-user-doc -->
  *
  * <p>
  * The following features are supported:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.MGenericTile#isHorizontal <em>Horizontal</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MGenericStack#getWeights <em>Weights</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MGenericStack#isHorizontal <em>Horizontal</em>}</li>
  * </ul>
  * </p>
  *
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getGenericTile()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getGenericStack()
  * @model abstract="true"
  * @generated
  */
-public interface MGenericTile<T extends MUIElement> extends MElementContainer<T> {
+public interface MGenericStack<T extends MUIElement> extends MElementContainer<T> {
+	/**
+	 * Returns the value of the '<em><b>Weights</b></em>' attribute list.
+	 * The list contents are of type {@link java.lang.Integer}.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Weights</em>' attribute list isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Weights</em>' attribute list.
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getGenericStack_Weights()
+	 * @model unique="false"
+	 * @generated
+	 */
+	EList<Integer> getWeights();
+
 	/**
 	 * Returns the value of the '<em><b>Horizontal</b></em>' attribute.
 	 * <!-- begin-user-doc -->
@@ -39,14 +56,14 @@ public interface MGenericTile<T extends MUIElement> extends MElementContainer<T>
 	 * <!-- end-user-doc -->
 	 * @return the value of the '<em>Horizontal</em>' attribute.
 	 * @see #setHorizontal(boolean)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getGenericTile_Horizontal()
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getGenericStack_Horizontal()
 	 * @model
 	 * @generated
 	 */
 	boolean isHorizontal();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MGenericTile#isHorizontal <em>Horizontal</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MGenericStack#isHorizontal <em>Horizontal</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @param value the new value of the '<em>Horizontal</em>' attribute.
@@ -55,4 +72,4 @@ public interface MGenericTile<T extends MUIElement> extends MElementContainer<T>
 	 */
 	void setHorizontal(boolean value);
 
-} // MGenericTile
+} // MGenericStack

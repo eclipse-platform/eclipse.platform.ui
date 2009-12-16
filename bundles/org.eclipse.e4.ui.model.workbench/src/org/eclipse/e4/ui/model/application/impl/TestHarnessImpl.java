@@ -66,6 +66,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTag <em>Tag</em>}</li>
@@ -323,6 +324,26 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTAINER_DATA_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected String containerData = CONTAINER_DATA_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
@@ -865,6 +886,27 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContainerData() {
+		return containerData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContainerData(String newContainerData) {
+		String oldContainerData = containerData;
+		containerData = newContainerData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__CONTAINER_DATA, oldContainerData, containerData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MUIElement> getChildren() {
 		if (children == null) {
 			children = new EObjectContainmentWithInverseEList<MUIElement>(MUIElement.class, this, MApplicationPackage.TEST_HARNESS__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
@@ -1207,6 +1249,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return isVisible();
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return getParent();
+			case MApplicationPackage.TEST_HARNESS__CONTAINER_DATA:
+				return getContainerData();
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				return getChildren();
 			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
@@ -1288,6 +1332,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return;
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
+				return;
+			case MApplicationPackage.TEST_HARNESS__CONTAINER_DATA:
+				setContainerData((String)newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				getChildren().clear();
@@ -1380,6 +1427,9 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
+			case MApplicationPackage.TEST_HARNESS__CONTAINER_DATA:
+				setContainerData(CONTAINER_DATA_EDEFAULT);
+				return;
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				getChildren().clear();
 				return;
@@ -1456,6 +1506,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.TEST_HARNESS__CONTAINER_DATA:
+				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.TEST_HARNESS__CHILDREN:
 				return children != null && !children.isEmpty();
 			case MApplicationPackage.TEST_HARNESS__ACTIVE_CHILD:
@@ -1522,6 +1574,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				case MApplicationPackage.TEST_HARNESS__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.TEST_HARNESS__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.TEST_HARNESS__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
+				case MApplicationPackage.TEST_HARNESS__CONTAINER_DATA: return MApplicationPackage.UI_ELEMENT__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1608,6 +1661,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.TEST_HARNESS__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.TEST_HARNESS__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.TEST_HARNESS__PARENT;
+				case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA: return MApplicationPackage.TEST_HARNESS__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1690,6 +1744,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
 		result.append(", tag: "); //$NON-NLS-1$
 		result.append(tag);
 		result.append(", value: "); //$NON-NLS-1$

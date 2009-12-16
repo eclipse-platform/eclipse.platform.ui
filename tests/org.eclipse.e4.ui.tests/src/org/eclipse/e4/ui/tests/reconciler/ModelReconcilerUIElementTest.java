@@ -199,6 +199,144 @@ public abstract class ModelReconcilerUIElementTest extends ModelReconcilerTest {
 		testUIElement_Widget(new Object(), new Object());
 	}
 
+	public void testUIElement_ContainerData_Unmodified() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+		window.setLabel("name");
+		window.setTooltip("toolTip");
+		window.setContainerData("baseData");
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		window.setContainerData("changedData");
+
+		Object serializedState = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application,
+				serializedState);
+
+		assertEquals("toolTip", window.getTooltip());
+		assertEquals("name", window.getLabel());
+		assertEquals("baseData", window.getContainerData());
+
+		applyAll(deltas);
+
+		assertEquals("toolTip", window.getTooltip());
+		assertEquals("name", window.getLabel());
+		assertEquals("changedData", window.getContainerData());
+	}
+
+	private void testUIElement_ContainerDataUnchanged(String containerData) {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+		window.setContainerData(containerData);
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		saveModel();
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(containerData, window.getContainerData());
+
+		applyAll(deltas);
+
+		assertEquals(containerData, window.getContainerData());
+	}
+
+	public void testUIElement_ContainerDataUnchanged_Null() {
+		testUIElement_ContainerDataUnchanged(null);
+	}
+
+	public void testUIElement_ContainerDataUnchanged_Empty() {
+		testUIElement_ContainerDataUnchanged("");
+	}
+
+	public void testUIElement_ContainerDataUnchanged_String() {
+		testUIElement_ContainerDataUnchanged("newData");
+	}
+
+	private void testUIElement_ContainerData(String before, String after) {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+		window.setContainerData(before);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		window.setContainerData(after);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(before, window.getContainerData());
+
+		applyAll(deltas);
+
+		assertEquals(after, window.getContainerData());
+	}
+
+	public void testUIElement_ContainerData_NullNull() {
+		testUIElement_ContainerData(null, null);
+	}
+
+	public void testUIElement_ContainerData_NullEmpty() {
+		testUIElement_ContainerData(null, "");
+	}
+
+	public void testUIElement_ContainerData_NullString() {
+		testUIElement_ContainerData(null, "newData");
+	}
+
+	public void testUIElement_ContainerData_EmptyNull() {
+		testUIElement_ContainerData("", null);
+	}
+
+	public void testUIElement_ContainerData_EmptyEmpty() {
+		testUIElement_ContainerData("", "");
+	}
+
+	public void testUIElement_ContainerData_EmptyString() {
+		testUIElement_ContainerData("", "newData");
+	}
+
+	public void testUIElement_ContainerData_StringNull() {
+		testUIElement_ContainerData("newData", null);
+	}
+
+	public void testUIElement_ContainerData_StringEmpty() {
+		testUIElement_ContainerData("newData", "");
+	}
+
+	public void testUIElement_ContainerData_StringStringUnchanged() {
+		testUIElement_ContainerData("newData", "newData");
+	}
+
+	public void testUIElement_ContainerData_StringStringChanged() {
+		testUIElement_ContainerData("newData", "newData2");
+	}
+
 	private void testUIElement_Renderer(Object before, Object after) {
 		MApplication application = createApplication();
 

@@ -49,6 +49,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectMenuItemImpl#getLabel <em>Label</em>}</li>
@@ -162,6 +163,26 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTAINER_DATA_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected String containerData = CONTAINER_DATA_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
@@ -474,6 +495,27 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContainerData() {
+		return containerData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContainerData(String newContainerData) {
+		String oldContainerData = containerData;
+		containerData = newContainerData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_MENU_ITEM__CONTAINER_DATA, oldContainerData, containerData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MMenuItem> getChildren() {
 		if (children == null) {
 			children = new EObjectContainmentWithInverseEList<MMenuItem>(MUIElement.class, this, MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN, MApplicationPackage.UI_ELEMENT__PARENT);
@@ -714,6 +756,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				return isVisible();
 			case MApplicationPackage.DIRECT_MENU_ITEM__PARENT:
 				return getParent();
+			case MApplicationPackage.DIRECT_MENU_ITEM__CONTAINER_DATA:
+				return getContainerData();
 			case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN:
 				return getChildren();
 			case MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD:
@@ -761,6 +805,9 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				return;
 			case MApplicationPackage.DIRECT_MENU_ITEM__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
+				return;
+			case MApplicationPackage.DIRECT_MENU_ITEM__CONTAINER_DATA:
+				setContainerData((String)newValue);
 				return;
 			case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN:
 				getChildren().clear();
@@ -817,6 +864,9 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 			case MApplicationPackage.DIRECT_MENU_ITEM__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
+			case MApplicationPackage.DIRECT_MENU_ITEM__CONTAINER_DATA:
+				setContainerData(CONTAINER_DATA_EDEFAULT);
+				return;
 			case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN:
 				getChildren().clear();
 				return;
@@ -865,6 +915,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.DIRECT_MENU_ITEM__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.DIRECT_MENU_ITEM__CONTAINER_DATA:
+				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.DIRECT_MENU_ITEM__CHILDREN:
 				return children != null && !children.isEmpty();
 			case MApplicationPackage.DIRECT_MENU_ITEM__ACTIVE_CHILD:
@@ -900,6 +952,7 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				case MApplicationPackage.DIRECT_MENU_ITEM__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.DIRECT_MENU_ITEM__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
+				case MApplicationPackage.DIRECT_MENU_ITEM__CONTAINER_DATA: return MApplicationPackage.UI_ELEMENT__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -954,6 +1007,7 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.DIRECT_MENU_ITEM__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.DIRECT_MENU_ITEM__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.DIRECT_MENU_ITEM__PARENT;
+				case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA: return MApplicationPackage.DIRECT_MENU_ITEM__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1013,6 +1067,8 @@ public class DirectMenuItemImpl extends ContributionImpl implements MDirectMenuI
 		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
 		result.append(", label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$

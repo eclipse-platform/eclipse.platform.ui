@@ -161,6 +161,15 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.GENERIC_STACK: {
+				MGenericStack<?> genericStack = (MGenericStack<?>)theEObject;
+				T1 result = caseGenericStack(genericStack);
+				if (result == null) result = caseElementContainer(genericStack);
+				if (result == null) result = caseUIElement(genericStack);
+				if (result == null) result = caseApplicationElement(genericStack);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.GENERIC_TILE: {
 				MGenericTile<?> genericTile = (MGenericTile<?>)theEObject;
 				T1 result = caseGenericTile(genericTile);
@@ -312,10 +321,11 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.PART_STACK: {
 				MPartStack partStack = (MPartStack)theEObject;
 				T1 result = casePartStack(partStack);
-				if (result == null) result = caseElementContainer(partStack);
 				if (result == null) result = casePSCElement(partStack);
-				if (result == null) result = caseUIElement(partStack);
+				if (result == null) result = caseGenericStack(partStack);
 				if (result == null) result = caseApplicationElement(partStack);
+				if (result == null) result = caseElementContainer(partStack);
+				if (result == null) result = caseUIElement(partStack);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -708,6 +718,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseElementContainer(MElementContainer<T> object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Generic Stack</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Generic Stack</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public <T extends MUIElement> T1 caseGenericStack(MGenericStack<T> object) {
 		return null;
 	}
 

@@ -69,6 +69,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#isOnTop <em>On Top</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#isVisible <em>Visible</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getParent <em>Parent</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getContainerData <em>Container Data</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getIconURI <em>Icon URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getTooltip <em>Tooltip</em>}</li>
@@ -292,6 +293,26 @@ public class EditorImpl extends InputImpl implements MEditor {
 	 * @ordered
 	 */
 	protected boolean visible = VISIBLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CONTAINER_DATA_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getContainerData() <em>Container Data</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getContainerData()
+	 * @generated
+	 * @ordered
+	 */
+	protected String containerData = CONTAINER_DATA_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
@@ -701,6 +722,27 @@ public class EditorImpl extends InputImpl implements MEditor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getContainerData() {
+		return containerData;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setContainerData(String newContainerData) {
+		String oldContainerData = containerData;
+		containerData = newContainerData;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__CONTAINER_DATA, oldContainerData, containerData));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public String getLabel() {
 		return label;
 	}
@@ -944,6 +986,8 @@ public class EditorImpl extends InputImpl implements MEditor {
 				return isVisible();
 			case MApplicationPackage.EDITOR__PARENT:
 				return getParent();
+			case MApplicationPackage.EDITOR__CONTAINER_DATA:
+				return getContainerData();
 			case MApplicationPackage.EDITOR__LABEL:
 				return getLabel();
 			case MApplicationPackage.EDITOR__ICON_URI:
@@ -1009,6 +1053,9 @@ public class EditorImpl extends InputImpl implements MEditor {
 				return;
 			case MApplicationPackage.EDITOR__PARENT:
 				setParent((MElementContainer<MUIElement>)newValue);
+				return;
+			case MApplicationPackage.EDITOR__CONTAINER_DATA:
+				setContainerData((String)newValue);
 				return;
 			case MApplicationPackage.EDITOR__LABEL:
 				setLabel((String)newValue);
@@ -1085,6 +1132,9 @@ public class EditorImpl extends InputImpl implements MEditor {
 			case MApplicationPackage.EDITOR__PARENT:
 				setParent((MElementContainer<MUIElement>)null);
 				return;
+			case MApplicationPackage.EDITOR__CONTAINER_DATA:
+				setContainerData(CONTAINER_DATA_EDEFAULT);
+				return;
 			case MApplicationPackage.EDITOR__LABEL:
 				setLabel(LABEL_EDEFAULT);
 				return;
@@ -1145,6 +1195,8 @@ public class EditorImpl extends InputImpl implements MEditor {
 				return visible != VISIBLE_EDEFAULT;
 			case MApplicationPackage.EDITOR__PARENT:
 				return getParent() != null;
+			case MApplicationPackage.EDITOR__CONTAINER_DATA:
+				return CONTAINER_DATA_EDEFAULT == null ? containerData != null : !CONTAINER_DATA_EDEFAULT.equals(containerData);
 			case MApplicationPackage.EDITOR__LABEL:
 				return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
 			case MApplicationPackage.EDITOR__ICON_URI:
@@ -1201,6 +1253,7 @@ public class EditorImpl extends InputImpl implements MEditor {
 				case MApplicationPackage.EDITOR__ON_TOP: return MApplicationPackage.UI_ELEMENT__ON_TOP;
 				case MApplicationPackage.EDITOR__VISIBLE: return MApplicationPackage.UI_ELEMENT__VISIBLE;
 				case MApplicationPackage.EDITOR__PARENT: return MApplicationPackage.UI_ELEMENT__PARENT;
+				case MApplicationPackage.EDITOR__CONTAINER_DATA: return MApplicationPackage.UI_ELEMENT__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1286,6 +1339,7 @@ public class EditorImpl extends InputImpl implements MEditor {
 				case MApplicationPackage.UI_ELEMENT__ON_TOP: return MApplicationPackage.EDITOR__ON_TOP;
 				case MApplicationPackage.UI_ELEMENT__VISIBLE: return MApplicationPackage.EDITOR__VISIBLE;
 				case MApplicationPackage.UI_ELEMENT__PARENT: return MApplicationPackage.EDITOR__PARENT;
+				case MApplicationPackage.UI_ELEMENT__CONTAINER_DATA: return MApplicationPackage.EDITOR__CONTAINER_DATA;
 				default: return -1;
 			}
 		}
@@ -1367,6 +1421,8 @@ public class EditorImpl extends InputImpl implements MEditor {
 		result.append(onTop);
 		result.append(", visible: "); //$NON-NLS-1$
 		result.append(visible);
+		result.append(", containerData: "); //$NON-NLS-1$
+		result.append(containerData);
 		result.append(", label: "); //$NON-NLS-1$
 		result.append(label);
 		result.append(", iconURI: "); //$NON-NLS-1$
