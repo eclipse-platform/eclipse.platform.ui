@@ -448,6 +448,11 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	final private Map fInputToData = Collections.synchronizedMap(new InputDataMap());
 	
 	/**
+	 * Flag indicating whether the content provider is currently a breakpoints listener.
+	 */
+	private boolean fIsBreakpointListener = false;
+	
+	/**
 	 * A map of presetnation context listeners.
 	 */
 	final private Map fContextListeners = Collections.synchronizedMap(new HashMap());
@@ -564,10 +569,13 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
 	 * @param comparator the element comparator.
 	 */
 	public void registerModelProxy(AbstractBreakpointManagerInput input, AbstractModelProxy proxy) {
-		if (fInputToData.isEmpty()) {
-			fBpManager.addBreakpointListener(this);
-		}
-		
+	    synchronized(this) {
+    		if (!fIsBreakpointListener) {
+    			fBpManager.addBreakpointListener(this);
+    			fIsBreakpointListener = true;
+    		}
+	    }
+	    
 		getInputData(input).proxyInstalled(proxy);
 	}
 	
@@ -580,7 +588,12 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
         getInputData(input).proxyDisposed(proxy);
 		
 		if (fInputToData.isEmpty()) {
-			fBpManager.removeBreakpointListener(this);
+		    synchronized(this) {
+		        if (fIsBreakpointListener) {
+		            fBpManager.removeBreakpointListener(this);
+		            fIsBreakpointListener = false;
+		        }
+		    }
 		}
 	}	
 	
