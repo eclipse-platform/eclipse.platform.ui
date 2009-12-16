@@ -1512,6 +1512,14 @@ public class TextViewer extends Viewer implements
 	 * @since 3.1
 	 */
 	private static final String SELECTION_POSITION_CATEGORY= "_textviewer_selection_category"; //$NON-NLS-1$
+
+	/**
+	 * The shared printer data.
+	 * 
+	 * @since 3.6
+	 */
+	private static PrinterData fgPrinterData= null;
+
 	/** The viewer's text widget */
 	private StyledText fTextWidget;
 	/** The viewer's input document */
@@ -4504,6 +4512,7 @@ public class TextViewer extends Viewer implements
 		}
 
 		final PrintDialog dialog= new PrintDialog(shell, SWT.PRIMARY_MODAL);
+		dialog.setPrinterData(fgPrinterData);
 		final PrinterData data= dialog.open();
 
 		if (data != null) {
@@ -4517,6 +4526,18 @@ public class TextViewer extends Viewer implements
 				}
 			};
 			printingThread.start();
+
+			/*
+			 * FIXME:
+			 * 	Should copy the printer data to avoid threading issues,
+			 *	but this is currently not possible, see:
+			 *  https://bugs.eclipse.org/bugs/show_bug.cgi?id=297957
+			 */
+			fgPrinterData= data;
+			fgPrinterData.startPage= 1;
+			fgPrinterData.endPage= 1;
+			fgPrinterData.scope= PrinterData.ALL_PAGES;
+			fgPrinterData.copyCount= 1;
 		}
 	}
 
