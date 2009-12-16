@@ -79,9 +79,6 @@
     <eTypeParameters name="T">
       <eBounds eClassifier="#//UIElement"/>
     </eTypeParameters>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="weights" unique="false"
-        upperBound="-1" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EInt"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="horizontal" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">
       <eTypeArguments eTypeParameter="#//GenericStack/T"/>
     </eGenericSuperTypes>

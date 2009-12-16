@@ -819,24 +819,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getGenericStack_Weights() {
-		return (EAttribute)genericStackEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EAttribute getGenericStack_Horizontal() {
-		return (EAttribute)genericStackEClass.getEStructuralFeatures().get(1);
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	public EClass getGenericTile() {
 		return genericTileEClass;
 	}
@@ -1551,8 +1533,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEReference(elementContainerEClass, ELEMENT_CONTAINER__ACTIVE_CHILD);
 
 		genericStackEClass = createEClass(GENERIC_STACK);
-		createEAttribute(genericStackEClass, GENERIC_STACK__WEIGHTS);
-		createEAttribute(genericStackEClass, GENERIC_STACK__HORIZONTAL);
 
 		genericTileEClass = createEClass(GENERIC_TILE);
 		createEAttribute(genericTileEClass, GENERIC_TILE__HORIZONTAL);
@@ -1913,8 +1893,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEReference(getElementContainer_ActiveChild(), g1, null, "activeChild", null, 0, 1, MElementContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(genericStackEClass, MGenericStack.class, "GenericStack", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getGenericStack_Weights(), ecorePackage.getEInt(), "weights", null, 0, -1, MGenericStack.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getGenericStack_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MGenericStack.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(genericTileEClass, MGenericTile.class, "GenericTile", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getGenericTile_Horizontal(), ecorePackage.getEBoolean(), "horizontal", null, 0, 1, MGenericTile.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$

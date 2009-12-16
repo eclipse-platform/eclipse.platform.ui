@@ -645,31 +645,13 @@ public interface MApplicationPackage extends EPackage {
 	int GENERIC_STACK__ACTIVE_CHILD = ELEMENT_CONTAINER__ACTIVE_CHILD;
 
 	/**
-	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_STACK__WEIGHTS = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int GENERIC_STACK__HORIZONTAL = ELEMENT_CONTAINER_FEATURE_COUNT + 1;
-
-	/**
 	 * The number of structural features of the '<em>Generic Stack</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int GENERIC_STACK_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 2;
+	int GENERIC_STACK_FEATURE_COUNT = ELEMENT_CONTAINER_FEATURE_COUNT + 0;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.GenericTileImpl <em>Generic Tile</em>}' class.
@@ -2659,31 +2641,13 @@ public interface MApplicationPackage extends EPackage {
 	int PART_STACK__ACTIVE_CHILD = UI_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Weights</b></em>' attribute list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__WEIGHTS = UI_ELEMENT_FEATURE_COUNT + 2;
-
-	/**
-	 * The feature id for the '<em><b>Horizontal</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int PART_STACK__HORIZONTAL = UI_ELEMENT_FEATURE_COUNT + 3;
-
-	/**
 	 * The number of structural features of the '<em>Part Stack</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART_STACK_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 4;
+	int PART_STACK_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartSashContainerImpl <em>Part Sash Container</em>}' class.
@@ -5375,28 +5339,6 @@ public interface MApplicationPackage extends EPackage {
 	EClass getGenericStack();
 
 	/**
-	 * Returns the meta object for the attribute list '{@link org.eclipse.e4.ui.model.application.MGenericStack#getWeights <em>Weights</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute list '<em>Weights</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MGenericStack#getWeights()
-	 * @see #getGenericStack()
-	 * @generated
-	 */
-	EAttribute getGenericStack_Weights();
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MGenericStack#isHorizontal <em>Horizontal</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Horizontal</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MGenericStack#isHorizontal()
-	 * @see #getGenericStack()
-	 * @generated
-	 */
-	EAttribute getGenericStack_Horizontal();
-
-	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MGenericTile <em>Generic Tile</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6449,22 +6391,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass GENERIC_STACK = eINSTANCE.getGenericStack();
-
-		/**
-		 * The meta object literal for the '<em><b>Weights</b></em>' attribute list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute GENERIC_STACK__WEIGHTS = eINSTANCE.getGenericStack_Weights();
-
-		/**
-		 * The meta object literal for the '<em><b>Horizontal</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @generated
-		 */
-		EAttribute GENERIC_STACK__HORIZONTAL = eINSTANCE.getGenericStack_Horizontal();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.GenericTileImpl <em>Generic Tile</em>}' class.
