@@ -102,7 +102,7 @@ jboolean convertStatToFileInfo (JNIEnv *env, struct stat info, jobject fileInfo)
     (*env)->CallVoidMethod(env, fileInfo, mid, (jlong)info.st_size);
 
 	// folder or file?
-	if ((info.st_mode & S_IFDIR) == S_IFDIR) {
+	if (S_ISDIR(info.st_mode)) {
 	    mid = (*env)->GetMethodID(env, cls, "setAttribute", "(IZ)V");
 	    if (mid == 0) return JNI_FALSE;
 	    (*env)->CallVoidMethod(env, fileInfo, mid, ATTRIBUTE_DIRECTORY, JNI_TRUE);
@@ -191,7 +191,7 @@ JNIEXPORT jboolean JNICALL Java_org_eclipse_core_internal_filesystem_local_Local
 #if defined(EFS_SYMLINK_SUPPORT)
 	//do an lstat first to see if it is a symbolic link
 	code = lstat(name, &info);
-	if (code == 0 && (info.st_mode & S_IFLNK) == S_IFLNK) {
+	if (code == 0 && (S_ISLNK(info.st_mode))) {
 		//symbolic link: read link target
 		char buf[PATH_MAX+1];
 		int len;
