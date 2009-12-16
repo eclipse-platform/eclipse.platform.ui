@@ -48,6 +48,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getStyle <em>Style</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#isToBeRendered <em>To Be Rendered</em>}</li>
@@ -85,6 +86,26 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * @ordered
 	 */
 	protected String id = ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStyle()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String STYLE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStyle()
+	 * @generated
+	 * @ordered
+	 */
+	protected String style = STYLE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -294,6 +315,27 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		id = newId;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getStyle() {
+		return style;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setStyle(String newStyle) {
+		String oldStyle = style;
+		style = newStyle;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.APPLICATION__STYLE, oldStyle, style));
 	}
 
 	/**
@@ -615,6 +657,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		switch (featureID) {
 			case MApplicationPackage.APPLICATION__ID:
 				return getId();
+			case MApplicationPackage.APPLICATION__STYLE:
+				return getStyle();
 			case MApplicationPackage.APPLICATION__WIDGET:
 				return getWidget();
 			case MApplicationPackage.APPLICATION__RENDERER:
@@ -655,6 +699,9 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		switch (featureID) {
 			case MApplicationPackage.APPLICATION__ID:
 				setId((String)newValue);
+				return;
+			case MApplicationPackage.APPLICATION__STYLE:
+				setStyle((String)newValue);
 				return;
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(newValue);
@@ -711,6 +758,9 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__ID:
 				setId(ID_EDEFAULT);
 				return;
+			case MApplicationPackage.APPLICATION__STYLE:
+				setStyle(STYLE_EDEFAULT);
+				return;
 			case MApplicationPackage.APPLICATION__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
@@ -761,6 +811,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		switch (featureID) {
 			case MApplicationPackage.APPLICATION__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+			case MApplicationPackage.APPLICATION__STYLE:
+				return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
 			case MApplicationPackage.APPLICATION__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.APPLICATION__RENDERER:
@@ -799,6 +851,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MApplicationElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.APPLICATION__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
+				case MApplicationPackage.APPLICATION__STYLE: return MApplicationPackage.APPLICATION_ELEMENT__STYLE;
 				default: return -1;
 			}
 		}
@@ -846,6 +899,7 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MApplicationElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.APPLICATION__ID;
+				case MApplicationPackage.APPLICATION_ELEMENT__STYLE: return MApplicationPackage.APPLICATION__STYLE;
 				default: return -1;
 			}
 		}
@@ -895,6 +949,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: "); //$NON-NLS-1$
 		result.append(id);
+		result.append(", style: "); //$NON-NLS-1$
+		result.append(style);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
 		result.append(", renderer: "); //$NON-NLS-1$

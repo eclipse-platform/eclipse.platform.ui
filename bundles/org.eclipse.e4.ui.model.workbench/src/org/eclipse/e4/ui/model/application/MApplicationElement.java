@@ -20,6 +20,7 @@ package org.eclipse.e4.ui.model.application;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getId <em>Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MApplicationElement#getStyle <em>Style</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,5 +54,31 @@ public interface MApplicationElement {
 	 * @generated
 	 */
 	void setId(String value);
+
+	/**
+	 * Returns the value of the '<em><b>Style</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Style</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Style</em>' attribute.
+	 * @see #setStyle(String)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getApplicationElement_Style()
+	 * @model
+	 * @generated
+	 */
+	String getStyle();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MApplicationElement#getStyle <em>Style</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Style</em>' attribute.
+	 * @see #getStyle()
+	 * @generated
+	 */
+	void setStyle(String value);
 
 } // MApplicationElement

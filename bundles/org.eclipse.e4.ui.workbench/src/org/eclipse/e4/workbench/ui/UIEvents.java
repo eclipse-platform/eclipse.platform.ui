@@ -39,6 +39,7 @@ public class UIEvents {
 	public static interface ApplicationElement {
 		public static final String TOPIC = UITopicBase + "/application/ApplicationElement"; //$NON-NLS-1$
 		public static final String ID = "id"; //$NON-NLS-1$
+		public static final String STYLE = "style"; //$NON-NLS-1$
 	}
 
 	public static interface BindingContainer {

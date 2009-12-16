@@ -58,6 +58,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getStyle <em>Style</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getURI <em>URI</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getObject <em>Object</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.EditorImpl#getPersistedState <em>Persisted State</em>}</li>
@@ -103,6 +104,26 @@ public class EditorImpl extends InputImpl implements MEditor {
 	 * @ordered
 	 */
 	protected String id = ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStyle()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String STYLE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStyle()
+	 * @generated
+	 * @ordered
+	 */
+	protected String style = STYLE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getURI() <em>URI</em>}' attribute.
@@ -472,6 +493,27 @@ public class EditorImpl extends InputImpl implements MEditor {
 		id = newId;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getStyle() {
+		return style;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setStyle(String newStyle) {
+		String oldStyle = style;
+		style = newStyle;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.EDITOR__STYLE, oldStyle, style));
 	}
 
 	/**
@@ -964,6 +1006,8 @@ public class EditorImpl extends InputImpl implements MEditor {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__ID:
 				return getId();
+			case MApplicationPackage.EDITOR__STYLE:
+				return getStyle();
 			case MApplicationPackage.EDITOR__URI:
 				return getURI();
 			case MApplicationPackage.EDITOR__OBJECT:
@@ -1019,6 +1063,9 @@ public class EditorImpl extends InputImpl implements MEditor {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__ID:
 				setId((String)newValue);
+				return;
+			case MApplicationPackage.EDITOR__STYLE:
+				setStyle((String)newValue);
 				return;
 			case MApplicationPackage.EDITOR__URI:
 				setURI((String)newValue);
@@ -1099,6 +1146,9 @@ public class EditorImpl extends InputImpl implements MEditor {
 			case MApplicationPackage.EDITOR__ID:
 				setId(ID_EDEFAULT);
 				return;
+			case MApplicationPackage.EDITOR__STYLE:
+				setStyle(STYLE_EDEFAULT);
+				return;
 			case MApplicationPackage.EDITOR__URI:
 				setURI(URI_EDEFAULT);
 				return;
@@ -1173,6 +1223,8 @@ public class EditorImpl extends InputImpl implements MEditor {
 		switch (featureID) {
 			case MApplicationPackage.EDITOR__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+			case MApplicationPackage.EDITOR__STYLE:
+				return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
 			case MApplicationPackage.EDITOR__URI:
 				return URI_EDEFAULT == null ? uri != null : !URI_EDEFAULT.equals(uri);
 			case MApplicationPackage.EDITOR__OBJECT:
@@ -1227,6 +1279,7 @@ public class EditorImpl extends InputImpl implements MEditor {
 		if (baseClass == MApplicationElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.EDITOR__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
+				case MApplicationPackage.EDITOR__STYLE: return MApplicationPackage.APPLICATION_ELEMENT__STYLE;
 				default: return -1;
 			}
 		}
@@ -1313,6 +1366,7 @@ public class EditorImpl extends InputImpl implements MEditor {
 		if (baseClass == MApplicationElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.EDITOR__ID;
+				case MApplicationPackage.APPLICATION_ELEMENT__STYLE: return MApplicationPackage.EDITOR__STYLE;
 				default: return -1;
 			}
 		}
@@ -1401,6 +1455,8 @@ public class EditorImpl extends InputImpl implements MEditor {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: "); //$NON-NLS-1$
 		result.append(id);
+		result.append(", style: "); //$NON-NLS-1$
+		result.append(style);
 		result.append(", URI: "); //$NON-NLS-1$
 		result.append(uri);
 		result.append(", object: "); //$NON-NLS-1$

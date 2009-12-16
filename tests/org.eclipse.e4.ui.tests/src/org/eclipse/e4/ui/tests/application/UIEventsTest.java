@@ -116,8 +116,9 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 
 	public class AppElementTester extends EventTester {
 		AppElementTester(IEventBroker eventBroker) {
-			super("AppElement", ApplicationElement.TOPIC,
-					new String[] { ApplicationElement.ID }, eventBroker);
+			super("AppElement", ApplicationElement.TOPIC, new String[] {
+					ApplicationElement.ID, ApplicationElement.STYLE },
+					eventBroker);
 		}
 	}
 
@@ -241,6 +242,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		reset(allTesters);
 		String newId = "Some New Id";
 		allData.setId(newId);
+		allData.setStyle("new Style");
 		checkForFailures(allTesters, appTester);
 
 		// Test that no-ops don't throw events

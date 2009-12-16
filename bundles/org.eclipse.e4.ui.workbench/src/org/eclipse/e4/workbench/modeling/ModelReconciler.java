@@ -25,6 +25,12 @@ public abstract class ModelReconciler {
 			.getApplicationElement_Id().getName();
 
 	/**
+	 * Attribute defined by MApplicationElements (value is <code>style</code>).
+	 */
+	public static final String APPLICATIONELEMENT_STYLE_ATTNAME = MApplicationPackage.eINSTANCE
+			.getApplicationElement_Style().getName();
+
+	/**
 	 * Attribute defined by MApplications (value is <code>commands</code>).
 	 */
 	public static final String APPLICATION_COMMANDS_ATTNAME = MApplicationPackage.eINSTANCE

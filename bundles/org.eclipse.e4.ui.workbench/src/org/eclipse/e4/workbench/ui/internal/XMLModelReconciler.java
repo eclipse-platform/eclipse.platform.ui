@@ -145,6 +145,8 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static EStructuralFeature getStructuralFeature(EObject object, String featureName) {
 		if (featureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplicationElement_Id();
+		} else if (featureName.equals(APPLICATIONELEMENT_STYLE_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getApplicationElement_Style();
 		} else if (featureName.equals(APPLICATION_COMMANDS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getApplication_Commands();
 		} else if (featureName.equals(UILABEL_LABEL_ATTNAME)) {

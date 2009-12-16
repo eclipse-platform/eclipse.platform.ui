@@ -52,6 +52,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getStyle <em>Style</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getWidget <em>Widget</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#getRenderer <em>Renderer</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.WindowImpl#isToBeRendered <em>To Be Rendered</em>}</li>
@@ -95,6 +96,26 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 	 * @ordered
 	 */
 	protected String id = ID_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStyle()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String STYLE_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getStyle() <em>Style</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getStyle()
+	 * @generated
+	 * @ordered
+	 */
+	protected String style = STYLE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #getWidget() <em>Widget</em>}' attribute.
@@ -414,6 +435,27 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		id = newId;
 		if (eNotificationRequired())
 			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.WINDOW__ID, oldId, id));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String getStyle() {
+		return style;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setStyle(String newStyle) {
+		String oldStyle = style;
+		style = newStyle;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.WINDOW__STYLE, oldStyle, style));
 	}
 
 	/**
@@ -883,6 +925,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		switch (featureID) {
 			case MApplicationPackage.WINDOW__ID:
 				return getId();
+			case MApplicationPackage.WINDOW__STYLE:
+				return getStyle();
 			case MApplicationPackage.WINDOW__WIDGET:
 				return getWidget();
 			case MApplicationPackage.WINDOW__RENDERER:
@@ -935,6 +979,9 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		switch (featureID) {
 			case MApplicationPackage.WINDOW__ID:
 				setId((String)newValue);
+				return;
+			case MApplicationPackage.WINDOW__STYLE:
+				setStyle((String)newValue);
 				return;
 			case MApplicationPackage.WINDOW__WIDGET:
 				setWidget(newValue);
@@ -1009,6 +1056,9 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 			case MApplicationPackage.WINDOW__ID:
 				setId(ID_EDEFAULT);
 				return;
+			case MApplicationPackage.WINDOW__STYLE:
+				setStyle(STYLE_EDEFAULT);
+				return;
 			case MApplicationPackage.WINDOW__WIDGET:
 				setWidget(WIDGET_EDEFAULT);
 				return;
@@ -1077,6 +1127,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		switch (featureID) {
 			case MApplicationPackage.WINDOW__ID:
 				return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
+			case MApplicationPackage.WINDOW__STYLE:
+				return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
 			case MApplicationPackage.WINDOW__WIDGET:
 				return WIDGET_EDEFAULT == null ? widget != null : !WIDGET_EDEFAULT.equals(widget);
 			case MApplicationPackage.WINDOW__RENDERER:
@@ -1127,6 +1179,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		if (baseClass == MApplicationElement.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.WINDOW__ID: return MApplicationPackage.APPLICATION_ELEMENT__ID;
+				case MApplicationPackage.WINDOW__STYLE: return MApplicationPackage.APPLICATION_ELEMENT__STYLE;
 				default: return -1;
 			}
 		}
@@ -1181,6 +1234,7 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		if (baseClass == MApplicationElement.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.APPLICATION_ELEMENT__ID: return MApplicationPackage.WINDOW__ID;
+				case MApplicationPackage.APPLICATION_ELEMENT__STYLE: return MApplicationPackage.WINDOW__STYLE;
 				default: return -1;
 			}
 		}
@@ -1237,6 +1291,8 @@ public class WindowImpl extends UILabelImpl implements MWindow {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (id: "); //$NON-NLS-1$
 		result.append(id);
+		result.append(", style: "); //$NON-NLS-1$
+		result.append(style);
 		result.append(", widget: "); //$NON-NLS-1$
 		result.append(widget);
 		result.append(", renderer: "); //$NON-NLS-1$
