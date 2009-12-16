@@ -27,6 +27,11 @@ import org.eclipse.swt.widgets.Shell;
  * This concrete dialog class can be instantiated as is, or further subclassed
  * as required.
  * </p>
+ * <p>
+ * <strong>Note:</strong> This class does not use button IDs from
+ * IDialogConstants. Instead, the ID is the index of the button in the supplied
+ * array.
+ * </p>
  */
 public class MessageDialog extends IconAndMessageDialog {
     /**
@@ -278,9 +283,11 @@ public class MessageDialog extends IconAndMessageDialog {
      * 
      * @param index
      *            the index of the button in the dialog's button bar
-     * @return a button in the dialog's button bar
+     * @return a button in the dialog's button bar, or <code>null</code> if there's no button with that index
      */
     protected Button getButton(int index) {
+        if (buttons == null || index < 0 || index >= buttons.length)
+            return null;
         return buttons[index];
     }
 
