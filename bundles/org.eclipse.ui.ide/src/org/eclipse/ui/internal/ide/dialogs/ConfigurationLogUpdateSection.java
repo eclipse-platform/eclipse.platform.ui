@@ -17,11 +17,11 @@ import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import org.eclipse.equinox.internal.provisional.p2.metadata.query.Collector;
 import org.eclipse.equinox.internal.provisional.p2.metadata.query.InstallableUnitQuery;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
+import org.eclipse.equinox.p2.metadata.query.IQueryResult;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.eclipse.osgi.service.resolver.State;
@@ -68,9 +68,9 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			// Since this code is only called in the Help -> About -> Configuration Details case we
 			// won't worry too much about performance here and we will sort the query results
 			// afterwards, but before printing them out.
-			Collector collector = profile.available(InstallableUnitQuery.ANY,  null);
+			IQueryResult result = profile.available(InstallableUnitQuery.ANY,  null);
 			SortedSet sorted = new TreeSet();
-			for (Iterator iter = collector.iterator(); iter.hasNext();) {
+			for (Iterator iter = result.iterator(); iter.hasNext();) {
 				IInstallableUnit unit = (IInstallableUnit) iter.next();
 				sorted.add(NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_IU, unit.getId(), unit.getVersion()));
 			}
