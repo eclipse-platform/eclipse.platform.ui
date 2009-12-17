@@ -29,6 +29,9 @@
          <description>
             %ImportWizards.PreferencesDescription
          </description>
+         <keywordReference
+               id="org.eclipse.ui.ide.settings">
+         </keywordReference>
       </wizard>
       <wizard
             name="%ImportWizards.FileSystem"
@@ -52,6 +55,9 @@
          <description>
             %ImportWizards.ExternalProjectDescription
          </description>
+         <keywordReference
+               id="org.eclipse.ui.ide.archive">
+         </keywordReference>
       </wizard>
       <wizard
             name="%ImportWizards.ZipFile"
@@ -65,6 +71,9 @@
          <selection
                class="org.eclipse.core.resources.IResource">
          </selection>
+         <keywordReference
+               id="org.eclipse.ui.ide.archive">
+         </keywordReference>
       </wizard>
    </extension>
    <extension
@@ -84,6 +93,9 @@
          <description>
             %ExportWizards.PreferencesDescription
          </description>
+         <keywordReference
+               id="org.eclipse.ui.ide.settings">
+         </keywordReference>
       </wizard>         
       <wizard
             name="%ExportWizards.FileSystem"
@@ -97,6 +109,9 @@
          <selection
                class="org.eclipse.core.resources.IResource">
          </selection>
+         <keywordReference
+               id="org.eclipse.ui.ide.project">
+         </keywordReference>
       </wizard>
       <wizard
             name="%ExportWizards.ZipFile"
@@ -110,6 +125,12 @@
          <selection
                class="org.eclipse.core.resources.IResource">
          </selection>
+         <keywordReference
+               id="org.eclipse.ui.ide.archive">
+         </keywordReference>
+         <keywordReference
+               id="org.eclipse.ui.ide.project">
+         </keywordReference>
       </wizard>
    </extension>
    <extension
@@ -163,6 +184,9 @@
          <selection
                class="org.eclipse.core.resources.IResource">
          </selection>
+         <keywordReference
+               id="org.eclipse.ui.ide.directory">
+         </keywordReference>
       </wizard>
       <wizard
             name="%NewWizards.file"
@@ -471,6 +495,18 @@
       <keyword
             id="org.eclipse.ui.ide.recentlyOpened"
             label="%PreferenceKeywords.RecentlyOpened"/>
+      <keyword
+            id="org.eclipse.ui.ide.directory"
+            label="%PreferenceKeywords.Directory"/>
+      <keyword
+            id="org.eclipse.ui.ide.project"
+            label="%PreferenceKeywords.Project"/>
+      <keyword
+            id="org.eclipse.ui.ide.archive"
+            label="%PreferenceKeywords.Archive"/>
+      <keyword
+            id="org.eclipse.ui.ide.settings"
+            label="%PreferenceKeywords.Settings"/>
    </extension>      
    <extension
          point="org.eclipse.ui.preferencePages">
