@@ -2357,6 +2357,9 @@ public class InternalTreeModelViewer extends TreeViewer
 	         
 	         item.setChecked(checked);
 	         item.setGrayed(grayed);
+	         
+	         item.setData(PREV_CHECKED_KEY, checked ? Boolean.TRUE : Boolean.FALSE);
+             item.setData(PREV_GRAYED_KEY, grayed ? Boolean.TRUE : Boolean.FALSE);
 		 }
 	}
 	
