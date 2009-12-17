@@ -12,9 +12,7 @@
 package org.eclipse.e4.workbench.modeling;
 
 import java.util.Collection;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MContribution;
 
 public abstract class ModelReconciler {
 
@@ -195,6 +193,12 @@ public abstract class ModelReconciler {
 			.getHandler_Command().getName();
 
 	/**
+	 * Attribute defined by MHandledItems (value is <code>command</code>).
+	 */
+	public static final String HANDLEDITEM_COMMAND_ATTNAME = MApplicationPackage.eINSTANCE
+			.getHandledItem_Command().getName();
+
+	/**
 	 * Attribute defined by MKeyBindings (value is <code>command</code>).
 	 */
 	public static final String KEYBINDING_COMMAND_ATTNAME = MApplicationPackage.eINSTANCE
@@ -250,24 +254,4 @@ public abstract class ModelReconciler {
 	 *         in due to the serialized delta changes
 	 */
 	public abstract Collection<ModelDelta> constructDeltas(Object model, Object serializedState);
-
-	protected String getModelId(Object object) {
-		String id = null;
-
-		if (object instanceof MApplicationElement) {
-			id = ((MApplicationElement) object).getId();
-			if (id != null) {
-				return id;
-			}
-		}
-
-		if (object instanceof MContribution) {
-			id = ((MContribution) object).getURI();
-			if (id != null) {
-				return id;
-			}
-		}
-
-		return null;
-	}
 }
