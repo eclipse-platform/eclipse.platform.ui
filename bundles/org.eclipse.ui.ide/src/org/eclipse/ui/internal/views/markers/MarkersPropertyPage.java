@@ -134,9 +134,10 @@ public class MarkersPropertyPage extends PropertyPage implements
 	private void createDescriptionArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(MarkerMessages.propertiesDialog_description_text);
-		descriptionText = new Text(parent, (SWT.SINGLE | SWT.BORDER));
+		descriptionText = new Text(parent, (SWT.MULTI|SWT.WRAP|SWT.V_SCROLL|SWT.BORDER));
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
-		gridData.widthHint = convertHorizontalDLUsToPixels(400);
+		gridData.widthHint = convertHorizontalDLUsToPixels(250);
+		gridData.heightHint = convertHeightInCharsToPixels(3);
 		descriptionText.setLayoutData(gridData);
 		descriptionText.setText(Util.getProperty(IMarker.MESSAGE, marker));
 		descriptionText.selectAll();
