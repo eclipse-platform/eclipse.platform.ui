@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.eclipse.jface.text;
 
 import java.util.ArrayList;
 
+import org.eclipse.jface.fieldassist.ContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposal;
 import org.eclipse.jface.fieldassist.IContentProposalProvider;
 
@@ -38,38 +39,6 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 	 * Proposal computer.
 	 */
 	private static class ProposalComputer {
-
-		private static class Proposal implements IContentProposal {
-
-			private String fContent;
-			private String fLabel;
-			private String fDescription;
-			private int fCursorPosition;
-
-			Proposal(String content, String label, String description, int cursorPosition) {
-				fContent= content;
-				fLabel= label;
-				fDescription= description;
-				fCursorPosition= cursorPosition;
-			}
-
-			public String getContent() {
-				return fContent;
-			}
-
-			public String getLabel() {
-				return fLabel;
-			}
-
-			public String getDescription() {
-				return fDescription;
-			}
-
-			public int getCursorPosition() {
-				return fCursorPosition;
-			}
-		}
-
 
 		/**
 		 * The whole regular expression.
@@ -266,7 +235,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		 * @param additionalInfo the additional information
 		 */
 		private void addProposal(String proposal, String displayString, String additionalInfo) {
-			fProposals.add(new Proposal(proposal, displayString, additionalInfo, proposal.length()));
+			fProposals.add(new ContentProposal(proposal, displayString, additionalInfo));
 		}
 
 		/**
@@ -279,7 +248,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		 * @param additionalInfo the additional information
 		 */
 		private void addProposal(String proposal, int cursorPosition, String displayString, String additionalInfo) {
-			fProposals.add(new Proposal(proposal, displayString, additionalInfo, cursorPosition));
+			fProposals.add(new ContentProposal(proposal, displayString, additionalInfo, cursorPosition));
 		}
 
 		/**
@@ -290,7 +259,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		 * @param additionalInfo the additional information
 		 */
 		private void addPriorityProposal(String proposal, String displayString, String additionalInfo) {
-			fPriorityProposals.add(new Proposal(proposal, displayString, additionalInfo, proposal.length()));
+			fPriorityProposals.add(new ContentProposal(proposal, displayString, additionalInfo));
 		}
 
 		/**
@@ -305,7 +274,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 		private void addBracketProposal(String proposal, int cursorPosition, String displayString, String additionalInfo) {
 			String prolog= fExpression.substring(0, fDocumentOffset);
 			if (! fIsEscape && prolog.endsWith("\\") && proposal.startsWith("\\")) { //$NON-NLS-1$//$NON-NLS-2$
-				fProposals.add(new Proposal(proposal, displayString, additionalInfo, cursorPosition));
+				fProposals.add(new ContentProposal(proposal, displayString, additionalInfo, cursorPosition));
 				return;
 			}
 			for (int i= 1; i <= cursorPosition; i++) {
@@ -314,14 +283,14 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 					String postfix= proposal.substring(cursorPosition);
 					String epilog= fExpression.substring(fDocumentOffset);
 					if (epilog.startsWith(postfix)) {
-						fPriorityProposals.add(new Proposal(proposal.substring(i, cursorPosition), displayString, additionalInfo, cursorPosition-i));
+						fPriorityProposals.add(new ContentProposal(proposal.substring(i, cursorPosition), displayString, additionalInfo, cursorPosition-i));
 					} else {
-						fPriorityProposals.add(new Proposal(proposal.substring(i), displayString, additionalInfo, cursorPosition-i));
+						fPriorityProposals.add(new ContentProposal(proposal.substring(i), displayString, additionalInfo, cursorPosition-i));
 					}
 					return;
 				}
 			}
-			fProposals.add(new Proposal(proposal, displayString, additionalInfo, cursorPosition));
+			fProposals.add(new ContentProposal(proposal, displayString, additionalInfo, cursorPosition));
 		}
 
 		/**
@@ -342,7 +311,7 @@ public class FindReplaceDocumentAdapterContentProposalProvider implements IConte
 			}
 
 			if (fIsEscape) {
-				fPriorityProposals.add(new Proposal(proposal, displayString, additionalInfo, position));
+				fPriorityProposals.add(new ContentProposal(proposal, displayString, additionalInfo, position));
 			} else {
 				addProposal(proposal, position, displayString, additionalInfo);
 			}
