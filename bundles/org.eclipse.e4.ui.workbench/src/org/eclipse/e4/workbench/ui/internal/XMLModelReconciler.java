@@ -330,30 +330,30 @@ public class XMLModelReconciler extends ModelReconciler {
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Element node = (Element) nodeList.item(i);
 			String featureName = node.getNodeName();
-			if (isSingleReference(featureName)) {
-				ModelDelta delta = createSingleReferenceDelta(references, eObject, features, node,
-						featureName);
-				deltas.add(delta);
-			} else if (isChainedReference(featureName)) {
-				ModelDelta delta = createMultiReferenceDelta(references, eObject, features, node,
-						featureName);
+			EStructuralFeature feature = getStructuralFeature(eObject, featureName);
+			features.remove(feature);
+
+			if (isChainedReference(featureName)) {
+				ModelDelta delta = createMultiReferenceDelta(references, eObject, feature, node);
 				deltas.add(delta);
 			} else {
-				ModelDelta delta = createAttributeDelta(eObject, features, node, featureName);
-				deltas.add(delta);
+				if (isUnset(node)) {
+					ModelDelta delta = new EMFModelDeltaUnset(eObject, feature);
+					deltas.add(delta);
+				} else if (isSingleReference(featureName)) {
+					ModelDelta delta = createSingleReferenceDelta(references, eObject, feature,
+							node);
+					deltas.add(delta);
+				} else {
+					ModelDelta delta = createAttributeDelta(eObject, feature, node, featureName);
+					deltas.add(delta);
+				}
 			}
 		}
 	}
 
 	private ModelDelta createSingleReferenceDelta(List<Object> references, EObject eObject,
-			Collection<EStructuralFeature> features, Element node, String featureName) {
-		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
-		features.remove(feature);
-
-		if (isUnset(node)) {
-			return new EMFModelDeltaUnset(eObject, feature);
-		}
-
+			EStructuralFeature feature, Element node) {
 		NodeList referencedIds = (NodeList) node;
 		Element reference = (Element) referencedIds.item(0);
 		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
@@ -476,9 +476,8 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	private ModelDelta createMultiReferenceDelta(List<Object> references, EObject eObject,
-			Collection<EStructuralFeature> features, Element node, String featureName) {
+			EStructuralFeature feature, Element node) {
 		NodeList referencedIds = (NodeList) node;
-		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
 		List<Object> originalReferences = new ArrayList<Object>();
 		List<Object> userReferences = new ArrayList<Object>();
 		List<?> currentReferences = (List<?>) eObject.eGet(feature);
@@ -499,8 +498,6 @@ public class XMLModelReconciler extends ModelReconciler {
 				}
 			}
 		}
-
-		features.remove(feature);
 
 		return new EMFModelDeltaThreeWayDelayedSet(eObject, feature, originalReferences,
 				userReferences, currentReferences);
@@ -583,15 +580,8 @@ public class XMLModelReconciler extends ModelReconciler {
 		return createObject(reference.getAttribute(TYPE_ATTNAME), reference, references);
 	}
 
-	private ModelDelta createAttributeDelta(EObject eObject,
-			Collection<EStructuralFeature> features, Element node, String featureName) {
-		EStructuralFeature feature = getStructuralFeature(eObject, featureName);
-		features.remove(feature);
-
-		if (isUnset(node)) {
-			return new EMFModelDeltaUnset(eObject, feature);
-		}
-
+	private ModelDelta createAttributeDelta(EObject eObject, EStructuralFeature feature,
+			Element node, String featureName) {
 		Object value = getValue(feature, node.getAttribute(featureName));
 		return new EMFModelDeltaSet(eObject, feature, value);
 	}
@@ -948,41 +938,55 @@ public class XMLModelReconciler extends ModelReconciler {
 		return getResourceId(reference, container);
 	}
 
+	/**
+	 * Creates an XML element that will capture the delta that occurred in the object.
+	 * 
+	 * @param document
+	 *            the root XML document
+	 * @param object
+	 *            the object that has changed
+	 * @param featureChange
+	 *            the captured information about the change
+	 * @param featureName
+	 *            the name of the feature that has changed
+	 * @return the XML element about the change
+	 */
 	private Element createDeltaElement(Document document, EObject object,
 			FeatureChange featureChange, String featureName) {
-		Element featureElement = document.createElement(featureName);
 		EStructuralFeature feature = featureChange.getFeature();
-
 		if (object.eIsSet(feature)) {
-			Object value = object.eGet(feature);
-			if (isSingleReference(featureName)) {
-				Element referenceElement = createReferenceElement(document, (EObject) value);
-				featureElement.appendChild(referenceElement);
-			} else if (isChainedReference(featureName)) {
-				List<?> references = (List<?>) value;
-				for (Object reference : references) {
-					Element referenceElement = createReferenceElement(document, (EObject) reference);
-					featureElement.appendChild(referenceElement);
-				}
+			return createSetDeltaElement(document, object, featureChange, featureName, feature);
+		}
 
-				references = (List<?>) featureChange.getValue();
-				for (Object reference : references) {
-					Element referenceElement = createOriginalReferenceElement(document, reference);
-					featureElement.appendChild(referenceElement);
-				}
-			} else {
-				featureElement.setAttribute(featureName, String.valueOf(value));
-			}
+		return createUnsetDeltaElement(document, featureChange, featureName);
+	}
+
+	private Element createSetDeltaElement(Document document, EObject object,
+			FeatureChange featureChange, String featureName, EStructuralFeature feature) {
+		Element featureElement = document.createElement(featureName);
+		Object value = object.eGet(feature);
+		if (isSingleReference(featureName)) {
+			Element referenceElement = createReferenceElement(document, (EObject) value);
+			featureElement.appendChild(referenceElement);
+		} else if (isChainedReference(featureName)) {
+			appendReferenceElements(document, featureElement, (List<?>) value);
+
+			appendOriginalReferenceElements(document, featureElement, (List<?>) featureChange
+					.getValue());
 		} else {
-			if (isChainedReference(featureName)) {
-				List<?> references = (List<?>) featureChange.getValue();
-				for (Object reference : references) {
-					Element referenceElement = createOriginalReferenceElement(document, reference);
-					featureElement.appendChild(referenceElement);
-				}
-			} else {
-				featureElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
-			}
+			featureElement.setAttribute(featureName, String.valueOf(value));
+		}
+		return featureElement;
+	}
+
+	private Element createUnsetDeltaElement(Document document, FeatureChange featureChange,
+			String featureName) {
+		Element featureElement = document.createElement(featureName);
+		if (isChainedReference(featureName)) {
+			appendOriginalReferenceElements(document, featureElement, (List<?>) featureChange
+					.getValue());
+		} else {
+			featureElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
 		}
 
 		return featureElement;
@@ -992,6 +996,14 @@ public class XMLModelReconciler extends ModelReconciler {
 		Element referenceElement = document.createElement(ORIGINALREFERENCE_ELEMENT_NAME);
 		referenceElement.setAttribute(APPLICATIONELEMENT_ID_ATTNAME, getOriginalId(reference));
 		return referenceElement;
+	}
+
+	private void appendOriginalReferenceElements(Document document, Element element,
+			List<?> references) {
+		for (Object reference : references) {
+			Element referenceElement = createOriginalReferenceElement(document, reference);
+			element.appendChild(referenceElement);
+		}
 	}
 
 	/**
@@ -1017,6 +1029,13 @@ public class XMLModelReconciler extends ModelReconciler {
 		return referenceElement;
 	}
 
+	private void appendReferenceElements(Document document, Element element, List<?> references) {
+		for (Object reference : references) {
+			Element ef = createReferenceElement(document, (EObject) reference);
+			element.appendChild(ef);
+		}
+	}
+
 	private Element createNewReferenceElement(Document document, EObject eObject) {
 		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
 
@@ -1028,35 +1047,38 @@ public class XMLModelReconciler extends ModelReconciler {
 				.getSimpleName());
 
 		for (EStructuralFeature collectedFeature : collectFeatures(eObject)) {
-			String collectedFeatureName = collectedFeature.getName();
+			String featureName = collectedFeature.getName();
 			// ignore transient features
-			if (!collectedFeature.isTransient() && shouldPersist(collectedFeatureName)) {
-				Element referenceAttributeElement = document.createElement(collectedFeatureName);
-				if (eObject.eIsSet(collectedFeature)) {
-					if (collectedFeatureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
-						referenceAttributeElement.setAttribute(collectedFeatureName,
-								getLocalId(eObject));
-					} else if (isSingleReference(collectedFeatureName)) {
-						referenceAttributeElement.setAttribute(collectedFeatureName,
-								getOriginalId(eObject.eGet(collectedFeature)));
-					} else if (isChainedReference(collectedFeatureName)) {
-						List<?> references = (List<?>) eObject.eGet(collectedFeature);
-						for (Object reference : references) {
-							Element ef = createReferenceElement(document, (EObject) reference);
-							referenceAttributeElement.appendChild(ef);
-						}
-					} else {
-						referenceAttributeElement.setAttribute(collectedFeatureName, String
-								.valueOf(eObject.eGet(collectedFeature)));
-					}
-				} else {
-					referenceAttributeElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
-				}
+			if (!collectedFeature.isTransient() && shouldPersist(featureName)) {
+				Element referenceAttributeElement = createAttributeElement(document, eObject,
+						collectedFeature, featureName);
 				referenceElement.appendChild(referenceAttributeElement);
 			}
 		}
 
 		return referenceElement;
+	}
+
+	private Element createAttributeElement(Document document, EObject eObject,
+			EStructuralFeature feature, String featureName) {
+		Element referenceAttributeElement = document.createElement(featureName);
+		if (eObject.eIsSet(feature)) {
+			if (featureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
+				referenceAttributeElement.setAttribute(featureName, getLocalId(eObject));
+			} else if (isSingleReference(featureName)) {
+				referenceAttributeElement.setAttribute(featureName, getOriginalId(eObject
+						.eGet(feature)));
+			} else if (isChainedReference(featureName)) {
+				List<?> references = (List<?>) eObject.eGet(feature);
+				appendReferenceElements(document, referenceAttributeElement, references);
+			} else {
+				referenceAttributeElement.setAttribute(featureName, String.valueOf(eObject
+						.eGet(feature)));
+			}
+		} else {
+			referenceAttributeElement.setAttribute(UNSET_ATTNAME, UNSET_ATTVALUE_TRUE);
+		}
+		return referenceAttributeElement;
 	}
 
 	/**
