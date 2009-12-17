@@ -101,30 +101,6 @@ public abstract class ModelReconciler {
 			.getElementContainer_ActiveChild().getName();
 
 	/**
-	 * Attribute defined by MWindows (value is <code>x</code>).
-	 */
-	public static final String WINDOW_X_ATTNAME = MApplicationPackage.eINSTANCE.getWindow_X()
-			.getName();
-
-	/**
-	 * Attribute defined by MWindows (value is <code>y</code>).
-	 */
-	public static final String WINDOW_Y_ATTNAME = MApplicationPackage.eINSTANCE.getWindow_Y()
-			.getName();
-
-	/**
-	 * Attribute defined by MWindows (value is <code>width</code>).
-	 */
-	public static final String WINDOW_WIDTH_ATTNAME = MApplicationPackage.eINSTANCE
-			.getWindow_Width().getName();
-
-	/**
-	 * Attribute defined by MWindows (value is <code>height</code>).
-	 */
-	public static final String WINDOW_HEIGHT_ATTNAME = MApplicationPackage.eINSTANCE
-			.getWindow_Height().getName();
-
-	/**
 	 * Attribute defined by MWindows (value is <code>mainMenu</code>).
 	 */
 	public static final String WINDOW_MAINMENU_ATTNAME = MApplicationPackage.eINSTANCE

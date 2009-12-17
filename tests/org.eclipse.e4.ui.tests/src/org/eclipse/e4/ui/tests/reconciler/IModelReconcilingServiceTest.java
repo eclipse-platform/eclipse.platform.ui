@@ -28,14 +28,14 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setX(100);
+		window.setLabel("windowName");
 
 		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.setX(200);
+		window.setLabel("newName");
 
 		Object state = reconciler.serialize();
 
@@ -44,25 +44,25 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(100, window.getX());
+		assertEquals("windowName", window.getLabel());
 
 		service.applyDeltas(deltas);
 
-		assertEquals(200, window.getX());
+		assertEquals("newName", window.getLabel());
 	}
 
 	public void testApplyDeltasUnfiltered2() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setX(100);
+		window.setLabel("windowName");
 
 		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.setX(200);
+		window.setLabel("newName");
 
 		Object state = reconciler.serialize();
 
@@ -71,25 +71,25 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(100, window.getX());
+		assertEquals("windowName", window.getLabel());
 
 		service.applyDeltas(deltas, null);
 
-		assertEquals(200, window.getX());
+		assertEquals("newName", window.getLabel());
 	}
 
 	public void testApplyDeltasUnfiltered3() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setX(100);
+		window.setLabel("windowName");
 
 		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.setX(200);
+		window.setLabel("newName");
 
 		Object state = reconciler.serialize();
 
@@ -98,25 +98,25 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(100, window.getX());
+		assertEquals("windowName", window.getLabel());
 
 		service.applyDeltas(deltas, new String[0]);
 
-		assertEquals(200, window.getX());
+		assertEquals("newName", window.getLabel());
 	}
 
 	public void testApplyDeltasFiltered() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
-		window.setX(100);
+		window.setLabel("windowName");
 
 		saveModel();
 
 		ModelReconciler reconciler = service.createModelReconciler();
 		reconciler.recordChanges(application);
 
-		window.setX(200);
+		window.setLabel("newName");
 
 		Object state = reconciler.serialize();
 
@@ -125,10 +125,11 @@ public abstract class IModelReconcilingServiceTest extends ModelReconcilerTest {
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(100, window.getX());
+		assertEquals("windowName", window.getLabel());
 
-		service.applyDeltas(deltas, new String[] { ModelReconciler.WINDOW_X_ATTNAME });
+		service.applyDeltas(deltas,
+				new String[] { ModelReconciler.UILABEL_LABEL_ATTNAME });
 
-		assertEquals(100, window.getX());
+		assertEquals("windowName", window.getLabel());
 	}
 }

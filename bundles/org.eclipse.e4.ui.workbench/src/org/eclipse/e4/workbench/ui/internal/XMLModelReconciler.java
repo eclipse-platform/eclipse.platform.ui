@@ -170,14 +170,6 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getUIElement_ContainerData();
 		} else if (featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getElementContainer_ActiveChild();
-		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_X();
-		} else if (featureName.equals(WINDOW_Y_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_Y();
-		} else if (featureName.equals(WINDOW_WIDTH_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_Width();
-		} else if (featureName.equals(WINDOW_HEIGHT_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getWindow_Height();
 		} else if (featureName.equals(COMMAND_COMMANDNAME_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getCommand_CommandName();
 		} else if (featureName.equals(COMMAND_DESCRIPTION_ATTNAME)) {
