@@ -353,6 +353,13 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.SNIPPET: {
+				MSnippet snippet = (MSnippet)theEObject;
+				T1 result = caseSnippet(snippet);
+				if (result == null) result = caseApplicationElement(snippet);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.VCOMMANDS_V: {
 				MV______________Commands_______________V v______________Commands_______________V = (MV______________Commands_______________V)theEObject;
 				T1 result = caseV______________Commands_______________V(v______________Commands_______________V);
@@ -1003,6 +1010,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseWindow(MWindow object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Snippet</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Snippet</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseSnippet(MSnippet object) {
 		return null;
 	}
 

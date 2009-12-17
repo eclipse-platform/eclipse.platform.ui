@@ -192,6 +192,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createWindowAdapter();
 			}
 			@Override
+			public Adapter caseSnippet(MSnippet object) {
+				return createSnippetAdapter();
+			}
+			@Override
 			public Adapter caseV______________Commands_______________V(MV______________Commands_______________V object) {
 				return createV______________Commands_______________VAdapter();
 			}
@@ -716,6 +720,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createWindowAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MSnippet <em>Snippet</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MSnippet
+	 * @generated
+	 */
+	public Adapter createSnippetAdapter() {
 		return null;
 	}
 

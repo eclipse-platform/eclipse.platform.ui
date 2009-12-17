@@ -156,6 +156,15 @@ public interface MApplicationFactory extends EFactory {
 	MWindow createWindow();
 
 	/**
+	 * Returns a new object of class '<em>Snippet</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Snippet</em>'.
+	 * @generated
+	 */
+	MSnippet createSnippet();
+
+	/**
 	 * Returns a new object of class '<em>Command</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->

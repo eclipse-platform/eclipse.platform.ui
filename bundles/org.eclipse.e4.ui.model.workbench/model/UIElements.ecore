@@ -172,6 +172,18 @@
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//BindingContainer"/>
   </eClassifiers>
+  <eClassifiers xsi:type="ecore:EEnum" name="SnippetType">
+    <eLiterals name="add" value="1"/>
+    <eLiterals name="remove" value="2"/>
+    <eLiterals name="modify" value="4"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="Snippet" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//SnippetType"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ApplicationElement"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="contents" lowerBound="1"
+        eType="#//ApplicationElement"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V______________Commands_______________V"
       abstract="true" interface="true"/>
   <eClassifiers xsi:type="ecore:EClass" name="BindingContainer" abstract="true" interface="true">

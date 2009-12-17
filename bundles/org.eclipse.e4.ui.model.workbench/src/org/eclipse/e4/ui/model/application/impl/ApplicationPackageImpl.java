@@ -49,6 +49,7 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
+import org.eclipse.e4.ui.model.application.MSnippet;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
@@ -69,6 +70,7 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.e4.ui.model.application.SideValue;
 
+import org.eclipse.e4.ui.model.application.SnippetType;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -302,6 +304,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass snippetEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass v______________Commands_______________VEClass = null;
 
 	/**
@@ -450,6 +459,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EEnum sideValueEEnum = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum snippetTypeEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1098,6 +1114,51 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getSnippet() {
+		return snippetEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSnippet_Type() {
+		return (EAttribute)snippetEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getSnippet_Parent() {
+		return (EReference)snippetEClass.getEStructuralFeatures().get(1);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getSnippet_PositionInParent() {
+		return (EAttribute)snippetEClass.getEStructuralFeatures().get(2);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getSnippet_Contents() {
+		return (EReference)snippetEClass.getEStructuralFeatures().get(3);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getV______________Commands_______________V() {
 		return v______________Commands_______________VEClass;
 	}
@@ -1458,6 +1519,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EEnum getSnippetType() {
+		return snippetTypeEEnum;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EDataType getIEclipseContext() {
 		return iEclipseContextEDataType;
 	}
@@ -1590,6 +1660,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEAttribute(windowEClass, WINDOW__WIDTH);
 		createEAttribute(windowEClass, WINDOW__HEIGHT);
 
+		snippetEClass = createEClass(SNIPPET);
+		createEAttribute(snippetEClass, SNIPPET__TYPE);
+		createEReference(snippetEClass, SNIPPET__PARENT);
+		createEAttribute(snippetEClass, SNIPPET__POSITION_IN_PARENT);
+		createEReference(snippetEClass, SNIPPET__CONTENTS);
+
 		v______________Commands_______________VEClass = createEClass(VCOMMANDS_V);
 
 		bindingContainerEClass = createEClass(BINDING_CONTAINER);
@@ -1654,6 +1730,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		// Create enums
 		sideValueEEnum = createEEnum(SIDE_VALUE);
+		snippetTypeEEnum = createEEnum(SNIPPET_TYPE);
 
 		// Create data types
 		iEclipseContextEDataType = createEDataType(IECLIPSE_CONTEXT);
@@ -1784,6 +1861,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBindingContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
+		snippetEClass.getESuperTypes().add(this.getApplicationElement());
 		commandEClass.getESuperTypes().add(this.getApplicationElement());
 		commandParameterEClass.getESuperTypes().add(this.getApplicationElement());
 		handlerEClass.getESuperTypes().add(this.getContribution());
@@ -1951,6 +2029,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEAttribute(getWindow_Width(), ecorePackage.getEInt(), "width", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEAttribute(getWindow_Height(), ecorePackage.getEInt(), "height", null, 0, 1, MWindow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
+		initEClass(snippetEClass, MSnippet.class, "Snippet", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getSnippet_Type(), this.getSnippetType(), "type", null, 0, 1, MSnippet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getSnippet_Parent(), this.getApplicationElement(), null, "parent", null, 0, 1, MSnippet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getSnippet_PositionInParent(), ecorePackage.getEString(), "positionInParent", null, 0, 1, MSnippet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEReference(getSnippet_Contents(), this.getApplicationElement(), null, "contents", null, 1, 1, MSnippet.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(v______________Commands_______________VEClass, MV______________Commands_______________V.class, "V______________Commands_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(bindingContainerEClass, MBindingContainer.class, "BindingContainer", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -2019,6 +2103,11 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		addEEnumLiteral(sideValueEEnum, SideValue.BOTTOM);
 		addEEnumLiteral(sideValueEEnum, SideValue.LEFT);
 		addEEnumLiteral(sideValueEEnum, SideValue.RIGHT);
+
+		initEEnum(snippetTypeEEnum, SnippetType.class, "SnippetType"); //$NON-NLS-1$
+		addEEnumLiteral(snippetTypeEEnum, SnippetType.ADD);
+		addEEnumLiteral(snippetTypeEEnum, SnippetType.REMOVE);
+		addEEnumLiteral(snippetTypeEEnum, SnippetType.MODIFY);
 
 		// Initialize data types
 		initEDataType(iEclipseContextEDataType, IEclipseContext.class, "IEclipseContext", !IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
