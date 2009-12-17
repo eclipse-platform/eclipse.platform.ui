@@ -31,8 +31,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
-import org.eclipse.ui.tests.harness.UITestHarnessPlugin;
-import org.osgi.util.tracker.ServiceTracker;
 
 /**
  * <code>UITestCase</code> is a useful super class for most
@@ -168,8 +166,6 @@ public abstract class UITestCase extends TestCase {
         System.err.println(msg);
     }
 
-    private ServiceTracker workbenchTracker = null;
-    
     /**
      * Simple implementation of setUp. Subclasses are prevented 
      * from overriding this method to maintain logging consistency.
@@ -177,11 +173,7 @@ public abstract class UITestCase extends TestCase {
      */
     protected final void setUp() throws Exception {
     	super.setUp();
-		workbenchTracker = new ServiceTracker(UITestHarnessPlugin.getDefault()
-				.getBundle().getBundleContext(), IWorkbench.class.getName(),
-				null);
-		workbenchTracker.open();
-		fWorkbench = (IWorkbench) workbenchTracker.getService();
+		fWorkbench = PlatformUI.getWorkbench();
     	trace("----- " + this.getName()); //$NON-NLS-1$
         trace(this.getName() + ": setUp..."); //$NON-NLS-1$
         addWindowListener();
@@ -209,11 +201,7 @@ public abstract class UITestCase extends TestCase {
         trace(this.getName() + ": tearDown...\n"); //$NON-NLS-1$
         removeWindowListener();
         doTearDown();
-        if (workbenchTracker!=null) {
-        	fWorkbench = null;
-        	workbenchTracker.close();
-        	workbenchTracker = null;
-        }
+    	fWorkbench = null;
     }
 
     /**
