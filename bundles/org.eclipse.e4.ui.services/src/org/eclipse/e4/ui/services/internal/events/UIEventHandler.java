@@ -37,6 +37,10 @@ public class UIEventHandler implements EventHandler {
 			// This is very close to a no-op if run on the main thread.
 			// Effectively, after some sanity checks, if the display thread
 			// is the same as the current thread, the SWT does runnable.run().
+			if (Display.getCurrent() != null) {
+				eventHandler.handleEvent(event);
+				return;
+			}
 			Display.getDefault().syncExec(new Runnable() { 
 				public void run() {
 					eventHandler.handleEvent(event);

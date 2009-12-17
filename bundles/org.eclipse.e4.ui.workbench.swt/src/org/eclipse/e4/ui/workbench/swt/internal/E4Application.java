@@ -45,6 +45,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.service.datalocation.Location;
+import org.eclipse.swt.widgets.Display;
 
 /**
  *
@@ -56,6 +57,8 @@ public class E4Application implements IApplication {
 
 	public Object start(IApplicationContext applicationContext)
 			throws Exception {
+
+		Display display = new Display();
 
 		args = (String[]) applicationContext.getArguments().get(
 				"application.args"); //$NON-NLS-1$
@@ -87,6 +90,9 @@ public class E4Application implements IApplication {
 		// Instantiate the Workbench (which is responsible for
 		// 'running' the UI (if any)...
 		E4Workbench workbench = new E4Workbench(appModel, appContext);
+
+		// Create and run the UI (if any)
+		workbench.createAndRunUI(appModel);
 
 		// Save the model into the targetURI
 		saveModel();
@@ -157,8 +163,7 @@ public class E4Application implements IApplication {
 		// FROM: WorkbenchApplication
 		// parent of the global workbench context is an OSGi service
 		// context that can provide OSGi services
-		IEclipseContext serviceContext = EclipseContextFactory
-				.getServiceContext(Activator.getDefault().getContext());
+		IEclipseContext serviceContext = E4Workbench.getServiceContext();
 		final IEclipseContext appContext = EclipseContextFactory.create(
 				serviceContext, strategy);
 		appContext.set(IContextConstants.DEBUG_STRING, "WorkbenchAppContext"); //$NON-NLS-1$

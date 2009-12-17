@@ -493,11 +493,12 @@ public class Workbench implements IWorkbench {
 		}
 	}
 
-	public void close() {
+	public boolean close() {
 		EList<MWindow> windows = workbench.getChildren();
 		for (MWindow window : windows) {
 			windowHandler.dispose(window.getWidget());
 		}
+		return true;
 	}
 
 	// public Display getDisplay() {

@@ -14,6 +14,6 @@ public interface IWorkbench {
 
 	public int run();
 
-	public void close();
+	public boolean close();
 
 }

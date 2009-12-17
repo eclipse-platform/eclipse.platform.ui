@@ -11,6 +11,8 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
+
 import java.util.ArrayList;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.IParameter;
@@ -51,9 +53,6 @@ public class E4Workbench implements IWorkbench {
 
 		// Hook the global notifications
 		((Notifier) uiRoot).eAdapters().add(new UIEventPublisher(appContext));
-
-		// Create and run the UI (if any)
-		createAndRunUI(uiRoot, appContext);
 	}
 
 	/**
@@ -61,7 +60,7 @@ public class E4Workbench implements IWorkbench {
 	 * @param cssURI
 	 * @param cssResourcesURI
 	 */
-	private void createAndRunUI(MApplicationElement uiRoot, IEclipseContext appContext) {
+	public void createAndRunUI(MApplicationElement uiRoot) {
 		// Has someone already created one ?
 		renderer = (IPresentationEngine) appContext.get(IPresentationEngine.class.getName());
 		if (renderer == null) {
@@ -119,11 +118,13 @@ public class E4Workbench implements IWorkbench {
 
 	/**
 	 * @return
+	 * @return
 	 */
-	public void close() {
+	public boolean close() {
 		if (renderer != null) {
 			renderer.stop();
 		}
+		return true;
 	}
 
 	/*
@@ -134,5 +135,9 @@ public class E4Workbench implements IWorkbench {
 	public int run() {
 		// TODO Auto-generated method stub
 		return 0;
+	}
+
+	public static IEclipseContext getServiceContext() {
+		return EclipseContextFactory.getServiceContext(Activator.getDefault().getContext());
 	}
 }

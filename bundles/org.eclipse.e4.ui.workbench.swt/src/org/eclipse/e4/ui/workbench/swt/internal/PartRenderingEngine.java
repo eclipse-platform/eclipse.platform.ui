@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.IResourceUtiltities;
+import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.E4Workbench;
@@ -52,6 +53,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.testing.TestableObject;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -441,7 +443,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public Object run(final MApplicationElement uiRoot,
 			final IEclipseContext appContext) {
-		final Display display = Display.getDefault();
+		final Display display = Display.getCurrent();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				String cssURI = (String) appContext
@@ -509,6 +511,13 @@ public class PartRenderingEngine implements IPresentationEngine {
 					}
 				}
 
+				TestableObject testableObject = (TestableObject) appContext
+						.get(TestableObject.class.getName());
+				if (testableObject instanceof E4Testable) {
+					((E4Testable) testableObject).init(display,
+							(IWorkbench) appContext.get(IWorkbench.class
+									.getName()));
+				}
 				// Spin the event loop until someone disposes the display
 				while (!testShell.isDisposed() && !display.isDisposed()) {
 					try {

@@ -1,10 +1,14 @@
 package org.eclipse.e4.ui.workbench.swt.internal;
 
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.e4.workbench.ui.IWorkbenchWindowHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.testing.TestableObject;
 
 public class WorkbenchWindowHandler implements IWorkbenchWindowHandler {
 
@@ -40,6 +44,15 @@ public class WorkbenchWindowHandler implements IWorkbenchWindowHandler {
 	public void runEvenLoop(Object appWindow) {
 		Shell window = (Shell) appWindow;
 		Display display = window.getDisplay();
+
+		MWindow model = (MWindow) window.getData("modelElement");
+		IEclipseContext context = model.getContext();
+		org.eclipse.ui.testing.TestableObject testableObject = (TestableObject) context
+				.get(TestableObject.class.getName());
+		if (testableObject instanceof E4Testable) {
+			((E4Testable) testableObject).init(display, (IWorkbench) context
+					.get(IWorkbench.class.getName()));
+		}
 
 		while (appWindow != null && !window.isDisposed()) {
 			try {

@@ -36,7 +36,7 @@ public class EPartServiceTest extends TestCase {
 
 	@Override
 	protected void setUp() throws Exception {
-		applicationContext = E4Application.createDefaultContext(null);
+		applicationContext = E4Application.createDefaultContext();
 
 		IContributionFactory contributionFactory = (IContributionFactory) applicationContext
 				.get(IContributionFactory.class.getName());
