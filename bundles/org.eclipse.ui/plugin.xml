@@ -138,6 +138,16 @@
             sequence="M3+CR"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.file.properties"
+            platform="cocoa"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+I"/>
+      <key
+            commandId="org.eclipse.ui.file.properties"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+I"/>
+      <key
             commandId="org.eclipse.ui.file.refresh"
             sequence="F5"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
