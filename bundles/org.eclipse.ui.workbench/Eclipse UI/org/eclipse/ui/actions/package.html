@@ -1,0 +1,28 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+   <meta name="Author" content="IBM">
+   <meta name="GENERATOR" content="Mozilla/4.5 [en] (WinNT; I) [Netscape]">
+   <title>Package-level Javadoc</title>
+</head>
+<body>
+Classes for actions and operations used in a workbench
+window, page, or part in the Eclipse Platform User Interface.
+<h2>
+Package Specification</h2>
+Actions for resource management, project build and workbench page management
+are provided to encourage a standard look and feel across views and editors
+contributed by independent system vendors. Base classes are also provided
+for selection oriented actions which enable or disable based upon selection
+in a part or viewer. These should be used by ISV's to define actions for
+menus, toolbars, and context menus.
+<p>Action which leads to resource modification should take advantage of
+the <tt>WorkspaceModifyOperation</tt> classes.&nbsp; These classes are
+used to defer events which typically occur as a result of workspace changes
+(such as the firing of resource deltas, performance of autobuilds, etc.)
+until the outermost operation has successfully completed.&nbsp; This deferral
+leads to an optimized, faster execution of resource modification because
+fewer deltas and autobuilds are performed.
+</body>
+</html>
