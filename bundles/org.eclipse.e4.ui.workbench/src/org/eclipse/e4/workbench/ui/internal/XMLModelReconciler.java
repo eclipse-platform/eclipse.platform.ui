@@ -1076,9 +1076,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			EStructuralFeature feature, String featureName) {
 		Element referenceAttributeElement = document.createElement(featureName);
 		if (object.eIsSet(feature)) {
-			if (featureName.equals(APPLICATIONELEMENT_ID_ATTNAME)) {
-				referenceAttributeElement.setAttribute(featureName, getLocalId(object));
-			} else if (isSingleReference(featureName)) {
+			if (isSingleReference(featureName)) {
 				referenceAttributeElement.setAttribute(featureName, getOriginalId(object
 						.eGet(feature)));
 			} else if (isChainedReference(featureName)) {
