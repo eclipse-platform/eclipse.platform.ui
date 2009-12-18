@@ -534,6 +534,10 @@ public class XMLModelReconciler extends ModelReconciler {
 				if (isSingleReference(attributeName)) {
 					String id = item.getAttribute(attributeName);
 					Object objectReference = findReference(references, id);
+					if (objectReference == null) {
+						objectReference = createObject((Element) ((NodeList) item).item(0),
+								references);
+					}
 
 					IDelta delta = new EMFModelDeltaSet(object, attributeFeature, objectReference);
 					compositeDelta.add(delta);
@@ -1077,8 +1081,15 @@ public class XMLModelReconciler extends ModelReconciler {
 		Element referenceAttributeElement = document.createElement(featureName);
 		if (object.eIsSet(feature)) {
 			if (isSingleReference(featureName)) {
-				referenceAttributeElement.setAttribute(featureName, getOriginalId(object
-						.eGet(feature)));
+				Object value = object.eGet(feature);
+				String id = getOriginalId(value);
+				if (id == null) {
+					Element referenceElement = createReferenceElement(document, (EObject) value);
+					referenceAttributeElement.appendChild(referenceElement);
+				} else {
+					referenceAttributeElement.setAttribute(featureName, getOriginalId(object
+							.eGet(feature)));
+				}
 			} else if (isChainedReference(featureName)) {
 				List<?> references = (List<?>) object.eGet(feature);
 				appendReferenceElements(document, referenceAttributeElement, references);
