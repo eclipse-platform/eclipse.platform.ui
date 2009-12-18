@@ -84,8 +84,10 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setLabel("MyWindow");
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		assertEquals("MyWindow", ((Shell) topWidget).getText());
 		assertEquals(topWidget, appContext.get(IServiceConstants.ACTIVE_SHELL));
@@ -95,8 +97,10 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setLabel("MyWindow");
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 
 		Shell shell = (Shell) topWidget;
@@ -114,8 +118,10 @@ public class MWindowTest extends TestCase {
 		window.setLabel("MyWindow");
 		window.setVisible(false);
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 
 		Shell shell = (Shell) topWidget;
@@ -125,8 +131,10 @@ public class MWindowTest extends TestCase {
 	public void testCreateView() {
 		final MWindow window = createWindowWithOneView();
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		assertEquals("MyWindow", shell.getText());
@@ -153,8 +161,10 @@ public class MWindowTest extends TestCase {
 	public void testContextChildren() {
 		final MWindow window = createWindowWithOneView();
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		assertEquals("MyWindow", shell.getText());
@@ -197,8 +207,10 @@ public class MWindowTest extends TestCase {
 	public void testCreateMenu() {
 		final MWindow window = createWindowWithOneViewAndMenu();
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		final Menu menuBar = shell.getMenuBar();
@@ -230,8 +242,10 @@ public class MWindowTest extends TestCase {
 		window.setLabel("windowName");
 
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Object widget = window.getWidget();
+		assertNotNull(widget);
 		assertTrue(widget instanceof Shell);
 
 		Shell shell = (Shell) widget;

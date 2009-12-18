@@ -88,6 +88,7 @@ public class MSashTest extends TestCase {
 		MWindow window = createSashWithNViews(2);
 
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
 		((Shell) topWidget).layout(true);

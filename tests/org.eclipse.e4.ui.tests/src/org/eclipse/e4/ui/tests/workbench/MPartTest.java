@@ -73,8 +73,10 @@ public class MPartTest extends TestCase {
 	public void testSetName() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		assertEquals("MyWindow", shell.getText());
@@ -104,8 +106,10 @@ public class MPartTest extends TestCase {
 	public void testCTabItem_GetImage() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		Control[] controls = getPresentationControls(shell);
@@ -126,8 +130,10 @@ public class MPartTest extends TestCase {
 	private void testDeclaredTooltip(String partToolTip, String expectedToolTip) {
 		final MWindow window = createWindowWithOneView("Part Name", partToolTip);
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		Control[] controls = getPresentationControls(shell);
@@ -160,8 +166,10 @@ public class MPartTest extends TestCase {
 	private void testMPart_setTooltip(String partToolTip, String expectedToolTip) {
 		final MWindow window = createWindowWithOneView("Part Name");
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		Control[] controls = getPresentationControls(shell);
@@ -202,6 +210,7 @@ public class MPartTest extends TestCase {
 	public void testMPart_getContext() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		MPartSashContainer container = (MPartSashContainer) window
 				.getChildren().get(0);

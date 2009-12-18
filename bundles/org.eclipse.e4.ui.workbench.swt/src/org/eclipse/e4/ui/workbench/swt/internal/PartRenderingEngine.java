@@ -443,7 +443,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	public Object run(final MApplicationElement uiRoot,
 			final IEclipseContext appContext) {
-		final Display display = Display.getCurrent();
+		final Display display = Display.getDefault();
 		Realm.runWithDefault(SWTObservables.getRealm(display), new Runnable() {
 			public void run() {
 				String cssURI = (String) appContext

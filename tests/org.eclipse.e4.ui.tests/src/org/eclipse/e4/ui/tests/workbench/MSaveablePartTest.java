@@ -73,8 +73,10 @@ public class MSaveablePartTest extends TestCase {
 	public void testCreateView() {
 		final MWindow window = createWindowWithOneView("Part Name");
 		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
+		assertNotNull(topWidget);
 		assertTrue(topWidget instanceof Shell);
 		Shell shell = (Shell) topWidget;
 		assertEquals("MyWindow", shell.getText());
