@@ -380,6 +380,48 @@ public abstract class ModelReconcilerElementContainerTest extends
 		assertEquals(part1, stack.getChildren().get(1));
 	}
 
+	public void testElementContainer_Children_Add_Multiple() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(partSashContainer);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		partSashContainer.getChildren().add(part);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertTrue(window.getChildren().get(0) instanceof MPartSashContainer);
+
+		partSashContainer = (MPartSashContainer) window.getChildren().get(0);
+
+		assertEquals(1, partSashContainer.getChildren().size());
+		assertTrue(partSashContainer.getChildren().get(0) instanceof MPart);
+	}
+
 	public void testElementContainer_Children_Add_PartSashContainer() {
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
@@ -744,5 +786,64 @@ public abstract class ModelReconcilerElementContainerTest extends
 		applyAll(deltas);
 
 		assertEquals(part2, stack.getActiveChild());
+	}
+
+	private void testElementContainer_ActiveChild3(boolean setActiveChildFirst) {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
+				.createPartSashContainer();
+		window.getChildren().add(partSashContainer);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		if (setActiveChildFirst) {
+			partSashContainer.setActiveChild(part);
+			partSashContainer.getChildren().add(part);
+		} else {
+			partSashContainer.getChildren().add(part);
+			partSashContainer.setActiveChild(part);
+		}
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertTrue(window.getChildren().get(0) instanceof MPartSashContainer);
+
+		partSashContainer = (MPartSashContainer) window.getChildren().get(0);
+
+		assertEquals(1, partSashContainer.getChildren().size());
+		assertTrue(partSashContainer.getChildren().get(0) instanceof MPart);
+
+		part = (MPart) partSashContainer.getChildren().get(0);
+		assertEquals(part, partSashContainer.getActiveChild());
+	}
+
+	public void testElementContainer_ActiveChild3_True() {
+		testElementContainer_ActiveChild3(true);
+	}
+
+	public void testElementContainer_ActiveChild3_False() {
+		testElementContainer_ActiveChild3(false);
 	}
 }

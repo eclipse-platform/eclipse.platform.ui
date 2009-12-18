@@ -12,6 +12,8 @@
 package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.LinkedList;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -39,6 +41,7 @@ public class ModelReconcilingService implements IModelReconcilingService {
 		}
 
 		MultiStatus multiStatus = new MultiStatus(Activator.PI_WORKBENCH, 0, "", null); //$NON-NLS-1$
+		LinkedList<ModelDelta> delayedDeltas = new LinkedList<ModelDelta>();
 
 		deltaIterationLoop: for (ModelDelta delta : deltas) {
 			for (String filter : filters) {
@@ -48,6 +51,10 @@ public class ModelReconcilingService implements IModelReconcilingService {
 			}
 
 			IStatus status = delta.apply();
+			if (status.getSeverity() == IStatus.CANCEL) {
+				delayedDeltas.add(delta);
+				continue;
+			}
 			multiStatus.add(status);
 
 			switch (status.getCode()) {
@@ -60,6 +67,13 @@ public class ModelReconcilingService implements IModelReconcilingService {
 			case IStatus.ERROR:
 				logger.error(status.getMessage());
 				break;
+			}
+		}
+
+		for (Iterator<ModelDelta> it = delayedDeltas.iterator(); it.hasNext();) {
+			ModelDelta delta = it.next();
+			if (delta.apply().isOK()) {
+				it.remove();
 			}
 		}
 

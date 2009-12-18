@@ -144,8 +144,6 @@ public abstract class ModelReconciler {
 
 	/**
 	 * Attribute defined by MGenericTiles (value is <code>horizontal</code>).
-	 * 
-	 * @see #TRIMCONTAINER_HORIZONTAL_ATTNAME
 	 */
 	public static final String GENERICTILE_HORIZONTAL_ATTNAME = MApplicationPackage.eINSTANCE
 			.getGenericTile_Horizontal().getName();
