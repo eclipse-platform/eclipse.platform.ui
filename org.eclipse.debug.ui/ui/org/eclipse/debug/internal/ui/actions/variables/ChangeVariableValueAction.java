@@ -7,6 +7,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Wind River Systems - Hide action for non standard debug models (298217)
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables;
 
@@ -44,6 +45,7 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	protected IVariable fVariable;
     private VariablesView fView;
     private boolean fEditing= false;
+    private boolean isApplicable = false;
 	
     /**
      * Creates a new ChangeVariableValueAction for the given variables view
@@ -59,6 +61,15 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			this,
 			IDebugHelpContextIds.CHANGE_VALUE_ACTION);
 		fView= view;
+	}
+	
+	/**
+	 * Indicates whether this action is applicable for the current selection.
+	 * If the element selected in the viewer is not a standard debug model 
+	 * element this action is not applicable. 
+	 */
+	public boolean isApplicable() {
+	    return isApplicable;
 	}
 	
 	/**
@@ -144,10 +155,12 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 	 * on the selection
 	 */
 	protected void update(IStructuredSelection sel) {
+	    isApplicable = false;
 		Iterator iter= sel.iterator();
 		if (iter.hasNext()) {
 			Object object= iter.next();
 			if (object instanceof IValueModification) {
+			    isApplicable = true;
 				IValueModification varMod= (IValueModification)object;
 				if (!varMod.supportsValueModification()) {
 					setEnabled(false);

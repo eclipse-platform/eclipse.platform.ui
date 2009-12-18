@@ -21,6 +21,7 @@ import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.expressions.PasteWatchExpressionsAction;
+import org.eclipse.debug.internal.ui.actions.variables.ChangeVariableValueAction;
 import org.eclipse.debug.internal.ui.preferences.IDebugPreferenceConstants;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerInputUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -83,7 +84,10 @@ public class ExpressionView extends VariablesView {
 		menu.add(new Separator(IDebugUIConstants.EMPTY_EXPRESSION_GROUP));
 		menu.add(new Separator(IDebugUIConstants.EXPRESSION_GROUP));
 		menu.add(getAction(VARIABLES_FIND_ELEMENT_ACTION));
-		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+        ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
+        if (changeValueAction.isApplicable()) {
+            menu.add(changeValueAction); 
+        }
 		menu.add(new Separator());
 		IAction action = new AvailableLogicalStructuresAction(this);
         if (action.isEnabled()) {

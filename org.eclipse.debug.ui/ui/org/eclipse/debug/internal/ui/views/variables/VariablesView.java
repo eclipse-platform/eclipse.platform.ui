@@ -853,7 +853,10 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		menu.add(new Separator(IDebugUIConstants.EMPTY_VARIABLE_GROUP));
 		menu.add(new Separator(IDebugUIConstants.VARIABLE_GROUP));
 		menu.add(getAction(VARIABLES_FIND_ELEMENT_ACTION));
-		menu.add(getAction("ChangeVariableValue")); //$NON-NLS-1$
+		ChangeVariableValueAction changeValueAction = (ChangeVariableValueAction)getAction("ChangeVariableValue"); //$NON-NLS-1$
+		if (changeValueAction.isApplicable()) {
+		    menu.add(changeValueAction); 
+		}
 		menu.add(new Separator());
 		IAction action = new AvailableLogicalStructuresAction(this);
 		if (action.isEnabled()) {
