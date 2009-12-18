@@ -52,6 +52,7 @@ import org.eclipse.jface.internal.provisional.action.ICoolBarManager2;
 import org.eclipse.jface.internal.provisional.action.IToolBarContributionItem;
 import org.eclipse.jface.internal.provisional.action.IToolBarManager2;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.ApplicationWindow;
@@ -365,6 +366,12 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	public WorkbenchWindow(int number) {
 		super(null);
 		this.number = number;
+
+		// Initialize a previous 'saved' state if applicable.
+		this.coolBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
+				IPreferenceConstants.COOLBAR_VISIBLE);
+		this.perspectiveBarVisible = PrefUtil.getInternalPreferenceStore().getBoolean(
+				IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
 
 		// Make sure there is a workbench. This call will throw
 		// an exception if workbench not created yet.
@@ -3596,7 +3603,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.0
 	 */
 	public boolean getCoolBarVisible() {
-		return coolBarVisible;
+		return getWindowConfigurer().getShowCoolBar() && coolBarVisible;
 	}
 
 	/**
@@ -3624,7 +3631,7 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	 * @since 3.0
 	 */
 	public boolean getPerspectiveBarVisible() {
-		return perspectiveBarVisible;
+		return getWindowConfigurer().getShowPerspectiveBar() && perspectiveBarVisible;
 	}
 	
 	/**
@@ -4058,13 +4065,17 @@ public class WorkbenchWindow extends ApplicationWindow implements
 	public void toggleToolbarVisibility() {
 		boolean coolbarVisible = getCoolBarVisible();
 		boolean perspectivebarVisible = getPerspectiveBarVisible();
+		IPreferenceStore prefs = PrefUtil.getInternalPreferenceStore();
+
 		// only toggle the visibility of the components that
 		// were on initially
 		if (getWindowConfigurer().getShowCoolBar()) {
 			setCoolBarVisible(!coolbarVisible);
+			prefs.setValue(IPreferenceConstants.COOLBAR_VISIBLE, !coolbarVisible);
 		}
 		if (getWindowConfigurer().getShowPerspectiveBar()) {
 			setPerspectiveBarVisible(!perspectivebarVisible);
+			prefs.setValue(IPreferenceConstants.PERSPECTIVEBAR_VISIBLE, !perspectivebarVisible);
 		}
 		getShell().layout();
 	}

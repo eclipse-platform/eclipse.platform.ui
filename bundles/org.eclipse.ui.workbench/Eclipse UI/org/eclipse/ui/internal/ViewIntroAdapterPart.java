@@ -23,6 +23,7 @@ import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.intro.IntroMessages;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
 import org.eclipse.ui.part.ViewPart;
@@ -188,12 +189,21 @@ public final class ViewIntroAdapterPart extends ViewPart {
 		WorkbenchWindow window = (WorkbenchWindow) getSite()
 				.getWorkbenchWindow();
 		
-		final boolean layout = (visible != window.getCoolBarVisible())
-				|| (visible != window.getPerspectiveBarVisible()); // don't layout unless things have actually changed
+		boolean layout = false; // don't layout unless things have actually changed
 		if (visible) {
-			window.setCoolBarVisible(true);
-			window.setPerspectiveBarVisible(true);
+			// Restore the last 'saved' state
+			boolean coolbarVisible = PrefUtil
+					.getInternalPreferenceStore().getBoolean(
+							IPreferenceConstants.COOLBAR_VISIBLE);
+			boolean persBarVisible = PrefUtil
+					.getInternalPreferenceStore().getBoolean(
+							IPreferenceConstants.PERSPECTIVEBAR_VISIBLE);
+			layout = (coolbarVisible != window.getCoolBarVisible())
+				|| (persBarVisible != window.getPerspectiveBarVisible());
+			window.setCoolBarVisible(coolbarVisible);
+			window.setPerspectiveBarVisible(persBarVisible);
 		} else {
+			layout = !window.getCoolBarVisible() || !window.getPerspectiveBarVisible();
 			window.setCoolBarVisible(false);
 			window.setPerspectiveBarVisible(false);
 		}

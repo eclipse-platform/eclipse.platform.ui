@@ -206,6 +206,20 @@ public interface IPreferenceConstants {
      */
     public static final String SHOULD_PROMPT_FOR_ENABLEMENT = "shouldPromptForEnablement"; //$NON-NLS-1$
 
+	/**
+	 * Preference to show/hide the CoolBar.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String COOLBAR_VISIBLE = "coolBarVisible"; //$NON-NLS-1$
+
+	/**
+	 * Preference to show/hide the PerspectiveBar.
+	 * 
+	 * @since 3.6
+	 */
+	public static final String PERSPECTIVEBAR_VISIBLE = "perspectiveBarVisible"; //$NON-NLS-1$
+
     /**
 	 * Preference that restores the 3.2 startup threading behavior. This
 	 * essentially means that there will be no restrictions on what runnables
