@@ -57,7 +57,7 @@ public interface MKeyBinding extends MKeySequence, MApplicationElement {
 	void setCommand(MCommand value);
 
 	/**
-	 * Returns the value of the '<em><b>Parameters</b></em>' reference list.
+	 * Returns the value of the '<em><b>Parameters</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MParameter}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -65,9 +65,9 @@ public interface MKeyBinding extends MKeySequence, MApplicationElement {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parameters</em>' reference list.
+	 * @return the value of the '<em>Parameters</em>' containment reference list.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getKeyBinding_Parameters()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	EList<MParameter> getParameters();

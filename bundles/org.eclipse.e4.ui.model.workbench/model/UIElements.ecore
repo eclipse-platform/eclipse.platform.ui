@@ -215,7 +215,7 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="wbCommand" eType="#//ParameterizedCommand"
         transient="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
-        eType="#//Parameter"/>
+        eType="#//Parameter" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="HandledMenuItem" eSuperTypes="#//MenuItem #//HandledItem"/>
   <eClassifiers xsi:type="ecore:EClass" name="HandledToolItem">
@@ -229,7 +229,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="command" lowerBound="1"
         eType="#//Command"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" upperBound="-1"
-        eType="#//Parameter"/>
+        eType="#//Parameter" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="KeySequence" abstract="true" interface="true">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="keySequence" lowerBound="1"

@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.model.application.MParameter;
 
 import org.eclipse.emf.common.notify.Notification;
 
+import org.eclipse.emf.common.notify.NotificationChain;
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -29,6 +30,8 @@ import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
@@ -78,7 +81,7 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 	protected ParameterizedCommand wbCommand = WB_COMMAND_EDEFAULT;
 
 	/**
-	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' reference list.
+	 * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @see #getParameters()
@@ -172,9 +175,23 @@ public class HandledItemImpl extends ItemImpl implements MHandledItem {
 	 */
 	public EList<MParameter> getParameters() {
 		if (parameters == null) {
-			parameters = new EObjectResolvingEList<MParameter>(MParameter.class, this, MApplicationPackage.HANDLED_ITEM__PARAMETERS);
+			parameters = new EObjectContainmentEList<MParameter>(MParameter.class, this, MApplicationPackage.HANDLED_ITEM__PARAMETERS);
 		}
 		return parameters;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
+		switch (featureID) {
+			case MApplicationPackage.HANDLED_ITEM__PARAMETERS:
+				return ((InternalEList<?>)getParameters()).basicRemove(otherEnd, msgs);
+		}
+		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**

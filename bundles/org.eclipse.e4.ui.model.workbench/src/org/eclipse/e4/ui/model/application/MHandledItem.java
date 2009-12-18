@@ -86,7 +86,7 @@ public interface MHandledItem extends MItem {
 	void setWbCommand(ParameterizedCommand value);
 
 	/**
-	 * Returns the value of the '<em><b>Parameters</b></em>' reference list.
+	 * Returns the value of the '<em><b>Parameters</b></em>' containment reference list.
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MParameter}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -94,9 +94,9 @@ public interface MHandledItem extends MItem {
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Parameters</em>' reference list.
+	 * @return the value of the '<em>Parameters</em>' containment reference list.
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getHandledItem_Parameters()
-	 * @model
+	 * @model containment="true"
 	 * @generated
 	 */
 	EList<MParameter> getParameters();

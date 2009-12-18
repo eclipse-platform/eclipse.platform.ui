@@ -3677,7 +3677,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM__WB_COMMAND = ITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -3876,7 +3876,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_MENU_ITEM__WB_COMMAND = MENU_ITEM_FEATURE_COUNT + 1;
 
 	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4075,7 +4075,7 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_TOOL_ITEM__WB_COMMAND = ELEMENT_CONTAINER_FEATURE_COUNT + 7;
 
 	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -4167,7 +4167,7 @@ public interface MApplicationPackage extends EPackage {
 	int KEY_BINDING__COMMAND = KEY_SEQUENCE_FEATURE_COUNT + 2;
 
 	/**
-	 * The feature id for the '<em><b>Parameters</b></em>' reference list.
+	 * The feature id for the '<em><b>Parameters</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
@@ -6296,10 +6296,10 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getHandledItem_WbCommand();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.MHandledItem#getParameters <em>Parameters</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MHandledItem#getParameters <em>Parameters</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Parameters</em>'.
+	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MHandledItem#getParameters()
 	 * @see #getHandledItem()
 	 * @generated
@@ -6348,10 +6348,10 @@ public interface MApplicationPackage extends EPackage {
 	EReference getKeyBinding_Command();
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.MKeyBinding#getParameters <em>Parameters</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MKeyBinding#getParameters <em>Parameters</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Parameters</em>'.
+	 * @return the meta object for the containment reference list '<em>Parameters</em>'.
 	 * @see org.eclipse.e4.ui.model.application.MKeyBinding#getParameters()
 	 * @see #getKeyBinding()
 	 * @generated
@@ -7341,7 +7341,7 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute HANDLED_ITEM__WB_COMMAND = eINSTANCE.getHandledItem_WbCommand();
 
 		/**
-		 * The meta object literal for the '<em><b>Parameters</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
@@ -7387,7 +7387,7 @@ public interface MApplicationPackage extends EPackage {
 		EReference KEY_BINDING__COMMAND = eINSTANCE.getKeyBinding_Command();
 
 		/**
-		 * The meta object literal for the '<em><b>Parameters</b></em>' reference list feature.
+		 * The meta object literal for the '<em><b>Parameters</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
