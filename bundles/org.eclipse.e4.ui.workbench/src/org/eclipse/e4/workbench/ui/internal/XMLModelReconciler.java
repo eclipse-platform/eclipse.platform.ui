@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
@@ -34,6 +35,8 @@ import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
@@ -537,6 +540,8 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static EObject createObject(String type) {
 		if (type.equals(MPart.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createPart();
+		} else if (type.equals(MEditor.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createEditor();
 		} else if (type.equals(MCommand.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createCommand();
 		} else if (type.equals(MHandler.class.getSimpleName())) {
@@ -557,6 +562,10 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createPartSashContainer();
 		} else if (type.equals(MWindowTrim.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createWindowTrim();
+		} else if (type.equals(MPerspective.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createPerspective();
+		} else if (type.equals(MPerspectiveStack.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createPerspectiveStack();
 		}
 		return null;
 	}

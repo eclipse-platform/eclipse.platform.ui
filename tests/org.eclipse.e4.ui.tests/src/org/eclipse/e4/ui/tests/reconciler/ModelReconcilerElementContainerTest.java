@@ -16,9 +16,12 @@ import java.util.List;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MPerspective;
+import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.MWindowTrim;
@@ -131,6 +134,99 @@ public abstract class ModelReconcilerElementContainerTest extends
 
 		part = stack.getChildren().get(0);
 		assertEquals("newPart", part.getLabel());
+	}
+
+	public void testElementContainer_Children_Add4() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		editor.setLabel("newEditor");
+		window.getChildren().add(editor);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, window.getChildren().size());
+
+		editor = (MEditor) window.getChildren().get(0);
+		assertEquals("newEditor", editor.getLabel());
+	}
+
+	public void testElementContainer_Children_Add5() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPerspective perspective = MApplicationFactory.eINSTANCE
+				.createPerspective();
+		perspective.setLabel("newEditor");
+		window.getChildren().add(perspective);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, window.getChildren().size());
+
+		perspective = (MPerspective) window.getChildren().get(0);
+		assertEquals("newEditor", perspective.getLabel());
+	}
+
+	public void testElementContainer_Children_Add6() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPerspectiveStack perspectiveStack = MApplicationFactory.eINSTANCE
+				.createPerspectiveStack();
+		window.getChildren().add(perspectiveStack);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, window.getChildren().size());
+
+		assertTrue(window.getChildren().get(0) instanceof MPerspectiveStack);
 	}
 
 	public void testElementContainer_Children_Remove() {
