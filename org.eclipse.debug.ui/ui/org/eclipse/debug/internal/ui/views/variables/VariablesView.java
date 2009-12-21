@@ -100,6 +100,8 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchPage;
@@ -120,7 +122,7 @@ import org.eclipse.ui.texteditor.IUpdate;
 public class VariablesView extends AbstractDebugView implements IDebugContextListener,
 	IPropertyChangeListener, IDebugExceptionHandler,
 	IPerspectiveListener, IModelChangedListener,
-	IViewerUpdateListener, IDetailPaneContainer2 {
+	IViewerUpdateListener, IDetailPaneContainer2, ISaveablePart {
 	
 	/**
 	 * Selection provider wrapping an exchangeable active selection provider.
@@ -461,6 +463,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		getSite().setSelectionProvider(fSelectionProvider);
 
 		fDetailPane = new DetailPaneProxy(this);
+		fDetailPane.addProperyListener(new IPropertyListener() {
+			public void propertyChanged(Object source, int propId) {
+				firePropertyChange(propId);
+			}
+		});
 		fDetailPane.display(null); // Bring up the default pane so the user doesn't see an empty composite
 		
 		createOrientationActions(variablesViewer);
@@ -1227,5 +1234,40 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		getSite().setSelectionProvider(fSelectionProvider);
 		// change active provider
 		fSelectionProvider.setActiveProvider(provider);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		fDetailPane.doSave(monitor);
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {
+		fDetailPane.doSaveAs();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		return fDetailPane.isDirty();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		return fDetailPane.isSaveAsAllowed();
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 */
+	public boolean isSaveOnCloseNeeded() {
+		return fDetailPane.isSaveOnCloseNeeded();
 	}
 }

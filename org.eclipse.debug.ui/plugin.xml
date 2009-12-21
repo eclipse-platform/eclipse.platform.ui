@@ -2838,8 +2838,6 @@ M4 = Platform-specific fourth key
 	        		    <or>
 					    	<instanceof value="org.eclipse.debug.core.model.IVariable"/>
 					    	<instanceof value="org.eclipse.debug.core.model.IExpression"/>
-					    	<instanceof value="org.eclipse.debug.core.model.IBreakpoint"/>
-					    	<instanceof value="org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointContainer"/>
 					    	<instanceof value="java.lang.String"/>
 					    </or>
 	        		</iterate>

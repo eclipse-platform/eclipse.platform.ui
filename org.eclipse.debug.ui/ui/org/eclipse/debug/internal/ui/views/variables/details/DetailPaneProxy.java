@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2008 IBM Corporation and others.
+ * Copyright (c) 2006, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,11 +13,14 @@ package org.eclipse.debug.internal.ui.views.variables.details;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDetailPane;
 import org.eclipse.debug.ui.IDetailPane2;
+import org.eclipse.debug.ui.IDetailPane3;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -26,6 +29,8 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPartSite;
 
 import com.ibm.icu.text.MessageFormat;
@@ -43,7 +48,7 @@ import com.ibm.icu.text.MessageFormat;
  * @see DetailPaneManager
  * @since 3.3
  */
-public class DetailPaneProxy {
+public class DetailPaneProxy implements ISaveablePart {
 	
 	/**
 	 * The IDetailPane currently being used to display detailed information.
@@ -59,6 +64,11 @@ public class DetailPaneProxy {
 	 * Detail pane container that the detail panes will be added to.
 	 */
 	private IDetailPaneContainer fParentContainer;
+	
+	/**
+	 * Property listeners
+	 */
+	private ListenerList fListeners = new ListenerList();
 	
 	/**
 	 * Constructor that sets up the detail pane for a view.  Note that no default pane
@@ -80,8 +90,18 @@ public class DetailPaneProxy {
 	 */
 	public void display(IStructuredSelection selection){
 		
+		IDetailPane3 saveable = getSaveable();
+		boolean clean = false;
+		if (saveable != null && saveable.isDirty() && saveable.isSaveOnCloseNeeded()) {
+			// save the contents before changing
+			saveable.doSave(null);
+		}
+		
 		if ((selection == null || selection.isEmpty()) && fCurrentPane != null){
 			fCurrentPane.display(selection);
+			if (clean) {
+				fireDirty();
+			}
 			return;
 		}
 		
@@ -90,6 +110,9 @@ public class DetailPaneProxy {
 		// Don't change anything if the preferred pane is the current pane
 		if (fCurrentPane != null && preferredPaneID != null && preferredPaneID.equals(fCurrentPane.getID())){
 			fCurrentPane.display(selection);
+			if (clean) {
+				fireDirty();
+			}
 			return;
 		}
 		
@@ -97,7 +120,20 @@ public class DetailPaneProxy {
 		
 		// Inform the container that a new detail pane is being used
 		fParentContainer.paneChanged(preferredPaneID);
+		if (clean) {
+			fireDirty();
+		}
 
+	}
+	
+	/**
+	 * Fires dirty property change.
+	 */
+	private void fireDirty() {
+		Object[] listeners = fListeners.getListeners();
+		for (int i = 0; i < listeners.length; i++) {
+			((IPropertyListener)listeners[i]).propertyChanged(this, PROP_DIRTY);
+		}
 	}
 	
 	/**
@@ -162,6 +198,13 @@ public class DetailPaneProxy {
 			if (fCurrentPane != null){
 				final IWorkbenchPartSite workbenchPartSite = fParentContainer.getWorkbenchPartSite();
 				fCurrentPane.init(workbenchPartSite);
+				IDetailPane3 saveable = getSaveable();
+				if (saveable != null) {
+					Object[] listeners = fListeners.getListeners();
+					for (int i = 0; i < listeners.length; i++) {
+						saveable.addPropertyListener((IPropertyListener) listeners[i]);
+					}
+				}
 				fCurrentControl = fCurrentPane.createControl(fParentContainer.getParentComposite());
 				if (fCurrentControl != null){
 					fParentContainer.getParentComposite().layout(true);
@@ -225,5 +268,85 @@ public class DetailPaneProxy {
 		fCurrentControl = errorLabel;
 		fParentContainer.getParentComposite().layout();
 	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSave(org.eclipse.core.runtime.IProgressMonitor)
+	 */
+	public void doSave(IProgressMonitor monitor) {
+		ISaveablePart saveable = getSaveable();
+		if (saveable != null) {
+			saveable.doSave(monitor);
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#doSaveAs()
+	 */
+	public void doSaveAs() {
+		ISaveablePart saveable = getSaveable();
+		if (saveable != null) {
+			saveable.doSaveAs();
+		}
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isDirty()
+	 */
+	public boolean isDirty() {
+		ISaveablePart saveable = getSaveable();
+		if (saveable != null) {
+			return saveable.isDirty();
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveAsAllowed()
+	 */
+	public boolean isSaveAsAllowed() {
+		ISaveablePart saveable = getSaveable();
+		if (saveable != null) {
+			return saveable.isSaveAsAllowed();
+		}
+		return false;
+	}
+
+	/* (non-Javadoc)
+	 * @see org.eclipse.ui.ISaveablePart#isSaveOnCloseNeeded()
+	 */
+	public boolean isSaveOnCloseNeeded() {
+		ISaveablePart saveable = getSaveable();
+		if (saveable != null) {
+			return saveable.isSaveOnCloseNeeded();
+		}
+		return false;
+	}
 	
+	/**
+	 * Returns the active saveable part or <code>null</code> if none.
+	 * 
+	 * @return saveable part or <code>null</code>
+	 */
+	IDetailPane3 getSaveable() {
+		if (fCurrentPane instanceof IDetailPane3) {
+			return (IDetailPane3) fCurrentPane;
+		}
+		return null;
+	}
+	
+	public void addProperyListener(IPropertyListener listener) {
+		fListeners.add(listener);
+		IDetailPane3 saveable = getSaveable();
+		if (saveable != null) {
+			saveable.addPropertyListener(listener);
+		}
+	}
+	
+	public void removePropertyListener(IPropertyListener listener) {
+		fListeners.remove(listener);
+		IDetailPane3 saveable = getSaveable();
+		if (saveable != null) {
+			saveable.removePropertyListener(listener);
+		}
+	}
 }
