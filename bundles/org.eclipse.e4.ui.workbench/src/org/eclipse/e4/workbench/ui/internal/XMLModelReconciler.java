@@ -328,9 +328,13 @@ public class XMLModelReconciler extends ModelReconciler {
 				if (isUnset(node)) {
 					ModelDelta delta = new EMFModelDeltaUnset(eObject, feature);
 					deltas.add(delta);
-				} else if (isSingleReference(featureName)) {
-					ModelDelta delta = createSingleReferenceDelta(deltas, references, eObject,
+				} else if (isDirectReference(featureName)) {
+					ModelDelta delta = createDirectReferenceDelta(deltas, references, eObject,
 							feature, node);
+					deltas.add(delta);
+				} else if (isIndirectReference(featureName)) {
+					ModelDelta delta = createIndirectReferenceDelta(references, eObject, feature,
+							node);
 					deltas.add(delta);
 				} else {
 					ModelDelta delta = createAttributeDelta(eObject, feature, node, featureName);
@@ -340,7 +344,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 	}
 
-	private ModelDelta createSingleReferenceDelta(Collection<ModelDelta> deltas,
+	private ModelDelta createDirectReferenceDelta(Collection<ModelDelta> deltas,
 			List<Object> references, EObject eObject, EStructuralFeature feature, Element node) {
 		NodeList referencedIds = (NodeList) node;
 		Element reference = (Element) referencedIds.item(0);
@@ -353,6 +357,35 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		return new EMFModelDeltaSet(eObject, feature, match);
+	}
+
+	private ModelDelta createIndirectReferenceDelta(List<Object> references, EObject eObject,
+			EStructuralFeature feature, Element node) {
+		NodeList referencedIds = (NodeList) node;
+		Element reference = (Element) referencedIds.item(0);
+		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+
+		Object match = findReference(references, referenceId);
+		if (match == null) {
+			NodeList list = (NodeList) reference;
+			ModelDelta delta = createDelayedDelta(eObject, feature, list);
+			if (delta != null) {
+				return delta;
+			}
+		}
+
+		return new EMFModelDeltaSet(eObject, feature, match);
+	}
+
+	private ModelDelta createDelayedDelta(EObject object, EStructuralFeature feature, NodeList list) {
+		for (int i = 0; i < list.getLength(); i++) {
+			Element e = (Element) list.item(i);
+			if (e.getNodeName().equals(APPLICATIONELEMENT_ID_ATTNAME)) {
+				String referenceId = e.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+				return new EMFModelDeltaDelayedSet(object, feature, rootObject, referenceId);
+			}
+		}
+		return null;
 	}
 
 	public static List<?> threeWayMerge(List<?> originalReferences, List<?> userReferences,
@@ -565,15 +598,9 @@ public class XMLModelReconciler extends ModelReconciler {
 						NodeList list = (NodeList) item;
 						list = (NodeList) list.item(0);
 						if (list != null) {
-							for (int j = 0; j < list.getLength(); j++) {
-								Element e = (Element) list.item(j);
-								if (e.getNodeName().equals(APPLICATIONELEMENT_ID_ATTNAME)) {
-									String s = e.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-									ModelDelta delta = new EMFModelDeltaDelayedSet(object,
-											attributeFeature, rootObject, s);
-									deltas.add(delta);
-									break;
-								}
+							ModelDelta delta = createDelayedDelta(object, attributeFeature, list);
+							if (delta != null) {
+								deltas.add(delta);
 							}
 						}
 					} else {

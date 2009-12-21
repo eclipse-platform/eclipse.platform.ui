@@ -762,6 +762,41 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(1, window.getBindings().size());
 	}
 
+	public void testElementContainer_ActiveChild_New() {
+		MApplication application = createApplication();
+		MWindow window1 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window1);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window2);
+		application.setActiveChild(window2);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window1 = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertNull(application.getActiveChild());
+		assertEquals(window1, application.getChildren().get(0));
+
+		applyAll(deltas);
+
+		assertEquals(2, application.getChildren().size());
+
+		assertEquals(window1, application.getChildren().get(0));
+		assertNotNull(application.getChildren().get(1));
+		assertEquals(application.getChildren().get(1), application
+				.getActiveChild());
+	}
+
 	public void testElementContainer_ActiveChild_Removed() {
 		MApplication application = createApplication();
 		MWindow window1 = MApplicationFactory.eINSTANCE.createWindow();
