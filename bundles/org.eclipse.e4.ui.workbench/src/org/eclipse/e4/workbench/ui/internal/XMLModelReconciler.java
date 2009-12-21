@@ -554,14 +554,16 @@ public class XMLModelReconciler extends ModelReconciler {
 					if (objectReference == null) {
 						NodeList list = (NodeList) item;
 						list = (NodeList) list.item(0);
-						for (int j = 0; j < list.getLength(); j++) {
-							Element e = (Element) list.item(j);
-							if (e.getNodeName().equals(APPLICATIONELEMENT_ID_ATTNAME)) {
-								String s = e.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-								ModelDelta delta = new EMFModelDeltaDelayedSet(object,
-										attributeFeature, rootObject, s);
-								deltas.add(delta);
-								break;
+						if (list != null) {
+							for (int j = 0; j < list.getLength(); j++) {
+								Element e = (Element) list.item(j);
+								if (e.getNodeName().equals(APPLICATIONELEMENT_ID_ATTNAME)) {
+									String s = e.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+									ModelDelta delta = new EMFModelDeltaDelayedSet(object,
+											attributeFeature, rootObject, s);
+									deltas.add(delta);
+									break;
+								}
 							}
 						}
 					} else {
@@ -576,7 +578,9 @@ public class XMLModelReconciler extends ModelReconciler {
 					for (int j = 0; j < objectReferenceNodes.getLength(); j++) {
 						Node node = objectReferenceNodes.item(j);
 						Object objectReference = getReference(deltas, (Element) node, references);
-						objectReferences.add(objectReference);
+						if (objectReference != null) {
+							objectReferences.add(objectReference);
+						}
 					}
 
 					IDelta delta = new EMFModelDeltaSet(object, attributeFeature, objectReferences);

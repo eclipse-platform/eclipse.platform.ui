@@ -749,6 +749,87 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(1, window.getBindings().size());
 	}
 
+	public void testElementContainer_ActiveChild_Removed() {
+		MApplication application = createApplication();
+		MWindow window1 = MApplicationFactory.eINSTANCE.createWindow();
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window1);
+		application.getChildren().add(window2);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		application.setActiveChild(window2);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window1 = application.getChildren().get(0);
+
+		application.getChildren().remove(1);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertNull(application.getActiveChild());
+		assertEquals(window1, application.getChildren().get(0));
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertNull(application.getActiveChild());
+		assertEquals(window1, application.getChildren().get(0));
+	}
+
+	public void testElementContainer_ActiveChild_Removed2() {
+		MApplication application = createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack partStack1 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack1);
+
+		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		partStack1.getChildren().add(part1);
+		partStack1.getChildren().add(part2);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPartStack partStack2 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack2);
+
+		partStack2.getChildren().add(part2);
+		partStack2.setActiveChild(part2);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		partStack1 = (MPartStack) window.getChildren().get(0);
+		part1 = partStack1.getChildren().get(0);
+
+		partStack1.getChildren().remove(1);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(partStack1, window.getChildren().get(0));
+
+		assertEquals(1, partStack1.getChildren().size());
+		assertEquals(part1, partStack1.getChildren().get(0));
+
+		applyAll(deltas);
+	}
+
 	/**
 	 * Tests that the changes pertaining to multiple key bindings that map to
 	 * the same command gets applied properly.
