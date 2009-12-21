@@ -482,11 +482,11 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 	
 	private void endMatcherElement(String elementName) {
 		if (elementName.equals(MATCHER)) {
-			// Pop off the filter description
-			FileInfoMatcherDescription filter = (FileInfoMatcherDescription) objectStack.pop();
+			// Pop off an array (Object[2]) containing the matcher id and arguments.
+			Object[] matcher = (Object[]) objectStack.pop();
 			// Make sure that you have something reasonable
-			String id = filter.getId();
-			// arguments can be null
+			String id = (String) matcher[0];
+			// the id can't be null
 			if (id == null) {
 				parseProblem(NLS.bind(Messages.projRead_badFilterID, id));
 				return;
@@ -494,15 +494,15 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 			if (objectStack.peek() instanceof ArrayList) {
 				state = S_MATCHER_ARGUMENTS;
-				// The HashMap of filtered resources is the next thing on the stack
+				// The ArrayList of matchers is the next thing on the stack
 				ArrayList list = ((ArrayList) objectStack.peek());
-				list.add(filter);
+				list.add(new FileInfoMatcherDescription((String) matcher[0], matcher[1]));
 			}
-			
+
 			if (objectStack.peek() instanceof FilterDescription) {
 				state = S_FILTER;
 				FilterDescription d = ((FilterDescription) objectStack.peek());
-				d.setFileInfoMatcherDescription(filter);
+				d.setFileInfoMatcherDescription(new FileInfoMatcherDescription((String) matcher[0], matcher[1]));
 			}
 		}
 	}
@@ -621,14 +621,14 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	private void endMatcherID(String elementName) {
 		if (elementName.equals(ID)) {
-			// A filter is an String.
+			// The matcher id is String.
 			String newID = charBuffer.toString().trim();
-			// objectStack has a FilterDescription on it. Set the type on this FilterDescription.
-			String oldID = ((FileInfoMatcherDescription) objectStack.peek()).getId();
+			// objectStack has an array (Object[2]) on it for the matcher id and arguments.
+			String oldID = (String)((Object[])objectStack.peek())[0];
 			if (oldID != null) {
 				parseProblem(NLS.bind(Messages.projRead_badID, oldID, newID));
 			} else {
-				((FileInfoMatcherDescription) objectStack.peek()).setId(newID);
+				((Object[]) objectStack.peek())[0] = newID;
 			}
 			state = S_MATCHER;
 		}
@@ -636,17 +636,18 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	private void endMatcherArguments(String elementName) {
 		if (elementName.equals(ARGUMENTS)) {
-			ArrayList filters = (ArrayList) objectStack.pop();
+			ArrayList matchers = (ArrayList) objectStack.pop();
 			Object newArguments = charBuffer.toString();
 			
-			if (filters.size() > 0)
-				newArguments = filters.toArray(new IFileInfoMatcherDescription[filters.size()]);
-			
-			Object oldArguments = ((FileInfoMatcherDescription) objectStack.peek()).getArguments();
+			if (matchers.size() > 0)
+				newArguments = matchers.toArray(new FileInfoMatcherDescription[matchers.size()]);
+
+			// objectStack has an array (Object[2]) on it for the matcher id and arguments.
+			String oldArguments = (String)((Object[])objectStack.peek())[1];
 			if (oldArguments != null) {
 				parseProblem(NLS.bind(Messages.projRead_badArguments, oldArguments, newArguments));
 			} else
-				((FileInfoMatcherDescription) objectStack.peek()).setArguments(newArguments);
+				((Object[]) objectStack.peek())[1] = newArguments;
 			state = S_MATCHER;
 		}
 	}
@@ -1024,7 +1025,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 					state = S_FILTER_TYPE;
 				} else if (elementName.equals(MATCHER)) {
 					state = S_MATCHER;
-					objectStack.push(new FileInfoMatcherDescription());
+					// Push an array for the matcher id and arguments
+					objectStack.push(new Object[2]);
 				}
 				break;
 			case S_MATCHER:
@@ -1038,9 +1040,8 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 			case S_MATCHER_ARGUMENTS:
 				if (elementName.equals(MATCHER)) {
 					state = S_MATCHER;
-					// Push place holders for the name, type, id and arguments of
-					// this filter.
-					objectStack.push(new FileInfoMatcherDescription());
+					// Push an array for the matcher id and arguments
+					objectStack.push(new Object[2]);
 				}
 				break;
 			case S_VARIABLE:

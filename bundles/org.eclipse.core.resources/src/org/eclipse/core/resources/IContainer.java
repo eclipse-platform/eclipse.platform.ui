@@ -468,13 +468,13 @@ public interface IContainer extends IResource, IAdaptable {
 	public void setDefaultCharset(String charset, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Adds a new filter matching the arguments to this container's filter list  
+	 * Adds a new filter to this container.
 	 * 
 	 * @param type (IResourceFilter.INCLUDE_ONLY or IResourceFilter.EXCLUDE_ALL) and/or IResourceFilter.INHERITABLE
 	 * @param updateFlags bit-wise or of update flag constants
 	 *   ({@link IResource#BACKGROUND_REFRESH})
-	 * @param monitor a progress monitor, or <code>null</code> if progress
-	 *    reporting is not desired
+	 * @param monitor a progress monitor, or <code>null</code> if progress reporting is not desired
+	 * @return the description of the added filter
 	 * @exception CoreException if this filter could not be added. Reasons include:
 	 * <ul>
 	 * <li> This resource is not a folder.</li>
@@ -486,7 +486,7 @@ public interface IContainer extends IResource, IAdaptable {
 	 * 
 	 * @since 3.6
 	 */
-	public IResourceFilterDescription createFilter(int type, IFileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
+	public IResourceFilterDescription createFilter(int type, FileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
 	 * Remove the filter matching the arguments from this container's filter list  
@@ -509,7 +509,7 @@ public interface IContainer extends IResource, IAdaptable {
 	public void removeFilter(IResourceFilterDescription filterDescription, int updateFlags, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Retrieve the filters for this container.
+	 * Retrieve all filters on this container.
 	 * If no filters exist for this resource, an empty array is returned.
 	 * 
 	 * @return an array of filters

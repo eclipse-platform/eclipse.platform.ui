@@ -12,7 +12,9 @@
 package org.eclipse.core.resources;
 
 /**
- * Interface for resource filters.  A filter determines which file system
+ * A description of a resource filter.
+ * 
+ * A filter determines which file system
  * objects will be visible when a local refresh is performed for an IContainer.
  *
  * @see IContainer#getFilters()
@@ -70,5 +72,5 @@ public interface IResourceFilterDescription {
 	 */
 	public int getType();
 
-	public IFileInfoMatcherDescription getFileInfoMatcherDescription();
+	public FileInfoMatcherDescription getFileInfoMatcherDescription();
 }

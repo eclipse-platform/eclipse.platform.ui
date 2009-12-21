@@ -17,13 +17,6 @@
  *******************************************************************************/
 package org.eclipse.core.internal.resources;
 
-import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
-
-import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
-import org.eclipse.core.runtime.OperationCanceledException;
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
@@ -713,9 +706,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	}
 
 	/**
-	 * @see IContainer#createFilter(int, IFileInfoMatcherDescription, int, IProgressMonitor)
+	 * @see IContainer#createFilter(int, FileInfoMatcherDescription, int, IProgressMonitor)
 	 */
-	public IResourceFilterDescription createFilter(int type, IFileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
+	public IResourceFilterDescription createFilter(int type, FileInfoMatcherDescription matcherDescription, int updateFlags, IProgressMonitor monitor) throws CoreException {
 		Assert.isNotNull(getProject());
 		monitor = Policy.monitorFor(monitor);
 		FilterDescription filter = null;

@@ -30,7 +30,7 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 	 */
 	private int type;
 
-	private IFileInfoMatcherDescription matcherDescription;
+	private FileInfoMatcherDescription matcherDescription;
 
 	/**
 	 * The resource that this filter is applied to
@@ -41,7 +41,7 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 		this.type = -1;
 	}
 
-	public FilterDescription(IResource resource, int type, IFileInfoMatcherDescription matcherDescription) {
+	public FilterDescription(IResource resource, int type, FileInfoMatcherDescription matcherDescription) {
 		super();
 		Assert.isNotNull(resource);
 		this.type = type;
@@ -88,11 +88,11 @@ public class FilterDescription implements IResourceFilterDescription, Comparable
 		return resource;
 	}
 
-	public IFileInfoMatcherDescription getFileInfoMatcherDescription() {
+	public FileInfoMatcherDescription getFileInfoMatcherDescription() {
 		return matcherDescription;
 	}
 
-	public void setFileInfoMatcherDescription(IFileInfoMatcherDescription matcherDescription) {
+	public void setFileInfoMatcherDescription(FileInfoMatcherDescription matcherDescription) {
 		this.matcherDescription = matcherDescription;
 	}
 

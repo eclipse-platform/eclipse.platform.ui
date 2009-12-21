@@ -11,13 +11,20 @@
 package org.eclipse.core.resources;
 
 /**
+ * A description of a file info matcher.
  * @since 3.6
  */
-public final class FileInfoMatcherDescription implements IFileInfoMatcherDescription {
+public final class FileInfoMatcherDescription {
 
 	private String id;
 
 	private Object arguments;
+
+	public FileInfoMatcherDescription(String id, Object arguments) {
+		super();
+		this.id = id;
+		this.arguments = arguments;
+	}
 
 	public Object getArguments() {
 		return arguments;
@@ -25,14 +32,6 @@ public final class FileInfoMatcherDescription implements IFileInfoMatcherDescrip
 
 	public String getId() {
 		return id;
-	}
-
-	public void setArguments(Object arguments) {
-		this.arguments = arguments;
-	}
-
-	public void setId(String id) {
-		this.id = id;
 	}
 
 	/* (non-Javadoc)

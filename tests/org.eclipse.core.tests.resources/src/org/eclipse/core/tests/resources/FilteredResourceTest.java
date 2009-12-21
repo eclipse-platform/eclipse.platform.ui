@@ -111,9 +111,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 */
 	public void testCreateFilterOnFolder() {
 		try {
-			IFileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription();
-			matcherDescription.setId(REGEX_FILTER_PROVIDER);
-			matcherDescription.setArguments("foo");
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo");
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS, matcherDescription, 0, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0");
@@ -166,9 +164,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 */
 	public void testCreateFilterOnProject() {
 		try {
-			IFileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription();
-			matcherDescription.setId(REGEX_FILTER_PROVIDER);
-			matcherDescription.setArguments("foo");
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo");
 			existingProject.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FOLDERS, matcherDescription, 0, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0");
@@ -237,9 +233,7 @@ public class FilteredResourceTest extends ResourceTest {
 		}
 
 		try {
-			IFileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription();
-			matcherDescription.setId(REGEX_FILTER_PROVIDER);
-			matcherDescription.setArguments("foo");
+			FileInfoMatcherDescription matcherDescription = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo");
 			folder.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES, matcherDescription, 0, getMonitor());
 		} catch (CoreException e) {
 			fail("1.0");
@@ -301,13 +295,8 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("0.5");
 		}
 
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*\\.cpp");
-
-		IFileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription();
-		matcherDescription2.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription2.setArguments(".*\\.h");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.cpp");
+		FileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.h");
 
 		IResourceFilterDescription filterDescription2 = null;
 
@@ -543,13 +532,8 @@ public class FilteredResourceTest extends ResourceTest {
 			fail("0.5");
 		}
 
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*\\.h");
-
-		IFileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription();
-		matcherDescription2.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription2.setArguments(".*\\.cpp");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.h");
+		FileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.cpp");
 
 		try {
 			folder.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -647,9 +631,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertTrue("0.2", !folder2.exists());
 		assertTrue("0.3", parentLoc.isPrefixOf(childLoc));
 
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*");
 		IResourceFilterDescription filterDescription1 = null;
 
 		try {
@@ -794,9 +776,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertTrue("0.2", !folder2.exists());
 		assertTrue("0.3", parentLoc.isPrefixOf(childLoc));
 
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*");
 		IResourceFilterDescription filterDescription1 = null;
 
 		try {
@@ -901,9 +881,7 @@ public class FilteredResourceTest extends ResourceTest {
 
 		assertTrue("0.1", !folder.exists());
 
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo");
 
 		try {
 			folder.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -963,9 +941,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation and removal of a simple filter on a folder.
 	 */
 	public void testCreateAndRemoveFilterOnFolder() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo");
 		IResourceFilterDescription filterDescription = null;
 
 		try {
@@ -1033,9 +1009,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation and removal of a simple filter on a folder.
 	 */
 	public void testCreateAndRemoveFilterOnFolderWithoutClosingProject() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo");
 		IResourceFilterDescription filterDescription = null;
 
 		try {
@@ -1087,9 +1061,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation of the include-only filter.
 	 */
 	public void testIncludeOnlyFilter() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*\\.c");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.c");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
@@ -1121,9 +1093,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.3", members[1].getType(), IResource.FILE);
 		assertEquals("2.4", members[1].getName(), "foo.c");
 
-		IFileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription();
-		matcherDescription2.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription2.setArguments(".*\\.c");
+		FileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.c");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS, matcherDescription2, 0, getMonitor());
@@ -1154,9 +1124,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation of the exclude-all filter.
 	 */
 	public void testExcludeAllFilter() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*\\.c");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.c");
 
 		try {
 			existingFolderInExistingFolder.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
@@ -1189,9 +1157,7 @@ public class FilteredResourceTest extends ResourceTest {
 		assertEquals("2.3", members[1].getType(), IResource.FILE);
 		assertEquals("2.4", members[1].getName(), "foo.h");
 
-		IFileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription();
-		matcherDescription2.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription2.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingFolder.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS, matcherDescription2, 0, getMonitor());
@@ -1220,13 +1186,8 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation of the mixed include-only exclude-all filter.
 	 */
 	public void testMixedFilter() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*\\.c");
-
-		IFileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription();
-		matcherDescription2.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription2.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.c");
+		FileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.FILES | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
@@ -1263,13 +1224,8 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation of inheritable filter.
 	 */
 	public void testInheritedFilter() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments(".*\\.c");
-
-		IFileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription();
-		matcherDescription2.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription2.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.c");
+		FileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingProject.createFilter(IResourceFilterDescription.INCLUDE_ONLY | IResourceFilterDescription.INHERITABLE | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -1306,9 +1262,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation of FOLDER filter.
 	 */
 	public void testFolderOnlyFilters() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingFolder.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FOLDERS, matcherDescription1, 0, getMonitor());
@@ -1342,9 +1296,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests the creation of FILE filter.
 	 */
 	public void testFileOnlyFilters() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingFolder.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -1378,9 +1330,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests moving a folder with filters.
 	 */
 	public void testMoveFolderWithFilterToAnotherProject() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -1433,9 +1383,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests copying a folder with filters.
 	 */
 	public void testCopyFolderWithFilterToAnotherProject() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -1492,9 +1440,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests copying a folder with filters to another folder.
 	 */
 	public void testCopyFolderWithFilterToAnotherFolder() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -1553,9 +1499,7 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests moving a folder with filters to another folder.
 	 */
 	public void testMoveFolderWithFilterToAnotherFolder() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo.*");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());
@@ -1610,13 +1554,8 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Tests deleting a folder with filters.
 	 */
 	public void testDeleteFolderWithFilterToAnotherFolder() {
-		IFileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription();
-		matcherDescription1.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription1.setArguments("foo.*");
-
-		IFileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription();
-		matcherDescription2.setId(REGEX_FILTER_PROVIDER);
-		matcherDescription2.setArguments(".*\\.c");
+		FileInfoMatcherDescription matcherDescription1 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, "foo.*");
+		FileInfoMatcherDescription matcherDescription2 = new FileInfoMatcherDescription(REGEX_FILTER_PROVIDER, ".*\\.c");
 
 		try {
 			existingFolderInExistingProject.createFilter(IResourceFilterDescription.EXCLUDE_ALL | IResourceFilterDescription.FILES, matcherDescription1, 0, getMonitor());

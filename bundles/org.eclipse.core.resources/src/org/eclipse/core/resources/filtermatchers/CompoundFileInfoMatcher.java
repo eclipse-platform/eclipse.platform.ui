@@ -24,7 +24,7 @@ public abstract class CompoundFileInfoMatcher extends AbstractFileInfoMatcher {
 	protected AbstractFileInfoMatcher[] filterTypes;
 
 	protected AbstractFileInfoMatcher instantiate(IProject project,
-			IFileInfoMatcherDescription filter) {
+			FileInfoMatcherDescription filter) {
 		IFilterMatcherDescriptor desc = project.getWorkspace().getFilterMatcherDescriptor(
 				filter.getId());
 		if (desc != null) {
@@ -44,7 +44,7 @@ public abstract class CompoundFileInfoMatcher extends AbstractFileInfoMatcher {
 	 * .core.resources.IProject, java.lang.Object)
 	 */
 	public final void initialize(IProject project, Object arguments) {
-		IFileInfoMatcherDescription[] filters = (IFileInfoMatcherDescription[]) arguments;
+		FileInfoMatcherDescription[] filters = (FileInfoMatcherDescription[]) arguments;
 		filterTypes = new AbstractFileInfoMatcher[filters != null ? filters.length
 				: 0];
 		for (int i = 0; i < filterTypes.length; i++)

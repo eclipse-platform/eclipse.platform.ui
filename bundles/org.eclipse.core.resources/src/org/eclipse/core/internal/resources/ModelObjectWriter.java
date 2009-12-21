@@ -101,15 +101,15 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		writer.endTag(FILTER);
 	}
 		
-	protected void write(IFileInfoMatcherDescription description, XMLWriter writer) {
+	protected void write(FileInfoMatcherDescription description, XMLWriter writer) {
 		writer.startTag(MATCHER, null);
 		writer.printSimpleTag(ID, description.getId());
 		if (description.getArguments() != null) {
 			if (description.getArguments() instanceof String) {
 				writer.printSimpleTag(ARGUMENTS, description.getArguments());
-			} else if (description.getArguments() instanceof IFileInfoMatcherDescription[]) {
+			} else if (description.getArguments() instanceof FileInfoMatcherDescription[]) {
 				writer.startTag(ARGUMENTS , null);
-				IFileInfoMatcherDescription[] array = (IFileInfoMatcherDescription[]) description.getArguments();
+				FileInfoMatcherDescription[] array = (FileInfoMatcherDescription[]) description.getArguments();
 				for (int i = 0; i < array.length; i++) {
 					write(array[i], writer);
 				}
