@@ -388,79 +388,89 @@ public class XMLModelReconciler extends ModelReconciler {
 			return collectedReferences;
 		}
 
-		// if (true) {
-		// List<?> refs = new ArrayList<Object>(userReferences);
-		// List<IOperation> ops = new ArrayList<IOperation>();
-		//
-		// for (int i = 0; i < currentReferences.size(); i++) {
-		// Object current = currentReferences.get(i);
-		//
-		// if (userReferences.indexOf(current) == -1) {
-		// AddOperation op = new AddOperation(refs, current, i);
-		// ops.add(op);
-		// }
-		// }
-		//
-		// for (IOperation op : ops) {
-		// if (op instanceof AddOperation) {
-		// op.perform();
-		// }
-		// }
-		//
-		// for (IOperation op : ops) {
-		// if (op instanceof RemoveOperation) {
-		// op.perform();
-		// }
-		// }
-		//
-		// return refs;
-		// }
+		List<Position> positions = new ArrayList<Position>();
 
-		// List<?> newRefs = new ArrayList<Object>(currentReferences);
-		// newRefs.removeAll(originalReferences);
-		//
-		// List<?> refs = new ArrayList<Object>(currentReferences);
-		// List<IOperation> ops = new ArrayList<IOperation>();
-		//
-		// for (int i = 0; i < currentReferences.size(); i++) {
-		// Object current = currentReferences.get(i);
-		//
-		// if (userReferences.indexOf(current) == -1 && !newRefs.contains(current)) {
-		// IOperation op = new RemoveOperation(refs, current);
-		// ops.add(op);
-		// }
-		// }
-		//
-		// for (int i = 0; i < userReferences.size(); i++) {
-		// Object user = userReferences.get(i);
-		// if (currentReferences.indexOf(user) == -1) {
-		// AddOperation op = new AddOperation(refs, user, i);
-		// ops.add(op);
-		// }
-		// }
-		//
-		// for (IOperation op : ops) {
-		// if (op instanceof AddOperation) {
-		// op.perform();
-		// }
-		// }
-		//
-		// for (IOperation op : ops) {
-		// if (op instanceof RemoveOperation) {
-		// op.perform();
-		// }
-		// }
-		//
-		// if (true) {
-		// return refs;
-		// }
+		for (int i = 0; i < userReferences.size(); i++) {
+			Object user = userReferences.get(i);
 
-		List<Object> collectedReferences2 = new ArrayList<Object>(currentReferences);
-		collectedReferences2.removeAll(originalReferences);
+			Position p = getPosition(originalReferences, userReferences, currentReferences, user, i);
+			if (p != null) {
+				positions.add(p);
+			}
+		}
 
-		List<Object> collectedReferences = new ArrayList<Object>(userReferences);
-		collectedReferences.addAll(collectedReferences2);
-		return collectedReferences;
+		List<Object> collectedRefs = new ArrayList<Object>(currentReferences);
+
+		for (Position position : positions) {
+			Object after = position.getAfter();
+			if (after != null) {
+				int index = currentReferences.indexOf(after);
+				collectedRefs.add(index + 1, position.getObject());
+			}
+
+			Object before = position.getBefore();
+			if (before != null) {
+				int index = currentReferences.indexOf(before);
+				collectedRefs.add(index, position.getObject());
+			}
+		}
+
+		return collectedRefs;
+	}
+
+	private static Position getPosition(List<?> originalReferences, List<?> userReferences,
+			List<?> currentReferences, Object object, int originalIndex) {
+		int index = originalReferences.indexOf(object);
+		if (index == -1) {
+			Object after = null;
+			for (int i = originalIndex - 1; i > -1; i--) {
+				Object afterCandidate = userReferences.get(i);
+				int afterIndex = currentReferences.indexOf(afterCandidate);
+				if (afterIndex != -1) {
+					after = afterCandidate;
+					break;
+				}
+			}
+
+			Object before = null;
+			for (int i = originalIndex + 1; i < userReferences.size(); i++) {
+				Object beforeCandidate = userReferences.get(i);
+				int beforeIndex = currentReferences.indexOf(beforeCandidate);
+				if (beforeIndex != -1) {
+					before = beforeCandidate;
+					break;
+				}
+			}
+
+			return new Position(object, after, before);
+		}
+		return null;
+	}
+
+	static class Position {
+
+		private final Object object;
+		private final Object after;
+		private final Object before;
+
+		Position(Object object, Object after, Object before) {
+			this.object = object;
+			this.after = after;
+			this.before = before;
+		}
+
+		public Object getObject() {
+			return object;
+		}
+
+		public Object getBefore() {
+			return before;
+		}
+
+		public Object getAfter() {
+			return after;
+		}
+
 	}
 
 	private ModelDelta createMultiReferenceDelta(Collection<ModelDelta> deltas,

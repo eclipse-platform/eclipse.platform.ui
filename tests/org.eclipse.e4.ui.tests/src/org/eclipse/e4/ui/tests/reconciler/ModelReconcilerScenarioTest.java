@@ -17,6 +17,8 @@ import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
+import org.eclipse.e4.ui.model.application.MMenu;
+import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -449,6 +451,17 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(part1, stack2.getChildren().get(0));
 	}
 
+	/**
+	 * <ol>
+	 * <li>The application has a window with a stack that houses three parts, A,
+	 * B, and C.</li>
+	 * <li>The user creates a new stack to the right of the original stack and
+	 * places part A in it.</li>
+	 * <li>The new application has a window with two stacks, the new stack in
+	 * front of the original housing part C, and the original stack now housing
+	 * parts A and B only.</li>
+	 * </ol>
+	 */
 	private void testPartStack_AdditionInBack_ApplicationHasNewStackInFront(
 			boolean performMoveFirst) {
 		MApplication application = createApplication();
@@ -517,8 +530,8 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
 		assertEquals(3, window.getChildren().size());
 
-		assertEquals(stack1, window.getChildren().get(0));
-		assertEquals(stack3, window.getChildren().get(2));
+		assertEquals(stack3, window.getChildren().get(0));
+		assertEquals(stack1, window.getChildren().get(1));
 
 		assertEquals(1, stack1.getChildren().size());
 		assertEquals(partB, stack1.getChildren().get(0));
@@ -526,7 +539,7 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(1, stack3.getChildren().size());
 		assertEquals(partC, stack3.getChildren().get(0));
 
-		stack2 = (MPartStack) window.getChildren().get(1);
+		stack2 = (MPartStack) window.getChildren().get(2);
 		assertEquals(partA, stack2.getChildren().get(0));
 	}
 
@@ -913,6 +926,73 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(2, partStack2.getChildren().size());
 		assertEquals(part3, partStack2.getChildren().get(0));
 		assertEquals(part2, partStack2.getChildren().get(1));
+	}
+
+	public void testMenu_MenuOrdering() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
+		window.setMainMenu(menu);
+
+		MMenuItem fileMenuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		fileMenuItem.setLabel("File");
+
+		MMenuItem editMenuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		editMenuItem.setLabel("Edit");
+
+		MMenuItem helpMenuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		helpMenuItem.setLabel("Help");
+
+		menu.getChildren().add(fileMenuItem);
+		menu.getChildren().add(editMenuItem);
+		menu.getChildren().add(helpMenuItem);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MMenuItem cvsMenuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		cvsMenuItem.setLabel("CVS");
+		menu.getChildren().add(2, cvsMenuItem);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		menu = window.getMainMenu();
+		fileMenuItem = menu.getChildren().get(0);
+		editMenuItem = menu.getChildren().get(1);
+		helpMenuItem = menu.getChildren().get(2);
+
+		MMenuItem e4MenuItem = MApplicationFactory.eINSTANCE.createMenuItem();
+		e4MenuItem.setLabel("e4");
+		menu.getChildren().add(2, e4MenuItem);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+
+		assertEquals(4, menu.getChildren().size());
+		assertEquals(fileMenuItem, menu.getChildren().get(0));
+		assertEquals(editMenuItem, menu.getChildren().get(1));
+		assertEquals(e4MenuItem, menu.getChildren().get(2));
+		assertEquals(helpMenuItem, menu.getChildren().get(3));
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+		assertEquals(menu, window.getMainMenu());
+
+		assertEquals(5, menu.getChildren().size());
+		assertEquals(fileMenuItem, menu.getChildren().get(0));
+		assertEquals(editMenuItem, menu.getChildren().get(1));
+		assertEquals("CVS", menu.getChildren().get(2).getLabel());
+		assertEquals(e4MenuItem, menu.getChildren().get(3));
+		assertEquals(helpMenuItem, menu.getChildren().get(4));
 	}
 
 	/**
