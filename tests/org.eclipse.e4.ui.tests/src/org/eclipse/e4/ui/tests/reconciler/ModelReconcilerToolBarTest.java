@@ -15,16 +15,16 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
-import org.eclipse.e4.ui.model.application.MMenu;
-import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 
-public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
+public abstract class ModelReconcilerToolBarTest extends ModelReconcilerTest {
 
-	private void testPartMenu_Children_Add(MMenuItem menuItem) {
+	private void testToolBar_Children_Add(MToolItem toolItem) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -32,15 +32,15 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		part.getMenus().add(menu);
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		part.setToolbar(toolBar);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		menu.getChildren().add(menuItem);
+		toolBar.getChildren().add(toolItem);
 
 		Object state = reconciler.serialize();
 
@@ -48,34 +48,34 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 		window = application.getChildren().get(0);
 
 		part = (MPart) window.getChildren().get(0);
-		menu = part.getMenus().get(0);
+		toolBar = part.getToolbar();
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(0, menu.getChildren().size());
+		assertEquals(0, toolBar.getChildren().size());
 
 		applyAll(deltas);
 
-		assertEquals(1, menu.getChildren().size());
-		assertEquals(menuItem.getClass(), menu.getChildren().get(0).getClass());
+		assertEquals(1, toolBar.getChildren().size());
+		assertEquals(toolItem.getClass(), toolBar.getChildren().get(0)
+				.getClass());
 	}
 
-	public void testPartMenu_Children_Add_MenuItem() {
-		testPartMenu_Children_Add(MApplicationFactory.eINSTANCE
-				.createMenuItem());
+	public void testToolBar_Children_Add_ToolItem() {
+		testToolBar_Children_Add(MApplicationFactory.eINSTANCE.createToolItem());
 	}
 
-	public void testPartMenu_Children_Add_DirectMenuItem() {
-		testPartMenu_Children_Add(MApplicationFactory.eINSTANCE
-				.createDirectMenuItem());
+	public void testToolBar_Children_Add_DirectToolItem() {
+		testToolBar_Children_Add(MApplicationFactory.eINSTANCE
+				.createDirectToolItem());
 	}
 
-	public void testPartMenu_Children_Add_HandledMenuItem() {
-		testPartMenu_Children_Add(MApplicationFactory.eINSTANCE
-				.createHandledMenuItem());
+	public void testToolBar_Children_Add_HandledToolItem() {
+		testToolBar_Children_Add(MApplicationFactory.eINSTANCE
+				.createHandledToolItem());
 	}
 
-	public void testPartMenu_Children_Remove() {
+	public void testToolBar_Children_Remove() {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -83,37 +83,36 @@ public abstract class ModelReconcilerMenuTest extends ModelReconcilerTest {
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		window.getChildren().add(part);
 
-		MMenu menu = MApplicationFactory.eINSTANCE.createMenu();
-		part.getMenus().add(menu);
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		part.setToolbar(toolBar);
 
-		MMenuItem menuItem = MApplicationFactory.eINSTANCE.createMenuItem();
-		menu.getChildren().add(menuItem);
+		MToolItem toolItem = MApplicationFactory.eINSTANCE.createToolItem();
+		toolBar.getChildren().add(toolItem);
 
 		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		menu.getChildren().remove(0);
+		toolBar.getChildren().remove(0);
 
 		Object state = reconciler.serialize();
+		print(state);
 
 		application = createApplication();
 		window = application.getChildren().get(0);
+
 		part = (MPart) window.getChildren().get(0);
-
-		menu = part.getMenus().get(0);
-
-		menuItem = menu.getChildren().get(0);
+		toolBar = part.getToolbar();
+		toolItem = toolBar.getChildren().get(0);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(1, menu.getChildren().size());
-
-		assertEquals(menuItem, menu.getChildren().get(0));
+		assertEquals(1, toolBar.getChildren().size());
+		assertEquals(toolItem, toolBar.getChildren().get(0));
 
 		applyAll(deltas);
 
-		assertEquals(0, menu.getChildren().size());
+		assertEquals(0, toolBar.getChildren().size());
 	}
 }

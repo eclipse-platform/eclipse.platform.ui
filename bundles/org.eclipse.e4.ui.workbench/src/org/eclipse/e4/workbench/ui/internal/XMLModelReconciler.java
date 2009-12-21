@@ -25,8 +25,12 @@ import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MBindingContainer;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
@@ -38,6 +42,7 @@ import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.MToolBar;
+import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.MWindowTrim;
@@ -112,8 +117,15 @@ public class XMLModelReconciler extends ModelReconciler {
 		}
 
 		if (object instanceof MPart) {
-			for (Object child : ((MPart) object).getMenus()) {
+			MPart part = (MPart) object;
+
+			for (Object child : part.getMenus()) {
 				getReferences(references, child);
+			}
+
+			MToolBar toolBar = part.getToolbar();
+			if (toolBar != null) {
+				getReferences(references, toolBar);
 			}
 		}
 
@@ -554,8 +566,18 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createWindow();
 		} else if (type.equals(MToolBar.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createToolBar();
+		} else if (type.equals(MToolItem.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createToolItem();
+		} else if (type.equals(MDirectToolItem.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createDirectToolItem();
+		} else if (type.equals(MHandledToolItem.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createHandledToolItem();
 		} else if (type.equals(MMenuItem.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createMenuItem();
+		} else if (type.equals(MDirectMenuItem.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createDirectMenuItem();
+		} else if (type.equals(MHandledMenuItem.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createHandledMenuItem();
 		} else if (type.equals(MPartStack.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createPartStack();
 		} else if (type.equals(MPartSashContainer.class.getSimpleName())) {
