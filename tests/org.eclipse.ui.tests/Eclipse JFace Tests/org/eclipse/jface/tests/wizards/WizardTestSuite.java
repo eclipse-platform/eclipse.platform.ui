@@ -27,5 +27,6 @@ public class WizardTestSuite extends TestSuite {
     public WizardTestSuite() {
     	addTestSuite(ButtonAlignmentTest.class);
     	addTestSuite(WizardTest.class);
+    	addTestSuite(WizardProgressMonitorTest.class);
     }
 }
