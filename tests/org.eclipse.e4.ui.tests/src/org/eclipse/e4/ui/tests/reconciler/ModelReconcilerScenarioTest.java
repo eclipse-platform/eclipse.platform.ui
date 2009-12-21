@@ -828,6 +828,91 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(part1, partStack1.getChildren().get(0));
 
 		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(partStack1, window.getChildren().get(0));
+
+		assertEquals(1, partStack1.getChildren().size());
+		assertEquals(part1, partStack1.getChildren().get(0));
+
+		partStack2 = (MPartStack) window.getChildren().get(1);
+
+		assertEquals(0, partStack2.getChildren().size());
+		assertNull(partStack2.getActiveChild());
+	}
+
+	public void testElementContainer_Children_Move_IdenticalToUserChange() {
+		MApplication application = createApplication();
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPartStack partStack1 = MApplicationFactory.eINSTANCE.createPartStack();
+		MPartStack partStack2 = MApplicationFactory.eINSTANCE.createPartStack();
+		window.getChildren().add(partStack1);
+		window.getChildren().add(partStack2);
+
+		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		partStack1.getChildren().add(part1);
+		partStack1.getChildren().add(part2);
+
+		MPart part3 = MApplicationFactory.eINSTANCE.createPart();
+		partStack2.getChildren().add(part3);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		partStack2.getChildren().add(part2);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		partStack1 = (MPartStack) window.getChildren().get(0);
+		partStack2 = (MPartStack) window.getChildren().get(1);
+
+		part1 = partStack1.getChildren().get(0);
+		part2 = partStack1.getChildren().get(1);
+		part3 = partStack2.getChildren().get(0);
+
+		partStack2.getChildren().add(part2);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(partStack1, window.getChildren().get(0));
+		assertEquals(partStack2, window.getChildren().get(1));
+
+		assertEquals(1, partStack1.getChildren().size());
+		assertEquals(part1, partStack1.getChildren().get(0));
+
+		assertEquals(2, partStack2.getChildren().size());
+		assertEquals(part3, partStack2.getChildren().get(0));
+		assertEquals(part2, partStack2.getChildren().get(1));
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(partStack1, window.getChildren().get(0));
+		assertEquals(partStack2, window.getChildren().get(1));
+
+		assertEquals(1, partStack1.getChildren().size());
+		assertEquals(part1, partStack1.getChildren().get(0));
+
+		assertEquals(2, partStack2.getChildren().size());
+		assertEquals(part3, partStack2.getChildren().get(0));
+		assertEquals(part2, partStack2.getChildren().get(1));
 	}
 
 	/**
