@@ -11,16 +11,14 @@
 
 package org.eclipse.ui.internal.ide.dialogs;
 
-import org.eclipse.core.resources.IFileInfoMatcherDescription;
+import org.eclipse.core.resources.FileInfoMatcherDescription;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceFilterDescription;
 import org.eclipse.core.runtime.IPath;
 
 /**
  * @since 3.6
- *
  */
-
 public abstract class UIResourceFilterDescription {
 	/**
 	 * @return
@@ -37,7 +35,7 @@ public abstract class UIResourceFilterDescription {
 	/**
 	 * @return
 	 */
-	abstract public IFileInfoMatcherDescription getFileInfoMatcherDescription();
+	abstract public FileInfoMatcherDescription getFileInfoMatcherDescription();
 	
 	/**
 	 * @param iResourceFilterDescription
@@ -46,7 +44,7 @@ public abstract class UIResourceFilterDescription {
 	public static UIResourceFilterDescription wrap(
 			final IResourceFilterDescription iResourceFilterDescription) {
 		return new UIResourceFilterDescription() {
-			public IFileInfoMatcherDescription getFileInfoMatcherDescription() {
+			public FileInfoMatcherDescription getFileInfoMatcherDescription() {
 				return iResourceFilterDescription.getFileInfoMatcherDescription();
 			}
 			public IPath getPath() {

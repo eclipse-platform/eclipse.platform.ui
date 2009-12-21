@@ -22,7 +22,6 @@ import java.util.LinkedList;
 
 import org.eclipse.core.resources.FileInfoMatcherDescription;
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IFileInfoMatcherDescription;
 import org.eclipse.core.resources.IFilterMatcherDescriptor;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
@@ -1401,8 +1400,8 @@ class FilterCopy extends UIResourceFilterDescription {
 		project = filter.getProject();
 		type = filter.getType();
 		arguments = filter.getFileInfoMatcherDescription().getArguments();
-		if (arguments instanceof IFileInfoMatcherDescription[]) {
-			IFileInfoMatcherDescription[] descs = (IFileInfoMatcherDescription[]) arguments;
+		if (arguments instanceof FileInfoMatcherDescription[]) {
+			FileInfoMatcherDescription[] descs = (FileInfoMatcherDescription[]) arguments;
 			FilterCopy [] tmp = new FilterCopy[descs.length];
 			for (int i = 0; i < tmp.length; i++)
 				tmp[i] = new FilterCopy(this, descs[i]);
@@ -1431,15 +1430,15 @@ class FilterCopy extends UIResourceFilterDescription {
 	 * @param parent 
 	 * @param description
 	 */
-	public FilterCopy(FilterCopy parent, IFileInfoMatcherDescription description) {
+	public FilterCopy(FilterCopy parent, FileInfoMatcherDescription description) {
 		children = null;
 		id = description.getId();
 		path = parent.getPath();
 		project = parent.getProject();
 		type = parent.getType();
 		arguments = description.getArguments();
-		if (arguments instanceof IFileInfoMatcherDescription[]) {
-			IFileInfoMatcherDescription[] descs = (IFileInfoMatcherDescription[]) arguments;
+		if (arguments instanceof FileInfoMatcherDescription[]) {
+			FileInfoMatcherDescription[] descs = (FileInfoMatcherDescription[]) arguments;
 			FilterCopy [] tmp = new FilterCopy[descs.length];
 			for (int i = 0; i < tmp.length; i++)
 				tmp[i] = new FilterCopy(parent, descs[i]);
@@ -1607,19 +1606,19 @@ class FilterCopy extends UIResourceFilterDescription {
 	/* (non-Javadoc)
 	 * @see org.eclipse.core.resources.IResourceFilterDescription#getFileInfoMatcherDescription()
 	 */
-	public IFileInfoMatcherDescription getFileInfoMatcherDescription() {
-		FileInfoMatcherDescription desc = new FileInfoMatcherDescription();
-		desc.setId(getId());
+	public FileInfoMatcherDescription getFileInfoMatcherDescription() {
+		
 		
 		Object arg = FilterCopy.this.getArguments();
 		if (arg instanceof FilterCopy []) {
 			FilterCopy [] filterCopies = (FilterCopy []) arg;
-			IFileInfoMatcherDescription[] descriptions = new IFileInfoMatcherDescription[filterCopies.length];
+			FileInfoMatcherDescription[] descriptions = new FileInfoMatcherDescription[filterCopies.length];
 			for (int i = 0; i < descriptions.length; i++)
 				descriptions[i] = filterCopies[i].getFileInfoMatcherDescription();
 			arg = descriptions;
 		}
-		desc.setArguments(arg);
+		
+		FileInfoMatcherDescription desc = new FileInfoMatcherDescription(getId(), arg);
 		return desc;
 	}
 }
