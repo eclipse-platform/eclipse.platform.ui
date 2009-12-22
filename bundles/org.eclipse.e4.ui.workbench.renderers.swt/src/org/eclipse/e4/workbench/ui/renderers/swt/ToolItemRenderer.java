@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.TriggerSequence;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandledItem;
-import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUIElement;
@@ -59,8 +58,8 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	public void init() {
 		itemUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
-				// Ensure that this event is for a MMenuItem
-				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MMenuItem))
+				// Ensure that this event is for a MToolItem
+				if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolItem))
 					return;
 
 				MToolItem itemModel = (MToolItem) event
