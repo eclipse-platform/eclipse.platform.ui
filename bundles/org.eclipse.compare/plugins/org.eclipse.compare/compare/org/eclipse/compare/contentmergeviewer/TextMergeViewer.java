@@ -3690,7 +3690,9 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 			fShowPseudoConflicts= fPreferenceStore.getBoolean(ComparePreferencePage.SHOW_PSEUDO_CONFLICTS);
 			
 			update(true);
-			selectFirstDiff(true);
+			// selectFirstDiff(true);
+			if (fFocusPart != null)
+				handleSelectionChanged(fFocusPart);
 			
 //		} else if (key.equals(ComparePreferencePage.USE_SPLINES)) {
 //			fUseSplines= fPreferenceStore.getBoolean(ComparePreferencePage.USE_SPLINES);
