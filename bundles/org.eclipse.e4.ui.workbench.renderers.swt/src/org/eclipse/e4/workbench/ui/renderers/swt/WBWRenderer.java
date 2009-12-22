@@ -70,6 +70,7 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	private EventHandler shellUpdater;
 	private EventHandler visibilityHandler;
+	private EventHandler sizeHandler;
 
 	public WBWRenderer() {
 		super();
@@ -140,18 +141,90 @@ public class WBWRenderer extends SWTPartRenderer {
 					boolean isVisible = (Boolean) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					theShell.setVisible(isVisible);
+				} else if (UIEvents.Window.X.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setLocation(newValue.intValue(), theShell
+							.getLocation().y);
+				} else if (UIEvents.Window.X.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setLocation(theShell.getLocation().x, newValue
+							.intValue());
+				} else if (UIEvents.Window.WIDTH.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setSize(newValue.intValue(), theShell.getSize().y);
+				} else if (UIEvents.Window.HEIGHT.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setSize(theShell.getSize().x, newValue.intValue());
 				}
 			}
 		};
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
 				UIEvents.UIElement.VISIBLE), visibilityHandler);
+
+		sizeHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				// Ensure that this event is for a MMenuItem
+				Object objElement = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				if (!(objElement instanceof MWindow)) {
+					return;
+				}
+
+				// Is this listener interested ?
+				MWindow windowModel = (MWindow) objElement;
+				if (windowModel.getRenderer() != WBWRenderer.this) {
+					return;
+				}
+
+				// No widget == nothing to update
+				Shell theShell = (Shell) windowModel.getWidget();
+				if (theShell == null) {
+					return;
+				}
+
+				String attName = (String) event
+						.getProperty(UIEvents.EventTags.ATTNAME);
+
+				if (UIEvents.UIElement.VISIBLE.equals(attName)) {
+					boolean isVisible = (Boolean) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setVisible(isVisible);
+				} else if (UIEvents.Window.X.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setLocation(newValue.intValue(), theShell
+							.getLocation().y);
+				} else if (UIEvents.Window.Y.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setLocation(theShell.getLocation().x, newValue
+							.intValue());
+				} else if (UIEvents.Window.WIDTH.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setSize(newValue.intValue(), theShell.getSize().y);
+				} else if (UIEvents.Window.HEIGHT.equals(attName)) {
+					Integer newValue = (Integer) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					theShell.setSize(theShell.getSize().x, newValue.intValue());
+				}
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.Window.TOPIC),
+				sizeHandler);
 	}
 
 	@PreDestroy
 	public void contextDisposed() {
 		eventBroker.unsubscribe(shellUpdater);
 		eventBroker.unsubscribe(visibilityHandler);
+		eventBroker.unsubscribe(sizeHandler);
 	}
 
 	public Object createWidget(MUIElement element, Object parent) {
@@ -171,9 +244,9 @@ public class WBWRenderer extends SWTPartRenderer {
 			wbwShell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
 		} else {
 			wbwShell = new Shell(parentShell, SWT.SHELL_TRIM);
-			wbwShell.setLocation(wbwModel.getX(), wbwModel.getY());
-			wbwShell.setSize(wbwModel.getWidth(), wbwModel.getHeight());
 		}
+		wbwShell.setBounds(wbwModel.getX(), wbwModel.getY(), wbwModel
+				.getWidth(), wbwModel.getHeight());
 		wbwShell.setVisible(element.isVisible());
 
 		wbwShell.setLayout(new FillLayout());

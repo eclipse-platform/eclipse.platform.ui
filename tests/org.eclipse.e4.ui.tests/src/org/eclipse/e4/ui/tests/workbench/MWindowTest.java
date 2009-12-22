@@ -258,6 +258,86 @@ public class MWindowTest extends TestCase {
 		assertEquals("windowName2", shell.getText());
 	}
 
+	public void testWindow_X() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		window.setX(200);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		Object widget = window.getWidget();
+		assertTrue(widget instanceof Shell);
+
+		Shell shell = (Shell) widget;
+		assertEquals(shell.getBounds().x, window.getX());
+		assertEquals(200, shell.getBounds().x);
+
+		// the shell's X coordinate should have been updated
+		window.setX(300);
+		assertEquals(shell.getBounds().x, window.getX());
+		assertEquals(300, shell.getBounds().x);
+	}
+
+	public void testWindow_Y() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		window.setY(200);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		Object widget = window.getWidget();
+		assertTrue(widget instanceof Shell);
+
+		Shell shell = (Shell) widget;
+		assertEquals(shell.getBounds().y, window.getY());
+		assertEquals(200, shell.getBounds().y);
+
+		// the shell's Y coordinate should have been updated
+		window.setY(300);
+		assertEquals(shell.getBounds().y, window.getY());
+		assertEquals(300, shell.getBounds().y);
+	}
+
+	public void testWindow_Width() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		window.setWidth(200);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		Object widget = window.getWidget();
+		assertTrue(widget instanceof Shell);
+
+		Shell shell = (Shell) widget;
+		assertEquals(shell.getBounds().width, window.getWidth());
+		assertEquals(200, shell.getBounds().width);
+
+		// the shell's width should have been updated
+		window.setWidth(300);
+		assertEquals(shell.getBounds().width, window.getWidth());
+		assertEquals(300, shell.getBounds().width);
+	}
+
+	public void testWindow_Height() {
+		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		window.setHeight(200);
+
+		wb = new E4Workbench(window, appContext);
+		wb.createAndRunUI(window);
+
+		Object widget = window.getWidget();
+		assertTrue(widget instanceof Shell);
+
+		Shell shell = (Shell) widget;
+		assertEquals(shell.getBounds().height, window.getHeight());
+		assertEquals(200, shell.getBounds().height);
+
+		// the shell's width should have been updated
+		window.setHeight(300);
+		assertEquals(shell.getBounds().height, window.getHeight());
+		assertEquals(300, shell.getBounds().height);
+	}
+
 	private MPart getContributedPart(MWindow window) {
 		MPartSashContainer psc = (MPartSashContainer) window.getChildren().get(
 				0);
