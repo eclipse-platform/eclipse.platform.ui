@@ -17,6 +17,10 @@
     <keyword
             label="%PreferenceKeywords.FileContent"
             id="org.eclipse.team.ui.team.fileContent"/>
+    <keyword
+          id="org.eclipse.team.ui.team.projectSet"
+          label="%PreferenceKeywords.ProjectSet">
+    </keyword>
    </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -259,6 +263,9 @@
          <selection
                class="org.eclipse.core.resources.IProject">
          </selection>
+         <keywordReference
+               id="org.eclipse.team.ui.team.projectSet">
+         </keywordReference>
       </wizard>
    </extension>
 <!-- ****************** Export Wizards ********************* -->
@@ -280,6 +287,9 @@
          <selection
                class="org.eclipse.core.resources.IProject">
          </selection>
+         <keywordReference
+               id="org.eclipse.team.ui.team.projectSet">
+         </keywordReference>
       </wizard>
    </extension>
 <!-- ***************** Perspective Extensions ********************** -->

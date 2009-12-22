@@ -851,6 +851,10 @@
     <keyword
           id="org.eclipse.team.cvs.ui.cvs.watch"
           label="%PreferenceKeywords.Watch"/>
+    <keyword
+          id="org.eclipse.team.cvs.ui.cvs.import"
+          label="%PreferenceKeywords.Import">
+    </keyword>
    </extension>   
    <extension
          point="org.eclipse.ui.preferencePages">
@@ -1916,6 +1920,9 @@
             <description> 
               %newProjectCheckoutWizardDescription
           </description>
+            <keywordReference
+                  id="org.eclipse.team.cvs.ui.cvs.import">
+            </keywordReference>
       </wizard>
    </extension>
    
