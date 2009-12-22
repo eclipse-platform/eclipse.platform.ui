@@ -976,6 +976,21 @@ public class XMLModelReconciler extends ModelReconciler {
 				}
 			}
 
+			if (reference instanceof MToolBar) {
+				for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {
+					EObject key = entry.getKey();
+					if (key instanceof MPart) {
+						for (FeatureChange change : entry.getValue()) {
+							if (change.getFeatureName().equals(PART_TOOLBAR_ATTNAME)) {
+								if (change.getValue() == reference) {
+									return key;
+								}
+							}
+						}
+					}
+				}
+			}
+
 			boolean newElement = false;
 
 			for (Entry<EObject, EList<FeatureChange>> entry : objectChanges.entrySet()) {

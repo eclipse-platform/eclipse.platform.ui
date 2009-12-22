@@ -291,4 +291,48 @@ public abstract class ModelReconcilerPartTest extends ModelReconcilerTest {
 		part = (MPart) window.getChildren().get(0);
 		assertNotNull(part.getToolbar());
 	}
+
+	public void testPart_NewWithToolBar2() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+
+		MPart part1 = MApplicationFactory.eINSTANCE.createPart();
+		window.getChildren().add(part1);
+
+		MToolBar toolBar = MApplicationFactory.eINSTANCE.createToolBar();
+		part1.setToolbar(toolBar);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MPart part2 = MApplicationFactory.eINSTANCE.createPart();
+		window.getChildren().add(part2);
+
+		part2.setToolbar(toolBar);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		part1 = (MPart) window.getChildren().get(0);
+		toolBar = part1.getToolbar();
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, window.getChildren().size());
+		assertEquals(part1, window.getChildren().get(0));
+		assertEquals(toolBar, part1.getToolbar());
+
+		applyAll(deltas);
+
+		assertEquals(2, window.getChildren().size());
+		assertEquals(part1, window.getChildren().get(0));
+		assertNull(part1.getToolbar());
+
+		part2 = (MPart) window.getChildren().get(1);
+		assertEquals(toolBar, part2.getToolbar());
+	}
 }
