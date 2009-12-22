@@ -230,6 +230,14 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getContribution_PersistedState();
 		} else if (featureName.equals(WINDOW_MAINMENU_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_MainMenu();
+		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getWindow_X();
+		} else if (featureName.equals(WINDOW_Y_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getWindow_Y();
+		} else if (featureName.equals(WINDOW_WIDTH_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getWindow_Width();
+		} else if (featureName.equals(WINDOW_HEIGHT_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getWindow_Height();
 		}
 		return null;
 	}

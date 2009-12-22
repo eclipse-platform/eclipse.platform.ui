@@ -97,7 +97,6 @@ public abstract class ModelReconcilerToolBarTest extends ModelReconcilerTest {
 		toolBar.getChildren().remove(0);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		window = application.getChildren().get(0);
