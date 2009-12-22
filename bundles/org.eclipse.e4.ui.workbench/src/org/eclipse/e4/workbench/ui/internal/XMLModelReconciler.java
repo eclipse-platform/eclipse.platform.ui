@@ -14,6 +14,7 @@ package org.eclipse.e4.workbench.ui.internal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -70,10 +71,14 @@ public class XMLModelReconciler extends ModelReconciler {
 	private static final String REFERENCE_ELEMENT_NAME = "reference"; //$NON-NLS-1$
 	private static final String ORIGINALREFERENCE_ELEMENT_NAME = "originalReference"; //$NON-NLS-1$
 
+	/**
+	 * The name of the root element that describes the model deltas in XML form (value is
+	 * <code>changes</code>).
+	 */
 	private static final String CHANGES_ATTNAME = "changes"; //$NON-NLS-1$
 
 	/**
-	 * An attribute for describing the type of the object in question.
+	 * An attribute for describing the type of the object in question (value is <code>type</code>).
 	 */
 	private static final String TYPE_ATTNAME = "type"; //$NON-NLS-1$
 
@@ -94,56 +99,12 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	static List<Object> getReferences(Object object) {
-		return getReferences(new LinkedList<Object>(), object);
-	}
-
-	private static List<Object> getReferences(List<Object> references, Object object) {
-		if (object instanceof MElementContainer<?>) {
-			for (Object child : ((MElementContainer<?>) object).getChildren()) {
-				getReferences(references, child);
-			}
+		Iterator<EObject> it = ((EObject) object).eAllContents();
+		List<Object> references = new LinkedList<Object>();
+		while (it.hasNext()) {
+			Object reference = it.next();
+			references.add(reference);
 		}
-
-		if (object instanceof MHandlerContainer) {
-			for (Object child : ((MHandlerContainer) object).getHandlers()) {
-				getReferences(references, child);
-			}
-		}
-
-		if (object instanceof MBindingContainer) {
-			for (Object child : ((MBindingContainer) object).getBindings()) {
-				getReferences(references, child);
-			}
-		}
-
-		if (object instanceof MPart) {
-			MPart part = (MPart) object;
-
-			for (Object child : part.getMenus()) {
-				getReferences(references, child);
-			}
-
-			MToolBar toolBar = part.getToolbar();
-			if (toolBar != null) {
-				getReferences(references, toolBar);
-			}
-		}
-
-		if (object instanceof MWindow) {
-			MMenu mainMenu = ((MWindow) object).getMainMenu();
-			if (mainMenu != null) {
-				getReferences(references, mainMenu);
-			}
-		}
-
-		if (object instanceof MApplication) {
-			for (Object child : ((MApplication) object).getCommands()) {
-				getReferences(references, child);
-			}
-		}
-
-		references.add(object);
-
 		return references;
 	}
 
@@ -1227,6 +1188,21 @@ public class XMLModelReconciler extends ModelReconciler {
 		return referenceAttributeElement;
 	}
 
+	/**
+	 * Determines whether this feature is a direct reference to a particular object. That is, the
+	 * reference is a 1-1 relationship and the referenced object is not referred by other objects
+	 * and is a hard containment feature.
+	 * <p>
+	 * An example of a direct reference would be a window's main menu. The menu is "owned" by the
+	 * window and cannot be one of the menus in a part.
+	 * </p>
+	 * 
+	 * @param featureName
+	 *            the name of the interested feature
+	 * @return <code>true</code> if this particular feature directly references and "owns" the
+	 *         target object, <code>false</code> otherwise
+	 * @see #isIndirectReference(String)
+	 */
 	private static boolean isDirectReference(String featureName) {
 		// a Window has a single reference to a menu
 		return featureName.equals(WINDOW_MAINMENU_ATTNAME) ||
@@ -1234,6 +1210,26 @@ public class XMLModelReconciler extends ModelReconciler {
 				featureName.equals(PART_TOOLBAR_ATTNAME);
 	}
 
+	/**
+	 * Determines whether this feature is an indirect reference to a particular object. That is, the
+	 * reference refers to an object and this reference does not necessarily describe containment.
+	 * <p>
+	 * An example of an indirect reference would be a handler's command. The handler points to a
+	 * command but the command is actually "owned" by an application in its list of commands. In
+	 * this case, there is no containment involved between the handler and the command.
+	 * </p>
+	 * <p>
+	 * Another example of an indirect reference would be a element container's active child. In this
+	 * case, the element container's contains the active child in its list of children and both this
+	 * listing and the active child reference is a containment feature.
+	 * </p>
+	 * 
+	 * @param featureName
+	 *            the name of the interested feature
+	 * @return <code>true</code> if this particular feature directly references and "owns" the
+	 *         target object, <code>false</code> otherwise
+	 * @see #isDirectReference(String)
+	 */
 	private static boolean isIndirectReference(String featureName) {
 		// an ElementContainer has a single reference to its active child
 		return featureName.equals(ELEMENTCONTAINER_ACTIVECHILD_ATTNAME) ||
