@@ -27,7 +27,7 @@ import org.eclipse.core.internal.runtime.PlatformURLPluginConnection;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.workbench.modeling.IDelta;
+import org.eclipse.e4.workbench.modeling.IModelReconcilingService;
 import org.eclipse.e4.workbench.modeling.ModelDelta;
 import org.eclipse.e4.workbench.modeling.ModelReconciler;
 import org.eclipse.emf.common.util.URI;
@@ -35,8 +35,6 @@ import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.URIConverter;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceFactoryImpl;
-import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.osgi.framework.Bundle;
 import org.w3c.dom.Document;
@@ -50,7 +48,7 @@ public class ResourceHandler {
 	 * Dictates whether the model should be stored using EMF or with the merging algorithm.
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=295524
 	 */
-	private static final boolean RESTORE_VIA_DELTAS = false;
+	private static final boolean RESTORE_VIA_DELTAS = true;
 
 	private File workbenchData;
 	private URI applicationDefinitionInstance;
@@ -64,7 +62,7 @@ public class ResourceHandler {
 		this.applicationDefinitionInstance = applicationDefinitionInstance;
 		resourceSetImpl = new ResourceSetImpl();
 		resourceSetImpl.getResourceFactoryRegistry().getExtensionToFactoryMap().put(
-				Resource.Factory.Registry.DEFAULT_EXTENSION, new XMIResourceFactoryImpl());
+				Resource.Factory.Registry.DEFAULT_EXTENSION, new E4XMIResourceFactory());
 		resourceSetImpl.getPackageRegistry().put(MApplicationPackage.eNS_URI,
 				MApplicationPackage.eINSTANCE);
 
@@ -104,7 +102,7 @@ public class ResourceHandler {
 	public Resource loadBaseModel() {
 		Activator.trace(Policy.DEBUG_WORKBENCH,
 				"Initializing workbench: " + applicationDefinitionInstance, null); //$NON-NLS-1$
-		resource = new XMIResourceImpl();
+		resource = new E4XMIResource();
 		MApplication theApp = loadDefaultModel(applicationDefinitionInstance);
 		resource.getContents().add((EObject) theApp);
 		resource.setURI(restoreLocation);
@@ -150,12 +148,12 @@ public class ResourceHandler {
 				if (file.exists()) {
 					Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
 							.parse(file);
-					XMLModelReconciler deltaReconciler = new XMLModelReconciler();
-					Collection<ModelDelta> operations = deltaReconciler.constructDeltas(resource
+					IModelReconcilingService modelReconcilingService = new ModelReconcilingService();
+					ModelReconciler modelReconciler = modelReconcilingService
+							.createModelReconciler();
+					Collection<ModelDelta> deltas = modelReconciler.constructDeltas(resource
 							.getContents().get(0), document);
-					for (IDelta operation : operations) {
-						operation.apply();
-					}
+					modelReconcilingService.applyDeltas(deltas);
 				}
 			} catch (Exception e) {
 				throw new RuntimeException(e);

@@ -51,7 +51,7 @@
          </property>
          <property
                name="applicationXMI"
-               value="org.eclipse.e4.demo.e4photo/Application.xmi">
+               value="org.eclipse.e4.demo.e4photo/Application.e4xmi">
          </property>
          <property
                name="applicationCSS"

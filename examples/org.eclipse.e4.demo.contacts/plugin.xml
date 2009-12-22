@@ -28,7 +28,7 @@
          </property>
          <property
                name="applicationXMI"
-               value="org.eclipse.e4.demo.contacts/Application.xmi">
+               value="org.eclipse.e4.demo.contacts/Application.e4xmi">
          </property>
          <property
                name="applicationCSS"
