@@ -2308,9 +2308,8 @@ public class TextMergeViewer extends ContentMergeViewer implements IAdaptable {
 							fCenterButton.setVisible(false);
 							if (fButtonDiff != null) {
 								setCurrentDiff(fButtonDiff, false);
-								copy(fCurrentDiff,
-										fCenterButton.getText().equals(COPY_LEFT_TO_RIGHT_INDICATOR),
-										fCurrentDiff.getKind() != RangeDifference.CONFLICT);
+								copy(fCurrentDiff, fCenterButton.getText().equals(
+									COPY_LEFT_TO_RIGHT_INDICATOR), false);
 							}
 						}
 					}
