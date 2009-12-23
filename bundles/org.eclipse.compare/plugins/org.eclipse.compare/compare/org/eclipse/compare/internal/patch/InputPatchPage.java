@@ -19,6 +19,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringReader;
+import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.net.URLConnection;
 
 import org.eclipse.compare.internal.ICompareContextIds;
 import org.eclipse.compare.internal.Utilities;
@@ -29,11 +34,15 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -80,6 +89,7 @@ import com.ibm.icu.text.MessageFormat;
 	// dialog store id constants
 	private final static String PAGE_NAME= "PatchWizardPage1"; //$NON-NLS-1$  
 	private final static String STORE_PATCH_FILES_ID= PAGE_NAME+".PATCH_FILES"; //$NON-NLS-1$
+	private final static String STORE_PATCH_URLS_ID= PAGE_NAME+".PATCH_URLS"; //$NON-NLS-1$
 	private final static String STORE_INPUT_METHOD_ID= PAGE_NAME+".INPUT_METHOD"; //$NON-NLS-1$
 	private final static String STORE_WORKSPACE_PATH_ID= PAGE_NAME+".WORKSPACE_PATH"; //$NON-NLS-1$
 	
@@ -87,6 +97,7 @@ import com.ibm.icu.text.MessageFormat;
 	protected final static int CLIPBOARD= 1;
 	protected final static int FILE= 2;
 	protected final static int WORKSPACE= 3;
+	protected final static int URL= 4;
 
 	protected final static String INPUTPATCHPAGE_NAME= "InputPatchPage"; //$NON-NLS-1$
 
@@ -104,6 +115,8 @@ import com.ibm.icu.text.MessageFormat;
 	private Button fPatchFileBrowseButton;
 	private Button fUsePatchFileButton;
 	private Button fUseWorkspaceButton;
+	private Button fUseURLButton;
+	private Combo fPatchURLField;
 	private Label fWorkspaceSelectLabel;
 	private TreeViewer fTreeViewer;
 	
@@ -115,7 +128,9 @@ import com.ibm.icu.text.MessageFormat;
 			case FILE:
 				fShowError= (fPatchFileNameField.getText() != "");  //$NON-NLS-1$
 				break;
-			    
+			case URL:
+				fShowError = (fPatchURLField.getText() != ""); //$NON-NLS-1$
+				break;
 			case WORKSPACE:
 				fShowError= (!fTreeViewer.getSelection().isEmpty());
 				break;
@@ -160,7 +175,7 @@ import com.ibm.icu.text.MessageFormat;
 		restoreWidgetValues();
 		
 		// see if there are any better options presently selected (i.e workspace
-		// or clipboard)
+		// or clipboard or URL from clipboard)
 		adjustToCurrentTarget();
 		
 		// No error for dialog opening
@@ -243,6 +258,14 @@ import com.ibm.icu.text.MessageFormat;
 					}
 				}
 				fPatchSource= PatchMessages.InputPatchPage_PatchFile_title;
+			} else if (inputMethod==URL) {
+				String patchFileURL = fPatchURLField.getText();
+				if (patchFileURL != null) {
+					String contents = getURLContents(patchFileURL);
+					if (contents != null)
+						reader = new StringReader(contents);
+				}
+				fPatchSource= PatchMessages.InputPatchPage_URL_title;
 			} else if (inputMethod==WORKSPACE) {
 				// Get the selected patch file (tree will only allow for one selection)
 				IResource[] resources= Utilities.getResources(fTreeViewer.getSelection());
@@ -282,6 +305,43 @@ import com.ibm.icu.text.MessageFormat;
 		}
 	}
 	
+	private String getURLContents(String patchFileURL) {
+		final URL url;
+		try {
+			url = new URL(patchFileURL);
+			final String[] result= new String[1];
+			try {
+				getContainer().run(true, true, new IRunnableWithProgress() {
+					public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
+						SubMonitor progress = SubMonitor.convert(monitor, PatchMessages.InputPatchPage_URLConnecting, 100);
+						try {
+							URLConnection connection = url.openConnection();
+							progress.worked(10);
+							if (monitor.isCanceled())
+								throw new OperationCanceledException();
+							Utilities.setReadTimeout(connection, 60*1000);
+							progress.setTaskName(PatchMessages.InputPatchPage_URLFetchingContent);
+							String enc = connection.getContentEncoding();
+							if (enc == null)
+								enc = ResourcesPlugin.getEncoding();
+							result[0] = Utilities.readString(connection.getInputStream(), enc, connection.getContentLength(), progress.newChild(90));
+						} catch (SocketTimeoutException e) { // timeout
+						} catch (IOException e) { //ignore
+						}
+						monitor.done();
+					}
+				});
+				return result[0];
+			} catch (OperationCanceledException e) { //ignore
+			} catch (InvocationTargetException e) { //ignore
+			} catch (InterruptedException e) { //ignore
+			}
+		} catch (MalformedURLException e) {
+			// ignore as we tested it with modify listener on combo
+		}
+		return null;
+	}
+
 	/* (non-JavaDoc)
 	 * Method declared in IWizardPage.
 	 */
@@ -299,6 +359,10 @@ import com.ibm.icu.text.MessageFormat;
 	private void setEnableWorkspacePatch(boolean enable) {
 		fWorkspaceSelectLabel.setEnabled(enable);
 		fTreeViewer.getTree().setEnabled(enable);
+	}
+
+	private void setEnableURLPatch(boolean enable) {
+		fPatchURLField.setEnabled(enable);
 	}
 
 	/*
@@ -337,6 +401,15 @@ import com.ibm.icu.text.MessageFormat;
 		fPatchFileBrowseButton.setLayoutData(data);
 
 		//3rd row
+		fUseURLButton = new Button(composite, SWT.RADIO);
+		fUseURLButton.setText(PatchMessages.InputPatchPage_URLButton_text);
+
+		fPatchURLField = new Combo(composite, SWT.BORDER);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
+		gd.horizontalSpan = 2;
+		fPatchURLField.setLayoutData(gd);
+
+		//4th row
 		fUseWorkspaceButton= new Button(composite, SWT.RADIO);
 		fUseWorkspaceButton.setText(PatchMessages.InputPatchPage_UseWorkspaceButton_text);
 		gd= new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
@@ -354,6 +427,7 @@ import com.ibm.icu.text.MessageFormat;
 				fShowError= true;
 				int state= getInputMethod();
 				setEnablePatchFile(state == FILE);
+				setEnableURLPatch(state == URL);
 				setEnableWorkspacePatch(state == WORKSPACE);
 				updateWidgetEnablements();
 				fPatchRead = false; 
@@ -368,8 +442,9 @@ import com.ibm.icu.text.MessageFormat;
 				clearErrorMessage();
 				fShowError= (fPatchFileNameField.getText() != ""); //$NON-NLS-1$
 				int state= getInputMethod();
-				setEnablePatchFile(state==FILE);
-				setEnableWorkspacePatch(state==WORKSPACE);
+				setEnablePatchFile(state == FILE);
+				setEnableURLPatch(state == URL);
+				setEnableWorkspacePatch(state == WORKSPACE);
 				updateWidgetEnablements();
 				fPatchRead = false; 
 			}
@@ -394,6 +469,24 @@ import com.ibm.icu.text.MessageFormat;
 				updateWidgetEnablements();
 			}
 		});
+		fUseURLButton.addSelectionListener(new SelectionAdapter() {
+			public void widgetSelected(SelectionEvent e) {
+				clearErrorMessage();
+				fShowError= (fPatchURLField.getText() != ""); //$NON-NLS-1$
+				int state= getInputMethod();
+				setEnablePatchFile(state == FILE);
+				setEnableURLPatch(state == URL);
+				setEnableWorkspacePatch(state == WORKSPACE);
+				updateWidgetEnablements();
+			}
+		});
+		fPatchURLField.addModifyListener(new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				clearErrorMessage();
+				fShowError = true;
+				updateWidgetEnablements();
+			}
+		});
 		fUseWorkspaceButton.addSelectionListener(new SelectionAdapter() {
 			public void widgetSelected(SelectionEvent e) {
 				if (!fUseWorkspaceButton.getSelection())
@@ -403,6 +496,7 @@ import com.ibm.icu.text.MessageFormat;
 				fShowError= (!fTreeViewer.getSelection().isEmpty());
 				int state= getInputMethod();
 				setEnablePatchFile(state == FILE);
+				setEnableURLPatch(state == URL);
 				setEnableWorkspacePatch(state == WORKSPACE);
 				updateWidgetEnablements();
 				fPatchRead = false; 
@@ -491,6 +585,20 @@ import com.ibm.icu.text.MessageFormat;
 					error= PatchMessages.InputPatchPage_CannotLocatePatch_message + path; 
 			} else {
 				error= PatchMessages.InputPatchPage_NoFileName_message; 
+			}
+		} else if (inputMethod == URL) {
+			String urlText = fPatchURLField.getText();
+			if(urlText != null) {
+				try {
+					new URL(urlText);
+					// Checking the URL is a bit too heavy for each keystroke.
+					// Let's assume it contains a valid patch.
+					gotPatch = true;
+				} catch (MalformedURLException e) {
+					error= PatchMessages.InputPatchPage_MalformedURL;
+				}
+			} else {
+				error= PatchMessages.InputPatchPage_NoURL;
 			}
 		} else if (inputMethod == WORKSPACE) {
 			//Get the selected patch file (tree will only allow for one selection)
@@ -638,6 +746,13 @@ import com.ibm.icu.text.MessageFormat;
 			if (patchFilePath != null)
 				setSourceName(patchFilePath);
 			
+			// set URLs history
+			String[] sourceURLs= settings.getArray(STORE_PATCH_URLS_ID);
+			if (sourceURLs != null)
+				for (int i= 0; i < sourceURLs.length; i++)
+					if (sourceURLs[i] != null && sourceURLs[i].length() > 0)
+						fPatchURLField.add(sourceURLs[i]);
+
 			// If the previous apply patch was used with a clipboard, we need to check
 			// if there is a valid patch on the clipboard. This will be done in adjustToCurrentTarget()
 			// so just set it to FILE now and, if there exists a patch on the clipboard, then clipboard
@@ -693,6 +808,14 @@ import com.ibm.icu.text.MessageFormat;
 			sourceNames= addToHistory(sourceNames, getPatchFilePath());
 			settings.put(STORE_PATCH_FILES_ID, sourceNames);
 			
+			// update source URLs history
+			String[] sourceURLs= settings.getArray(STORE_PATCH_URLS_ID);
+			if (sourceURLs == null)
+				sourceURLs= new String[0];
+
+			sourceURLs= addToHistory(sourceURLs, fPatchURLField.getText());
+			settings.put(STORE_PATCH_URLS_ID, sourceURLs);
+
 			// save the workspace selection
 			settings.put(STORE_WORKSPACE_PATH_ID, getWorkspacePath());
 			
@@ -712,12 +835,14 @@ import com.ibm.icu.text.MessageFormat;
 	}
 
 	// static helpers
-	
+
 	/**
-	 * Checks to see if the file that has been selected for Apply Patch
-	 * is actually a patch
-	 * @return true if the file selected to run Apply Patch on in the workspace is a patch file
-	 * or if the clipboard contains a patch
+	 * Checks to see if the file that has been selected for Apply Patch is
+	 * actually a patch
+	 * 
+	 * @return true if the file selected to run Apply Patch on in the workspace
+	 *         is a patch file or if the clipboard contains a patch or if the
+	 *         clipboard contains an URL (we assume it points to a patch )
 	 */
 	private boolean adjustToCurrentTarget() {
 		// readjust selection if there is a patch selected in the workspace or on the clipboard
@@ -757,15 +882,26 @@ import com.ibm.icu.text.MessageFormat;
 		Reader reader = null;
 		Control c = getControl();
 		if (c != null) {
-			Clipboard clipboard = new Clipboard(c.getDisplay());
-			Object o = clipboard.getContents(TextTransfer.getInstance());
+			Clipboard clipboard= new Clipboard(c.getDisplay());
+			Object o= clipboard.getContents(TextTransfer.getInstance());
 			clipboard.dispose();
 			try {
 				if (o instanceof String) {
-					reader = new StringReader((String) o);
+					reader= new StringReader((String) o);
 					if (isPatchFile(reader)) {
 						setInputButtonState(CLIPBOARD);
 						return true;
+					}
+					// maybe it's an URL
+					try {
+						URL url = new URL((String)o);
+						if(url != null) {
+							setInputButtonState(URL);
+							fPatchURLField.setText((String)o);
+							return true;
+						}
+					} catch (MalformedURLException e) {
+						// ignore
 					}
 				}
 			} finally {
@@ -780,8 +916,6 @@ import com.ibm.icu.text.MessageFormat;
 		}
 		return false;
 	} 
-	
-	
 
 	private boolean isPatchFile(Reader reader) {
 		WorkspacePatcher patcher= ((PatchWizard) getWizard()).getPatcher();
@@ -811,24 +945,35 @@ import com.ibm.icu.text.MessageFormat;
 		case CLIPBOARD:
 			fUseClipboardButton.setSelection(true);
 			fUsePatchFileButton.setSelection(false);
+			fUseURLButton.setSelection(false);
 			fUseWorkspaceButton.setSelection(false);
 			break;
 
 		case FILE:
 			fUseClipboardButton.setSelection(false);
 			fUsePatchFileButton.setSelection(true);
+			fUseURLButton.setSelection(false);
+			fUseWorkspaceButton.setSelection(false);
+			break;
+
+		case URL:
+			fUseClipboardButton.setSelection(false);
+			fUsePatchFileButton.setSelection(false);
+			fUseURLButton.setSelection(true);
 			fUseWorkspaceButton.setSelection(false);
 			break;
 
 		case WORKSPACE:
 			fUseClipboardButton.setSelection(false);
 			fUsePatchFileButton.setSelection(false);
+			fUseURLButton.setSelection(false);
 			fUseWorkspaceButton.setSelection(true);
 			break;
 		}
 
 		setEnablePatchFile(state == FILE);
 		setEnableWorkspacePatch(state == WORKSPACE);
+		setEnableURLPatch(state == URL);
 	}
 
 	protected int getInputMethod() {
@@ -836,6 +981,8 @@ import com.ibm.icu.text.MessageFormat;
 			return CLIPBOARD;
 		if (fUsePatchFileButton.getSelection())
 			return FILE;
+		if(fUseURLButton.getSelection())
+			return URL;
 		return WORKSPACE;
 	}
 

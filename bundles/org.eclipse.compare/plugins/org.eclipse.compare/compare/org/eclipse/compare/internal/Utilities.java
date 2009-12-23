@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,19 +10,57 @@
  *******************************************************************************/
 package org.eclipse.compare.internal;
 
-import java.io.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.MissingResourceException;
+import java.util.ResourceBundle;
 
-import org.eclipse.compare.*;
+import org.eclipse.compare.CompareConfiguration;
+import org.eclipse.compare.CompareUI;
+import org.eclipse.compare.IEncodedStreamContentAccessor;
+import org.eclipse.compare.ISharedDocumentAdapter;
+import org.eclipse.compare.IStreamContentAccessor;
+import org.eclipse.compare.ITypedElement;
+import org.eclipse.compare.SharedDocumentAdapter;
 import org.eclipse.compare.contentmergeviewer.IDocumentRange;
 import org.eclipse.compare.internal.core.patch.HunkResult;
 import org.eclipse.compare.patch.IHunk;
 import org.eclipse.compare.structuremergeviewer.DiffNode;
 import org.eclipse.compare.structuremergeviewer.ICompareInput;
-import org.eclipse.core.resources.*;
-import org.eclipse.core.resources.mapping.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.resources.IEncodedStorage;
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourceAttributes;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.mapping.ResourceMapping;
+import org.eclipse.core.resources.mapping.ResourceMappingContext;
+import org.eclipse.core.resources.mapping.ResourceTraversal;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.ISafeRunnable;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.MultiStatus;
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -33,8 +71,17 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.widgets.*;
-import org.eclipse.ui.*;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.IActionBars;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartSite;
+import org.eclipse.ui.IWorkbenchSite;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.texteditor.IDocumentProvider;
 
@@ -582,6 +629,12 @@ public class Utilities {
 	 * Returns null if an error occurred.
 	 */
 	public static String readString(InputStream is, String encoding) throws IOException {
+		return readString(is, encoding, -1, null);
+	}
+
+	public static String readString(InputStream is, String encoding, int length, IProgressMonitor monitor) throws IOException {
+		SubMonitor progress = SubMonitor.convert(monitor);
+		progress.setWorkRemaining(length);
 		if (is == null)
 			return null;
 		BufferedReader reader= null;
@@ -590,9 +643,13 @@ public class Utilities {
 			char[] part= new char[2048];
 			int read= 0;
 			reader= new BufferedReader(new InputStreamReader(is, encoding));
-			while ((read= reader.read(part)) != -1)
+			while ((read= reader.read(part)) != -1) {
 				buffer.append(part, 0, read);
-			
+				progress.worked(2048);
+				if (progress.isCanceled())
+					throw new OperationCanceledException();
+			}
+
 			return buffer.toString();
 		} finally {
 			if (reader != null) {
@@ -780,5 +837,25 @@ public class Utilities {
 				}
 			});
 		}
+	}
+
+	/**
+	 * @param connection a connection for which the timeout is set
+	 * @param timeout an int that specifies the connect timeout value in milliseconds
+	 * @return whether the timeout has been successfully set
+	 */
+	public static boolean setReadTimeout(URLConnection connection, int timeout) {
+		Method[] methods = connection.getClass().getMethods();
+		for (int i = 0; i < methods.length; i++) {
+			if (methods[i].getName().equals("setReadTimeout")) //$NON-NLS-1$
+				try {
+					methods[i].invoke(connection, new Object[] {new Integer(timeout)});
+					return true;
+				} catch (IllegalArgumentException e) { // ignore
+				} catch (IllegalAccessException e) { // ignore
+				} catch (InvocationTargetException e) { // ignore
+				}
+		}
+		return false;
 	}
 }

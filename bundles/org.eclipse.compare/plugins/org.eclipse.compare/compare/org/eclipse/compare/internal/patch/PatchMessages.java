@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -22,6 +22,10 @@ public final class PatchMessages extends NLS {
 
 	public static String HunkMergePage_GenerateRejectFile;
 	public static String HunkMergePage_Merged;
+	public static String InputPatchPage_MalformedURL;
+	public static String InputPatchPage_NoURL;
+	public static String InputPatchPage_URLButton_text;
+	public static String InputPatchPage_URL_title;
 	public static String PatchCompareEditorInput_0;
 	public static String PatcherCompareEditorInput_0;
 	public static String PatcherCompareEditorInput_AfterPatch;
@@ -58,6 +62,8 @@ public final class PatchMessages extends NLS {
 	public static String InputPatchPage_WorkspacePatch_title;
 	public static String InputPatchPage_NoDiffsFound_format;
 	public static String InputPatchPage_SingleFileError_format;
+	public static String InputPatchPage_URLConnecting;
+	public static String InputPatchPage_URLFetchingContent;
 	public static String PatchTargetPage_title;
 	public static String PatchTargetPage_message;
 	public static String PreviewPatchPage_title;
