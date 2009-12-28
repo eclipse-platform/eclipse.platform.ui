@@ -11,6 +11,16 @@
 
 package org.eclipse.ui.internal.statushandlers;
 
+import org.eclipse.jface.viewers.ILabelDecorator;
+
+import java.util.Map;
+
+import java.util.Collection;
+
+import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
+
+import org.eclipse.ui.statushandlers.StatusAdapter;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.swt.widgets.Shell;
@@ -19,7 +29,8 @@ import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 /**
  * This class contains constant necessary to read/write the
  * {@link WorkbenchStatusDialogManager} properties. Some properties may be
- * promoted to the API.
+ * promoted to the API. Some of those properties are used to configure the
+ * dialog, while others are used to describe the state of the dialgo.
  * 
  */
 public interface IStatusDialogConstants {
@@ -55,4 +66,117 @@ public interface IStatusDialogConstants {
 	 * {@link Boolean#FALSE} means that they will be silently ignored.
 	 */
 	public static final Object HANDLE_OK_STATUSES = new Object();
+
+	/**
+	 * This property indicates how the dialog should be named. The default value
+	 * comes from jface resources. It may be {@link String} or <code>null</code>
+	 * .
+	 */
+	public static final Object TITLE = new Object();
+
+	/**
+	 * This property indicates which status severities should be handled. The
+	 * value must be of {@link Integer} type.
+	 */
+	public static final Object MASK = new Object();
+
+	/**
+	 * This flag indicates if the details area was opened before switching the
+	 * modality or not. It must be of {@link Boolean} type.
+	 */
+	public static final Object DETAILS_OPENED = new Object();
+
+	/**
+	 * This flag indicates if the support area was opened before switching the
+	 * modality or not. It must be of {@link Boolean} type.
+	 */
+	public static final Object TRAY_OPENED = new Object();
+
+	/**
+	 * This flag controls if the support area is opened automatically when the
+	 * dialog is opened. It must be of {@link Boolean} type or <code>null</code>
+	 * .
+	 */
+	public static final Object ENABLE_DEFAULT_SUPPORT_AREA = new Object();
+
+	/**
+	 * This flag controls if there should be a control allowing for support
+	 * opening. It must be of {@link Boolean} type or <code>null</code>.
+	 */
+	public static final Object HIDE_SUPPORT_BUTTON = new Object();
+
+	/**
+	 * This property holds custom support provider which will be used do display
+	 * support area for currently selected {@link StatusAdapter}. It must be of
+	 * {@link AbstractStatusAreaProvider} or <code>null</code>.
+	 */
+	public static final Object CUSTOM_SUPPORT_PROVIDER = new Object();
+
+	/**
+	 * This property holds custom details provider which will be used do display
+	 * details for currently selected {@link StatusAdapter}. It must be of
+	 * {@link AbstractStatusAreaProvider} or <code>null</code>.
+	 */
+	public static final Object CUSTOM_DETAILS_PROVIDER = new Object();
+
+	/**
+	 * Currently selected status adapter. It must be of {@link StatusAdapter}
+	 * type.
+	 */
+	public static final Object CURRENT_STATUS_ADAPTER = new Object();
+
+	/**
+	 * This property allows for retrieving the list of {@link StatusAdapter}
+	 * currently kept by the dialog. The corresponding object must be of
+	 * {@link Collection} type.
+	 */
+	public static final Object STATUS_ADAPTERS = new Object();
+
+	/**
+	 * Stores "modal" flags describing {@link StatusAdapter}. It is a
+	 * {@link Map} of {@link StatusAdapter}s and {@link Boolean}s.
+	 */
+	public static final Object STATUS_MODALS = new Object();
+
+	/**
+	 * This fields holds the information about dialog position and size when
+	 * switching the modality.
+	 */
+	public static final Object SHELL_BOUNDS = new Object();
+
+	/**
+	 * This property stores internal {@link LabelProviderWrapper} which is
+	 * responsible for providing all the text and images. This property should
+	 * be never changed.
+	 */
+	public static final Object LABEL_PROVIDER = new Object();
+
+	/**
+	 * This property stores custom label provider. LABEL_PROVIDER uses
+	 * CUSTOM_LABEL_PROVIDER or default label provider to deliver images and
+	 * text to the dialog. Since the custom label provider is not able to
+	 * deliver all necessary images, this field should not be used. It is kept
+	 * only for backward compatibility.
+	 */
+	public static final Object CUSTOM_LABEL_PROVIDER = new Object();
+
+	/**
+	 * If it is necessary to modify each message, this property may be used. It
+	 * should be of {@link ILabelDecorator} type. This decorator will be invoked
+	 * for each text that will be later passed to the dialog.
+	 */
+	public static final Object DECORATOR = new Object();
+
+	/**
+	 * This flag indicates if the dialog is during modality switch state. It
+	 * must be of {@link Boolean} type.
+	 */
+	public static final Object MODALITY_SWITCH = new Object();
+
+	/**
+	 * This flag controls animations. It is for testing purposes only. If it set
+	 * to false, animations will not be created. Animation means shell
+	 * closing/opening animation.
+	 */
+	public static final Object ANIMATION = new Object();
 }

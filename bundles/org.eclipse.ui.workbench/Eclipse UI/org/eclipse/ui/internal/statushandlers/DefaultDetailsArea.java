@@ -13,7 +13,9 @@ package org.eclipse.ui.internal.statushandlers;
 
 import com.ibm.icu.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -48,28 +50,18 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
-import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 /**
  * The default details area displaying a tree of statuses.
- * 
- * @since 3.4
  */
 public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 	private static final int MINIMUM_HEIGHT = 100;
 
-	private WorkbenchStatusDialogManager workbenchStatusDialog;
-
-	public DefaultDetailsArea(WorkbenchStatusDialogManager wsd){
-		this.workbenchStatusDialog = wsd;
-	}
-	
 	/*
 	 * All statuses should be displayed.
 	 */
-	protected static final int MASK = IStatus.CANCEL | IStatus.ERROR
-			| IStatus.INFO | IStatus.WARNING;
+	private int mask;
 
 	/*
 	 * New child entry in the list will be shifted by a number of pixels
@@ -81,11 +73,28 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	 */
 	private StyledText text;
 
+	private boolean handleOkStatuses;
+
+	private Map dialogState;
+
+	/**
+	 * @param dialogState
+	 */
+	public DefaultDetailsArea(Map dialogState) {
+		this.dialogState = dialogState;
+		handleOkStatuses = ((Boolean) dialogState
+				.get(IStatusDialogConstants.HANDLE_OK_STATUSES)).booleanValue();
+		mask = ((Integer) dialogState.get(IStatusDialogConstants.MASK))
+				.intValue();
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see org.eclipse.ui.statushandlers.AbstractStatusAreaProvider#createSupportArea(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.statushandlers.StatusAdapter)
+	 * @see
+	 * org.eclipse.ui.statushandlers.AbstractStatusAreaProvider#createSupportArea
+	 * (org.eclipse.swt.widgets.Composite,
+	 * org.eclipse.ui.statushandlers.StatusAdapter)
 	 */
 	public Control createSupportArea(Composite parent,
 			StatusAdapter statusAdapter) {
@@ -111,11 +120,11 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		// trying to emulate the workbench behavior as exactly as possible.
 		IBindingService binding = (IBindingService) PlatformUI.getWorkbench()
 				.getService(IBindingService.class);
-		//find bindings for copy action
+		// find bindings for copy action
 		final TriggerSequence ts[] = binding
 				.getActiveBindingsFor(ActionFactory.COPY.getCommandId());
 		text.addKeyListener(new KeyListener() {
-			
+
 			ArrayList keyList = new ArrayList();
 
 			public void keyPressed(KeyEvent e) {
@@ -127,7 +136,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 					character += 0x40;
 				}
 				// do not process modifier keys
-				if((e.keyCode & (~SWT.MODIFIER_MASK)) == 0){
+				if ((e.keyCode & (~SWT.MODIFIER_MASK)) == 0) {
 					return;
 				}
 				// if there is a character, use it. if no character available,
@@ -158,7 +167,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 			}
 
 			public void keyReleased(KeyEvent e) {
-				//no op
+				// no op
 			}
 		});
 		createDNDSource();
@@ -167,9 +176,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		return parent;
 	}
 
-	protected void setStatusAdapter(StatusAdapter adapter) {
+	private void setStatusAdapter(StatusAdapter adapter) {
 		populateList(text, adapter.getStatus(), 0, new int[] { 0 });
-		if (workbenchStatusDialog.getStatusAdapters().size() == 1) {
+		if (!isMulti()) {
 			Long timestamp = (Long) adapter
 					.getProperty(IStatusAdapterConstants.TIMESTAMP_PROPERTY);
 
@@ -227,7 +236,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 					event.data = prepareCopyString();
 				}
 			}
-			
+
 			public void dragStart(DragSourceEvent event) {
 			}
 		});
@@ -242,7 +251,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 			/*
 			 * (non-Javadoc)
 			 * 
-			 * @see org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse.swt.events.SelectionEvent)
+			 * @see
+			 * org.eclipse.swt.events.SelectionAdapter#widgetSelected(org.eclipse
+			 * .swt.events.SelectionEvent)
 			 */
 			public void widgetSelected(SelectionEvent e) {
 				copyToClipboard();
@@ -260,9 +271,9 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		return text.getSelectionText();
 	}
 
-	private void populateList(StyledText text, IStatus status, int nesting, int[] lineNumber) {
-		if (!status.matches(MASK)
-				&& !(isDialogHandlingOKStatuses() && status.isOK())) {
+	private void populateList(StyledText text, IStatus status, int nesting,
+			int[] lineNumber) {
+		if (!status.matches(mask) && !(handleOkStatuses && status.isOK())) {
 			return;
 		}
 		appendNewLine(text, status.getMessage(), nesting, lineNumber[0]++);
@@ -271,7 +282,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		Throwable t = status.getException();
 		if (t instanceof CoreException) {
 			CoreException ce = (CoreException) t;
-			populateList(text, ce.getStatus(), nesting + 1,lineNumber);
+			populateList(text, ce.getStatus(), nesting + 1, lineNumber);
 		} else if (t != null) {
 			// Include low-level exception message
 			String message = t.getLocalizedMessage();
@@ -290,7 +301,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	private String getLineSeparator() {
 		return System.getProperty("line.separator"); //$NON-NLS-1$
 	}
-	
+
 	private void appendNewLine(StyledText text, String line, int indentLevel,
 			int lineNumber) {
 		text.append(line + getLineSeparator());
@@ -315,9 +326,13 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 		}
 	}
 
-	private boolean isDialogHandlingOKStatuses() {
-		return ((Boolean) workbenchStatusDialog
-				.getProperty(IStatusDialogConstants.HANDLE_OK_STATUSES))
-				.booleanValue();
+	/**
+	 * This method checks if status dialog holds more than one status.
+	 * 
+	 * @return true if the dialog has one more than one status.
+	 */
+	private boolean isMulti() {
+		return ((Collection) dialogState
+				.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() != 1;
 	}
 }

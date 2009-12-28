@@ -73,6 +73,7 @@ public class StatusDialogManagerTest extends TestCase {
 		automatedMode = ErrorDialog.AUTOMATED_MODE;
 		wsdm = new WorkbenchStatusDialogManager(null, null);
 		ErrorDialog.AUTOMATED_MODE = false;
+		wsdm.setProperty(IStatusDialogConstants.ANIMATION, Boolean.FALSE);
 		super.setUp();
 	}
 
@@ -106,7 +107,6 @@ public class StatusDialogManagerTest extends TestCase {
 		IStatus status = new IStatus() {
 
 			public IStatus[] getChildren() {
-				// TODO Auto-generated method stub
 				return new IStatus[0];
 			}
 
@@ -262,32 +262,26 @@ public class StatusDialogManagerTest extends TestCase {
 		wsdm.setMessageDecorator(new ILabelDecorator(){
 			
 			public Image decorateImage(Image image, Object element) {
-				// TODO Auto-generated method stub
 				return null;
 			}
 			
 			public String decorateText(String text, Object element) {
-				// TODO Auto-generated method stub
 				return text.replaceAll("[A-Z][A-Z][A-Z][0-9][0-9]", "");
 			}
 			
 			public void addListener(ILabelProviderListener listener) {
-				// TODO Auto-generated method stub
 				
 			}
 			
 			public void dispose() {
-				// TODO Auto-generated method stub
 				
 			}
 			
 			public boolean isLabelProperty(Object element, String property) {
-				// TODO Auto-generated method stub
 				return false;
 			}
 			
 			public void removeListener(ILabelProviderListener listener) {
-				// TODO Auto-generated method stub
 				
 			}
 			
