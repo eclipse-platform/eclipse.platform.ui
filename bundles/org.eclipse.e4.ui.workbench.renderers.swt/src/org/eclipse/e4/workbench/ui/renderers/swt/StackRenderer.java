@@ -381,7 +381,7 @@ public class StackRenderer extends LazyStackRenderer {
 			oldItem.dispose();
 		}
 
-		// HACK!! 'auto-hide' empty stacks (should be modeled explicitly
+		// HACK!! 'auto-hide' empty stacks (should be modelled explicitly
 		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
 		boolean isEditorStack = child instanceof MEditor;
 		if (ctf.getItemCount() == 0 && !isEditorStack) {
@@ -389,7 +389,8 @@ public class StackRenderer extends LazyStackRenderer {
 			parentElement.setToBeRendered(false);
 			sh.getDisplay().asyncExec(new Runnable() {
 				public void run() {
-					sh.layout(true, true);
+					if (!sh.isDisposed())
+						sh.layout(true, true);
 				}
 			});
 		}
