@@ -3883,6 +3883,7 @@
          </command>
       </menuContribution>
    </extension>
+   
    <!-- END OF org.eclipse.ui.menus extension point test contributions -->
    
    <extension
@@ -3974,6 +3975,10 @@
             commandId="org.eclipse.ui.tests.menus.iconsToolbarOnly"
             icon="icons/view.gif"
             style="toolbar">
+      </image>
+      <image
+            commandId="tests.commands.CCT.cmd3"
+            icon="icons/anything.gif">
       </image>
    </extension>
    <extension

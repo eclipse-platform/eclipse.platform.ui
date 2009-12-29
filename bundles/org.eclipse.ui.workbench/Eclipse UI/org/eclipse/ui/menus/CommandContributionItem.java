@@ -332,6 +332,13 @@ public class CommandContributionItem extends ContributionItem {
 					ICommandImageService.TYPE_DISABLED, iconStyle);
 			hoverIcon = service.getImageDescriptor(command.getId(),
 					ICommandImageService.TYPE_HOVER, iconStyle);
+
+			if (contributedIcon == null)
+				contributedIcon = icon;
+			if (contributedDisabledIcon == null)
+				contributedDisabledIcon = disabledIcon;
+			if (contributedHoverIcon == null)
+				contributedHoverIcon = hoverIcon;
 		}
 	}
 

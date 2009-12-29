@@ -260,10 +260,14 @@ public class CommandEnablementTest extends UITestCase {
 
 	}
 	
-	public void testRestoreContributionUI() throws Exception {
+	public void testRestoreContributedUI() throws Exception {
+		
+		Field iconField = CommandContributionItem.class.getDeclaredField("icon");
+		iconField.setAccessible(true);
 
 		Field labelField = CommandContributionItem.class.getDeclaredField("label");
 		labelField.setAccessible(true);
+		
 		String menuId = "org.eclipse.ui.tests.Bug275126";
 		MenuManager manager = new MenuManager(null, menuId);
 		IMenuService menuService = (IMenuService) fWorkbench.getService(IMenuService.class);
@@ -282,6 +286,7 @@ public class CommandEnablementTest extends UITestCase {
 		// default handler 
 		assertTrue(cmd3.getHandler() instanceof HandlerProxy);
 		assertEquals(contributedLabel, labelField.get(item)); 
+		assertNotNull(iconField.get(item));
 
 		UpdatingHandler handler1 = new UpdatingHandler(text1);
 		activation1 = handlerService.activateHandler(CMD3_ID, handler1, new ActiveContextExpression(CONTEXT_TEST1,
@@ -293,15 +298,18 @@ public class CommandEnablementTest extends UITestCase {
 		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
 		assertEquals(handler1, cmd3.getHandler());
 		assertEquals(text1, labelField.get(item));
+		assertNotNull(iconField.get(item));
 		
 		contextService.deactivateContext(contextActivation1);
 		// back to default handler state
 		assertTrue(cmd3.getHandler() instanceof HandlerProxy);
 		assertEquals(contributedLabel, labelField.get(item)); 
+		assertNotNull(iconField.get(item));
 
 		contextActivation2 = contextService.activateContext(CONTEXT_TEST2);
 		assertEquals(handler2, cmd3.getHandler());
 		assertEquals(text2, labelField.get(item));
+		assertNotNull(iconField.get(item));
 
 		// activate both context
 		contextActivation1 = contextService.activateContext(CONTEXT_TEST1);
@@ -309,6 +317,7 @@ public class CommandEnablementTest extends UITestCase {
 		// both handler activations eval to true, no handler set
 		assertNull(cmd3.getHandler());
 		assertEquals(contributedLabel, labelField.get(item));
+		assertNotNull(iconField.get(item));
 		
 		contextService.deactivateContext(contextActivation1);
 		contextService.deactivateContext(contextActivation2);
