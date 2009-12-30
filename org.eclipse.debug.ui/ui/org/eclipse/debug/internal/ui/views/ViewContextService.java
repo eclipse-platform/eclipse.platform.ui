@@ -771,7 +771,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 				while (iterator.hasNext()) {
 					Object target = iterator.next();
 					ILaunch launch = DebugModelContextBindingManager.getLaunch(target);
-					if (launch != null) {
+					if (launch != null && !launch.isTerminated()) {
 						ILaunchConfiguration launchConfiguration = launch.getLaunchConfiguration();
 						if (launchConfiguration != null) {
 							try {
@@ -1014,6 +1014,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 					}
 				}
 			}
+			// Ensure that the views are activated for the new contexts if needed.
+			contextActivated(DebugUITools.getDebugContextManager().getContextService(fWindow).getActiveContext());
 		}
 	}
 	

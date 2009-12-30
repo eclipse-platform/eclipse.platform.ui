@@ -8,6 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Pawel Piech - Bug 154598: DebugModelContextBindingManager does not use IAdaptable.getAdapter() to retrieve IDebugModelProvider adapter
+ *     Pawel Piech - Bug 298648:  [View Management] Race conditions and other issues make view management unreliable. 
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contexts;
 
@@ -25,16 +26,12 @@ import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IDebugModelProvider;
-import org.eclipse.debug.core.model.IStackFrame;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -50,7 +47,6 @@ import org.eclipse.ui.activities.IActivityPatternBinding;
 import org.eclipse.ui.activities.IWorkbenchActivitySupport;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.progress.UIJob;
 
 /**
  * Manages <code>debugModelContextBindings</code> extensions.
@@ -140,13 +136,15 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			IConfigurationElement element = configurationElements[i];
 			String modelIdentifier = element.getAttribute(ATTR_DEBUG_MODEL_ID);
 			String contextId = element.getAttribute(ATTR_CONTEXT_ID);
-			if (modelIdentifier != null && contextId != null) {
-				List contextIds = (List) fModelToContextIds.get(modelIdentifier);
-				if (contextIds == null) {
-					contextIds = new ArrayList();
-					fModelToContextIds.put(modelIdentifier, contextIds);
-				}
-				contextIds.add(contextId);
+			synchronized (this) {
+    			if (modelIdentifier != null && contextId != null) {
+    				List contextIds = (List) fModelToContextIds.get(modelIdentifier);
+    				if (contextIds == null) {
+    					contextIds = new ArrayList();
+    					fModelToContextIds.put(modelIdentifier, contextIds);
+    				}
+    				contextIds.add(contextId);
+    			}
 			}
 		}
 	}	
@@ -202,21 +200,28 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 			return;
 		}
 		ILaunch launch = getLaunch(object);
-		if (launch == null) {
+		if (launch == null || launch.isTerminated()) {
 			return;
 		}
-		Set alreadyEnabled = (Set) fLaunchToModelIds.get(launch);
-		if (alreadyEnabled == null) {
-			alreadyEnabled = new HashSet();
-			fLaunchToModelIds.put(launch, alreadyEnabled);
+		List toEnable = new ArrayList(modelIds.length);
+		synchronized (this) {
+		    Set alreadyEnabled = (Set) fLaunchToModelIds.get(launch);
+    		if (alreadyEnabled == null) {
+    			alreadyEnabled = new HashSet();
+    			fLaunchToModelIds.put(launch, alreadyEnabled);
+    		}
+    		for (int i = 0; i < modelIds.length; i++) {
+    			String id = modelIds[i];
+    			if (!alreadyEnabled.contains(id)) {
+    				alreadyEnabled.add(id);
+    				toEnable.add(id);
+    			}
+    		}
 		}
-		for (int i = 0; i < modelIds.length; i++) {
-			String id = modelIds[i];
-			if (!alreadyEnabled.contains(id)) {
-				alreadyEnabled.add(id);
-				activateModel(id, launch);
-			}
+		for (int i = 0; i < toEnable.size(); i++) {
+		    activateModel((String)toEnable.get(i), launch);
 		}
+
 		enableActivitiesFor(modelIds);
 	}
 	
@@ -228,15 +233,19 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 * @param launch the launch the model is being enabled for
 	 */
 	private void activateModel(String modelId, ILaunch launch) {
-		List contextIds = (List) fModelToContextIds.get(modelId);
-		if (contextIds == null) {
-			// if there are no contexts for a model, the base debug context should 
-			// be activated (i.e. a debug model with no org.eclipse.ui.contexts and
-			// associated org.eclipse.debug.ui.modelContextBindings)
-			contextIds = new ArrayList();
-			contextIds.add(DEBUG_CONTEXT);
-			fModelToContextIds.put(modelId, contextIds);
-		}
+	    List contextIds = null; 
+	    synchronized (this) {
+    		contextIds = (List) fModelToContextIds.get(modelId);
+    		if (contextIds == null) {
+    			// if there are no contexts for a model, the base debug context should 
+    			// be activated (i.e. a debug model with no org.eclipse.ui.contexts and
+    			// associated org.eclipse.debug.ui.modelContextBindings)
+    			contextIds = new ArrayList();
+    			contextIds.add(DEBUG_CONTEXT);
+    			fModelToContextIds.put(modelId, contextIds);
+    		}
+	    }
+	    
 		Iterator iterator = contextIds.iterator();
 		while (iterator.hasNext()) {
 			activateContext((String) iterator.next(), launch);
@@ -273,7 +282,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 * @param launch
 	 * @param activation
 	 */
-	private void addActivation(ILaunch launch, IContextActivation activation) {
+	private synchronized void addActivation(ILaunch launch, IContextActivation activation) {
 		List activations = (List) fLanuchToContextActivations.get(launch);
 		if (activations == null) {
 			activations = new ArrayList();
@@ -299,8 +308,8 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 				}
 			}
 		}
-		if (object instanceof IStackFrame) {
-			return new String[] { ((IStackFrame) object).getModelIdentifier() };
+		if (object instanceof IDebugElement) {
+			return new String[] { ((IDebugElement) object).getModelIdentifier() };
 		}
 		return null;
 	}	
@@ -330,21 +339,23 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		// disable activated contexts
 		for (int i = 0; i < launches.length; i++) {
 			ILaunch launch = launches[i];
-			final List activations = (List) fLanuchToContextActivations.remove(launch);
-			fLaunchToModelIds.remove(launch);
+			List activations;
+			synchronized(this) {
+    			activations = (List) fLanuchToContextActivations.remove(launch);
+    			fLaunchToModelIds.remove(launch);
+			}
 			if (activations != null) {
-				UIJob job = new UIJob("Deactivate debug contexts") { //$NON-NLS-1$
-					public IStatus runInUIThread(IProgressMonitor monitor) {
-						Iterator iterator = activations.iterator();
+			    final List _activations = activations;
+				Runnable r = new Runnable() {
+					public void run() {
+						Iterator iterator = _activations.iterator();
 						while (iterator.hasNext()) {
 							IContextActivation activation = (IContextActivation) iterator.next();
 							activation.getContextService().deactivateContext(activation);
 						}
-						return Status.OK_STATUS;
 					}
 				};
-				job.setSystem(true);
-				job.schedule();
+				DebugUIPlugin.getStandardDisplay().asyncExec(r);
 			}
 			
 		}
@@ -380,15 +391,17 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		if (modelIds != null) {
 			for (int i = 0; i < modelIds.length; i++) {
 				String modelId = modelIds[i];
-				List contextIds = (List) fModelToContextIds.get(modelId);
-				if (contextIds != null) {
-					Iterator contextIterator = contextIds.iterator();
-					while (contextIterator.hasNext()) {
-						String contextId = (String) contextIterator.next();
-						if (!workbenchContexts.contains(contextId)) {
-							workbenchContexts.add(contextId);
-						}
-					}
+				synchronized (this) {
+    				List contextIds = (List) fModelToContextIds.get(modelId);
+    				if (contextIds != null) {
+    					Iterator contextIterator = contextIds.iterator();
+    					while (contextIterator.hasNext()) {
+    						String contextId = (String) contextIterator.next();
+    						if (!workbenchContexts.contains(contextId)) {
+    							workbenchContexts.add(contextId);
+    						}
+    					}
+    				}
 				}
 			}
 		}
