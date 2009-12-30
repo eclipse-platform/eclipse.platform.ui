@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="_SeXUAO8EEd6FC9cDb6iV7g" id="_SeXUAO8EEd6FC9cDb6iV7g">
-  <children xsi:type="application:Window" xmi:id="_SeXUAe8EEd6FC9cDb6iV7g" label="e4 Contacts Demo" id="_SeXUAe8EEd6FC9cDb6iV7g">
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore" xmi:id="_SeXUAO8EEd6FC9cDb6iV7g" id="_SeXUAO8EEd6FC9cDb6iV7g">
+  <children xsi:type="application:Window" xmi:id="_SeXUAe8EEd6FC9cDb6iV7g" label="e4 Contacts Demo" id="_SeXUAe8EEd6FC9cDb6iV7g" x="20" y="20" width="700" height="480">
     <children xsi:type="application:WindowTrim" xmi:id="_SeXUAu8EEd6FC9cDb6iV7g" id="_SeXUAu8EEd6FC9cDb6iV7g">
       <children xsi:type="application:ToolBar" xmi:id="_SeXUA-8EEd6FC9cDb6iV7g" id="_SeXUA-8EEd6FC9cDb6iV7g">
         <children xsi:type="application:DirectToolItem" xmi:id="_SeXUBO8EEd6FC9cDb6iV7g" id="_SeXUBO8EEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="Save"/>
         <children xsi:type="application:ToolItem" xmi:id="_SeXUBe8EEd6FC9cDb6iV7g" id="_SeXUBe8EEd6FC9cDb6iV7g" separator="true"/>
         <children xsi:type="application:HandledToolItem" xmi:id="_SeXUBu8EEd6FC9cDb6iV7g" id="_SeXUBu8EEd6FC9cDb6iV7g" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/bright.png" tooltip="Light" command="contacts.brightTheme"/>
         <children xsi:type="application:HandledToolItem" xmi:id="_SeXUB-8EEd6FC9cDb6iV7g" id="_SeXUB-8EEd6FC9cDb6iV7g" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/dark.png" tooltip="Dark" command="contacts.darkTheme"/>
-        <children xsi:type="application:ToolItem" xmi:id="_SeXUCO8EEd6FC9cDb6iV7g" id="_SeXUCO8EEd6FC9cDb6iV7g" separator="true"/>
-        <children xsi:type="application:HandledToolItem" xmi:id="_SeXUCe8EEd6FC9cDb6iV7g" id="_SeXUCe8EEd6FC9cDb6iV7g" label="Exit" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/door_in.png" tooltip="Exit" command="contacts.exit"/>
       </children>
     </children>
     <children xsi:type="application:PartSashContainer" xmi:id="_SeXUCu8EEd6FC9cDb6iV7g" id="_SeXUCu8EEd6FC9cDb6iV7g" horizontal="true">
