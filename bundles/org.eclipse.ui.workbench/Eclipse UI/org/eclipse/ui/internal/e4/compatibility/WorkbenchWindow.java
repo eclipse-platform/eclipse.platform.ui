@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
@@ -24,7 +25,9 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
+import org.eclipse.ui.internal.registry.UIExtensionTracker;
 
 /**
  * @since 3.5
@@ -33,6 +36,8 @@ import org.eclipse.ui.WorkbenchException;
 public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private final MWindow model;
+	private WorkbenchPage page;
+	private UIExtensionTracker tracker;
 
 	// /**
 	// * @param perspectiveId
@@ -61,19 +66,17 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getActivePage()
 	 */
 	public IWorkbenchPage getActivePage() {
-		if (model != null) {
-			return null;
+		if (page == null) {
+			page = new WorkbenchPage(this, model, null);
 		}
-		// TODO Auto-generated method stub
-		return null;
+		return page;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPages()
 	 */
 	public IWorkbenchPage[] getPages() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IWorkbenchPage[] { getActivePage() };
 	}
 
 	/* (non-Javadoc)
@@ -96,16 +99,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
-		// TODO Auto-generated method stub
-		return null;
+		return ((Control) model.getWidget()).getShell();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#getWorkbench()
 	 */
 	public IWorkbench getWorkbench() {
-		// TODO Auto-generated method stub
-		return null;
+		return PlatformUI.getWorkbench();
 	}
 
 	/* (non-Javadoc)
@@ -155,8 +156,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
-		// TODO Auto-generated method stub
-		return null;
+		if (tracker == null) {
+			tracker = new UIExtensionTracker(getWorkbench().getDisplay());
+		}
+		return tracker;
 	}
 
 	/* (non-Javadoc)

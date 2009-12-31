@@ -65,6 +65,14 @@ public class E4Application implements IApplication {
 
 		// Create the app model and its context
 		MApplication appModel = loadApplicationModel();
+		// for compatibility layer: set the application in the OSGi service
+		// context (see Workbench#getInstance())
+		if (!E4Workbench.getServiceContext().containsKey(
+				MApplication.class.getName())) {
+			// first one wins.
+			E4Workbench.getServiceContext().set(MApplication.class.getName(),
+					appModel);
+		}
 		IEclipseContext appContext = createDefaultContext();
 
 		// Set the app's context after adding itself

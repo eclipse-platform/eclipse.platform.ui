@@ -15,7 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -29,12 +28,13 @@ import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.actions.ActionFactory.IWorkbenchAction;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.wizards.IWizardDescriptor;
@@ -63,9 +63,9 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
          */
         public void removeExtension(IExtension source, Object[] objects) {
             for (int i = 0; i < objects.length; i++) {
-                if (objects[i] instanceof NewWizardShortcutAction) {
-                    actions.values().remove(objects[i]);
-                }
+				if (objects[i] instanceof NewWizardShortcutAction) {
+					actions.values().remove(objects[i]);
+				}
             }
         }
 
@@ -108,13 +108,24 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
         super(id);
         Assert.isNotNull(window);
         this.workbenchWindow = window;
-        showDlgAction = ActionFactory.NEW.create(window);
+		// TODO commented out for e4 compatibility
+		// showDlgAction = ActionFactory.NEW.create(window);
+		class ShowDialogAction extends Action implements IWorkbenchAction {
+			public void dispose() {
+			}
+
+			public void run() {
+				MessageDialog.openInformation(null, "oops", "Dialog not yet implemented."); //$NON-NLS-1$//$NON-NLS-2$
+			}
+		}
+		showDlgAction = new ShowDialogAction();
         registerListeners();
         // indicate that a new wizards submenu has been created
-		if (window instanceof WorkbenchWindow) {
-			((WorkbenchWindow) window)
-					.addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
-		}
+		// TODO commented out for e4 compatibility
+		// if (window instanceof WorkbenchWindow) {
+		// ((WorkbenchWindow) window)
+		// .addSubmenu(WorkbenchWindow.NEW_WIZARD_SUBMENU);
+		// }
     }
 
     /**

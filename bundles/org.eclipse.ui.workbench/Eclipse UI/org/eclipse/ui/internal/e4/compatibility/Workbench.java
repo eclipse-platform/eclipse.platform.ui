@@ -42,6 +42,9 @@ import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
+import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
+import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
@@ -58,6 +61,8 @@ public class Workbench implements IWorkbench {
 	private static Workbench instance;
 
 	private MApplication application;
+
+	private UIExtensionTracker tracker;
 
 	/**
 	 * @param mApplication
@@ -152,6 +157,9 @@ public class Workbench implements IWorkbench {
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
 		Object activeChild = application.getActiveChild();
 		MWindow activeWindow = (MWindow) activeChild;
+		if (activeWindow == null && !application.getChildren().isEmpty()) {
+			activeWindow = application.getChildren().get(0);
+		}
 		IEclipseContext windowContext = activeWindow
 				.getContext();
 		IWorkbenchWindow result = (IWorkbenchWindow) windowContext
@@ -170,8 +178,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getEditorRegistry()
 	 */
 	public IEditorRegistry getEditorRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return WorkbenchPlugin.getDefault().getEditorRegistry();
 	}
 
 	/*
@@ -180,8 +187,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getOperationSupport()
 	 */
 	public IWorkbenchOperationSupport getOperationSupport() {
-		// TODO Auto-generated method stub
-		return null;
+		return WorkbenchPlugin.getDefault().getOperationSupport();
 	}
 
 	/*
@@ -220,8 +226,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getSharedImages()
 	 */
 	public ISharedImages getSharedImages() {
-		// TODO Auto-generated method stub
-		return null;
+		return WorkbenchPlugin.getDefault().getSharedImages();
 	}
 
 	/*
@@ -330,8 +335,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getDecoratorManager()
 	 */
 	public IDecoratorManager getDecoratorManager() {
-		// TODO Auto-generated method stub
-		return null;
+		return WorkbenchPlugin.getDefault().getDecoratorManager();
 	}
 
 	/*
@@ -410,8 +414,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getHelpSystem()
 	 */
 	public IWorkbenchHelpSystem getHelpSystem() {
-		// TODO Auto-generated method stub
-		return null;
+		return WorkbenchHelpSystem.getInstance();
 	}
 
 	/*
@@ -450,8 +453,10 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
-		// TODO Auto-generated method stub
-		return null;
+		if (tracker == null) {
+			tracker = new UIExtensionTracker(getDisplay());
+		}
+		return tracker;
 	}
 
 	/*

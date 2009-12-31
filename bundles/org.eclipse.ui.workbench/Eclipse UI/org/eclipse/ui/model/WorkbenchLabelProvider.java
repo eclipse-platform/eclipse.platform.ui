@@ -21,14 +21,11 @@ import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.ui.IEditorRegistry;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.util.Util;
 
@@ -60,20 +57,24 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * when it changes, since many workbench adapters derive their icon from the file
      * associations in the registry.
      */
-    private IPropertyListener editorRegistryListener = new IPropertyListener() {
-		public void propertyChanged(Object source, int propId) {
-			if (propId == IEditorRegistry.PROP_CONTENTS) {
-				fireLabelProviderChanged(new LabelProviderChangedEvent(WorkbenchLabelProvider.this));
-			}
-		}
-	};		
+	// TODO commented out for e4 compatibility
+	// private IPropertyListener editorRegistryListener = new
+	// IPropertyListener() {
+	// public void propertyChanged(Object source, int propId) {
+	// if (propId == IEditorRegistry.PROP_CONTENTS) {
+	// fireLabelProviderChanged(new
+	// LabelProviderChangedEvent(WorkbenchLabelProvider.this));
+	// }
+	// }
+	// };
 	private ResourceManager resourceManager;
 
     /**
      * Creates a new workbench label provider.
      */
     public WorkbenchLabelProvider() {
-    	PlatformUI.getWorkbench().getEditorRegistry().addPropertyListener(editorRegistryListener);
+		// TODO commented out for e4 compatibility
+		// PlatformUI.getWorkbench().getEditorRegistry().addPropertyListener(editorRegistryListener);
     }
 
     /**
@@ -113,7 +114,8 @@ public class WorkbenchLabelProvider extends LabelProvider implements
      * Method declared on ILabelProvider
      */
     public void dispose() {
-    	PlatformUI.getWorkbench().getEditorRegistry().removePropertyListener(editorRegistryListener);
+		// TODO commented out for e4 compatibility
+		// PlatformUI.getWorkbench().getEditorRegistry().removePropertyListener(editorRegistryListener);
 		if (resourceManager != null)
 			resourceManager.dispose();
     	resourceManager = null;

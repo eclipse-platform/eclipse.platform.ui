@@ -43,6 +43,8 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
+import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
+import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
@@ -166,6 +168,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //    
 //    private WorkbenchOperationSupport operationSupport;
 	private BundleListener bundleListener;
+
+	private SharedImages sharedImages;
+
+	private WorkbenchOperationSupport operationSupport;
+
+	private EditorRegistry editorRegistry;
         
     
     /**
@@ -400,12 +408,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      */
 
     public IEditorRegistry getEditorRegistry() {
-		// TODO commented out for e4 compatibility
-//        if (editorRegistry == null) {
-//            editorRegistry = new EditorRegistry();
-//        }
-//        return editorRegistry;
-    	return null;
+		if (editorRegistry == null) {
+			editorRegistry = new EditorRegistry();
+		}
+		return editorRegistry;
     }
 
     /**
@@ -605,12 +611,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
     public IWorkbenchOperationSupport getOperationSupport() {
-		// TODO commented out for e4 compatibility
-//        if (operationSupport == null) {
-//        	operationSupport = new WorkbenchOperationSupport();
-//        }
-//        return operationSupport;
-    	return null;
+		if (operationSupport == null) {
+			operationSupport = new WorkbenchOperationSupport();
+		}
+		return operationSupport;
     }
     
 
@@ -643,12 +647,10 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the shared image manager
      */
     public ISharedImages getSharedImages() {
-		// TODO commented out for e4 compatibility
-//        if (sharedImages == null) {
-//			sharedImages = new SharedImages();
-//		}
-//        return sharedImages;
-    	return null;
+		if (sharedImages == null) {
+			sharedImages = new SharedImages();
+		}
+		return sharedImages;
     }
 
     /**
