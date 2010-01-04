@@ -102,10 +102,14 @@ public class ResourceHandler {
 	public Resource loadBaseModel() {
 		Activator.trace(Policy.DEBUG_WORKBENCH,
 				"Initializing workbench: " + applicationDefinitionInstance, null); //$NON-NLS-1$
-		resource = new E4XMIResource();
-		MApplication theApp = loadDefaultModel(applicationDefinitionInstance);
-		resource.getContents().add((EObject) theApp);
-		resource.setURI(restoreLocation);
+		if (RESTORE_VIA_DELTAS) {
+			resource = new ResourceSetImpl().getResource(applicationDefinitionInstance, true);
+		} else {
+			resource = new E4XMIResource();
+			MApplication theApp = loadDefaultModel(applicationDefinitionInstance);
+			resource.getContents().add((EObject) theApp);
+			resource.setURI(restoreLocation);
+		}
 		return resource;
 	}
 
