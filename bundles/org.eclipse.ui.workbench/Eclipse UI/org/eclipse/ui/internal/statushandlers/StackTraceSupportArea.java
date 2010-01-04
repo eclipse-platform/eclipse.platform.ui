@@ -178,4 +178,9 @@ public class StackTraceSupportArea extends AbstractStatusAreaProvider {
 	public List getList() {
 		return list;
 	}
+
+	public boolean validFor(StatusAdapter statusAdapter) {
+		return statusAdapter.getStatus().getException() != null;
+	}
+
 }

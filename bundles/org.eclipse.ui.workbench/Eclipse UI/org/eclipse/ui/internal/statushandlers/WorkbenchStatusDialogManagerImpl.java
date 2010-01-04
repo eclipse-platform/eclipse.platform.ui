@@ -263,7 +263,7 @@ public class WorkbenchStatusDialogManagerImpl {
 					boolean showSupport = ((Boolean) dialogState
 							.get(IStatusDialogConstants.SHOW_SUPPORT))
 							.booleanValue();
-					if (dialog.providesSupport() && showSupport) {
+					if (showSupport) {
 						dialog.openTray();
 					}
 					dialog.getShell().setLocation(
@@ -468,6 +468,9 @@ public class WorkbenchStatusDialogManagerImpl {
 	public Object getProperty(Object key){
 		if(key == IStatusDialogConstants.SHELL){
 			return getShell();
+		}
+		if (key == IStatusDialogConstants.MANAGER_IMPL) {
+			return this;
 		}
 		return dialogState.get(key);
 	}

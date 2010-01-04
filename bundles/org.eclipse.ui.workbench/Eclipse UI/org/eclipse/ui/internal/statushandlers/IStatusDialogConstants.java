@@ -11,19 +11,14 @@
 
 package org.eclipse.ui.internal.statushandlers;
 
-import org.eclipse.jface.viewers.ILabelDecorator;
-
-import java.util.Map;
-
 import java.util.Collection;
-
-import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
-
-import org.eclipse.ui.statushandlers.StatusAdapter;
-
+import java.util.Map;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
+import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 
 /**
@@ -179,4 +174,6 @@ public interface IStatusDialogConstants {
 	 * closing/opening animation.
 	 */
 	public static final Object ANIMATION = new Object();
+
+	public static final Object MANAGER_IMPL = WorkbenchStatusDialogManagerImpl.class;
 }

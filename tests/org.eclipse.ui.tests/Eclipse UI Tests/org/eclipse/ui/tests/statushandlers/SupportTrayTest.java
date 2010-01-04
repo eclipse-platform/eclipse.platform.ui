@@ -57,22 +57,26 @@ public class SupportTrayTest extends TestCase {
 
 	public void testDefaultSupportProviderEnablement(){
 		Map dialogState = new HashMap();
-		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, new StatusAdapter(Status.OK_STATUS));
+		Status status = new Status(IStatus.ERROR, "org.eclipse.ui.test",
+				"Message.", new NullPointerException());
+		StatusAdapter sa = new StatusAdapter(status);
+		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, sa);
 		SupportTray st = new SupportTray(dialogState, new NullListener());
-		assertFalse(st.providesSupport());
+		assertNull(st.providesSupport(sa));
 		
 		dialogState.put(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA, Boolean.TRUE);
-		assertTrue(st.providesSupport());
+		assertNotNull(st.providesSupport(sa));
 		
 		assertTrue(st.getSupportProvider() instanceof StackTraceSupportArea);
 	}
 	
 	public void testJFacePolicySupportProvider(){
 		Map dialogState = new HashMap();
-		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, new StatusAdapter(Status.OK_STATUS));
+		StatusAdapter sa = new StatusAdapter(Status.OK_STATUS);
+		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, sa);
 		SupportTray st = new SupportTray(dialogState, new NullListener());
 		
-		assertFalse(st.providesSupport());
+		assertNull(st.providesSupport(sa));
 		
 		final IStatus[] _status = new IStatus[]{null};
 		
@@ -84,7 +88,7 @@ public class SupportTrayTest extends TestCase {
 			}
 		});
 		
-		assertTrue(st.providesSupport());
+		assertNotNull(st.providesSupport(sa));
 
 		TrayDialog td = null;
 		try {
@@ -103,17 +107,18 @@ public class SupportTrayTest extends TestCase {
 	
 	public void testJFacePolicyOverDefaultPreference() {
 		Map dialogState = new HashMap();
-		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, new StatusAdapter(Status.OK_STATUS));
+		StatusAdapter sa = new StatusAdapter(Status.OK_STATUS);
+		dialogState.put(IStatusDialogConstants.CURRENT_STATUS_ADAPTER, sa);
 		SupportTray st = new SupportTray(dialogState, new NullListener());
 
-		assertFalse(st.providesSupport());
+		assertNull(st.providesSupport(sa));
 
 		ErrorSupportProvider provider = new NullErrorSupportProvider();
 
 		Policy.setErrorSupportProvider(provider);
 
 		dialogState.put(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA, Boolean.TRUE);
-		assertTrue(st.providesSupport());
+		assertNotNull(st.providesSupport(sa));
 
 		assertEquals(provider, st.getSupportProvider());
 	}
@@ -139,4 +144,5 @@ public class SupportTrayTest extends TestCase {
 				td[0].close();
 		}
 	}
+
 }

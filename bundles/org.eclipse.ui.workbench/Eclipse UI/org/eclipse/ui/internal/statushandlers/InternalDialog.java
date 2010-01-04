@@ -58,7 +58,7 @@ import org.eclipse.ui.views.IViewDescriptor;
  * 
  * @since 3.4
  */
-class InternalDialog extends TrayDialog {
+public class InternalDialog extends TrayDialog {
 
 	/**
 	 * The id of the goto action button
@@ -334,13 +334,15 @@ class InternalDialog extends TrayDialog {
 	 * @see org.eclipse.jface.dialogs.TrayDialog#closeTray()
 	 */
 	public void closeTray() throws IllegalStateException {
-		super.closeTray();
+		if (getTray() != null) {
+			super.closeTray();
+		}
 		//preserve state during modality switch
 		if (!getBooleanValue(IStatusDialogConstants.MODALITY_SWITCH)) {
 			dialogState.put(IStatusDialogConstants.TRAY_OPENED, Boolean.FALSE);
 		}
 		if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
-			launchTrayLink.setEnabled(supportTray.providesSupport()
+			launchTrayLink.setEnabled(providesSupport()
 					&& !getBooleanValue(IStatusDialogConstants.TRAY_OPENED));
 		}
 	}
@@ -509,20 +511,39 @@ class InternalDialog extends TrayDialog {
 		Control control = statusListViewer.getControl();
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		data.heightHint = convertHeightInCharsToPixels(5);
-		statusListViewer.addSelectionChangedListener(supportTray);
 		control.setLayoutData(data);
 		initContentProvider();
 		initLabelProvider();
-		statusListViewer
-				.addPostSelectionChangedListener(new ISelectionChangedListener() {
-					public void selectionChanged(SelectionChangedEvent event) {
-						handleSelectionChange();
-						supportTray.selectionChanged(event);
-					}
-				});
+		statusListViewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
+			public void selectionChanged(SelectionChangedEvent event) {
+				handleSelectionChange();
+				if ((getTray() == null) && getBooleanValue(IStatusDialogConstants.TRAY_OPENED)
+						&& providesSupport()) {
+					silentTrayOpen();
+					return;
+				}
+				if ((getTray() != null) && !providesSupport()) {
+					silentTrayClose();
+					return;
+				}
+				supportTray.selectionChanged(event);
+			}
+		});
 		Dialog.applyDialogFont(parent);
 	}
 
+	/**
+	 * closes the tray without changing any flag
+	 */
+	private void silentTrayClose() {
+		super.closeTray();
+	}
+
+	/** opens the tray without changing any flag */
+	private void silentTrayOpen() {
+		if (getTray() == null)
+			super.openTray(supportTray);
+	}
 	/**
 	 * This methods switches StatusAdapters presentation depending if there
 	 * is one status or more.
@@ -717,8 +738,7 @@ class InternalDialog extends TrayDialog {
 				hideButton(gotoButton, true);
 		}
 		// and tray enablement button
-		if (supportTray.providesSupport()
-				&& !getBooleanValue(IStatusDialogConstants.SHOW_SUPPORT)) {
+		if (providesSupport() && !getBooleanValue(IStatusDialogConstants.HIDE_SUPPORT_BUTTON)) {
 			if (launchTrayLink == null || launchTrayLink.isDisposed()) {
 				launchTrayLink = createGetSupportLink();
 			}
@@ -776,7 +796,9 @@ class InternalDialog extends TrayDialog {
 		if (launchTrayLink != null && !launchTrayLink.isDisposed()) {
 			launchTrayLink.setEnabled(false);
 		}
-		super.openTray(tray);
+		if (providesSupport()) {
+			super.openTray(tray);
+		}
 		dialogState.put(IStatusDialogConstants.TRAY_OPENED, Boolean.TRUE);
 	}
 
@@ -909,8 +931,7 @@ class InternalDialog extends TrayDialog {
 	 */
 	private Link createGetSupportLink() {
 		// no support
-		if (!supportTray.providesSupport()
-				|| getBooleanValue(IStatusDialogConstants.HIDE_SUPPORT_BUTTON)) {
+		if (!providesSupport() || getBooleanValue(IStatusDialogConstants.HIDE_SUPPORT_BUTTON)) {
 			return null;
 		}
 
@@ -1019,7 +1040,7 @@ class InternalDialog extends TrayDialog {
 	}
 
 	public boolean providesSupport() {
-		return supportTray.providesSupport();
+		return supportTray.providesSupport(getCurrentStatusAdapter()) != null;
 	}
 
 	private String getString(Object key) {

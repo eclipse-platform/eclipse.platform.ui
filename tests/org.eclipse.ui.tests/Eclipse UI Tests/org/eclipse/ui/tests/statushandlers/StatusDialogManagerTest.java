@@ -45,6 +45,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
+import org.eclipse.ui.internal.statushandlers.WorkbenchStatusDialogManagerImpl;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.AbstractStatusAreaProvider;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
@@ -543,6 +544,7 @@ public class StatusDialogManagerTest extends TestCase {
 		// this verifies if support is opened for correct statusAdapter
 		openSupportArea(statusAdapter1, passed);
 		selectTable(table, 1);
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
 		assertEquals(statusAdapter2, passed[0]);
 	}
 
@@ -869,6 +871,92 @@ public class StatusDialogManagerTest extends TestCase {
 		Rectangle newSize = shell.getBounds();
 		assertTrue(newSize.height > sizeY);
 	}
+	
+	public void testIgnoringOpenTrayOnShow() {
+		wsdm.enableDefaultSupportArea(true);
+		wsdm.enableErrorDialogCompatibility();
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		WorkbenchStatusDialogManagerImpl manager = (WorkbenchStatusDialogManagerImpl) wsdm
+				.getProperty(IStatusDialogConstants.MANAGER_IMPL);
+		assertNull("Tray should not be opened", manager.getDialog().getTray());
+		
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2,
+				new NullPointerException()), false);
+		
+		Table table = StatusDialogUtil.getTable();
+		selectTable(table, 1);
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
+		assertNotNull("Tray should be opened", manager.getDialog().getTray());
+		
+		selectTable(table, 0);
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
+		assertNull("Tray should not be opened", manager.getDialog().getTray());
+	}
+	
+	public void testAutoOpeningTrayOnShow() {
+		wsdm.enableDefaultSupportArea(true);
+		wsdm.enableErrorDialogCompatibility();
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1, new NullPointerException()), false);
+		WorkbenchStatusDialogManagerImpl manager = (WorkbenchStatusDialogManagerImpl) wsdm
+				.getProperty(IStatusDialogConstants.MANAGER_IMPL);
+		assertNotNull("Tray should be opened", manager.getDialog().getTray());
+	}
+	
+	/**
+	 * Enable default support area.
+	 * Open the dialog as non-modal.
+	 * Open the tray. Test if tray opened.
+	 * Change the modality. Test if tray still opened.
+	 * Select adapter without status. Test if tray closed.
+	 */
+	public void testModalitySwitch5() {
+		wsdm.enableDefaultSupportArea(true);
+		StatusAdapter sa = createStatusAdapter(MESSAGE_1, new NullPointerException());
+		wsdm.addStatusAdapter(sa, false);
+
+		assertNotNull(StatusDialogUtil.getSupportLink());
+		assertTrue(StatusDialogUtil.getSupportLink().isEnabled());
+		selectWidget(StatusDialogUtil.getSupportLink());
+		WorkbenchStatusDialogManagerImpl manager = (WorkbenchStatusDialogManagerImpl) wsdm
+				.getProperty(IStatusDialogConstants.MANAGER_IMPL);
+		assertNotNull("Tray should be opened", manager.getDialog().getTray());
+		
+		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), true);
+		assertNotNull("Tray should be opened", manager.getDialog().getTray());
+
+		Table table = StatusDialogUtil.getTable();
+		selectTable(table, 1);
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
+		assertNull("Tray should not be opened", manager.getDialog().getTray());
+		assertNull(StatusDialogUtil.getSupportLink());
+	}
+	
+	public void testSupportLinkVisibility1(){
+		wsdm.enableDefaultSupportArea(true);
+		StatusAdapter sa = createStatusAdapter(MESSAGE_1, new NullPointerException());
+		wsdm.addStatusAdapter(sa, false);
+		assertNotNull(StatusDialogUtil.getSupportLink());
+		StatusAdapter sa2 = createStatusAdapter(MESSAGE_2);
+		wsdm.addStatusAdapter(sa2, false);
+		Table table = StatusDialogUtil.getTable();
+		selectTable(table, 1);
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
+		assertNull(StatusDialogUtil.getSupportLink());
+	}
+	
+	public void testSupportLinkVisibility2() {
+		wsdm.enableDefaultSupportArea(true);
+		StatusAdapter sa = createStatusAdapter(MESSAGE_1);
+		wsdm.addStatusAdapter(sa, false);
+		assertNull(StatusDialogUtil.getSupportLink());
+		StatusAdapter sa2 = createStatusAdapter(MESSAGE_2, new NullPointerException());
+		wsdm.addStatusAdapter(sa2, false);
+		Table table = StatusDialogUtil.getTable();
+		selectTable(table, 1);
+		while(Display.getCurrent().readAndDispatch() && (StatusDialogUtil.getStatusShell() != null));
+		assertNotNull(StatusDialogUtil.getSupportLink());
+	}
+	
 
 	/**
 	 * Delivers custom support area.

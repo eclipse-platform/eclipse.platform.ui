@@ -52,7 +52,6 @@ public class SupportTray extends DialogTray implements
 		this.closeListener = listener;
 		this.dialogState = dialogState;
 		this.hideSupportButtons = getBooleanValue(IStatusDialogConstants.HIDE_SUPPORT_BUTTON);
-		this.defaultSupportAreaEnabled = getBooleanValue(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA);
 		this.lastSelectedStatus = getCurrentStatusAdapter();
 	}
 
@@ -71,7 +70,6 @@ public class SupportTray extends DialogTray implements
 
 	private StatusAdapter lastSelectedStatus;
 
-	private boolean defaultSupportAreaEnabled;
 	private AbstractStatusAreaProvider userSupportProvider;
 
 	/*
@@ -85,8 +83,9 @@ public class SupportTray extends DialogTray implements
 		// nothing to display. Should never happen, cause button is disabled
 		// when nothing to display.
 
-		if (!providesSupport()) {
-			return container;
+		if (providesSupport(getCurrentStatusAdapter()) == null
+				&& getBooleanValue(IStatusDialogConstants.TRAY_OPENED)) {
+
 		}
 
 		GridLayout layout = new GridLayout();
@@ -262,7 +261,7 @@ public class SupportTray extends DialogTray implements
 			provider = userSupportProvider;
 		}
 
-		if (defaultSupportAreaEnabled && provider == null) {
+		if (getBooleanValue(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA) && provider == null) {
 			provider = new StackTraceSupportArea();
 		}
 		return provider;
@@ -286,21 +285,21 @@ public class SupportTray extends DialogTray implements
 	/**
 	 * Checks if the support dialog has any support areas.
 	 * 
-	 * @return true if support dialog has any support areas to display,
-	 *         false otherwise
-	 * 
+	 * @param adapter
+	 *            - a parameter for which we area checking the status adapter
+	 * @return true if support dialog has any support areas to display, false
+	 *         otherwise
 	 */
-	public boolean providesSupport() {
-		userSupportProvider = (AbstractStatusAreaProvider) dialogState
-				.get(IStatusDialogConstants.CUSTOM_SUPPORT_PROVIDER);
-		defaultSupportAreaEnabled = getBooleanValue(IStatusDialogConstants.ENABLE_DEFAULT_SUPPORT_AREA);
-		if (Policy.getErrorSupportProvider() != null) {
-			return true;
+	public ErrorSupportProvider providesSupport(StatusAdapter adapter) {
+		ErrorSupportProvider provider = getSupportProvider();
+		if (provider instanceof AbstractStatusAreaProvider) {
+			AbstractStatusAreaProvider areaProvider = (AbstractStatusAreaProvider) provider;
+			if (areaProvider.validFor(adapter)) {
+				return areaProvider;
+			}
+			return null;
 		}
-		if (userSupportProvider != null) {
-			return true;
-		}
-		return defaultSupportAreaEnabled;
+		return provider;
 	}
 
 	/*
