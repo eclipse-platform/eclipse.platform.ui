@@ -4261,10 +4261,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			fRulerContextMenu= null;
 		}
 
-		registerUndoRedoAction(ITextEditorActionConstants.UNDO, null);
-		registerUndoRedoAction(ITextEditorActionConstants.REDO, null);
-
 		if (fActions != null) {
+			registerUndoRedoAction(ITextEditorActionConstants.UNDO, null);
+			registerUndoRedoAction(ITextEditorActionConstants.REDO, null);
 			fActions.clear();
 			fActions= null;
 		}
