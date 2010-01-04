@@ -29,6 +29,65 @@ import org.eclipse.emf.common.util.EList;
 
 public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 
+	public void testApplicationElement_Id_Changed() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+		window.setLabel("name");
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		window.setLabel("customName");
+
+		Object serializedState = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		window.setId("id");
+
+		Collection<ModelDelta> deltas = constructDeltas(application,
+				serializedState);
+
+		assertEquals("name", window.getLabel());
+
+		applyAll(deltas);
+
+		assertEquals("customName", window.getLabel());
+	}
+
+	public void testApplicationElement_Id_Changed2() {
+		MApplication application = createApplication();
+
+		MWindow window = createWindow(application);
+		window.setId("id");
+		window.setLabel("name");
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		window.setLabel("customName");
+
+		Object serializedState = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		window.setId("id2");
+
+		Collection<ModelDelta> deltas = constructDeltas(application,
+				serializedState);
+
+		assertEquals("name", window.getLabel());
+
+		applyAll(deltas);
+
+		assertEquals("customName", window.getLabel());
+	}
+
 	/**
 	 * <ol>
 	 * <li>Initially, the application has a part named "name".</li>

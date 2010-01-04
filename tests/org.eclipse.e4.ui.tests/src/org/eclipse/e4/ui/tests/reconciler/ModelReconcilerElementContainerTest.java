@@ -885,6 +885,7 @@ public abstract class ModelReconcilerElementContainerTest extends
 	}
 
 	private void testElementContainer_ActiveChild3(boolean setActiveChildFirst) {
+		// create an application with one window
 		MApplication application = createApplication();
 		MWindow window = createWindow(application);
 
@@ -893,10 +894,13 @@ public abstract class ModelReconcilerElementContainerTest extends
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
+		// create a part sash container and add it to the window
 		MPartSashContainer partSashContainer = MApplicationFactory.eINSTANCE
 				.createPartSashContainer();
 		window.getChildren().add(partSashContainer);
 
+		// add a new part as a child of the container and also set it as the
+		// active child
 		MPart part = MApplicationFactory.eINSTANCE.createPart();
 		if (setActiveChildFirst) {
 			partSashContainer.setActiveChild(part);

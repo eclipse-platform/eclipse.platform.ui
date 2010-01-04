@@ -68,6 +68,8 @@ import org.w3c.dom.NodeList;
 
 public class XMLModelReconciler extends ModelReconciler {
 
+	private static final String XMIID_ATTNAME = "xmi:id"; //$NON-NLS-1$
+
 	private static final String REFERENCE_ELEMENT_NAME = "reference"; //$NON-NLS-1$
 	private static final String ORIGINALREFERENCE_ELEMENT_NAME = "originalReference"; //$NON-NLS-1$
 
@@ -370,8 +372,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		Object match = findReference(references, referenceId);
 		if (match == null) {
-			NodeList list = (NodeList) reference;
-			ModelDelta delta = createDelayedDelta(eObject, feature, list);
+			ModelDelta delta = createDelayedDelta(eObject, feature, reference);
 			if (delta != null) {
 				return delta;
 			}
@@ -380,15 +381,10 @@ public class XMLModelReconciler extends ModelReconciler {
 		return new EMFModelDeltaSet(eObject, feature, match);
 	}
 
-	private ModelDelta createDelayedDelta(EObject object, EStructuralFeature feature, NodeList list) {
-		for (int i = 0; i < list.getLength(); i++) {
-			Element e = (Element) list.item(i);
-			if (e.getNodeName().equals(APPLICATIONELEMENT_ID_ATTNAME)) {
-				String referenceId = e.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-				return new EMFModelDeltaDelayedSet(object, feature, rootObject, referenceId);
-			}
-		}
-		return null;
+	private ModelDelta createDelayedDelta(EObject object, EStructuralFeature feature,
+			Element element) {
+		String referenceId = element.getAttribute(XMIID_ATTNAME);
+		return new EMFModelDeltaDelayedSet(object, feature, rootObject, referenceId);
 	}
 
 	public static List<?> threeWayMerge(List<?> originalReferences, List<?> userReferences,
@@ -594,6 +590,9 @@ public class XMLModelReconciler extends ModelReconciler {
 		EObject object = createObject(typeName);
 		CompositeDelta compositeDelta = new CompositeDelta(object);
 
+		E4XMIResource resource = (E4XMIResource) rootObject.eResource();
+		resource.setInternalId(object, element.getAttribute(XMIID_ATTNAME));
+
 		NodeList elementAttributes = (NodeList) element;
 		for (int i = 0; i < elementAttributes.getLength(); i++) {
 			Element item = (Element) elementAttributes.item(i);
@@ -617,7 +616,8 @@ public class XMLModelReconciler extends ModelReconciler {
 						NodeList list = (NodeList) item;
 						list = (NodeList) list.item(0);
 						if (list != null) {
-							ModelDelta delta = createDelayedDelta(object, attributeFeature, list);
+							ModelDelta delta = createDelayedDelta(object, attributeFeature,
+									(Element) list);
 							if (delta != null) {
 								deltas.add(delta);
 							}
@@ -1163,6 +1163,10 @@ public class XMLModelReconciler extends ModelReconciler {
 				referenceElement.appendChild(referenceAttributeElement);
 			}
 		}
+
+		E4XMIResource resource = (E4XMIResource) rootObject.eResource();
+		String internalId = resource.getInternalId(eObject);
+		referenceElement.setAttribute(XMIID_ATTNAME, internalId);
 
 		return referenceElement;
 	}

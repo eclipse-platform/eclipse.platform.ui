@@ -11,7 +11,8 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.ui.model.application.MApplicationElement;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -19,7 +20,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 public class E4XMIResource extends XMIResourceImpl {
 
-	private int count = 0;
+	private Map<EObject, String> objectMap = new HashMap<EObject, String>();
 
 	public E4XMIResource() {
 	}
@@ -28,24 +29,20 @@ public class E4XMIResource extends XMIResourceImpl {
 		super(uri);
 	}
 
+	public void setInternalId(EObject object, String id) {
+		objectMap.put(object, id);
+	}
+
+	public String getInternalId(EObject object) {
+		return objectMap.get(object);
+	}
+
 	@Override
 	protected boolean useIDs() {
 		return true;
 	}
 
-	@Override
-	public void setID(EObject eObject, String id) {
-		super.setID(eObject, id);
-
-		if (id != null) {
-			count++;
-		}
-	}
-
 	private String createId() {
-		//				String id = "element." + count; //$NON-NLS-1$
-		// count++;
-		// return id;
 		return EcoreUtil.generateUUID();
 	}
 
@@ -58,23 +55,31 @@ public class E4XMIResource extends XMIResourceImpl {
 	}
 
 	@Override
+	public void setID(EObject eObject, String id) {
+		if (id != null) {
+			String internalId = objectMap.get(eObject);
+			if (internalId != null) {
+				super.setID(eObject, internalId);
+			}
+			objectMap.put(eObject, id);
+		}
+		super.setID(eObject, id);
+	}
+
+	@Override
 	public String getID(EObject eObject) {
 		String id = super.getID(eObject);
 		if (id != null) {
 			return id;
 		}
 
-		MApplicationElement element = (MApplicationElement) eObject;
-		id = element.getId();
+		id = objectMap.get(eObject);
 		if (id != null) {
-			super.setID((EObject) element, id);// getUniqueId());
 			return id;
 		}
 
 		id = getUniqueId();
-
-		element.setId(id);
-		super.setID((EObject) element, id);
+		setID(eObject, id);
 		return id;
 	}
 }
