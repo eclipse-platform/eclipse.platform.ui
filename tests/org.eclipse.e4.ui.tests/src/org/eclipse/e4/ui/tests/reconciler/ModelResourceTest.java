@@ -17,6 +17,7 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.ui.internal.E4XMIResourceFactory;
@@ -24,6 +25,7 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.Resource.Factory;
+import org.eclipse.emf.ecore.xmi.XMLResource;
 
 public abstract class ModelResourceTest extends TestCase {
 
@@ -34,6 +36,8 @@ public abstract class ModelResourceTest extends TestCase {
 	private Factory factory;
 
 	private Resource resource;
+
+	private XMLResource xmlResource;
 
 	@Override
 	protected void setUp() throws Exception {
@@ -55,6 +59,14 @@ public abstract class ModelResourceTest extends TestCase {
 		temporaryURI = null;
 	}
 
+	protected String getId(MApplicationElement applicationElement) {
+		return getId((EObject) applicationElement);
+	}
+
+	protected String getId(EObject object) {
+		return xmlResource.getID(object);
+	}
+
 	protected Factory createFactory() {
 		return new E4XMIResourceFactory();
 	}
@@ -69,6 +81,10 @@ public abstract class ModelResourceTest extends TestCase {
 
 	protected MApplication createApplication() {
 		resource = factory.createResource(temporaryURI);
+		if (resource instanceof XMLResource) {
+			xmlResource = (XMLResource) resource;
+		}
+
 		if (temporaryFile.exists()) {
 			try {
 				resource.load(null);
