@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,7 +13,6 @@
  *     Benjamin Muskalla <b.muskalla@gmx.net> - https://bugs.eclipse.org/bugs/show_bug.cgi?id=41573
  *     Stephan Wahlbrink <stephan.wahlbrink@walware.de> - Wrong operations mode/feedback for text drag over/drop in text editors - https://bugs.eclipse.org/bugs/show_bug.cgi?id=206043
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
- *     Tom Hofmann - Bugs 278817, 278831
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -6032,7 +6031,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				fSourceViewer.setVisibleRegion(offset, length);
 		} else {
 			IRegion rangeIndication= fSourceViewer.getRangeIndication();
-			if (rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())
+			if (moveCursor || rangeIndication == null || offset != rangeIndication.getOffset() || length != rangeIndication.getLength())
 				fSourceViewer.setRangeIndication(offset, length, moveCursor);
 		}
 	}
