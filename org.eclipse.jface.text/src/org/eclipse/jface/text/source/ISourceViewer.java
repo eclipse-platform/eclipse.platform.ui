@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -163,9 +163,9 @@ public interface ISourceViewer extends ITextViewer {
 	void setRangeIndicator(Annotation rangeIndicator);
 
 	/**
-	 * Sets the viewers's range indication to the specified range. Its is indicated
-	 * whether the cursor should also be moved to the beginning of the specified range.
-	 *
+	 * Sets the viewers's range indication to the specified range. It is indicated whether the
+	 * cursor should also be moved to the beginning of the specified range.
+	 * 
 	 * @param offset the offset of the range
 	 * @param length the length of the range
 	 * @param moveCursor indicates whether the cursor should be moved to the given offset
