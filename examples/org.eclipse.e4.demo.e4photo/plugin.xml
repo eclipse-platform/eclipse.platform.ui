@@ -69,7 +69,7 @@
          point="org.eclipse.e4.workbench.model">
       <model
             parentID="E4MainWindow"
-            location="xmi/photoDemo.xmi">
+            location="Application.e4xmi">
       </model>
    </extension>
 
