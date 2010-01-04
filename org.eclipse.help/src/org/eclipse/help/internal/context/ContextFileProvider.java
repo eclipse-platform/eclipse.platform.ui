@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -150,7 +150,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 	 * Returns the context definitions for the given plug-in and locale,
 	 * as a mapping of short IDs to Context objects (shortContextId -> Context).
 	 */
-	private Map[] getPluginContexts(String pluginId, String locale) {
+	public Map[] getPluginContexts(String pluginId, String locale) {
 		List maps = new ArrayList();
 		Map associations = getPluginAssociations();
 		ContextFile[] descriptors = (ContextFile[])associations.get(pluginId);
@@ -213,6 +213,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 		return null;
 	}
 
+
 	private Map loadContextsFromInputStream(ContextFile descriptor, String locale, InputStream in)
 			throws Exception {
 		if (reader == null) {
@@ -240,10 +241,19 @@ public class ContextFileProvider extends AbstractContextProvider {
 					String id = context.getId();
 					if (id != null) {
 						Object existingContext =  contexts.get(id);
-						if (existingContext != null) {
-							((Context)existingContext).mergeContext(context);									
-						} else {
+						if (existingContext==null)
 						    contexts.put(id, context);
+						else
+						{
+							((Context)existingContext).mergeContext(context);	
+
+							if (HelpPlugin.DEBUG_CONTEXT) 
+							{
+								String error = "Context help ID '"+id+"' is found multiple times in file '"+descriptor.getBundleId()+'/'+descriptor.getFile()+"'\n"+ //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+									" Description 1: "+((Context)existingContext).getText()+'\n'+ //$NON-NLS-1$
+									" Description 2: "+context.getText(); //$NON-NLS-1$
+								System.out.println(error);
+							}
 						}
 					}
 				}
