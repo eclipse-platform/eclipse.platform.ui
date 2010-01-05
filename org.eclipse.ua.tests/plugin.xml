@@ -601,5 +601,15 @@
             filter="(other.info=org.eclipse.ua.tests)">
       </serviceSelector>
    </extension>
+   <extension
+         point="org.eclipse.help.base.luceneSearchParticipants">
+      <searchParticipant
+            headless="false"
+            icon="icons/sample4.gif"
+            id="org.eclipse.ua.tests.luceneTestParticipant"
+            name="Lucene Search Participant Test"
+            participant="org.eclipse.ua.tests.help.search.MockLuceneParticipant">
+      </searchParticipant>
+   </extension>
 
 </plugin>
