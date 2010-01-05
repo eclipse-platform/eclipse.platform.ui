@@ -231,6 +231,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return font information or <code>null</code>
+	 * @throws CoreException 
 	 */
 	protected FontData getFontData(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
@@ -242,6 +243,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return color or <code>null</code>
+	 * @throws CoreException 
 	 */
 	protected RGB getForeground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
@@ -253,6 +255,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return color or <code>null</code>
+	 * @throws CoreException 
 	 */
 	protected RGB getBackground(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
@@ -264,6 +267,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 	 * @param presentationContext
 	 * @param columnId
 	 * @return image descriptor or <code>null</code>
+	 * @throws CoreException 
 	 */
 	protected ImageDescriptor getImageDescriptor(TreePath elementPath, IPresentationContext presentationContext, String columnId) throws CoreException {
 		return null;
