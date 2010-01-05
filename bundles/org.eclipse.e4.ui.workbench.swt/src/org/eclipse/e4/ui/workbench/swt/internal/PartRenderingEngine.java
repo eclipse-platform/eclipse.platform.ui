@@ -161,6 +161,10 @@ public class PartRenderingEngine implements IPresentationEngine {
 	public PartRenderingEngine() {
 	}
 
+	public PartRenderingEngine(String curFactoryId) {
+		this.curFactoryId = curFactoryId;
+	}
+
 	/**
 	 * Initialize a part renderer from the extension point.
 	 * 
@@ -387,7 +391,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		// Have we already created this one ?
 		if (element.getId() != null && element.getId().length() > 0) {
 			RenderingRecord record = renderedWidgets.get(element.getId());
-			if (record != null) {
+			if (record != null && !record.widget.isDisposed()) {
 				element.setRenderer(record.renderer);
 				record.renderer.bindWidget(element, record.widget);
 				if (element instanceof MContribution)
