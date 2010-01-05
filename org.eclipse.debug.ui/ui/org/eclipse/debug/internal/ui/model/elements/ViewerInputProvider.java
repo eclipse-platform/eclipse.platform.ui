@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -105,7 +105,7 @@ public abstract class ViewerInputProvider implements IViewerInputProvider {
 	 * Returns a scheduling rule to use when performing the given updates or
 	 * <code>null</code> if none.
 	 * 
-	 * @param updates
+	 * @param update
 	 * @return scheduling rule or <code>null</code> if none
 	 */
 	protected ISchedulingRule getRule(IViewerInputUpdate update) {

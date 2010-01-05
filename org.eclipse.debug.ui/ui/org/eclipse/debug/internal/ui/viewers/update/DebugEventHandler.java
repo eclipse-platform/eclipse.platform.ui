@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2006 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -147,6 +147,8 @@ public abstract class DebugEventHandler {
 	 * Fires a model delta to indicate that the launch manager should be refreshed.
 	 * Subclasses should override individual handle events to provide deltas that
 	 * better reflect the actual change in the model.
+	 * 
+	 * @param event the event that triggered the root refresh 
 	 */
 	protected void refreshRoot(DebugEvent event) {
 		ModelDelta delta = new ModelDelta(DebugPlugin.getDefault().getLaunchManager(), IModelDelta.CONTENT);

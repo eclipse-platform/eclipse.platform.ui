@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2007 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -66,6 +66,15 @@ public class DebugTargetContentProvider extends ElementContentProvider {
 		return false;
 	}
 
+	/**
+	 * Returns all children of the given parent object.
+	 * 
+	 * @param parent 
+	 * @param context
+	 * @param monitor
+	 * @return all children
+	 * @throws CoreException
+	 */
 	protected Object[] getAllChildren(Object parent, IPresentationContext context, IViewerUpdate monitor) throws CoreException {
 		String id = context.getId();
 		if (id.equals(IDebugUIConstants.ID_DEBUG_VIEW))

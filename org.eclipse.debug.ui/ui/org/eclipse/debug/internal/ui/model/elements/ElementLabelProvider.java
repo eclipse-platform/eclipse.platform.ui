@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -227,7 +227,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 
 	/**
 	 * Returns the <code>FontData</code> for the path in the given column with the current presentation
-	 * @param element
+	 * @param elementPath
 	 * @param presentationContext
 	 * @param columnId
 	 * @return font information or <code>null</code>
@@ -238,7 +238,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 
 	/**
 	 * Returns the <code>RGB</code> foreground colour for the path in the given column with the current presentation
-	 * @param element
+	 * @param elementPath
 	 * @param presentationContext
 	 * @param columnId
 	 * @return color or <code>null</code>
@@ -249,7 +249,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 
 	/**
 	 * Returns the <code>RGB</code> background colour for the path in the given column with the current presentation
-	 * @param element
+	 * @param elementPath
 	 * @param presentationContext
 	 * @param columnId
 	 * @return color or <code>null</code>
@@ -260,7 +260,7 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 
 	/**
 	 * Returns the <code>ImageDescriptor</code> for the path in the given column with the current presentation
-	 * @param element
+	 * @param elementPath
 	 * @param presentationContext
 	 * @param columnId
 	 * @return image descriptor or <code>null</code>

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2006, 2009 IBM Corporation and others.
+ *  Copyright (c) 2006, 2010 IBM Corporation and others.
  *  All rights reserved. This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License v1.0
  *  which accompanies this distribution, and is available at
@@ -120,6 +120,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	 * Returns the name of the given variable to display in <code>COLUMN_VARIABLE_NAME</code>.
 	 * 
 	 * @param variable
+	 * @param context
 	 * @return variable name
 	 * @throws CoreException
 	 */
@@ -131,6 +132,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	 * Returns the type name of the given variable to display in <code>COLUMN_VARIABLE_TYPE</code>.
 	 * 
 	 * @param variable
+	 * @param context
 	 * @return variable type name
 	 * @throws CoreException
 	 */
@@ -143,6 +145,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	 * 
 	 * @param variable
 	 * @param value
+	 * @param context
 	 * @return value label
 	 * @throws CoreException
 	 */
@@ -155,6 +158,7 @@ public class VariableLabelProvider extends DebugElementLabelProvider {
 	 * 
 	 * @param variable
 	 * @param value
+	 * @param context
 	 * @return value label
 	 * @throws CoreException
 	 */
