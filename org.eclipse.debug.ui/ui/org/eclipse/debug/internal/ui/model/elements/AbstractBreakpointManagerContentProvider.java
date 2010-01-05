@@ -110,13 +110,16 @@ public abstract class AbstractBreakpointManagerContentProvider extends ElementCo
             registerOrganizersListener(null, fOrganizers);
 		}
 		
-		synchronized void proxyInstalled(AbstractModelProxy proxy) {
-		    fProxies.add(proxy);
-		    
-		    // Generate an install delta
-		    
-            ModelDelta rootDelta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
-            buildInstallDelta(rootDelta, fContainer);
+		void proxyInstalled(AbstractModelProxy proxy) {
+		    ModelDelta rootDelta = null;
+		    synchronized(this) {
+    		    fProxies.add(proxy);
+    		    
+    		    // Generate an install delta
+    		    
+                rootDelta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
+                buildInstallDelta(rootDelta, fContainer);
+		    }
             proxy.fireModelChanged(rootDelta);
 		}
 
