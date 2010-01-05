@@ -112,8 +112,8 @@ public class MenuItemRenderer extends SWTPartRenderer {
 	}
 
 	private void setItemText(MMenuItem model, MenuItem item) {
+		String text = model.getLabel();
 		if (model instanceof MHandledItem) {
-			String text = model.getLabel();
 			MHandledItem handledItem = (MHandledItem) model;
 			IEclipseContext context = getContext(model);
 			EBindingService bs = (EBindingService) context
@@ -129,7 +129,10 @@ public class MenuItemRenderer extends SWTPartRenderer {
 			}
 			item.setText(text);
 		} else {
-			item.setText(model.getLabel());
+			if (text == null) {
+				text = ""; //$NON-NLS-1$
+			}
+			item.setText(text);
 		}
 	}
 
