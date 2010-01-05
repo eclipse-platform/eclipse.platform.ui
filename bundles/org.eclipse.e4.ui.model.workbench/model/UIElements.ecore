@@ -172,17 +172,21 @@
     <eGenericSuperTypes eClassifier="#//HandlerContainer"/>
     <eGenericSuperTypes eClassifier="#//BindingContainer"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="SnippetType">
-    <eLiterals name="add" value="1"/>
-    <eLiterals name="remove" value="2"/>
-    <eLiterals name="modify" value="4"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelComponents">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="components" upperBound="-1"
+        eType="#//ModelComponent" containment="true"/>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EClass" name="Snippet" eSuperTypes="#//ApplicationElement">
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" eType="#//SnippetType"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="parent" eType="#//ApplicationElement"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="contents" lowerBound="1"
-        eType="#//ApplicationElement"/>
+  <eClassifiers xsi:type="ecore:EClass" name="ModelComponent" eSuperTypes="#//ApplicationElement">
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="positionInParent" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"
+        defaultValueLiteral=""/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parentID" lowerBound="1"
+        eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="children" upperBound="-1"
+        eType="#//UIElement" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="commands" upperBound="-1"
+        eType="#//Command" containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="handlers" upperBound="-1"
+        eType="#//Handler" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V______________Commands_______________V"
       abstract="true" interface="true"/>

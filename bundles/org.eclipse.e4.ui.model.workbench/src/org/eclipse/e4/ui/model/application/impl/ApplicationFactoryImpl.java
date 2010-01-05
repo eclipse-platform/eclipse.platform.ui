@@ -78,7 +78,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.PART_STACK: return (EObject)createPartStack();
 			case MApplicationPackage.PART_SASH_CONTAINER: return (EObject)createPartSashContainer();
 			case MApplicationPackage.WINDOW: return (EObject)createWindow();
-			case MApplicationPackage.SNIPPET: return (EObject)createSnippet();
+			case MApplicationPackage.MODEL_COMPONENTS: return (EObject)createModelComponents();
+			case MApplicationPackage.MODEL_COMPONENT: return (EObject)createModelComponent();
 			case MApplicationPackage.COMMAND: return (EObject)createCommand();
 			case MApplicationPackage.COMMAND_PARAMETER: return (EObject)createCommandParameter();
 			case MApplicationPackage.HANDLER: return (EObject)createHandler();
@@ -107,8 +108,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 		switch (eDataType.getClassifierID()) {
 			case MApplicationPackage.SIDE_VALUE:
 				return createSideValueFromString(eDataType, initialValue);
-			case MApplicationPackage.SNIPPET_TYPE:
-				return createSnippetTypeFromString(eDataType, initialValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -124,8 +123,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 		switch (eDataType.getClassifierID()) {
 			case MApplicationPackage.SIDE_VALUE:
 				return convertSideValueToString(eDataType, instanceValue);
-			case MApplicationPackage.SNIPPET_TYPE:
-				return convertSnippetTypeToString(eDataType, instanceValue);
 			default:
 				throw new IllegalArgumentException("The datatype '" + eDataType.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -276,9 +273,19 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public MSnippet createSnippet() {
-		SnippetImpl snippet = new SnippetImpl();
-		return snippet;
+	public MModelComponents createModelComponents() {
+		ModelComponentsImpl modelComponents = new ModelComponentsImpl();
+		return modelComponents;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MModelComponent createModelComponent() {
+		ModelComponentImpl modelComponent = new ModelComponentImpl();
+		return modelComponent;
 	}
 
 	/**
@@ -418,26 +425,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * @generated
 	 */
 	public String convertSideValueToString(EDataType eDataType, Object instanceValue) {
-		return instanceValue == null ? null : instanceValue.toString();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public SnippetType createSnippetTypeFromString(EDataType eDataType, String initialValue) {
-		SnippetType result = SnippetType.get(initialValue);
-		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		return result;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public String convertSnippetTypeToString(EDataType eDataType, Object instanceValue) {
 		return instanceValue == null ? null : instanceValue.toString();
 	}
 

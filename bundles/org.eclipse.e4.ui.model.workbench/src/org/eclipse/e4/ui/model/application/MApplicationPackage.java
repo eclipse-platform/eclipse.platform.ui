@@ -2691,7 +2691,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
 	 * @generated
 	 */
-	int EDITOR = 46;
+	int EDITOR = 47;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -3165,14 +3165,42 @@ public interface MApplicationPackage extends EPackage {
 	int WINDOW_FEATURE_COUNT = UI_LABEL_FEATURE_COUNT + 20;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.SnippetImpl <em>Snippet</em>}' class.
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl <em>Model Components</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.SnippetImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSnippet()
+	 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponents()
 	 * @generated
 	 */
-	int SNIPPET = 29;
+	int MODEL_COMPONENTS = 29;
+
+	/**
+	 * The feature id for the '<em><b>Components</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENTS__COMPONENTS = 0;
+
+	/**
+	 * The number of structural features of the '<em>Model Components</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENTS_FEATURE_COUNT = 1;
+
+	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl <em>Model Component</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponent()
+	 * @generated
+	 */
+	int MODEL_COMPONENT = 30;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3181,7 +3209,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SNIPPET__ID = APPLICATION_ELEMENT__ID;
+	int MODEL_COMPONENT__ID = APPLICATION_ELEMENT__ID;
 
 	/**
 	 * The feature id for the '<em><b>Style</b></em>' attribute.
@@ -3190,25 +3218,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SNIPPET__STYLE = APPLICATION_ELEMENT__STYLE;
-
-	/**
-	 * The feature id for the '<em><b>Type</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SNIPPET__TYPE = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
-
-	/**
-	 * The feature id for the '<em><b>Parent</b></em>' reference.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 * @ordered
-	 */
-	int SNIPPET__PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
+	int MODEL_COMPONENT__STYLE = APPLICATION_ELEMENT__STYLE;
 
 	/**
 	 * The feature id for the '<em><b>Position In Parent</b></em>' attribute.
@@ -3217,25 +3227,52 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 * @ordered
 	 */
-	int SNIPPET__POSITION_IN_PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+	int MODEL_COMPONENT__POSITION_IN_PARENT = APPLICATION_ELEMENT_FEATURE_COUNT + 0;
 
 	/**
-	 * The feature id for the '<em><b>Contents</b></em>' reference.
+	 * The feature id for the '<em><b>Parent ID</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SNIPPET__CONTENTS = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+	int MODEL_COMPONENT__PARENT_ID = APPLICATION_ELEMENT_FEATURE_COUNT + 1;
 
 	/**
-	 * The number of structural features of the '<em>Snippet</em>' class.
+	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int SNIPPET_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+	int MODEL_COMPONENT__CHILDREN = APPLICATION_ELEMENT_FEATURE_COUNT + 2;
+
+	/**
+	 * The feature id for the '<em><b>Commands</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT__COMMANDS = APPLICATION_ELEMENT_FEATURE_COUNT + 3;
+
+	/**
+	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT__HANDLERS = APPLICATION_ELEMENT_FEATURE_COUNT + 4;
+
+	/**
+	 * The number of structural features of the '<em>Model Component</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int MODEL_COMPONENT_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}' class.
@@ -3245,7 +3282,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Commands_______________V()
 	 * @generated
 	 */
-	int VCOMMANDS_V = 30;
+	int VCOMMANDS_V = 31;
 
 	/**
 	 * The number of structural features of the '<em>VCommands V</em>' class.
@@ -3264,7 +3301,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getBindingContainer()
 	 * @generated
 	 */
-	int BINDING_CONTAINER = 31;
+	int BINDING_CONTAINER = 32;
 
 	/**
 	 * The feature id for the '<em><b>Bindings</b></em>' containment reference list.
@@ -3292,7 +3329,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommand()
 	 * @generated
 	 */
-	int COMMAND = 32;
+	int COMMAND = 33;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3356,7 +3393,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getCommandParameter()
 	 * @generated
 	 */
-	int COMMAND_PARAMETER = 33;
+	int COMMAND_PARAMETER = 34;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3420,7 +3457,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandler()
 	 * @generated
 	 */
-	int HANDLER = 34;
+	int HANDLER = 35;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3493,7 +3530,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandlerContainer()
 	 * @generated
 	 */
-	int HANDLER_CONTAINER = 35;
+	int HANDLER_CONTAINER = 36;
 
 	/**
 	 * The feature id for the '<em><b>Handlers</b></em>' containment reference list.
@@ -3521,7 +3558,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledItem()
 	 * @generated
 	 */
-	int HANDLED_ITEM = 36;
+	int HANDLED_ITEM = 37;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3702,7 +3739,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledMenuItem()
 	 * @generated
 	 */
-	int HANDLED_MENU_ITEM = 37;
+	int HANDLED_MENU_ITEM = 38;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -3901,7 +3938,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getHandledToolItem()
 	 * @generated
 	 */
-	int HANDLED_TOOL_ITEM = 38;
+	int HANDLED_TOOL_ITEM = 39;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4100,7 +4137,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeySequence()
 	 * @generated
 	 */
-	int KEY_SEQUENCE = 40;
+	int KEY_SEQUENCE = 41;
 
 	/**
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
@@ -4128,7 +4165,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getKeyBinding()
 	 * @generated
 	 */
-	int KEY_BINDING = 39;
+	int KEY_BINDING = 40;
 
 	/**
 	 * The feature id for the '<em><b>Key Sequence</b></em>' attribute.
@@ -4192,7 +4229,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameter()
 	 * @generated
 	 */
-	int PARAMETER = 41;
+	int PARAMETER = 42;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4247,7 +4284,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Trim_______________V()
 	 * @generated
 	 */
-	int VTRIM_V = 42;
+	int VTRIM_V = 43;
 
 	/**
 	 * The number of structural features of the '<em>VTrim V</em>' class.
@@ -4266,7 +4303,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTrimContainer()
 	 * @generated
 	 */
-	int TRIM_CONTAINER = 43;
+	int TRIM_CONTAINER = 44;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4393,7 +4430,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getWindowTrim()
 	 * @generated
 	 */
-	int WINDOW_TRIM = 44;
+	int WINDOW_TRIM = 45;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4520,7 +4557,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________Editing_______________V()
 	 * @generated
 	 */
-	int VEDITING_V = 45;
+	int VEDITING_V = 46;
 
 	/**
 	 * The number of structural features of the '<em>VEditing V</em>' class.
@@ -4755,7 +4792,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV______________SharedElements_______________V()
 	 * @generated
 	 */
-	int VSHARED_ELEMENTS_V = 47;
+	int VSHARED_ELEMENTS_V = 48;
 
 	/**
 	 * The number of structural features of the '<em>VShared Elements V</em>' class.
@@ -4774,7 +4811,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 48;
+	int PERSPECTIVE = 49;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -4937,7 +4974,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
 	 * @generated
 	 */
-	int PERSPECTIVE_STACK = 49;
+	int PERSPECTIVE_STACK = 50;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -5055,7 +5092,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 	 * @generated
 	 */
-	int VTESTING_V = 50;
+	int VTESTING_V = 51;
 
 	/**
 	 * The number of structural features of the '<em>VTesting V</em>' class.
@@ -5074,7 +5111,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 	 * @generated
 	 */
-	int TEST_HARNESS = 51;
+	int TEST_HARNESS = 52;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -5354,17 +5391,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSideValue()
 	 * @generated
 	 */
-	int SIDE_VALUE = 52;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.SnippetType <em>Snippet Type</em>}' enum.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.SnippetType
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSnippetType()
-	 * @generated
-	 */
-	int SNIPPET_TYPE = 53;
+	int SIDE_VALUE = 53;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -6051,58 +6078,90 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getWindow_Height();
 
 	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MSnippet <em>Snippet</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MModelComponents <em>Model Components</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Snippet</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MSnippet
+	 * @return the meta object for class '<em>Model Components</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponents
 	 * @generated
 	 */
-	EClass getSnippet();
+	EClass getModelComponents();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MSnippet#getType <em>Type</em>}'.
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponents#getComponents <em>Components</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Type</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MSnippet#getType()
-	 * @see #getSnippet()
+	 * @return the meta object for the containment reference list '<em>Components</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponents#getComponents()
+	 * @see #getModelComponents()
 	 * @generated
 	 */
-	EAttribute getSnippet_Type();
+	EReference getModelComponents_Components();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MSnippet#getParent <em>Parent</em>}'.
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MModelComponent <em>Model Component</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Parent</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MSnippet#getParent()
-	 * @see #getSnippet()
+	 * @return the meta object for class '<em>Model Component</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent
 	 * @generated
 	 */
-	EReference getSnippet_Parent();
+	EClass getModelComponent();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MSnippet#getPositionInParent <em>Position In Parent</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MModelComponent#getPositionInParent <em>Position In Parent</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @return the meta object for the attribute '<em>Position In Parent</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MSnippet#getPositionInParent()
-	 * @see #getSnippet()
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getPositionInParent()
+	 * @see #getModelComponent()
 	 * @generated
 	 */
-	EAttribute getSnippet_PositionInParent();
+	EAttribute getModelComponent_PositionInParent();
 
 	/**
-	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MSnippet#getContents <em>Contents</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MModelComponent#getParentID <em>Parent ID</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference '<em>Contents</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MSnippet#getContents()
-	 * @see #getSnippet()
+	 * @return the meta object for the attribute '<em>Parent ID</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getParentID()
+	 * @see #getModelComponent()
 	 * @generated
 	 */
-	EReference getSnippet_Contents();
+	EAttribute getModelComponent_ParentID();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getChildren <em>Children</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Children</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getChildren()
+	 * @see #getModelComponent()
+	 * @generated
+	 */
+	EReference getModelComponent_Children();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getCommands <em>Commands</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Commands</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getCommands()
+	 * @see #getModelComponent()
+	 * @generated
+	 */
+	EReference getModelComponent_Commands();
+
+	/**
+	 * Returns the meta object for the containment reference list '{@link org.eclipse.e4.ui.model.application.MModelComponent#getHandlers <em>Handlers</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the containment reference list '<em>Handlers</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent#getHandlers()
+	 * @see #getModelComponent()
+	 * @generated
+	 */
+	EReference getModelComponent_Handlers();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}'.
@@ -6521,16 +6580,6 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EEnum getSideValue();
-
-	/**
-	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.SnippetType <em>Snippet Type</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for enum '<em>Snippet Type</em>'.
-	 * @see org.eclipse.e4.ui.model.application.SnippetType
-	 * @generated
-	 */
-	EEnum getSnippetType();
 
 	/**
 	 * Returns the meta object for data type '{@link org.eclipse.e4.core.services.context.IEclipseContext <em>IEclipse Context</em>}'.
@@ -7141,30 +7190,32 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute WINDOW__HEIGHT = eINSTANCE.getWindow_Height();
 
 		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.SnippetImpl <em>Snippet</em>}' class.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl <em>Model Components</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.SnippetImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSnippet()
+		 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponents()
 		 * @generated
 		 */
-		EClass SNIPPET = eINSTANCE.getSnippet();
+		EClass MODEL_COMPONENTS = eINSTANCE.getModelComponents();
 
 		/**
-		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Components</b></em>' containment reference list feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute SNIPPET__TYPE = eINSTANCE.getSnippet_Type();
+		EReference MODEL_COMPONENTS__COMPONENTS = eINSTANCE.getModelComponents_Components();
 
 		/**
-		 * The meta object literal for the '<em><b>Parent</b></em>' reference feature.
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.ModelComponentImpl <em>Model Component</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.ModelComponentImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getModelComponent()
 		 * @generated
 		 */
-		EReference SNIPPET__PARENT = eINSTANCE.getSnippet_Parent();
+		EClass MODEL_COMPONENT = eINSTANCE.getModelComponent();
 
 		/**
 		 * The meta object literal for the '<em><b>Position In Parent</b></em>' attribute feature.
@@ -7172,15 +7223,39 @@ public interface MApplicationPackage extends EPackage {
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute SNIPPET__POSITION_IN_PARENT = eINSTANCE.getSnippet_PositionInParent();
+		EAttribute MODEL_COMPONENT__POSITION_IN_PARENT = eINSTANCE.getModelComponent_PositionInParent();
 
 		/**
-		 * The meta object literal for the '<em><b>Contents</b></em>' reference feature.
+		 * The meta object literal for the '<em><b>Parent ID</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EReference SNIPPET__CONTENTS = eINSTANCE.getSnippet_Contents();
+		EAttribute MODEL_COMPONENT__PARENT_ID = eINSTANCE.getModelComponent_ParentID();
+
+		/**
+		 * The meta object literal for the '<em><b>Children</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODEL_COMPONENT__CHILDREN = eINSTANCE.getModelComponent_Children();
+
+		/**
+		 * The meta object literal for the '<em><b>Commands</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODEL_COMPONENT__COMMANDS = eINSTANCE.getModelComponent_Commands();
+
+		/**
+		 * The meta object literal for the '<em><b>Handlers</b></em>' containment reference list feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference MODEL_COMPONENT__HANDLERS = eINSTANCE.getModelComponent_Handlers();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________Commands_______________V <em>VCommands V</em>}' class.
@@ -7545,16 +7620,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EEnum SIDE_VALUE = eINSTANCE.getSideValue();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.SnippetType <em>Snippet Type</em>}' enum.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.SnippetType
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSnippetType()
-		 * @generated
-		 */
-		EEnum SNIPPET_TYPE = eINSTANCE.getSnippetType();
 
 		/**
 		 * The meta object literal for the '<em>IEclipse Context</em>' data type.

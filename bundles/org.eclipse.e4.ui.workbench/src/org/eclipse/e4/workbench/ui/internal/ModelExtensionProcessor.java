@@ -11,7 +11,6 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.util.ArrayList;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
@@ -21,12 +20,15 @@ import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.Logger;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MModelComponent;
+import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.e4.ui.model.application.MUIElement;
-import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 
@@ -40,46 +42,12 @@ public class ModelExtensionProcessor {
 	/**
 	 * Preferred default parent ID, if none specified
 	 */
-	final private static String preferredID1 = "Horizontal Sash[right]"; //$NON-NLS-1$
+	//	final private static String preferredID1 = "Horizontal Sash[right]"; //$NON-NLS-1$
 
 	/**
 	 * Alternative preferred default parent ID, if none specified
 	 */
-	final private static String preferredID2 = "bottom"; //$NON-NLS-1$
-
-	/**
-	 * Model extensions as described by the extension registry
-	 */
-	private class ModelExtension {
-		private String uri;
-		private String parentID;
-		private IContributor contributor;
-
-		public ModelExtension(String uri, String parentID, IContributor contributor) {
-			super();
-			this.uri = uri;
-			this.parentID = parentID;
-			this.contributor = contributor;
-		}
-
-		public URI getURI() {
-			if (uri == null)
-				return null;
-			String bundleName = contributor.getName();
-			String path = bundleName + '/' + uri;
-			try {
-				return URI.createPlatformPluginURI(path, false);
-			} catch (RuntimeException e) {
-				log("Model extension has invalid location", e); //$NON-NLS-1$
-				return null;
-			}
-		}
-
-		public String getParentID() {
-			return parentID;
-		}
-
-	}
+	//	final private static String preferredID2 = "bottom"; //$NON-NLS-1$
 
 	private MApplication e4Window;
 
@@ -92,48 +60,8 @@ public class ModelExtensionProcessor {
 		this.e4Window = e4Window;
 	}
 
-	/**
-	 * Add extensions to the specified window.
-	 */
-	public void addModelExtensions() {
-		ModelExtension[] extensions = readExtensionRegistry();
-		for (ModelExtension extension : extensions) {
-			URI uri = extension.getURI();
-			if (uri == null) {
-				log("Unable to find location for the model extension \"{0}\"", //$NON-NLS-1$
-						extension.contributor.getName());
-				continue;
-			}
-			Resource resource;
-			try {
-				resource = new ResourceSetImpl().getResource(uri, true);
-			} catch (RuntimeException e) {
-				log("Unable to read model extension", e); //$NON-NLS-1$
-				continue;
-			}
-			EList<?> contents = resource.getContents();
-			if (contents.isEmpty())
-				continue;
-			Object extensionRoot = contents.get(0);
-			if (!(extensionRoot instanceof MUIElement)) {
-				log("Unable to create model extension \"{0}\"", //$NON-NLS-1$
-						extension.contributor.getName());
-				continue;
-			}
-
-			MUIElement root = (MUIElement) extensionRoot;
-			MElementContainer<MUIElement> parentElement = null;
-			if (root instanceof MWindow)
-				parentElement = (MElementContainer<MUIElement>) ((MUIElement) e4Window);
-			else
-				parentElement = findDefaultParent(extension.getParentID());
-			if (parentElement != null)
-				parentElement.getChildren().add(root);
-		}
-	}
-
 	private MElementContainer<MUIElement> findDefaultParent(String parentID) {
-		MUIElement defaultElement = null;
+		MApplicationElement defaultElement = null;
 		// Try the specified ID
 		if (parentID != null) {
 			defaultElement = findElementById(e4Window, parentID);
@@ -141,39 +69,96 @@ public class ModelExtensionProcessor {
 				return (MElementContainer<MUIElement>) defaultElement;
 		}
 
-		// Try first preferred ID
-		defaultElement = findElementById(e4Window, preferredID1);
-		if (defaultElement != null)
-			return (MElementContainer<MUIElement>) defaultElement;
-
-		// Try second preferred ID - parent of "bottom"
-		defaultElement = findPart(e4Window, preferredID2);
-		if (defaultElement != null)
-			return defaultElement.getParent();
+		// // Try first preferred ID
+		// defaultElement = findElementById(e4Window, preferredID1);
+		// if (defaultElement != null)
+		// return (MElementContainer<MUIElement>) defaultElement;
+		//
+		// // Try second preferred ID - parent of "bottom"
+		// defaultElement = findPart(e4Window, preferredID2);
+		// if (defaultElement != null)
+		// return defaultElement.getParent();
 
 		return null;
 	}
 
-	private ModelExtension[] readExtensionRegistry() {
+	public void addModelExtensions() {
 		IExtensionRegistry registry = RegistryFactory.getRegistry();
 		IExtensionPoint extPoint = registry.getExtensionPoint(extensionPointID);
 		IExtension[] extensions = extPoint.getExtensions();
-		ArrayList<ModelExtension> result = new ArrayList<ModelExtension>();
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] ces = extension.getConfigurationElements();
 			for (IConfigurationElement ce : ces) {
-				if (!"model".equals(ce.getName())) //$NON-NLS-1$
+				if (!"snippet".equals(ce.getName())) //$NON-NLS-1$
 					continue;
-				String attrURI = ce.getAttribute("location"); //$NON-NLS-1$
-				String attrParent = ce.getAttribute("parentID"); //$NON-NLS-1$
 				IContributor contributor = ce.getContributor();
-				ModelExtension modelExt = new ModelExtension(attrURI, attrParent, contributor);
-				result.add(modelExt);
+				String attrURI = ce.getAttribute("uri"); //$NON-NLS-1$
+				if (attrURI == null) {
+					log("Unable to find location for the model extension \"{0}\"", //$NON-NLS-1$
+							contributor.getName());
+					continue;
+				}
+
+				URI uri;
+				String bundleName = contributor.getName();
+				String path = bundleName + '/' + attrURI;
+				try {
+					uri = URI.createPlatformPluginURI(path, false);
+				} catch (RuntimeException e) {
+					log("Model extension has invalid location", e); //$NON-NLS-1$
+					continue;
+				}
+
+				Resource resource;
+				try {
+					resource = new ResourceSetImpl().getResource(uri, true);
+				} catch (RuntimeException e) {
+					log("Unable to read model extension", e); //$NON-NLS-1$
+					continue;
+				}
+				EList<?> contents = resource.getContents();
+				if (contents.isEmpty())
+					continue;
+				Object extensionRoot = contents.get(0);
+				if (!(extensionRoot instanceof MModelComponents)) {
+					log("Unable to create model extension \"{0}\"", //$NON-NLS-1$
+							contributor.getName());
+					continue;
+				}
+				EList<MModelComponent> snippets = ((MModelComponents) extensionRoot)
+						.getComponents();
+				for (MModelComponent snippet : snippets) {
+					Object parentElement = findDefaultParent(snippet.getParentID());
+					if (parentElement == null) {
+						log("Unable to find parent with ID \"{0}\"", //$NON-NLS-1$
+								snippet.getParentID());
+						continue;
+					}
+
+					EObject parentObject = ((EObject) parentElement);
+					Object[] elements = ((EObject) snippet).eContents().toArray();
+					for (int i = 0; i < elements.length; i++) {
+						EStructuralFeature sourceFeature = ((EObject) elements[i])
+								.eContainingFeature();
+						EStructuralFeature destinationFeature = parentObject.eClass()
+								.getEStructuralFeature(sourceFeature.getName());
+
+						if (destinationFeature == null) {
+							log("Unable to find feature named \"{0}\"", //$NON-NLS-1$
+									sourceFeature.getName());
+							continue;
+						}
+
+						// TBD: 1) isn't it always a list?; 2) is there some utility to do this?
+						Object oldValue = parentObject.eGet(destinationFeature);
+						if (oldValue instanceof EList<?>)
+							((EList) oldValue).add(elements[i]);
+						else
+							parentObject.eSet(destinationFeature, elements[i]);
+					}
+				}
 			}
 		}
-		ModelExtension[] typedResult = new ModelExtension[result.size()];
-		result.toArray(typedResult);
-		return typedResult;
 	}
 
 	private void log(String msg, Exception e) {
@@ -194,31 +179,21 @@ public class ModelExtensionProcessor {
 			logger.error(msg, arg);
 	}
 
-	private MUIElement findElementById(MUIElement element, String id) {
+	private MApplicationElement findElementById(MApplicationElement element, String id) {
 		if (id == null || id.length() == 0)
 			return null;
 		// is it me?
 		if (id.equals(element.getId()))
 			return element;
 		// Recurse if this is a container
-		if (element instanceof MElementContainer<?>) {
-			EList<MUIElement> children = ((MElementContainer<MUIElement>) element).getChildren();
-			MUIElement foundElement = null;
-			for (MUIElement childME : children) {
-				foundElement = findElementById(childME, id);
-				if (foundElement != null)
-					return foundElement;
-			}
+		EList<EObject> elements = ((EObject) element).eContents();
+		for (EObject childElement : elements) {
+			if (!(childElement instanceof MApplicationElement))
+				continue;
+			MApplicationElement result = findElementById((MApplicationElement) childElement, id);
+			if (result != null)
+				return result;
 		}
-		return null;
-	}
-
-	private MPart findPart(MUIElement toSearch, String id) {
-		if (toSearch == null)
-			return null;
-		MUIElement found = findElementById(toSearch, id);
-		if (found instanceof MPart)
-			return (MPart) found;
 		return null;
 	}
 

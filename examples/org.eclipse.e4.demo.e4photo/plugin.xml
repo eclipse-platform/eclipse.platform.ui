@@ -67,10 +67,9 @@
          id="PhotoDemo"
          name="Photo Demo"
          point="org.eclipse.e4.workbench.model">
-      <model
-            parentID="E4MainWindow"
-            location="Application.e4xmi">
-      </model>
+      <snippet
+            uri="xmi/components.xmi">
+      </snippet>
    </extension>
 
 </plugin>

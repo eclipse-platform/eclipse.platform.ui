@@ -192,8 +192,12 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createWindowAdapter();
 			}
 			@Override
-			public Adapter caseSnippet(MSnippet object) {
-				return createSnippetAdapter();
+			public Adapter caseModelComponents(MModelComponents object) {
+				return createModelComponentsAdapter();
+			}
+			@Override
+			public Adapter caseModelComponent(MModelComponent object) {
+				return createModelComponentAdapter();
 			}
 			@Override
 			public Adapter caseV______________Commands_______________V(MV______________Commands_______________V object) {
@@ -724,16 +728,30 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MSnippet <em>Snippet</em>}'.
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MModelComponents <em>Model Components</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
 	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
 	 * <!-- end-user-doc -->
 	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MSnippet
+	 * @see org.eclipse.e4.ui.model.application.MModelComponents
 	 * @generated
 	 */
-	public Adapter createSnippetAdapter() {
+	public Adapter createModelComponentsAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MModelComponent <em>Model Component</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MModelComponent
+	 * @generated
+	 */
+	public Adapter createModelComponentAdapter() {
 		return null;
 	}
 

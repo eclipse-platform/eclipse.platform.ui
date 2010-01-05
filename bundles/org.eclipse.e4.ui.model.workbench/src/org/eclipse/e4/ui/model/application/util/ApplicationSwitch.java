@@ -353,10 +353,16 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
-			case MApplicationPackage.SNIPPET: {
-				MSnippet snippet = (MSnippet)theEObject;
-				T1 result = caseSnippet(snippet);
-				if (result == null) result = caseApplicationElement(snippet);
+			case MApplicationPackage.MODEL_COMPONENTS: {
+				MModelComponents modelComponents = (MModelComponents)theEObject;
+				T1 result = caseModelComponents(modelComponents);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.MODEL_COMPONENT: {
+				MModelComponent modelComponent = (MModelComponent)theEObject;
+				T1 result = caseModelComponent(modelComponent);
+				if (result == null) result = caseApplicationElement(modelComponent);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -1014,17 +1020,32 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Snippet</em>'.
+	 * Returns the result of interpreting the object as an instance of '<em>Model Components</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
 	 * returning a non-null result will terminate the switch.
 	 * <!-- end-user-doc -->
 	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Snippet</em>'.
+	 * @return the result of interpreting the object as an instance of '<em>Model Components</em>'.
 	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
 	 * @generated
 	 */
-	public T1 caseSnippet(MSnippet object) {
+	public T1 caseModelComponents(MModelComponents object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Model Component</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Model Component</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseModelComponent(MModelComponent object) {
 		return null;
 	}
 

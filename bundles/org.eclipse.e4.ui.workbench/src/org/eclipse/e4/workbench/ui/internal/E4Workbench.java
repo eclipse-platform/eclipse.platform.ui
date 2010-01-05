@@ -86,6 +86,11 @@ public class E4Workbench implements IWorkbench {
 	private void init(MApplication appElement) {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
 
+		// Add model items described in the model extension point
+		// This has to be done before commands are put into the context
+		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
+		extProcessor.addModelExtensions();
+
 		// fill in commands
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize service from model", null); //$NON-NLS-1$
 		ECommandService cs = (ECommandService) appContext.get(ECommandService.class.getName());
@@ -107,10 +112,6 @@ public class E4Workbench implements IWorkbench {
 			}
 			cs.defineCommand(id, name, null, cat, parms);
 		}
-
-		// Add model items described in the model extension point
-		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
-		extProcessor.addModelExtensions();
 
 		// Do a top level processHierarchy for the application?
 		Workbench.processHierarchy(appElement);

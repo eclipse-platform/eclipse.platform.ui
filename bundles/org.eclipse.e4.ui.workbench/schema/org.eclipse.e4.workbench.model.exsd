@@ -18,7 +18,7 @@
       </annotation>
       <complexType>
          <sequence>
-            <element ref="model" minOccurs="1" maxOccurs="unbounded"/>
+            <element ref="snippet" minOccurs="1" maxOccurs="unbounded"/>
          </sequence>
          <attribute name="point" type="string" use="required">
             <annotation>
@@ -47,16 +47,9 @@
       </complexType>
    </element>
 
-   <element name="model">
+   <element name="snippet">
       <complexType>
-         <attribute name="location" type="string" use="required">
-            <annotation>
-               <documentation>
-                  
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="parentID" type="string">
+         <attribute name="uri" type="string" use="required">
             <annotation>
                <documentation>
                   
