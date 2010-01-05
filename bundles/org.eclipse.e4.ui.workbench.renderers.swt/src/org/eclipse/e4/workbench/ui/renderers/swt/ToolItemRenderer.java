@@ -77,8 +77,7 @@ public class ToolItemRenderer extends SWTPartRenderer {
 				} else if (UIEvents.UILabel.ICONURI.equals(attName)) {
 					toolItem.setImage(getImage(itemModel));
 				} else if (UIEvents.UILabel.TOOLTIP.equals(attName)) {
-					if (itemModel.getTooltip() != null)
-						toolItem.setToolTipText(itemModel.getTooltip());
+					toolItem.setToolTipText(itemModel.getTooltip());
 					toolItem.setImage(getImage(itemModel));
 				}
 			}
@@ -112,8 +111,8 @@ public class ToolItemRenderer extends SWTPartRenderer {
 	}
 
 	private void setItemText(MToolItem model, ToolItem item) {
+		String text = model.getLabel();
 		if (model instanceof MHandledItem) {
-			String text = model.getLabel();
 			MHandledItem handledItem = (MHandledItem) model;
 			IEclipseContext context = getContext(model);
 			EBindingService bs = (EBindingService) context
@@ -129,8 +128,10 @@ public class ToolItemRenderer extends SWTPartRenderer {
 			}
 			item.setText(text);
 		} else {
-			if (model.getLabel() != null)
-				item.setText(model.getLabel());
+			if (text == null) {
+				text = ""; //$NON-NLS-1$
+			}
+			item.setText(text);
 		}
 	}
 

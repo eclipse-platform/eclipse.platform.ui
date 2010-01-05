@@ -21,6 +21,7 @@ import org.eclipse.e4.ui.tests.workbench.HandlerTest;
 import org.eclipse.e4.ui.tests.workbench.MPartTest;
 import org.eclipse.e4.ui.tests.workbench.MSashTest;
 import org.eclipse.e4.ui.tests.workbench.MSaveablePartTest;
+import org.eclipse.e4.ui.tests.workbench.MToolItemTest;
 import org.eclipse.e4.ui.tests.workbench.MWindowTest;
 import org.eclipse.e4.ui.tests.workbench.PartRenderingEngineTests;
 
@@ -37,6 +38,7 @@ public class UIAllTests extends TestSuite {
 		addTestSuite(PartRenderingEngineTests.class);
 		addTestSuite(MPartTest.class);
 		addTestSuite(MSaveablePartTest.class);
+		addTestSuite(MToolItemTest.class);
 		addTestSuite(MWindowTest.class);
 		addTestSuite(MSashTest.class);
 		addTestSuite(HandlerTest.class);
