@@ -11,8 +11,8 @@
 
 package org.eclipse.e4.workbench.ui.internal;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.WeakHashMap;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -20,7 +20,7 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 public class E4XMIResource extends XMIResourceImpl {
 
-	private Map<EObject, String> objectMap = new HashMap<EObject, String>();
+	private Map<EObject, String> objectMap = new WeakHashMap<EObject, String>();
 
 	public E4XMIResource() {
 	}
