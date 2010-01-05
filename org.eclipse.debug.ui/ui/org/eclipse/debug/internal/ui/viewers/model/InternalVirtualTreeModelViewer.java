@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Wind River Systems and others.
+ * Copyright (c) 2009, 2010 Wind River Systems and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -7,6 +7,7 @@
  * 
  * Contributors:
  *     Wind River Systems - initial API and implementation
+ *     IBM - ongoing bug fixing
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.viewers.model;
 
@@ -187,7 +188,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
         fLabelProvider = new TreeModelLabelProvider(this);
         
         if ((style & SWT.POP_UP) != 0) {
-            ((ITreeModelContentProvider)getContentProvider()).setModelDeltaMask(
+            getContentProvider().setModelDeltaMask(
                 ~ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS | ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS);
         }
     }
@@ -1391,7 +1392,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
     }
 
     public void updateViewer(IModelDelta delta) {
-        ((ITreeModelContentProvider)getContentProvider()).updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
+        getContentProvider().updateModel(delta, ITreeModelContentProvider.ALL_MODEL_DELTA_FLAGS);
     }
     
     public ViewerLabel getElementLabel(TreePath path, String columnId) {
