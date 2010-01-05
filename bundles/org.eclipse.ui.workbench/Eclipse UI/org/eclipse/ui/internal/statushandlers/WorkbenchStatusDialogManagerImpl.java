@@ -265,9 +265,9 @@ public class WorkbenchStatusDialogManagerImpl {
 							.booleanValue();
 					if (showSupport) {
 						dialog.openTray();
+						dialog.getShell().setLocation(
+								dialog.getInitialLocation(dialog.getShell().getSize()));
 					}
-					dialog.getShell().setLocation(
-							dialog.getInitialLocation(dialog.getShell().getSize()));
 					dialog.open();
 				}
 				dialog.refresh();

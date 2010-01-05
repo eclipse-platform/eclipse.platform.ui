@@ -454,6 +454,7 @@ public class InternalDialog extends TrayDialog {
 	 * This method should initialize the dialog bounds.
 	 */
 	protected void initializeBounds() {
+		super.initializeBounds();
 		refreshDialogSize();
 		boolean modalitySwitch = getBooleanValue(IStatusDialogConstants.MODALITY_SWITCH);
 		if (modalitySwitch) {
