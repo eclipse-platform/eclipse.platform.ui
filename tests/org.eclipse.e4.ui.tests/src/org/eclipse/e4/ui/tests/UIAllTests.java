@@ -18,6 +18,7 @@ import org.eclipse.e4.ui.tests.application.StartupTestSuite;
 import org.eclipse.e4.ui.tests.reconciler.ModelReconcilerTestSuite;
 import org.eclipse.e4.ui.tests.workbench.ContextTest;
 import org.eclipse.e4.ui.tests.workbench.HandlerTest;
+import org.eclipse.e4.ui.tests.workbench.MPartSashContainerTest;
 import org.eclipse.e4.ui.tests.workbench.MPartTest;
 import org.eclipse.e4.ui.tests.workbench.MSashTest;
 import org.eclipse.e4.ui.tests.workbench.MSaveablePartTest;
@@ -37,6 +38,7 @@ public class UIAllTests extends TestSuite {
 		addTest(StartupTestSuite.suite());
 		addTestSuite(PartRenderingEngineTests.class);
 		addTestSuite(MPartTest.class);
+		addTestSuite(MPartSashContainerTest.class);
 		addTestSuite(MSaveablePartTest.class);
 		addTestSuite(MToolItemTest.class);
 		addTestSuite(MWindowTest.class);

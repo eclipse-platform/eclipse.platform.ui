@@ -13,10 +13,15 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import javax.inject.Inject;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.services.events.IEventBroker;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.events.ControlEvent;
@@ -24,14 +29,53 @@ import org.eclipse.swt.events.ControlListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public class SashRenderer extends SWTPartRenderer {
 
 	private static final int UNDEFINED_WEIGHT = -1;
 	private static final int DEFAULT_WEIGHT = 100;
 
+	@Inject
+	private IEventBroker eventBroker;
+
+	private EventHandler sashEventHandler;
+
 	public SashRenderer() {
 		super();
+	}
+
+	@PostConstruct
+	void postConstruct() {
+		sashEventHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				// Ensure that this event is for a MPartSashContainer
+				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+				if (!(element instanceof MPartSashContainer)) {
+					return;
+				}
+
+				if (UIEvents.GenericTile.HORIZONTAL.equals(event
+						.getProperty(UIEvents.EventTags.ATTNAME))) {
+					Boolean horizontal = (Boolean) event
+							.getProperty(UIEvents.EventTags.NEW_VALUE);
+					MPartSashContainer container = (MPartSashContainer) element;
+					SashForm sashForm = (SashForm) container.getWidget();
+					sashForm
+							.setOrientation(horizontal.booleanValue() ? SWT.HORIZONTAL
+									: SWT.VERTICAL);
+				}
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.GenericTile.TOPIC,
+				UIEvents.GenericTile.HORIZONTAL), sashEventHandler);
+	}
+
+	@PreDestroy
+	void preDestroy() {
+		eventBroker.unsubscribe(sashEventHandler);
 	}
 
 	public Widget createWidget(MUIElement element, Object parent) {
