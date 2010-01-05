@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -276,10 +276,10 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 		}
 		SubMonitor lmonitor = SubMonitor.convert(monitor, IInternalDebugCoreConstants.EMPTY_STRING, 5);
 		try {
+			boolean added = false;
 			if (isLocal()) {
 				// use java.io to update configuration file
 				try {
-					boolean added = false;
 					lmonitor.subTask(DebugCoreMessages.LaunchConfigurationWorkingCopy_1);
 					IFileStore file = getFileStore();
 					if (file == null) {
@@ -305,11 +305,6 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 						if(stream != null) {
 							stream.close();
 						}
-					}
-					if (added) {
-						getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getName(), getContainer()));
-					} else {
-						getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getName(), getContainer()));
 					}
 					//notify file saved
 					updateMonitor(lmonitor, 1);
@@ -356,6 +351,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				}
 				SubMonitor smonitor = null;
 				if (!file.exists()) {
+					added = true;
 					//create file input stream: work one unit in a sub monitor
 					smonitor = lmonitor.newChild(1);
 					smonitor.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_2, new String[] {getName()}));
@@ -374,6 +370,12 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 					smonitor.setTaskName(MessageFormat.format(DebugCoreMessages.LaunchConfigurationWorkingCopy_3, new String[] {getName()}));
 					file.setContents(stream, true, false, smonitor);
 				}
+			}
+			// notify of add/change for both local and shared configurations - see bug 288368 
+			if (added) {
+				getLaunchManager().launchConfigurationAdded(new LaunchConfiguration(getName(), getContainer()));
+			} else {
+				getLaunchManager().launchConfigurationChanged(new LaunchConfiguration(getName(), getContainer()));
 			}
 		}
 		finally {

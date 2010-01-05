@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -2122,12 +2122,16 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 	 * @param config the launch configuration that was deleted
 	 */
 	protected void launchConfigurationDeleted(ILaunchConfiguration config) {
+		boolean removed = false;
 		synchronized (this) {
-			fLaunchConfigurations.remove(config);
+			Object key = fLaunchConfigurations.remove(config);
+			removed = key != null;
 			getAllLaunchConfigurations().remove(config);			
 		}
-		getConfigurationNotifier().notify(config, REMOVED);
-		clearConfigNameCache();			
+		if (removed) {
+			getConfigurationNotifier().notify(config, REMOVED);
+			clearConfigNameCache();
+		}
 	}
 	
 	/**

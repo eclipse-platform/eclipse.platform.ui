@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -282,9 +282,6 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 							 DebugException.REQUEST_FAILED, DebugCoreMessages.LaunchConfiguration_Failed_to_delete_launch_configuration__1, null) 
 						);
 					}
-					// manually update the launch manager cache since there
-					// will be no resource delta
-					getLaunchManager().launchConfigurationDeleted(this);
 				}
 			} else {
 				// Delete the resource using IFile API such that
@@ -298,6 +295,8 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 				}
 				file.delete(true, null);
 			}
+			// update the launch manager cache synchronously
+			getLaunchManager().launchConfigurationDeleted(this);
 		}
 	}
 
