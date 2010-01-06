@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -32,7 +32,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IWorkbenchPropertyPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
@@ -49,8 +48,7 @@ import org.eclipse.ui.views.markers.internal.Util;
  * @since 3.4
  * 
  */
-public class MarkersPropertyPage extends PropertyPage implements
-		IWorkbenchPropertyPage {
+public class MarkersPropertyPage extends PropertyPage {
 
 	private Text descriptionText;
 	private IMarker marker;
@@ -58,7 +56,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 	Button completedCheckbox;
 
 	/**
-	 * Create a new instance of the reciever.
+	 * Create a new instance of the receiver.
 	 */
 	public MarkersPropertyPage() {
 		super();
@@ -106,7 +104,7 @@ public class MarkersPropertyPage extends PropertyPage implements
 	}
 
 	/**
-	 * Creates a seperator.
+	 * Creates a separator.
 	 */
 	protected void createSeperator(Composite parent) {
 		Label seperator = new Label(parent, SWT.NULL);
@@ -134,7 +132,10 @@ public class MarkersPropertyPage extends PropertyPage implements
 	private void createDescriptionArea(Composite parent) {
 		Label label = new Label(parent, SWT.NONE);
 		label.setText(MarkerMessages.propertiesDialog_description_text);
+		GridData labelGridData= new GridData(SWT.LEFT, SWT.TOP, false, false);
+		label.setLayoutData(labelGridData);
 		descriptionText = new Text(parent, (SWT.MULTI|SWT.WRAP|SWT.V_SCROLL|SWT.BORDER));
+		labelGridData.verticalIndent= -descriptionText.computeTrim(0, 0, 0, 0).y;
 		GridData gridData = new GridData(GridData.FILL_HORIZONTAL);
 		gridData.widthHint = convertHorizontalDLUsToPixels(250);
 		gridData.heightHint = convertHeightInCharsToPixels(3);
