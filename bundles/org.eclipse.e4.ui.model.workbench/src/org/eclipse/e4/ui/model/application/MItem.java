@@ -85,7 +85,6 @@ public interface MItem extends MUIElement, MUILabel {
 
 	/**
 	 * Returns the value of the '<em><b>Type</b></em>' attribute.
-	 * The default value is <code>""</code>.
 	 * The literals are from the enumeration {@link org.eclipse.e4.ui.model.application.ItemType}.
 	 * <!-- begin-user-doc -->
 	 * <p>
@@ -97,7 +96,7 @@ public interface MItem extends MUIElement, MUILabel {
 	 * @see org.eclipse.e4.ui.model.application.ItemType
 	 * @see #setType(ItemType)
 	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItem_Type()
-	 * @model default="" required="true"
+	 * @model required="true"
 	 * @generated
 	 */
 	ItemType getType();

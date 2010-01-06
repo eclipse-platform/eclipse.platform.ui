@@ -41,6 +41,12 @@ public abstract class ModelReconciler {
 			.getContribution_PersistedState().getName();
 
 	/**
+	 * Attribute defined by MContributions (value is <code>uri</code>).
+	 */
+	public static final String CONTRIBUTION_URI_ATTNAME = MApplicationPackage.eINSTANCE
+			.getContribution_URI().getName();
+
+	/**
 	 * Attribute defined by MHandlerContainers (value is <code>handlers</code>).
 	 */
 	public static final String HANDLERCONTAINER_HANDLERS_ATTNAME = MApplicationPackage.eINSTANCE
@@ -215,7 +221,7 @@ public abstract class ModelReconciler {
 			.getItem_Selected().getName();
 
 	/**
-	 * Attribute defined by MItems (value is <code>separator</code>).
+	 * Attribute defined by MItems (value is <code>type</code>).
 	 */
 	public static final String ITEM_TYPE_ATTNAME = MApplicationPackage.eINSTANCE.getItem_Type()
 			.getName();

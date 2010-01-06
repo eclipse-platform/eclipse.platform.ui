@@ -13,6 +13,7 @@ package org.eclipse.e4.ui.tests.reconciler;
 
 import java.util.Collection;
 
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
@@ -180,8 +181,8 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		testItem_Selected(false, false, false);
 	}
 
-	private void testItem_Separator(boolean applicationState,
-			boolean userChange, boolean newApplicationState) {
+	private void testItem_Type(ItemType applicationState, ItemType userChange,
+			ItemType newApplicationState) {
 		MApplication application = createApplication();
 
 		MWindow window = createWindow(application);
@@ -192,71 +193,102 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		menu.getChildren().add(item);
 		window.setMainMenu(menu);
 
-		item.setSeparator(applicationState);
+		item.setType(applicationState);
+
+		saveModel();
 
 		ModelReconciler reconciler = createModelReconciler();
 		reconciler.recordChanges(application);
 
-		item.setSeparator(userChange);
-
-		saveModel();
+		item.setType(userChange);
 
 		Object state = reconciler.serialize();
+		print(state);
 
 		application = createApplication();
 		window = application.getChildren().get(0);
 		menu = window.getMainMenu();
 		item = menu.getChildren().get(0);
 
-		menu.getChildren().add(item);
-		window.setMainMenu(menu);
-
-		item.setSeparator(newApplicationState);
+		item.setType(newApplicationState);
 
 		Collection<ModelDelta> deltas = constructDeltas(application, state);
 
-		assertEquals(newApplicationState, item.isSeparator());
+		assertEquals(newApplicationState, item.getType());
 
 		applyAll(deltas);
 
 		if (userChange == applicationState) {
 			// no change from the user, the new state is applied
-			assertEquals(newApplicationState, item.isSeparator());
+			assertEquals(newApplicationState, item.getType());
 		} else {
 			// user change must override application state
-			assertEquals(userChange, item.isSeparator());
+			assertEquals(userChange, item.getType());
 		}
 	}
 
-	public void testItem_Separator_TrueTrueTrue() {
-		testItem_Separator(true, true, true);
+	public void testItem_Type_PushPushPush() {
+		testItem_Type(ItemType.PUSH, ItemType.PUSH, ItemType.PUSH);
 	}
 
-	public void testItem_Separator_TrueTrueFalse() {
-		testItem_Separator(true, true, false);
+	public void testItem_Type_PushPushCheck() {
+		testItem_Type(ItemType.PUSH, ItemType.PUSH, ItemType.CHECK);
 	}
 
-	public void testItem_Separator_TrueFalseTrue() {
-		testItem_Separator(true, false, true);
+	public void testItem_Type_PushCheckPush() {
+		testItem_Type(ItemType.PUSH, ItemType.CHECK, ItemType.PUSH);
 	}
 
-	public void testItem_Separator_TrueFalseFalse() {
-		testItem_Separator(true, false, false);
+	public void testItem_Type_PushCheckCheck() {
+		testItem_Type(ItemType.PUSH, ItemType.CHECK, ItemType.CHECK);
 	}
 
-	public void testItem_Separator_FalseTrueTrue() {
-		testItem_Separator(false, true, true);
+	public void testItem_Type_CheckCheckCheck() {
+		testItem_Type(ItemType.CHECK, ItemType.CHECK, ItemType.CHECK);
 	}
 
-	public void testItem_Separator_FalseTrueFalse() {
-		testItem_Separator(false, true, false);
+	public void testItem_Type_CheckCheckRadio() {
+		testItem_Type(ItemType.CHECK, ItemType.CHECK, ItemType.RADIO);
 	}
 
-	public void testItem_Separator_FalseFalseTrue() {
-		testItem_Separator(false, false, true);
+	public void testItem_Type_CheckRadioCheck() {
+		testItem_Type(ItemType.CHECK, ItemType.RADIO, ItemType.CHECK);
 	}
 
-	public void testItem_Separator_FalseFalseFalse() {
-		testItem_Separator(false, false, false);
+	public void testItem_Type_CheckRadioRadio() {
+		testItem_Type(ItemType.CHECK, ItemType.RADIO, ItemType.RADIO);
+	}
+
+	public void testItem_Type_RadioRadioRadio() {
+		testItem_Type(ItemType.RADIO, ItemType.RADIO, ItemType.RADIO);
+	}
+
+	public void testItem_Type_RadioRadioSeparator() {
+		testItem_Type(ItemType.RADIO, ItemType.RADIO, ItemType.SEPARATOR);
+	}
+
+	public void testItem_Type_RadioSeparatorRadio() {
+		testItem_Type(ItemType.RADIO, ItemType.SEPARATOR, ItemType.RADIO);
+	}
+
+	public void testItem_Type_RadioSeparatorSeparator() {
+		testItem_Type(ItemType.RADIO, ItemType.SEPARATOR, ItemType.SEPARATOR);
+	}
+
+	public void testItem_Type_SeparatorSeparatorSeparator() {
+		testItem_Type(ItemType.SEPARATOR, ItemType.SEPARATOR,
+				ItemType.SEPARATOR);
+	}
+
+	public void testItem_Type_SeparatorSeparatorPush() {
+		testItem_Type(ItemType.SEPARATOR, ItemType.SEPARATOR, ItemType.PUSH);
+	}
+
+	public void testItem_Type_SeparatorPushSeparator() {
+		testItem_Type(ItemType.SEPARATOR, ItemType.PUSH, ItemType.SEPARATOR);
+	}
+
+	public void testItem_Type_SeparatorPushPush() {
+		testItem_Type(ItemType.SEPARATOR, ItemType.PUSH, ItemType.PUSH);
 	}
 }

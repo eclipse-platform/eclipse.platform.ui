@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import javax.xml.parsers.DocumentBuilderFactory;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -193,6 +194,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getHandlerContainer_Handlers();
 		} else if (featureName.equals(CONTRIBUTION_PERSISTEDSTATE_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getContribution_PersistedState();
+		} else if (featureName.equals(CONTRIBUTION_URI_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getContribution_URI();
 		} else if (featureName.equals(WINDOW_MAINMENU_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getWindow_MainMenu();
 		} else if (featureName.equals(WINDOW_X_ATTNAME)) {
@@ -217,6 +220,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return Boolean.valueOf(featureValue);
 		} else if (feature == MApplicationPackage.eINSTANCE.getTrimContainer_Side()) {
 			return SideValue.getByName(featureValue);
+		} else if (feature == MApplicationPackage.eINSTANCE.getItem_Type()) {
+			return ItemType.getByName(featureValue);
 		}
 		return null;
 	}
@@ -341,7 +346,7 @@ public class XMLModelReconciler extends ModelReconciler {
 	private ModelDelta createDirectReferenceDelta(Collection<ModelDelta> deltas,
 			List<Object> references, EObject eObject, EStructuralFeature feature, Element node) {
 		NodeList referencedIds = (NodeList) node;
-		Element reference = (Element) referencedIds.item(0);
+		Element reference = getFirstElement(referencedIds);
 		String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
 
 		Object match = findReference(references, referenceId);
@@ -353,7 +358,7 @@ public class XMLModelReconciler extends ModelReconciler {
 		return new EMFModelDeltaSet(eObject, feature, match);
 	}
 
-	private Element getFirstElement(NodeList list) {
+	private static Element getFirstElement(NodeList list) {
 		for (int i = 0; i < list.getLength(); i++) {
 			Node item = list.item(i);
 			if (item instanceof Element) {
@@ -372,10 +377,7 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		Object match = findReference(references, referenceId);
 		if (match == null) {
-			ModelDelta delta = createDelayedDelta(eObject, feature, reference);
-			if (delta != null) {
-				return delta;
-			}
+			return createDelayedDelta(eObject, feature, reference);
 		}
 
 		return new EMFModelDeltaSet(eObject, feature, match);
@@ -406,6 +408,7 @@ public class XMLModelReconciler extends ModelReconciler {
 			return userReferences;
 		} else if (originalReferences.containsAll(currentReferences)
 				&& currentReferences.containsAll(originalReferences)) {
+			// since both versions contain the same thing, just use whatever the user had
 			return userReferences;
 		}
 
@@ -513,17 +516,22 @@ public class XMLModelReconciler extends ModelReconciler {
 		List<?> currentReferences = (List<?>) eObject.eGet(feature);
 
 		for (int i = 0; i < referencedIds.getLength(); i++) {
-			Element reference = (Element) referencedIds.item(i);
-			if (isUnset(reference)) {
-				userReferences.add(createObject(deltas, reference, references));
-			} else {
-				String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-				Object match = findReference(references, referenceId);
-				if (match != null) {
-					if (reference.getNodeName().equals(REFERENCE_ELEMENT_NAME)) {
-						userReferences.add(match);
-					} else {
-						originalReferences.add(match);
+			Node item = referencedIds.item(i);
+			if (item instanceof Element) {
+				Element reference = (Element) item;
+				if (isUnset(reference)) {
+					userReferences.add(createObject(deltas, reference, references));
+				} else {
+					String referenceId = reference.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
+					Object match = findReference(references, referenceId);
+					if (match != null) {
+						// determine if this was a reference set by the user or a reference that was
+						// originally defined by the application
+						if (reference.getNodeName().equals(REFERENCE_ELEMENT_NAME)) {
+							userReferences.add(match);
+						} else {
+							originalReferences.add(match);
+						}
 					}
 				}
 			}
@@ -595,55 +603,62 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		NodeList elementAttributes = (NodeList) element;
 		for (int i = 0; i < elementAttributes.getLength(); i++) {
-			Element item = (Element) elementAttributes.item(i);
-			if (!isUnset(item)) {
-				String attributeName = item.getNodeName();
-				EStructuralFeature attributeFeature = getStructuralFeature(object, attributeName);
-				if (isDirectReference(attributeName)) {
-					String id = item.getAttribute(attributeName);
-					Object objectReference = findReference(references, id);
-					if (objectReference == null) {
-						objectReference = createObject(deltas, (Element) ((NodeList) item).item(0),
-								references);
-					}
-
-					IDelta delta = new EMFModelDeltaSet(object, attributeFeature, objectReference);
-					compositeDelta.add(delta);
-				} else if (isIndirectReference(attributeName)) {
-					String id = item.getAttribute(attributeName);
-					Object objectReference = findReference(references, id);
-					if (objectReference == null) {
-						NodeList list = (NodeList) item;
-						list = (NodeList) list.item(0);
-						if (list != null) {
-							ModelDelta delta = createDelayedDelta(object, attributeFeature,
-									(Element) list);
-							if (delta != null) {
-								deltas.add(delta);
-							}
+			Node node = elementAttributes.item(i);
+			if (node instanceof Element) {
+				Element item = (Element) node;
+				if (!isUnset(item)) {
+					String attributeName = item.getNodeName();
+					EStructuralFeature attributeFeature = getStructuralFeature(object,
+							attributeName);
+					if (isDirectReference(attributeName)) {
+						String id = item.getAttribute(attributeName);
+						Object objectReference = findReference(references, id);
+						if (objectReference == null) {
+							objectReference = createObject(deltas,
+									getFirstElement((NodeList) item), references);
 						}
-					} else {
+
 						IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
 								objectReference);
 						compositeDelta.add(delta);
-					}
-				} else if (isChainedReference(attributeName)) {
-					List<Object> objectReferences = new ArrayList<Object>();
-					NodeList objectReferenceNodes = (NodeList) item;
-
-					for (int j = 0; j < objectReferenceNodes.getLength(); j++) {
-						Node node = objectReferenceNodes.item(j);
-						Object objectReference = getReference(deltas, (Element) node, references);
-						if (objectReference != null) {
-							objectReferences.add(objectReference);
+					} else if (isIndirectReference(attributeName)) {
+						String id = item.getAttribute(attributeName);
+						Object objectReference = findReference(references, id);
+						if (objectReference == null) {
+							NodeList list = (NodeList) item;
+							Element refElement = getFirstElement(list);
+							if (refElement != null) {
+								ModelDelta delta = createDelayedDelta(object, attributeFeature,
+										refElement);
+								deltas.add(delta);
+							}
+						} else {
+							IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
+									objectReference);
+							compositeDelta.add(delta);
 						}
-					}
+					} else if (isChainedReference(attributeName)) {
+						List<Object> objectReferences = new ArrayList<Object>();
+						NodeList objectReferenceNodes = (NodeList) item;
 
-					IDelta delta = new EMFModelDeltaSet(object, attributeFeature, objectReferences);
-					compositeDelta.add(delta);
-				} else {
-					object.eSet(attributeFeature, getValue(attributeFeature, item
-							.getAttribute(attributeName)));
+						for (int j = 0; j < objectReferenceNodes.getLength(); j++) {
+							Node refNode = objectReferenceNodes.item(j);
+							if (refNode instanceof Element) {
+								Object objectReference = getReference(deltas, (Element) refNode,
+										references);
+								if (objectReference != null) {
+									objectReferences.add(objectReference);
+								}
+							}
+						}
+
+						IDelta delta = new EMFModelDeltaSet(object, attributeFeature,
+								objectReferences);
+						compositeDelta.add(delta);
+					} else {
+						object.eSet(attributeFeature, getValue(attributeFeature, item
+								.getAttribute(attributeName)));
+					}
 				}
 			}
 		}
@@ -1061,7 +1076,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			// recording the id because we need to describe the entire object if the object is new,
 			// simply recording an id would be insufficient for recording the attributes of the new
 			// object
-			Element referenceElement = createReferenceElement(document, (EObject) value);
+			Element referenceElement = createReferenceElement(document, (EObject) value,
+					featureName);
 			featureElement.appendChild(referenceElement);
 		} else if (isChainedReference(featureName)) {
 			// record what we're currently referencing
@@ -1121,15 +1137,23 @@ public class XMLModelReconciler extends ModelReconciler {
 	 *            the root XML document
 	 * @param eObject
 	 *            the object to reference
+	 * @param featureName
+	 *            the name of the feature describing the reference relationship, if
+	 *            <code>null</code>, it is assumed to be a direct reference
 	 * @return an XML element that describes the reference to the provided object
+	 * @see #isDirectReference(String)
+	 * @see #isIndirectReference(String)
 	 */
-	private Element createReferenceElement(Document document, EObject eObject) {
+	private Element createReferenceElement(Document document, EObject eObject, String featureName) {
 		String id = getOriginalId(eObject);
 
 		if (id == null) {
-			// didn't exist originally, we need a completely new reference that describes the object
-			// and its attributes
-			return createNewReferenceElement(document, eObject);
+			if (featureName == null || isDirectReference(featureName)) {
+				// didn't exist originally, we need a completely new reference that describes the
+				// object and its attributes
+				return createNewReferenceElement(document, eObject);
+			}
+			return createUniqueReferenceElement(document, eObject);
 		}
 
 		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
@@ -1139,13 +1163,13 @@ public class XMLModelReconciler extends ModelReconciler {
 
 	private void appendReferenceElements(Document document, Element element, List<?> references) {
 		for (Object reference : references) {
-			Element ef = createReferenceElement(document, (EObject) reference);
+			Element ef = createReferenceElement(document, (EObject) reference, null);
 			element.appendChild(ef);
 		}
 	}
 
 	private Element createNewReferenceElement(Document document, EObject eObject) {
-		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
+		Element referenceElement = createUniqueReferenceElement(document, eObject);
 
 		// object did not exist, mark it as such so it can be created during the
 		// delta application phase
@@ -1156,13 +1180,19 @@ public class XMLModelReconciler extends ModelReconciler {
 
 		for (EStructuralFeature collectedFeature : collectFeatures(eObject)) {
 			String featureName = collectedFeature.getName();
-			// ignore transient features
+			// ignore transient features and features that we are not interested in
 			if (!collectedFeature.isTransient() && shouldPersist(featureName)) {
 				Element referenceAttributeElement = createAttributeElement(document, eObject,
 						collectedFeature, featureName);
 				referenceElement.appendChild(referenceAttributeElement);
 			}
 		}
+
+		return referenceElement;
+	}
+
+	private Element createUniqueReferenceElement(Document document, EObject eObject) {
+		Element referenceElement = document.createElement(REFERENCE_ELEMENT_NAME);
 
 		E4XMIResource resource = (E4XMIResource) rootObject.eResource();
 		String internalId = resource.getInternalId(eObject);
@@ -1192,11 +1222,11 @@ public class XMLModelReconciler extends ModelReconciler {
 				Object value = object.eGet(feature);
 				String id = getOriginalId(value);
 				if (id == null) {
-					Element referenceElement = createReferenceElement(document, (EObject) value);
+					Element referenceElement = createReferenceElement(document, (EObject) value,
+							featureName);
 					referenceAttributeElement.appendChild(referenceElement);
 				} else {
-					referenceAttributeElement.setAttribute(featureName, getOriginalId(object
-							.eGet(feature)));
+					referenceAttributeElement.setAttribute(featureName, id);
 				}
 			} else if (isChainedReference(featureName)) {
 				List<?> references = (List<?>) object.eGet(feature);
