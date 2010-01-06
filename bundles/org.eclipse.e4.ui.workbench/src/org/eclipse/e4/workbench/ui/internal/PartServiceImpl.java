@@ -23,15 +23,36 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.ui.UIEvents;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public class PartServiceImpl implements EPartService {
+	public static void addListener(IEventBroker broker) {
+		EventHandler windowHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+				if (element instanceof MWindow) {
+					MContext contextAware = (MContext) element;
+					IEclipseContext context = contextAware.getContext();
+					if (context != null) {
+						context.set(EPartService.PART_SERVICE_ROOT, element);
+					}
+				}
+			}
+		};
+		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
+				windowHandler);
+	}
 
 	/**
 	 * This is the specific implementation. TODO: generalize it
 	 */
 	@Inject
-	private MWindow windowContainer;
+	@Named(EPartService.PART_SERVICE_ROOT)
+	private MElementContainer<MUIElement> rootContainer;
 
 	@Inject
 	void setPart(@Optional @Named(IServiceConstants.ACTIVE_PART) MPart p) {
@@ -86,11 +107,11 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart findPart(String id) {
-		return findPart(windowContainer, id);
+		return findPart(rootContainer, id);
 	}
 
 	public Collection<MPart> getParts() {
-		return getParts(new ArrayList<MPart>(), windowContainer);
+		return getParts(new ArrayList<MPart>(), rootContainer);
 	}
 
 	private Collection<MPart> getParts(Collection<MPart> parts,
@@ -132,7 +153,7 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private boolean isInContainer(MPart part) {
-		return isInContainer(windowContainer, part);
+		return isInContainer(rootContainer, part);
 	}
 
 	private boolean isInContainer(MElementContainer<?> container, MPart part) {

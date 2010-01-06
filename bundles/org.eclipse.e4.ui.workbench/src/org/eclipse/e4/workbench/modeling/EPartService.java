@@ -14,6 +14,7 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MPart;
 
 public interface EPartService {
+	public static final String PART_SERVICE_ROOT = "partServiceRoot"; //$NON-NLS-1$
 
 	public void activate(MPart part);
 

@@ -27,6 +27,9 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.workbench.swt.internal.E4Application;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.internal.UIEventPublisher;
+import org.eclipse.e4.workbench.ui.internal.Workbench;
+import org.eclipse.emf.common.notify.Notifier;
 
 public class EPartServiceTest extends TestCase {
 
@@ -649,6 +652,9 @@ public class EPartServiceTest extends TestCase {
 		// setup the context
 		applicationContext.set(MApplication.class.getName(), application);
 		application.setContext(applicationContext);
+		Workbench.processHierarchy(application);
+		((Notifier) application).eAdapters().add(
+				new UIEventPublisher(applicationContext));
 
 		// render the windows
 		engine.createGui(window1);
@@ -721,6 +727,9 @@ public class EPartServiceTest extends TestCase {
 
 		applicationContext.set(MApplication.class.getName(), application);
 		application.setContext(applicationContext);
+		Workbench.processHierarchy(application);
+		((Notifier) application).eAdapters().add(
+				new UIEventPublisher(applicationContext));
 
 		return application;
 	}
