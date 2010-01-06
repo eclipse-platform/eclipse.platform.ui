@@ -11,6 +11,7 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
+import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
 import junit.framework.Test;
@@ -48,6 +49,7 @@ public class LinkedResourceTest extends ResourceTest {
 	protected IFolder existingFolderInExistingFolder;
 	protected IFolder existingFolderInExistingProject;
 	protected IProject existingProject;
+	protected IProject existingProjectInSubDirectory;
 	protected IPath localFile;
 	protected IPath localFolder;
 	protected IFile nonExistingFileInExistingFolder;
@@ -109,6 +111,7 @@ public class LinkedResourceTest extends ResourceTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		existingProject = getWorkspace().getRoot().getProject("ExistingProject");
+		existingProjectInSubDirectory = getWorkspace().getRoot().getProject("ExistingProjectInSubDirectory");
 		otherExistingProject = getWorkspace().getRoot().getProject("OtherExistingProject");
 		closedProject = getWorkspace().getRoot().getProject("ClosedProject");
 		existingFolderInExistingProject = existingProject.getFolder("existingFolderInExistingProject");
@@ -129,6 +132,18 @@ public class LinkedResourceTest extends ResourceTest {
 		nonExistingLocation = getRandomLocation();
 		localFile = localFolder.append(childName);
 		doCleanup();
+
+		if (!existingProjectInSubDirectory.exists()) {
+			IProjectDescription desc = getWorkspace().newProjectDescription(existingProjectInSubDirectory.getName());
+			File dir = existingProject.getLocation().toFile();
+			dir = dir.getParentFile();
+			dir = new File(dir + File.separator + "sub" + File.separator + "dir" + File.separator + "more" + File.separator + "proj");
+			dir.mkdirs();
+			desc.setLocation(Path.fromOSString(dir.getAbsolutePath()));
+			existingProjectInSubDirectory.create(desc, getMonitor());
+		}
+		if (!existingProjectInSubDirectory.isOpen())
+			existingProjectInSubDirectory.open(getMonitor());
 	}
 
 	protected void tearDown() throws Exception {
@@ -732,7 +747,7 @@ public class LinkedResourceTest extends ResourceTest {
 			fail("1.99", e);
 		}
 	}
-	
+
 	/**
 	 * Tests whether {@link IFile#createLink} and {@link IFolder#createLink} 
 	 * handle {@link IResource#HIDDEN} flag properly.
@@ -866,7 +881,7 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.1", link.isLinked());
 		assertEquals("2.2", resolve(localFolder), link.getLocation());
 	}
-	
+
 	/**
 	 * Tests bug 209175.
 	 */
@@ -880,26 +895,26 @@ public class LinkedResourceTest extends ResourceTest {
 			file2.createLink(localFile, IResource.NONE, getMonitor());
 
 			HashMap links = ((Project) project).internalGetDescription().getLinks();
-			LinkDescription linkDescription1 = (LinkDescription)links.get(file1.getProjectRelativePath());
+			LinkDescription linkDescription1 = (LinkDescription) links.get(file1.getProjectRelativePath());
 			assertNotNull("1.0", linkDescription1);
-			assertEquals("1.1", URIUtil.toURI(localFile), linkDescription1.getLocationURI());			
-			LinkDescription linkDescription2 = (LinkDescription)links.get(file2.getProjectRelativePath());
+			assertEquals("1.1", URIUtil.toURI(localFile), linkDescription1.getLocationURI());
+			LinkDescription linkDescription2 = (LinkDescription) links.get(file2.getProjectRelativePath());
 			assertNotNull("2.0", linkDescription2);
 			assertEquals("2.1", URIUtil.toURI(localFile), linkDescription2.getLocationURI());
 
 			folder.delete(true, getMonitor());
 
 			links = ((Project) project).internalGetDescription().getLinks();
-			linkDescription1 = (LinkDescription)links.get(file1.getProjectRelativePath());
+			linkDescription1 = (LinkDescription) links.get(file1.getProjectRelativePath());
 			assertNull("3.0", linkDescription1);
-			linkDescription2 = (LinkDescription)links.get(file2.getProjectRelativePath());
+			linkDescription2 = (LinkDescription) links.get(file2.getProjectRelativePath());
 			assertNotNull("4.0", linkDescription2);
 			assertEquals("4.1", URIUtil.toURI(localFile), linkDescription2.getLocationURI());
 		} catch (CoreException e) {
 			fail("5.0", e);
 		}
 	}
-	
+
 	/**
 	 * Tests that IWorkspaceRoot.findFilesForLocation works correctly
 	 * in presence of a linked resource that does not match the case in the file system
@@ -934,6 +949,119 @@ public class LinkedResourceTest extends ResourceTest {
 			assertTrue("1.1 " + toTest[i], !toTest[i].isLinked(IResource.NONE));
 			assertTrue("1.2 " + toTest[i], !toTest[i].isLinked(IResource.CHECK_ANCESTORS));
 		}
+		// create a link
+		IFolder link = nonExistingFolderInExistingProject;
+		try {
+			link.createLink(localFolder, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		IFile child = link.getFile(childName);
+		assertTrue("2.0", child.exists());
+		assertTrue("2.1", link.isLinked());
+		assertTrue("2.2", link.isLinked(IResource.NONE));
+		assertTrue("2.3", link.isLinked(IResource.CHECK_ANCESTORS));
+		assertTrue("2.1", !child.isLinked());
+		assertTrue("2.2", !child.isLinked(IResource.NONE));
+		assertTrue("2.3", child.isLinked(IResource.CHECK_ANCESTORS));
+
+	}
+
+	/**
+	 * Tests the
+	 * {@link org.eclipse.core.resources.IResource#setLinkLocation(URI , int , IProgressMonitor )}
+	 * method.
+	 */
+	public void testsetLinkLocation() {
+		// initially nothing is linked
+		IResource[] toTest = new IResource[] {closedProject, existingFileInExistingProject, existingFolderInExistingFolder, existingFolderInExistingProject, existingProject, nonExistingFileInExistingFolder, nonExistingFileInExistingProject, nonExistingFileInOtherExistingProject, nonExistingFolderInExistingFolder, nonExistingFolderInExistingProject, nonExistingFolderInNonExistingFolder, nonExistingFolderInNonExistingProject, nonExistingFolderInOtherExistingProject, nonExistingProject, otherExistingProject};
+		for (int i = 0; i < toTest.length; i++) {
+			assertTrue("1.0 " + toTest[i], !toTest[i].isLinked());
+			assertTrue("1.1 " + toTest[i], !toTest[i].isLinked(IResource.NONE));
+			assertTrue("1.2 " + toTest[i], !toTest[i].isLinked(IResource.CHECK_ANCESTORS));
+		}
+		// create a link
+		IFolder link = nonExistingFolderInExistingProject;
+		try {
+			link.createLink(localFolder, IResource.NONE, getMonitor());
+		} catch (CoreException e) {
+			fail("1.99", e);
+		}
+		IFile child = link.getFile(childName);
+		assertTrue("2.0", child.exists());
+		assertTrue("2.1", link.isLinked());
+		assertTrue("2.2", link.isLinked(IResource.NONE));
+		assertTrue("2.3", link.isLinked(IResource.CHECK_ANCESTORS));
+		assertTrue("2.1", !child.isLinked());
+		assertTrue("2.2", !child.isLinked(IResource.NONE));
+		assertTrue("2.3", child.isLinked(IResource.CHECK_ANCESTORS));
+
+		try {
+			link.createLink(existingFileInExistingProject.getLocationURI(), IResource.REPLACE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertTrue("3.1", link.isLinked());
+		assertTrue("3.2", link.isLinked(IResource.NONE));
+		assertTrue("3.3", link.isLinked(IResource.CHECK_ANCESTORS));
+		assertTrue("3.4", link.getLocation().equals(existingFileInExistingProject.getLocation()));
+	}
+
+	/**
+	 * Tests swapping the link location. 
+	 * This is a regression test for bug 268507
+	 */
+	public void testSetLinkLocationSwapLinkedResource() {
+		final IPath parentLoc = existingFolderInExistingProject.getLocation();
+		final IPath childLoc = existingFolderInExistingFolder.getLocation();
+
+		try {
+			nonExistingFolderInExistingProject.createLink(parentLoc, IResource.NONE, getMonitor());
+			nonExistingFolderInOtherExistingProject.createLink(childLoc, IResource.NONE, getMonitor());
+			create(nonExistingFolderInOtherExistingProject.getFile("foo"), true);
+
+			assertTrue("2.0", existingFolderInExistingFolder.members().length == 1);
+			assertTrue("3.0", existingFolderInExistingFolder.members()[0].getName().equals("foo"));
+			assertTrue("2.0", nonExistingFolderInOtherExistingProject.members().length == 1);
+			assertTrue("3.0", nonExistingFolderInOtherExistingProject.members()[0].getName().equals("foo"));
+
+			assertTrue("4.0", nonExistingFolderInExistingProject.members().length == 1);
+			assertTrue("5.0", nonExistingFolderInExistingProject.members()[0].getName().equals(existingFolderInExistingFolder.getName()));
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		// Swap links around
+		try {
+			nonExistingFolderInExistingProject.createLink(childLoc, IResource.REPLACE, getMonitor());
+			nonExistingFolderInOtherExistingProject.createLink(parentLoc, IResource.REPLACE, getMonitor());
+
+			assertTrue("2.0", existingFolderInExistingFolder.members().length == 1);
+			assertTrue("3.0", existingFolderInExistingFolder.members()[0].getName().equals("foo"));
+			assertTrue(nonExistingFolderInExistingProject.getLocation().equals(childLoc));
+			assertTrue("2.0", nonExistingFolderInExistingProject.members().length == 1);
+			assertTrue("3.0", nonExistingFolderInExistingProject.members()[0].getName().equals("foo"));
+
+			assertTrue("4.0", nonExistingFolderInOtherExistingProject.members().length == 1);
+			assertTrue("5.0", nonExistingFolderInOtherExistingProject.members()[0].getName().equals(existingFolderInExistingFolder.getName()));
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+	}
+
+	/**
+	 * Tests the
+	 * {@link org.eclipse.core.resources.IResource#setLinkLocation(IPath, int , IProgressMonitor )}
+	 * method.
+	 */
+	public void testsetLinkLocationPath() {
+		//initially nothing is linked
+		IResource[] toTest = new IResource[] {closedProject, existingFileInExistingProject, existingFolderInExistingFolder, existingFolderInExistingProject, existingProject, nonExistingFileInExistingFolder, nonExistingFileInExistingProject, nonExistingFileInOtherExistingProject, nonExistingFolderInExistingFolder, nonExistingFolderInExistingProject, nonExistingFolderInNonExistingFolder, nonExistingFolderInNonExistingProject, nonExistingFolderInOtherExistingProject, nonExistingProject, otherExistingProject};
+		for (int i = 0; i < toTest.length; i++) {
+			assertTrue("1.0 " + toTest[i], !toTest[i].isLinked());
+			assertTrue("1.1 " + toTest[i], !toTest[i].isLinked(IResource.NONE));
+			assertTrue("1.2 " + toTest[i], !toTest[i].isLinked(IResource.CHECK_ANCESTORS));
+		}
 		//create a link
 		IFolder link = nonExistingFolderInExistingProject;
 		try {
@@ -950,6 +1078,15 @@ public class LinkedResourceTest extends ResourceTest {
 		assertTrue("2.2", !child.isLinked(IResource.NONE));
 		assertTrue("2.3", child.isLinked(IResource.CHECK_ANCESTORS));
 
+		try {
+			link.createLink(existingFileInExistingProject.getLocation(), IResource.REPLACE, getMonitor());
+		} catch (CoreException e) {
+			fail("2.99", e);
+		}
+		assertTrue("3.1", link.isLinked());
+		assertTrue("3.2", link.isLinked(IResource.NONE));
+		assertTrue("3.3", link.isLinked(IResource.CHECK_ANCESTORS));
+		assertTrue("3.4", link.getLocation().equals(existingFileInExistingProject.getLocation()));
 	}
 
 	/**
@@ -1159,6 +1296,24 @@ public class LinkedResourceTest extends ResourceTest {
 			}
 		}.performTest(inputs);
 
+	}
+
+	/**
+	 * Automated test of IWorkspace#validateLinkLocation and IWorkspace#validateLinkLocationURI with empty location
+	 * This is a regression test for bug 266662
+	 */
+	public void testValidateEmptyLinkLocation() {
+		IFolder folder = nonExistingFolderInExistingProject;
+		IPath newLocation = new Path("");
+		URI newLocationURI = URIUtil.toURI(newLocation);
+		try {
+			IStatus linkedResourceStatus = getWorkspace().validateLinkLocation(folder, newLocation);
+			assertEquals("1.0", IStatus.ERROR, linkedResourceStatus.getSeverity());
+			linkedResourceStatus = getWorkspace().validateLinkLocationURI(folder, newLocationURI);
+			assertEquals("1.1", IStatus.ERROR, linkedResourceStatus.getSeverity());
+		} catch (Exception e) {
+			fail("1.99", e);
+		}
 	}
 
 	/**
