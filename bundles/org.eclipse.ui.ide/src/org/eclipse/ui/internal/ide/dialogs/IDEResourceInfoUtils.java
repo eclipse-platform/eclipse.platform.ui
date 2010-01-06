@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -62,7 +62,7 @@ public class IDEResourceInfoUtils {
 
 	private static String LINKED_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_linkedFolder;
 
-	private static String GROUP_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_groupFolder;
+	private static String VIRTUAL_FOLDER_LABEL = IDEWorkbenchMessages.ResourceInfo_virtualFolder;
 
 	private static String GROUP_TEXT = IDEWorkbenchMessages.ResourceInfo_isGroup;
 
@@ -365,7 +365,7 @@ public class IDEResourceInfoUtils {
 
 		if (resource.getType() == IResource.FOLDER) {
 			if (resource.isGroup()) {
-				return GROUP_FOLDER_LABEL;
+				return VIRTUAL_FOLDER_LABEL;
 			}
 			if (resource.isLinked()) {
 				return LINKED_FOLDER_LABEL;

@@ -12,6 +12,7 @@
 package org.eclipse.ui.ide.undo;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.ui.internal.ide.dialogs.UIResourceFilterDescription;
 import org.eclipse.ui.internal.ide.undo.ContainerDescription;
 
 /**
@@ -39,9 +40,26 @@ public class CreateGroupOperation extends AbstractCreateResourcesOperation {
 	 *            the label of the operation
 	 */
 	public CreateGroupOperation(IFolder groupHandle, String label) {
+		this(null, null, label);
+	}
+	/**
+	 * Create a CreateGroupOperation
+	 * 
+	 * @param groupHandle
+	 *            the folder to be created
+	 * @param filterList
+	 *            the list of resource filters
+	 * @param label
+	 *            the label of the operation
+	 * @since 3.6
+	 */
+	public CreateGroupOperation(IFolder groupHandle,
+			UIResourceFilterDescription[] filterList, String label) {
 		super(null, label);
 		ContainerDescription containerDescription = ContainerDescription
-				.fromGroupContainer(groupHandle);
+		.fromGroupContainer(groupHandle);
+		if (filterList != null)
+			containerDescription.getFirstLeafFolder().setFilters(filterList);
 		setResourceDescriptions(new ResourceDescription[] { containerDescription });
 	}
 }

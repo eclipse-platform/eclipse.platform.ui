@@ -82,6 +82,9 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String showAdvanced;
 	public static String hideAdvanced;
 	public static String editfilters;
+	public static String useDefaultLocation;
+	public static String createLinkedFolder;
+	public static String createVirtualFolder;
 	
 	// ==============================================================================
 	// Workbench Actions
@@ -424,16 +427,6 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String WizardNewFolderCreationPage_title;
 	public static String WizardNewFolder_internalError;
 
-	// --- New Group ---
-	public static String WizardNewGroupMainPage_groupName;
-	public static String WizardNewGroupMainPage_groupLabel;
-	public static String WizardNewGroupMainPage_description;
-	public static String WizardNewGroupCreationPage_progress;
-	public static String WizardNewGroupCreationPage_errorTitle;
-	public static String WizardNewGroupCreationPage_internalErrorTitle;
-	public static String WizardNewGroupCreationPage_title;
-	public static String WizardNewGroup_internalError;
-
 	// --- New File ---
 	public static String WizardNewFileCreationPage_progress;
 	public static String WizardNewFileCreationPage_errorTitle;
@@ -570,7 +563,7 @@ public class IDEWorkbenchMessages extends NLS {
 	public static String ResourceInfo_project;
 	public static String ResourceInfo_linkedFile;
 	public static String ResourceInfo_linkedFolder;
-	public static String ResourceInfo_groupFolder;
+	public static String ResourceInfo_virtualFolder;
 	public static String ResourceInfo_unknown;
 	public static String ResourceInfo_notLocal;
 	public static String ResourceInfo_undefinedPathVariable;

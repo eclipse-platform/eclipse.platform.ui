@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,13 +25,13 @@ import org.eclipse.swt.dnd.TransferData;
 
 /**
  * The <code>ResourceTransfer</code> class is used to transfer an
- * array of <code>IResources</code>s from one part to another in a 
+ * array of <code>IResource</code>s from one part to another in a 
  * drag and drop operation or a cut, copy, paste action.
  * <p>
  * In every drag and drop operation there is a <code>DragSource</code> and 
  * a <code>DropTarget</code>.  When a drag occurs a <code>Transfer</code> is 
- * used to marshall the drag data from the source into a byte array.  If a drop 
- * occurs another <code>Transfer</code> is used to marshall the byte array into
+ * used to marshal the drag data from the source into a byte array.  If a drop 
+ * occurs another <code>Transfer</code> is used to marshal the byte array into
  * drop data for the target.  
  * </p>
  * <p>

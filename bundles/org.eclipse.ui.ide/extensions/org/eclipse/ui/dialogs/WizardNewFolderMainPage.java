@@ -8,7 +8,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Leon J. Breedt - Added multiple folder creation support (in WizardNewFolderMainPage)
- *     
+ * 
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -17,6 +17,8 @@ import java.net.URI;
 import java.util.Iterator;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.AbstractOperation;
+import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceStatus;
@@ -40,6 +42,7 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -48,8 +51,10 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.CreateFolderOperation;
+import org.eclipse.ui.ide.undo.CreateGroupOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
@@ -58,6 +63,7 @@ import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.ide.dialogs.ResourceFilterEditDialog;
 import org.eclipse.ui.internal.ide.dialogs.UIResourceFilterDescription;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard main page for a wizard that creates a folder resource.
@@ -85,14 +91,18 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	private ResourceAndContainerGroup resourceGroup;
 
 	private Button advancedButton;
-
+	private Button useDefaultLocation;
+	private Button useVirtualFolder;
+	private Button useLinkedResource;
+	
 	private Button filterButton;
 	
 	private CreateLinkedResourceGroup linkedResourceGroup;
 
-	private Composite linkedResourceParent;
+	private Composite advancedComposite;
 
 	private Composite linkedResourceComposite;
+	private Composite linkedGroupComposite;
 
 	private UIResourceFilterDescription[] filterList = null;
 	
@@ -136,17 +146,18 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				.getPluginPreferences();
 
 		if (preferences.getBoolean(ResourcesPlugin.PREF_DISABLE_LINKING) == false) {
-			linkedResourceParent = new Composite(parent, SWT.NONE);
-			linkedResourceParent.setFont(parent.getFont());
-			linkedResourceParent.setLayoutData(new GridData(
+			advancedComposite = new Composite(parent, SWT.NONE);
+			advancedComposite.setFont(parent.getFont());
+			advancedComposite.setLayoutData(new GridData(
 					GridData.FILL_HORIZONTAL));
 			GridLayout layout = new GridLayout();
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
-			linkedResourceParent.setLayout(layout);
+			advancedComposite.setLayout(layout);
 
-			advancedButton = new Button(linkedResourceParent, SWT.PUSH);
-			advancedButton.setFont(linkedResourceParent.getFont());
+			
+			advancedButton = new Button(advancedComposite, SWT.PUSH);
+			advancedButton.setFont(advancedComposite.getFont());
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
 			GridData data = setButtonLayoutData(advancedButton);
 			data.horizontalAlignment = GridData.BEGINNING;
@@ -214,8 +225,8 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	 *                if the operation fails
 	 * @exception OperationCanceledException
 	 *                if the operation is canceled
-	 *                
-	 * @deprecated As of 3.3, use {@link #createNewFolder()} which uses the 
+	 * 
+	 * @deprecated As of 3.3, use {@link #createNewFolder()} which uses the
 	 *   undoable operation support.
 	 */
 	protected void createFolder(IFolder folderHandle, IProgressMonitor monitor)
@@ -282,6 +293,23 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	}
 
 	/**
+	 * Creates a container resource handle for the container with the given workspace path. This
+	 * method does not create the resource.
+	 * 
+	 * @param containerPath the path of the container resource to create a handle for
+	 * @return the new container resource handle
+	 * @see #createFolder
+	 * @since 3.6
+	 */
+	protected IContainer createContainerHandle(IPath containerPath) {
+		if (containerPath.segmentCount() == 1)
+			return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getProject(
+					containerPath.segment(0));
+		return IDEWorkbenchPlugin.getPluginWorkspace().getRoot().getFolder(
+				containerPath);
+	}
+
+	/**
 	 * Creates the link target path if a link target has been specified.
 	 */
 	protected void createLinkTarget() {
@@ -320,10 +348,17 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 		IPath newFolderPath = containerPath.append(resourceGroup.getResource());
 		final IFolder newFolderHandle = createFolderHandle(newFolderPath);
 
+		final boolean createVirtualFolder = useVirtualFolder != null && useVirtualFolder.getSelection();
 		createLinkTarget();
 		IRunnableWithProgress op = new IRunnableWithProgress() {
 			public void run(IProgressMonitor monitor) {
-				CreateFolderOperation op = new CreateFolderOperation(
+				AbstractOperation op;
+				if (createVirtualFolder)
+					op = new CreateGroupOperation(
+							newFolderHandle, filterList,
+							IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
+				else
+					op = new CreateFolderOperation(
 						newFolderHandle, linkTargetPath, filterList,
 						IDEWorkbenchMessages.WizardNewFolderCreationPage_title);
 				try {
@@ -407,25 +442,98 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			linkedResourceComposite.dispose();
 			linkedResourceComposite = null;
 			filterButton.dispose();
+			useDefaultLocation.dispose();
+			useVirtualFolder.dispose();
+			useLinkedResource.dispose();
+			linkedGroupComposite.dispose();
 			filterButton = null;
+			useDefaultLocation = null;
+			useVirtualFolder = null;
+			useLinkedResource = null;
+			linkedGroupComposite = null;
 			composite.layout();
 			shell.setSize(shellSize.x, shellSize.y - linkedResourceGroupHeight);
 			advancedButton.setText(IDEWorkbenchMessages.showAdvanced);
 		} else {
+			
+			Image folderImage = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(
+	                ISharedImages.IMG_OBJ_FOLDER).createImage();
+			useDefaultLocation = new Button(advancedComposite, SWT.RADIO);
+
+			int indent = useDefaultLocation.computeSize(SWT.DEFAULT, SWT.DEFAULT).x;
+
+			useDefaultLocation.setFont(advancedComposite.getFont());
+			useDefaultLocation.setText(IDEWorkbenchMessages.useDefaultLocation);
+			useDefaultLocation.setImage(folderImage);
+			GridData data = setButtonLayoutData(useDefaultLocation);
+			data.horizontalAlignment = GridData.BEGINNING;
+			data.horizontalIndent = indent;
+			useDefaultLocation.setLayoutData(data);
+
+			Image virtualFolderImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+					IDEWorkbenchPlugin.IDE_WORKBENCH,
+					"$nl$/icons/full/obj16/virt_fldr_obj.gif").createImage(); //$NON-NLS-1$
+
+			useVirtualFolder = new Button(advancedComposite, SWT.RADIO);
+			useVirtualFolder.setFont(advancedComposite.getFont());
+			useVirtualFolder.setImage(virtualFolderImage);
+			useVirtualFolder.setText(IDEWorkbenchMessages.createVirtualFolder);
+			data = setButtonLayoutData(useVirtualFolder);
+			data.horizontalAlignment = GridData.BEGINNING;
+			data.horizontalIndent = indent;
+			useVirtualFolder.setLayoutData(data);
+
+			Image linkedFolderImage = AbstractUIPlugin.imageDescriptorFromPlugin(
+					IDEWorkbenchPlugin.IDE_WORKBENCH,
+					"$nl$/icons/full/obj16/link_fldr_obj.gif").createImage(); //$NON-NLS-1$
+
+			useLinkedResource = new Button(advancedComposite, SWT.RADIO);
+			useLinkedResource.setFont(advancedComposite.getFont());
+			useLinkedResource.setText(IDEWorkbenchMessages.createLinkedFolder);
+			useLinkedResource.setImage(linkedFolderImage);
+			data = setButtonLayoutData(useLinkedResource);
+			data.horizontalAlignment = GridData.BEGINNING;
+			data.horizontalIndent = indent;
+			useLinkedResource.setLayoutData(data);
+
+			SelectionAdapter radioListener = new SelectionAdapter() {
+				public void widgetSelected(SelectionEvent e) {
+					handleRadioSelect();
+				}
+			};
+			
+			useLinkedResource.addSelectionListener(radioListener);
+			useVirtualFolder.addSelectionListener(radioListener);
+			useDefaultLocation.addSelectionListener(radioListener);
+			
+			useDefaultLocation.setSelection(true);
+			
+			linkedGroupComposite = new Composite(advancedComposite, 0);
+			data = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
+			data.horizontalIndent = indent;
+			linkedGroupComposite.setLayoutData(data);
+
+			GridLayout layout = new GridLayout();
+			layout.marginHeight = 0;
+			layout.marginWidth = 0;
+			linkedGroupComposite.setLayout(layout);
+
 			linkedResourceComposite = linkedResourceGroup
-					.createContents(linkedResourceParent);
+					.createTextOnlyContents(linkedGroupComposite);
 			if (linkedResourceGroupHeight == -1) {
 				Point groupSize = linkedResourceComposite.computeSize(
 						SWT.DEFAULT, SWT.DEFAULT, true);
 				linkedResourceGroupHeight = groupSize.y;
 			}
+			linkedResourceGroup.setEnabled(false);
 			shell.setSize(shellSize.x, shellSize.y + linkedResourceGroupHeight);
 
-			filterButton = new Button(linkedResourceParent, SWT.PUSH);
-			filterButton.setFont(linkedResourceParent.getFont());
+			filterButton = new Button(advancedComposite, SWT.PUSH);
+			filterButton.setFont(advancedComposite.getFont());
 			filterButton.setText(IDEWorkbenchMessages.editfilters);
-			GridData data = setButtonLayoutData(filterButton);
+			data = setButtonLayoutData(filterButton);
 			data.horizontalAlignment = GridData.BEGINNING;
+			data.horizontalIndent = indent;
 			filterButton.setLayoutData(data);
 			filterButton.addSelectionListener(new SelectionAdapter() {
 				public void widgetSelected(SelectionEvent e) {
@@ -436,6 +544,10 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 			composite.layout();
 			advancedButton.setText(IDEWorkbenchMessages.hideAdvanced);
 		}
+	}
+
+	private void handleRadioSelect() {
+		linkedResourceGroup.setEnabled(useLinkedResource.getSelection());
 	}
 
 	/**
@@ -540,6 +652,15 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 				setErrorMessage(resourceGroup.getProblemMessage());
 			}
 			valid = false;
+		}
+
+		if ((useDefaultLocation == null) || useDefaultLocation.getSelection()) {
+			IPath containerPath = resourceGroup.getContainerFullPath();
+			if (containerPath != null &&
+					createContainerHandle(containerPath).isGroup()) {
+				valid = false;
+				setErrorMessage(IDEWorkbenchMessages.CreateLinkedResourceGroup_linkRequiredUnderAGroup);
+			}
 		}
 
 		IStatus linkedResourceStatus = null;
