@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="_UW9TZfr3Ed6gmo7caOxU9h" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
+  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9i" id="_UW9TZfr3Ed6gmo7caOxU9i" parentID="E4MainWindow">
+    <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9j" id="_UW9TZfr3Ed6gmo7caOxU9ij" xsi:type="application:PartSashContainer">
+      <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9k" id="_UW9TZfr3Ed6gmo7caOxU9k" xsi:type="application:PartStack">
+        <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9l" id="_UW9TZfr3Ed6gmo7caOxU9l" xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library"/>
+      </children>
+      <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9m" id="_UW9TZfr3Ed6gmo7caOxU9m" xsi:type="application:PartStack">
+        <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9n" id="_UW9TZfr3Ed6gmo7caOxU9n" xsi:type="application:Part" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" label="Preview"/>
+      </children>
+    </children>
+  </components>
+  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9o" id="_UW9TZfr3Ed6gmo7caOxU9o" parentID="org.eclipse.e4.ide.app.menu.file">
+    <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9p" id="_UW9TZfr3Ed6gmo7caOxU9p" xsi:type="application:HandledMenuItem" label="Create Album 2" command="org.eclipse.e4.demo.e4photo.command.createAlbum"/>
+  </components>
+  <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9q" id="_UW9TZfr3Ed6gmo7caOxU9q" parentID="org.eclipse.e4.ide.application">
+    <commands xmi:id="org.eclipse.e4.demo.e4photo.command.createAlbum" id="org.eclipse.e4.demo.e4photo.command.createAlbum" commandName="Create Album Snippet"/>
+    <handlers xmi:id="_UW9TZfr3Ed6gmo7caOxU9s" id="_UW9TZfr3Ed6gmo7caOxU9s" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="org.eclipse.e4.demo.e4photo.command.createAlbum"/>
+  </components>
+</application:ModelComponents>

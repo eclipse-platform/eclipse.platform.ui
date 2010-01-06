@@ -13,6 +13,7 @@ package org.eclipse.e4.workbench.ui.internal;
 
 import java.util.Map;
 import java.util.WeakHashMap;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
@@ -78,7 +79,15 @@ public class E4XMIResource extends XMIResourceImpl {
 			return id;
 		}
 
+		MApplicationElement element = (MApplicationElement) eObject;
+		id = element.getId();
+		if (id != null && id.length() != 0) {
+			setID(eObject, id);
+			return id;
+		}
+
 		id = getUniqueId();
+		element.setId(id);
 		setID(eObject, id);
 		return id;
 	}

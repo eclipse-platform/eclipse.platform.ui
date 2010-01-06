@@ -11,14 +11,13 @@
  ******************************************************************************/
 package org.eclipse.e4.workbench.ui.internal;
 
-import org.eclipse.e4.core.services.context.EclipseContextFactory;
-
 import java.util.ArrayList;
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
+import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -85,11 +84,6 @@ public class E4Workbench implements IWorkbench {
 
 	private void init(MApplication appElement) {
 		Activator.trace(Policy.DEBUG_WORKBENCH, "init() workbench", null); //$NON-NLS-1$
-
-		// Add model items described in the model extension point
-		// This has to be done before commands are put into the context
-		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
-		extProcessor.addModelExtensions();
 
 		// fill in commands
 		Activator.trace(Policy.DEBUG_CMDS, "Initialize service from model", null); //$NON-NLS-1$

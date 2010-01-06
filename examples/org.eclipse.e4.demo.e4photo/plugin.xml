@@ -68,7 +68,7 @@
          name="Photo Demo"
          point="org.eclipse.e4.workbench.model">
       <snippet
-            uri="xmi/components.xmi">
+            uri="xmi/components.e4xmi">
       </snippet>
    </extension>
 

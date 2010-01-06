@@ -145,9 +145,15 @@ public class ResourceHandler {
 		if (RESTORE_VIA_DELTAS) {
 			Resource resource = loadBaseModel();
 			try {
+				MApplication appElement = (MApplication) resource.getContents().get(0);
+				// Add model items described in the model extension point
+				// This has to be done before commands are put into the context
+				ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
+				extProcessor.addModelExtensions();
+
 				File file = new File(restoreLocation.toFileString());
 				reconciler = new XMLModelReconciler();
-				reconciler.recordChanges(resource.getContents().get(0));
+				reconciler.recordChanges(appElement);
 
 				if (file.exists()) {
 					Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()
