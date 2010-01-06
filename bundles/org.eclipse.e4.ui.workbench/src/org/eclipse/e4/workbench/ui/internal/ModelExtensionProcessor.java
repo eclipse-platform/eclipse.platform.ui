@@ -17,8 +17,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
-import org.eclipse.e4.core.services.Logger;
-import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -162,21 +160,21 @@ public class ModelExtensionProcessor {
 	}
 
 	private void log(String msg, Exception e) {
-		IEclipseContext context = e4Window.getContext();
-		Logger logger = (Logger) context.get(Logger.class.getName());
-		if (logger == null)
-			e.printStackTrace();
-		else
-			logger.error(e, msg);
+		// IEclipseContext context = e4Window.getContext();
+		// Logger logger = (Logger) context.get(Logger.class.getName());
+		// if (logger == null)
+		e.printStackTrace();
+		// else
+		// logger.error(e, msg);
 	}
 
 	private void log(String msg, String arg) {
-		IEclipseContext context = e4Window.getContext();
-		Logger logger = (Logger) context.get(Logger.class.getName());
-		if (logger == null)
-			System.err.println(msg);
-		else
-			logger.error(msg, arg);
+		// IEclipseContext context = e4Window.getContext();
+		// Logger logger = (Logger) context.get(Logger.class.getName());
+		// if (logger == null)
+		System.err.println(msg);
+		// else
+		// logger.error(msg, arg);
 	}
 
 	private MApplicationElement findElementById(MApplicationElement element, String id) {
