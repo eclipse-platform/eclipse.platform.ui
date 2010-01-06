@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 IBM Corporation and others.
+ * Copyright (c) 2008, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -38,10 +38,8 @@ public class SearchTestUtils {
 		final Set unexpectedHrefs = new HashSet();		
 		hrefsToFind.addAll(Arrays.asList(hrefs));
 		
-		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList(), nl);
-		SearchResults collector = new SearchResults(null, 500, nl);
-		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
-		SearchHit[] hits = collector.getSearchHits();
+		SearchHit[] hits;
+		hits = getSearchHits(searchWord, nl);
 		for (int j=0;j<hits.length;++j) {
 			String href = hits[j].getHref();
 			// ignore query params
@@ -81,6 +79,15 @@ public class SearchTestUtils {
 			}
 			Assert.fail(buf.toString());
 		}
+	}
+
+	public static SearchHit[] getSearchHits(String searchWord, String nl) {
+		SearchHit[] hits;
+		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList(), nl);
+		SearchResults collector = new SearchResults(null, 500, nl);
+		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
+		hits = collector.getSearchHits();
+		return hits;
 	}
 
 }

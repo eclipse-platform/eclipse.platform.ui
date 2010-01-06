@@ -11,6 +11,8 @@
 package org.eclipse.ua.tests.help.search;
 
 
+import org.eclipse.help.internal.search.SearchHit;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -51,6 +53,18 @@ public class LuceneParticipantTest extends TestCase {
 	
 	public void testSearchWordInSecondDoc() {
 		SearchTestUtils.searchAllLocales("nhduehrf", new String[] { "/org.eclipse.help.base/lucene2.xml" });
+	}
+	
+	public void testReturnedTitle() {
+		SearchHit[] hits = SearchTestUtils.getSearchHits("jduehdye", "en");
+		assertEquals(hits.length,1);
+		assertEquals("Title1", hits[0].getLabel());
+	}
+	
+	public void testReturnedSummary() {
+		SearchHit[] hits = SearchTestUtils.getSearchHits("jduehdye", "en");
+		assertEquals(hits.length,1);
+		assertEquals("Summary1", hits[0].getSummary());
 	}
 	
 }
