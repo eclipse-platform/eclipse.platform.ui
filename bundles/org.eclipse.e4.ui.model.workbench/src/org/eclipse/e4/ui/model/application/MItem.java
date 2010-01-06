@@ -21,7 +21,7 @@ package org.eclipse.e4.ui.model.application;
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MItem#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.MItem#isSelected <em>Selected</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.MItem#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MItem#getType <em>Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -84,29 +84,33 @@ public interface MItem extends MUIElement, MUILabel {
 	void setSelected(boolean value);
 
 	/**
-	 * Returns the value of the '<em><b>Separator</b></em>' attribute.
+	 * Returns the value of the '<em><b>Type</b></em>' attribute.
+	 * The default value is <code>""</code>.
+	 * The literals are from the enumeration {@link org.eclipse.e4.ui.model.application.ItemType}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Separator</em>' attribute isn't clear,
+	 * If the meaning of the '<em>Type</em>' attribute isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @return the value of the '<em>Separator</em>' attribute.
-	 * @see #setSeparator(boolean)
-	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItem_Separator()
-	 * @model
+	 * @return the value of the '<em>Type</em>' attribute.
+	 * @see org.eclipse.e4.ui.model.application.ItemType
+	 * @see #setType(ItemType)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItem_Type()
+	 * @model default="" required="true"
 	 * @generated
 	 */
-	boolean isSeparator();
+	ItemType getType();
 
 	/**
-	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#isSeparator <em>Separator</em>}' attribute.
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MItem#getType <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @param value the new value of the '<em>Separator</em>' attribute.
-	 * @see #isSeparator()
+	 * @param value the new value of the '<em>Type</em>' attribute.
+	 * @see org.eclipse.e4.ui.model.application.ItemType
+	 * @see #getType()
 	 * @generated
 	 */
-	void setSeparator(boolean value);
+	void setType(ItemType value);
 
 } // MItem

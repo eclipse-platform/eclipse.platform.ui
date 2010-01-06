@@ -109,9 +109,8 @@ public class UIEventPublisher extends EContentAdapter {
 	 */
 	private String getTopic(EStructuralFeature eFeature, String type) {
 		EClass eContainingClass = eFeature.getEContainingClass();
-		return UIEvents.UITopicBase + UIEvents.TOPIC_SEP
-				+ eContainingClass.getEPackage().getName() + UIEvents.TOPIC_SEP
-				+ eContainingClass.getName() + UIEvents.TOPIC_SEP + eFeature.getName()
-				+ UIEvents.TOPIC_SEP + type;
+		return UIEvents.UITopicBase + UIEvents.TOPIC_SEP + eContainingClass.getEPackage().getName()
+				+ UIEvents.TOPIC_SEP + eContainingClass.getName() + UIEvents.TOPIC_SEP
+				+ eFeature.getName() + UIEvents.TOPIC_SEP + type;
 	}
 }

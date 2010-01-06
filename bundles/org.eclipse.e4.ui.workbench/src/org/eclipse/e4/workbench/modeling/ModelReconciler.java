@@ -217,8 +217,8 @@ public abstract class ModelReconciler {
 	/**
 	 * Attribute defined by MItems (value is <code>separator</code>).
 	 */
-	public static final String ITEM_SEPARATOR_ATTNAME = MApplicationPackage.eINSTANCE
-			.getItem_Separator().getName();
+	public static final String ITEM_TYPE_ATTNAME = MApplicationPackage.eINSTANCE.getItem_Type()
+			.getName();
 
 	/**
 	 * Begin recording changes on the specified object. All changes contained within child elements

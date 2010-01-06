@@ -520,6 +520,14 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
+			case MApplicationPackage.PLACEHOLDER: {
+				MPlaceholder placeholder = (MPlaceholder)theEObject;
+				T1 result = casePlaceholder(placeholder);
+				if (result == null) result = caseUIElement(placeholder);
+				if (result == null) result = caseApplicationElement(placeholder);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
 			case MApplicationPackage.PERSPECTIVE: {
 				MPerspective perspective = (MPerspective)theEObject;
 				T1 result = casePerspective(perspective);
@@ -960,21 +968,6 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Editor</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Editor</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @generated
-	 */
-	public T1 caseEditor(MEditor object) {
-		return null;
-	}
-
-	/**
 	 * Returns the result of interpreting the object as an instance of '<em>Part Stack</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -1290,6 +1283,21 @@ public class ApplicationSwitch<T1> {
 	}
 
 	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Editor</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Editor</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 caseEditor(MEditor object) {
+		return null;
+	}
+
+	/**
 	 * Returns the result of interpreting the object as an instance of '<em>VShared Elements V</em>'.
 	 * <!-- begin-user-doc -->
 	 * This implementation returns null;
@@ -1301,6 +1309,21 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 caseV______________SharedElements_______________V(MV______________SharedElements_______________V object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Placeholder</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Placeholder</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 casePlaceholder(MPlaceholder object) {
 		return null;
 	}
 

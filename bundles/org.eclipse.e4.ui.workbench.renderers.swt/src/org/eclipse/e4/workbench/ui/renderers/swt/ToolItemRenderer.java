@@ -26,6 +26,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.TriggerSequence;
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MParameter;
@@ -142,13 +143,19 @@ public class ToolItemRenderer extends SWTPartRenderer {
 		ToolBar tb = (ToolBar) parent;
 		MToolItem itemModel = (MToolItem) element;
 
-		if (itemModel.isSeparator()) {
+		if (itemModel.getType() == ItemType.SEPARATOR) {
 			return new ToolItem(tb, SWT.SEPARATOR);
 		}
 
-		int flags = SWT.PUSH;
-		if (itemModel.getChildren().size() > 0)
-			flags = SWT.DROP_DOWN;
+		// OK, it's a real menu item, what kind?
+		int flags = itemModel.getChildren().size() > 0 ? SWT.DROP_DOWN : 0;
+		if (itemModel.getType() == ItemType.PUSH)
+			flags |= SWT.PUSH;
+		else if (itemModel.getType() == ItemType.CHECK)
+			flags |= SWT.CHECK;
+		else if (itemModel.getType() == ItemType.RADIO)
+			flags |= SWT.RADIO;
+
 		ToolItem newItem = new ToolItem((ToolBar) parent, flags);
 		if (itemModel.getLabel() != null)
 			newItem.setText(itemModel.getLabel());

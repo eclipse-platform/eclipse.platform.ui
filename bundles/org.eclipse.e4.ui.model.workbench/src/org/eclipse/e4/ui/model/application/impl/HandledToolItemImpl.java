@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MHandledItem;
@@ -25,8 +26,8 @@ import org.eclipse.e4.ui.model.application.MToolItem;
 import org.eclipse.e4.ui.model.application.MUILabel;
 
 import org.eclipse.emf.common.notify.Notification;
-
 import org.eclipse.emf.common.notify.NotificationChain;
+
 import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
@@ -37,7 +38,6 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
-import org.eclipse.emf.ecore.util.EObjectResolvingEList;
 
 /**
  * <!-- begin-user-doc -->
@@ -51,7 +51,7 @@ import org.eclipse.emf.ecore.util.EObjectResolvingEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#isSelected <em>Selected</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getCommand <em>Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getWbCommand <em>Wb Command</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.HandledToolItemImpl#getParameters <em>Parameters</em>}</li>
@@ -162,24 +162,24 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 	protected boolean selected = SELECTED_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean SEPARATOR_EDEFAULT = false;
+	protected static final ItemType TYPE_EDEFAULT = ItemType.PUSH;
 
 	/**
-	 * The cached value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean separator = SEPARATOR_EDEFAULT;
+	protected ItemType type = TYPE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getCommand() <em>Command</em>}' reference.
@@ -350,8 +350,8 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isSeparator() {
-		return separator;
+	public ItemType getType() {
+		return type;
 	}
 
 	/**
@@ -359,11 +359,11 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSeparator(boolean newSeparator) {
-		boolean oldSeparator = separator;
-		separator = newSeparator;
+	public void setType(ItemType newType) {
+		ItemType oldType = type;
+		type = newType == null ? TYPE_EDEFAULT : newType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR, oldSeparator, separator));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.HANDLED_TOOL_ITEM__TYPE, oldType, type));
 	}
 
 	/**
@@ -469,8 +469,8 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 				return isEnabled();
 			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				return isSelected();
-			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
-				return isSeparator();
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TYPE:
+				return getType();
 			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
 				if (resolve) return getCommand();
 				return basicGetCommand();
@@ -506,8 +506,8 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				setSelected((Boolean)newValue);
 				return;
-			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
-				setSeparator((Boolean)newValue);
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TYPE:
+				setType((ItemType)newValue);
 				return;
 			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
 				setCommand((MCommand)newValue);
@@ -546,8 +546,8 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				setSelected(SELECTED_EDEFAULT);
 				return;
-			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
-				setSeparator(SEPARATOR_EDEFAULT);
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TYPE:
+				setType(TYPE_EDEFAULT);
 				return;
 			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
 				setCommand((MCommand)null);
@@ -580,8 +580,8 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 				return enabled != ENABLED_EDEFAULT;
 			case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED:
 				return selected != SELECTED_EDEFAULT;
-			case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR:
-				return separator != SEPARATOR_EDEFAULT;
+			case MApplicationPackage.HANDLED_TOOL_ITEM__TYPE:
+				return type != TYPE_EDEFAULT;
 			case MApplicationPackage.HANDLED_TOOL_ITEM__COMMAND:
 				return command != null;
 			case MApplicationPackage.HANDLED_TOOL_ITEM__WB_COMMAND:
@@ -611,7 +611,7 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 			switch (derivedFeatureID) {
 				case MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED: return MApplicationPackage.ITEM__ENABLED;
 				case MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED: return MApplicationPackage.ITEM__SELECTED;
-				case MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
+				case MApplicationPackage.HANDLED_TOOL_ITEM__TYPE: return MApplicationPackage.ITEM__TYPE;
 				default: return -1;
 			}
 		}
@@ -650,7 +650,7 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 			switch (baseFeatureID) {
 				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.HANDLED_TOOL_ITEM__ENABLED;
 				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.HANDLED_TOOL_ITEM__SELECTED;
-				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.HANDLED_TOOL_ITEM__SEPARATOR;
+				case MApplicationPackage.ITEM__TYPE: return MApplicationPackage.HANDLED_TOOL_ITEM__TYPE;
 				default: return -1;
 			}
 		}
@@ -690,8 +690,8 @@ public class HandledToolItemImpl extends ElementContainerImpl<MMenuItem> impleme
 		result.append(enabled);
 		result.append(", selected: "); //$NON-NLS-1$
 		result.append(selected);
-		result.append(", separator: "); //$NON-NLS-1$
-		result.append(separator);
+		result.append(", type: "); //$NON-NLS-1$
+		result.append(type);
 		result.append(", wbCommand: "); //$NON-NLS-1$
 		result.append(wbCommand);
 		result.append(')');

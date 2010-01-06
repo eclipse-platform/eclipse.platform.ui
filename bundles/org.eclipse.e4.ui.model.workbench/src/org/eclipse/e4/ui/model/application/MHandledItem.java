@@ -90,7 +90,7 @@ public interface MHandledItem extends MItem {
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MParameter}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Parameters</em>' reference list isn't clear,
+	 * If the meaning of the '<em>Parameters</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->

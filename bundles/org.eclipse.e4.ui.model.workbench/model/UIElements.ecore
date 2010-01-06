@@ -5,6 +5,12 @@
     nsURI="http://www.eclipse.org/ui/2008/UIModel" nsPrefix="application">
   <eClassifiers xsi:type="ecore:EClass" name="V____________ConstantsAndTypes_____________V"
       abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EEnum" name="ItemType">
+    <eLiterals name="Push"/>
+    <eLiterals name="Check" value="1"/>
+    <eLiterals name="Radio" value="2"/>
+    <eLiterals name="Separator" value="3"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="SideValue">
     <eLiterals name="Top"/>
     <eLiterals name="Bottom" value="1"/>
@@ -99,7 +105,8 @@
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="enabled" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"
         defaultValueLiteral="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="selected" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="separator" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="type" lowerBound="1" eType="#//ItemType"
+        defaultValueLiteral=""/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MenuItem" eSuperTypes="#//Menu #//Item"/>
   <eClassifiers xsi:type="ecore:EClass" name="DirectMenuItem" eSuperTypes="#//Contribution #//MenuItem"/>
@@ -265,6 +272,9 @@
   <eClassifiers xsi:type="ecore:EClass" name="Editor" eSuperTypes="#//Input #//SaveablePart"/>
   <eClassifiers xsi:type="ecore:EClass" name="V______________SharedElements_______________V"
       abstract="true" interface="true"/>
+  <eClassifiers xsi:type="ecore:EClass" name="Placeholder" eSuperTypes="#//UIElement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="ref" lowerBound="1" eType="#//UIElement"/>
+  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Perspective">
     <eGenericSuperTypes eClassifier="#//UILabel"/>
     <eGenericSuperTypes eClassifier="#//ElementContainer">

@@ -10,21 +10,11 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
-import java.util.Collection;
-
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 
-import org.eclipse.emf.common.notify.Notification;
-
-import org.eclipse.emf.common.util.EList;
-
 import org.eclipse.emf.ecore.EClass;
-
-import org.eclipse.emf.ecore.impl.ENotificationImpl;
-
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 /**
  * <!-- begin-user-doc -->

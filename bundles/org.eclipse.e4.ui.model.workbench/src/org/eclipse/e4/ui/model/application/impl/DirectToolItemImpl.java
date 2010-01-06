@@ -12,6 +12,7 @@ package org.eclipse.e4.ui.model.application.impl;
 
 import java.util.Collection;
 
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MDirectToolItem;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -55,7 +56,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isSelected <em>Selected</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getChildren <em>Children</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.DirectToolItemImpl#getActiveChild <em>Active Child</em>}</li>
  * </ul>
@@ -285,24 +286,24 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	protected boolean selected = SELECTED_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean SEPARATOR_EDEFAULT = false;
+	protected static final ItemType TYPE_EDEFAULT = ItemType.PUSH;
 
 	/**
-	 * The cached value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean separator = SEPARATOR_EDEFAULT;
+	protected ItemType type = TYPE_EDEFAULT;
 
 	/**
 	 * The cached value of the '{@link #getChildren() <em>Children</em>}' containment reference list.
@@ -621,8 +622,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isSeparator() {
-		return separator;
+	public ItemType getType() {
+		return type;
 	}
 
 	/**
@@ -630,11 +631,11 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSeparator(boolean newSeparator) {
-		boolean oldSeparator = separator;
-		separator = newSeparator;
+	public void setType(ItemType newType) {
+		ItemType oldType = type;
+		type = newType == null ? TYPE_EDEFAULT : newType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR, oldSeparator, separator));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.DIRECT_TOOL_ITEM__TYPE, oldType, type));
 	}
 
 	/**
@@ -768,8 +769,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return isEnabled();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED:
 				return isSelected();
-			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
-				return isSeparator();
+			case MApplicationPackage.DIRECT_TOOL_ITEM__TYPE:
+				return getType();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
 				return getChildren();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD:
@@ -824,8 +825,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED:
 				setSelected((Boolean)newValue);
 				return;
-			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
-				setSeparator((Boolean)newValue);
+			case MApplicationPackage.DIRECT_TOOL_ITEM__TYPE:
+				setType((ItemType)newValue);
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
 				getChildren().clear();
@@ -882,8 +883,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED:
 				setSelected(SELECTED_EDEFAULT);
 				return;
-			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
-				setSeparator(SEPARATOR_EDEFAULT);
+			case MApplicationPackage.DIRECT_TOOL_ITEM__TYPE:
+				setType(TYPE_EDEFAULT);
 				return;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
 				getChildren().clear();
@@ -927,8 +928,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 				return enabled != ENABLED_EDEFAULT;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED:
 				return selected != SELECTED_EDEFAULT;
-			case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR:
-				return separator != SEPARATOR_EDEFAULT;
+			case MApplicationPackage.DIRECT_TOOL_ITEM__TYPE:
+				return type != TYPE_EDEFAULT;
 			case MApplicationPackage.DIRECT_TOOL_ITEM__CHILDREN:
 				return children != null && !children.isEmpty();
 			case MApplicationPackage.DIRECT_TOOL_ITEM__ACTIVE_CHILD:
@@ -968,7 +969,7 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			switch (derivedFeatureID) {
 				case MApplicationPackage.DIRECT_TOOL_ITEM__ENABLED: return MApplicationPackage.ITEM__ENABLED;
 				case MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED: return MApplicationPackage.ITEM__SELECTED;
-				case MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
+				case MApplicationPackage.DIRECT_TOOL_ITEM__TYPE: return MApplicationPackage.ITEM__TYPE;
 				default: return -1;
 			}
 		}
@@ -1018,7 +1019,7 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 			switch (baseFeatureID) {
 				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.DIRECT_TOOL_ITEM__ENABLED;
 				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.DIRECT_TOOL_ITEM__SELECTED;
-				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.DIRECT_TOOL_ITEM__SEPARATOR;
+				case MApplicationPackage.ITEM__TYPE: return MApplicationPackage.DIRECT_TOOL_ITEM__TYPE;
 				default: return -1;
 			}
 		}
@@ -1069,8 +1070,8 @@ public class DirectToolItemImpl extends ContributionImpl implements MDirectToolI
 		result.append(enabled);
 		result.append(", selected: "); //$NON-NLS-1$
 		result.append(selected);
-		result.append(", separator: "); //$NON-NLS-1$
-		result.append(separator);
+		result.append(", type: "); //$NON-NLS-1$
+		result.append(type);
 		result.append(')');
 		return result.toString();
 	}

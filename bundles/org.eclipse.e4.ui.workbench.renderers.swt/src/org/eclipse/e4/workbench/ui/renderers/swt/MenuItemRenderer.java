@@ -26,6 +26,7 @@ import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.bindings.TriggerSequence;
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MContribution;
 import org.eclipse.e4.ui.model.application.MHandledItem;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -95,15 +96,21 @@ public class MenuItemRenderer extends SWTPartRenderer {
 		MMenuItem itemModel = (MMenuItem) element;
 		Menu parentMenu = (Menu) parent;
 
-		if (itemModel.isSeparator()) {
+		if (itemModel.getType() == ItemType.SEPARATOR) {
 			return new MenuItem(parentMenu, SWT.SEPARATOR);
 		}
 
 		// OK, it's a real menu item, what kind?
-		int flags = SWT.PUSH;
-		if (itemModel.getChildren() != null) {
+		int flags = 0;
+		if (itemModel.getChildren().size() > 0)
 			flags = SWT.CASCADE;
-		}
+		else if (itemModel.getType() == ItemType.PUSH)
+			flags = SWT.PUSH;
+		else if (itemModel.getType() == ItemType.CHECK)
+			flags = SWT.CHECK;
+		else if (itemModel.getType() == ItemType.RADIO)
+			flags = SWT.RADIO;
+
 		MenuItem newItem = new MenuItem((Menu) parent, flags);
 		setItemText(itemModel, newItem);
 		newItem.setEnabled(itemModel.isEnabled());

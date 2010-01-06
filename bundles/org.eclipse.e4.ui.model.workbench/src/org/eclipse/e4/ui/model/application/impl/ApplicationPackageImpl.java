@@ -14,6 +14,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -50,8 +51,8 @@ import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
+import org.eclipse.e4.ui.model.application.MPlaceholder;
 import org.eclipse.e4.ui.model.application.MSaveablePart;
-import org.eclipse.e4.ui.model.application.MSnippet;
 import org.eclipse.e4.ui.model.application.MTestHarness;
 import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.e4.ui.model.application.MToolItem;
@@ -72,7 +73,6 @@ import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.model.application.MWindowTrim;
 import org.eclipse.e4.ui.model.application.SideValue;
 
-import org.eclipse.e4.ui.model.application.SnippetType;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EDataType;
@@ -278,13 +278,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private EClass editorEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
 	private EClass partStackEClass = null;
 
 	/**
@@ -432,7 +425,21 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	private EClass editorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	private EClass v______________SharedElements_______________VEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass placeholderEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -461,6 +468,13 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass testHarnessEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EEnum itemTypeEEnum = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -900,7 +914,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EAttribute getItem_Separator() {
+	public EAttribute getItem_Type() {
 		return (EAttribute)itemEClass.getEStructuralFeatures().get(2);
 	}
 
@@ -1028,15 +1042,6 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EClass getSaveablePart() {
 		return saveablePartEClass;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public EClass getEditor() {
-		return editorEClass;
 	}
 
 	/**
@@ -1494,8 +1499,35 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getEditor() {
+		return editorEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getV______________SharedElements_______________V() {
 		return v______________SharedElements_______________VEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getPlaceholder() {
+		return placeholderEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPlaceholder_Ref() {
+		return (EReference)placeholderEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -1532,6 +1564,15 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 */
 	public EClass getTestHarness() {
 		return testHarnessEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EEnum getItemType() {
+		return itemTypeEEnum;
 	}
 
 	/**
@@ -1642,7 +1683,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		itemEClass = createEClass(ITEM);
 		createEAttribute(itemEClass, ITEM__ENABLED);
 		createEAttribute(itemEClass, ITEM__SELECTED);
-		createEAttribute(itemEClass, ITEM__SEPARATOR);
+		createEAttribute(itemEClass, ITEM__TYPE);
 
 		menuItemEClass = createEClass(MENU_ITEM);
 
@@ -1744,6 +1785,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		v______________SharedElements_______________VEClass = createEClass(VSHARED_ELEMENTS_V);
 
+		placeholderEClass = createEClass(PLACEHOLDER);
+		createEReference(placeholderEClass, PLACEHOLDER__REF);
+
 		perspectiveEClass = createEClass(PERSPECTIVE);
 
 		perspectiveStackEClass = createEClass(PERSPECTIVE_STACK);
@@ -1753,6 +1797,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		testHarnessEClass = createEClass(TEST_HARNESS);
 
 		// Create enums
+		itemTypeEEnum = createEEnum(ITEM_TYPE);
 		sideValueEEnum = createEEnum(SIDE_VALUE);
 
 		// Create data types
@@ -1914,6 +1959,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		windowTrimEClass.getEGenericSuperTypes().add(g1);
 		editorEClass.getESuperTypes().add(this.getInput());
 		editorEClass.getESuperTypes().add(this.getSaveablePart());
+		placeholderEClass.getESuperTypes().add(this.getUIElement());
 		g1 = createEGenericType(this.getUILabel());
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getElementContainer());
@@ -2014,7 +2060,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(itemEClass, MItem.class, "Item", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEAttribute(getItem_Enabled(), ecorePackage.getEBoolean(), "enabled", "true", 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 		initEAttribute(getItem_Selected(), ecorePackage.getEBoolean(), "selected", null, 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
-		initEAttribute(getItem_Separator(), ecorePackage.getEBoolean(), "separator", null, 0, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+		initEAttribute(getItem_Type(), this.getItemType(), "type", "", 1, 1, MItem.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$ //$NON-NLS-2$
 
 		initEClass(menuItemEClass, MMenuItem.class, "MenuItem", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
@@ -2116,6 +2162,9 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 
 		initEClass(v______________SharedElements_______________VEClass, MV______________SharedElements_______________V.class, "V______________SharedElements_______________V", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
+		initEClass(placeholderEClass, MPlaceholder.class, "Placeholder", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getPlaceholder_Ref(), this.getUIElement(), null, "ref", null, 1, 1, MPlaceholder.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
 		initEClass(perspectiveEClass, MPerspective.class, "Perspective", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		initEClass(perspectiveStackEClass, MPerspectiveStack.class, "PerspectiveStack", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
@@ -2125,6 +2174,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(testHarnessEClass, MTestHarness.class, "TestHarness", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 
 		// Initialize enums and add enum literals
+		initEEnum(itemTypeEEnum, ItemType.class, "ItemType"); //$NON-NLS-1$
+		addEEnumLiteral(itemTypeEEnum, ItemType.PUSH);
+		addEEnumLiteral(itemTypeEEnum, ItemType.CHECK);
+		addEEnumLiteral(itemTypeEEnum, ItemType.RADIO);
+		addEEnumLiteral(itemTypeEEnum, ItemType.SEPARATOR);
+
 		initEEnum(sideValueEEnum, SideValue.class, "SideValue"); //$NON-NLS-1$
 		addEEnumLiteral(sideValueEEnum, SideValue.TOP);
 		addEEnumLiteral(sideValueEEnum, SideValue.BOTTOM);

@@ -34,7 +34,7 @@ public interface MModelComponents {
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MModelComponent}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Components</em>' reference list isn't clear,
+	 * If the meaning of the '<em>Components</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->

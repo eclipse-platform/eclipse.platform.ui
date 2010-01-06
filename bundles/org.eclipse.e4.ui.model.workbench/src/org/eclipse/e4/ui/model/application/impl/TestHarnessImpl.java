@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.core.services.context.IEclipseContext;
 
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MCommand;
 import org.eclipse.e4.ui.model.application.MCommandParameter;
@@ -77,7 +78,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isSelected <em>Selected</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.TestHarnessImpl#isDirty <em>Dirty</em>}</li>
  * </ul>
  * </p>
@@ -526,24 +527,24 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	protected boolean selected = SELECTED_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean SEPARATOR_EDEFAULT = false;
+	protected static final ItemType TYPE_EDEFAULT = ItemType.PUSH;
 
 	/**
-	 * The cached value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean separator = SEPARATOR_EDEFAULT;
+	protected ItemType type = TYPE_EDEFAULT;
 
 	/**
 	 * The default value of the '{@link #isDirty() <em>Dirty</em>}' attribute.
@@ -1125,8 +1126,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isSeparator() {
-		return separator;
+	public ItemType getType() {
+		return type;
 	}
 
 	/**
@@ -1134,11 +1135,11 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSeparator(boolean newSeparator) {
-		boolean oldSeparator = separator;
-		separator = newSeparator;
+	public void setType(ItemType newType) {
+		ItemType oldType = type;
+		type = newType == null ? TYPE_EDEFAULT : newType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__SEPARATOR, oldSeparator, separator));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.TEST_HARNESS__TYPE, oldType, type));
 	}
 
 	/**
@@ -1272,8 +1273,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return isEnabled();
 			case MApplicationPackage.TEST_HARNESS__SELECTED:
 				return isSelected();
-			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
-				return isSeparator();
+			case MApplicationPackage.TEST_HARNESS__TYPE:
+				return getType();
 			case MApplicationPackage.TEST_HARNESS__DIRTY:
 				return isDirty();
 		}
@@ -1367,8 +1368,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__SELECTED:
 				setSelected((Boolean)newValue);
 				return;
-			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
-				setSeparator((Boolean)newValue);
+			case MApplicationPackage.TEST_HARNESS__TYPE:
+				setType((ItemType)newValue);
 				return;
 			case MApplicationPackage.TEST_HARNESS__DIRTY:
 				setDirty((Boolean)newValue);
@@ -1460,8 +1461,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			case MApplicationPackage.TEST_HARNESS__SELECTED:
 				setSelected(SELECTED_EDEFAULT);
 				return;
-			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
-				setSeparator(SEPARATOR_EDEFAULT);
+			case MApplicationPackage.TEST_HARNESS__TYPE:
+				setType(TYPE_EDEFAULT);
 				return;
 			case MApplicationPackage.TEST_HARNESS__DIRTY:
 				setDirty(DIRTY_EDEFAULT);
@@ -1528,8 +1529,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 				return enabled != ENABLED_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__SELECTED:
 				return selected != SELECTED_EDEFAULT;
-			case MApplicationPackage.TEST_HARNESS__SEPARATOR:
-				return separator != SEPARATOR_EDEFAULT;
+			case MApplicationPackage.TEST_HARNESS__TYPE:
+				return type != TYPE_EDEFAULT;
 			case MApplicationPackage.TEST_HARNESS__DIRTY:
 				return dirty != DIRTY_EDEFAULT;
 		}
@@ -1610,7 +1611,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			switch (derivedFeatureID) {
 				case MApplicationPackage.TEST_HARNESS__ENABLED: return MApplicationPackage.ITEM__ENABLED;
 				case MApplicationPackage.TEST_HARNESS__SELECTED: return MApplicationPackage.ITEM__SELECTED;
-				case MApplicationPackage.TEST_HARNESS__SEPARATOR: return MApplicationPackage.ITEM__SEPARATOR;
+				case MApplicationPackage.TEST_HARNESS__TYPE: return MApplicationPackage.ITEM__TYPE;
 				default: return -1;
 			}
 		}
@@ -1697,7 +1698,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 			switch (baseFeatureID) {
 				case MApplicationPackage.ITEM__ENABLED: return MApplicationPackage.TEST_HARNESS__ENABLED;
 				case MApplicationPackage.ITEM__SELECTED: return MApplicationPackage.TEST_HARNESS__SELECTED;
-				case MApplicationPackage.ITEM__SEPARATOR: return MApplicationPackage.TEST_HARNESS__SEPARATOR;
+				case MApplicationPackage.ITEM__TYPE: return MApplicationPackage.TEST_HARNESS__TYPE;
 				default: return -1;
 			}
 		}
@@ -1762,8 +1763,8 @@ public class TestHarnessImpl extends ApplicationElementImpl implements MTestHarn
 		result.append(enabled);
 		result.append(", selected: "); //$NON-NLS-1$
 		result.append(selected);
-		result.append(", separator: "); //$NON-NLS-1$
-		result.append(separator);
+		result.append(", type: "); //$NON-NLS-1$
+		result.append(type);
 		result.append(", dirty: "); //$NON-NLS-1$
 		result.append(dirty);
 		result.append(')');

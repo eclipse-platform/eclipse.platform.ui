@@ -272,6 +272,10 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createV______________SharedElements_______________VAdapter();
 			}
 			@Override
+			public Adapter casePlaceholder(MPlaceholder object) {
+				return createPlaceholderAdapter();
+			}
+			@Override
 			public Adapter casePerspective(MPerspective object) {
 				return createPerspectiveAdapter();
 			}
@@ -672,20 +676,6 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.MEditor
-	 * @generated
-	 */
-	public Adapter createEditorAdapter() {
-		return null;
-	}
-
-	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPartStack <em>Part Stack</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -980,6 +970,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	}
 
 	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MEditor
+	 * @generated
+	 */
+	public Adapter createEditorAdapter() {
+		return null;
+	}
+
+	/**
 	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * This default implementation returns null so that we can easily ignore cases;
@@ -990,6 +994,20 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createV______________SharedElements_______________VAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPlaceholder <em>Placeholder</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MPlaceholder
+	 * @generated
+	 */
+	public Adapter createPlaceholderAdapter() {
 		return null;
 	}
 

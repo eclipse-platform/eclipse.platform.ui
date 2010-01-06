@@ -116,7 +116,7 @@ public class UIEvents {
 		public static final String TOPIC = UITopicBase + "/application/Item"; //$NON-NLS-1$
 		public static final String ENABLED = "enabled"; //$NON-NLS-1$
 		public static final String SELECTED = "selected"; //$NON-NLS-1$
-		public static final String SEPARATOR = "separator"; //$NON-NLS-1$
+		public static final String TYPE = "type"; //$NON-NLS-1$
 	}
 
 	public static interface KeyBinding {
@@ -130,6 +130,20 @@ public class UIEvents {
 		public static final String KEYSEQUENCE = "keySequence"; //$NON-NLS-1$
 	}
 
+	public static interface ModelComponent {
+		public static final String TOPIC = UITopicBase + "/application/ModelComponent"; //$NON-NLS-1$
+		public static final String CHILDREN = "children"; //$NON-NLS-1$
+		public static final String COMMANDS = "commands"; //$NON-NLS-1$
+		public static final String HANDLERS = "handlers"; //$NON-NLS-1$
+		public static final String PARENTID = "parentID"; //$NON-NLS-1$
+		public static final String POSITIONINPARENT = "positionInParent"; //$NON-NLS-1$
+	}
+
+	public static interface ModelComponents {
+		public static final String TOPIC = UITopicBase + "/application/ModelComponents"; //$NON-NLS-1$
+		public static final String COMPONENTS = "components"; //$NON-NLS-1$
+	}
+
 	public static interface Parameter {
 		public static final String TOPIC = UITopicBase + "/application/Parameter"; //$NON-NLS-1$
 		public static final String TAG = "tag"; //$NON-NLS-1$
@@ -140,6 +154,11 @@ public class UIEvents {
 		public static final String TOPIC = UITopicBase + "/application/Part"; //$NON-NLS-1$
 		public static final String MENUS = "menus"; //$NON-NLS-1$
 		public static final String TOOLBAR = "toolbar"; //$NON-NLS-1$
+	}
+
+	public static interface Placeholder {
+		public static final String TOPIC = UITopicBase + "/application/Placeholder"; //$NON-NLS-1$
+		public static final String REF = "ref"; //$NON-NLS-1$
 	}
 
 	public static interface TrimContainer {

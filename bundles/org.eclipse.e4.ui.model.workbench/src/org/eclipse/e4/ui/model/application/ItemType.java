@@ -18,119 +18,145 @@ import org.eclipse.emf.common.util.Enumerator;
 
 /**
  * <!-- begin-user-doc -->
- * A representation of the literals of the enumeration '<em><b>Snippet Type</b></em>',
+ * A representation of the literals of the enumeration '<em><b>Item Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getSnippetType()
+ * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getItemType()
  * @model
  * @generated
  */
-public enum SnippetType implements Enumerator {
+public enum ItemType implements Enumerator {
 	/**
-	 * The '<em><b>Add</b></em>' literal object.
+	 * The '<em><b>Push</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #ADD_VALUE
+	 * @see #PUSH_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	ADD(1, "add", "add"), //$NON-NLS-1$ //$NON-NLS-2$
+	PUSH(0, "Push", "Push"), //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
-	 * The '<em><b>Remove</b></em>' literal object.
+	 * The '<em><b>Check</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #REMOVE_VALUE
+	 * @see #CHECK_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	REMOVE(2, "remove", "remove"), //$NON-NLS-1$ //$NON-NLS-2$
+	CHECK(1, "Check", "Check"), //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
-	 * The '<em><b>Modify</b></em>' literal object.
+	 * The '<em><b>Radio</b></em>' literal object.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #MODIFY_VALUE
+	 * @see #RADIO_VALUE
 	 * @generated
 	 * @ordered
 	 */
-	MODIFY(4, "modify", "modify"); //$NON-NLS-1$ //$NON-NLS-2$
+	RADIO(2, "Radio", "Radio"), //$NON-NLS-1$ //$NON-NLS-2$
 
 	/**
-	 * The '<em><b>Add</b></em>' literal value.
+	 * The '<em><b>Separator</b></em>' literal object.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #SEPARATOR_VALUE
+	 * @generated
+	 * @ordered
+	 */
+	SEPARATOR(3, "Separator", "Separator"); //$NON-NLS-1$ //$NON-NLS-2$
+
+	/**
+	 * The '<em><b>Push</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>Add</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>Push</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #ADD
-	 * @model name="add"
+	 * @see #PUSH
+	 * @model name="Push"
 	 * @generated
 	 * @ordered
 	 */
-	public static final int ADD_VALUE = 1;
+	public static final int PUSH_VALUE = 0;
 
 	/**
-	 * The '<em><b>Remove</b></em>' literal value.
+	 * The '<em><b>Check</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>Remove</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>Check</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #REMOVE
-	 * @model name="remove"
+	 * @see #CHECK
+	 * @model name="Check"
 	 * @generated
 	 * @ordered
 	 */
-	public static final int REMOVE_VALUE = 2;
+	public static final int CHECK_VALUE = 1;
 
 	/**
-	 * The '<em><b>Modify</b></em>' literal value.
+	 * The '<em><b>Radio</b></em>' literal value.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of '<em><b>Modify</b></em>' literal object isn't clear,
+	 * If the meaning of '<em><b>Radio</b></em>' literal object isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
-	 * @see #MODIFY
-	 * @model name="modify"
+	 * @see #RADIO
+	 * @model name="Radio"
 	 * @generated
 	 * @ordered
 	 */
-	public static final int MODIFY_VALUE = 4;
+	public static final int RADIO_VALUE = 2;
 
 	/**
-	 * An array of all the '<em><b>Snippet Type</b></em>' enumerators.
+	 * The '<em><b>Separator</b></em>' literal value.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of '<em><b>Separator</b></em>' literal object isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @see #SEPARATOR
+	 * @model name="Separator"
+	 * @generated
+	 * @ordered
+	 */
+	public static final int SEPARATOR_VALUE = 3;
+
+	/**
+	 * An array of all the '<em><b>Item Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private static final SnippetType[] VALUES_ARRAY =
-		new SnippetType[] {
-			ADD,
-			REMOVE,
-			MODIFY,
+	private static final ItemType[] VALUES_ARRAY =
+		new ItemType[] {
+			PUSH,
+			CHECK,
+			RADIO,
+			SEPARATOR,
 		};
 
 	/**
-	 * A public read-only list of all the '<em><b>Snippet Type</b></em>' enumerators.
+	 * A public read-only list of all the '<em><b>Item Type</b></em>' enumerators.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static final List<SnippetType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
+	public static final List<ItemType> VALUES = Collections.unmodifiableList(Arrays.asList(VALUES_ARRAY));
 
 	/**
-	 * Returns the '<em><b>Snippet Type</b></em>' literal with the specified literal value.
+	 * Returns the '<em><b>Item Type</b></em>' literal with the specified literal value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static SnippetType get(String literal) {
+	public static ItemType get(String literal) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			SnippetType result = VALUES_ARRAY[i];
+			ItemType result = VALUES_ARRAY[i];
 			if (result.toString().equals(literal)) {
 				return result;
 			}
@@ -139,14 +165,14 @@ public enum SnippetType implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Snippet Type</b></em>' literal with the specified name.
+	 * Returns the '<em><b>Item Type</b></em>' literal with the specified name.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static SnippetType getByName(String name) {
+	public static ItemType getByName(String name) {
 		for (int i = 0; i < VALUES_ARRAY.length; ++i) {
-			SnippetType result = VALUES_ARRAY[i];
+			ItemType result = VALUES_ARRAY[i];
 			if (result.getName().equals(name)) {
 				return result;
 			}
@@ -155,16 +181,17 @@ public enum SnippetType implements Enumerator {
 	}
 
 	/**
-	 * Returns the '<em><b>Snippet Type</b></em>' literal with the specified integer value.
+	 * Returns the '<em><b>Item Type</b></em>' literal with the specified integer value.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public static SnippetType get(int value) {
+	public static ItemType get(int value) {
 		switch (value) {
-			case ADD_VALUE: return ADD;
-			case REMOVE_VALUE: return REMOVE;
-			case MODIFY_VALUE: return MODIFY;
+			case PUSH_VALUE: return PUSH;
+			case CHECK_VALUE: return CHECK;
+			case RADIO_VALUE: return RADIO;
+			case SEPARATOR_VALUE: return SEPARATOR;
 		}
 		return null;
 	}
@@ -196,7 +223,7 @@ public enum SnippetType implements Enumerator {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	private SnippetType(int value, String name, String literal) {
+	private ItemType(int value, String name, String literal) {
 		this.value = value;
 		this.name = name;
 		this.literal = literal;
@@ -240,4 +267,4 @@ public enum SnippetType implements Enumerator {
 		return literal;
 	}
 	
-} //SnippetType
+} //ItemType

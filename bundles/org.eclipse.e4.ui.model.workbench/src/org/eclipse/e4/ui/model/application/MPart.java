@@ -35,7 +35,7 @@ public interface MPart extends MContribution, MContext, MPSCElement, MUILabel, M
 	 * The list contents are of type {@link org.eclipse.e4.ui.model.application.MMenu}.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Menus</em>' reference list isn't clear,
+	 * If the meaning of the '<em>Menus</em>' containment reference list isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->
@@ -50,7 +50,7 @@ public interface MPart extends MContribution, MContext, MPSCElement, MUILabel, M
 	 * Returns the value of the '<em><b>Toolbar</b></em>' containment reference.
 	 * <!-- begin-user-doc -->
 	 * <p>
-	 * If the meaning of the '<em>Toolbar</em>' reference isn't clear,
+	 * If the meaning of the '<em>Toolbar</em>' containment reference isn't clear,
 	 * there really should be more of a description here...
 	 * </p>
 	 * <!-- end-user-doc -->

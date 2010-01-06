@@ -981,13 +981,13 @@ public interface MApplicationPackage extends EPackage {
 	int ITEM__SELECTED = UI_ELEMENT_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int ITEM__SEPARATOR = UI_ELEMENT_FEATURE_COUNT + 5;
+	int ITEM__TYPE = UI_ELEMENT_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Item</em>' class.
@@ -1271,13 +1271,13 @@ public interface MApplicationPackage extends EPackage {
 	int MENU_ITEM__SELECTED = MENU_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int MENU_ITEM__SEPARATOR = MENU_FEATURE_COUNT + 5;
+	int MENU_ITEM__TYPE = MENU_FEATURE_COUNT + 5;
 
 	/**
 	 * The number of structural features of the '<em>Menu Item</em>' class.
@@ -1470,13 +1470,13 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_MENU_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 13;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_MENU_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 14;
+	int DIRECT_MENU_ITEM__TYPE = CONTRIBUTION_FEATURE_COUNT + 14;
 
 	/**
 	 * The number of structural features of the '<em>Direct Menu Item</em>' class.
@@ -1624,13 +1624,13 @@ public interface MApplicationPackage extends EPackage {
 	int TOOL_ITEM__SELECTED = ITEM__SELECTED;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TOOL_ITEM__SEPARATOR = ITEM__SEPARATOR;
+	int TOOL_ITEM__TYPE = ITEM__TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -1823,13 +1823,13 @@ public interface MApplicationPackage extends EPackage {
 	int DIRECT_TOOL_ITEM__SELECTED = CONTRIBUTION_FEATURE_COUNT + 11;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int DIRECT_TOOL_ITEM__SEPARATOR = CONTRIBUTION_FEATURE_COUNT + 12;
+	int DIRECT_TOOL_ITEM__TYPE = CONTRIBUTION_FEATURE_COUNT + 12;
 
 	/**
 	 * The feature id for the '<em><b>Children</b></em>' containment reference list.
@@ -2682,16 +2682,6 @@ public interface MApplicationPackage extends EPackage {
 	 * @ordered
 	 */
 	int SAVEABLE_PART_FEATURE_COUNT = PART_FEATURE_COUNT + 1;
-
-	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
-	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
-	 * @generated
-	 */
-	int EDITOR = 47;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -3687,13 +3677,13 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_ITEM__SELECTED = ITEM__SELECTED;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_ITEM__SEPARATOR = ITEM__SEPARATOR;
+	int HANDLED_ITEM__TYPE = ITEM__TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -3886,13 +3876,13 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_MENU_ITEM__SELECTED = MENU_ITEM__SELECTED;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_MENU_ITEM__SEPARATOR = MENU_ITEM__SEPARATOR;
+	int HANDLED_MENU_ITEM__TYPE = MENU_ITEM__TYPE;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -4085,13 +4075,13 @@ public interface MApplicationPackage extends EPackage {
 	int HANDLED_TOOL_ITEM__SELECTED = ELEMENT_CONTAINER_FEATURE_COUNT + 4;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int HANDLED_TOOL_ITEM__SEPARATOR = ELEMENT_CONTAINER_FEATURE_COUNT + 5;
+	int HANDLED_TOOL_ITEM__TYPE = ELEMENT_CONTAINER_FEATURE_COUNT + 5;
 
 	/**
 	 * The feature id for the '<em><b>Command</b></em>' reference.
@@ -4569,6 +4559,16 @@ public interface MApplicationPackage extends EPackage {
 	int VEDITING_V_FEATURE_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
+	 * @generated
+	 */
+	int EDITOR = 47;
+
+	/**
 	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4804,6 +4804,115 @@ public interface MApplicationPackage extends EPackage {
 	int VSHARED_ELEMENTS_V_FEATURE_COUNT = 0;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PlaceholderImpl <em>Placeholder</em>}' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.impl.PlaceholderImpl
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPlaceholder()
+	 * @generated
+	 */
+	int PLACEHOLDER = 49;
+
+	/**
+	 * The feature id for the '<em><b>Id</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__ID = UI_ELEMENT__ID;
+
+	/**
+	 * The feature id for the '<em><b>Style</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__STYLE = UI_ELEMENT__STYLE;
+
+	/**
+	 * The feature id for the '<em><b>Widget</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__WIDGET = UI_ELEMENT__WIDGET;
+
+	/**
+	 * The feature id for the '<em><b>Renderer</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__RENDERER = UI_ELEMENT__RENDERER;
+
+	/**
+	 * The feature id for the '<em><b>To Be Rendered</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__TO_BE_RENDERED = UI_ELEMENT__TO_BE_RENDERED;
+
+	/**
+	 * The feature id for the '<em><b>On Top</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__ON_TOP = UI_ELEMENT__ON_TOP;
+
+	/**
+	 * The feature id for the '<em><b>Visible</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__VISIBLE = UI_ELEMENT__VISIBLE;
+
+	/**
+	 * The feature id for the '<em><b>Parent</b></em>' container reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__PARENT = UI_ELEMENT__PARENT;
+
+	/**
+	 * The feature id for the '<em><b>Container Data</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__CONTAINER_DATA = UI_ELEMENT__CONTAINER_DATA;
+
+	/**
+	 * The feature id for the '<em><b>Ref</b></em>' reference.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER__REF = UI_ELEMENT_FEATURE_COUNT + 0;
+
+	/**
+	 * The number of structural features of the '<em>Placeholder</em>' class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PLACEHOLDER_FEATURE_COUNT = UI_ELEMENT_FEATURE_COUNT + 1;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl <em>Perspective</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -4811,7 +4920,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspective()
 	 * @generated
 	 */
-	int PERSPECTIVE = 49;
+	int PERSPECTIVE = 50;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -4974,7 +5083,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPerspectiveStack()
 	 * @generated
 	 */
-	int PERSPECTIVE_STACK = 50;
+	int PERSPECTIVE_STACK = 51;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -5092,7 +5201,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getV_________Testing__________V()
 	 * @generated
 	 */
-	int VTESTING_V = 51;
+	int VTESTING_V = 52;
 
 	/**
 	 * The number of structural features of the '<em>VTesting V</em>' class.
@@ -5111,7 +5220,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getTestHarness()
 	 * @generated
 	 */
-	int TEST_HARNESS = 52;
+	int TEST_HARNESS = 53;
 
 	/**
 	 * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -5357,13 +5466,13 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS__SELECTED = APPLICATION_ELEMENT_FEATURE_COUNT + 24;
 
 	/**
-	 * The feature id for the '<em><b>Separator</b></em>' attribute.
+	 * The feature id for the '<em><b>Type</b></em>' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int TEST_HARNESS__SEPARATOR = APPLICATION_ELEMENT_FEATURE_COUNT + 25;
+	int TEST_HARNESS__TYPE = APPLICATION_ELEMENT_FEATURE_COUNT + 25;
 
 	/**
 	 * The feature id for the '<em><b>Dirty</b></em>' attribute.
@@ -5384,6 +5493,16 @@ public interface MApplicationPackage extends EPackage {
 	int TEST_HARNESS_FEATURE_COUNT = APPLICATION_ELEMENT_FEATURE_COUNT + 27;
 
 	/**
+	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ItemType <em>Item Type</em>}' enum.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.e4.ui.model.application.ItemType
+	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItemType()
+	 * @generated
+	 */
+	int ITEM_TYPE = 54;
+
+	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -5391,7 +5510,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getSideValue()
 	 * @generated
 	 */
-	int SIDE_VALUE = 53;
+	int SIDE_VALUE = 55;
 
 	/**
 	 * The meta object id for the '<em>IEclipse Context</em>' data type.
@@ -5401,7 +5520,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getIEclipseContext()
 	 * @generated
 	 */
-	int IECLIPSE_CONTEXT = 54;
+	int IECLIPSE_CONTEXT = 56;
 
 	/**
 	 * The meta object id for the '<em>Parameterized Command</em>' data type.
@@ -5411,7 +5530,7 @@ public interface MApplicationPackage extends EPackage {
 	 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getParameterizedCommand()
 	 * @generated
 	 */
-	int PARAMETERIZED_COMMAND = 55;
+	int PARAMETERIZED_COMMAND = 57;
 
 
 	/**
@@ -5829,15 +5948,15 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getItem_Selected();
 
 	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#isSeparator <em>Separator</em>}'.
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MItem#getType <em>Type</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Separator</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MItem#isSeparator()
+	 * @return the meta object for the attribute '<em>Type</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MItem#getType()
 	 * @see #getItem()
 	 * @generated
 	 */
-	EAttribute getItem_Separator();
+	EAttribute getItem_Type();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MMenuItem <em>Menu Item</em>}'.
@@ -5981,16 +6100,6 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getSaveablePart();
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Editor</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MEditor
-	 * @generated
-	 */
-	EClass getEditor();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartStack <em>Part Stack</em>}'.
@@ -6522,6 +6631,16 @@ public interface MApplicationPackage extends EPackage {
 	EClass getV______________Editing_______________V();
 
 	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MEditor <em>Editor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Editor</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MEditor
+	 * @generated
+	 */
+	EClass getEditor();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -6530,6 +6649,27 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getV______________SharedElements_______________V();
+
+	/**
+	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPlaceholder <em>Placeholder</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for class '<em>Placeholder</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPlaceholder
+	 * @generated
+	 */
+	EClass getPlaceholder();
+
+	/**
+	 * Returns the meta object for the reference '{@link org.eclipse.e4.ui.model.application.MPlaceholder#getRef <em>Ref</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the reference '<em>Ref</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPlaceholder#getRef()
+	 * @see #getPlaceholder()
+	 * @generated
+	 */
+	EReference getPlaceholder_Ref();
 
 	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPerspective <em>Perspective</em>}'.
@@ -6570,6 +6710,16 @@ public interface MApplicationPackage extends EPackage {
 	 * @generated
 	 */
 	EClass getTestHarness();
+
+	/**
+	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.ItemType <em>Item Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for enum '<em>Item Type</em>'.
+	 * @see org.eclipse.e4.ui.model.application.ItemType
+	 * @generated
+	 */
+	EEnum getItemType();
 
 	/**
 	 * Returns the meta object for enum '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}'.
@@ -6968,12 +7118,12 @@ public interface MApplicationPackage extends EPackage {
 		EAttribute ITEM__SELECTED = eINSTANCE.getItem_Selected();
 
 		/**
-		 * The meta object literal for the '<em><b>Separator</b></em>' attribute feature.
+		 * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
 		 * @generated
 		 */
-		EAttribute ITEM__SEPARATOR = eINSTANCE.getItem_Separator();
+		EAttribute ITEM__TYPE = eINSTANCE.getItem_Type();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.MenuItemImpl <em>Menu Item</em>}' class.
@@ -7108,16 +7258,6 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass SAVEABLE_PART = eINSTANCE.getSaveablePart();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
-		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
-		 * @generated
-		 */
-		EClass EDITOR = eINSTANCE.getEditor();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PartStackImpl <em>Part Stack</em>}' class.
@@ -7562,6 +7702,16 @@ public interface MApplicationPackage extends EPackage {
 		EClass VEDITING_V = eINSTANCE.getV______________Editing_______________V();
 
 		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.EditorImpl <em>Editor</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.EditorImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getEditor()
+		 * @generated
+		 */
+		EClass EDITOR = eINSTANCE.getEditor();
+
+		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.MV______________SharedElements_______________V <em>VShared Elements V</em>}' class.
 		 * <!-- begin-user-doc -->
 		 * <!-- end-user-doc -->
@@ -7570,6 +7720,24 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass VSHARED_ELEMENTS_V = eINSTANCE.getV______________SharedElements_______________V();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PlaceholderImpl <em>Placeholder</em>}' class.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.impl.PlaceholderImpl
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getPlaceholder()
+		 * @generated
+		 */
+		EClass PLACEHOLDER = eINSTANCE.getPlaceholder();
+
+		/**
+		 * The meta object literal for the '<em><b>Ref</b></em>' reference feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EReference PLACEHOLDER__REF = eINSTANCE.getPlaceholder_Ref();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PerspectiveImpl <em>Perspective</em>}' class.
@@ -7610,6 +7778,16 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EClass TEST_HARNESS = eINSTANCE.getTestHarness();
+
+		/**
+		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ItemType <em>Item Type</em>}' enum.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @see org.eclipse.e4.ui.model.application.ItemType
+		 * @see org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl#getItemType()
+		 * @generated
+		 */
+		EEnum ITEM_TYPE = eINSTANCE.getItemType();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.SideValue <em>Side Value</em>}' enum.

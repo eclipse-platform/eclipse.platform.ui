@@ -10,7 +10,6 @@
  */
 package org.eclipse.e4.ui.model.application;
 
-import org.eclipse.emf.common.util.EList;
 
 /**
  * <!-- begin-user-doc -->
@@ -23,5 +22,4 @@ import org.eclipse.emf.common.util.EList;
  * @generated
  */
 public interface MGenericStack<T extends MUIElement> extends MElementContainer<T> {
-
 } // MGenericStack

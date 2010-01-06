@@ -179,8 +179,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return MApplicationPackage.eINSTANCE.getItem_Enabled();
 		} else if (featureName.equals(ITEM_SELECTED_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getItem_Selected();
-		} else if (featureName.equals(ITEM_SEPARATOR_ATTNAME)) {
-			return MApplicationPackage.eINSTANCE.getItem_Separator();
+		} else if (featureName.equals(ITEM_TYPE_ATTNAME)) {
+			return MApplicationPackage.eINSTANCE.getItem_Type();
 		} else if (featureName.equals(PART_MENUS_ATTNAME)) {
 			return MApplicationPackage.eINSTANCE.getPart_Menus();
 		} else if (featureName.equals(PART_TOOLBAR_ATTNAME)) {

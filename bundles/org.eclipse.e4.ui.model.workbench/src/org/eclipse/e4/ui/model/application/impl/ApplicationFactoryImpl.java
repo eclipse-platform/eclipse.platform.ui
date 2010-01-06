@@ -90,6 +90,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 			case MApplicationPackage.PARAMETER: return (EObject)createParameter();
 			case MApplicationPackage.WINDOW_TRIM: return (EObject)createWindowTrim();
 			case MApplicationPackage.EDITOR: return (EObject)createEditor();
+			case MApplicationPackage.PLACEHOLDER: return (EObject)createPlaceholder();
 			case MApplicationPackage.PERSPECTIVE: return (EObject)createPerspective();
 			case MApplicationPackage.PERSPECTIVE_STACK: return (EObject)createPerspectiveStack();
 			case MApplicationPackage.TEST_HARNESS: return (EObject)createTestHarness();
@@ -106,6 +107,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public Object createFromString(EDataType eDataType, String initialValue) {
 		switch (eDataType.getClassifierID()) {
+			case MApplicationPackage.ITEM_TYPE:
+				return createItemTypeFromString(eDataType, initialValue);
 			case MApplicationPackage.SIDE_VALUE:
 				return createSideValueFromString(eDataType, initialValue);
 			default:
@@ -121,6 +124,8 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	@Override
 	public String convertToString(EDataType eDataType, Object instanceValue) {
 		switch (eDataType.getClassifierID()) {
+			case MApplicationPackage.ITEM_TYPE:
+				return convertItemTypeToString(eDataType, instanceValue);
 			case MApplicationPackage.SIDE_VALUE:
 				return convertSideValueToString(eDataType, instanceValue);
 			default:
@@ -226,16 +231,6 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MSaveablePart createSaveablePart() {
 		SaveablePartImpl saveablePart = new SaveablePartImpl();
 		return saveablePart;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @generated
-	 */
-	public MEditor createEditor() {
-		EditorImpl editor = new EditorImpl();
-		return editor;
 	}
 
 	/**
@@ -383,6 +378,26 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public MEditor createEditor() {
+		EditorImpl editor = new EditorImpl();
+		return editor;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public MPlaceholder createPlaceholder() {
+		PlaceholderImpl placeholder = new PlaceholderImpl();
+		return placeholder;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public MPerspective createPerspective() {
 		PerspectiveImpl perspective = new PerspectiveImpl();
 		return perspective;
@@ -406,6 +421,26 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	public MTestHarness createTestHarness() {
 		TestHarnessImpl testHarness = new TestHarnessImpl();
 		return testHarness;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ItemType createItemTypeFromString(EDataType eDataType, String initialValue) {
+		ItemType result = ItemType.get(initialValue);
+		if (result == null) throw new IllegalArgumentException("The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName() + "'"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		return result;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public String convertItemTypeToString(EDataType eDataType, Object instanceValue) {
+		return instanceValue == null ? null : instanceValue.toString();
 	}
 
 	/**

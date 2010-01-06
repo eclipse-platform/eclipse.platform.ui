@@ -36,7 +36,6 @@
       <children xsi:type="application:MenuItem" xmi:id="_AXU5YO8IEd6FC9cDb6iV7g" id="_AXU5YO8IEd6FC9cDb6iV7g" label="File">
         <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqUO8IEd6FC9cDb6iV7g" id="_AXeqUO8IEd6FC9cDb6iV7g" label="Create Album" command="e4photo.createAlbum"/>
         <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqUe8IEd6FC9cDb6iV7g" id="_AXeqUe8IEd6FC9cDb6iV7g" label="Switch Perspective" command="e4photo.switchPersepective"/>
-        <children xsi:type="application:MenuItem" xmi:id="_AXeqUu8IEd6FC9cDb6iV7g" id="_AXeqUu8IEd6FC9cDb6iV7g" label="Create Album" separator="true"/>
         <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqU-8IEd6FC9cDb6iV7g" id="_AXeqU-8IEd6FC9cDb6iV7g" label="Exit" command="e4photo.exit"/>
       </children>
       <children xsi:type="application:MenuItem" xmi:id="_AXeqVO8IEd6FC9cDb6iV7g" id="_AXeqVO8IEd6FC9cDb6iV7g" label="Edit">

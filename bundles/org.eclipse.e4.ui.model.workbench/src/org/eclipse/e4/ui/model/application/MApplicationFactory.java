@@ -120,15 +120,6 @@ public interface MApplicationFactory extends EFactory {
 	MSaveablePart createSaveablePart();
 
 	/**
-	 * Returns a new object of class '<em>Editor</em>'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return a new object of class '<em>Editor</em>'.
-	 * @generated
-	 */
-	MEditor createEditor();
-
-	/**
 	 * Returns a new object of class '<em>Part Stack</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -253,6 +244,24 @@ public interface MApplicationFactory extends EFactory {
 	 * @generated
 	 */
 	MWindowTrim createWindowTrim();
+
+	/**
+	 * Returns a new object of class '<em>Editor</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Editor</em>'.
+	 * @generated
+	 */
+	MEditor createEditor();
+
+	/**
+	 * Returns a new object of class '<em>Placeholder</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Placeholder</em>'.
+	 * @generated
+	 */
+	MPlaceholder createPlaceholder();
 
 	/**
 	 * Returns a new object of class '<em>Perspective</em>'.

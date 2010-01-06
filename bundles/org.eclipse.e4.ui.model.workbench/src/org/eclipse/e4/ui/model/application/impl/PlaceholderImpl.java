@@ -10,54 +10,48 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
-import java.util.Collection;
-
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
-import org.eclipse.e4.ui.model.application.MModelComponent;
-import org.eclipse.e4.ui.model.application.MModelComponents;
+import org.eclipse.e4.ui.model.application.MPlaceholder;
+import org.eclipse.e4.ui.model.application.MUIElement;
 
-import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
+import org.eclipse.emf.common.notify.Notification;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
-import org.eclipse.emf.ecore.impl.EObjectImpl;
-
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
+import org.eclipse.emf.ecore.impl.ENotificationImpl;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>Model Components</b></em>'.
+ * An implementation of the model object '<em><b>Placeholder</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * <ul>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ModelComponentsImpl#getComponents <em>Components</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PlaceholderImpl#getRef <em>Ref</em>}</li>
  * </ul>
  * </p>
  *
  * @generated
  */
-public class ModelComponentsImpl extends EObjectImpl implements MModelComponents {
+public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 	/**
-	 * The cached value of the '{@link #getComponents() <em>Components</em>}' containment reference list.
+	 * The cached value of the '{@link #getRef() <em>Ref</em>}' reference.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #getComponents()
+	 * @see #getRef()
 	 * @generated
 	 * @ordered
 	 */
-	protected EList<MModelComponent> components;
+	protected MUIElement ref;
 
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	protected ModelComponentsImpl() {
+	protected PlaceholderImpl() {
 		super();
 	}
 
@@ -68,7 +62,7 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 */
 	@Override
 	protected EClass eStaticClass() {
-		return MApplicationPackage.Literals.MODEL_COMPONENTS;
+		return MApplicationPackage.Literals.PLACEHOLDER;
 	}
 
 	/**
@@ -76,11 +70,16 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public EList<MModelComponent> getComponents() {
-		if (components == null) {
-			components = new EObjectContainmentEList<MModelComponent>(MModelComponent.class, this, MApplicationPackage.MODEL_COMPONENTS__COMPONENTS);
+	public MUIElement getRef() {
+		if (ref != null && ((EObject)ref).eIsProxy()) {
+			InternalEObject oldRef = (InternalEObject)ref;
+			ref = (MUIElement)eResolveProxy(oldRef);
+			if (ref != oldRef) {
+				if (eNotificationRequired())
+					eNotify(new ENotificationImpl(this, Notification.RESOLVE, MApplicationPackage.PLACEHOLDER__REF, oldRef, ref));
+			}
 		}
-		return components;
+		return ref;
 	}
 
 	/**
@@ -88,13 +87,20 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@Override
-	public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs) {
-		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
-				return ((InternalEList<?>)getComponents()).basicRemove(otherEnd, msgs);
-		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
+	public MUIElement basicGetRef() {
+		return ref;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setRef(MUIElement newRef) {
+		MUIElement oldRef = ref;
+		ref = newRef;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PLACEHOLDER__REF, oldRef, ref));
 	}
 
 	/**
@@ -105,8 +111,9 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
-				return getComponents();
+			case MApplicationPackage.PLACEHOLDER__REF:
+				if (resolve) return getRef();
+				return basicGetRef();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -116,13 +123,11 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
 	public void eSet(int featureID, Object newValue) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
-				getComponents().clear();
-				getComponents().addAll((Collection<? extends MModelComponent>)newValue);
+			case MApplicationPackage.PLACEHOLDER__REF:
+				setRef((MUIElement)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -136,8 +141,8 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public void eUnset(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
-				getComponents().clear();
+			case MApplicationPackage.PLACEHOLDER__REF:
+				setRef((MUIElement)null);
 				return;
 		}
 		super.eUnset(featureID);
@@ -151,10 +156,10 @@ public class ModelComponentsImpl extends EObjectImpl implements MModelComponents
 	@Override
 	public boolean eIsSet(int featureID) {
 		switch (featureID) {
-			case MApplicationPackage.MODEL_COMPONENTS__COMPONENTS:
-				return components != null && !components.isEmpty();
+			case MApplicationPackage.PLACEHOLDER__REF:
+				return ref != null;
 		}
 		return super.eIsSet(featureID);
 	}
 
-} //ModelComponentsImpl
+} //PlaceholderImpl

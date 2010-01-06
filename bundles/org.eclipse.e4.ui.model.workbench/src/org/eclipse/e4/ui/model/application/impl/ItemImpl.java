@@ -10,6 +10,7 @@
  */
 package org.eclipse.e4.ui.model.application.impl;
 
+import org.eclipse.e4.ui.model.application.ItemType;
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MItem;
 import org.eclipse.e4.ui.model.application.MUILabel;
@@ -32,7 +33,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getTooltip <em>Tooltip</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#isEnabled <em>Enabled</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#isSelected <em>Selected</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#isSeparator <em>Separator</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ItemImpl#getType <em>Type</em>}</li>
  * </ul>
  * </p>
  *
@@ -140,24 +141,24 @@ public class ItemImpl extends UIElementImpl implements MItem {
 	protected boolean selected = SELECTED_EDEFAULT;
 
 	/**
-	 * The default value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The default value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected static final boolean SEPARATOR_EDEFAULT = false;
+	protected static final ItemType TYPE_EDEFAULT = ItemType.PUSH;
 
 	/**
-	 * The cached value of the '{@link #isSeparator() <em>Separator</em>}' attribute.
+	 * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @see #isSeparator()
+	 * @see #getType()
 	 * @generated
 	 * @ordered
 	 */
-	protected boolean separator = SEPARATOR_EDEFAULT;
+	protected ItemType type = TYPE_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -288,8 +289,8 @@ public class ItemImpl extends UIElementImpl implements MItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public boolean isSeparator() {
-		return separator;
+	public ItemType getType() {
+		return type;
 	}
 
 	/**
@@ -297,11 +298,11 @@ public class ItemImpl extends UIElementImpl implements MItem {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	public void setSeparator(boolean newSeparator) {
-		boolean oldSeparator = separator;
-		separator = newSeparator;
+	public void setType(ItemType newType) {
+		ItemType oldType = type;
+		type = newType == null ? TYPE_EDEFAULT : newType;
 		if (eNotificationRequired())
-			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.ITEM__SEPARATOR, oldSeparator, separator));
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.ITEM__TYPE, oldType, type));
 	}
 
 	/**
@@ -322,8 +323,8 @@ public class ItemImpl extends UIElementImpl implements MItem {
 				return isEnabled();
 			case MApplicationPackage.ITEM__SELECTED:
 				return isSelected();
-			case MApplicationPackage.ITEM__SEPARATOR:
-				return isSeparator();
+			case MApplicationPackage.ITEM__TYPE:
+				return getType();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -351,8 +352,8 @@ public class ItemImpl extends UIElementImpl implements MItem {
 			case MApplicationPackage.ITEM__SELECTED:
 				setSelected((Boolean)newValue);
 				return;
-			case MApplicationPackage.ITEM__SEPARATOR:
-				setSeparator((Boolean)newValue);
+			case MApplicationPackage.ITEM__TYPE:
+				setType((ItemType)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -381,8 +382,8 @@ public class ItemImpl extends UIElementImpl implements MItem {
 			case MApplicationPackage.ITEM__SELECTED:
 				setSelected(SELECTED_EDEFAULT);
 				return;
-			case MApplicationPackage.ITEM__SEPARATOR:
-				setSeparator(SEPARATOR_EDEFAULT);
+			case MApplicationPackage.ITEM__TYPE:
+				setType(TYPE_EDEFAULT);
 				return;
 		}
 		super.eUnset(featureID);
@@ -406,8 +407,8 @@ public class ItemImpl extends UIElementImpl implements MItem {
 				return enabled != ENABLED_EDEFAULT;
 			case MApplicationPackage.ITEM__SELECTED:
 				return selected != SELECTED_EDEFAULT;
-			case MApplicationPackage.ITEM__SEPARATOR:
-				return separator != SEPARATOR_EDEFAULT;
+			case MApplicationPackage.ITEM__TYPE:
+				return type != TYPE_EDEFAULT;
 		}
 		return super.eIsSet(featureID);
 	}
@@ -468,8 +469,8 @@ public class ItemImpl extends UIElementImpl implements MItem {
 		result.append(enabled);
 		result.append(", selected: "); //$NON-NLS-1$
 		result.append(selected);
-		result.append(", separator: "); //$NON-NLS-1$
-		result.append(separator);
+		result.append(", type: "); //$NON-NLS-1$
+		result.append(type);
 		result.append(')');
 		return result.toString();
 	}

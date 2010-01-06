@@ -4,7 +4,7 @@
     <children xsi:type="application:WindowTrim" xmi:id="_SeXUAu8EEd6FC9cDb6iV7g" id="_SeXUAu8EEd6FC9cDb6iV7g">
       <children xsi:type="application:ToolBar" xmi:id="_SeXUA-8EEd6FC9cDb6iV7g" id="_SeXUA-8EEd6FC9cDb6iV7g">
         <children xsi:type="application:DirectToolItem" xmi:id="_SeXUBO8EEd6FC9cDb6iV7g" id="_SeXUBO8EEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.contacts/org.eclipse.e4.demo.contacts.handlers.SaveHandler" label="" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/disk.png" tooltip="Save"/>
-        <children xsi:type="application:ToolItem" xmi:id="_SeXUBe8EEd6FC9cDb6iV7g" id="_SeXUBe8EEd6FC9cDb6iV7g" separator="true"/>
+        <children xsi:type="application:ToolItem" type="Separator"/>
         <children xsi:type="application:HandledToolItem" xmi:id="_SeXUBu8EEd6FC9cDb6iV7g" id="_SeXUBu8EEd6FC9cDb6iV7g" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/bright.png" tooltip="Light" command="contacts.brightTheme"/>
         <children xsi:type="application:HandledToolItem" xmi:id="_SeXUB-8EEd6FC9cDb6iV7g" id="_SeXUB-8EEd6FC9cDb6iV7g" iconURI="platform:/plugin/org.eclipse.e4.demo.contacts/icons/silk/dark.png" tooltip="Dark" command="contacts.darkTheme"/>
       </children>
