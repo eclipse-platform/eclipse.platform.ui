@@ -212,4 +212,194 @@ public abstract class ModelReconcilerContributionTest extends
 	public void testContribution_PersistedState_StringString2String2() {
 		testContribution_PersistedState("state", "state2", "state2");
 	}
+
+	private void testContribution_URI(String applicationURI, String userChange,
+			String newApplicationURI) {
+		MApplication application = createApplication();
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		MPart part = MApplicationFactory.eINSTANCE.createPart();
+		part.setURI(applicationURI);
+		window.getChildren().add(part);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		part.setURI(userChange);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+		part = (MPart) window.getChildren().get(0);
+		part.setURI(newApplicationURI);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(newApplicationURI, part.getURI());
+
+		applyAll(deltas);
+
+		if (applicationURI == null) {
+			if (userChange == null) {
+				assertEquals(newApplicationURI, part.getURI());
+			} else {
+				assertEquals(userChange, part.getURI());
+			}
+		} else {
+			if (userChange == null || !applicationURI.equals(userChange)) {
+				assertEquals(userChange, part.getURI());
+			} else {
+				assertEquals(newApplicationURI, part.getURI());
+			}
+		}
+	}
+
+	public void testContribution_URI_NullNullNull() {
+		testContribution_URI(null, null, null);
+	}
+
+	public void testContribution_URI_NullNullEmpty() {
+		testContribution_URI(null, null, "");
+	}
+
+	public void testContribution_URI_NullNullString() {
+		testContribution_URI(null, null, "uri");
+	}
+
+	public void testContribution_URI_NullEmptyNull() {
+		testContribution_URI(null, "", null);
+	}
+
+	public void testContribution_URI_NullEmptyEmpty() {
+		testContribution_URI(null, "", "");
+	}
+
+	public void testContribution_URI_NullEmptyString() {
+		testContribution_URI(null, "", "uri");
+	}
+
+	public void testContribution_URI_NullStringNull() {
+		testContribution_URI(null, "uri", null);
+	}
+
+	public void testContribution_URI_NullStringEmpty() {
+		testContribution_URI(null, "uri", "");
+	}
+
+	public void testContribution_URI_NullStringString() {
+		testContribution_URI(null, "uri", "uri");
+	}
+
+	public void testContribution_URI_NullStringString2() {
+		testContribution_URI(null, "uri", "uri2");
+	}
+
+	public void testContribution_URI_EmptyNullNull() {
+		testContribution_URI("", null, null);
+	}
+
+	public void testContribution_URI_EmptyNullEmpty() {
+		testContribution_URI("", null, "");
+	}
+
+	public void testContribution_URI_EmptyNullString() {
+		testContribution_URI("", null, "uri");
+	}
+
+	public void testContribution_URI_EmptyEmptyNull() {
+		testContribution_URI("", "", null);
+	}
+
+	public void testContribution_URI_EmptyEmptyEmpty() {
+		testContribution_URI("", "", "");
+	}
+
+	public void testContribution_URI_EmptyEmptyString() {
+		testContribution_URI("", "", "uri");
+	}
+
+	public void testContribution_URI_EmptyStringNull() {
+		testContribution_URI("", "uri", null);
+	}
+
+	public void testContribution_URI_EmptyStringEmpty() {
+		testContribution_URI("", "uri", "");
+	}
+
+	public void testContribution_URI_EmptyStringString() {
+		testContribution_URI("", "uri", "uri");
+	}
+
+	public void testContribution_URI_EmptyStringString2() {
+		testContribution_URI("", "uri", "uri2");
+	}
+
+	public void testContribution_URI_StringNullNull() {
+		testContribution_URI("uri", null, null);
+	}
+
+	public void testContribution_URI_StringNullEmpty() {
+		testContribution_URI("uri", null, "");
+	}
+
+	public void testContribution_URI_StringNullString() {
+		testContribution_URI("uri", null, "uri");
+	}
+
+	public void testContribution_URI_StringNullString2() {
+		testContribution_URI("uri", null, "uri2");
+	}
+
+	public void testContribution_URI_StringEmptyNull() {
+		testContribution_URI("uri", "", null);
+	}
+
+	public void testContribution_URI_StringEmptyEmpty() {
+		testContribution_URI("uri", "", "");
+	}
+
+	public void testContribution_URI_StringEmptyString() {
+		testContribution_URI("uri", "", "uri");
+	}
+
+	public void testContribution_URI_StringEmptyString2() {
+		testContribution_URI("uri", "", "uri2");
+	}
+
+	public void testContribution_URI_StringStringNull() {
+		testContribution_URI("uri", "uri", null);
+	}
+
+	public void testContribution_URI_StringString2Null() {
+		testContribution_URI("uri", "uri2", null);
+	}
+
+	public void testContribution_URI_StringStringEmpty() {
+		testContribution_URI("uri", "uri", "");
+	}
+
+	public void testContribution_URI_StringString2Empty() {
+		testContribution_URI("uri", "uri2", "");
+	}
+
+	public void testContribution_URI_StringStringString() {
+		testContribution_URI("uri", "uri", "uri");
+	}
+
+	public void testContribution_URI_StringStringString2() {
+		testContribution_URI("uri", "uri", "uri2");
+	}
+
+	public void testContribution_URI_StringString2String() {
+		testContribution_URI("uri", "uri2", "uri");
+	}
+
+	public void testContribution_URI_StringString2String2() {
+		testContribution_URI("uri", "uri2", "uri2");
+	}
 }
