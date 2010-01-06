@@ -12,9 +12,8 @@
 package org.eclipse.ui.internal.progress;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -51,7 +50,15 @@ public class WorkbenchSiteProgressService implements
         IWorkbenchSiteProgressService, IJobBusyListener {
     PartSite site;
 
-    private Collection busyJobs = Collections.synchronizedSet(new HashSet());
+	/**
+	 * Map from Job to Boolean (non-null). Interpretation of the value:
+	 * <ul>
+	 * <li>{@link Boolean#TRUE}: The half busy cursor has been requested.</li>
+	 * <li>{@link Boolean#FALSE}: The half busy cursor has not (yet) been
+	 * requested.</li>
+	 * </ul>
+	 */
+	private Map busyJobs = new HashMap();
 
     private Object busyLock = new Object();
 
@@ -235,12 +242,7 @@ public class WorkbenchSiteProgressService implements
 			 * .eclipse.core.runtime.jobs.IJobChangeEvent)
 			 */
 			public void aboutToRun(IJobChangeEvent event) {
-				if (useHalfBusyCursor) {
-					synchronized (waitCursorLock) {
-						waitCursorJobCount++;
-					}
-				}
-				incrementBusy(event.getJob());
+				incrementBusy(event.getJob(), useHalfBusyCursor);
 			}
 
 			/*
@@ -252,18 +254,6 @@ public class WorkbenchSiteProgressService implements
 			 */
 			public void done(IJobChangeEvent event) {
 				Job job = event.getJob();
-
-				if (useHalfBusyCursor) {
-					synchronized (busyLock) {
-						if (busyJobs.contains(job)) {
-							// only decrement if job has been about to run
-							synchronized (waitCursorLock) {
-								waitCursorJobCount--;
-							}
-						}
-					}
-				}
-
 				decrementBusy(job);
 				job.removeJobChangeListener(this);
 			}
@@ -276,11 +266,17 @@ public class WorkbenchSiteProgressService implements
      * @see org.eclipse.ui.internal.progress.IJobBusyListener#decrementBusy(org.eclipse.core.runtime.jobs.Job)
      */
     public void decrementBusy(Job job) {
+		Object halfBusyCursorState;
         synchronized (busyLock) {
-            if (!busyJobs.contains(job)) {
+			halfBusyCursorState = busyJobs.remove(job);
+			if (halfBusyCursorState == null) {
 				return;
 			}
-            busyJobs.remove(job);
+		}
+		if (halfBusyCursorState == Boolean.TRUE) {
+			synchronized (waitCursorLock) {
+				waitCursorJobCount--;
+			}
         }
         try {
         	decrementBusy();
@@ -296,12 +292,37 @@ public class WorkbenchSiteProgressService implements
      * @see org.eclipse.ui.internal.progress.IJobBusyListener#incrementBusy(org.eclipse.core.runtime.jobs.Job)
      */
     public void incrementBusy(Job job) {
+		incrementBusy(job, false);
+	}
+
+	private void incrementBusy(Job job, boolean useHalfBusyCursor) {
+		Object halfBusyCursorState;
         synchronized (busyLock) {
-            if (busyJobs.contains(job)) {
-				return;
-			}
-            busyJobs.add(job);
+			halfBusyCursorState = busyJobs.get(job);
+			if (useHalfBusyCursor || halfBusyCursorState != Boolean.TRUE)
+				busyJobs.put(job, Boolean.valueOf(useHalfBusyCursor));
         }
+		if (useHalfBusyCursor && halfBusyCursorState != Boolean.TRUE) {
+			// want to set busy cursor and it has not been set before
+			synchronized (waitCursorLock) {
+				waitCursorJobCount++;
+			}
+		}
+		if (halfBusyCursorState != null) {
+			// incrementBusy(Job, boolean) has been called before
+			if (useHalfBusyCursor && halfBusyCursorState == Boolean.FALSE) {
+				// need to update cursor without changing busy count:
+				synchronized (busyLock) {
+					updateJob.setBusy(true);
+				}
+				if (PlatformUI.isWorkbenchRunning()) {
+					updateJob.schedule(100);
+				} else {
+					updateJob.cancel();
+				}
+			}
+			return;
+		}
         incrementBusy();
     }
 
