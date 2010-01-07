@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="_UW9TZfr3Ed6gmo7caOxU9h" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
+<application:ModelComponents xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="_UW9TZfr3Ed6gmo7caOxU9h" xsi:schemaLocation="../../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore">
   <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9i" id="_UW9TZfr3Ed6gmo7caOxU9i" parentID="E4MainWindow">
     <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9j" id="_UW9TZfr3Ed6gmo7caOxU9ij" xsi:type="application:PartSashContainer">
       <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9k" id="_UW9TZfr3Ed6gmo7caOxU9k" xsi:type="application:PartStack">
@@ -14,6 +14,8 @@
     <children xmi:id="_UW9TZfr3Ed6gmo7caOxU9p" id="_UW9TZfr3Ed6gmo7caOxU9p" xsi:type="application:HandledMenuItem" label="Create Album 2" command="org.eclipse.e4.demo.e4photo.command.createAlbum"/>
   </components>
   <components xmi:id="_UW9TZfr3Ed6gmo7caOxU9q" id="_UW9TZfr3Ed6gmo7caOxU9q" parentID="org.eclipse.e4.ide.application">
+    <descriptors id="_BESTZfr3Ed6gmo7caOxU01" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library"/>
+    <descriptors id="_BESTZfr3Ed6gmo7caOxU02" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" label="Preview"/>
     <commands xmi:id="org.eclipse.e4.demo.e4photo.command.createAlbum" id="org.eclipse.e4.demo.e4photo.command.createAlbum" commandName="Create Album Snippet"/>
     <handlers xmi:id="_UW9TZfr3Ed6gmo7caOxU9s" id="_UW9TZfr3Ed6gmo7caOxU9s" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="org.eclipse.e4.demo.e4photo.command.createAlbum"/>
   </components>

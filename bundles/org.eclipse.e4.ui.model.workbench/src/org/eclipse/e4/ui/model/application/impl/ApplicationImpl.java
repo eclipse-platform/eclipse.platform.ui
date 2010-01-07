@@ -21,6 +21,8 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MHandler;
 import org.eclipse.e4.ui.model.application.MHandlerContainer;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 
@@ -60,6 +62,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getActiveChild <em>Active Child</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getHandlers <em>Handlers</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getBindings <em>Bindings</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDescriptors <em>Descriptors</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  * </ul>
  * </p>
@@ -266,6 +269,16 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * @ordered
 	 */
 	protected EList<MKeyBinding> bindings;
+
+	/**
+	 * The cached value of the '{@link #getDescriptors() <em>Descriptors</em>}' containment reference list.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getDescriptors()
+	 * @generated
+	 * @ordered
+	 */
+	protected EList<MPartDescriptor> descriptors;
 
 	/**
 	 * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
@@ -585,6 +598,18 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EList<MPartDescriptor> getDescriptors() {
+		if (descriptors == null) {
+			descriptors = new EObjectContainmentEList<MPartDescriptor>(MPartDescriptor.class, this, MApplicationPackage.APPLICATION__DESCRIPTORS);
+		}
+		return descriptors;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EList<MCommand> getCommands() {
 		if (commands == null) {
 			commands = new EObjectContainmentEList<MCommand>(MCommand.class, this, MApplicationPackage.APPLICATION__COMMANDS);
@@ -627,6 +652,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return ((InternalEList<?>)getHandlers()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.APPLICATION__BINDINGS:
 				return ((InternalEList<?>)getBindings()).basicRemove(otherEnd, msgs);
+			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+				return ((InternalEList<?>)getDescriptors()).basicRemove(otherEnd, msgs);
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return ((InternalEList<?>)getCommands()).basicRemove(otherEnd, msgs);
 		}
@@ -682,6 +709,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return getHandlers();
 			case MApplicationPackage.APPLICATION__BINDINGS:
 				return getBindings();
+			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+				return getDescriptors();
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return getCommands();
 		}
@@ -739,6 +768,10 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				getBindings().clear();
 				getBindings().addAll((Collection<? extends MKeyBinding>)newValue);
 				return;
+			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+				getDescriptors().clear();
+				getDescriptors().addAll((Collection<? extends MPartDescriptor>)newValue);
+				return;
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				getCommands().clear();
 				getCommands().addAll((Collection<? extends MCommand>)newValue);
@@ -794,6 +827,9 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 			case MApplicationPackage.APPLICATION__BINDINGS:
 				getBindings().clear();
 				return;
+			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+				getDescriptors().clear();
+				return;
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				getCommands().clear();
 				return;
@@ -835,6 +871,8 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				return handlers != null && !handlers.isEmpty();
 			case MApplicationPackage.APPLICATION__BINDINGS:
 				return bindings != null && !bindings.isEmpty();
+			case MApplicationPackage.APPLICATION__DESCRIPTORS:
+				return descriptors != null && !descriptors.isEmpty();
 			case MApplicationPackage.APPLICATION__COMMANDS:
 				return commands != null && !commands.isEmpty();
 		}
@@ -886,6 +924,12 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 				default: return -1;
 			}
 		}
+		if (baseClass == MPartDescriptorContainer.class) {
+			switch (derivedFeatureID) {
+				case MApplicationPackage.APPLICATION__DESCRIPTORS: return MApplicationPackage.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS;
+				default: return -1;
+			}
+		}
 		return super.eBaseStructuralFeatureID(derivedFeatureID, baseClass);
 	}
 
@@ -931,6 +975,12 @@ public class ApplicationImpl extends ContextImpl implements MApplication {
 		if (baseClass == MBindingContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.BINDING_CONTAINER__BINDINGS: return MApplicationPackage.APPLICATION__BINDINGS;
+				default: return -1;
+			}
+		}
+		if (baseClass == MPartDescriptorContainer.class) {
+			switch (baseFeatureID) {
+				case MApplicationPackage.PART_DESCRIPTOR_CONTAINER__DESCRIPTORS: return MApplicationPackage.APPLICATION__DESCRIPTORS;
 				default: return -1;
 			}
 		}

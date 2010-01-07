@@ -176,6 +176,14 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 				return createPartAdapter();
 			}
 			@Override
+			public Adapter casePartDescriptor(MPartDescriptor object) {
+				return createPartDescriptorAdapter();
+			}
+			@Override
+			public Adapter casePartDescriptorContainer(MPartDescriptorContainer object) {
+				return createPartDescriptorContainerAdapter();
+			}
+			@Override
 			public Adapter caseSaveablePart(MSaveablePart object) {
 				return createSaveablePartAdapter();
 			}
@@ -658,6 +666,34 @@ public class ApplicationAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createPartAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPartDescriptor <em>Part Descriptor</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MPartDescriptor
+	 * @generated
+	 */
+	public Adapter createPartDescriptorAdapter() {
+		return null;
+	}
+
+	/**
+	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.MPartDescriptorContainer <em>Part Descriptor Container</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.eclipse.e4.ui.model.application.MPartDescriptorContainer
+	 * @generated
+	 */
+	public Adapter createPartDescriptorContainerAdapter() {
 		return null;
 	}
 

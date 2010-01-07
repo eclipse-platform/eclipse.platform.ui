@@ -47,6 +47,8 @@ import org.eclipse.e4.ui.model.application.MModelComponents;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MParameter;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.MPartDescriptorContainer;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
@@ -265,6 +267,20 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * @generated
 	 */
 	private EClass partEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass partDescriptorEClass = null;
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private EClass partDescriptorContainerEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1040,6 +1056,42 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public EClass getPartDescriptor() {
+		return partDescriptorEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EAttribute getPartDescriptor_AllowMultiple() {
+		return (EAttribute)partDescriptorEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EClass getPartDescriptorContainer() {
+		return partDescriptorContainerEClass;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public EReference getPartDescriptorContainer_Descriptors() {
+		return (EReference)partDescriptorContainerEClass.getEStructuralFeatures().get(0);
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	public EClass getSaveablePart() {
 		return saveablePartEClass;
 	}
@@ -1708,6 +1760,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		createEReference(partEClass, PART__MENUS);
 		createEReference(partEClass, PART__TOOLBAR);
 
+		partDescriptorEClass = createEClass(PART_DESCRIPTOR);
+		createEAttribute(partDescriptorEClass, PART_DESCRIPTOR__ALLOW_MULTIPLE);
+
+		partDescriptorContainerEClass = createEClass(PART_DESCRIPTOR_CONTAINER);
+		createEReference(partDescriptorContainerEClass, PART_DESCRIPTOR_CONTAINER__DESCRIPTORS);
+
 		saveablePartEClass = createEClass(SAVEABLE_PART);
 
 		partStackEClass = createEClass(PART_STACK);
@@ -1892,6 +1950,8 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		applicationEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getBindingContainer());
 		applicationEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getPartDescriptorContainer());
+		applicationEClass.getEGenericSuperTypes().add(g1);
 		pscElementEClass.getESuperTypes().add(this.getUIElement());
 		partEClass.getESuperTypes().add(this.getContribution());
 		partEClass.getESuperTypes().add(this.getContext());
@@ -1899,6 +1959,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		partEClass.getESuperTypes().add(this.getUILabel());
 		partEClass.getESuperTypes().add(this.getHandlerContainer());
 		partEClass.getESuperTypes().add(this.getBindingContainer());
+		partDescriptorEClass.getESuperTypes().add(this.getPart());
 		saveablePartEClass.getESuperTypes().add(this.getPart());
 		saveablePartEClass.getESuperTypes().add(this.getDirtyable());
 		g1 = createEGenericType(this.getUIElement());
@@ -1930,6 +1991,7 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		g1 = createEGenericType(this.getBindingContainer());
 		windowEClass.getEGenericSuperTypes().add(g1);
 		modelComponentEClass.getESuperTypes().add(this.getApplicationElement());
+		modelComponentEClass.getESuperTypes().add(this.getPartDescriptorContainer());
 		commandEClass.getESuperTypes().add(this.getApplicationElement());
 		commandParameterEClass.getESuperTypes().add(this.getApplicationElement());
 		handlerEClass.getESuperTypes().add(this.getContribution());
@@ -2084,6 +2146,12 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		initEClass(partEClass, MPart.class, "Part", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 		initEReference(getPart_Menus(), this.getMenu(), null, "menus", null, 0, -1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 		initEReference(getPart_Toolbar(), this.getToolBar(), null, "toolbar", null, 0, 1, MPart.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(partDescriptorEClass, MPartDescriptor.class, "PartDescriptor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEAttribute(getPartDescriptor_AllowMultiple(), ecorePackage.getEBoolean(), "allowMultiple", null, 0, 1, MPartDescriptor.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
+
+		initEClass(partDescriptorContainerEClass, MPartDescriptorContainer.class, "PartDescriptorContainer", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
+		initEReference(getPartDescriptorContainer_Descriptors(), this.getPartDescriptor(), null, "descriptors", null, 0, -1, MPartDescriptorContainer.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED); //$NON-NLS-1$
 
 		initEClass(saveablePartEClass, MSaveablePart.class, "SaveablePart", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
 

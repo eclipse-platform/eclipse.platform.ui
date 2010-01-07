@@ -275,6 +275,7 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseElementContainer(application);
 				if (result == null) result = caseHandlerContainer(application);
 				if (result == null) result = caseBindingContainer(application);
+				if (result == null) result = casePartDescriptorContainer(application);
 				if (result == null) result = caseUIElement(application);
 				if (result == null) result = caseApplicationElement(application);
 				if (result == null) result = defaultCase(theEObject);
@@ -299,6 +300,27 @@ public class ApplicationSwitch<T1> {
 				if (result == null) result = caseBindingContainer(part);
 				if (result == null) result = caseUIElement(part);
 				if (result == null) result = caseApplicationElement(part);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.PART_DESCRIPTOR: {
+				MPartDescriptor partDescriptor = (MPartDescriptor)theEObject;
+				T1 result = casePartDescriptor(partDescriptor);
+				if (result == null) result = casePart(partDescriptor);
+				if (result == null) result = caseContribution(partDescriptor);
+				if (result == null) result = caseContext(partDescriptor);
+				if (result == null) result = casePSCElement(partDescriptor);
+				if (result == null) result = caseUILabel(partDescriptor);
+				if (result == null) result = caseHandlerContainer(partDescriptor);
+				if (result == null) result = caseBindingContainer(partDescriptor);
+				if (result == null) result = caseUIElement(partDescriptor);
+				if (result == null) result = caseApplicationElement(partDescriptor);
+				if (result == null) result = defaultCase(theEObject);
+				return result;
+			}
+			case MApplicationPackage.PART_DESCRIPTOR_CONTAINER: {
+				MPartDescriptorContainer partDescriptorContainer = (MPartDescriptorContainer)theEObject;
+				T1 result = casePartDescriptorContainer(partDescriptorContainer);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -363,6 +385,7 @@ public class ApplicationSwitch<T1> {
 				MModelComponent modelComponent = (MModelComponent)theEObject;
 				T1 result = caseModelComponent(modelComponent);
 				if (result == null) result = caseApplicationElement(modelComponent);
+				if (result == null) result = casePartDescriptorContainer(modelComponent);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}
@@ -949,6 +972,36 @@ public class ApplicationSwitch<T1> {
 	 * @generated
 	 */
 	public T1 casePart(MPart object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Part Descriptor</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Part Descriptor</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 casePartDescriptor(MPartDescriptor object) {
+		return null;
+	}
+
+	/**
+	 * Returns the result of interpreting the object as an instance of '<em>Part Descriptor Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns null;
+	 * returning a non-null result will terminate the switch.
+	 * <!-- end-user-doc -->
+	 * @param object the target of the switch.
+	 * @return the result of interpreting the object as an instance of '<em>Part Descriptor Container</em>'.
+	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+	 * @generated
+	 */
+	public T1 casePartDescriptorContainer(MPartDescriptorContainer object) {
 		return null;
 	}
 

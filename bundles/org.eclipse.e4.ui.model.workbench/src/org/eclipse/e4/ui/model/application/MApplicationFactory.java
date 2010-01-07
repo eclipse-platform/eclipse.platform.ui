@@ -111,6 +111,24 @@ public interface MApplicationFactory extends EFactory {
 	MPart createPart();
 
 	/**
+	 * Returns a new object of class '<em>Part Descriptor</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Part Descriptor</em>'.
+	 * @generated
+	 */
+	MPartDescriptor createPartDescriptor();
+
+	/**
+	 * Returns a new object of class '<em>Part Descriptor Container</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return a new object of class '<em>Part Descriptor Container</em>'.
+	 * @generated
+	 */
+	MPartDescriptorContainer createPartDescriptorContainer();
+
+	/**
 	 * Returns a new object of class '<em>Saveable Part</em>'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
