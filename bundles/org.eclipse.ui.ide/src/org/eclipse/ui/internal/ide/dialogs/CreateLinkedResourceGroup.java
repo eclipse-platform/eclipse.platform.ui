@@ -252,6 +252,7 @@ public class CreateLinkedResourceGroup {
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.horizontalIndent = indent;
 		linkTargetGroup.setLayoutData(data);
+		linkTargetGroup.setFont(locationGroup.getFont());
 
 		// link target location entry field
 		linkTargetField = new Text(linkTargetGroup, SWT.BORDER);
@@ -260,6 +261,7 @@ public class CreateLinkedResourceGroup {
 		data.horizontalSpan = 2;
 		linkTargetField.setLayoutData(data);
 		linkTargetField.setEnabled(enabled);
+		linkTargetField.setFont(locationGroup.getFont());
 		linkTargetField.addModifyListener(new ModifyListener() {
 			public void modifyText(ModifyEvent e) {
 				linkTarget = linkTargetField.getText();
@@ -291,6 +293,7 @@ public class CreateLinkedResourceGroup {
 				handleLinkTargetBrowseButtonPressed();
 			}
 		});
+		browseButton.setFont(locationGroup.getFont());
 		browseButton.setEnabled(enabled);
 		setButtonLayoutData(browseButton);
 
@@ -303,6 +306,7 @@ public class CreateLinkedResourceGroup {
 				handleVariablesButtonPressed();
 			}
 		});
+		variablesButton.setFont(locationGroup.getFont());
 		variablesButton.setEnabled(enabled);
 		setButtonLayoutData(variablesButton);
 
