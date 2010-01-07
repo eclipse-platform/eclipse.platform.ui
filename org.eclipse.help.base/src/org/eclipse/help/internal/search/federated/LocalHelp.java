@@ -92,7 +92,7 @@ public class LocalHelp implements ISearchEngine2 {
 			return false;
 		String participantId = id.substring(0, sep);
 		id = id.substring(sep+1);
-		SearchParticipant participant = BaseHelpSystem.getLocalSearchManager().getGlobalParticipant(participantId);
+		LuceneSearchParticipant participant = BaseHelpSystem.getLocalSearchManager().getGlobalParticipant(participantId);
 		if (participant==null)
 			return false;
 		try {

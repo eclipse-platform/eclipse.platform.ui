@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,10 +60,8 @@ import org.eclipse.help.internal.protocols.HelpURLStreamHandler;
 import org.eclipse.help.internal.toc.TocFileProvider;
 import org.eclipse.help.internal.toc.TocManager;
 import org.eclipse.help.internal.util.ResourceLocator;
-import org.eclipse.help.search.IHelpSearchIndex;
-import org.eclipse.help.search.ISearchDocument;
 import org.eclipse.help.search.ISearchIndex;
-import org.eclipse.help.search.SearchParticipant;
+import org.eclipse.help.search.LuceneSearchParticipant;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Version;
@@ -71,7 +69,7 @@ import org.osgi.framework.Version;
 /**
  * Text search index. Documents added to this index can than be searched against a search query.
  */
-public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
+public class SearchIndex implements ISearchIndex {
 
 	private IndexReader ir;
 
@@ -194,8 +192,8 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			if (relativePath != null) {
 				doc.add(new Field(FIELD_INDEX_ID, relativePath, Field.Store.YES, Field.Index.UN_TOKENIZED));
 			}
-			// check for the explicit search participant.
-			SearchParticipant participant = null;
+			// NEW: check for the explicit search participant.
+			LuceneSearchParticipant participant = null;
 			HelpURLConnection urlc = new HelpURLConnection(url);
 			String id = urlc.getValue("id"); //$NON-NLS-1$
 			String pid = urlc.getValue("participantId"); //$NON-NLS-1$
@@ -205,7 +203,7 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 			if (participant == null)
 				participant = BaseHelpSystem.getLocalSearchManager().getParticipant(pluginId, name);
 			if (participant != null) {
-				IStatus status = participant.addDocument(this, pluginId, name, url, id, new LuceneSearchDocument(doc));
+				IStatus status = participant.addDocument(this, pluginId, name, url, id, doc);
 				if (status.getSeverity() == IStatus.OK) {
 					String filters = doc.get("filters"); //$NON-NLS-1$
 					indexedDocs.put(name, filters != null ? filters : "0"); //$NON-NLS-1$
@@ -1047,11 +1045,11 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 
 	public IStatus addDocument(String pluginId, String name, URL url, String id, Document doc) {
 		// try a registered participant for the file format
-		SearchParticipant participant = BaseHelpSystem.getLocalSearchManager()
+		LuceneSearchParticipant participant = BaseHelpSystem.getLocalSearchManager()
 				.getParticipant(pluginId, name);
 		if (participant != null) {
 			try {
-				return participant.addDocument(this, pluginId, name, url, id, new LuceneSearchDocument(doc));
+				return participant.addDocument(this, pluginId, name, url, id, doc);
 			}
 			catch (Throwable t) {
 				return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
@@ -1061,11 +1059,5 @@ public class SearchIndex implements ISearchIndex, IHelpSearchIndex {
 		}
 		// default to html
 		return htmlSearchParticipant.addDocument(this, pluginId, name, url, id, doc);
-	}
-
-	public IStatus addSearchableDocument(String pluginId, String name, URL url, String id, ISearchDocument doc) {
-		// In the help system the only class that implements ISearchDocument is LuceneSearchDocument
-		LuceneSearchDocument luceneDoc = (LuceneSearchDocument)doc;
-		return addDocument(pluginId, name, url, id, luceneDoc.getDocument());
 	}
 }

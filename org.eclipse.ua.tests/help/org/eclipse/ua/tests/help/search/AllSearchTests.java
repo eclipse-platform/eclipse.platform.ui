@@ -35,10 +35,9 @@ public class AllSearchTests extends TestSuite {
 		addTestSuite(LocaleTest.class);
 		addTestSuite(AnalyzerTest.class);
 		addTest(SearchCheatsheet.suite());
+		addTest(SearchIntro.suite());
 		addTest(EncodedCharacterSearch.suite());
 		addTest(MetaKeywords.suite());
-		addTest(SearchParticipantTest.suite());
-		addTest(SearchParticipantXMLTest.suite());
 		addTest(LuceneParticipantTest.suite());
 		addTest(LuceneXMLParticipantTest.suite());
 	}
