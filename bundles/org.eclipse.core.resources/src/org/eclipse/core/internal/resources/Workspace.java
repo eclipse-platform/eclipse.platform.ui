@@ -714,7 +714,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		copyTree(source, destination, depth, updateFlags, keepSyncInfo, false, source.getType() == IResource.PROJECT);
 	}
 
-	protected void copyTree(IResource source, IPath destination, int depth,
+	private void copyTree(IResource source, IPath destination, int depth,
 			int updateFlags, boolean keepSyncInfo, boolean moveResources, boolean movingProject)
 			throws CoreException {
 				
@@ -809,7 +809,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			String childName = children[i].getName();
 			if (!projectCopy || !childName.equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
 				IPath childPath = destination.append(childName);
-				copyTree(children[i], childPath, depth, updateFlags, keepSyncInfo);
+				copyTree(children[i], childPath, depth, updateFlags, keepSyncInfo, moveResources, movingProject);
 			}
 		}
 	}

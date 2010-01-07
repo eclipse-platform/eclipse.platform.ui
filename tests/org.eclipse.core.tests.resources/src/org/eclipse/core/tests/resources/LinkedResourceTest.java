@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2009 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1675,6 +1675,62 @@ public class LinkedResourceTest extends ResourceTest {
 			IFile newFile = destination.getFile(linkedFile.getProjectRelativePath());
 			assertTrue("3.0", newFile.isLinked());
 			assertEquals("3.1", resolve(fileLocation), newFile.getLocation());
+		} finally {
+			Workspace.clear(resolve(fileLocation).toFile());
+		}
+	}
+
+	/**
+	 * Tests bug 298849.
+	 */
+	public void testMoveFolderWithLinks() {
+		// create a folder
+		IFolder folderWithLinks = existingProject.getFolder(getUniqueString());
+		try {
+			folderWithLinks.create(true, true, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		IPath fileLocation = getRandomLocation();
+		try {
+			createFileInFileSystem(resolve(fileLocation), getRandomContents());
+
+			// create a linked file in the folder
+			IFile linkedFile = folderWithLinks.getFile(getUniqueString());
+			try {
+				linkedFile.createLink(fileLocation, IResource.NONE, getMonitor());
+			} catch (CoreException e) {
+				fail("2.0", e);
+			}
+
+			// there should be an entry in .project for the linked file
+			String string = readStringInFileSystem(existingProject.getFile(".project"));
+			assertTrue("3.0", string.indexOf(linkedFile.getProjectRelativePath().toString()) != -1);
+
+			// move the folder
+			try {
+				folderWithLinks.move(otherExistingProject.getFolder(getUniqueString()).getFullPath(), IResource.SHALLOW | IResource.ALLOW_MISSING_LOCAL, getMonitor());
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+
+			// both the folder and link in the source project should not exist
+			assertFalse("5.0", folderWithLinks.exists());
+			assertFalse("6.0", linkedFile.exists());
+
+			// the project description should not contain links
+			HashMap links = null;
+			try {
+				links = ((ProjectDescription) existingProject.getDescription()).getLinks();
+			} catch (CoreException e) {
+				fail("7.0", e);
+			}
+			assertNull("8.0", links);
+
+			// and the entry from .project should be removed
+			string = readStringInFileSystem(existingProject.getFile(".project"));
+			assertEquals("9.0", -1, string.indexOf(linkedFile.getProjectRelativePath().toString()));
 		} finally {
 			Workspace.clear(resolve(fileLocation).toFile());
 		}
