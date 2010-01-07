@@ -551,8 +551,11 @@ public class Workbench implements IWorkbench {
 		if (instance == null) {
 			IEclipseContext serviceContext = org.eclipse.e4.workbench.ui.internal.E4Workbench
 					.getServiceContext();
-			instance = new Workbench((MApplication) serviceContext
-					.get(MApplication.class.getName()));
+			MApplication app = (MApplication) serviceContext
+					.get(MApplication.class.getName());
+			if (app != null) {
+				instance = new Workbench(app);
+			}
 		}
 		return instance;
 	}
