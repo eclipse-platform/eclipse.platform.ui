@@ -451,12 +451,14 @@ public class ResourceFilterGroup {
 	 */
 	public Control createContents(Composite parent) {
 
+        Font font = parent.getFont();
 		shell = parent.getShell();
 
 		if (resource == null) {
 			Label label = new Label(parent, SWT.NONE);
 			label.setText(NLS.bind(
 					IDEWorkbenchMessages.ResourceFilterPage_noResource, null));
+	        label.setFont(font);
 			return label;
 		}
 
@@ -475,7 +477,7 @@ public class ResourceFilterGroup {
 		data.grabExcessHorizontalSpace = true;
 		data.grabExcessVerticalSpace = true;
 		composite.setLayoutData(data);
-		composite.setFont(parent.getFont());
+		composite.setFont(font);
 
 		Label label = new Label(composite, 0);
 		label.setText(NLS.bind(IDEWorkbenchMessages.ResourceFilterPage_title,
@@ -483,7 +485,8 @@ public class ResourceFilterGroup {
 		data = new GridData(GridData.FILL);
 		data.horizontalSpan = 2;
 		label.setLayoutData(data);
-
+		label.setFont(font);
+		
 		createViewerGroup(composite);
 		createButtonGroup(composite);
 
@@ -502,6 +505,7 @@ public class ResourceFilterGroup {
 
 		filterView.setContentProvider(new TreeContentProvider());
 		filterView.setInput(filters);
+		filterView.getTree().setFont(parent.getFont());
 
 		filterView.addSelectionChangedListener(new ISelectionChangedListener() {
 			public void selectionChanged(SelectionChangedEvent event) {
