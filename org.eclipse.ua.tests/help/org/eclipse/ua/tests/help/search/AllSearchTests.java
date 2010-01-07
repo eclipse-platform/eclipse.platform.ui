@@ -38,5 +38,6 @@ public class AllSearchTests extends TestSuite {
 		addTest(EncodedCharacterSearch.suite());
 		addTest(MetaKeywords.suite());
 		addTest(LuceneParticipantTest.suite());
+		addTest(LuceneXMLParticipantTest.suite());
 	}
 }

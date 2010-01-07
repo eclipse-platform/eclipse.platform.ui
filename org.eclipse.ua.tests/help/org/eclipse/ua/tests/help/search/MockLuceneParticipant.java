@@ -47,5 +47,9 @@ public class MockLuceneParticipant extends LuceneSearchParticipant {
 		set.add(DOC_2);
 		return set;
 	}
+	
+	public String getId() {
+		return super.getId();
+	}
 
 }
