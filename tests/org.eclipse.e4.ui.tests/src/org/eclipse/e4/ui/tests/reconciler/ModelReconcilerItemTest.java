@@ -203,7 +203,6 @@ public abstract class ModelReconcilerItemTest extends ModelReconcilerTest {
 		item.setType(userChange);
 
 		Object state = reconciler.serialize();
-		print(state);
 
 		application = createApplication();
 		window = application.getChildren().get(0);
