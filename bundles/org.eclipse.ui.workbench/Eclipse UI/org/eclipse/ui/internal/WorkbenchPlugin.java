@@ -43,7 +43,6 @@ import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.operations.WorkbenchOperationSupport;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
@@ -171,7 +170,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	private SharedImages sharedImages;
 
-	private WorkbenchOperationSupport operationSupport;
+	// private WorkbenchOperationSupport operationSupport;
 
 	private EditorRegistry editorRegistry;
         
@@ -611,10 +610,11 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 * @since 3.1
 	 */
     public IWorkbenchOperationSupport getOperationSupport() {
-		if (operationSupport == null) {
-			operationSupport = new WorkbenchOperationSupport();
-		}
-		return operationSupport;
+		// if (operationSupport == null) {
+		// operationSupport = new WorkbenchOperationSupport();
+		// }
+		// return operationSupport;
+		return null;
     }
     
 
