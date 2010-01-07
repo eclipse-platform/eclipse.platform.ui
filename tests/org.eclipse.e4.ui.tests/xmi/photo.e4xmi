@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ASCII"?>
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="_AXU5UO8IEd6FC9cDb6iV7g" id="_AXU5UO8IEd6FC9cDb6iV7g">
+  <children xsi:type="application:Window" xmi:id="_AXU5Ue8IEd6FC9cDb6iV7g" id="_AXU5Ue8IEd6FC9cDb6iV7g" x="20" y="20" width="800" height="600">
+    <children xsi:type="application:PartSashContainer" xmi:id="_AXU5Uu8IEd6FC9cDb6iV7g" id="_AXU5Uu8IEd6FC9cDb6iV7g" horizontal="true">
+      <children xsi:type="application:PartSashContainer" xmi:id="_AXU5U-8IEd6FC9cDb6iV7g" id="_AXU5U-8IEd6FC9cDb6iV7g" containerData="30">
+        <children xsi:type="application:PartStack" xmi:id="_AXU5VO8IEd6FC9cDb6iV7g" id="_AXU5VO8IEd6FC9cDb6iV7g" containerData="70">
+          <children xsi:type="application:Part" xmi:id="_AXU5Ve8IEd6FC9cDb6iV7g" id="_AXU5Ve8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Library" label="Library"/>
+        </children>
+        <children xsi:type="application:PartStack" xmi:id="_AXU5Vu8IEd6FC9cDb6iV7g" id="_AXU5Vu8IEd6FC9cDb6iV7g" containerData="30">
+          <children xsi:type="application:Part" xmi:id="_AXU5V-8IEd6FC9cDb6iV7g" id="_AXU5V-8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" label="Location"/>
+        </children>
+      </children>
+      <children xsi:type="application:PartSashContainer" xmi:id="_AXU5WO8IEd6FC9cDb6iV7g" id="_AXU5WO8IEd6FC9cDb6iV7g" containerData="70">
+        <children xsi:type="application:Part" xmi:id="_AXU5We8IEd6FC9cDb6iV7g" id="_AXU5We8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Preview" containerData="70" label="Preview" iconURI=""/>
+        <children xsi:type="application:PartStack" xmi:id="_AXU5Wu8IEd6FC9cDb6iV7g" id="_AXU5Wu8IEd6FC9cDb6iV7g" containerData="30">
+          <children xsi:type="application:Part" xmi:id="_AXU5W-8IEd6FC9cDb6iV7g" id="ThumbnailsView" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Thumbnails" label="Thumbnails"/>
+          <children xsi:type="application:Part" xmi:id="_IljJcflEEd6zQeFS0uSN1A" id="ExifView" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
+        </children>
+      </children>
+    </children>
+    <variables>selection</variables>
+    <variables>exif</variables>
+    <mainMenu xmi:id="_AXU5X-8IEd6FC9cDb6iV7g" id="_AXU5X-8IEd6FC9cDb6iV7g">
+      <children xsi:type="application:MenuItem" xmi:id="_AXU5YO8IEd6FC9cDb6iV7g" id="_AXU5YO8IEd6FC9cDb6iV7g" label="File">
+        <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqUO8IEd6FC9cDb6iV7g" id="_AXeqUO8IEd6FC9cDb6iV7g" label="Create Album" command="e4photo.createAlbum"/>
+        <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqUe8IEd6FC9cDb6iV7g" id="_AXeqUe8IEd6FC9cDb6iV7g" label="Switch Perspective" command="e4photo.switchPersepective"/>
+        <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqU-8IEd6FC9cDb6iV7g" id="_AXeqU-8IEd6FC9cDb6iV7g" label="Exit" command="e4photo.exit"/>
+      </children>
+      <children xsi:type="application:MenuItem" xmi:id="_AXeqVO8IEd6FC9cDb6iV7g" id="_AXeqVO8IEd6FC9cDb6iV7g" label="Edit">
+        <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqVe8IEd6FC9cDb6iV7g" id="_AXeqVe8IEd6FC9cDb6iV7g" label="Exit" command="e4photo.exit"/>
+      </children>
+      <children xsi:type="application:MenuItem" xmi:id="_AXeqVu8IEd6FC9cDb6iV7g" id="_AXeqVu8IEd6FC9cDb6iV7g" label="Exit">
+        <children xsi:type="application:HandledMenuItem" xmi:id="_AXeqV-8IEd6FC9cDb6iV7g" id="_AXeqV-8IEd6FC9cDb6iV7g" label="Exit" command="e4photo.exit"/>
+      </children>
+    </mainMenu>
+  </children>
+  <handlers xmi:id="_AXeqWO8IEd6FC9cDb6iV7g" id="_AXeqWO8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExitHandler" command="e4photo.exit"/>
+  <handlers xmi:id="_AXeqWe8IEd6FC9cDb6iV7g" id="_AXeqWe8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.NewProjectHandler" command="e4photo.createAlbum"/>
+  <handlers xmi:id="_AXeqWu8IEd6FC9cDb6iV7g" id="_AXeqWu8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.SwitchPerspectiveHandler" command="e4photo.switchPersepective"/>
+  <handlers xmi:id="_AXeqW-8IEd6FC9cDb6iV7g" id="_AXeqW-8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ImageDialogHandler" command="e4photo.imageDialog"/>
+  <bindings xmi:id="_AXeqXO8IEd6FC9cDb6iV7g" keySequence="CTRL+X" id="_AXeqXO8IEd6FC9cDb6iV7g" command="e4photo.exit"/>
+  <bindings xmi:id="_AXeqXe8IEd6FC9cDb6iV7g" keySequence="CTRL+N" id="_AXeqXe8IEd6FC9cDb6iV7g" command="e4photo.createAlbum"/>
+  <commands xmi:id="e4photo.exit" id="e4photo.exit" commandName="Exit" description=""/>
+  <commands xmi:id="e4photo.createAlbum" id="e4photo.createAlbum" commandName="Create Album"/>
+  <commands xmi:id="e4photo.switchPersepective" id="e4photo.switchPersepective" commandName="Switch Perspective" description=""/>
+  <commands xmi:id="e4photo.imageDialog" id="e4photo.imageDialog" commandName="Image Dialog" description=""/>
+</application:Application>

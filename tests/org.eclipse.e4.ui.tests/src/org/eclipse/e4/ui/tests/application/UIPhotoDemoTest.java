@@ -17,7 +17,7 @@ public class UIPhotoDemoTest extends UIStartupTest {
 
 	@Override
 	protected String getURI() {
-		return "org.eclipse.e4.ui.tests/xmi/photo.xmi";
+		return "org.eclipse.e4.ui.tests/xmi/photo.e4xmi";
 	}
 
 	@Override

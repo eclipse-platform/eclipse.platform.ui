@@ -17,7 +17,7 @@ public class UIContactsDemoTest extends UIStartupTest {
 
 	@Override
 	protected String getURI() {
-		return "org.eclipse.e4.ui.tests/xmi/contacts.xmi";
+		return "org.eclipse.e4.ui.tests/xmi/contacts.e4xmi";
 	}
 
 	@Override
