@@ -3,10 +3,10 @@
 <schema targetNamespace="org.eclipse.help.base" xmlns="http://www.w3.org/2001/XMLSchema">
 <annotation>
       <appInfo>
-         <meta.schema plugin="org.eclipse.help.base" id="luceneSearchParticipants" name="Lucene Search Participants"/>
+         <meta.schema plugin="org.eclipse.help.base" id="searchParticipant" name="Help Search Participant"/>
       </appInfo>
       <documentation>
-         This extension point should be used to add document content to the Lucene search index. There are two cases were you would want to add a search participant:
+         This extension point should be used to add document content to the search index. There are two cases were you would want to add a search participant:
 &lt;ol&gt;
 &lt;li&gt;
 To index documents registered with the help system&apos;s TOC that are not of the HTML format (e.g. XML). In this case, the participant must declare file extensions it can handle. It will be called to index each matching document. In this case, the participant has the plug-in scope.
@@ -24,11 +24,8 @@ Search participants are associated with the plug-in the extension appears in. In
    <element name="extension">
       <annotation>
          <appInfo>
-            <meta.element deprecated="true" replacement="org.eclipse.help.base.searchParticipant" />
+            <meta.element />
          </appInfo>
-         <documentation>
-            This extension point is deprecated because it depends on API classes which expose Lucene classes, which are not binary compatible between major release. The extension point org.eclipse.help.base.searchParticipant should be used instead.
-         </documentation>
       </annotation>
       <complexType>
          <choice minOccurs="1" maxOccurs="unbounded">
@@ -69,9 +66,6 @@ Search participants are associated with the plug-in the extension appears in. In
          </appInfo>
       </annotation>
       <complexType>
-         <sequence>
-            <element ref="participant" minOccurs="0" maxOccurs="1"/>
-         </sequence>
          <attribute name="id" type="string" use="required">
             <annotation>
                <documentation>
@@ -99,13 +93,13 @@ Search participants are associated with the plug-in the extension appears in. In
                </appInfo>
             </annotation>
          </attribute>
-         <attribute name="participant" type="string">
+         <attribute name="participant" type="string" use="required">
             <annotation>
                <documentation>
-                  (&lt;strong&gt;new in 3.2&lt;/strong&gt;) the implementation class for the help search participant.  This class must implement the &lt;samp&gt;org.eclipse.help.search.ILuceneSearchParticipant&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;participant&lt;/samp&gt; element may be provided instead.
+                  The implementation class for the help search participant.  This class must implement the &lt;samp&gt;org.eclipse.help.search.SearchParticipant&lt;/samp&gt; interface.  This attribute may be omitted, and the nested &lt;samp&gt;participant&lt;/samp&gt; element may be provided instead.
                </documentation>
                <appInfo>
-                  <meta.attribute kind="java" basedOn="org.eclipse.help.IHelpSerchParticipant"/>
+                  <meta.attribute kind="java" basedOn="org.eclipse.help.search.SearchParticipant:"/>
                </appInfo>
             </annotation>
          </attribute>
@@ -121,40 +115,6 @@ Search participants are associated with the plug-in the extension appears in. In
             <annotation>
                <documentation>
                   specifies whether or not this search participant should be used when running the help system outside an eclipse workbench, i.e. it is running in either standalone or infocenter mode. The default value is &lt;code&gt;false&lt;/code&gt;.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="participant">
-      <complexType>
-         <sequence>
-            <element ref="parameter" minOccurs="0" maxOccurs="unbounded"/>
-         </sequence>
-         <attribute name="class" type="string">
-            <annotation>
-               <documentation>
-                  the implementation class for the help search participant.  This class must implement the &lt;samp&gt;org.eclipse.help.search.ILuceneSearchParticipant&lt;/samp&gt; interface.
-               </documentation>
-            </annotation>
-         </attribute>
-      </complexType>
-   </element>
-
-   <element name="parameter">
-      <complexType>
-         <attribute name="name" type="string" use="required">
-            <annotation>
-               <documentation>
-                  name of a parameter passed to the implementation class
-               </documentation>
-            </annotation>
-         </attribute>
-         <attribute name="value" type="string" use="required">
-            <annotation>
-               <documentation>
-                  value of a parameter passed to the implementation class
                </documentation>
             </annotation>
          </attribute>
@@ -181,7 +141,7 @@ Search participants are associated with the plug-in the extension appears in. In
          <meta.section type="since"/>
       </appInfo>
       <documentation>
-         3.2
+         3.5
       </documentation>
    </annotation>
 
@@ -214,25 +174,17 @@ Search participants are associated with the plug-in the extension appears in. In
          <meta.section type="apiInfo"/>
       </appInfo>
       <documentation>
-         The supplied search participant class must extend the &lt;samp&gt;org.eclipse.help.search.LuceneSearchParticipant&lt;/samp&gt; abstract class.
+         The supplied search participant class must extend the &lt;samp&gt;org.eclipse.help.search.SearchParticipant&lt;/samp&gt; abstract class.
       </documentation>
    </annotation>
 
-   <annotation>
-      <appInfo>
-         <meta.section type="implementation"/>
-      </appInfo>
-      <documentation>
-         Help system provides search participant for XHTML files (xhtml extension). Plug-ins that have dynamic XHTML documents as part of TOC must bind to this participant using &lt;code&gt;binding&lt;/code&gt; element and &lt;code&gt;org.eclipse.help.base.xhtml&lt;/code&gt; as the target participant id.
-      </documentation>
-   </annotation>
 
    <annotation>
       <appInfo>
          <meta.section type="copyright"/>
       </appInfo>
       <documentation>
-         Copyright (c) 2005, 2006 IBM Corporation and others.&lt;br&gt;
+         Copyright (c) 2010 IBM Corporation and others.&lt;br&gt;
 All rights reserved. This program and the accompanying materials are made 
 available under the terms of the Eclipse Public License v1.0 which accompanies 
 this distribution, and is available at &lt;a href=&quot;http://www.eclipse.org/legal/epl-v10.html&quot;&gt;http://www.eclipse.org/legal/epl-v10.html&lt;/a&gt;

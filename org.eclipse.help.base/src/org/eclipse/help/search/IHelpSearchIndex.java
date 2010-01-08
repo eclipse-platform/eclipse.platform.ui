@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,26 +12,23 @@ package org.eclipse.help.search;
 
 import java.net.URL;
 
-import org.apache.lucene.document.Document;
+
 import org.eclipse.core.runtime.IStatus;
 
 /**
  * Represents a Lucene index for one locale. The interface is used
  * to allow participants to delegate indexing of documents outside
  * of the TOC using the same algorithms as those in TOC.
- * @deprecated 
- * This interface is deprecated because it exposes Lucene classes, 
- * which are not binary compatible between major release. This
- * interface was used by clients which implemented the extension
- * point org.eclipse.help.bace.luceneSearchParticipants. The 
- * extension point org.eclipse.help.base.searchParticipant 
- * and the interface IHelpSearchIndex should be used instead.
+ * 
+ * @noextend This interface is not intended to be extended by clients.
+ * @noimplement This interface is not intended to be implemented by clients.
+ * @since 3.5
  */
 
-public interface ISearchIndex {
+public interface IHelpSearchIndex {
 
 	/**
-	 * Adds a document to the search index by parsing it using one of the file-based search
+	 * Adds a document to the search index database by parsing it using one of the file-based search
 	 * participants, or the default HTML search participant. Use this method when encountering
 	 * documents outside of TOC that are nevertheless of the known format and help system knows how
 	 * to handle.
@@ -45,10 +42,10 @@ public interface ISearchIndex {
 	 * @param id
 	 *            the unique id of this document as defined in the participant
 	 * @param doc
-	 *            the Lucene document
+	 *            the document to be added
 	 * @return the status of the operation
 	 */
-	IStatus addDocument(String pluginId, String name, URL url, String id, Document doc);
+	IStatus addSearchableDocument(String pluginId, String name, URL url, String id, ISearchDocument doc);
 	
 	/**
 	 * A search index is created for each locale.

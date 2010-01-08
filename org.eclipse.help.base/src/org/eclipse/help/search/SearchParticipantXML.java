@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2010 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.help.search;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.Reader;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.Stack;
@@ -20,8 +19,6 @@ import java.util.Stack;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -36,17 +33,12 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * An abstract search participants for adding XML documents to the Lucene search index. Subclass it
+ * An abstract search participants for adding XML documents to the search index. Subclass it
  * and implement or override protected methods to handle parsing of the document.
  * 
- * @since 3.2
- *  * @deprecated 
- * This class is deprecated because it exposes Lucene classes, 
- * which are not binary compatible between major release. The 
- * extension point org.eclipse.help.base.searchParticipant 
- * and the class SearchParticipantXML should be used instead.
+ * @since 3.5
  */
-public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
+public abstract class SearchParticipantXML extends SearchParticipant {
 	private Stack stack = new Stack();
 	private SAXParser parser;
 	private XMLProcessor processor;
@@ -125,8 +117,8 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			buffer.append(text);
 		}
 
-		public Reader newContentReader() {
-			return new StringReader(buffer.toString());
+		public String getContent() {
+			return buffer.toString();
 		}
 
 		public String getSummary() {
@@ -176,7 +168,7 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 		 * @see org.xml.sax.helpers.DefaultHandler#startDocument()
 		 */
 		public void startDocument() throws SAXException {
-			XMLSearchParticipant.this.handleStartDocument(data);
+			SearchParticipantXML.this.handleStartDocument(data);
 		}
 
 		/*
@@ -185,7 +177,7 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 		 * @see org.xml.sax.helpers.DefaultHandler#endDocument()
 		 */
 		public void endDocument() throws SAXException {
-			XMLSearchParticipant.this.handleEndDocument(data);
+			SearchParticipantXML.this.handleEndDocument(data);
 		}
 
 		/*
@@ -288,11 +280,9 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 	 */
 	protected abstract void handleText(String text, IParsedXMLContent data);
 
-	/*
-	 * @see LuceneSearchParticipant#addDocument(String, String, URL, String, Document)
-	 */
-	public IStatus addDocument(ISearchIndex index, String pluginId, String name, URL url, String id,
-			Document doc) {
+	
+	public IStatus addDocument(IHelpSearchIndex index, String pluginId,
+			String name, URL url, String id, ISearchDocument doc) {
 		InputStream stream = null;
 		try {
 			if (parser == null) {
@@ -305,16 +295,15 @@ public abstract class XMLSearchParticipant extends LuceneSearchParticipant {
 			stream = url.openStream();
 			stream = preprocess(stream, name, index.getLocale());
 			parser.parse(stream, handler);
-			doc.add(new Field("contents", parsed.newContentReader())); //$NON-NLS-1$
-			doc.add(new Field("exact_contents", parsed.newContentReader())); //$NON-NLS-1$
+			doc.addContents(parsed.getContent());
 			String title = parsed.getTitle();
 			if (title != null)
 				addTitle(title, doc);
 			String summary = parsed.getSummary();
 			if (summary != null)
-				doc.add(new Field("summary", summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+				doc.setSummary(summary);
 			if (hasFilters) {
-				doc.add(new Field("filters", "true", Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$ //$NON-NLS-2$
+				doc.setHasFilters(true);
 			}
 			return Status.OK_STATUS;
 		} catch (Exception e) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2007 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,7 +15,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.search.XMLSearchParticipant;
+import org.eclipse.help.search.SearchParticipantXML;
 import org.eclipse.jface.action.Action;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.internal.cheatsheets.composite.parser.ICompositeCheatsheetTags;
@@ -23,7 +23,7 @@ import org.eclipse.ui.internal.cheatsheets.data.IParserTags;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.xml.sax.Attributes;
 
-public class CheatsheetSearchParticipant extends XMLSearchParticipant {
+public class CheatsheetSearchParticipant extends SearchParticipantXML {
 	private static final String INTRO_DESC = "cheatsheet/intro/description"; //$NON-NLS-1$
 
 	private static final String ITEM_DESC = "cheatsheet/item/description"; //$NON-NLS-1$

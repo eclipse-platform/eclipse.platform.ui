@@ -621,5 +621,22 @@
             participant="org.eclipse.ua.tests.help.search.MockLuceneXMLParticipant">
       </searchParticipant>
    </extension>
+   <extension
+         point="org.eclipse.help.base.searchParticipant">
+      <searchParticipant
+            headless="false"
+            icon="icons/sample4.gif"
+            id="org.eclipse.ua.tests.searchParticipant"
+            name="Mock Search Participant"
+            participant="org.eclipse.ua.tests.help.search.MockSearchParticipant">
+      </searchParticipant>
+      <searchParticipant
+            headless="false"
+            icon="icons/sample4.gif"
+            id="org.eclipse.ua.tests.searchParticipantXml"
+            name="Mock Search Participant for XML"
+            participant="org.eclipse.ua.tests.help.search.MockSearchParticipantXML">
+      </searchParticipant>
+   </extension>
 
 </plugin>

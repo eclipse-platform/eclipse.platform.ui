@@ -39,7 +39,7 @@ import org.eclipse.help.internal.base.util.HelpProperties;
 import org.eclipse.help.internal.protocols.HelpURLConnection;
 import org.eclipse.help.internal.toc.Toc;
 import org.eclipse.help.internal.toc.TocFileProvider;
-import org.eclipse.help.search.LuceneSearchParticipant;
+import org.eclipse.help.search.SearchParticipant;
 
 /**
  * Indexing Operation represents a long operation, which performs indexing of
@@ -372,7 +372,7 @@ class IndexingOperation {
 			}
 		}
 		//Add documents from global search participants
-		LuceneSearchParticipant[] participants = BaseHelpSystem.getLocalSearchManager().getGlobalParticipants();
+		SearchParticipant[] participants = BaseHelpSystem.getLocalSearchManager().getGlobalParticipants();
 		for (int j=0; j<participants.length; j++) {
 			String participantId;
 			try {

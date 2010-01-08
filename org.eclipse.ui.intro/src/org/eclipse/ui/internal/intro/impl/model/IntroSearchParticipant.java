@@ -10,20 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl.model;
 
-import java.io.StringReader;
 import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.help.search.ISearchIndex;
-import org.eclipse.help.search.LuceneSearchParticipant;
+import org.eclipse.help.search.IHelpSearchIndex;
+import org.eclipse.help.search.ISearchDocument;
+import org.eclipse.help.search.SearchParticipant;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
@@ -34,12 +32,12 @@ import org.eclipse.ui.intro.config.IntroURLFactory;
 import org.osgi.framework.Bundle;
 
 /**
- * An implementation of the Lucene search participant that adds Welcome content into the local help
+ * An implementation of SearchParticipant that adds Welcome content into the local help
  * index so that it can be searched.
  * 
  */
 
-public class IntroSearchParticipant extends LuceneSearchParticipant {
+public class IntroSearchParticipant extends SearchParticipant {
 
 	private IntroModelRoot model;
 	
@@ -148,8 +146,9 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 	 *      java.lang.String, java.net.URL, java.lang.String, java.lang.String,
 	 *      org.apache.lucene.document.Document)
 	 */
-	public IStatus addDocument(ISearchIndex index, String pluginId, String name, URL url, String id,
-			Document doc) {
+
+	public IStatus addDocument(IHelpSearchIndex index, String pluginId, String name, URL url, String id,
+			ISearchDocument doc) {
 		if (model == null)
 			return Status.CANCEL_STATUS;
 		IntroPage page = getPage(id);
@@ -167,8 +166,8 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 		return null;
 	}
 
-	private IStatus addPage(ISearchIndex index, String pluginId, String name, URL url, IntroPage page,
-			Document doc) {
+	private IStatus addPage(IHelpSearchIndex index, String pluginId, String name, URL url, IntroPage page,
+			ISearchDocument doc) {
 		AbstractIntroElement[] children = page.getChildren();
 		if (children.length > 0) {
 			StringBuffer buf = new StringBuffer();
@@ -179,17 +178,16 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 			     addTitle(titleSummary.title, doc);
             }
             if (titleSummary.summary != null) {
-            	doc.add(new Field("summary", titleSummary.summary, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$				
+            	doc.setSummary(titleSummary.summary); 
             }
-			doc.add(new Field("contents", new StringReader(contents))); //$NON-NLS-1$
-			doc.add(new Field("exact_contents", new StringReader(contents))); //$NON-NLS-1$
+            doc.addContents(contents);
 			return Status.OK_STATUS;
 		}
 		// delegate to the help system
-		return index.addDocument(pluginId, name, url, page.getId(), doc);
+		return index.addSearchableDocument(pluginId, name, url, page.getId(), doc);
 	}
 
-	private void addChildren(AbstractIntroElement[] children, StringBuffer buf, Document doc, TitleAndSummary titleSummary) {
+	private void addChildren(AbstractIntroElement[] children, StringBuffer buf, ISearchDocument doc, TitleAndSummary titleSummary) {
 		for (int i = 0; i < children.length; i++) {
 			AbstractIntroElement child = children[i];
 			if (child instanceof IntroLink) {
@@ -255,4 +253,5 @@ public class IntroSearchParticipant extends LuceneSearchParticipant {
 		IIntroURL url = IntroURLFactory.createIntroURL("http://org.eclipse.ui.intro/showPage?id=" + id); //$NON-NLS-1$
 		return url.execute();
 	}
+
 }

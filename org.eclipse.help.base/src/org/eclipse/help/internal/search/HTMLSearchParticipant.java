@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,19 +14,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.xhtml.XHTMLContentDescriber;
-import org.eclipse.help.search.ISearchIndex;
-import org.eclipse.help.search.LuceneSearchParticipant;
+import org.eclipse.help.search.IHelpSearchIndex;
+import org.eclipse.help.search.ISearchDocument;
+import org.eclipse.help.search.SearchParticipant;
 
 
-public class HTMLSearchParticipant extends LuceneSearchParticipant {
+public class HTMLSearchParticipant extends SearchParticipant {
 
 	private static final String HELP_BASE_XHTML = "org.eclipse.help.base.xhtml"; //$NON-NLS-1$
 	private HTMLDocParser parser;
@@ -39,16 +38,17 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 		this.indexPath = indexPath;
 	}
 
-	public IStatus addDocument(ISearchIndex index, String pluginId, String name, URL url, String id,
-			Document doc) {
+
+	public IStatus addDocument(IHelpSearchIndex index, String pluginId, String name, URL url, String id,
+			ISearchDocument doc) {
 		// if it's XHTML, forward it on to the proper search participant
 		if (isXHTML(pluginId, url)) {
 			LocalSearchManager manager = BaseHelpSystem.getLocalSearchManager();
-			LuceneSearchParticipant participant  = manager.getParticipant(HELP_BASE_XHTML); 
+			SearchParticipant participant  = manager.getParticipant(HELP_BASE_XHTML); 
 			if (participant == null) {
 				participant = getXhtmlParticipant();
 			}
-			return participant.addDocument(index, pluginId, name, url, id, doc);
+			return participant.addDocument((IHelpSearchIndex) index, pluginId, name, url, id, doc);
 		}
 		// otherwise, treat it as HTML
 		else {		
@@ -62,13 +62,10 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 										+ name + " cannot be opened.", //$NON-NLS-1$
 								null);
 					}
-					doc.add(new Field("contents", parser.getContentReader())); //$NON-NLS-1$
-					doc.add(new Field("exact_contents", parser.getContentReader())); //$NON-NLS-1$
+					doc.addContents(parser.getContentReader(), parser.getContentReader()); 
 					String title = parser.getTitle();
-					doc.add(new Field("title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
-					doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
-					doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
-					doc.add(new Field("summary", parser.getSummary(title), Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+					doc.setTitle(title);
+					doc.setSummary(parser.getSummary(title)); 
 					if (parser.getException() != null) {
 						return new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, IStatus.ERROR,
 								"Parse error occurred while adding document " + name //$NON-NLS-1$
@@ -88,7 +85,7 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 		}
 	}
 	
-	private XHTMLSearchParticipant getXhtmlParticipant() {
+	private SearchParticipant getXhtmlParticipant() {
 		if (xhtmlParticipant == null) {
 			xhtmlParticipant = new XHTMLSearchParticipant();
 		}
@@ -124,4 +121,5 @@ public class HTMLSearchParticipant extends LuceneSearchParticipant {
 
 		return false;
 	}
+
 }

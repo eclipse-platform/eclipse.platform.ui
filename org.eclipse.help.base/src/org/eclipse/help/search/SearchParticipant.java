@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2010 IBM Corporation and others.
+ * Copyright (c) 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
@@ -25,8 +23,8 @@ import org.eclipse.help.internal.util.ResourceLocator;
 import org.osgi.framework.Bundle;
 
 /**
- * Participant in the help search. A plug-in can contribute instance of LuceneSearchParticipant to
- * <code>"org.eclipse.help.search.luceneSearchParticipant"</code> extension point. Search
+ * Participant in the help search. A plug-in can contribute instance of SearchParticipant to
+ * <code>"org.eclipse.help.search.searchParticipant"</code> extension point. Search
  * participant is responsible for adding the content of documents it is responsible for into the
  * help system's search index. Once in the index, the document becomes searchable and can produce
  * search hits. There are two ways of using the participant:
@@ -50,14 +48,9 @@ import org.osgi.framework.Bundle;
  * able to open them in any meaningful way. </li>
  * </ol>
  * 
- * @since 3.2
- * @deprecated 
- * This class is deprecated because it exposes Lucene classes, 
- * which are not binary compatible between major release. The 
- * extension point org.eclipse.help.base.searchParticipant 
- * and the class SearchParticipant should be used instead.
+ * @since 3.5
  */
-public abstract class LuceneSearchParticipant {
+public abstract class SearchParticipant {
 
 	private static final HashSet EMPTY_SET = new HashSet();
 
@@ -80,7 +73,7 @@ public abstract class LuceneSearchParticipant {
 	 * 
 	 * @return the unique id
 	 */
-	public String getId() {
+	public final String getId() {
 		return id;
 	}
 
@@ -100,12 +93,12 @@ public abstract class LuceneSearchParticipant {
 	 * @param id
 	 *            the unique id associated with this document
 	 * @param doc
-	 *            the Lucene document to add searchable content to
+	 *            the document to add searchable content to
 	 * @return the status of the indexing operation. A successful operation should return
 	 *         <code>Status.OK</code>.
 	 */
-	public abstract IStatus addDocument(ISearchIndex index, String pluginId, String name, URL url, String id,
-			Document doc);
+	public abstract IStatus addDocument(IHelpSearchIndex index, String pluginId, String name, URL url, String id,
+			ISearchDocument doc);
 
 	/**
 	 * Returns all the documents that this participant knows about. This method is only used for
@@ -156,18 +149,16 @@ public abstract class LuceneSearchParticipant {
 	}
 
 	/**
-	 * A utility method that adds a document title to the Lucene document.
+	 * A utility method that adds a title to the document.
 	 * 
 	 * @param title
 	 *            the title string
 	 * @param doc
-	 *            the Lucene document
+	 *            the document
 	 */
 
-	protected void addTitle(String title, Document doc) {
-		doc.add(new Field("title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
-		doc.add(new Field("exact_title", title, Field.Store.NO, Field.Index.TOKENIZED)); //$NON-NLS-1$
-		doc.add(new Field("raw_title", title, Field.Store.YES, Field.Index.NO)); //$NON-NLS-1$
+	protected void addTitle(String title, ISearchDocument doc) {
+		doc.setTitle(title);
 	}
 
 	/**

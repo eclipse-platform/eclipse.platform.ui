@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,13 +16,13 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
-import org.eclipse.help.search.XMLSearchParticipant;
+import org.eclipse.help.search.SearchParticipantXML;
 import org.xml.sax.Attributes;
 
 /**
  * The search participant responsible for indexing XHTML documents.
  */
-public class XHTMLSearchParticipant extends XMLSearchParticipant {
+public class XHTMLSearchParticipant extends SearchParticipantXML {
 	
 	private static final String KEYWORDS = "keywords"; //$NON-NLS-1$
 	private static final String META_TAG = "meta"; //$NON-NLS-1$
