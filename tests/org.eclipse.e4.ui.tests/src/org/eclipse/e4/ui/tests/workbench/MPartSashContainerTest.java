@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
@@ -73,7 +74,13 @@ public class MPartSashContainerTest extends TestCase {
 		partSashContainer.getChildren().add(partA);
 		partSashContainer.getChildren().add(partB);
 
-		wb = new E4Workbench(window, appContext);
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Object widget = partSashContainer.getWidget();

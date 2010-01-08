@@ -15,6 +15,7 @@ import junit.framework.TestCase;
 
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
@@ -72,7 +73,14 @@ public class MPartTest extends TestCase {
 
 	public void testSetName() {
 		final MWindow window = createWindowWithOneView("Part Name");
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -105,7 +113,14 @@ public class MPartTest extends TestCase {
 
 	public void testCTabItem_GetImage() {
 		final MWindow window = createWindowWithOneView("Part Name");
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -129,7 +144,14 @@ public class MPartTest extends TestCase {
 
 	private void testDeclaredTooltip(String partToolTip, String expectedToolTip) {
 		final MWindow window = createWindowWithOneView("Part Name", partToolTip);
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -165,7 +187,14 @@ public class MPartTest extends TestCase {
 
 	private void testMPart_setTooltip(String partToolTip, String expectedToolTip) {
 		final MWindow window = createWindowWithOneView("Part Name");
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -209,7 +238,14 @@ public class MPartTest extends TestCase {
 
 	public void testMPart_getContext() {
 		final MWindow window = createWindowWithOneView("Part Name");
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		MPartSashContainer container = (MPartSashContainer) window

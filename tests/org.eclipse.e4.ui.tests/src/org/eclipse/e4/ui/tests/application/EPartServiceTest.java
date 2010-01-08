@@ -21,6 +21,7 @@ import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
@@ -634,6 +635,23 @@ public class EPartServiceTest extends TestCase {
 				IServiceConstants.ACTIVE_PART);
 		assertNotNull(shouldBeCorrect);
 		assertEquals(partBackB, partServiceB.getActivePart());
+	}
+
+	public void testShowPart() {
+		MApplication application = createApplication(1, new String[1][0]);
+		MWindow window = application.getChildren().get(0);
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart part = partService.showPart("partId");
+		assertNotNull(part);
+		assertEquals("partId", part.getId());
 	}
 
 	public void testSwitchWindows() {

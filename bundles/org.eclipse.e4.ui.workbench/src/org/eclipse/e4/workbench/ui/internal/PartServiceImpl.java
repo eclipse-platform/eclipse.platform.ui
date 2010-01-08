@@ -17,15 +17,21 @@ import javax.inject.Named;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
@@ -46,6 +52,9 @@ public class PartServiceImpl implements EPartService {
 		broker.subscribe(UIEvents.buildTopic(UIEvents.Context.TOPIC, UIEvents.Context.CONTEXT),
 				windowHandler);
 	}
+
+	@Inject
+	private MApplication application;
 
 	/**
 	 * This is the specific implementation. TODO: generalize it
@@ -227,5 +236,45 @@ public class PartServiceImpl implements EPartService {
 			internalFixContext(null, oldActiveChild);
 		}
 
+	}
+
+	public MPart showPart(String id) {
+		MPartDescriptor descriptorMatch = null;
+		for (MPartDescriptor descriptor : application.getDescriptors()) {
+			if (descriptor.getId().equals(id)) {
+				descriptorMatch = descriptor;
+				break;
+			}
+		}
+
+		if (descriptorMatch == null) {
+			return null;
+		}
+		// 2) add a child under the parent
+		// TBD only make a new one if multiple copies are allowed
+
+		// TBD here we just copy descriptor for convenience; better would be to have an utility
+		// to make a part based on the descriptor.
+		// Create the part based on the descriptor
+		// MPart part = MApplicationFactory.eINSTANCE.createPart();
+		// part.setURI(descriptor.getURI());
+		// part.setLabel(descriptor.getLabel());
+		MPart part = (MPart) EcoreUtil.copy((EObject) descriptorMatch);
+
+		// Wrap it in a stack - TBD - always?
+		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+		stack.getChildren().add(part);
+
+		rootContainer.getChildren().add(stack);
+		// 3) make it visible / active / re-layout
+		// XXX part service somehow tied to a container window. After that fixed code will be:
+		// partService.activate((MPart) copy);
+		// but for now:
+		// IEclipseContext parentContext = ((MContext)parent).getContext();
+		// EPartService parentPartService = (EPartService)
+		// parentContext.get(EPartService.class.getName());
+		// parentPartService.activate(part);
+		activate(part);
+		return part;
 	}
 }

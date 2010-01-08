@@ -16,6 +16,7 @@ import junit.framework.TestCase;
 import org.eclipse.e4.core.services.IDisposable;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -83,7 +84,14 @@ public class MWindowTest extends TestCase {
 	public void testCreateWindow() {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setLabel("MyWindow");
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -96,7 +104,14 @@ public class MWindowTest extends TestCase {
 	public void testWindowVisibility() {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setLabel("MyWindow");
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -117,7 +132,14 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setLabel("MyWindow");
 		window.setVisible(false);
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -130,7 +152,14 @@ public class MWindowTest extends TestCase {
 
 	public void testCreateView() {
 		final MWindow window = createWindowWithOneView();
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -160,7 +189,14 @@ public class MWindowTest extends TestCase {
 
 	public void testContextChildren() {
 		final MWindow window = createWindowWithOneView();
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -206,7 +242,14 @@ public class MWindowTest extends TestCase {
 
 	public void testCreateMenu() {
 		final MWindow window = createWindowWithOneViewAndMenu();
-		wb = new E4Workbench(window, appContext);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Widget topWidget = (Widget) window.getWidget();
@@ -241,7 +284,13 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setLabel("windowName");
 
-		wb = new E4Workbench(window, appContext);
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Object widget = window.getWidget();
@@ -262,7 +311,13 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setX(200);
 
-		wb = new E4Workbench(window, appContext);
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Object widget = window.getWidget();
@@ -282,7 +337,13 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setY(200);
 
-		wb = new E4Workbench(window, appContext);
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Object widget = window.getWidget();
@@ -302,7 +363,13 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setWidth(200);
 
-		wb = new E4Workbench(window, appContext);
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Object widget = window.getWidget();
@@ -322,7 +389,13 @@ public class MWindowTest extends TestCase {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(200);
 
-		wb = new E4Workbench(window, appContext);
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
 		wb.createAndRunUI(window);
 
 		Object widget = window.getWidget();

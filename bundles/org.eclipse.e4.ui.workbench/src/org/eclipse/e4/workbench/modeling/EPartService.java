@@ -30,8 +30,6 @@ public interface EPartService {
 
 	public boolean isPartVisible(MPart part);
 
-	// public MPart showPart(String id);
-	//
-	// public MPart showPart(MPart part);
+	public MPart showPart(String id);
 
 }
