@@ -124,6 +124,8 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 
 	public String getColumnText(Object anElement, int aColumn) {
 		ILabelProvider[] labelProviders = contentService.findRelevantLabelProviders(anElement);
+		if (labelProviders.length == 0)
+			return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement));	
 		String text = null;
 		for (int i = 0; i < labelProviders.length; i++) {
 			if (labelProviders[i] instanceof ITableLabelProvider && aColumn != -1)
@@ -133,7 +135,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 			if (text != null && text.length() > 0)
 				return text;
 		}
-		return NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement));	
+		return text;
 	}
 	
 	/* (non-Javadoc)
@@ -141,13 +143,14 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 */
 	public StyledString getStyledText(Object anElement) {
 		Collection extensions = contentService.findPossibleLabelExtensions(anElement);
+		if (extensions.size() == 0)
+			return new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement)));	
 
-		StyledString text = null; 
+		StyledString text = null;
 		for (Iterator itr = extensions.iterator(); itr.hasNext() && text == null; ) { 
 			text = findStyledText((NavigatorContentExtension) itr.next(), anElement);
 		}
-		// decorate the element
-		return (text == null) ? new StyledString(NLS.bind(CommonNavigatorMessages.NavigatorContentServiceLabelProvider_Error_no_label_provider_for_0_, makeSmallString(anElement))) : text;	
+		return text != null ? text : new StyledString();
 	}
 	
 	/**
