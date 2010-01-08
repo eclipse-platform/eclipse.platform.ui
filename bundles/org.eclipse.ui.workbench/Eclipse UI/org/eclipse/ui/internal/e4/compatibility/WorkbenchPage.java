@@ -447,7 +447,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 			part = partService.showPart(viewId);
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
-			compatibilityView.create();
 
 			viewReferences.add(new ViewReference(this, part));
 

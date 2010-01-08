@@ -48,6 +48,7 @@ public abstract class CompatibilityPart {
 		wrapped.dispose();
 	}
 
+	@Inject
 	public final void create() {
 		try {
 			wrapped = createPart();
