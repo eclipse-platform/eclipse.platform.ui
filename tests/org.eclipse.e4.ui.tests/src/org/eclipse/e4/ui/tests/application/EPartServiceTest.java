@@ -652,6 +652,27 @@ public class EPartServiceTest extends TestCase {
 		MPart part = partService.showPart("partId");
 		assertNotNull(part);
 		assertEquals("partId", part.getId());
+		assertTrue("Shown part should be visible", part.isVisible());
+	}
+
+	public void testShowPart_PartAlreadyShown() {
+		MApplication application = createApplication(1, new String[1][0]);
+		MWindow window = application.getChildren().get(0);
+		MPartDescriptor partDescriptor = MApplicationFactory.eINSTANCE
+				.createPartDescriptor();
+		partDescriptor.setId("partId");
+		application.getDescriptors().add(partDescriptor);
+
+		engine.createGui(window);
+
+		EPartService partService = (EPartService) window.getContext().get(
+				EPartService.class.getName());
+		MPart part = partService.showPart("partId");
+		assertNotNull(part);
+		assertEquals("partId", part.getId());
+
+		MPart part2 = partService.showPart("partId");
+		assertEquals("Should not have instantiated a new MPart", part, part2);
 	}
 
 	public void testSwitchWindows() {

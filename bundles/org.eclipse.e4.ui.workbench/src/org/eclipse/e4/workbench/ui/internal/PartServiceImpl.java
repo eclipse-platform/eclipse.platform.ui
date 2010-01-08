@@ -239,6 +239,18 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart showPart(String id) {
+		MPart part = null;
+		for (MPart localPart : getParts()) {
+			if (localPart.getId().equals(id)) {
+				part = localPart;
+			}
+		}
+
+		if (part != null) {
+			activate(part);
+			return part;
+		}
+
 		MPartDescriptor descriptorMatch = null;
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
 			if (descriptor.getId().equals(id)) {
@@ -259,7 +271,7 @@ public class PartServiceImpl implements EPartService {
 		// MPart part = MApplicationFactory.eINSTANCE.createPart();
 		// part.setURI(descriptor.getURI());
 		// part.setLabel(descriptor.getLabel());
-		MPart part = (MPart) EcoreUtil.copy((EObject) descriptorMatch);
+		part = (MPart) EcoreUtil.copy((EObject) descriptorMatch);
 
 		// Wrap it in a stack - TBD - always?
 		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
