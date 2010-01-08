@@ -11,11 +11,18 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
@@ -49,6 +56,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Inject
 	private EPartService partService;
 
+	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
+
 	/**
 	 * @param workbenchWindow
 	 * @param input
@@ -78,8 +87,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#bringToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void bringToTop(IWorkbenchPart part) {
-		// TODO Auto-generated method stub
-
+		MPart mpart = partService.findPart(part.getSite().getId());
+		if (mpart != null) {
+			partService.bringToTop(mpart);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -118,7 +129,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#findView(java.lang.String)
 	 */
 	public IViewPart findView(String viewId) {
-		// TODO Auto-generated method stub
+		MPart part = partService.findPart(viewId);
+		if (part != null) {
+			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+			return compatibilityView.getView();
+		}
 		return null;
 	}
 
@@ -126,15 +141,25 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String)
 	 */
 	public IViewReference findViewReference(String viewId) {
-		// TODO Auto-generated method stub
-		return null;
+		return findViewReference(viewId, null);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#findViewReference(java.lang.String, java.lang.String)
 	 */
 	public IViewReference findViewReference(String viewId, String secondaryId) {
-		// TODO Auto-generated method stub
+		for (IViewReference reference : viewReferences) {
+			if (viewId.equals(reference.getId())) {
+				String refSecondaryId = reference.getSecondaryId();
+				if (refSecondaryId == null) {
+					if (secondaryId == null) {
+						return reference;
+					}
+				} else if (refSecondaryId.equals(secondaryId)) {
+					return reference;
+				}
+			}
+		}
 		return null;
 	}
 
@@ -213,8 +238,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getViewReferences()
 	 */
 	public IViewReference[] getViewReferences() {
-		// TODO Auto-generated method stub
-		return null;
+		return viewReferences.toArray(new IViewReference[viewReferences.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -252,9 +276,30 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewPart)
 	 */
 	public void hideView(IViewPart view) {
-		// TODO Auto-generated method stub
+		if (view == null) {
+			return;
+		}
 
+		MPart part = partService.findPart(view.getSite().getId());
+		if (part != null) {
+			MElementContainer<MUIElement> parent = part.getParent();
+			parent.getChildren().remove(part);
+
+			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+			compatibilityView.delegateDispose();
+			
+			for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
+				IViewReference reference = it.next();
+				if (compatibilityView.getPart() == reference.getPart(false)) {
+					it.remove();
+					return;
+				}
+			}
+		}
 	}
+
+	@Inject
+	IPresentationEngine engine;
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
@@ -268,8 +313,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#isPartVisible(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public boolean isPartVisible(IWorkbenchPart part) {
-		// TODO Auto-generated method stub
-		return false;
+		MPart mpart = partService.findPart(part.getSite().getId());
+		return mpart == null ? false : partService.isPartVisible(mpart);
 	}
 
 	/* (non-Javadoc)
@@ -403,6 +448,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 			compatibilityView.create();
+
+			viewReferences.add(new ViewReference(this, part));
+
 			return compatibilityView.getView();
 		}
 
@@ -447,7 +495,24 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getViewStack(org.eclipse.ui.IViewPart)
 	 */
 	public IViewPart[] getViewStack(IViewPart part) {
-		// TODO Auto-generated method stub
+		MPart mpart = partService.findPart(part.getSite().getId());
+		if (mpart != null) {
+			MElementContainer<?> parent = mpart.getParent();
+			if (parent instanceof MPartStack) {
+				List<IViewPart> stack = new ArrayList<IViewPart>();
+
+				for (Object child : parent.getChildren()) {
+					MPart siblingPart = (MPart) child;
+					Object siblingObject = siblingPart.getObject();
+					if (siblingObject instanceof CompatibilityView) {
+						IViewPart view = ((CompatibilityView) siblingObject).getView();
+						stack.add(view);
+					}
+				}
+
+				return stack.toArray(new IViewPart[stack.size()]);
+			}
+		}
 		return null;
 	}
 
@@ -632,7 +697,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#getActivePart()
 	 */
 	public IWorkbenchPart getActivePart() {
-		// TODO Auto-generated method stub
+		MPart part = partService.getActivePart();
+		if (part != null) {
+			Object object = part.getObject();
+			if (object instanceof CompatibilityPart) {
+				return ((CompatibilityPart) object).getPart();
+			}
+		}
 		return null;
 	}
 

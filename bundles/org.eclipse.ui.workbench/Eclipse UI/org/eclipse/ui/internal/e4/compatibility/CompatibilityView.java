@@ -11,108 +11,47 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import javax.inject.Inject;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.ui.model.application.MPart;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.IStatusLineManager;
-import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.StatusLineManager;
-import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.views.IViewDescriptor;
 
-public class CompatibilityView {
+public class CompatibilityView extends CompatibilityPart {
 
-	private IViewPart wrapped;
-
-	@Inject
-	private MPart part;
-
-	@Inject
-	private Composite composite;
-
-	@Inject
-	private IWorkbench workbench;
-
-	public void create() {
-		IViewDescriptor descriptor = workbench.getViewRegistry().find(part.getId());
+	protected IWorkbenchPart createPart() {
 		try {
-			wrapped = descriptor.createView();
-			wrapped.init(createSite(), null);
-			wrapped.createPartControl(composite);
-			delegateSetFocus();
+			IViewDescriptor descriptor = workbench.getViewRegistry().find(part.getId());
+			return descriptor.createView();
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			throw new RuntimeException(e);
 		}
 	}
 
-	public void delegateSetFocus() {
-		wrapped.setFocus();
-	}
-
-	private IActionBars actionBars() {
-		return new IActionBars() {
-
-			public void updateActionBars() {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void setGlobalActionHandler(String actionId, IAction handler) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public IToolBarManager getToolBarManager() {
-				return new ToolBarManager();
-			}
-
-			public IStatusLineManager getStatusLineManager() {
-				return new StatusLineManager();
-			}
-
-			public IServiceLocator getServiceLocator() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			public IMenuManager getMenuManager() {
-				return new MenuManager();
-			}
-
-			public IAction getGlobalActionHandler(String actionId) {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			public void clearGlobalActionHandlers() {
-				// TODO Auto-generated method stub
-
-			}
-		};
+	protected void initialize(IWorkbenchPart part) throws PartInitException {
+		((IViewPart) part).init(createSite(), null);
 	}
 
 	private IViewSite createSite() {
 		return new IViewSite() {
+			
+			private IActionBars actionBars;
 
 			public IActionBars getActionBars() {
-				return actionBars();
+				if (actionBars == null) {
+					actionBars = new ActionBars();
+				}
+				return actionBars;
 			}
 
 			public String getSecondaryId() {
@@ -120,7 +59,7 @@ public class CompatibilityView {
 			}
 
 			public String getId() {
-				return null;
+				return part.getId();
 			}
 
 			public String getPluginId() {
@@ -146,7 +85,7 @@ public class CompatibilityView {
 			}
 
 			public IWorkbenchPart getPart() {
-				return CompatibilityView.this.wrapped;
+				return CompatibilityView.this.getPart();
 			}
 
 			public IWorkbenchPage getPage() {
@@ -183,7 +122,7 @@ public class CompatibilityView {
 	}
 
 	public IViewPart getView() {
-		return wrapped;
+		return (IViewPart) getPart();
 	}
 
 }
