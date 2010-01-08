@@ -29,6 +29,7 @@ Export-Package: org.eclipse.ui;ui.workbench=split;mandatory:="ui.workbench",
    org.eclipse.ui.intro,
    org.eclipse.ui.ide,
    org.eclipse.ui.presentations.r21",
+ org.eclipse.ui.internal.e4.compatibility;x-internal:=true,
  org.eclipse.ui.internal.menus;x-friends:="org.eclipse.ui",
  org.eclipse.ui.internal.misc;x-internal:=true,
  org.eclipse.ui.internal.registry,
@@ -69,5 +70,6 @@ Import-Package: com.ibm.icu.text,
  com.ibm.icu.util,
  javax.xml.parsers,
  org.w3c.dom,
- org.xml.sax
+ org.xml.sax,
+ javax.inject;version="1.0.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5

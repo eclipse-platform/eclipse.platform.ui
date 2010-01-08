@@ -14,6 +14,8 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Control;
@@ -25,7 +27,6 @@ import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 
@@ -35,23 +36,22 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
  */
 public class WorkbenchWindow implements IWorkbenchWindow {
 
-	private final MWindow model;
+	private IWorkbench inject__workbench;
+	private MWindow inject__model;
 	private WorkbenchPage page;
 	private UIExtensionTracker tracker;
 
-	// /**
-	// * @param perspectiveId
-	// * @param input
-	// */
-	// public WorkbenchWindow(String perspectiveId, IAdaptable input) {
-	//
-	// }
+	private IAdaptable input;
 
-	/**
-	 * @param activeWindow
-	 */
-	public WorkbenchWindow(MWindow model) {
-		this.model = model;
+	WorkbenchWindow(IAdaptable input) {
+		this.input = input;
+	}
+
+	void contextSet() {
+		page = new WorkbenchPage(this, input);
+		IEclipseContext windowContext = inject__model.getContext();
+		ContextInjectionFactory.inject(page, windowContext);
+		windowContext.set(IWorkbenchPage.class.getName(), page);
 	}
 
 	/* (non-Javadoc)
@@ -66,9 +66,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getActivePage()
 	 */
 	public IWorkbenchPage getActivePage() {
-		if (page == null) {
-			page = new WorkbenchPage(this, model, null);
-		}
 		return page;
 	}
 
@@ -76,15 +73,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPages()
 	 */
 	public IWorkbenchPage[] getPages() {
-		return new IWorkbenchPage[] { getActivePage() };
+		return new IWorkbenchPage[] { page };
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#getPartService()
 	 */
 	public IPartService getPartService() {
-		// TODO Auto-generated method stub
-		return null;
+		return page;
 	}
 
 	/* (non-Javadoc)
@@ -99,14 +95,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
-		return ((Control) model.getWidget()).getShell();
+		return ((Control) inject__model.getWidget()).getShell();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#getWorkbench()
 	 */
 	public IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
+		return inject__workbench;
 	}
 
 	/* (non-Javadoc)
@@ -122,16 +118,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
 			throws WorkbenchException {
-		// TODO Auto-generated method stub
-		return null;
+		return inject__workbench.openWorkbenchWindow(perspectiveId, input).getActivePage();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#openPage(org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IWorkbenchPage openPage(IAdaptable input) throws WorkbenchException {
-		// TODO Auto-generated method stub
-		return null;
+		return openPage(null, input);
 	}
 
 	/* (non-Javadoc)

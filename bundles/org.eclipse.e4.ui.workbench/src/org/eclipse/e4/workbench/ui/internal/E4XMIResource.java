@@ -49,7 +49,7 @@ public class E4XMIResource extends XMIResourceImpl {
 
 	private String getUniqueId() {
 		String id = createId();
-		while (getEObjectByID(id) != null) {
+		while (objectMap.get(id) != null) {
 			id = createId();
 		}
 		return id;

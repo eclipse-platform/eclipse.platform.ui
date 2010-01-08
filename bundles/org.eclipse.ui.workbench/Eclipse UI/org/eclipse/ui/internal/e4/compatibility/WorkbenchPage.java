@@ -11,9 +11,11 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
-import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
@@ -42,16 +44,17 @@ import org.eclipse.ui.PartInitException;
 public class WorkbenchPage implements IWorkbenchPage {
 
 	WorkbenchWindow workbenchWindow;
-	MWindow model;
 	private IAdaptable input;
+
+	@Inject
+	private EPartService partService;
 
 	/**
 	 * @param workbenchWindow
-	 * @param model
+	 * @param input
 	 */
-	public WorkbenchPage(WorkbenchWindow workbenchWindow, MWindow model, IAdaptable input) {
+	public WorkbenchPage(WorkbenchWindow workbenchWindow, IAdaptable input) {
 		this.workbenchWindow = workbenchWindow;
-		this.model = model;
 		this.input = input;
 	}
 
@@ -387,16 +390,25 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String)
 	 */
 	public IViewPart showView(String viewId) throws PartInitException {
-		// TODO Auto-generated method stub
-		return null;
+		return showView(viewId, null, VIEW_ACTIVATE);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#showView(java.lang.String, java.lang.String, int)
 	 */
 	public IViewPart showView(String viewId, String secondaryId, int mode) throws PartInitException {
-		// TODO Auto-generated method stub
-		return null;
+		MPart part = partService.findPart(viewId);
+		if (part == null) {
+			part = partService.showPart(viewId);
+
+			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+			compatibilityView.create();
+			return compatibilityView.getView();
+		}
+
+		CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
+		compatibilityView.delegateSetFocus();
+		return compatibilityView.getView();
 	}
 
 	/* (non-Javadoc)

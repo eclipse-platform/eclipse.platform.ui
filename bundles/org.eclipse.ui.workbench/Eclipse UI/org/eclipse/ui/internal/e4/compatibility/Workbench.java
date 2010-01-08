@@ -11,12 +11,17 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.lang.reflect.InvocationTargetException;
+import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
-import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -60,15 +65,32 @@ public class Workbench implements IWorkbench {
 
 	private static Workbench instance;
 
+	@Inject
 	private MApplication application;
 
-	private UIExtensionTracker tracker;
+	@Inject
+	private IPresentationEngine engine;
 
-	/**
-	 * @param mApplication
-	 */
-	private Workbench(MApplication application) {
-		this.application = application;
+	private UIExtensionTracker tracker;
+	private IPerspectiveRegistry perspectiveRegistry = new PerspectiveRegistry();
+	private IViewRegistry viewRegistry;
+
+	Workbench() {
+		// prevent external initialization
+	}
+
+	@PostConstruct
+	void postConstruct() {
+		try {
+			viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class,
+					application.getContext());
+		} catch (InvocationTargetException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -78,8 +100,9 @@ public class Workbench implements IWorkbench {
 	 */
 	public Display getDisplay() {
 		if (application.getChildren().size() > 0) {
-			return ((Widget) ((MUIElement) application.getChildren().get(0))
-					.getWidget()).getDisplay();
+			MWindow window = application.getChildren().get(0);
+			Widget widget = (Widget) window.getWidget();
+			return widget == null ? null : widget.getDisplay();
 		}
 		return null;
 	}
@@ -155,6 +178,16 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getActiveWorkbenchWindow()
 	 */
 	public IWorkbenchWindow getActiveWorkbenchWindow() {
+		// Return null if called from a non-UI thread.
+		// This is not spec'ed behaviour and is misleading, however this is how
+		// it
+		// worked in 2.1 and we cannot change it now.
+		// For more details, see [Bug 57384] [RCP] Main window not active on
+		// startup
+		if (Display.getCurrent() == null) {
+			return null;
+		}
+
 		Object activeChild = application.getActiveChild();
 		MWindow activeWindow = (MWindow) activeChild;
 		if (activeWindow == null && !application.getChildren().isEmpty()) {
@@ -166,8 +199,10 @@ public class Workbench implements IWorkbench {
 				.get(
 				IWorkbenchWindow.class.getName());
 		if (result == null) {
-			result = new WorkbenchWindow(activeWindow);
+			result = new WorkbenchWindow(null);
+			ContextInjectionFactory.inject(result, windowContext);
 			windowContext.set(IWorkbenchWindow.class.getName(), result);
+			//			throw new RuntimeException("No workbench window found"); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -196,8 +231,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getPerspectiveRegistry()
 	 */
 	public IPerspectiveRegistry getPerspectiveRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return perspectiveRegistry;
 	}
 
 	/*
@@ -277,7 +311,11 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
 			IAdaptable input) throws WorkbenchException {
-		WorkbenchWindow result = new WorkbenchWindow(null);
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+		engine.createGui(window);
+		WorkbenchWindow result = new WorkbenchWindow(input);
+		ContextInjectionFactory.inject(result, window.getContext());
 		return result;
 	}
 
@@ -290,8 +328,7 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(IAdaptable input)
 			throws WorkbenchException {
-		// TODO Auto-generated method stub
-		return null;
+		return openWorkbenchWindow(getPerspectiveRegistry().getDefaultPerspective(), input);
 	}
 
 	/*
@@ -465,8 +502,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getViewRegistry()
 	 */
 	public IViewRegistry getViewRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		return viewRegistry;
 	}
 
 	/*
@@ -547,14 +583,28 @@ public class Workbench implements IWorkbench {
 	/**
 	 * @return
 	 */
-	public static IWorkbench getInstance() {
+	public synchronized static IWorkbench getInstance() {
 		if (instance == null) {
 			IEclipseContext serviceContext = org.eclipse.e4.workbench.ui.internal.E4Workbench
 					.getServiceContext();
-			MApplication app = (MApplication) serviceContext
-					.get(MApplication.class.getName());
-			if (app != null) {
-				instance = new Workbench(app);
+			if (serviceContext.getLocal(MApplication.class.getName()) == null) {
+				return null;
+			}
+
+			MApplication application = (MApplication) serviceContext.get(MApplication.class
+					.getName());
+
+			try {
+				IEclipseContext appContext = application
+						.getContext();
+				instance = (Workbench) ContextInjectionFactory.make(Workbench.class, appContext);
+				appContext.set(IWorkbench.class.getName(), instance);
+			} catch (InvocationTargetException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 		return instance;
