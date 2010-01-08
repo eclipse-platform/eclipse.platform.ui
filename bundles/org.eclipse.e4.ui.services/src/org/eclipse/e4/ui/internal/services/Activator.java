@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -11,11 +11,6 @@
 package org.eclipse.e4.ui.internal.services;
 
 import java.util.Hashtable;
-
-import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.core.services.context.IContextFunction;
 import org.eclipse.e4.ui.services.EContextService;
 import org.osgi.framework.BundleActivator;
@@ -26,7 +21,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator {
 	
-	public final static String PLUGIN_ID = "org.eclipse.e4.ui.services";
+	public final static String PLUGIN_ID = "org.eclipse.e4.ui.services"; //$NON-NLS-1$
 	
 	private static Activator singleton;
 	
@@ -89,15 +84,4 @@ public class Activator implements BundleActivator {
 	public BundleContext getBundleContext() {
 		return bundleContext;
 	}
-	
-	public void logError(String msg) {
-		if (bundleContext == null) { // fallback if nothing is available
-			if (System.err != null)
-				System.err.println(msg);
-			return;
-		}
-		ILog log = Platform.getLog(bundleContext.getBundle());
-		log.log(new Status(IStatus.ERROR, Activator.PLUGIN_ID, msg));
-	}
-
 }
