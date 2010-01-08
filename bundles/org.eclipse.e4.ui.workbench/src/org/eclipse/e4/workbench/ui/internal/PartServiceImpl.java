@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import javax.inject.Inject;
 import javax.inject.Named;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -239,13 +240,9 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart showPart(String id) {
-		MPart part = null;
-		for (MPart localPart : getParts()) {
-			if (localPart.getId().equals(id)) {
-				part = localPart;
-			}
-		}
+		Assert.isNotNull(id);
 
+		MPart part = findPart(id);
 		if (part != null) {
 			activate(part);
 			return part;
