@@ -1,3 +1,13 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.internal.statushandlers;
 
 import java.util.Collection;
@@ -50,6 +60,7 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.IViewDescriptor;
+
 
 /**
  * Parent window actually does not use its Shell to build dialog on. The

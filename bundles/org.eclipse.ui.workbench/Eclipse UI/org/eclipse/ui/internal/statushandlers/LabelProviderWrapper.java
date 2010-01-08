@@ -1,27 +1,35 @@
+/*******************************************************************************
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ ******************************************************************************/
 package org.eclipse.ui.internal.statushandlers;
-
-import java.util.Collection;
-
-import java.util.Map;
-
-import org.eclipse.jface.viewers.ViewerComparator;
-
-import org.eclipse.jface.viewers.Viewer;
-
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.jface.viewers.ILabelDecorator;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.widgets.Display;
 
 import com.ibm.icu.text.DateFormat;
 import java.net.URL;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
+import org.eclipse.jface.viewers.ILabelDecorator;
+import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.ITableLabelProvider;
+import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.progress.ProgressManager;
 import org.eclipse.ui.internal.progress.ProgressMessages;
@@ -29,9 +37,6 @@ import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 
-import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ITableLabelProvider;
-import org.eclipse.swt.graphics.Image;
 
 /**
  * This is an utility class which is responsible for text and icon decorators in
