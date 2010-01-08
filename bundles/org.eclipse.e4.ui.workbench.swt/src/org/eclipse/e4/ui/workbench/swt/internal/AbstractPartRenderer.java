@@ -17,6 +17,7 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MUILabel;
 import org.eclipse.e4.workbench.modeling.EPartService;
+import org.eclipse.emf.ecore.EObject;
 
 public abstract class AbstractPartRenderer {
 	public static final String OWNING_ME = "modelElement"; //$NON-NLS-1$
@@ -74,7 +75,9 @@ public abstract class AbstractPartRenderer {
 	}
 
 	/**
-	 * Return a parent context for this part.
+	 * Return a parent context for this part. Note that this code uses the EMF
+	 * container rather than walking the model's 'parent' references in order to
+	 * handle elements that are not contained in the regular child lists.
 	 * 
 	 * @param part
 	 *            the part to start searching from
@@ -82,13 +85,13 @@ public abstract class AbstractPartRenderer {
 	 *         hierarchy
 	 */
 	protected MContext getParentWithContext(MUIElement part) {
-		MElementContainer<MUIElement> parent = part.getParent();
+		EObject parent = ((EObject) part).eContainer();
 		while (parent != null) {
 			if (parent instanceof MContext) {
 				if (((MContext) parent).getContext() != null)
 					return (MContext) parent;
 			}
-			parent = parent.getParent();
+			parent = parent.eContainer();
 		}
 		return null;
 	}
