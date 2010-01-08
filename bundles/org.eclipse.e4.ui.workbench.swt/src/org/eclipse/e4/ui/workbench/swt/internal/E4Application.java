@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009. 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -15,8 +15,6 @@ import java.io.IOException;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.core.services.IContributionFactory;
 import org.eclipse.e4.core.services.Logger;
@@ -61,10 +59,10 @@ public class E4Application implements IApplication {
 		Display display = new Display();
 
 		args = (String[]) applicationContext.getArguments().get(
-				"application.args"); //$NON-NLS-1$
+				IApplicationContext.APPLICATION_ARGS);
 
 		// Create the app model and its context
-		MApplication appModel = loadApplicationModel();
+		MApplication appModel = loadApplicationModel(applicationContext);
 		// for compatibility layer: set the application in the OSGi service
 		// context (see Workbench#getInstance())
 		if (!E4Workbench.getServiceContext().containsKey(
@@ -81,15 +79,17 @@ public class E4Application implements IApplication {
 
 		// Parse out parameters from both the command line and/or the product
 		// definition (if any) and put them in the context
-		String xmiURI = getArgValue(E4Workbench.XMI_URI_ARG);
+		String xmiURI = getArgValue(E4Workbench.XMI_URI_ARG, applicationContext);
 		appContext.set(E4Workbench.XMI_URI_ARG, xmiURI);
-		String cssURI = getArgValue(E4Workbench.CSS_URI_ARG);
+		String cssURI = getArgValue(E4Workbench.CSS_URI_ARG, applicationContext);
 		appContext.set(E4Workbench.CSS_URI_ARG, cssURI);
-		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG);
+		String cssResourcesURI = getArgValue(E4Workbench.CSS_RESOURCE_URI_ARG,
+				applicationContext);
 		appContext.set(E4Workbench.CSS_RESOURCE_URI_ARG, cssResourcesURI);
 
 		// This is a default arg, if missing we use the default rendering engine
-		String presentationURI = getArgValue(E4Workbench.PRESENTATION_URI_ARG);
+		String presentationURI = getArgValue(E4Workbench.PRESENTATION_URI_ARG,
+				applicationContext);
 		if (presentationURI == null) {
 			presentationURI = PartRenderingEngine.engineURI;
 			appContext.set(E4Workbench.PRESENTATION_URI_ARG, presentationURI);
@@ -119,13 +119,13 @@ public class E4Application implements IApplication {
 		}
 	}
 
-	private MApplication loadApplicationModel() {
+	private MApplication loadApplicationModel(IApplicationContext appContext) {
 		MApplication theApp = null;
 
 		Location instanceLocation = Activator.getDefault()
 				.getInstanceLocation();
 
-		String appModelPath = getArgValue(E4Workbench.XMI_URI_ARG);
+		String appModelPath = getArgValue(E4Workbench.XMI_URI_ARG, appContext);
 		Assert.isNotNull(appModelPath, E4Workbench.XMI_URI_ARG
 				+ " argument missing"); //$NON-NLS-1$
 		final URI initialWorkbenchDefinitionInstance = URI
@@ -140,7 +140,7 @@ public class E4Application implements IApplication {
 		return theApp;
 	}
 
-	private String getArgValue(String argName) {
+	private String getArgValue(String argName, IApplicationContext appContext) {
 		// Is it in the arg list ?
 		if (argName == null || argName.length() == 0)
 			return null;
@@ -150,13 +150,7 @@ public class E4Application implements IApplication {
 				return args[i + 1];
 		}
 
-		// No, if we're a product is it in the product's definition?
-		IProduct product = Platform.getProduct();
-		if (product != null) {
-			return product.getProperty(argName);
-		}
-
-		return null;
+		return appContext.getBrandingProperty(argName);
 	}
 
 	public void stop() {
