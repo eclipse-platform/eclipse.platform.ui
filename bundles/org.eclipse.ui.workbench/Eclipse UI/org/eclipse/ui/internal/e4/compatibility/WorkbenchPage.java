@@ -17,10 +17,15 @@ import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
+import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -28,6 +33,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
@@ -43,6 +49,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 /**
  * @since 3.5
@@ -56,7 +63,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Inject
 	private EPartService partService;
 
+	@Inject
+	private MApplication application;
+
 	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
+	private List<IEditorReference> editorReferences = new ArrayList<IEditorReference>();
 
 	/**
 	 * @param workbenchWindow
@@ -168,6 +179,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorPart getActiveEditor() {
 		// TODO Auto-generated method stub
+		MPart part = partService.getActivePart();
+		if (part instanceof MEditor) {
+			CompatibilityEditor editor = (CompatibilityEditor) part.getObject();
+			return editor.getEditor();
+		}
 		return null;
 	}
 
@@ -191,16 +207,19 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditors()
 	 */
 	public IEditorPart[] getEditors() {
-		// TODO Auto-generated method stub
-		return null;
+		int length = editorReferences.size();
+		IEditorPart[] editors = new IEditorPart[length];
+		for (int i = 0; i < length; i++) {
+			editors[i] = editorReferences.get(i).getEditor(false);
+		}
+		return editors;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReferences()
 	 */
 	public IEditorReference[] getEditorReferences() {
-		// TODO Auto-generated method stub
-		return null;
+		return editorReferences.toArray(new IEditorReference[editorReferences.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -337,8 +356,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#openEditor(org.eclipse.ui.IEditorInput, java.lang.String)
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId) throws PartInitException {
-		// TODO Auto-generated method stub
-		return null;
+		return openEditor(input, editorId, true);
 	}
 
 	/* (non-Javadoc)
@@ -346,8 +364,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate)
 			throws PartInitException {
-		// TODO Auto-generated method stub
-		return null;
+		return openEditor(input, editorId, activate, MATCH_INPUT);
 	}
 
 	/* (non-Javadoc)
@@ -355,8 +372,46 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate,
 			int matchFlags) throws PartInitException {
-		// TODO Auto-generated method stub
-		return null;
+		IEditorRegistry registry = workbenchWindow.getWorkbench().getEditorRegistry();
+		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
+
+		MPartDescriptor partDescriptor = getEditorDescriptor();
+		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		editor.setURI(partDescriptor.getURI());
+		editor.setId(editorId);
+
+		window.getChildren().add(editor);
+
+		CompatibilityEditor compatibilityEditor = (CompatibilityEditor) editor.getObject();
+		compatibilityEditor.set(input, descriptor);
+
+		editorReferences.add(new EditorReference(this, editor, input));
+
+		if (activate) {
+			partService.activate(editor);
+		}
+
+		return compatibilityEditor.getEditor();
+	}
+
+	@Inject
+	private MWindow window;
+
+	private MPartDescriptor getEditorDescriptor() {
+		for (MPartDescriptor descriptor : application.getDescriptors()) {
+			if (descriptor
+					.getURI()
+					.equals(
+							"platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor")) { //$NON-NLS-1$
+				return descriptor;
+			}
+		}
+
+		MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
+		descriptor
+				.setURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor"); //$NON-NLS-1$
+		application.getDescriptors().add(descriptor);
+		return descriptor;
 	}
 
 	/* (non-Javadoc)
@@ -710,7 +765,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#getActivePartReference()
 	 */
 	public IWorkbenchPartReference getActivePartReference() {
-		// TODO Auto-generated method stub
+		IWorkbenchPart part = getActivePart();
+		if (part != null) {
+			for (IViewReference reference : viewReferences) {
+				if (reference.getPart(false) == part) {
+					return reference;
+				}
+			}
+		}
 		return null;
 	}
 

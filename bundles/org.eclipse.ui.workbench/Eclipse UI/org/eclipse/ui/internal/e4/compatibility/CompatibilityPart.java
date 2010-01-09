@@ -13,9 +13,9 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import javax.inject.Inject;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 
@@ -26,9 +26,6 @@ public abstract class CompatibilityPart {
 
 	@Inject
 	Composite composite;
-
-	@Inject
-	IWorkbench workbench;
 
 	IWorkbenchPart wrapped;
 
@@ -48,8 +45,8 @@ public abstract class CompatibilityPart {
 		wrapped.dispose();
 	}
 
-	@Inject
-	public final void create() {
+	@PostConstruct
+	public void create() {
 		try {
 			wrapped = createPart();
 			initialize(wrapped);

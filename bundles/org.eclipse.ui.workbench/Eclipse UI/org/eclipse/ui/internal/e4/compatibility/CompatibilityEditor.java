@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import javax.inject.Inject;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Shell;
@@ -24,20 +27,42 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class CompatibilityEditor extends CompatibilityPart {
 
 	private IEditorInput input;
+	private EditorDescriptor descriptor;
 
-	void setInput(IEditorInput input) {
+	@Inject
+	private IWorkbenchWindow workbenchWindow;
+
+	void set(IEditorInput input, EditorDescriptor descriptor) {
 		this.input = input;
+		this.descriptor = descriptor;
+
+		initialized = true;
+		create();
 	}
 
 	@Override
 	protected IWorkbenchPart createPart() {
-		// TODO Auto-generated method stub
-		return null;
+		try {
+			return descriptor.createEditor();
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			throw new RuntimeException(e);
+		}
 	}
+
+	@Override
+	public void create() {
+		if (initialized) {
+			super.create();
+		}
+	}
+
+	private boolean initialized = false;
 
 	@Override
 	protected void initialize(IWorkbenchPart part) throws PartInitException {
@@ -72,8 +97,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 			}
 
 			public IWorkbenchWindow getWorkbenchWindow() {
-				// TODO Auto-generated method stub
-				return null;
+				return workbenchWindow;
 			}
 
 			public Shell getShell() {
@@ -87,8 +111,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 			}
 
 			public IWorkbenchPage getPage() {
-				// TODO Auto-generated method stub
-				return null;
+				return workbenchWindow.getActivePage();
 			}
 
 			public void registerContextMenu(MenuManager menuManager,
@@ -114,18 +137,36 @@ public class CompatibilityEditor extends CompatibilityPart {
 			}
 
 			public IWorkbenchPart getPart() {
-				// TODO Auto-generated method stub
-				return null;
+				return CompatibilityEditor.this.getPart();
 			}
 
 			public IKeyBindingService getKeyBindingService() {
-				// TODO Auto-generated method stub
-				return null;
+				return new IKeyBindingService() {
+
+					public void unregisterAction(IAction action) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void setScopes(String[] scopes) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void registerAction(IAction action) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public String[] getScopes() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+				};
 			}
 
 			public String getId() {
-				// TODO Auto-generated method stub
-				return null;
+				return part.getId();
 			}
 
 			public void registerContextMenu(String menuId, MenuManager menuManager,

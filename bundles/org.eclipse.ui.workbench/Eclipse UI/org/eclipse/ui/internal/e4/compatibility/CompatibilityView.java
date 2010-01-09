@@ -30,7 +30,8 @@ public class CompatibilityView extends CompatibilityPart {
 
 	protected IWorkbenchPart createPart() {
 		try {
-			IViewDescriptor descriptor = workbench.getViewRegistry().find(part.getId());
+			IViewDescriptor descriptor = PlatformUI.getWorkbench().getViewRegistry().find(
+					part.getId());
 			return descriptor.createView();
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block

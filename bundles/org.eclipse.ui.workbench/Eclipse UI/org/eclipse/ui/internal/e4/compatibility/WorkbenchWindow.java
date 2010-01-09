@@ -13,6 +13,7 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
@@ -135,7 +136,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			IRunnableWithProgress runnable) throws InvocationTargetException,
 			InterruptedException {
 		// TODO Auto-generated method stub
-
+		runnable.run(new NullProgressMonitor());
 	}
 
 	/* (non-Javadoc)

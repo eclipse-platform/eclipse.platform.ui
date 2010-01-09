@@ -12,6 +12,7 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Set;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -25,6 +26,9 @@ import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
+import org.eclipse.jface.resource.ColorRegistry;
+import org.eclipse.jface.resource.FontRegistry;
+import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -53,6 +57,7 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
+import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -431,8 +436,87 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getThemeManager()
 	 */
 	public IThemeManager getThemeManager() {
-		// TODO Auto-generated method stub
-		return null;
+		return new IThemeManager() {
+
+			public void setCurrentTheme(String id) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public void removePropertyChangeListener(IPropertyChangeListener listener) {
+				// TODO Auto-generated method stub
+
+			}
+
+			public ITheme getTheme(String id) {
+				return getCurrentTheme();
+			}
+
+			public ITheme getCurrentTheme() {
+				return new ITheme() {
+
+					public void removePropertyChangeListener(IPropertyChangeListener listener) {
+						// TODO Auto-generated method stub
+
+					}
+
+					public Set keySet() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public String getString(String key) {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public String getLabel() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public int getInt(String key) {
+						// TODO Auto-generated method stub
+						return 0;
+					}
+
+					public String getId() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public FontRegistry getFontRegistry() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public ColorRegistry getColorRegistry() {
+						// TODO Auto-generated method stub
+						return null;
+					}
+
+					public boolean getBoolean(String key) {
+						// TODO Auto-generated method stub
+						return false;
+					}
+
+					public void dispose() {
+						// TODO Auto-generated method stub
+
+					}
+
+					public void addPropertyChangeListener(IPropertyChangeListener listener) {
+						// TODO Auto-generated method stub
+
+					}
+				};
+			}
+
+			public void addPropertyChangeListener(IPropertyChangeListener listener) {
+				// TODO Auto-generated method stub
+
+			}
+		};
 	}
 
 	/*
