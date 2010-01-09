@@ -11,7 +11,10 @@
 
 package org.eclipse.e4.ui.tests.application;
 
+import javax.inject.Inject;
+
 import org.eclipse.e4.core.services.IDisposable;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
@@ -19,11 +22,18 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.e4.workbench.ui.internal.Activator;
 import org.eclipse.e4.workbench.ui.internal.Policy;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 public class HeadlessContextPresentationEngine implements IPresentationEngine {
+
+	@Inject
+	private IEventBroker eventBroker;
 
 	private static IEclipseContext getParentContext(MUIElement element) {
 		MElementContainer<MUIElement> parent = element.getParent();
@@ -48,6 +58,23 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 			populateModelInterfaces(contextModel, context, intf.getInterfaces());
 		}
+	}
+
+	@PostConstruct
+	void postConstruct() {
+		eventBroker.subscribe(UIEvents.buildTopic(
+				UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.CHILDREN), new EventHandler() {
+			public void handleEvent(Event event) {
+				Object element = event
+						.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (element instanceof MUIElement) {
+					Object parent = event
+							.getProperty(UIEvents.EventTags.ELEMENT);
+					createGui((MUIElement) element, parent);
+				}
+			}
+		});
 	}
 
 	/*

@@ -495,6 +495,7 @@ public class EPartServiceTest extends TestCase {
 
 		partService.activate(part);
 		assertTrue(partService.isPartVisible(part));
+		assertEquals(part, partService.getActivePart());
 	}
 
 	public void testActivate_partService_twoWindows() {
@@ -523,6 +524,7 @@ public class EPartServiceTest extends TestCase {
 				EPartService.class.getName());
 
 		partServiceA.activate(partBackA);
+		assertEquals(partBackA, partServiceA.getActivePart());
 
 		assertFalse(partServiceA.isPartVisible(partFrontA));
 		assertTrue(partServiceA.isPartVisible(partBackA));
@@ -530,6 +532,7 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(partServiceA.isPartVisible(partBackB));
 
 		partServiceA.activate(partBackB);
+		assertEquals(partBackA, partServiceA.getActivePart());
 
 		assertFalse(partServiceA.isPartVisible(partFrontA));
 		assertTrue(partServiceA.isPartVisible(partBackA));
@@ -542,6 +545,7 @@ public class EPartServiceTest extends TestCase {
 		assertFalse(partServiceB.isPartVisible(partBackB));
 
 		partServiceB.activate(partBackB);
+		assertEquals(partBackB, partServiceB.getActivePart());
 		assertFalse(partServiceB.isPartVisible(partFrontA));
 		assertFalse(partServiceB.isPartVisible(partBackA));
 		assertFalse(partServiceB.isPartVisible(partFrontB));
@@ -652,6 +656,7 @@ public class EPartServiceTest extends TestCase {
 		MPart part = partService.showPart("partId");
 		assertNotNull(part);
 		assertEquals("partId", part.getId());
+		assertEquals(part, partService.getActivePart());
 		assertTrue("Shown part should be visible", part.isVisible());
 	}
 
@@ -670,9 +675,11 @@ public class EPartServiceTest extends TestCase {
 		MPart part = partService.showPart("partId");
 		assertNotNull(part);
 		assertEquals("partId", part.getId());
+		assertEquals(part, partService.getActivePart());
 
 		MPart part2 = partService.showPart("partId");
 		assertEquals("Should not have instantiated a new MPart", part, part2);
+		assertEquals(part, partService.getActivePart());
 	}
 
 	public void testSwitchWindows() {
