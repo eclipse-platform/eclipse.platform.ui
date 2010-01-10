@@ -42,7 +42,9 @@ import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IReusableEditor;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
+import org.eclipse.ui.IShowEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
@@ -190,21 +192,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#closeEditor(org.eclipse.ui.IEditorPart, boolean)
 	 */
 	public boolean closeEditor(IEditorPart editor, boolean save) {
-		if (!editor.isSaveOnCloseNeeded()) {
-			MPart part = null;
-			for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
-				IEditorReference reference = it.next();
-				if (editor == reference.getPart(false)) {
-					part = ((EditorReference) reference).getModel();
-					break;
-				}
+		MPart part = null;
+		for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
+			IEditorReference reference = it.next();
+			if (editor == reference.getPart(false)) {
+				part = ((EditorReference) reference).getModel();
+				break;
 			}
+		}
 
-			if (part != null) {
-				hidePart(part);
-			}
-
-			return true;
+		if (part != null) {
+			return hidePart(part);
 		}
 		return false;
 	}
@@ -364,30 +362,38 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	}
 
-	private void hidePart(MPart part) {
+	private boolean hidePart(MPart part) {
+		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
+		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
+		if (workbenchPart instanceof ISaveablePart) {
+			if (((ISaveablePart) workbenchPart).isSaveOnCloseNeeded()) {
+				return false;
+			}
+		}
+
 		MElementContainer<MUIElement> parent = part.getParent();
 		parent.getChildren().remove(part);
 		// TODO: this shouldn't be mandatory??
 		engine.removeGui(part);
 
-		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
 		compatibilityPart.delegateDispose();
 
 		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
 			IViewReference reference = it.next();
-			if (compatibilityPart.getPart() == reference.getPart(false)) {
+			if (workbenchPart == reference.getPart(false)) {
 				it.remove();
-				return;
+				return true;
 			}
 		}
 
 		for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
 			IEditorReference reference = it.next();
-			if (compatibilityPart.getPart() == reference.getPart(false)) {
+			if (workbenchPart == reference.getPart(false)) {
 				it.remove();
-				return;
+				return true;
 			}
 		}
+		return false;
 	}
 
 	private void hidePart(String id) {
@@ -415,15 +421,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewReference)
 	 */
 	public void hideView(IViewReference view) {
-		// TODO Auto-generated method stub
-
+		if (view != null) {
+			hidePart(view.getId());
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#isPartVisible(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public boolean isPartVisible(IWorkbenchPart part) {
-		MPart mpart = partService.findPart(part.getSite().getId());
+		MPart mpart = findPart(part);
 		return mpart == null ? false : partService.isPartVisible(mpart);
 	}
 
@@ -463,6 +470,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate,
 			int matchFlags) throws PartInitException {
+		if (matchFlags == MATCH_INPUT) {
+			for (IEditorReference editorRef : editorReferences) {
+				IEditorPart editor = editorRef.getEditor(false);
+				if (editor.getEditorInput().equals(input)) {
+					if (editor instanceof IShowEditorInput) {
+						((IShowEditorInput) editor).showEditorInput(input);
+					}
+					return editor;
+				}
+			}
+		}
+
 		IEditorRegistry registry = workbenchWindow.getWorkbench().getEditorRegistry();
 		EditorDescriptor descriptor = (EditorDescriptor) registry.findEditor(editorId);
 
