@@ -16,6 +16,7 @@ import java.util.Iterator;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -26,8 +27,10 @@ import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
@@ -50,6 +53,8 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * @since 3.5
@@ -57,7 +62,7 @@ import org.eclipse.ui.internal.registry.EditorDescriptor;
  */
 public class WorkbenchPage implements IWorkbenchPage {
 
-	WorkbenchWindow workbenchWindow;
+	private WorkbenchWindow workbenchWindow;
 	private IAdaptable input;
 
 	@Inject
@@ -66,8 +71,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 	@Inject
 	private MApplication application;
 
+	@Inject
+	private IEventBroker eventBroker;
+
 	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
 	private List<IEditorReference> editorReferences = new ArrayList<IEditorReference>();
+
+	private ListenerList partListeners = new ListenerList();
 
 	/**
 	 * @param workbenchWindow
@@ -76,6 +86,37 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public WorkbenchPage(WorkbenchWindow workbenchWindow, IAdaptable input) {
 		this.workbenchWindow = workbenchWindow;
 		this.input = input;
+	}
+
+	private void firePartBroughtToTop(IWorkbenchPart part) {
+		for (Object listener : partListeners.getListeners()) {
+			((IPartListener) listener).partBroughtToTop(part);
+		}
+	}
+
+	@Inject
+	void inject() {
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+				UIEvents.ElementContainer.ACTIVECHILD), new EventHandler() {
+			public void handleEvent(Event event) {
+				Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+				if (value instanceof MPart) {
+					MPart part = (MPart) value;
+					MElementContainer<?> parentWindow = part.getParent();
+					while (!(parentWindow instanceof MWindow)) {
+						parentWindow = parentWindow.getParent();
+					}
+
+					if (((MWindow) parentWindow).getContext().get(IWorkbenchWindow.class.getName()) == workbenchWindow) {
+						Object object = part.getObject();
+						if (object instanceof CompatibilityPart) {
+							firePartBroughtToTop(((CompatibilityPart) object).getPart());
+						}
+					}
+				}
+			}
+		});
+
 	}
 
 	/* (non-Javadoc)
@@ -94,11 +135,28 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	}
 
+	private MPart findPart(IWorkbenchPart part) {
+		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
+			IViewReference reference = it.next();
+			if (part == reference.getPart(false)) {
+				return ((WorkbenchPartReference) reference).getModel();
+			}
+		}
+
+		for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
+			IEditorReference reference = it.next();
+			if (part == reference.getPart(false)) {
+				return ((WorkbenchPartReference) reference).getModel();
+			}
+		}
+		return null;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#bringToTop(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void bringToTop(IWorkbenchPart part) {
-		MPart mpart = partService.findPart(part.getSite().getId());
+		MPart mpart = findPart(part);
 		if (mpart != null) {
 			partService.bringToTop(mpart);
 		}
@@ -768,8 +826,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener)
 	 */
 	public void addPartListener(IPartListener listener) {
-		// TODO Auto-generated method stub
-
+		partListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
@@ -813,8 +870,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener)
 	 */
 	public void removePartListener(IPartListener listener) {
-		// TODO Auto-generated method stub
-
+		partListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
