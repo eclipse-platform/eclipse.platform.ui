@@ -66,6 +66,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	private WorkbenchWindow workbenchWindow;
 	private IAdaptable input;
+	private IPerspectiveDescriptor perspective;
 
 	@Inject
 	private EPartService partService;
@@ -85,9 +86,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @param workbenchWindow
 	 * @param input
 	 */
-	public WorkbenchPage(WorkbenchWindow workbenchWindow, IAdaptable input) {
+	public WorkbenchPage(WorkbenchWindow workbenchWindow, IAdaptable input,
+			IPerspectiveDescriptor perspective) {
 		this.workbenchWindow = workbenchWindow;
 		this.input = input;
+		this.perspective = perspective;
 	}
 
 	private void firePartBroughtToTop(IWorkbenchPart part) {
@@ -331,8 +334,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getPerspective()
 	 */
 	public IPerspectiveDescriptor getPerspective() {
-		// TODO Auto-generated method stub
-		return null;
+		return perspective;
 	}
 
 	/* (non-Javadoc)

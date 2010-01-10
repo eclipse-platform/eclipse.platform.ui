@@ -25,6 +25,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbench;
@@ -49,13 +50,15 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	private UIExtensionTracker tracker;
 
 	private IAdaptable input;
+	private IPerspectiveDescriptor perspective;
 
-	WorkbenchWindow(IAdaptable input) {
+	WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor perspective) {
 		this.input = input;
+		this.perspective = perspective;
 	}
 
 	void contextSet() {
-		page = new WorkbenchPage(this, input);
+		page = new WorkbenchPage(this, input, perspective);
 		IEclipseContext windowContext = model.getContext();
 		ContextInjectionFactory.inject(page, windowContext);
 		windowContext.set(IWorkbenchWindow.class.getName(), this);

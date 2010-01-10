@@ -12,6 +12,8 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
@@ -39,6 +41,7 @@ import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.ILocalWorkingSetManager;
+import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISaveableFilter;
 import org.eclipse.ui.ISharedImages;
@@ -231,7 +234,8 @@ public class Workbench implements IWorkbench {
 				.get(
 				IWorkbenchWindow.class.getName());
 		if (result == null) {
-			result = new WorkbenchWindow(null);
+			result = new WorkbenchWindow(null, getPerspectiveRegistry().findPerspectiveWithId(
+					getPerspectiveRegistry().getDefaultPerspective()));
 			ContextInjectionFactory.inject(result, windowContext);
 			windowContext.set(IWorkbenchWindow.class.getName(), result);
 			//			throw new RuntimeException("No workbench window found"); //$NON-NLS-1$
@@ -301,8 +305,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getWorkbenchWindowCount()
 	 */
 	public int getWorkbenchWindowCount() {
-		// TODO Auto-generated method stub
-		return 0;
+		return getWorkbenchWindows().length;
 	}
 
 	/*
@@ -311,8 +314,16 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getWorkbenchWindows()
 	 */
 	public IWorkbenchWindow[] getWorkbenchWindows() {
-		// TODO Auto-generated method stub
-		return null;
+		List<IWorkbenchWindow> windows = new ArrayList<IWorkbenchWindow>();
+		for (MWindow window : application.getChildren()) {
+			IEclipseContext context = window.getContext();
+			IWorkbenchWindow wwindow = (IWorkbenchWindow) context.get(IWorkbenchWindow.class
+					.getName());
+			if (wwindow != null) {
+				windows.add(wwindow);
+			}
+		}
+		return windows.toArray(new IWorkbenchWindow[windows.size()]);
 	}
 
 	/*
@@ -355,13 +366,22 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchWindow openWorkbenchWindow(String perspectiveId,
 			IAdaptable input) throws WorkbenchException {
+		IPerspectiveDescriptor descriptor = getPerspectiveRegistry().findPerspectiveWithId(
+				perspectiveId);
+		if (descriptor == null) {
+			// FIXME: NLS
+			throw new WorkbenchException("Could not find perspective with id " + perspectiveId); //$NON-NLS-1$
+		}
+
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		engine.createGui(window);
 		application.setActiveChild(window);
-		WorkbenchWindow result = new WorkbenchWindow(input);
+
+		WorkbenchWindow result = new WorkbenchWindow(input, descriptor);
 		ContextInjectionFactory.inject(result, window.getContext());
 		fireWindowOpened(result);
+
 		return result;
 	}
 
