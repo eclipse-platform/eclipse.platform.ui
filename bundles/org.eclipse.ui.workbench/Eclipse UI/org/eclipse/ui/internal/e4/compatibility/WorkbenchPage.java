@@ -129,8 +129,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#activate(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void activate(IWorkbenchPart part) {
-		// TODO Auto-generated method stub
-
+		MPart mpart = findPart(part);
+		if (mpart != null) {
+			partService.activate(mpart);
+			part.setFocus();
+		}
 	}
 
 	/* (non-Javadoc)
@@ -180,8 +183,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#closeAllEditors(boolean)
 	 */
 	public boolean closeAllEditors(boolean save) {
-		// TODO Auto-generated method stub
-		return false;
+		for (IEditorPart editor : getEditors()) {
+			if (!closeEditor(editor, save)) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -871,8 +878,25 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IEditorReference[] openEditors(IEditorInput[] inputs, String[] editorIDs, int matchFlags)
 			throws MultiPartInitException {
-		// TODO Auto-generated method stub
-		return null;
+		PartInitException[] exceptions = new PartInitException[inputs.length];
+		IEditorReference[] references = new IEditorReference[inputs.length];
+		boolean hasFailures = false;
+
+		for (int i = 0; i < inputs.length; i++) {
+			try {
+				IEditorPart editor = openEditor(inputs[i], editorIDs[i], i == 0, matchFlags);
+				references[i] = (IEditorReference) getReference(editor);
+			} catch (PartInitException e) {
+				hasFailures = true;
+				exceptions[i] = e;
+			}
+		}
+
+		if (hasFailures) {
+			throw new MultiPartInitException(references, exceptions);
+		}
+
+		return references;
 	}
 
 	/* (non-Javadoc)

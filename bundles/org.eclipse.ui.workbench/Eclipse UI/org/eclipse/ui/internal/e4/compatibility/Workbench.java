@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
@@ -415,8 +416,7 @@ public class Workbench implements IWorkbench {
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId,
 			IWorkbenchWindow window) throws WorkbenchException {
-		// TODO Auto-generated method stub
-		return null;
+		return showPerspective(perspectiveId, window, null);
 	}
 
 	/*
@@ -426,10 +426,54 @@ public class Workbench implements IWorkbench {
 	 * org.eclipse.ui.IWorkbenchWindow, org.eclipse.core.runtime.IAdaptable)
 	 */
 	public IWorkbenchPage showPerspective(String perspectiveId,
-			IWorkbenchWindow window, IAdaptable input)
+			IWorkbenchWindow targetWindow, IAdaptable input)
 			throws WorkbenchException {
-		// TODO Auto-generated method stub
-		return null;
+		Assert.isNotNull(perspectiveId);
+		IPerspectiveDescriptor targetPerspective = getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+		if (targetPerspective == null) {
+			// FIXME: NLS
+			throw new WorkbenchException("Could not find perspective with id " + perspectiveId); //$NON-NLS-1$			
+		}
+		
+		if (targetWindow != null) {
+			IWorkbenchPage page = targetWindow.getActivePage();
+			if (activate(perspectiveId, page, input, true)) {
+				return page;
+			}
+		}
+
+		for (IWorkbenchWindow window : getWorkbenchWindows()) {
+			IWorkbenchPage page = window.getActivePage();
+			if (activate(perspectiveId, page, input, true)) {
+				return page;
+			}
+		}
+		
+		if (targetWindow != null) {
+			IWorkbenchPage page = targetWindow.getActivePage();
+			if (activate(perspectiveId, page, input, false)) {
+				return page;
+			}
+		}
+
+		return openWorkbenchWindow(perspectiveId, input).getActivePage();
+	}
+
+	private boolean activate(String perspectiveId, IWorkbenchPage page, IAdaptable input,
+			boolean checkPerspective) {
+		if (page != null) {
+			for (IPerspectiveDescriptor openedPerspective : page.getOpenPerspectives()) {
+				if (!checkPerspective || openedPerspective.getId().equals(perspectiveId)) {
+					if (page.getInput() == input) {
+						WorkbenchWindow wwindow = (WorkbenchWindow) page.getWorkbenchWindow();
+						MWindow model = wwindow.getModel();
+						application.setActiveChild(model);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 
 	/*
@@ -447,8 +491,16 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#saveAllEditors(boolean)
 	 */
 	public boolean saveAllEditors(boolean confirm) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean success = true;
+		for (IWorkbenchWindow window : getWorkbenchWindows()) {
+			IWorkbenchPage page = window.getActivePage();
+			if (page != null) {
+				if (page.saveAllEditors(confirm)) {
+					success = false;
+				}
+			}
+		}
+		return success;
 	}
 
 	/*

@@ -65,6 +65,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		windowContext.set(IWorkbenchPage.class.getName(), page);
 	}
 
+	MWindow getModel() {
+		return model;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#close()
 	 */
