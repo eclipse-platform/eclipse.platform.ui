@@ -15,6 +15,8 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.services.IServiceLocator;
@@ -22,6 +24,10 @@ import org.eclipse.ui.services.IServiceLocator;
 public class ActionBars implements IActionBars {
 
 	private IToolBarManager manager;
+
+	private IMenuManager menuManager;
+
+	private StatusLineManager statusLineManager;
 
 	/*
 	 * (non-Javadoc)
@@ -49,8 +55,10 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#getMenuManager()
 	 */
 	public IMenuManager getMenuManager() {
-		// TODO Auto-generated method stub
-		return null;
+		if (menuManager == null) {
+			menuManager = new MenuManager();
+		}
+		return menuManager;
 	}
 
 	/*
@@ -69,8 +77,10 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#getStatusLineManager()
 	 */
 	public IStatusLineManager getStatusLineManager() {
-		// TODO Auto-generated method stub
-		return null;
+		if (statusLineManager == null) {
+			statusLineManager = new StatusLineManager();
+		}
+		return statusLineManager;
 	}
 
 	/*
