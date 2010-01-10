@@ -411,14 +411,17 @@ public class NavigatorContentDescriptorManager {
 					}
 
 				} else {
-					NavigatorPlugin.logError(0,
-							"Invalid suppressedExtensionId (\"" //$NON-NLS-1$
+					String message = 
+							"Invalid suppressedExtensionId \"" //$NON-NLS-1$
 									+ descriptor.getSuppressedExtensionId()
-									+ "\" specified from " //$NON-NLS-1$
-									+ descriptor.getContribution()
+									+ "\" specified from \"" //$NON-NLS-1$
+									+ descriptor.getId() + "\" in \"" + descriptor.getContribution() //$NON-NLS-1$
 											.getPluginId()
-									+ ". No extension with matching id found.", //$NON-NLS-1$
-							null);
+									+ "\". No extension with matching id found."; //$NON-NLS-1$
+					if (Policy.DEBUG_EXTENSION_SETUP) {
+						System.out.println("Error: " + message); //$NON-NLS-1$
+					}
+					NavigatorPlugin.logError(0, message, null);
 				}
 			}
 		}
