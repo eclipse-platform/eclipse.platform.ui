@@ -84,7 +84,7 @@ public class Workbench implements IWorkbench {
 	private IEventBroker eventBroker;
 
 	private UIExtensionTracker tracker;
-	private IPerspectiveRegistry perspectiveRegistry = new PerspectiveRegistry();
+	private IPerspectiveRegistry perspectiveRegistry;
 	private IViewRegistry viewRegistry;
 
 	private ListenerList windowListeners = new ListenerList();
@@ -98,6 +98,8 @@ public class Workbench implements IWorkbench {
 		try {
 			viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class,
 					application.getContext());
+			perspectiveRegistry = (IPerspectiveRegistry) ContextInjectionFactory.make(
+					PerspectiveRegistry.class, application.getContext());
 			
 			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
 					UIEvents.ElementContainer.CHILDREN), new EventHandler() {

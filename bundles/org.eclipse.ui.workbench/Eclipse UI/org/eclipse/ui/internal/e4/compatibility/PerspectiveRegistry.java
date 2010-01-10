@@ -11,10 +11,33 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import java.util.HashMap;
+import java.util.Map;
+import javax.inject.Inject;
+import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IExtensionPoint;
+import org.eclipse.core.runtime.IExtensionRegistry;
+import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 
 public class PerspectiveRegistry implements IPerspectiveRegistry {
+
+	@Inject
+	private IExtensionRegistry extensionRegistry;
+
+	private Map<String, IPerspectiveDescriptor> descriptors = new HashMap<String, IPerspectiveDescriptor>();
+
+	@PostConstruct
+	void postConstruct() {
+		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.perspectives"); //$NON-NLS-1$
+		for (IConfigurationElement element : point.getConfigurationElements()) {
+			String id = element.getAttribute("id"); //$NON-NLS-1$
+			String label = element.getAttribute("name"); //$NON-NLS-1$
+
+			descriptors.put(id, new PerspectiveDescriptor(id, label));
+		}
+	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveRegistry#clonePerspective(java.lang.String, java.lang.String, org.eclipse.ui.IPerspectiveDescriptor)
@@ -37,15 +60,18 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see org.eclipse.ui.IPerspectiveRegistry#findPerspectiveWithId(java.lang.String)
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithId(String perspectiveId) {
-		// TODO Auto-generated method stub
-		return null;
+		return descriptors.get(perspectiveId);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPerspectiveRegistry#findPerspectiveWithLabel(java.lang.String)
 	 */
 	public IPerspectiveDescriptor findPerspectiveWithLabel(String label) {
-		// TODO Auto-generated method stub
+		for (IPerspectiveDescriptor descriptor : descriptors.values()) {
+			if (descriptor.getLabel().equals(label)) {
+				return descriptor;
+			}
+		}
 		return null;
 	}
 
@@ -61,8 +87,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see org.eclipse.ui.IPerspectiveRegistry#getPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getPerspectives() {
-		// TODO Auto-generated method stub
-		return null;
+		return descriptors.values().toArray(new IPerspectiveDescriptor[descriptors.size()]);
 	}
 
 	/* (non-Javadoc)

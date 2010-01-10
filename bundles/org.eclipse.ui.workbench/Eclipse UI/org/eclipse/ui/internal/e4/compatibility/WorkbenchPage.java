@@ -302,8 +302,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getDirtyEditors()
 	 */
 	public IEditorPart[] getDirtyEditors() {
-		// TODO Auto-generated method stub
-		return null;
+		List<IEditorPart> dirtyEditors = new ArrayList<IEditorPart>();
+		for (IEditorReference editorRef : editorReferences) {
+			IEditorPart editor = editorRef.getEditor(false);
+			if (editor.isDirty()) {
+				dirtyEditors.add(editor);
+			}
+		}
+		return dirtyEditors.toArray(new IEditorPart[dirtyEditors.size()]);
 	}
 
 	/* (non-Javadoc)
@@ -340,8 +346,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getViews()
 	 */
 	public IViewPart[] getViews() {
-		// TODO Auto-generated method stub
-		return null;
+		int length = viewReferences.size();
+		IViewPart[] views = new IViewPart[length];
+		for (int i = 0; i < length; i++) {
+			views[i] = viewReferences.get(i).getView(false);
+		}
+		return views;
 	}
 
 	/* (non-Javadoc)

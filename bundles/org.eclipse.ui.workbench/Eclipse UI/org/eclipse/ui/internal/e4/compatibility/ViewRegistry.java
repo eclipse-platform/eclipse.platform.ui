@@ -46,6 +46,15 @@ public class ViewRegistry implements IViewRegistry {
 			descriptor
 					.setURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"); //$NON-NLS-1$
 
+			String iconURI = element.getAttribute("icon"); //$NON-NLS-1$
+			if (iconURI != null) {
+				// FIXME: need to get rid of $nl$
+				StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
+				builder.append(element.getNamespaceIdentifier()).append('/');
+				builder.append(iconURI);
+				descriptor.setIconURI(builder.toString());
+			}
+
 			application.getDescriptors().add(descriptor);
 			descriptors.put(descriptor.getId(), new ViewDescriptor(element));
 		}
