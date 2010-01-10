@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -35,13 +35,13 @@ import org.eclipse.ui.navigator.OverridePolicy;
 /**
  * <p>
  * Provides relevant content based on the associated
- * {@link org.eclipse.ui.internal.navigator.NavigatorContentService}&nbsp; for
- * a TreeViewer .
+ * {@link org.eclipse.ui.internal.navigator.NavigatorContentService}&nbsp; for a
+ * TreeViewer .
  * </p>
  * <p>
  * Except for the dependency on
- * {@link org.eclipse.ui.internal.navigator.NavigatorContentService}, this
- * class has no dependencies on the rest of the Common Navigator framework. Tree
+ * {@link org.eclipse.ui.internal.navigator.NavigatorContentService}, this class
+ * has no dependencies on the rest of the Common Navigator framework. Tree
  * viewers that would like to use the extensions defined by the Common
  * Navigator, without using the actual view part or other pieces of
  * functionality (filters, sorting, etc) may choose to use this class, in effect
@@ -54,15 +54,14 @@ import org.eclipse.ui.navigator.OverridePolicy;
  * @since 3.2
  * 
  */
-public class NavigatorContentServiceContentProvider implements
-		ITreeContentProvider, ITreePathContentProvider {
+public class NavigatorContentServiceContentProvider implements ITreeContentProvider, ITreePathContentProvider {
 
 	private static final Object[] NO_CHILDREN = new Object[0];
 
 	private final NavigatorContentService contentService;
 
-	private final boolean isContentServiceSelfManaged;
-	
+	private boolean disposeContentService;
+
 	private final boolean enforceHasChildren;
 
 	private Viewer viewer;
@@ -79,11 +78,8 @@ public class NavigatorContentServiceContentProvider implements
 	 *            for
 	 */
 	public NavigatorContentServiceContentProvider(String aViewerId) {
-		super();
-		contentService = new NavigatorContentService(aViewerId);
-		INavigatorViewerDescriptor vDesc = contentService.getViewerDescriptor();
-		enforceHasChildren = vDesc.getBooleanConfigProperty(NavigatorViewerDescriptor.PROP_ENFORCE_HAS_CHILDREN);
-		isContentServiceSelfManaged = true;
+		this(new NavigatorContentService(aViewerId));
+		disposeContentService = true;
 	}
 
 	/**
@@ -95,142 +91,43 @@ public class NavigatorContentServiceContentProvider implements
 	 *            The associated NavigatorContentService that should be used to
 	 *            acquire information.
 	 */
-	public NavigatorContentServiceContentProvider(
-			NavigatorContentService aContentService) {
+	public NavigatorContentServiceContentProvider(NavigatorContentService aContentService) {
 		super();
 		contentService = aContentService;
-		isContentServiceSelfManaged = false;
 		INavigatorViewerDescriptor vDesc = contentService.getViewerDescriptor();
 		enforceHasChildren = vDesc.getBooleanConfigProperty(NavigatorViewerDescriptor.PROP_ENFORCE_HAS_CHILDREN);
 	}
 
-	/**
-	 * 
-	 * <p>
-	 * Return the root objects for the supplied anInputElement. anInputElement
-	 * is the root thing that the viewer visualizes.
-	 * </p>
-	 * <p>
-	 * This method will call out to its {@link NavigatorContentService}&nbsp;for
-	 * extensions that are enabled on the supplied anInputElement or enabled on
-	 * the viewerId supplied when the {@link NavigatorContentService}&nbsp; was
-	 * created (either by this class or its client). The extensions will then be
-	 * queried for relevant content. The children returned from each extension
-	 * will be aggregated and returned as is -- there is no additional sorting
-	 * or filtering at this level.
-	 * </p>
-	 * <p>
-	 * The results of this method will be displayed in the root of the
-	 * TreeViewer.
-	 * </p>
-	 * {@inheritDoc}
-	 * 
-	 * @param anInputElement
-	 *            The relevant element that a client would like children for -
-	 *            the input element of the TreeViewer
-	 * @return A non-null array of objects that are logical children of
-	 *         anInputElement
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
+	public synchronized void inputChanged(Viewer aViewer, Object anOldInput, Object aNewInput) {
+		viewer = aViewer;
+		contentService.updateService(aViewer, anOldInput, aNewInput);
+	}
+
 	public synchronized Object[] getElements(Object anInputElement) {
-		contentService.resetContributionMemory();
-		Set rootContentExtensions = contentService
-				.findRootContentExtensions(anInputElement);
-		if (rootContentExtensions.size() == 0) {
-			return NO_CHILDREN;
-		}
-		ContributorTrackingSet finalElementsSet = new ContributorTrackingSet(contentService);
-		ContributorTrackingSet localSet = new ContributorTrackingSet(contentService);		
-
-		Object[] contributedChildren = null;
-		NavigatorContentExtension foundExtension;
-		NavigatorContentExtension[] overridingExtensions;
-		for (Iterator itr = rootContentExtensions.iterator(); itr.hasNext();) {
-			foundExtension = (NavigatorContentExtension) itr.next();
-			try {
-
-				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
-						rootContentExtensions)) {
-
-					contributedChildren = foundExtension.internalGetContentProvider()
-							.getElements(anInputElement);
-					
-					localSet.setContents(contributedChildren);
-
-					overridingExtensions = foundExtension
-							.getOverridingExtensionsForTriggerPoint(anInputElement);
-
-					if (overridingExtensions.length > 0) { 
-						localSet = pipelineChildren(anInputElement,
-								overridingExtensions, localSet, ELEMENTS);						
-					}
-					finalElementsSet.addAll(localSet);
-				}
-			} catch (RuntimeException re) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), re);
-			} catch (Error e) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), e);
-
-			}
-		}
-		return finalElementsSet.toArray();
+		Set rootContentExtensions = contentService.findRootContentExtensions(anInputElement);
+		return internalGetChildren(anInputElement, anInputElement, rootContentExtensions, ELEMENTS);
 	}
 
-	/**
-	 * <p>
-	 * Return the children of the supplied aParentElement
-	 * </p>
-	 * 
-	 * <p>
-	 * This method will call out to its {@link NavigatorContentService}&nbsp;for
-	 * extensions that are enabled on the supplied aParentElement. The
-	 * extensions will then be queried for children for aParentElement. The
-	 * children returned from each extension will be aggregated and returned as
-	 * is -- there is no additional sorting or filtering at this level.
-	 * </p>
-	 * <p>
-	 * The results of this method will be displayed as children of the supplied
-	 * element in the TreeViewer.
-	 * </p>
-	 * {@inheritDoc}
-	 * 
-	 * @param aParentElement
-	 *            An element that requires children content in the viewer (e.g.
-	 *            an end-user expanded a node)
-	 * @return A non-null array of objects that are logical children of
-	 *         aParentElement
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(java.lang.Object)
-	 */
-	public synchronized Object[] getChildren(Object aParentElement) {	
-		return internalGetChildren(aParentElement);
+	public synchronized Object[] getChildren(Object aParentElement) {
+		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(aParentElement);
+		return internalGetChildren(aParentElement, aParentElement, enabledExtensions, !ELEMENTS);
 	}
 
-	private Object[] internalGetChildren(Object aParentElementOrPath) {
+	public synchronized Object[] getChildren(TreePath parentPath) {
+		Object aParentElement = internalAsElement(parentPath);
+		Set enabledExtensions = contentService.findContentExtensionsByTriggerPoint(aParentElement);
+		return internalGetChildren(aParentElement, parentPath, enabledExtensions, !ELEMENTS);
+	}
+	
+	private static final boolean ELEMENTS = true;
+
+	private Object[] internalGetChildren(Object aParentElement, Object aParentElementOrPath, Set enabledExtensions, boolean elements) {
 		contentService.resetContributionMemory();
-		Object aParentElement = internalAsElement(aParentElementOrPath);
-		Set enabledExtensions = contentService
-				.findContentExtensionsByTriggerPoint(aParentElement);
 		if (enabledExtensions.size() == 0) {
 			return NO_CHILDREN;
 		}
-		ContributorTrackingSet finalChildrenSet = new ContributorTrackingSet(contentService);
 		ContributorTrackingSet localSet = new ContributorTrackingSet(contentService);
+		Set finalSet = new LinkedHashSet();
 
 		Object[] contributedChildren = null;
 		NavigatorContentExtension foundExtension;
@@ -239,100 +136,66 @@ public class NavigatorContentServiceContentProvider implements
 			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
 
-				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
-						enabledExtensions)) {
-
-					contributedChildren = foundExtension.internalGetContentProvider()
-							.getChildren(aParentElementOrPath);
-
-					overridingExtensions = foundExtension
-							.getOverridingExtensionsForTriggerPoint(aParentElement);
-					
+				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(), enabledExtensions)) {
+					if (elements)
+						contributedChildren = foundExtension.internalGetContentProvider().getElements(aParentElementOrPath);
+					else
+						contributedChildren = foundExtension.internalGetContentProvider().getChildren(aParentElementOrPath);
+					overridingExtensions = foundExtension.getOverridingExtensionsForTriggerPoint(aParentElement);
 					localSet.setContents(contributedChildren);
 
 					if (overridingExtensions.length > 0) {
-						// TODO: could pass tree path through pipeline						
-						localSet = pipelineChildren(aParentElement,
-								overridingExtensions, localSet, !ELEMENTS);
+						pipelineChildren(aParentElement, overridingExtensions, localSet, elements);
 					}
-					finalChildrenSet.addAll(localSet);
+					finalSet.addAll(localSet);
 				}
-			} catch (RuntimeException re) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), re);
-			} catch (Error e) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), e);
+			} catch (Throwable e) {
+				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
+						new Object[] { foundExtension.getDescriptor().getId(), aParentElement }), e);
 
 			}
 		}
-		return finalChildrenSet.toArray();
+		return finalSet.toArray();
 	}
 
-	private static final boolean ELEMENTS = true;
-	
 	/**
-	 * Query each of <code>theOverridingExtensions</code> for children, and
-	 * then pipe them through the Pipeline content provider.
+	 * Query each of <code>theOverridingExtensions</code> for children, and then
+	 * pipe them through the Pipeline content provider.
 	 * 
 	 * @param aParentOrPath
 	 *            The parent element in the tree
 	 * @param theOverridingExtensions
 	 *            The set of overriding extensions that should participate in
 	 *            the pipeline chain
-	 * @param theCurrentChildren
+	 * @param pipelinedChildren
 	 *            The current children to return to the viewer (should be
 	 *            modifiable)
-	 * @return The set of children to return to the viewer
 	 */
-	private ContributorTrackingSet pipelineChildren(Object aParentOrPath,
-			NavigatorContentExtension[] theOverridingExtensions,
-			ContributorTrackingSet theCurrentChildren, boolean elements) {
+	private void pipelineChildren(Object aParentOrPath, NavigatorContentExtension[] theOverridingExtensions,
+			ContributorTrackingSet pipelinedChildren, boolean elements) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
-		ContributorTrackingSet pipelinedChildren = theCurrentChildren;
 		for (int i = 0; i < theOverridingExtensions.length; i++) {
 
-						
 			if (theOverridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
-				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i].getDescriptor());	
+				pipelinedChildren.setContributor((NavigatorContentDescriptor) theOverridingExtensions[i]
+						.getDescriptor());
 				if (elements) {
-					pipelinedContentProvider.getPipelinedElements(aParentOrPath,
-							pipelinedChildren);
+					pipelinedContentProvider.getPipelinedElements(aParentOrPath, pipelinedChildren);
 				} else {
-					pipelinedContentProvider.getPipelinedChildren(aParentOrPath,
-							pipelinedChildren);
+					pipelinedContentProvider.getPipelinedChildren(aParentOrPath, pipelinedChildren);
 				}
-				
+
 				pipelinedChildren.setContributor(null);
-				
-				overridingExtensions = theOverridingExtensions[i]
-						.getOverridingExtensionsForTriggerPoint(aParentOrPath);
+
+				overridingExtensions = theOverridingExtensions[i].getOverridingExtensionsForTriggerPoint(aParentOrPath);
 				if (overridingExtensions.length > 0) {
-					pipelinedChildren = pipelineChildren(aParentOrPath,
-							overridingExtensions, pipelinedChildren, elements);
+					pipelineChildren(aParentOrPath, overridingExtensions, pipelinedChildren, elements);
 				}
 			}
 		}
-
-		return pipelinedChildren;
-
 	}
 
 	/**
@@ -347,8 +210,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * @return True if the results should be pipelined through the downstream
 	 *         extensions.
 	 */
-	private boolean isOverridingExtensionInSet(
-			INavigatorContentDescriptor aDescriptor, Set theEnabledExtensions) {
+	private boolean isOverridingExtensionInSet(INavigatorContentDescriptor aDescriptor, Set theEnabledExtensions) {
 
 		if (aDescriptor.getSuppressedExtensionId() != null /*
 															 * The descriptor is
@@ -361,14 +223,13 @@ public class NavigatorContentServiceContentProvider implements
 			 * invoked twice; once as a first class extension, and once an
 			 * overriding extension.
 			 */
-			if (theEnabledExtensions.contains(contentService
-					.getExtension(aDescriptor.getOverriddenDescriptor()))) {
+			if (theEnabledExtensions.contains(contentService.getExtension(aDescriptor.getOverriddenDescriptor()))) {
 				return true;
 			}
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Currently this method only checks one level deep. If the suppressed
 	 * extension of the given descriptor is contained lower in the tree, then
@@ -381,8 +242,7 @@ public class NavigatorContentServiceContentProvider implements
 	 * @return True if the results should be pipelined through the downstream
 	 *         extensions.
 	 */
-	private boolean isOverridingDescriptorInSet(
-			INavigatorContentDescriptor aDescriptor, Set theEnabledDescriptors) {
+	private boolean isOverridingDescriptorInSet(INavigatorContentDescriptor aDescriptor, Set theEnabledDescriptors) {
 
 		if (aDescriptor.getSuppressedExtensionId() != null /*
 															 * The descriptor is
@@ -401,32 +261,10 @@ public class NavigatorContentServiceContentProvider implements
 		}
 		return false;
 	}
-	
-	
 
-	/**
-	 * <p>
-	 * Returns the logical parent of anElement.
-	 * </p>
-	 * <p>
-	 * This method requires that any extension that would like an opportunity to
-	 * supply a parent for anElement expressly indicate that in the action
-	 * expression &lt;enables&gt; statement of the
-	 * <b>org.eclipse.ui.navigator.navigatorContent </b> extension point.
-	 * </p>
-	 * {@inheritDoc}
-	 * 
-	 * @param anElement
-	 *            An element that requires its logical parent - generally as a
-	 *            result of setSelection(expand=true) on the viewer
-	 * @return The logical parent if available or null if the parent cannot be
-	 *         determined
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(java.lang.Object)
-	 */
 	public synchronized Object getParent(Object anElement) {
 		contentService.resetContributionMemory();
-		Set extensions = contentService
-				.findContentExtensionsWithPossibleChild(anElement);
+		Set extensions = contentService.findContentExtensionsWithPossibleChild(anElement);
 
 		Object parent;
 		NavigatorContentExtension foundExtension;
@@ -435,54 +273,41 @@ public class NavigatorContentServiceContentProvider implements
 			foundExtension = (NavigatorContentExtension) itr.next();
 			try {
 
-				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(),
-						extensions)) {
-
-					parent = foundExtension.internalGetContentProvider().getParent(
-							anElement);
-
-					overridingExtensions = foundExtension
-							.getOverridingExtensionsForPossibleChild(anElement);
-
+				if (!isOverridingExtensionInSet(foundExtension.getDescriptor(), extensions)) {
+					parent = foundExtension.internalGetContentProvider().getParent(anElement);
+					overridingExtensions = foundExtension.getOverridingExtensionsForPossibleChild(anElement);
 					if (overridingExtensions.length > 0) {
-						parent = pipelineParent(anElement,
-								overridingExtensions, parent);
+						parent = pipelineParent(anElement, overridingExtensions, parent);
 					}
 
 					if (parent != null) {
 						return parent;
 					}
 				}
-			} catch (RuntimeException re) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), re);
-			} catch (Error e) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), e);
-
+			} catch (Throwable e) {
+				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
+						new Object[] { foundExtension.getDescriptor().getId(), anElement }), e);
 			}
 		}
 
 		return null;
 	}
 
+	public synchronized TreePath[] getParents(Object anElement) {
+		List paths = new ArrayList();
+		TreePathCompiler compiler = new TreePathCompiler(anElement);
+		Set compilers = findPaths(compiler);
+		for (Iterator iter = compilers.iterator(); iter.hasNext();) {
+			TreePathCompiler c = (TreePathCompiler) iter.next();
+			paths.add(c.createParentPath());
+
+		}
+		return (TreePath[]) paths.toArray(new TreePath[paths.size()]);
+
+	}
 	/**
-	 * Query each of <code>theOverridingExtensions</code> for elements, and
-	 * then pipe them through the Pipeline content provider.
+	 * Query each of <code>theOverridingExtensions</code> for elements, and then
+	 * pipe them through the Pipeline content provider.
 	 * 
 	 * @param anInputElement
 	 *            The input element in the tree
@@ -494,8 +319,7 @@ public class NavigatorContentServiceContentProvider implements
 	 *            modifiable)
 	 * @return The set of elements to return to the viewer
 	 */
-	private Object pipelineParent(Object anInputElement,
-			NavigatorContentExtension[] theOverridingExtensions,
+	private Object pipelineParent(Object anInputElement, NavigatorContentExtension[] theOverridingExtensions,
 			Object theCurrentParent) {
 		IPipelinedTreeContentProvider pipelinedContentProvider;
 		NavigatorContentExtension[] overridingExtensions;
@@ -506,35 +330,20 @@ public class NavigatorContentServiceContentProvider implements
 				pipelinedContentProvider = (IPipelinedTreeContentProvider) theOverridingExtensions[i]
 						.getContentProvider();
 
-				aSuggestedParent = pipelinedContentProvider.getPipelinedParent(
-						anInputElement, aSuggestedParent);
+				aSuggestedParent = pipelinedContentProvider.getPipelinedParent(anInputElement, aSuggestedParent);
 
 				overridingExtensions = theOverridingExtensions[i]
 						.getOverridingExtensionsForTriggerPoint(anInputElement);
 				if (overridingExtensions.length > 0) {
-					aSuggestedParent = pipelineParent(anInputElement,
-							overridingExtensions, aSuggestedParent);
+					aSuggestedParent = pipelineParent(anInputElement, overridingExtensions, aSuggestedParent);
 				}
 			}
 		}
 		return aSuggestedParent != null ? aSuggestedParent : theCurrentParent;
 	}
 
-	/**
-	 * <p>
-	 * Used to determine of anElement should be displayed with a '+' or not.
-	 * </p>
-	 * {@inheritDoc}
-	 * 
-	 * @param anElement
-	 *            The element in question
-	 * @return True if anElement has logical children as returned by this
-	 *         content provider.
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(java.lang.Object)
-	 */
 	public synchronized boolean hasChildren(Object anElement) {
-		Set resultInstances = contentService
-				.findContentExtensionsByTriggerPoint(anElement);
+		Set resultInstances = contentService.findContentExtensionsByTriggerPoint(anElement);
 
 		NavigatorContentExtension ext;
 		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
@@ -545,7 +354,27 @@ public class NavigatorContentServiceContentProvider implements
 				return true;
 			}
 		}
+		return false;
+	}
 
+	public synchronized boolean hasChildren(TreePath path) {
+		Object anElement = internalAsElement(path);
+		Set resultInstances = contentService.findContentExtensionsByTriggerPoint(anElement);
+
+		NavigatorContentExtension ext;
+		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
+			ext = (NavigatorContentExtension) itr.next();
+			if (!ext.isLoaded() && !enforceHasChildren)
+				return true;
+			ITreeContentProvider cp = ext.internalGetContentProvider();
+			if (cp instanceof ITreePathContentProvider) {
+				ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
+				if (tpcp.hasChildren(path)) {
+					return true;
+				}
+			} else if (cp.hasChildren(anElement))
+				return true;
+		}
 		return false;
 	}
 
@@ -563,94 +392,16 @@ public class NavigatorContentServiceContentProvider implements
 	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
 	 */
 	public synchronized void dispose() {
-		if (isContentServiceSelfManaged) {
+		if (disposeContentService) {
 			contentService.dispose();
 		}
 	}
 
 	/**
-	 * <p>
-	 * Indicates that the current content provider is now representing a
-	 * different input element. The input element is the root thing that the
-	 * viewer displays.
-	 * </p>
-	 * <p>
-	 * This method should handle any cleanup associated with the old input
-	 * element and any initialization associated with the new input element.
-	 * </p>
-	 * {@inheritDoc}
-	 * 
-	 * @param aViewer
-	 *            The viewer that the current content provider is associated
-	 *            with
-	 * @param anOldInput
-	 *            The original input element that the viewer was visualizing
-	 * @param aNewInput
-	 *            The new input element that the viewer will visualize.
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer,
-	 *      java.lang.Object, java.lang.Object)
-	 * 
-	 */
-	public synchronized void inputChanged(Viewer aViewer, Object anOldInput,
-			Object aNewInput) {
-		viewer = aViewer;
-		contentService.updateService(aViewer, anOldInput, aNewInput);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#getChildren(org.eclipse.jface.viewers.TreePath)
-	 */
-	public Object[] getChildren(TreePath parentPath) {
-		return internalGetChildren(parentPath);
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#hasChildren(org.eclipse.jface.viewers.TreePath)
-	 */
-	public boolean hasChildren(TreePath path) {
-		Object anElement = internalAsElement(path);
-		Set resultInstances = contentService
-				.findContentExtensionsByTriggerPoint(anElement);
-
-		NavigatorContentExtension ext;
-		for (Iterator itr = resultInstances.iterator(); itr.hasNext();) {
-			ext = (NavigatorContentExtension) itr.next();
-			if (!ext.isLoaded() && !enforceHasChildren)
-				return true;
-			ITreeContentProvider cp = ext.internalGetContentProvider();
-			if (cp instanceof ITreePathContentProvider) {
-				ITreePathContentProvider tpcp = (ITreePathContentProvider) cp;
-				if (tpcp.hasChildren(path)) {
-					return true;
-				}
-			} else if (cp.hasChildren(anElement))
-				return true;
-		}
-
-		return false;
-	}
-
-	/* (non-Javadoc)
-	 * @see org.eclipse.jface.viewers.ITreePathContentProvider#getParents(java.lang.Object)
-	 */
-	public TreePath[] getParents(Object anElement) {
-		
-		List paths = new ArrayList();
-		TreePathCompiler compiler = new TreePathCompiler(anElement); 
-		Set compilers = findPaths(compiler);
-		for (Iterator iter = compilers.iterator(); iter.hasNext();) {
-			TreePathCompiler c = (TreePathCompiler) iter.next();
-			paths.add(c.createParentPath());
-			
-		}
-		return (TreePath[]) paths.toArray(new TreePath[paths.size()]);
-		 
-	}
-  
-
-	/**
 	 * Get the element from an element or tree path argument.
-	 * @param parentElementOrPath the element or tree path
+	 * 
+	 * @param parentElementOrPath
+	 *            the element or tree path
 	 * @return the element
 	 */
 	private Object internalAsElement(Object parentElementOrPath) {
@@ -664,7 +415,6 @@ public class NavigatorContentServiceContentProvider implements
 		}
 		return parentElementOrPath;
 	}
-	
 
 	class CyclicPathException extends Exception {
 
@@ -672,13 +422,12 @@ public class NavigatorContentServiceContentProvider implements
 
 		protected CyclicPathException(TreePathCompiler compiler, Object invalidSegment, boolean asChild) {
 			super("Cannot add " + invalidSegment + //$NON-NLS-1$ 
-					" to the list of segments in " + compiler +  //$NON-NLS-1$ 
-					(asChild ? " as a child." : " as a parent.") ); //$NON-NLS-1$ //$NON-NLS-2$
+					" to the list of segments in " + compiler + //$NON-NLS-1$ 
+					(asChild ? " as a child." : " as a parent.")); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
 	class TreePathCompiler {
-
 
 		private final LinkedList segments = new LinkedList();
 
@@ -697,14 +446,14 @@ public class NavigatorContentServiceContentProvider implements
 		}
 
 		protected void addParent(Object segment) throws CyclicPathException {
-			if(segments.contains(segment)) {
+			if (segments.contains(segment)) {
 				throw new CyclicPathException(this, segment, false);
 			}
 			segments.addFirst(segment);
 		}
 
 		protected void addChild(Object segment) throws CyclicPathException {
-			if(segments.contains(segment)) {
+			if (segments.contains(segment)) {
 				throw new CyclicPathException(this, segment, false);
 			}
 			segments.addLast(segment);
@@ -729,20 +478,22 @@ public class NavigatorContentServiceContentProvider implements
 			parentSegments.removeLast();
 			return new TreePath(parentSegments.toArray());
 		}
-		
+
 		public Object getLastSegment() {
 			return segments.getLast();
 		}
-		
+
 		public Object getFirstSegment() {
 			return segments.getFirst();
 		}
-		
-		/* (non-Javadoc)
+
+		/*
+		 * (non-Javadoc)
+		 * 
 		 * @see java.lang.Object#toString()
 		 */
 		public String toString() {
-		
+
 			StringBuffer buffer = new StringBuffer();
 			for (Iterator iter = segments.iterator(); iter.hasNext();) {
 				Object segment = iter.next();
@@ -755,17 +506,17 @@ public class NavigatorContentServiceContentProvider implements
 
 	private Set findPaths(TreePathCompiler aPathCompiler) {
 
-		Set/* <Object> */ parents = findParents(aPathCompiler.getFirstSegment());
-		Set/* <TreePathCompiler> */ parentPaths = new LinkedHashSet();
-		Set/* <TreePathCompiler> */ foundPaths = Collections.EMPTY_SET;
+		Set/* <Object> */parents = findParents(aPathCompiler.getFirstSegment());
+		Set/* <TreePathCompiler> */parentPaths = new LinkedHashSet();
+		Set/* <TreePathCompiler> */foundPaths = Collections.EMPTY_SET;
 		if (parents.size() > 0) {
 			for (Iterator parentIter = parents.iterator(); parentIter.hasNext();) {
 				Object parent = (Object) parentIter.next();
 				TreePathCompiler c = new TreePathCompiler(aPathCompiler);
 				try {
-					c.addParent(parent); 
+					c.addParent(parent);
 					foundPaths = findPaths(c);
-				} catch(CyclicPathException cpe) {
+				} catch (CyclicPathException cpe) {
 					String msg = cpe.getMessage() != null ? cpe.getMessage() : cpe.toString();
 					NavigatorPlugin.logError(0, msg, cpe);
 				}
@@ -781,8 +532,7 @@ public class NavigatorContentServiceContentProvider implements
 
 	private Set findParents(Object anElement) {
 
-		Set descriptors = contentService.findDescriptorsWithPossibleChild(
-				anElement, false);
+		Set descriptors = contentService.findDescriptorsWithPossibleChild(anElement, false);
 		Set parents = new LinkedHashSet();
 		NavigatorContentDescriptor foundDescriptor;
 		NavigatorContentExtension foundExtension;
@@ -791,9 +541,7 @@ public class NavigatorContentServiceContentProvider implements
 			foundDescriptor = (NavigatorContentDescriptor) itr.next();
 			foundExtension = contentService.getExtension(foundDescriptor);
 			try {
-
-				if (!isOverridingDescriptorInSet(
-						foundExtension.getDescriptor(), descriptors)) {
+				if (!isOverridingDescriptorInSet(foundExtension.getDescriptor(), descriptors)) {
 
 					/* internalGetContentProvider returns the real delegate */
 					if (foundExtension.getContentProvider() instanceof ITreePathContentProvider) {
@@ -802,77 +550,54 @@ public class NavigatorContentServiceContentProvider implements
 						 * errors
 						 */
 						TreePath[] parentTreePaths = ((ITreePathContentProvider) foundExtension
-								.internalGetContentProvider())
-								.getParents(anElement);
+								.internalGetContentProvider()).getParents(anElement);
 
 						for (int i = 0; i < parentTreePaths.length; i++) {
 
 							parent = parentTreePaths[i].getLastSegment();
-							if ((parent = findParent(foundExtension, anElement,
-									parent)) != null)
+							if ((parent = findParent(foundExtension, anElement, parent)) != null)
 								parents.add(parent);
 						}
 
 					} else {
-
-						parent = foundExtension.internalGetContentProvider()
-								.getParent(anElement);
-						if ((parent = findParent(foundExtension, anElement,
-								parent)) != null)
+						parent = foundExtension.internalGetContentProvider().getParent(anElement);
+						if ((parent = findParent(foundExtension, anElement, parent)) != null)
 							parents.add(parent);
 					}
 				}
 
-			} catch (RuntimeException re) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), re);
-			} catch (Error e) {
-				NavigatorPlugin
-						.logError(
-								0,
-								NLS
-										.bind(
-												CommonNavigatorMessages.Could_not_provide_children_for_element,
-												new Object[] { foundExtension
-														.getDescriptor()
-														.getId() }), e);
-		
-			} 
+			} catch (Throwable e) {
+				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
+						new Object[] { foundExtension.getDescriptor().getId(), anElement }), e);
+			}
 		}
-		
+
 		return parents;
-		
+
 	}
-	 
-	
+
 	private Object findParent(NavigatorContentExtension anExtension, Object anElement, Object aSuggestedParent) {
-		
+
 		/* the last valid (non-null) parent for the anElement */
 		Object lastValidParent = aSuggestedParent;
 		/* used to keep track of new suggestions */
 		Object suggestedOverriddenParent = null;
-		IPipelinedTreeContentProvider piplineContentProvider; 
-		NavigatorContentExtension[] overridingExtensions = anExtension.getOverridingExtensionsForPossibleChild(anElement); 
+		IPipelinedTreeContentProvider piplineContentProvider;
+		NavigatorContentExtension[] overridingExtensions = anExtension
+				.getOverridingExtensionsForPossibleChild(anElement);
 		for (int i = 0; i < overridingExtensions.length; i++) {
-			if(overridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
-				piplineContentProvider = (IPipelinedTreeContentProvider) overridingExtensions[i].getContentProvider(); 
+			if (overridingExtensions[i].getContentProvider() instanceof IPipelinedTreeContentProvider) {
+				piplineContentProvider = (IPipelinedTreeContentProvider) overridingExtensions[i].getContentProvider();
 				suggestedOverriddenParent = piplineContentProvider.getPipelinedParent(anElement, lastValidParent);
-				
-				if(suggestedOverriddenParent != null)
-					lastValidParent = suggestedOverriddenParent; 
-				
-				// should never return null 
+
+				if (suggestedOverriddenParent != null)
+					lastValidParent = suggestedOverriddenParent;
+
+				// should never return null
 				lastValidParent = findParent(overridingExtensions[i], anElement, lastValidParent);
 			}
-				
-		} 
+
+		}
 		return lastValidParent;
 	}
 
