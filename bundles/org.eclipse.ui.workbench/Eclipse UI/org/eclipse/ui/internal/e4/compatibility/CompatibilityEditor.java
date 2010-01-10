@@ -16,6 +16,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -101,8 +102,8 @@ public class CompatibilityEditor extends CompatibilityPart {
 			}
 
 			public Shell getShell() {
-				// TODO Auto-generated method stub
-				return null;
+				Control control = (Control) part.getWidget();
+				return control.getShell();
 			}
 
 			public ISelectionProvider getSelectionProvider() {

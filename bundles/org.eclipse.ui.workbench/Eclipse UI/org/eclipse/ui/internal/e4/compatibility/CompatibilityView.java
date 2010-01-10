@@ -17,6 +17,7 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IKeyBindingService;
@@ -149,7 +150,8 @@ public class CompatibilityView extends CompatibilityPart {
 			}
 
 			public Shell getShell() {
-				return null;
+				Control control = (Control) part.getWidget();
+				return control.getShell();
 			}
 
 			public IWorkbenchWindow getWorkbenchWindow() {

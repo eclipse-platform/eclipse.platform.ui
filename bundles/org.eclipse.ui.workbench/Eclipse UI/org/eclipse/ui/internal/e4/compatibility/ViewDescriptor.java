@@ -52,8 +52,7 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getId()
 	 */
 	public String getId() {
-		// TODO Auto-generated method stub
-		return null;
+		return element.getAttribute("id"); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

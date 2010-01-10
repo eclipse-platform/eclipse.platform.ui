@@ -29,6 +29,10 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 		this.part = part;
 	}
 
+	MPart getModel() {
+		return part;
+	}
+
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPart(boolean)
 	 */

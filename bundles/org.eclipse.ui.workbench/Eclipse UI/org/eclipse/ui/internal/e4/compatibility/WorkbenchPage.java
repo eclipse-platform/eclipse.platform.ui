@@ -132,7 +132,22 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#closeEditor(org.eclipse.ui.IEditorPart, boolean)
 	 */
 	public boolean closeEditor(IEditorPart editor, boolean save) {
-		// TODO Auto-generated method stub
+		if (!editor.isSaveOnCloseNeeded()) {
+			MPart part = null;
+			for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
+				IEditorReference reference = it.next();
+				if (editor == reference.getPart(false)) {
+					part = ((EditorReference) reference).getModel();
+					break;
+				}
+			}
+
+			if (part != null) {
+				hidePart(part);
+			}
+
+			return true;
+		}
 		return false;
 	}
 
@@ -291,29 +306,47 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	}
 
-	/* (non-Javadoc)
+	private void hidePart(MPart part) {
+		MElementContainer<MUIElement> parent = part.getParent();
+		parent.getChildren().remove(part);
+		// TODO: this shouldn't be mandatory??
+		engine.removeGui(part);
+
+		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
+		compatibilityPart.delegateDispose();
+
+		for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
+			IViewReference reference = it.next();
+			if (compatibilityPart.getPart() == reference.getPart(false)) {
+				it.remove();
+				return;
+			}
+		}
+
+		for (Iterator<IEditorReference> it = editorReferences.iterator(); it.hasNext();) {
+			IEditorReference reference = it.next();
+			if (compatibilityPart.getPart() == reference.getPart(false)) {
+				it.remove();
+				return;
+			}
+		}
+	}
+
+	private void hidePart(String id) {
+		MPart part = partService.findPart(id);
+		if (part != null) {
+			hidePart(part);
+		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see org.eclipse.ui.IWorkbenchPage#hideView(org.eclipse.ui.IViewPart)
 	 */
 	public void hideView(IViewPart view) {
-		if (view == null) {
-			return;
-		}
-
-		MPart part = partService.findPart(view.getSite().getId());
-		if (part != null) {
-			MElementContainer<MUIElement> parent = part.getParent();
-			parent.getChildren().remove(part);
-
-			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
-			compatibilityView.delegateDispose();
-			
-			for (Iterator<IViewReference> it = viewReferences.iterator(); it.hasNext();) {
-				IViewReference reference = it.next();
-				if (compatibilityView.getPart() == reference.getPart(false)) {
-					it.remove();
-					return;
-				}
-			}
+		if (view != null) {
+			hidePart(view.getSite().getId());
 		}
 	}
 

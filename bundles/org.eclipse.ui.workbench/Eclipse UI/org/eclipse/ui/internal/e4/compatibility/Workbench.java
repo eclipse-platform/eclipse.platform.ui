@@ -356,6 +356,7 @@ public class Workbench implements IWorkbench {
 		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		application.getChildren().add(window);
 		engine.createGui(window);
+		application.setActiveChild(window);
 		WorkbenchWindow result = new WorkbenchWindow(input);
 		ContextInjectionFactory.inject(result, window.getContext());
 		fireWindowOpened(result);
