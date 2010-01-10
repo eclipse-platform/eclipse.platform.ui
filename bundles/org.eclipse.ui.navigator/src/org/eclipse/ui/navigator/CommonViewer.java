@@ -288,8 +288,6 @@ public class CommonViewer extends TreeViewer {
 	 *      java.lang.Object[])
 	 */
 	public void add(Object parentElement, Object[] childElements) {
-		// TODO Intercept ADD for the pipeline service.
-
 		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
 				.getPipelineService();
 
@@ -314,9 +312,6 @@ public class CommonViewer extends TreeViewer {
 	 * @see org.eclipse.jface.viewers.AbstractTreeViewer#remove(java.lang.Object[])
 	 */
 	public void remove(Object[] elements) {
-
-		// TODO Intercept REMOVE for the pipeline service.
-
 		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
 				.getPipelineService();
 
