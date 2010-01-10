@@ -54,12 +54,12 @@ public final class NavigatorActivationService implements
 	private static final char EQUALS = '=';  
 
 	/*
-	 * Set of ids of activated extensions.
-	 */
-	//private final Set activatedExtensions = new HashSet();
-
-	/*
-	 * Set of ids of activated extensions.
+	 * Map of ids of activated extensions. Note this is only synchronized when
+	 * modifying it structurally (that is adding or deleting entries in it). For
+	 * changing of the activated extension state, no synchronization is
+	 * necessary.  Though this is semantically functioning as a Set, it's implemented
+	 * as a Map to avoid the synchronization during the frequent checking of
+	 * extension status.
 	 */
 	private final Map/*<String, Boolean>*/ activatedExtensionsMap = new HashMap();
 
@@ -105,7 +105,6 @@ public final class NavigatorActivationService implements
 				activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.FALSE);
 			return descriptor.isActiveByDefault();
 		}
-		//return activatedExtensions.contains(aNavigatorExtensionId);
 	}
 
 	/**
@@ -142,10 +141,8 @@ public final class NavigatorActivationService implements
 		}
 
 		if (toEnable) {
-			//activatedExtensions.add(aNavigatorExtensionId);
 			activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.TRUE);
 		} else {
-			//activatedExtensions.remove(aNavigatorExtensionId);
 			activatedExtensionsMap.put(aNavigatorExtensionId, Boolean.FALSE);
 		}
 		notifyListeners(new String[] { aNavigatorExtensionId }, toEnable);
@@ -177,12 +174,10 @@ public final class NavigatorActivationService implements
 
 		if (toEnable) {
 			for (int i = 0; i < aNavigatorExtensionIds.length; i++) {
-				//activatedExtensions.add(aNavigatorExtensionIds[i]);
 				activatedExtensionsMap.put(aNavigatorExtensionIds[i], Boolean.TRUE);
 			}
 		} else {
 			for (int i = 0; i < aNavigatorExtensionIds.length; i++) {
-				//activatedExtensions.remove(aNavigatorExtensionIds[i]);
 				activatedExtensionsMap.put(aNavigatorExtensionIds[i], Boolean.FALSE);
 			}
 		}
@@ -197,9 +192,7 @@ public final class NavigatorActivationService implements
 	public void persistExtensionActivations() {
 		IEclipsePreferences prefs = NavigatorContentService.getPreferencesRoot();
 		
-		//synchronized (activatedExtensions) {
 		synchronized (activatedExtensionsMap) {
-			//Iterator activatedExtensionsIterator = activatedExtensions.iterator();
 			Iterator activatedExtensionsIterator = activatedExtensionsMap.keySet().iterator();
 			
 			/* ensure that the preference will be non-empty */
@@ -276,7 +269,6 @@ public final class NavigatorActivationService implements
 			String booleanString = null;
 			int indx=0;
 			for (int i = 0; i < contentExtensionIds.length; i++) {
-				//activatedExtensions.add(contentExtensionIds[i]);
 				if( (indx = contentExtensionIds[i].indexOf(EQUALS)) > -1) {
 					// up to but not including the equals
 					id = contentExtensionIds[i].substring(0, indx);
@@ -301,7 +293,6 @@ public final class NavigatorActivationService implements
 					.getAllContentDescriptors();
 			for (int i = 0; i < contentDescriptors.length; i++) {
 				if (contentDescriptors[i].isActiveByDefault()) {					
-					//activatedExtensions.add(contentDescriptors[i].getId());
 					activatedExtensionsMap.put(contentDescriptors[i].getId(), Boolean.TRUE);
 				}
 			}
