@@ -1,6 +1,6 @@
-#Wed Jan 14 16:52:51 PST 2009
+#Sun Jan 10 01:29:19 PST 2010
 eclipse.preferences.version=1
-formatter_profile=_CNF
+formatter_profile=_UI 200 Character Wrap
 formatter_settings_version=11
 internal.default.compliance=user
 org.eclipse.jdt.ui.javadoc=true
