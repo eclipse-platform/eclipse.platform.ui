@@ -503,7 +503,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 			CompatibilityView compatibilityView = (CompatibilityView) part.getObject();
 
-			viewReferences.add(new ViewReference(this, part));
+			viewReferences.add(new ViewReference(this, part, compatibilityView.getDescriptor()));
 
 			return compatibilityView.getView();
 		}

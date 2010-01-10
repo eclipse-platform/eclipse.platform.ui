@@ -15,6 +15,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Set;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -22,7 +23,9 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
+import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -61,6 +64,8 @@ import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventHandler;
 
 /**
  * @since 3.5
@@ -75,10 +80,14 @@ public class Workbench implements IWorkbench {
 
 	@Inject
 	private IPresentationEngine engine;
+	@Inject
+	private IEventBroker eventBroker;
 
 	private UIExtensionTracker tracker;
 	private IPerspectiveRegistry perspectiveRegistry = new PerspectiveRegistry();
 	private IViewRegistry viewRegistry;
+
+	private ListenerList windowListeners = new ListenerList();
 
 	Workbench() {
 		// prevent external initialization
@@ -89,6 +98,24 @@ public class Workbench implements IWorkbench {
 		try {
 			viewRegistry = (IViewRegistry) ContextInjectionFactory.make(ViewRegistry.class,
 					application.getContext());
+			
+			eventBroker.subscribe(UIEvents.buildTopic(UIEvents.ElementContainer.TOPIC,
+					UIEvents.ElementContainer.CHILDREN), new EventHandler() {
+				public void handleEvent(Event event) {
+					if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
+						if (UIEvents.EventTypes.REMOVE.equals(event
+								.getProperty(UIEvents.EventTags.TYPE))) {
+							MWindow window = (MWindow) event
+									.getProperty(UIEvents.EventTags.OLD_VALUE);
+							IWorkbenchWindow wwindow = (IWorkbenchWindow) window.getContext().get(
+									IWorkbenchWindow.class.getName());
+							if (wwindow != null) {
+								fireWindowClosed(wwindow);
+							}
+						}
+					}
+				}
+			});
 		} catch (InvocationTargetException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -151,8 +178,7 @@ public class Workbench implements IWorkbench {
 	 * )
 	 */
 	public void addWindowListener(IWindowListener listener) {
-		// TODO Auto-generated method stub
-
+		windowListeners.add(listener);
 	}
 
 	/*
@@ -163,8 +189,7 @@ public class Workbench implements IWorkbench {
 	 * )
 	 */
 	public void removeWindowListener(IWindowListener listener) {
-		// TODO Auto-generated method stub
-
+		windowListeners.remove(listener);
 	}
 
 	/*
@@ -308,6 +333,18 @@ public class Workbench implements IWorkbench {
 		return null;
 	}
 
+	private void fireWindowOpened(IWorkbenchWindow window) {
+		for (Object listener : windowListeners.getListeners()) {
+			((IWindowListener) listener).windowOpened(window);
+		}
+	}
+
+	private void fireWindowClosed(IWorkbenchWindow window) {
+		for (Object listener : windowListeners.getListeners()) {
+			((IWindowListener) listener).windowClosed(window);
+		}
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -321,6 +358,7 @@ public class Workbench implements IWorkbench {
 		engine.createGui(window);
 		WorkbenchWindow result = new WorkbenchWindow(input);
 		ContextInjectionFactory.inject(result, window.getContext());
+		fireWindowOpened(result);
 		return result;
 	}
 

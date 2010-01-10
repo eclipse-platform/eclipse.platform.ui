@@ -12,12 +12,14 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import java.lang.reflect.InvocationTargetException;
+import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -37,8 +39,12 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
  */
 public class WorkbenchWindow implements IWorkbenchWindow {
 
-	private IWorkbench inject__workbench;
-	private MWindow inject__model;
+	@Inject
+	private IWorkbench workbench;
+	@Inject
+	private MWindow model;
+	@Inject
+	private IPresentationEngine engine;
 	private WorkbenchPage page;
 	private UIExtensionTracker tracker;
 
@@ -50,8 +56,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	void contextSet() {
 		page = new WorkbenchPage(this, input);
-		IEclipseContext windowContext = inject__model.getContext();
+		IEclipseContext windowContext = model.getContext();
 		ContextInjectionFactory.inject(page, windowContext);
+		windowContext.set(IWorkbenchWindow.class.getName(), this);
 		windowContext.set(IWorkbenchPage.class.getName(), page);
 	}
 
@@ -59,8 +66,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#close()
 	 */
 	public boolean close() {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME: the rendering engine should destroy in response to a remove,
+		// right?
+		model.getParent().getChildren().remove(model);
+		engine.removeGui(model);
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -96,14 +106,14 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
-		return ((Control) inject__model.getWidget()).getShell();
+		return ((Control) model.getWidget()).getShell();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchWindow#getWorkbench()
 	 */
 	public IWorkbench getWorkbench() {
-		return inject__workbench;
+		return workbench;
 	}
 
 	/* (non-Javadoc)
@@ -119,7 +129,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public IWorkbenchPage openPage(String perspectiveId, IAdaptable input)
 			throws WorkbenchException {
-		return inject__workbench.openWorkbenchWindow(perspectiveId, input).getActivePage();
+		return workbench.openWorkbenchWindow(perspectiveId, input).getActivePage();
 	}
 
 	/* (non-Javadoc)

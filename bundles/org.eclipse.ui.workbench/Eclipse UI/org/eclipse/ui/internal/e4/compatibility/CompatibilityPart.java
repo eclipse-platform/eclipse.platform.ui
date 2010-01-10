@@ -16,7 +16,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.PartInitException;
 
 public abstract class CompatibilityPart {
@@ -52,6 +54,17 @@ public abstract class CompatibilityPart {
 			initialize(wrapped);
 			createPartControl(wrapped, composite);
 			delegateSetFocus();
+
+			part.setLabel(wrapped.getTitle());
+			part.setTooltip(wrapped.getTitleToolTip());
+
+			wrapped.addPropertyListener(new IPropertyListener() {
+				public void propertyChanged(Object source, int propId) {
+					if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+						part.setLabel(wrapped.getTitle());
+					}
+				}
+			});
 		} catch (CoreException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

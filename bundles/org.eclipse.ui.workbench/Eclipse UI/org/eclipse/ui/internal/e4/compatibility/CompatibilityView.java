@@ -28,9 +28,15 @@ import org.eclipse.ui.views.IViewDescriptor;
 
 public class CompatibilityView extends CompatibilityPart {
 
+	private IViewDescriptor descriptor;
+
+	IViewDescriptor getDescriptor() {
+		return descriptor;
+	}
+
 	protected IWorkbenchPart createPart() {
 		try {
-			IViewDescriptor descriptor = PlatformUI.getWorkbench().getViewRegistry().find(
+			descriptor = PlatformUI.getWorkbench().getViewRegistry().find(
 					part.getId());
 			return descriptor.createView();
 		} catch (CoreException e) {

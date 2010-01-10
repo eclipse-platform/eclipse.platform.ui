@@ -15,11 +15,19 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.views.IViewDescriptor;
 
 public class ViewReference extends WorkbenchPartReference implements IViewReference {
 
-	ViewReference(IWorkbenchPage page, MPart part) {
+	private IViewDescriptor descriptor;
+
+	ViewReference(IWorkbenchPage page, MPart part, IViewDescriptor descriptor) {
 		super(page, part);
+		this.descriptor = descriptor;
+	}
+
+	public String getPartName() {
+		return descriptor.getLabel();
 	}
 
 	public String getSecondaryId() {
