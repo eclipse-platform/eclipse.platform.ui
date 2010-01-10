@@ -22,6 +22,12 @@ import org.eclipse.ui.navigator.PipelinedViewerUpdate;
 public class TestContentProviderPipelined extends ResourceExtensionContentProvider implements
 		IPipelinedTreeContentProvider {
 
+	public static boolean _throw;
+	
+	public static void resetTest() {
+		_throw = false;
+	}
+	
 	public TestContentProviderPipelined() {
 	}
 
@@ -33,6 +39,8 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	 * (java.lang.Object, java.util.Set)
 	 */
 	public void getPipelinedChildren(Object aParent, Set theCurrentChildren) {
+		if (_throw)
+			throw new RuntimeException("did not work out");
 		System.out.println("parent: " + aParent);
 		System.out.println("chilren: " + theCurrentChildren);
 
@@ -46,6 +54,8 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	 * (java.lang.Object, java.util.Set)
 	 */
 	public void getPipelinedElements(Object anInput, Set theCurrentElements) {
+		if (_throw)
+			throw new RuntimeException("did not work out");
 		getPipelinedChildren(anInput, theCurrentElements);
 	}
 
@@ -57,6 +67,8 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	 * (java.lang.Object, java.lang.Object)
 	 */
 	public Object getPipelinedParent(Object anObject, Object aSuggestedParent) {
+		if (_throw)
+			throw new RuntimeException("did not work out");
 		return aSuggestedParent;
 	}
 
@@ -69,6 +81,8 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	 */
 	public PipelinedShapeModification interceptAdd(
 			PipelinedShapeModification anAddModification) {
+		if (_throw)
+			throw new RuntimeException("did not work out");
 		return anAddModification;
 	}
 
@@ -81,6 +95,8 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	 */
 	public boolean interceptRefresh(
 			PipelinedViewerUpdate aRefreshSynchronization) {
+		if (_throw)
+			throw new RuntimeException("did not work out");
 		return true;
 	}
 
@@ -93,6 +109,8 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	 */
 	public PipelinedShapeModification interceptRemove(
 			PipelinedShapeModification aRemoveModification) {
+		if (_throw)
+			throw new RuntimeException("did not work out");
 		return aRemoveModification;
 	}
 
@@ -104,6 +122,8 @@ public class TestContentProviderPipelined extends ResourceExtensionContentProvid
 	 * (org.eclipse.ui.navigator.PipelinedViewerUpdate)
 	 */
 	public boolean interceptUpdate(PipelinedViewerUpdate anUpdateSynchronization) {
+		if (_throw)
+			throw new RuntimeException("did not work out");
 		return false;
 	}
 

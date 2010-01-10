@@ -33,9 +33,11 @@ import org.eclipse.ui.navigator.CommonNavigator;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.INavigatorContentService;
 import org.eclipse.ui.navigator.NavigatorActionService;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.EditorTestHelper;
 import org.eclipse.ui.tests.navigator.extension.TestContentProvider;
+import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
 import org.eclipse.ui.tests.navigator.extension.TestSorterData;
 import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
@@ -66,6 +68,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testContentOverride1";
 	public static final String TEST_CONTENT_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testContentOverride2";
 	public static final String TEST_CONTENT_OVERRIDE2_BLANK = "org.eclipse.ui.tests.navigator.testContentOverride2Blank";
+	public static final String TEST_CONTENT_PIPELINED = "org.eclipse.ui.tests.navigator.testContentPipelined";
 	
 	public static final String TEST_CONTENT_LABEL1 = "org.eclipse.ui.tests.navigator.testContentLabel1";
 	public static final String TEST_CONTENT_LABEL2 = "org.eclipse.ui.tests.navigator.testContentLabel2";
@@ -132,6 +135,11 @@ public class NavigatorTestBase extends TestCase {
 					"Set the _navigatorInstanceId in the constructor");
 		}
 
+		// Easier if this is not around when not needed
+		if (!_navigatorInstanceId.equals(ProjectExplorer.VIEW_ID))
+			EditorTestHelper.showView(ProjectExplorer.VIEW_ID, false);
+
+		TestContentProviderPipelined.resetTest();
 		TestContentProviderResource.resetTest();
 		TestSorterData.resetTest();
 		TestSorterResource.resetTest();

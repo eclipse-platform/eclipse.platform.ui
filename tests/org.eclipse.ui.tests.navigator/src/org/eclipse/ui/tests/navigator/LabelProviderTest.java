@@ -12,6 +12,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
@@ -181,7 +182,8 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 	private void checkItems(TreeItem[] rootItems, TestLabelProvider tlp) {
 		assertEquals(tlp.backgroundColor, rootItems[0].getBackground(0));
-		assertEquals(tlp.backgroundColor, rootItems[0].getForeground(0));
+		assertEquals(TestLabelProvider.toForegroundColor(tlp.backgroundColor),
+				rootItems[0].getForeground(0));
 		assertEquals(tlp.font, rootItems[0].getFont(0));
 		assertEquals(tlp.image, rootItems[0].getImage(0));
 	}
@@ -263,6 +265,28 @@ public class LabelProviderTest extends NavigatorTestBase {
 		checkItemsAll(rootItems, TestLabelProviderCyan.instance);
 	}
 
+	public void testOverrideAdd() throws Exception {
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
+				TEST_CONTENT_OVERRIDE2 }, false);
+		_contentService.getActivationService()
+				.activateExtensions(
+						new String[] { TEST_CONTENT_OVERRIDDEN2,
+								TEST_CONTENT_OVERRIDE2 }, true);
+
+		refreshViewer();
+
+		// Try manually adding
+		_viewer.expandToLevel(_project, 3);
+		IFile f = _project.getFile("newfile");
+		_viewer.add(_project, new Object[] { f });
+
+		if (false)
+			DisplayHelper.sleep(10000000);
+
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+		checkItemsAll(rootItems, TestLabelProviderCyan.instance);
+	}
+
 	// Make sure that it finds label providers that are in overridden content
 	// extensions
 	// if none of the label providers from the desired content extensions return
@@ -279,7 +303,8 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
-		// DisplayHelper.sleep(10000000);
+		if (false)
+			DisplayHelper.sleep(10000000);
 
 		// But we get the text from the overridden label provider
 		if (!rootItems[0].getText().startsWith("Blue"))
@@ -287,6 +312,32 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 		// We get the everything else from the blank label provider
 		checkItems(rootItems, TestLabelProviderBlank.instance);
+	}
+
+	// Bug 295803 Source of contribution set to lowest priority NCE
+	// Not fixed yet
+	public void XXXtestMultiNceSameObject() throws Exception {
+
+		_contentService.bindExtensions(
+				new String[] { TEST_CONTENT_OVERRIDDEN1, }, true);
+		// Just two different ones, they don't override, the label provider
+		// should be associated with the higher priority extension that
+		// contributed the object.
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_OVERRIDDEN1,
+						COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+
+		refreshViewer();
+
+		TreeItem[] rootItems = _viewer.getTree().getItems();
+
+		// DisplayHelper.sleep(10000000);
+
+		// But we get the text from the overridden label provider
+		// FIXME - this should be the normal background and foreground color
+		// since it should be from the JDT/Resource NCE
+		if (!rootItems[0].getText().startsWith("Blue"))
+			fail("Wrong text: " + rootItems[0].getText());
 	}
 
 }
