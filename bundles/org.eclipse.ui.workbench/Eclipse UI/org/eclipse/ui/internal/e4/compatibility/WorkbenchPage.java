@@ -17,6 +17,7 @@ import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
@@ -559,16 +560,23 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#saveAllEditors(boolean)
 	 */
 	public boolean saveAllEditors(boolean confirm) {
-		// TODO Auto-generated method stub
-		return false;
+		boolean success = true;
+		for (IEditorPart editor : getEditors()) {
+			if (!saveEditor(editor, confirm)) {
+				success = false;
+			}
+		}
+		return success;
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#saveEditor(org.eclipse.ui.IEditorPart, boolean)
 	 */
 	public boolean saveEditor(IEditorPart editor, boolean confirm) {
-		// TODO Auto-generated method stub
-		return false;
+		if (editor.isDirty()) {
+			editor.doSave(new NullProgressMonitor());
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
