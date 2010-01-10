@@ -32,7 +32,7 @@ public class CommonNavigatorMessages extends NLS {
 	public static String Link_With_Editor_Job_;
 
 	/** */
-	public static String Could_not_provide_children_for_element;
+	public static String Exception_Invoking_Extension;
 
 	/** */
 	public static String NavigatorViewerDescriptor_Popup_Menu_Overridden;

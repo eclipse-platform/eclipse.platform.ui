@@ -17,6 +17,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.eclipse.jface.viewers.TreePath;
+import org.eclipse.osgi.util.NLS;
 
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentDescriptor;
 import org.eclipse.ui.internal.navigator.extensions.NavigatorContentExtension;
@@ -81,7 +82,6 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			INavigatorContentDescriptor descriptor = (INavigatorContentDescriptor) descriptorsItr.next();
 			pipelineInterceptAdd(anAddModification, trackedSet, descriptor);
 		}
-
 		// for consistency, we register the contribution from our best known match
 		registerContribution(anAddModification.getParent(), anAddModification.getChildren().toArray());
 		return anAddModification;
@@ -118,12 +118,17 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 			for (Iterator overridingDescriptorsItr = overridingDescriptors.iterator(); overridingDescriptorsItr
 					.hasNext();) {
 				INavigatorContentDescriptor overridingDescriptor = (INavigatorContentDescriptor) overridingDescriptorsItr.next();
+				NavigatorContentExtension extension = null;
 				if(contentService.isVisible(overridingDescriptor.getId()) && contentService.isActive(overridingDescriptor.getId())) {
-					trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor);
-					NavigatorContentExtension extension = contentService.getExtension(overridingDescriptor);
-					((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);
-					trackedSet.setContributor(null);
-					pipelineInterceptAdd(anAddModification, trackedSet, overridingDescriptor);
+					try {
+						trackedSet.setContributor((NavigatorContentDescriptor) overridingDescriptor);
+						extension = contentService.getExtension(overridingDescriptor);
+						((IPipelinedTreeContentProvider) extension.internalGetContentProvider()).interceptAdd(anAddModification);
+						trackedSet.setContributor(null);
+						pipelineInterceptAdd(anAddModification, trackedSet, overridingDescriptor);
+					} catch (Throwable e) {
+						NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension, new Object[] { extension.getDescriptor().getId(), null }), e);
+					}
 				}
 			}
 		}
@@ -176,36 +181,34 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 	
 
 	private void pipelineInterceptRemove(PipelinedShapeModification aRemoveModification, ContributorTrackingSet trackedSet, NavigatorContentExtension overrideableExtension) {
-		
-		
-		try {
-			NavigatorContentExtension overridingExtension = null;
-			Set overridingExtensions = new LinkedHashSet();
-			for (Iterator iter = trackedSet.iterator(); iter.hasNext();) {
-				Object element = (Object) iter.next();
-				if(element instanceof TreePath) {
-					overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(((TreePath)element).getLastSegment())));
-				} else {
-					overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(element)));
-				}
+		NavigatorContentExtension overridingExtension = null;
+		Set overridingExtensions = new LinkedHashSet();
+		for (Iterator iter = trackedSet.iterator(); iter.hasNext();) {
+			Object element = (Object) iter.next();
+			if (element instanceof TreePath) {
+				overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(((TreePath) element).getLastSegment())));
+			} else {
+				overridingExtensions.addAll(Arrays.asList(overrideableExtension.getOverridingExtensionsForPossibleChild(element)));
 			}
-			 
-			for (Iterator extensionsItr = overridingExtensions.iterator(); extensionsItr.hasNext();) {
+		}
+
+		for (Iterator extensionsItr = overridingExtensions.iterator(); extensionsItr.hasNext();) {
+			try {
 				overridingExtension = (NavigatorContentExtension) extensionsItr.next();
 				trackedSet.setContributor((NavigatorContentDescriptor) overridingExtension.getDescriptor());
 				if (overridingExtension.getContentProvider() instanceof IPipelinedTreeContentProvider) {
 					((IPipelinedTreeContentProvider) overridingExtension.getContentProvider()).interceptRemove(aRemoveModification);
 				}
 				trackedSet.setContributor(null);
-				if(overridingExtension.getDescriptor().hasOverridingExtensions())
+				if (overridingExtension.getDescriptor().hasOverridingExtensions())
 					pipelineInterceptRemove(aRemoveModification, trackedSet, overridingExtension);
-												
+			} catch (Throwable e) {
+				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
+						new Object[] { overridingExtension.getDescriptor().getId(), null }), e);
 			}
-			
-		} catch (Throwable e) {
-			String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
-			NavigatorPlugin.logError(0, msg, e);
+
 		}
+
 	}
 
 	/**
@@ -263,8 +266,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 						intercepted |= pipelineInterceptRefresh(overridingExtensionsForPossibleChild[i], aRefreshSynchronization, refreshable);
 				}
 			} catch (Throwable e) {
-				String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
-				NavigatorPlugin.logError(0, msg, e);
+				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
+						new Object[] { overridingExtensionsForPossibleChild[i].getDescriptor().getId(), refreshable }), e);
 			}
 		}
 
@@ -329,8 +332,8 @@ public class NavigatorPipelineService implements INavigatorPipelineService {
 						intercepted |= pipelineInterceptUpdate(overridingExtensionsForPossibleChild[i], anUpdateSynchronization, refreshable);
 				}
 			} catch (Throwable e) {
-				String msg = e.getMessage() != null ? e.getMessage()  : e.toString();
-				NavigatorPlugin.logError(0, msg, e);
+				NavigatorPlugin.logError(0, NLS.bind(CommonNavigatorMessages.Exception_Invoking_Extension,
+						new Object[] { overridingExtensionsForPossibleChild[i].getDescriptor().getId(), refreshable }), e);
 			}
 		}
 

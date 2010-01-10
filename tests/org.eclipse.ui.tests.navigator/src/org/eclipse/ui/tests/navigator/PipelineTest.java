@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2009 IBM Corporation and others.
+ * Copyright (c) 2003, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.navigator;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -17,6 +18,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined;
 
 public class PipelineTest extends NavigatorTestBase {
 
@@ -24,7 +26,7 @@ public class PipelineTest extends NavigatorTestBase {
 		_navigatorInstanceId = TEST_VIEWER_PIPELINE;
 	}
 
-	public void testNavigatorRootContents() throws Exception {
+	public void testNavigatorResourceJava() throws Exception {
 
 		assertEquals(
 				"There should be no visible extensions for the pipeline viewer.",
@@ -47,12 +49,13 @@ public class PipelineTest extends NavigatorTestBase {
 		refreshViewer();
 
 		// we do this to force the rendering of the children of items[0]
-		_viewer.setSelection(
-				new StructuredSelection(_project.getFile(".project")), true); //$NON-NLS-1$
+		_viewer.setSelection(new StructuredSelection(_project
+				.getFile(".project")), true); //$NON-NLS-1$
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
 
-		assertEquals("There should be one item.", _projectCount, rootItems.length); //$NON-NLS-1$		
+		assertEquals(
+				"There should be " + _projectCount + " item(s).", _projectCount, rootItems.length); //$NON-NLS-1$		
 
 		assertTrue(
 				"The root object should be an IJavaProject, which is IAdaptable.", rootItems[0].getData() instanceof IAdaptable); //$NON-NLS-1$
@@ -80,8 +83,8 @@ public class PipelineTest extends NavigatorTestBase {
 
 		rootItems = _viewer.getTree().getItems();
 
-		assertEquals("There should be " + (_projectCount + 1) + 
-				" items.", _projectCount + 1, rootItems.length);
+		assertEquals("There should be " + (_projectCount + 1) + " items.",
+				_projectCount + 1, rootItems.length);
 
 		boolean found = false;
 		for (int i = 0; i < rootItems.length && !found; i++) {
@@ -93,4 +96,27 @@ public class PipelineTest extends NavigatorTestBase {
 		}
 		assertTrue(found);
 	}
+	
+	public void testInterceptAddThrow() throws Exception {
+		_contentService.bindExtensions(new String[] {
+				COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_PIPELINED},
+				false);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
+						TEST_CONTENT_PIPELINED }, true);
+
+		refreshViewer();
+
+		// we do this to force the rendering of the children of items[0]
+		_viewer.setSelection(new StructuredSelection(_project
+				.getFile(".project")), true); //$NON-NLS-1$
+
+		IFile f = _project.getFile("newfile");
+
+		TestContentProviderPipelined._throw = true;
+		// This will throw, have to look in the look to see the message
+		_viewer.add(_project, new Object[] { f });
+
+	}	
+	
 }
