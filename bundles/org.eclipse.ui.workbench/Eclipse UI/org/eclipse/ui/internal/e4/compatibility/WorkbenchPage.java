@@ -262,7 +262,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#findEditor(org.eclipse.ui.IEditorInput)
 	 */
 	public IEditorPart findEditor(IEditorInput input) {
-		// TODO Auto-generated method stub
+		for (IEditorReference editorRef : editorReferences) {
+			IEditorPart editor = editorRef.getEditor(false);
+			if (editor.getEditorInput().equals(input)) {
+				return editor;
+			}
+		}
 		return null;
 	}
 
@@ -471,14 +476,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public IEditorPart openEditor(IEditorInput input, String editorId, boolean activate,
 			int matchFlags) throws PartInitException {
 		if (matchFlags == MATCH_INPUT) {
-			for (IEditorReference editorRef : editorReferences) {
-				IEditorPart editor = editorRef.getEditor(false);
-				if (editor.getEditorInput().equals(input)) {
-					if (editor instanceof IShowEditorInput) {
-						((IShowEditorInput) editor).showEditorInput(input);
-					}
-					return editor;
+			IEditorPart editor = findEditor(input);
+			if (editor != null) {
+				if (editor instanceof IShowEditorInput) {
+					((IShowEditorInput) editor).showEditorInput(input);
 				}
+				return editor;
 			}
 		}
 
@@ -812,7 +815,18 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getReference(org.eclipse.ui.IWorkbenchPart)
 	 */
 	public IWorkbenchPartReference getReference(IWorkbenchPart part) {
-		// TODO Auto-generated method stub
+		for (IEditorReference editorRef : editorReferences) {
+			if (editorRef.getPart(false) == part) {
+				return editorRef;
+			}
+		}
+
+		for (IViewReference viewRef : viewReferences) {
+			if (viewRef.getPart(false) == part) {
+				return viewRef;
+			}
+		}
+
 		return null;
 	}
 
