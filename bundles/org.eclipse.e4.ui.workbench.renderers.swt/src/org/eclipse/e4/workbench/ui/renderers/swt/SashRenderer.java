@@ -17,7 +17,6 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.ui.model.application.MElementContainer;
-import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -34,21 +33,67 @@ import org.osgi.service.event.EventHandler;
 
 public class SashRenderer extends SWTPartRenderer {
 
-	private static final int UNDEFINED_WEIGHT = -1;
-	private static final int DEFAULT_WEIGHT = 100;
+	private class ModelUpdateJob implements Runnable {
+		public List<MPartSashContainer> sashModelsToUpdate = new ArrayList<MPartSashContainer>();
+
+		public void run() {
+			clearModelUpdate();
+			while (!sashModelsToUpdate.isEmpty()) {
+				MPartSashContainer psc = sashModelsToUpdate.remove(0);
+
+				// prevent recursive updating
+				ignoreWeightUpdates = true;
+				synchSashToModel(psc);
+				ignoreWeightUpdates = false;
+			}
+		}
+	}
+
+	private class SashUpdateJob implements Runnable {
+		public List<SashForm> sashesToUpdate = new ArrayList<SashForm>();
+
+		public void run() {
+			clearSashUpdate();
+			while (!sashesToUpdate.isEmpty()) {
+				SashForm sf = sashesToUpdate.remove(0);
+
+				// prevent recursive updating
+				ignoreWeightUpdates = true;
+				synchModelToSash(sf);
+				ignoreWeightUpdates = false;
+			}
+		}
+	}
 
 	@Inject
 	private IEventBroker eventBroker;
 
-	private EventHandler sashEventHandler;
+	private static final int UNDEFINED_WEIGHT = -1;
+	private static final int DEFAULT_WEIGHT = 100;
+
+	private EventHandler sashOrientationHandler;
+	private EventHandler sashWeightHandler;
+
+	ModelUpdateJob modelUpdateJob;
+	SashUpdateJob sashUpdateJob;
+
+	protected boolean ignoreWeightUpdates = false;
 
 	public SashRenderer() {
 		super();
 	}
 
+	void clearModelUpdate() {
+		modelUpdateJob = null;
+	}
+
+	void clearSashUpdate() {
+		sashUpdateJob = null;
+	}
+
 	@PostConstruct
 	void postConstruct() {
-		sashEventHandler = new EventHandler() {
+		sashOrientationHandler = new EventHandler() {
 			public void handleEvent(Event event) {
 				// Ensure that this event is for a MPartSashContainer
 				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -62,20 +107,53 @@ public class SashRenderer extends SWTPartRenderer {
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					MPartSashContainer container = (MPartSashContainer) element;
 					SashForm sashForm = (SashForm) container.getWidget();
-					sashForm
-							.setOrientation(horizontal.booleanValue() ? SWT.HORIZONTAL
-									: SWT.VERTICAL);
+					sashForm.setOrientation(horizontal.booleanValue() ? SWT.HORIZONTAL
+							: SWT.VERTICAL);
 				}
 			}
 		};
 
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.GenericTile.TOPIC,
-				UIEvents.GenericTile.HORIZONTAL), sashEventHandler);
+				UIEvents.GenericTile.HORIZONTAL), sashOrientationHandler);
+
+		sashWeightHandler = new EventHandler() {
+			public void handleEvent(Event event) {
+				if (ignoreWeightUpdates)
+					return;
+
+				// Ensure that this event is for a MPartSashContainer
+				MUIElement element = (MUIElement) event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				MUIElement parent = element.getParent();
+				if (!(parent instanceof MPartSashContainer)
+						|| parent.getRenderer() != SashRenderer.this)
+					return;
+
+				MPartSashContainer pscModel = (MPartSashContainer) parent;
+				SashForm sf = (SashForm) pscModel.getWidget();
+				if (UIEvents.UIElement.CONTAINERDATA.equals(event
+						.getProperty(UIEvents.EventTags.ATTNAME))) {
+					if (modelUpdateJob == null) {
+						modelUpdateJob = new ModelUpdateJob();
+						modelUpdateJob.sashModelsToUpdate.add(pscModel);
+						sf.getDisplay().asyncExec(modelUpdateJob);
+					} else {
+						if (!modelUpdateJob.sashModelsToUpdate
+								.contains(pscModel))
+							modelUpdateJob.sashModelsToUpdate.add(pscModel);
+					}
+				}
+			}
+		};
+
+		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
+				UIEvents.UIElement.CONTAINERDATA), sashWeightHandler);
 	}
 
 	@PreDestroy
 	void preDestroy() {
-		eventBroker.unsubscribe(sashEventHandler);
+		eventBroker.unsubscribe(sashOrientationHandler);
+		eventBroker.unsubscribe(sashWeightHandler);
 	}
 
 	public Widget createWidget(MUIElement element, Object parent) {
@@ -136,7 +214,7 @@ public class SashRenderer extends SWTPartRenderer {
 		MPartSashContainer psc = (MPartSashContainer) element;
 		final SashForm sashForm = (SashForm) psc.getWidget();
 
-		synchWeightsToModel(sashForm);
+		synchSashToModel(psc);
 
 		// add a size change listener to each child so we can recalculate
 		// the weights on a change...
@@ -147,8 +225,20 @@ public class SashRenderer extends SWTPartRenderer {
 				}
 
 				public void controlResized(ControlEvent e) {
-					// See if we need to re do the weights
-					synchModelToWeights((Control) e.widget);
+					Control ctrl = (Control) e.widget;
+					if (ctrl.isDisposed()
+							|| !(ctrl.getParent() instanceof SashForm))
+						return;
+
+					SashForm sf = (SashForm) ctrl.getParent();
+					if (sashUpdateJob == null) {
+						sashUpdateJob = new SashUpdateJob();
+						sashUpdateJob.sashesToUpdate.add(sf);
+						sf.getDisplay().asyncExec(sashUpdateJob);
+					} else {
+						if (!sashUpdateJob.sashesToUpdate.contains(sf))
+							sashUpdateJob.sashesToUpdate.add(sf);
+					}
 				}
 			});
 		}
@@ -158,7 +248,7 @@ public class SashRenderer extends SWTPartRenderer {
 	 * @param element
 	 * @return
 	 */
-	private int getWeight(MUIElement element) {
+	private static int getWeight(MUIElement element) {
 		String info = element.getContainerData();
 		try {
 			int value = Integer.parseInt(info);
@@ -168,52 +258,58 @@ public class SashRenderer extends SWTPartRenderer {
 		}
 	}
 
+	private static int[] getModelWeights(MPartSashContainer psc) {
+		SashForm sf = (SashForm) psc.getWidget();
+		int[] modelWeights = sf.getWeights();
+		int index = 0;
+		for (MUIElement element : psc.getChildren()) {
+			if (element.getWidget() != null)
+				modelWeights[index++] = getWeight(element);
+		}
+		return modelWeights;
+	}
+
+	private static MUIElement[] getModelElements(SashForm sf) {
+		Object me = sf.getData(OWNING_ME);
+		if (!(me instanceof MPartSashContainer))
+			return null;
+
+		MPartSashContainer psc = (MPartSashContainer) me;
+		MUIElement[] modelElements = new MUIElement[sf.getWeights().length];
+		int index = 0;
+		for (MUIElement element : psc.getChildren()) {
+			if (element.getWidget() != null)
+				modelElements[index++] = element;
+		}
+		return modelElements;
+	}
+
 	/**
-	 * Synchronizes the weights of the specified sash form to the underlying
-	 * model.
-	 * 
-	 * @param sf
-	 *            the sash form to synchronize
+	 * @param psc
 	 */
-	private void synchWeightsToModel(SashForm sf) {
+	private void synchSashToModel(MPartSashContainer psc) {
+		if (!(psc.getWidget() instanceof SashForm))
+			return;
+
+		SashForm sf = (SashForm) psc.getWidget();
 		if (sf.isDisposed())
 			return;
 
-		// retrieve the model
-		MPartSashContainer psc = (MPartSashContainer) sf.getData(OWNING_ME);
-
-		// Gather up the weights from the rendered elements and
-		// apply then to the SashForm
-		List<Integer> weights = new ArrayList<Integer>();
-		for (MPSCElement pscElement : psc.getChildren()) {
-			if (pscElement.getWidget() instanceof Control) {
-				weights.add(getWeight(pscElement));
-			}
-		}
-
-		int[] sashWeights = new int[weights.size()];
-		int swCount = 0;
-		for (int sw : weights) {
-			sashWeights[swCount++] = sw;
-		}
-
-		sf.setWeights(sashWeights);
+		int[] curWeights = sf.getWeights();
+		assert (curWeights.length > 0);
+		int[] newWeights = getModelWeights(psc);
+		sf.setWeights(newWeights);
+		curWeights = sf.getWeights();
 	}
 
-	protected void synchModelToWeights(Control ctrl) {
-		if (!(ctrl.getParent() instanceof SashForm))
-			return;
-
-		SashForm sf = (SashForm) ctrl.getParent();
-		MPartSashContainer psc = (MPartSashContainer) sf.getData(OWNING_ME);
-		int[] ctrlWeights = sf.getWeights();
-
-		int weightIndex = 0;
-		for (MPSCElement pscElement : psc.getChildren()) {
-			if (pscElement.getWidget() instanceof Control) {
-				pscElement.setContainerData(Integer
-						.toString(ctrlWeights[weightIndex++]));
-			}
+	/**
+	 * @param psc
+	 */
+	private void synchModelToSash(SashForm sf) {
+		int[] w = sf.getWeights();
+		MUIElement[] elements = SashRenderer.getModelElements(sf);
+		for (int i = 0; i < w.length; i++) {
+			elements[i].setContainerData(Integer.toString(w[i]));
 		}
 	}
 }
