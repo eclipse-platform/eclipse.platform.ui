@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -18,7 +18,6 @@ import org.eclipse.compare.contentmergeviewer.IFlushable;
 import org.eclipse.compare.internal.BinaryCompareViewer;
 import org.eclipse.compare.internal.ChangePropertyAction;
 import org.eclipse.compare.internal.CompareContentViewerSwitchingPane;
-import org.eclipse.compare.internal.CompareEditor;
 import org.eclipse.compare.internal.CompareEditorInputNavigator;
 import org.eclipse.compare.internal.CompareMessages;
 import org.eclipse.compare.internal.ComparePreferencePage;
@@ -201,7 +200,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 
 	private ICompareContainer fContainer;
 	private boolean fContainerProvided;
-
 	private String fHelpContextId;
 	private InternalOutlineViewerCreator fOutlineView;
 	private ViewerDescriptor fContentViewerDescriptor;
@@ -553,11 +551,31 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 		fComposite.layout();
 
 		feedInput();
-	
+		
 		fComposite.addDisposeListener(new DisposeListener() {
 			public void widgetDisposed(DisposeEvent e) {
-				if (!(getWorkbenchPart() instanceof CompareEditor))
-					handleDispose();
+				/*
+				 * When the UI associated with this compare editor input is
+				 * disposed each composite being part of the UI releases its
+				 * children first. A dispose listener is added to the last
+				 * widget found in that structure. Therefore, compare editor
+				 * input is disposed at the end making it possible to refer
+				 * during widgets disposal.
+				 */
+				Composite composite = fComposite;
+				Control control = composite;
+				while (composite.getChildren().length > 0) {
+					control = composite.getChildren()[composite.getChildren().length - 1];
+					if (control instanceof Composite)
+						composite = (Composite) control;
+					else
+						break;
+				}
+				control.addDisposeListener(new DisposeListener() {
+					public void widgetDisposed(DisposeEvent ev) {
+						handleDispose();
+					}
+				});
 			}
 		});
 		if (fHelpContextId != null)
@@ -576,19 +594,6 @@ public abstract class CompareEditorInput implements IEditorInput, IPropertyChang
 	 */
 	protected CompareViewerSwitchingPane createContentViewerSwitchingPane(Splitter parent, int style, CompareEditorInput cei) {
 		return new CompareContentViewerSwitchingPane(parent, style, cei);
-	}
-	
-	/**
-	 * Disposes this editor input. Clients should not call this method. The
-	 * Compare Editor calls this method at appropriate times i.e. when disposing.
-	 * 
-	 * @since 3.5
-	 * @nooverride This method is not intended to be re-implemented or extended
-	 *             by clients.
-	 * @noreference This method is not intended to be referenced by clients.
-	 */
-	public void dispose() {
-		handleDispose();
 	}
 	
 	/**
