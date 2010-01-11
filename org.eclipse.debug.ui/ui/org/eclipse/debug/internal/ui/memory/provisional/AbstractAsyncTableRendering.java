@@ -2385,8 +2385,11 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 		if (isMemoryBlockBaseAddressChanged())
 			return;
 
-		if(fTableViewer.getKey(0).equals(address))
-			return;
+		Object key = fTableViewer.getKey(0);
+		if(key != null) {
+			if(key.equals(address))
+				return;
+		}
 	
 		BigInteger start = fContentDescriptor.getStartAddress();
 		BigInteger end = fContentDescriptor.getEndAddress();
