@@ -13,10 +13,10 @@ package org.eclipse.ui.tests.api.workbenchpart;
 import junit.framework.Assert;
 
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart2;
 import org.eclipse.ui.IWorkbenchPartConstants;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -30,9 +30,9 @@ public class OverriddenTitleTest extends UITestCase {
         super(testName);
     }
 
-    WorkbenchWindow window;
+    IWorkbenchWindow window;
 
-    WorkbenchPage page;
+    IWorkbenchPage page;
 
     OverriddenTitleView view;
 
@@ -63,8 +63,8 @@ public class OverriddenTitleTest extends UITestCase {
 
     protected void doSetUp() throws Exception {
         super.doSetUp();
-        window = (WorkbenchWindow) openTestWindow();
-        page = (WorkbenchPage) window.getActivePage();
+        window = openTestWindow();
+        page = window.getActivePage();
         view = (OverriddenTitleView) page
                 .showView("org.eclipse.ui.tests.workbenchpart.OverriddenTitleView");
         view.addPropertyListener(propertyListener);
