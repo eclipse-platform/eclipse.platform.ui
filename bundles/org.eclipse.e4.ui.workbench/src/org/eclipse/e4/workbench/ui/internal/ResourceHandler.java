@@ -161,6 +161,7 @@ public class ResourceHandler {
 					IModelReconcilingService modelReconcilingService = new ModelReconcilingService();
 					ModelReconciler modelReconciler = modelReconcilingService
 							.createModelReconciler();
+					document.normalizeDocument();
 					Collection<ModelDelta> deltas = modelReconciler.constructDeltas(resource
 							.getContents().get(0), document);
 					modelReconcilingService.applyDeltas(deltas);
