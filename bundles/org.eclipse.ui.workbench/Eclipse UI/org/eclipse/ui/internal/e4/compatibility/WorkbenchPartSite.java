@@ -17,8 +17,6 @@ import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -37,6 +35,8 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	private MPart model;
 	private IWorkbenchPart part;
 	private IConfigurationElement element;
+
+	private ISelectionProvider selectionProvider;
 
 	WorkbenchPartSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
 		this.model = model;
@@ -128,28 +128,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchSite#getSelectionProvider()
 	 */
 	public ISelectionProvider getSelectionProvider() {
-		return new ISelectionProvider() {
-
-			public void setSelection(ISelection selection) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void removeSelectionChangedListener(ISelectionChangedListener listener) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public ISelection getSelection() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-
-			public void addSelectionChangedListener(ISelectionChangedListener listener) {
-				// TODO Auto-generated method stub
-
-			}
-		};
+		return selectionProvider;
 	}
 
 	/* (non-Javadoc)
@@ -177,8 +156,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchSite#setSelectionProvider(org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void setSelectionProvider(ISelectionProvider provider) {
-		// TODO Auto-generated method stub
-
+		selectionProvider = provider;
 	}
 
 	/* (non-Javadoc)
