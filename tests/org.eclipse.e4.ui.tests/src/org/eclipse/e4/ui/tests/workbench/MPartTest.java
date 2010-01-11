@@ -142,6 +142,38 @@ public class MPartTest extends TestCase {
 		assertNotNull(item.getImage());
 	}
 
+	private void testDeclaredName(String declared, String expected) {
+		final MWindow window = createWindowWithOneView(declared);
+
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.getChildren().add(window);
+		application.setContext(appContext);
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		MPartSashContainer container = (MPartSashContainer) window
+				.getChildren().get(0);
+		MPartStack stack = (MPartStack) container.getChildren().get(0);
+		CTabFolder folder = (CTabFolder) stack.getWidget();
+		CTabItem item = folder.getItem(0);
+		assertEquals(expected, item.getText());
+	}
+
+	public void testDeclaredNameNull() {
+		testDeclaredName(null, "");
+	}
+
+	public void testDeclaredNameEmpty() {
+		testDeclaredName("", "");
+	}
+
+	public void testDeclaredNameDefined() {
+		testDeclaredName("partName", "partName");
+	}
+
 	private void testDeclaredTooltip(String partToolTip, String expectedToolTip) {
 		final MWindow window = createWindowWithOneView("Part Name", partToolTip);
 

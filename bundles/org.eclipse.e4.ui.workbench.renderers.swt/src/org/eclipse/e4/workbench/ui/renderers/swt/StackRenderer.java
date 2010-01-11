@@ -156,6 +156,9 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 	private String getLabel(MUILabel itemPart, String newName) {
+		if (newName == null) {
+			newName = ""; //$NON-NLS-1$
+		}
 		if (itemPart instanceof MDirtyable && ((MDirtyable) itemPart).isDirty()) {
 			newName = '*' + newName;
 		}
