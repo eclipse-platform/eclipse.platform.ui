@@ -227,6 +227,12 @@ public abstract class ModelReconciler {
 			.getName();
 
 	/**
+	 * Attribute defined by MPartDescriptorContainers (value is <code>descriptors</code>).
+	 */
+	public static final String PARTDESCRIPTORCONTAINER_DESCRIPTORS_ATTNAME = MApplicationPackage.eINSTANCE
+			.getPartDescriptorContainer_Descriptors().getName();
+
+	/**
 	 * Begin recording changes on the specified object. All changes contained within child elements
 	 * of the object will also be recorded. When the desired changes have been captured,
 	 * {@link #serialize()} should be called.

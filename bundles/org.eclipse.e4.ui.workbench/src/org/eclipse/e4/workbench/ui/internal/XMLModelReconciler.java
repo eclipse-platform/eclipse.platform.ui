@@ -1335,7 +1335,8 @@ public class XMLModelReconciler extends ModelReconciler {
 	 */
 	private static boolean shouldPersist(String featureName) {
 		// parent changes are captured by children changes already
-		return !featureName.equals(UIELEMENT_PARENT_ATTNAME);
+		return !featureName.equals(UIELEMENT_PARENT_ATTNAME)
+				&& !featureName.equals(PARTDESCRIPTORCONTAINER_DESCRIPTORS_ATTNAME);
 	}
 
 	private static Collection<EStructuralFeature> collectFeatures(
