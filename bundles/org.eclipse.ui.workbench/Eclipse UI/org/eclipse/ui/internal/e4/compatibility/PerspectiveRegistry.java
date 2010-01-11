@@ -20,6 +20,8 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.util.PrefUtil;
 
 public class PerspectiveRegistry implements IPerspectiveRegistry {
 
@@ -79,8 +81,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see org.eclipse.ui.IPerspectiveRegistry#getDefaultPerspective()
 	 */
 	public String getDefaultPerspective() {
-		// TODO Auto-generated method stub
-		return null;
+		return PrefUtil.getAPIPreferenceStore().getString(
+				IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 	}
 
 	/* (non-Javadoc)
@@ -94,8 +96,11 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	 * @see org.eclipse.ui.IPerspectiveRegistry#setDefaultPerspective(java.lang.String)
 	 */
 	public void setDefaultPerspective(String id) {
-		// TODO Auto-generated method stub
-
+		IPerspectiveDescriptor desc = findPerspectiveWithId(id);
+		if (desc != null) {
+			PrefUtil.getAPIPreferenceStore().setValue(
+					IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID, id);
+		}
 	}
 
 	/* (non-Javadoc)

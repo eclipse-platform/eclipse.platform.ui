@@ -83,8 +83,7 @@ public class ViewRegistry implements IViewRegistry {
 	 * @see org.eclipse.ui.views.IViewRegistry#getViews()
 	 */
 	public IViewDescriptor[] getViews() {
-		// TODO Auto-generated method stub
-		return null;
+		return descriptors.values().toArray(new IViewDescriptor[descriptors.size()]);
 	}
 
 	/* (non-Javadoc)
