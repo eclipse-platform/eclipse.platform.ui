@@ -175,8 +175,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#close()
 	 */
 	public boolean close() {
-		// TODO Auto-generated method stub
-		return false;
+		if (!closeAllEditors(true)) {
+			return false;
+		}
+
+		for (IViewPart view : getViews()) {
+			hideView(view);
+		}
+
+		workbenchWindow.setActivePage(null);
+		return true;
 	}
 
 	/* (non-Javadoc)

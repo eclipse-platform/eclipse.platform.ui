@@ -15,6 +15,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.views.IViewDescriptor;
 
 public class ViewDescriptor implements IViewDescriptor {
@@ -44,8 +45,7 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getDescription()
 	 */
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return RegistryReader.getDescription(element);
 	}
 
 	/* (non-Javadoc)
@@ -82,16 +82,14 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getAllowMultiple()
 	 */
 	public boolean getAllowMultiple() {
-		// TODO Auto-generated method stub
-		return false;
+		return Boolean.parseBoolean(element.getAttribute("allowMultiple")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.IViewDescriptor#isRestorable()
 	 */
 	public boolean isRestorable() {
-		// TODO Auto-generated method stub
-		return false;
+		return Boolean.parseBoolean(element.getAttribute("restorable")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
