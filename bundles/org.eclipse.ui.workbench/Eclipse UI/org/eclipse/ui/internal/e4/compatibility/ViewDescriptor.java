@@ -100,4 +100,8 @@ public class ViewDescriptor implements IViewDescriptor {
 		return null;
 	}
 
+	public IConfigurationElement getConfigurationElement() {
+		return element;
+	}
+
 }

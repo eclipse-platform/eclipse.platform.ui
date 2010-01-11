@@ -11,12 +11,17 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IPropertyListener;
+import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.eclipse.ui.IWorkbenchPart2;
+import org.eclipse.ui.IWorkbenchPart3;
 import org.eclipse.ui.IWorkbenchPartReference;
 
 public class WorkbenchPartReference implements IWorkbenchPartReference {
@@ -24,9 +29,43 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	private IWorkbenchPage page;
 	private MPart part;
 
+	private ListenerList propertyListeners = new ListenerList();
+	private ListenerList partPropertyListeners = new ListenerList();
+
 	WorkbenchPartReference(IWorkbenchPage page, MPart part) {
 		this.page = page;
 		this.part = part;
+
+		IWorkbenchPart workbenchPart = getPart(false);
+		if (workbenchPart != null) {
+			workbenchPart.addPropertyListener(new IPropertyListener() {
+				public void propertyChanged(Object source, int propId) {
+					firePropertyListeners(source, propId);
+				}
+			});
+
+			if (workbenchPart instanceof IWorkbenchPart3) {
+				((IWorkbenchPart3) workbenchPart)
+						.addPartPropertyListener(new IPropertyChangeListener() {
+							public void propertyChange(PropertyChangeEvent event) {
+								firePartPropertyListeners(event);
+					}
+				});
+
+			}
+		}
+	}
+
+	private void firePropertyListeners(Object source, int propId) {
+		for (Object listener : propertyListeners.getListeners()) {
+			((IPropertyListener) listener).propertyChanged(source, propId);
+		}
+	}
+
+	private void firePartPropertyListeners(PropertyChangeEvent event) {
+		for (Object listener : partPropertyListeners.getListeners()) {
+			((IPropertyChangeListener) listener).propertyChange(event);
+		}
 	}
 
 	MPart getModel() {
@@ -75,16 +114,14 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#addPropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
 	public void addPropertyListener(IPropertyListener listener) {
-		// TODO Auto-generated method stub
-
+		propertyListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartReference#removePropertyListener(org.eclipse.ui.IPropertyListener)
 	 */
 	public void removePropertyListener(IPropertyListener listener) {
-		// TODO Auto-generated method stub
-
+		propertyListeners.remove(listener);
 	}
 
 	/* (non-Javadoc)
@@ -105,14 +142,22 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getContentDescription()
 	 */
 	public String getContentDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
+		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
+		if (workbenchPart instanceof IWorkbenchPart2) {
+			return ((IWorkbenchPart2) workbenchPart).getContentDescription();
+		}
+		return workbenchPart.getTitle();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartReference#isDirty()
 	 */
 	public boolean isDirty() {
+		IWorkbenchPart part = getPart(false);
+		if (part instanceof ISaveablePart) {
+			return ((ISaveablePart) part).isDirty();
+		}
 		// TODO Auto-generated method stub
 		return false;
 	}
@@ -121,6 +166,10 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#getPartProperty(java.lang.String)
 	 */
 	public String getPartProperty(String key) {
+		IWorkbenchPart part = getPart(false);
+		if (part instanceof IWorkbenchPart3) {
+			return ((IWorkbenchPart3) part).getPartProperty(key);
+		}
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -129,16 +178,14 @@ public class WorkbenchPartReference implements IWorkbenchPartReference {
 	 * @see org.eclipse.ui.IWorkbenchPartReference#addPartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPartPropertyListener(IPropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-
+		partPropertyListeners.add(listener);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartReference#removePartPropertyListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePartPropertyListener(IPropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-
+		partPropertyListeners.remove(listener);
 	}
 
 }
