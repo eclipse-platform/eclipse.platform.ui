@@ -21,14 +21,6 @@
             </message_arguments>
         </filter>
     </resource>
-    <resource path="compare/org/eclipse/compare/CompareEditorInput.java" type="org.eclipse.compare.CompareEditorInput">
-        <filter id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.compare.CompareEditorInput"/>
-                <message_argument value="setFocus()"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="compare/org/eclipse/compare/CompareUI.java" type="org.eclipse.compare.CompareUI">
         <filter id="338944126">
             <message_arguments>
@@ -47,13 +39,13 @@
         <filter id="338944126">
             <message_arguments>
                 <message_argument value="org.eclipse.compare.CompareViewerSwitchingPane"/>
-                <message_argument value="setTitleArgument(String)"/>
+                <message_argument value="getTitleArgument()"/>
             </message_arguments>
         </filter>
         <filter id="338944126">
             <message_arguments>
                 <message_argument value="org.eclipse.compare.CompareViewerSwitchingPane"/>
-                <message_argument value="getTitleArgument()"/>
+                <message_argument value="setTitleArgument(String)"/>
             </message_arguments>
         </filter>
     </resource>
