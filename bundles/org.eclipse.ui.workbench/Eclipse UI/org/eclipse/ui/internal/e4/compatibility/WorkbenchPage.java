@@ -221,12 +221,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		if (part != null) {
-			if (save) {
-				if (!saveEditor(editor, true)) {
-					return false;
-				}
-			}
-			return hidePart(part);
+			return hidePart(part, save);
 		}
 		return false;
 	}
@@ -426,13 +421,17 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	}
 
-	private boolean hidePart(MPart part) {
+	private boolean hidePart(MPart part, boolean save) {
 		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
 		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
 		if (workbenchPart instanceof ISaveablePart) {
 			ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
-			if (saveablePart.isDirty() && saveablePart.isSaveOnCloseNeeded()) {
-				return false;
+			if (saveablePart.isDirty()) {
+				if (save && saveablePart.isSaveOnCloseNeeded()) {
+					if (!saveSaveable(saveablePart, true)) {
+						return false;
+					}
+				}
 			}
 		}
 
@@ -464,7 +463,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private void hidePart(String id) {
 		MPart part = partService.findPart(id);
 		if (part != null) {
-			hidePart(part);
+			hidePart(part, true);
 		}
 	}
 
@@ -619,11 +618,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#saveEditor(org.eclipse.ui.IEditorPart, boolean)
 	 */
-	public boolean saveEditor(IEditorPart editor, boolean confirm) {
-		if (editor.isDirty()) {
-			editor.doSave(new NullProgressMonitor());
+	private boolean saveSaveable(ISaveablePart saveable, boolean confirm) {
+		if (saveable.isDirty()) {
+			saveable.doSave(new NullProgressMonitor());
 		}
 		return true;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.eclipse.ui.IWorkbenchPage#saveEditor(org.eclipse.ui.IEditorPart,
+	 * boolean)
+	 */
+	public boolean saveEditor(IEditorPart editor, boolean confirm) {
+		return saveSaveable(editor, confirm);
 	}
 
 	/* (non-Javadoc)
