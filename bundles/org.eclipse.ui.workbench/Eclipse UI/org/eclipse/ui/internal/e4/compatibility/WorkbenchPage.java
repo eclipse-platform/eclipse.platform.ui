@@ -221,6 +221,11 @@ public class WorkbenchPage implements IWorkbenchPage {
 		}
 
 		if (part != null) {
+			if (save) {
+				if (!saveEditor(editor, true)) {
+					return false;
+				}
+			}
 			return hidePart(part);
 		}
 		return false;
@@ -425,7 +430,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 		CompatibilityPart compatibilityPart = (CompatibilityPart) part.getObject();
 		IWorkbenchPart workbenchPart = compatibilityPart.getPart();
 		if (workbenchPart instanceof ISaveablePart) {
-			if (((ISaveablePart) workbenchPart).isSaveOnCloseNeeded()) {
+			ISaveablePart saveablePart = (ISaveablePart) workbenchPart;
+			if (saveablePart.isDirty() && saveablePart.isSaveOnCloseNeeded()) {
 				return false;
 			}
 		}
@@ -773,7 +779,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IPerspectiveDescriptor[] getOpenPerspectives() {
 		// TODO Auto-generated method stub
-		return null;
+		return new IPerspectiveDescriptor[] { getPerspective() };
 	}
 
 	/* (non-Javadoc)
@@ -781,7 +787,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public IPerspectiveDescriptor[] getSortedPerspectives() {
 		// TODO Auto-generated method stub
-		return null;
+		return new IPerspectiveDescriptor[] { getPerspective() };
 	}
 
 	/* (non-Javadoc)
