@@ -294,8 +294,34 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#findEditors(org.eclipse.ui.IEditorInput, java.lang.String, int)
 	 */
 	public IEditorReference[] findEditors(IEditorInput input, String editorId, int matchFlags) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (matchFlags) {
+		case MATCH_NONE:
+			return new IEditorReference[0];
+		case MATCH_INPUT:
+			List<IEditorReference> editorRefs = new ArrayList<IEditorReference>();
+			for (IEditorReference editorRef : editorReferences) {
+				try {
+					if (input.equals(editorRef.getEditorInput())) {
+						editorRefs.add(editorRef);
+					}
+				} catch (PartInitException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
+		case MATCH_ID:
+			editorRefs = new ArrayList<IEditorReference>();
+			for (IEditorReference editorRef : editorReferences) {
+				if (editorId.equals(editorRef.getId())) {
+					editorRefs.add(editorRef);
+				}
+			}
+			return editorRefs.toArray(new IEditorReference[editorRefs.size()]);
+		default:
+			// TODO Auto-generated catch block
+			return new IEditorReference[0];
+		}
 	}
 
 	/* (non-Javadoc)
@@ -305,7 +331,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		int length = editorReferences.size();
 		IEditorPart[] editors = new IEditorPart[length];
 		for (int i = 0; i < length; i++) {
-			editors[i] = editorReferences.get(i).getEditor(false);
+			editors[i] = editorReferences.get(i).getEditor(true);
 		}
 		return editors;
 	}
@@ -367,7 +393,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		int length = viewReferences.size();
 		IViewPart[] views = new IViewPart[length];
 		for (int i = 0; i < length; i++) {
-			views[i] = viewReferences.get(i).getView(false);
+			views[i] = viewReferences.get(i).getView(true);
 		}
 		return views;
 	}
