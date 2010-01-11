@@ -13,16 +13,22 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.views.IViewDescriptor;
 
 public class ViewDescriptor implements IViewDescriptor {
 
+	private MPartDescriptor descriptor;
 	private IConfigurationElement element;
 
-	public ViewDescriptor(IConfigurationElement element) {
+	public ViewDescriptor(MPartDescriptor descriptor, IConfigurationElement element) {
+		this.descriptor = descriptor;
 		this.element = element;
 	}
 
@@ -30,6 +36,10 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#createView()
 	 */
 	public IViewPart createView() throws CoreException {
+		if (element == null) {
+			throw new CoreException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+					"Unable to create an e4 view of id " + descriptor.getId())); //$NON-NLS-1$
+		}
 		return (IViewPart) element.createExecutableExtension("class"); //$NON-NLS-1$
 	}
 
@@ -45,14 +55,14 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getDescription()
 	 */
 	public String getDescription() {
-		return RegistryReader.getDescription(element);
+		return element == null ? "" : RegistryReader.getDescription(element); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.IViewDescriptor#getId()
 	 */
 	public String getId() {
-		return element.getAttribute("id"); //$NON-NLS-1$
+		return descriptor.getId();
 	}
 
 	/* (non-Javadoc)
@@ -67,7 +77,7 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getLabel()
 	 */
 	public String getLabel() {
-		return element.getAttribute("name"); //$NON-NLS-1$
+		return descriptor.getLabel();
 	}
 
 	/* (non-Javadoc)
@@ -82,14 +92,15 @@ public class ViewDescriptor implements IViewDescriptor {
 	 * @see org.eclipse.ui.views.IViewDescriptor#getAllowMultiple()
 	 */
 	public boolean getAllowMultiple() {
-		return Boolean.parseBoolean(element.getAttribute("allowMultiple")); //$NON-NLS-1$
+		return descriptor.isAllowMultiple();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.views.IViewDescriptor#isRestorable()
 	 */
 	public boolean isRestorable() {
-		return Boolean.parseBoolean(element.getAttribute("restorable")); //$NON-NLS-1$
+		// TODO Auto-generated method stub
+		return element == null ? false : Boolean.parseBoolean(element.getAttribute("restorable")); //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)

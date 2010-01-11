@@ -38,12 +38,18 @@ public class ViewRegistry implements IViewRegistry {
 
 	@PostConstruct
 	void postConstruct() {
+		for (MPartDescriptor descriptor : application.getDescriptors()) {
+			descriptors.put(descriptor.getId(), new ViewDescriptor(descriptor, null));
+		}
+
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.views"); //$NON-NLS-1$
 		for (IConfigurationElement element : point.getConfigurationElements()) {
 			if (element.getName().equals("view")) { //$NON-NLS-1$
 				MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
 				descriptor.setLabel(element.getAttribute("name")); //$NON-NLS-1$
 				descriptor.setId(element.getAttribute("id")); //$NON-NLS-1$
+				descriptor.setAllowMultiple(Boolean.parseBoolean(element
+						.getAttribute("allowMultiple"))); //$NON-NLS-1$
 				descriptor
 						.setURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"); //$NON-NLS-1$
 
@@ -62,7 +68,7 @@ public class ViewRegistry implements IViewRegistry {
 				}
 
 				application.getDescriptors().add(descriptor);
-				descriptors.put(descriptor.getId(), new ViewDescriptor(element));
+				descriptors.put(descriptor.getId(), new ViewDescriptor(descriptor, element));
 			}
 		}
 	}
