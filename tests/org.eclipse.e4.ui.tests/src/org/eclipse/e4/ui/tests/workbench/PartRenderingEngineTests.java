@@ -75,6 +75,27 @@ public class PartRenderingEngineTests extends TestCase {
 		}
 	}
 
+	public void testAddWindowBug299219() throws Exception {
+		MApplication application = MApplicationFactory.eINSTANCE
+				.createApplication();
+		application.setContext(appContext);
+
+		MWindow window = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window);
+
+		appContext.set(MApplication.class.getName(), application);
+
+		wb = new E4Workbench(application, appContext);
+		wb.createAndRunUI(window);
+
+		assertNotNull(window.getWidget());
+
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window2);
+
+		assertNotNull(window2.getWidget());
+	}
+
 	private MWindow createWindowWithOneView(String partName) {
 		final MWindow window = MApplicationFactory.eINSTANCE.createWindow();
 		window.setHeight(300);
