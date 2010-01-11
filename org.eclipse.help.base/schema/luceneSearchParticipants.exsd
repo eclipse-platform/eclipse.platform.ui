@@ -120,7 +120,7 @@ Search participants are associated with the plug-in the extension appears in. In
          <attribute name="headless" type="boolean" use="default" value="false">
             <annotation>
                <documentation>
-                  specifies whether or not this search participant should be used when running the help system outside an eclipse workbench, i.e. it is running in either standalone or infocenter mode. The default value is &lt;code&gt;false&lt;/code&gt;.
+                  specifies whether or not this search participant should be used when running the help system outside an eclipse workbench, i.e. it is running in either standalone or information center mode. The default value is &lt;code&gt;false&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>

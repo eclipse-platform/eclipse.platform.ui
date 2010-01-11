@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2006 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -106,7 +106,7 @@ public class StandaloneInfocenter extends EclipseController {
 		System.out.println();
 		System.out.println("where:"); //$NON-NLS-1$
 		System.out
-				.println(" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which infocenter is launched, is not the same as Eclipse installation directory,"); //$NON-NLS-1$
+				.println(" eclipseInstallPath specifies Eclipse installation directory; this directory is a parent to \"plugins\" directory and eclipse executable;  the option must be provided, when current directory from which information center is launched, is not the same as Eclipse installation directory,"); //$NON-NLS-1$
 		System.out
 				.println(" helpServerHost specifies host name of the interface that help server will use,"); //$NON-NLS-1$
 		System.out
