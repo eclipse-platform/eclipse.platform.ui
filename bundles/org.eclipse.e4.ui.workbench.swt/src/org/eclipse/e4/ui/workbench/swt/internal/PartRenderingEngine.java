@@ -115,12 +115,17 @@ public class PartRenderingEngine implements IPresentationEngine {
 
 	private EventHandler childrenHandler = new EventHandler() {
 		public void handleEvent(Event event) {
-			MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) event
-					.getProperty(UIEvents.EventTags.ELEMENT);
+
+			Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (!(changedObj instanceof MElementContainer<?>))
+				return;
+
+			MElementContainer<MUIElement> changedElement = (MElementContainer<MUIElement>) changedObj;
+			boolean isApplication = changedObj instanceof MApplication;
 
 			// If the parent isn't in the UI then who cares?
 			AbstractPartRenderer factory = getFactoryFor(changedElement);
-			if (factory == null)
+			if (!isApplication && factory == null)
 				return;
 
 			String eventType = (String) event
@@ -136,7 +141,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 					// NOTE: createGui will call 'childAdded' if successful
 					createGui(added);
 				else {
-					factory.childRendered(changedElement, added);
+					if (factory != null)
+						factory.childRendered(changedElement, added);
 				}
 			} else if (UIEvents.EventTypes.REMOVE.equals(eventType)) {
 				Activator.trace(Policy.DEBUG_RENDERER, "Child Removed", null); //$NON-NLS-1$
@@ -147,7 +153,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 				if (!removed.isToBeRendered())
 					return;
 
-				factory.hideChild(changedElement, removed);
+				if (factory != null)
+					factory.hideChild(changedElement, removed);
 			}
 		}
 	};
@@ -296,8 +303,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			factory.hookControllerLogic(element);
 
 			if (element instanceof MElementContainer) {
-				factory
-						.processContents((MElementContainer<MUIElement>) element);
+				factory.processContents((MElementContainer<MUIElement>) element);
 			}
 
 			factory.postProcess(element);
