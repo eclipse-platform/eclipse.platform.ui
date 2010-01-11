@@ -25,7 +25,7 @@ import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 
 public abstract class ResourceWrapperContentProvider implements
 		IPipelinedTreeContentProvider {
-	private static final Object[] NO_CHILDREN = new Object[0];
+	protected static final Object[] NO_CHILDREN = new Object[0];
 
 	protected static final String INTERCEPT_ADD = "ADD";
 	protected static final String INTERCEPT_REMOVE = "REMOVE";
