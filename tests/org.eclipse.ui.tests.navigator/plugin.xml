@@ -39,6 +39,12 @@
             class="org.eclipse.ui.navigator.CommonNavigator"
             name="Inherited Test View"/>            
 
+	  <view
+            id="org.eclipse.ui.tests.navigator.PipelineTestView"
+            allowMultiple="false"
+            class="org.eclipse.ui.navigator.CommonNavigator"
+            name="Inherited Test View"/>
+
       <view
             id="org.eclipse.ui.tests.navigator.NonCommonViewerTestView"
             allowMultiple="false"
@@ -143,6 +149,8 @@
             inheritBindingsFromViewer="org.eclipse.ui.tests.navigator.TestView"
             helpContext="org.eclipse.ui.tests.navigator.testHelpContext">
       </viewer>
+
+	  <viewer viewerId="org.eclipse.ui.tests.navigator.InheritedTestView"/>
 
 	  <!-- don't make the name match the View we want to make sure that works -->
       <viewer viewerId="org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer"/>  
@@ -452,6 +460,133 @@
 		<override suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
 
       </navigatorContent>
+      
+      <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.A" 
+            name="Test Pipeline Overrides A"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestPipelineProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="normal">
+         <override
+               policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+               suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
+         <triggerPoints>
+            <adapt type="org.eclipse.core.resources.IWorkspaceRoot"/>
+         </triggerPoints>
+         <possibleChildren>
+         	<instanceof value="org.eclipse.ui.tests.navigator.m12.model.M1Resource"/>
+         </possibleChildren>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.B" 
+            name="Test Pipeline Overrides B"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestPipelineProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="normal">
+         <override                
+         	policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+         	suppressedExtensionId="org.eclipse.ui.tests.navigator.testPipeline.A"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.m12.model.M1Resource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.C" 
+            name="Test Pipeline Overrides C"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestPipelineProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="low">
+         <override
+         	policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+         	suppressedExtensionId="org.eclipse.ui.tests.navigator.testPipeline.A"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.m12.model.M1Resource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.D" 
+            name="Test Pipeline Overrides D"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestPipelineProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="low">
+         <override 
+         	policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+         	suppressedExtensionId="org.eclipse.ui.tests.navigator.testPipeline.B"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.m12.model.M1Resource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.E" 
+            name="Test Pipeline Overrides E"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestPipelineProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="low">
+         <override
+         	policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+         	suppressedExtensionId="org.eclipse.ui.tests.navigator.testPipeline.D"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.m12.model.M1Resource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.F" 
+            name="Test Pipeline Overrides F"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestPipelineProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="high">
+         <override
+         	policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+         	suppressedExtensionId="org.eclipse.ui.tests.navigator.testPipeline.C"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.m12.model.M1Resource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+	  
+	  <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.G" 
+            name="Test Pipeline Overrides G"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestPipelineProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="normal">
+         <override
+         	policy="InvokeOnlyIfSuppressedExtAlsoVisibleAndActive"
+         	suppressedExtensionId="org.eclipse.ui.tests.navigator.testPipeline.C"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.m12.model.M1Resource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
+      
+      <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testPipeline.label" 
+            name="Test Pipeline Label Provider"
+            contentProvider="org.eclipse.ui.tests.navigator.extension.TestEmptyContentProvider"
+            labelProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider"
+            priority="normal">
+         <override suppressedExtensionId="org.eclipse.ui.tests.navigator.testPipeline.A"/>
+         <enablement>
+            <instanceof
+                  value="org.eclipse.ui.tests.navigator.m12.model.M1Resource">
+            </instanceof>
+         </enablement>
+	  </navigatorContent>
 
       <navigatorContent
             id="org.eclipse.ui.tests.navigator.testContentSorterResource.override"
