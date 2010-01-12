@@ -78,7 +78,6 @@ public class ApiTestSuite extends TestSuite {
         addTest(new TestSuite(FileEditorInputTest.class));
         addTest(new TestSuite(IEditorMatchingStrategyTest.class));
         addTest(new TestSuite(XMLMementoTest.class));
-        addTest(new TestSuite(TrimLayoutTest.class));
         addTest(new TestSuite(IWorkbenchPartTestableTests.class));
         addTest(new TestSuite(ArbitraryPropertyTest.class));
         addTest(new TestSuite(LifecycleViewTest.class));
