@@ -26,6 +26,7 @@ import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MUIElement;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
@@ -42,6 +43,7 @@ import org.eclipse.ui.INavigationHistory;
 import org.eclipse.ui.IPartListener;
 import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.ISelectionListener;
@@ -679,6 +681,12 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (!openedPerspectives.contains(perspective)) {
 			openedPerspectives.add(perspective);
 		}
+
+		// TODO Auto-generated method stub
+		MPerspective modelPerspective = MApplicationFactory.eINSTANCE.createPerspective();
+		IPerspectiveFactory factory = ((PerspectiveDescriptor) perspective).createFactory();
+		factory.createInitialLayout(new ModeledPageLayout(application, modelPerspective,
+				perspective));
 	}
 
 	/* (non-Javadoc)

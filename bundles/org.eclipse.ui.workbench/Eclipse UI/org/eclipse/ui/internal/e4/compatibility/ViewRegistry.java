@@ -21,6 +21,7 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MPartDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
@@ -44,16 +45,16 @@ public class ViewRegistry implements IViewRegistry {
 
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.views"); //$NON-NLS-1$
 		for (IConfigurationElement element : point.getConfigurationElements()) {
-			if (element.getName().equals("view")) { //$NON-NLS-1$
+			if (element.getName().equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
 				MPartDescriptor descriptor = MApplicationFactory.eINSTANCE.createPartDescriptor();
-				descriptor.setLabel(element.getAttribute("name")); //$NON-NLS-1$
-				descriptor.setId(element.getAttribute("id")); //$NON-NLS-1$
+				descriptor.setLabel(element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME));
+				descriptor.setId(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 				descriptor.setAllowMultiple(Boolean.parseBoolean(element
-						.getAttribute("allowMultiple"))); //$NON-NLS-1$
+						.getAttribute(IWorkbenchRegistryConstants.ATT_ALLOW_MULTIPLE)));
 				descriptor
 						.setURI("platform:/plugin/org.eclipse.ui.workbench/org.eclipse.ui.internal.e4.compatibility.CompatibilityView"); //$NON-NLS-1$
 
-				String iconURI = element.getAttribute("icon"); //$NON-NLS-1$
+				String iconURI = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 				if (iconURI != null) {
 					StringBuilder builder = new StringBuilder("platform:/plugin/"); //$NON-NLS-1$
 					builder.append(element.getNamespaceIdentifier()).append('/');

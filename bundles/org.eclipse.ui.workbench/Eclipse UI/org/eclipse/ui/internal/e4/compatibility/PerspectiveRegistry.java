@@ -21,6 +21,7 @@ import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 public class PerspectiveRegistry implements IPerspectiveRegistry {
@@ -34,10 +35,10 @@ public class PerspectiveRegistry implements IPerspectiveRegistry {
 	void postConstruct() {
 		IExtensionPoint point = extensionRegistry.getExtensionPoint("org.eclipse.ui.perspectives"); //$NON-NLS-1$
 		for (IConfigurationElement element : point.getConfigurationElements()) {
-			String id = element.getAttribute("id"); //$NON-NLS-1$
-			String label = element.getAttribute("name"); //$NON-NLS-1$
+			String id = element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
+			String label = element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 
-			descriptors.put(id, new PerspectiveDescriptor(id, label));
+			descriptors.put(id, new PerspectiveDescriptor(id, label, element));
 		}
 	}
 

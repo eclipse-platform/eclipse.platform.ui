@@ -11,17 +11,34 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 
 	private String id;
 	private String label;
+	private IConfigurationElement element;
 
-	PerspectiveDescriptor(String id, String label) {
+	PerspectiveDescriptor(String id, String label, IConfigurationElement element) {
 		this.id = id;
 		this.label = label;
+		this.element = element;
+	}
+
+	IPerspectiveFactory createFactory() {
+		try {
+			return (IPerspectiveFactory) element
+					.createExecutableExtension(IWorkbenchRegistryConstants.ATT_CLASS);
+		} catch (CoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			throw new RuntimeException(e);
+		}
 	}
 
 	public String getDescription() {
