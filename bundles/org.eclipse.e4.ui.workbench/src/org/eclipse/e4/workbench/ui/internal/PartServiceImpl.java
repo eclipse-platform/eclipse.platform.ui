@@ -19,6 +19,7 @@ import org.eclipse.e4.core.services.annotations.Optional;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MContext;
 import org.eclipse.e4.ui.model.application.MElementContainer;
@@ -117,7 +118,10 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	public MPart findPart(String id) {
-		return findPart(rootContainer, id);
+		MApplicationElement applicationElement = findPart(rootContainer, id);
+		if (applicationElement instanceof MPart)
+			return (MPart) applicationElement;
+		return null;
 	}
 
 	public Collection<MPart> getParts() {
@@ -144,21 +148,21 @@ public class PartServiceImpl implements EPartService {
 		return false;
 	}
 
-	private MPart findPart(MElementContainer<?> container, String id) {
+	private MApplicationElement findPart(MElementContainer<?> container, String id) {
 		for (Object object : container.getChildren()) {
-			if (object instanceof MPart) {
-				MPart part = (MPart) object;
+			if (object instanceof MApplicationElement) {
+				MApplicationElement part = (MApplicationElement) object;
 				if (id.equals(part.getId())) {
 					return part;
 				}
-			} else if (object instanceof MElementContainer<?>) {
-				MPart part = findPart((MElementContainer<?>) object, id);
+			}
+			if (object instanceof MElementContainer<?>) {
+				MApplicationElement part = findPart((MElementContainer<?>) object, id);
 				if (part != null) {
 					return part;
 				}
 			}
 		}
-
 		return null;
 	}
 
@@ -270,19 +274,19 @@ public class PartServiceImpl implements EPartService {
 		// part.setLabel(descriptor.getLabel());
 		part = (MPart) EcoreUtil.copy((EObject) descriptorMatch);
 
-		// Wrap it in a stack - TBD - always?
-		MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
-		stack.getChildren().add(part);
+		MApplicationElement container = findPart(rootContainer, descriptorMatch.getCategory());
+		if (container instanceof MElementContainer<?>) {
+			((MElementContainer<MPart>) container).getChildren().add(part);
+		} else { // wrap it in a stack
+			MPartStack stack = MApplicationFactory.eINSTANCE.createPartStack();
+			stack.getChildren().add(part);
+			rootContainer.getChildren().add(stack);
+		}
 
-		rootContainer.getChildren().add(stack);
 		// 3) make it visible / active / re-layout
-		// XXX part service somehow tied to a container window. After that fixed code will be:
-		// partService.activate((MPart) copy);
-		// but for now:
-		// IEclipseContext parentContext = ((MContext)parent).getContext();
-		// EPartService parentPartService = (EPartService)
-		// parentContext.get(EPartService.class.getName());
-		// parentPartService.activate(part);
+
+		// bug with activation - need to deactivate first:
+		// deactivate(part);
 		activate(part);
 		return part;
 	}

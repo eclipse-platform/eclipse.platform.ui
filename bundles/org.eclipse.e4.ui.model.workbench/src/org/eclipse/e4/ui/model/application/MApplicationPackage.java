@@ -2684,13 +2684,22 @@ public interface MApplicationPackage extends EPackage {
 	int PART_DESCRIPTOR__ALLOW_MULTIPLE = PART_FEATURE_COUNT + 0;
 
 	/**
+	 * The feature id for the '<em><b>Category</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @ordered
+	 */
+	int PART_DESCRIPTOR__CATEGORY = PART_FEATURE_COUNT + 1;
+
+	/**
 	 * The number of structural features of the '<em>Part Descriptor</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
 	 * @generated
 	 * @ordered
 	 */
-	int PART_DESCRIPTOR_FEATURE_COUNT = PART_FEATURE_COUNT + 1;
+	int PART_DESCRIPTOR_FEATURE_COUNT = PART_FEATURE_COUNT + 2;
 
 	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.impl.PartDescriptorContainerImpl <em>Part Descriptor Container</em>}' class.
@@ -6376,6 +6385,17 @@ public interface MApplicationPackage extends EPackage {
 	EAttribute getPartDescriptor_AllowMultiple();
 
 	/**
+	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.MPartDescriptor#getCategory <em>Category</em>}'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @return the meta object for the attribute '<em>Category</em>'.
+	 * @see org.eclipse.e4.ui.model.application.MPartDescriptor#getCategory()
+	 * @see #getPartDescriptor()
+	 * @generated
+	 */
+	EAttribute getPartDescriptor_Category();
+
+	/**
 	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.MPartDescriptorContainer <em>Part Descriptor Container</em>}'.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -7571,6 +7591,14 @@ public interface MApplicationPackage extends EPackage {
 		 * @generated
 		 */
 		EAttribute PART_DESCRIPTOR__ALLOW_MULTIPLE = eINSTANCE.getPartDescriptor_AllowMultiple();
+
+		/**
+		 * The meta object literal for the '<em><b>Category</b></em>' attribute feature.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		EAttribute PART_DESCRIPTOR__CATEGORY = eINSTANCE.getPartDescriptor_Category();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.impl.PartDescriptorContainerImpl <em>Part Descriptor Container</em>}' class.

@@ -27,6 +27,7 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartDescriptorImpl#isAllowMultiple <em>Allow Multiple</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.impl.PartDescriptorImpl#getCategory <em>Category</em>}</li>
  * </ul>
  * </p>
  *
@@ -52,6 +53,26 @@ public class PartDescriptorImpl extends PartImpl implements MPartDescriptor {
 	 * @ordered
 	 */
 	protected boolean allowMultiple = ALLOW_MULTIPLE_EDEFAULT;
+
+	/**
+	 * The default value of the '{@link #getCategory() <em>Category</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategory()
+	 * @generated
+	 * @ordered
+	 */
+	protected static final String CATEGORY_EDEFAULT = null;
+
+	/**
+	 * The cached value of the '{@link #getCategory() <em>Category</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see #getCategory()
+	 * @generated
+	 * @ordered
+	 */
+	protected String category = CATEGORY_EDEFAULT;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -98,11 +119,34 @@ public class PartDescriptorImpl extends PartImpl implements MPartDescriptor {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
+	public String getCategory() {
+		return category;
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setCategory(String newCategory) {
+		String oldCategory = category;
+		category = newCategory;
+		if (eNotificationRequired())
+			eNotify(new ENotificationImpl(this, Notification.SET, MApplicationPackage.PART_DESCRIPTOR__CATEGORY, oldCategory, category));
+	}
+
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
 	@Override
 	public Object eGet(int featureID, boolean resolve, boolean coreType) {
 		switch (featureID) {
 			case MApplicationPackage.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				return isAllowMultiple();
+			case MApplicationPackage.PART_DESCRIPTOR__CATEGORY:
+				return getCategory();
 		}
 		return super.eGet(featureID, resolve, coreType);
 	}
@@ -117,6 +161,9 @@ public class PartDescriptorImpl extends PartImpl implements MPartDescriptor {
 		switch (featureID) {
 			case MApplicationPackage.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				setAllowMultiple((Boolean)newValue);
+				return;
+			case MApplicationPackage.PART_DESCRIPTOR__CATEGORY:
+				setCategory((String)newValue);
 				return;
 		}
 		super.eSet(featureID, newValue);
@@ -133,6 +180,9 @@ public class PartDescriptorImpl extends PartImpl implements MPartDescriptor {
 			case MApplicationPackage.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				setAllowMultiple(ALLOW_MULTIPLE_EDEFAULT);
 				return;
+			case MApplicationPackage.PART_DESCRIPTOR__CATEGORY:
+				setCategory(CATEGORY_EDEFAULT);
+				return;
 		}
 		super.eUnset(featureID);
 	}
@@ -147,6 +197,8 @@ public class PartDescriptorImpl extends PartImpl implements MPartDescriptor {
 		switch (featureID) {
 			case MApplicationPackage.PART_DESCRIPTOR__ALLOW_MULTIPLE:
 				return allowMultiple != ALLOW_MULTIPLE_EDEFAULT;
+			case MApplicationPackage.PART_DESCRIPTOR__CATEGORY:
+				return CATEGORY_EDEFAULT == null ? category != null : !CATEGORY_EDEFAULT.equals(category);
 		}
 		return super.eIsSet(featureID);
 	}
@@ -163,6 +215,8 @@ public class PartDescriptorImpl extends PartImpl implements MPartDescriptor {
 		StringBuffer result = new StringBuffer(super.toString());
 		result.append(" (allowMultiple: "); //$NON-NLS-1$
 		result.append(allowMultiple);
+		result.append(", category: "); //$NON-NLS-1$
+		result.append(category);
 		result.append(')');
 		return result.toString();
 	}

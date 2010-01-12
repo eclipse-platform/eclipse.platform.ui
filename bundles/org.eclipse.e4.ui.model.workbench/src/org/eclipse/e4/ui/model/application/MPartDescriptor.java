@@ -20,6 +20,7 @@ package org.eclipse.e4.ui.model.application;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.eclipse.e4.ui.model.application.MPartDescriptor#isAllowMultiple <em>Allow Multiple</em>}</li>
+ *   <li>{@link org.eclipse.e4.ui.model.application.MPartDescriptor#getCategory <em>Category</em>}</li>
  * </ul>
  * </p>
  *
@@ -53,5 +54,31 @@ public interface MPartDescriptor extends MPart {
 	 * @generated
 	 */
 	void setAllowMultiple(boolean value);
+
+	/**
+	 * Returns the value of the '<em><b>Category</b></em>' attribute.
+	 * <!-- begin-user-doc -->
+	 * <p>
+	 * If the meaning of the '<em>Category</em>' attribute isn't clear,
+	 * there really should be more of a description here...
+	 * </p>
+	 * <!-- end-user-doc -->
+	 * @return the value of the '<em>Category</em>' attribute.
+	 * @see #setCategory(String)
+	 * @see org.eclipse.e4.ui.model.application.MApplicationPackage#getPartDescriptor_Category()
+	 * @model
+	 * @generated
+	 */
+	String getCategory();
+
+	/**
+	 * Sets the value of the '{@link org.eclipse.e4.ui.model.application.MPartDescriptor#getCategory <em>Category</em>}' attribute.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param value the new value of the '<em>Category</em>' attribute.
+	 * @see #getCategory()
+	 * @generated
+	 */
+	void setCategory(String value);
 
 } // MPartDescriptor
