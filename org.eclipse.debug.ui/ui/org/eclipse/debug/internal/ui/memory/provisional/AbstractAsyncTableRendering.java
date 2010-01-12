@@ -8,6 +8,7 @@
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *     Teodor Madan (Freescale) -  Bug 292360 -  [Memory View] platform renderings do not implement correctly IMemoryRendering#getControl
+ *     Teodor Madan (Freescale) -  Bug 292426 -  [Memory View] platform renderings cannot be repositioned from non-UI thread through calls to IRepositionableMemoryRendering#goToAddress 
  *******************************************************************************/
 
 package org.eclipse.debug.internal.ui.memory.provisional;
@@ -2137,61 +2138,67 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 * @param address address to position cursor at
 	 * @throws DebugException if an exception occurs
 	 */
-	public void goToAddress(BigInteger address) throws DebugException {
+	public void goToAddress(final BigInteger address) throws DebugException {
 		
-		if (fTableViewer.getVirtualContentModel() == null)
+		if (!fIsCreated  || fTableViewer.getVirtualContentModel() == null)
 			return;
-		
-		int i = fTableViewer.getVirtualContentModel().indexOfKey(address);
 
-		if (i >= 0)
-		{	
-			// address is within range, set cursor and reveal
-			fTableViewer.setSelection(address);
-			updateSyncTopAddress(getTopVisibleAddress());
-			updateSyncSelectedAddress(address);
-		}
-		else
-		{
+		final int keyIndex = fTableViewer.getVirtualContentModel().indexOfKey(address);
+
+		if (keyIndex < 0) {
 			// if not extended memory block
 			// do not allow user to go to an address that's out of range
 			if (!(getMemoryBlock() instanceof IMemoryBlockExtension))
 			{
 				Status stat = new Status(
-				 IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
-				 DebugException.NOT_SUPPORTED, DebugUIMessages.AbstractTableRendering_11, null  
+						IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
+						DebugException.NOT_SUPPORTED, DebugUIMessages.AbstractTableRendering_11, null  
 				);
 				DebugException e = new DebugException(stat);
 				throw e;
 			}
-
+	
 			BigInteger startAdd = fContentDescriptor.getStartAddress();
 			BigInteger endAdd = fContentDescriptor.getEndAddress();
-			
+	
 			if (address.compareTo(startAdd) < 0 ||
-				address.compareTo(endAdd) > 0)
+					address.compareTo(endAdd) > 0)
 			{
 				Status stat = new Status(
-				 IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
-				 DebugException.NOT_SUPPORTED, DebugUIMessages.AbstractTableRendering_11, null  
+						IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
+						DebugException.NOT_SUPPORTED, DebugUIMessages.AbstractTableRendering_11, null  
 				);
 				DebugException e = new DebugException(stat);
 				throw e;
 			}
-	
-			// load at the address
-			fTableViewer.setSelection(address);
-			reloadTable(address);
-	
-			updateSyncSelectedAddress(address);
-
-			if (!isDynamicLoad())
-			{						
-				updateSyncPageStartAddress(address);
-			}
-			
-			updateSyncTopAddress(address);
 		}
+		
+		Runnable runnable = new Runnable(){
+			public void run() {
+				showTable();
+				if (keyIndex >=0)
+				{	
+					// address is within range, set cursor and reveal
+					fTableViewer.setSelection(address);
+					updateSyncTopAddress(getTopVisibleAddress());
+					updateSyncSelectedAddress(address);
+				}
+				else
+				{
+					// load at the address
+					fTableViewer.setSelection(address);
+					reloadTable(address);
+
+					updateSyncSelectedAddress(address);
+					if (!isDynamicLoad())
+					{						
+						updateSyncPageStartAddress(address);
+					}
+					updateSyncTopAddress(address);
+				}
+			}
+		};
+		runOnUIThread(runnable);
 	}			
 	
 	/**
