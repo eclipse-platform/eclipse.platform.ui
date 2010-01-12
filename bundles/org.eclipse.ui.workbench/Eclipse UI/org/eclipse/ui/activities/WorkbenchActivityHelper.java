@@ -17,10 +17,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.activities.ws.WorkbenchActivitySupport;
 
 /**
  * A utility class that contains helpful methods for interacting with the
@@ -135,32 +133,8 @@ public final class WorkbenchActivityHelper {
 	 */
 	private static boolean allow(ITriggerPoint triggerPoint,
 			IIdentifier identifier) {
-		if (identifier.isEnabled()) {
-			return true;
-		}
-
-		ITriggerPointAdvisor advisor = ((WorkbenchActivitySupport) PlatformUI
-				.getWorkbench().getActivitySupport()).getTriggerPointAdvisor();
-		Set activitiesToEnable = advisor.allow(triggerPoint, identifier);
-		
-		if (activitiesToEnable == null) {
-			return false;
-		}
-		
-		if (activitiesToEnable.isEmpty()) {
-			// no activities required to be enabled for this trigger point -
-			// allow use unconditionally.
-			return true;
-		}
-
-		enableActivities(activitiesToEnable);
-		// only allow the operation if all the activities we needed to enabled
-		// are now enabled. this means if something has an expression bound
-		// activity that is not currently enabled this call will always return
-		// false - trying to manually set such an activity will always fail.
-		Set newEnabled = PlatformUI.getWorkbench().getActivitySupport()
-				.getActivityManager().getEnabledActivityIds();
-		return newEnabled.containsAll(activitiesToEnable);
+		// FIXME compat obviously we need to put back some activity support
+		return true;
 	}
 
 	/**
@@ -189,14 +163,15 @@ public final class WorkbenchActivityHelper {
 	 * @param activities
 	 *            the activities to enable
 	 */
-	private static void enableActivities(Collection activities) {
-		IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench()
-				.getActivitySupport();
-		Set newSet = new HashSet(activitySupport.getActivityManager()
-				.getEnabledActivityIds());
-		newSet.addAll(activities);
-		activitySupport.setEnabledActivityIds(newSet);
-	}
+	// FIXME compat: we'll probably need this later.
+	// private static void enableActivities(Collection activities) {
+	// IWorkbenchActivitySupport activitySupport = PlatformUI.getWorkbench()
+	// .getActivitySupport();
+	// Set newSet = new HashSet(activitySupport.getActivityManager()
+	// .getEnabledActivityIds());
+	// newSet.addAll(activities);
+	// activitySupport.setEnabledActivityIds(newSet);
+	// }
 
 	/**
 	 * Answers whether the provided object should be filtered from the UI based
