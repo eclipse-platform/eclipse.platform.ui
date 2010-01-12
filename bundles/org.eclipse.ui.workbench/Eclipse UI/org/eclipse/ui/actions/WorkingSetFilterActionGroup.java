@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IMenuManager;
@@ -34,9 +33,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkingSetComparator;
 import org.eclipse.ui.internal.WorkingSetMenuContributionItem;
-import org.eclipse.ui.internal.actions.ClearWorkingSetAction;
-import org.eclipse.ui.internal.actions.EditWorkingSetAction;
-import org.eclipse.ui.internal.actions.SelectWorkingSetAction;
 import org.eclipse.ui.internal.util.Util;
 
 /**
@@ -60,11 +56,11 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
     private IWorkingSet workingSet = null;
 
-    private ClearWorkingSetAction clearWorkingSetAction;
-
-    private SelectWorkingSetAction selectWorkingSetAction;
-
-    private EditWorkingSetAction editWorkingSetAction;
+	// private ClearWorkingSetAction clearWorkingSetAction;
+	//
+	// private SelectWorkingSetAction selectWorkingSetAction;
+	//
+	// private EditWorkingSetAction editWorkingSetAction;
 
     private IPropertyChangeListener workingSetUpdater;
 
@@ -97,9 +93,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         Assert.isNotNull(shell);
 
         this.workingSetUpdater = workingSetUpdater;
-        clearWorkingSetAction = new ClearWorkingSetAction(this);
-        selectWorkingSetAction = new SelectWorkingSetAction(this, shell);
-        editWorkingSetAction = new EditWorkingSetAction(this, shell);
+		// clearWorkingSetAction = new ClearWorkingSetAction(this);
+		// selectWorkingSetAction = new SelectWorkingSetAction(this, shell);
+		// editWorkingSetAction = new EditWorkingSetAction(this, shell);
         mruList = new CompoundContributionItem() {
 
 			protected IContributionItem[] getContributionItems() {
@@ -147,9 +143,14 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
         else
         	menuManager.add(new Separator(WORKING_SET_ACTION_GROUP));
         
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, selectWorkingSetAction);
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, clearWorkingSetAction);
-        menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, editWorkingSetAction);
+		// FIXME compat: add 3 actions back
+		// menuManager.appendToGroup(WORKING_SET_ACTION_GROUP,
+		// selectWorkingSetAction);
+		// menuManager.appendToGroup(WORKING_SET_ACTION_GROUP,
+		// clearWorkingSetAction);
+		// menuManager.appendToGroup(WORKING_SET_ACTION_GROUP,
+		// editWorkingSetAction);
+
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(START_SEPARATOR_ID));
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, mruList);
         menuManager.appendToGroup(WORKING_SET_ACTION_GROUP, new Separator(SEPARATOR_ID));
@@ -160,9 +161,10 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * @see org.eclipse.ui.actions.ActionGroup#fillContextMenu(org.eclipse.jface.action.IMenuManager)
 	 */
 	public void fillContextMenu(IMenuManager menuManager) {
-		menuManager.add(selectWorkingSetAction);
-		menuManager.add(clearWorkingSetAction);
-		menuManager.add(editWorkingSetAction);
+		// FIXME compat: add 3 actions back
+		// menuManager.add(selectWorkingSetAction);
+		// menuManager.add(clearWorkingSetAction);
+		// menuManager.add(editWorkingSetAction);
 		menuManager.add(new Separator());
         menuManager.add(mruList);
 		menuManager.add(new Separator(SEPARATOR_ID));
@@ -187,8 +189,10 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 
         workingSet = newWorkingSet;
         // Update action
-        clearWorkingSetAction.setEnabled(newWorkingSet != null);
-        editWorkingSetAction.setEnabled(newWorkingSet != null && newWorkingSet.isEditable());
+		// FIXME compat: working set actions
+		// clearWorkingSetAction.setEnabled(newWorkingSet != null);
+		// editWorkingSetAction.setEnabled(newWorkingSet != null &&
+		// newWorkingSet.isEditable());
 
         firePropertyChange(newWorkingSet, oldWorkingSet);
     }

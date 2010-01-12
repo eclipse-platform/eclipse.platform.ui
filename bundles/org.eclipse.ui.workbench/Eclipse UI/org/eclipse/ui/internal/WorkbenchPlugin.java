@@ -45,6 +45,7 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.registry.EditorRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -565,13 +566,13 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 2.0
      */
     public IWorkingSetManager getWorkingSetManager() {
-		// TODO commented out for e4 compatibility
+		// FIXME compat commented out for e4 compatibility
+		throw new UnsupportedOperationException();
 //        if (workingSetManager == null) {
 //            workingSetManager = new WorkingSetManager(bundleContext);
 //            workingSetManager.restoreState();
 //        }
 //        return workingSetManager;
-    	return null;
     }
 
     /**
@@ -581,13 +582,15 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 2.0
      */
 	// TODO commented out for e4 compatibility
-//    public WorkingSetRegistry getWorkingSetRegistry() {
+	public WorkingSetRegistry getWorkingSetRegistry() {
+		// FIXME compat: add working set stuff
+		throw new UnsupportedOperationException();
 //        if (workingSetRegistry == null) {
 //            workingSetRegistry = new WorkingSetRegistry();
 //            workingSetRegistry.load();
 //        }
 //        return workingSetRegistry;
-//    }
+	}
 
     /**
      * Returns the introduction registry.
@@ -614,7 +617,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		// operationSupport = new WorkbenchOperationSupport();
 		// }
 		// return operationSupport;
-		return null;
+		// FIXME compat: add operation support
+		throw new UnsupportedOperationException();
     }
     
 
@@ -638,7 +642,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //           
 //        }
 //        return preferenceManager;
-    	return null;
+		// FIXME compat: add preference manager support
+		throw new UnsupportedOperationException();
     }
 
     /**
@@ -680,7 +685,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //            viewRegistry = new ViewRegistry();
 //        }
 //        return viewRegistry;
-    	return null;
+		// FIXME compat: add view registry support
+		throw new UnsupportedOperationException();
     }
 
     /**
