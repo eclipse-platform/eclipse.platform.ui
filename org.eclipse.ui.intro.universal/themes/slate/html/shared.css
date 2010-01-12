@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -61,6 +61,8 @@ HR {
 	float : none;
 	clear : both;
 	margin-left: 70px;
+	position : relative;
+	top : -25px;
 }
 
 a {
@@ -211,7 +213,6 @@ body, .page {
 }
 
 .page {
-	background-image : url(../graphics/contentpage/background.jpg);
 	background-repeat : repeat-x;
 	background-position : top left;
 	
@@ -237,11 +238,6 @@ body, .page {
 	top : 0px;
 	padding-left: 12px;
 	height : 118px;
-	width : 100%;
-}
-
-.page > #navigation-links {
-	width: 98.1%;
 }
 
 #navigation-links a {
@@ -421,11 +417,16 @@ h1, p { margin-left : 10px; } /* required in mozilla so the page description is 
 
 #page-content * a > .link-label { left: 65px; }
 
-#page-content * a p .text {
+#page-content * a p  {
 	display : block;
 	position : relative;
 	top : -45px;
 	margin-bottom: -25px;
+}
+
+#page-content * a p .text {
+	display : block;
+	position : relative;
 	left : 53px;
 	margin-right: 53px;
 }

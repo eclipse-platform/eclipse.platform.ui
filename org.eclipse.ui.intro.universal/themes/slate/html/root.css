@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2009 IBM Corporation and others.
+ * Copyright (c) 2006, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -249,6 +249,16 @@ html, body {
     top : 0px;
     width : auto;
     text-align:center;
+    margin-bottom : 0px;
+}
+
+#page-links a#workbench img {
+    padding : 0px;
+}
+
+#page-links a#workbench span {
+    margin-top : 0px;
+    line-height : normal;
 }
 
 #page-links a#workbench .link-label {
@@ -256,4 +266,5 @@ html, body {
     color:white;
     font-weight:bold;
     text-align:center;
+    margin-left: 0;
 }
