@@ -1,6 +1,6 @@
-#Sun Jan 10 01:29:19 PST 2010
+#Sun Jan 10 12:25:18 PST 2010
 eclipse.preferences.version=1
-formatter_profile=_UI 200 Character Wrap
+formatter_profile=_UI 100 Character Wrap
 formatter_settings_version=11
 internal.default.compliance=user
 org.eclipse.jdt.ui.javadoc=true
