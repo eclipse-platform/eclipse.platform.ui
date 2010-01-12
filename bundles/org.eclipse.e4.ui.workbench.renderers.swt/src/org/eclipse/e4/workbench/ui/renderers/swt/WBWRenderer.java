@@ -399,7 +399,7 @@ public class WBWRenderer extends SWTPartRenderer {
 							saveOnCloseNeeded = (Boolean) ContextInjectionFactory
 									.invoke(
 											clientObject,
-											"isSaveOnCloseNeeded", null, Boolean.TRUE); //$NON-NLS-1$
+											"isSaveOnCloseNeeded", part.getContext(), Boolean.TRUE); //$NON-NLS-1$
 						} catch (InvocationTargetException e) {
 							if (logger != null)
 								logger.error(e);
