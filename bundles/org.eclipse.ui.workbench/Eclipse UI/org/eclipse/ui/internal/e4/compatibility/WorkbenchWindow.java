@@ -104,8 +104,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getSelectionService()
 	 */
 	public ISelectionService getSelectionService() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat window selection service
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -126,8 +126,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#isApplicationMenu(java.lang.String)
 	 */
 	public boolean isApplicationMenu(String menuId) {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat isApplicationMenu
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -177,48 +177,46 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IPageService#addPageListener(org.eclipse.ui.IPageListener)
 	 */
 	public void addPageListener(IPageListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addPageListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.IPerspectiveListener)
 	 */
 	public void addPerspectiveListener(IPerspectiveListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addPerspectiveListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageService#removePageListener(org.eclipse.ui.IPageListener)
 	 */
 	public void removePageListener(IPageListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat removePageListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.IPerspectiveListener)
 	 */
 	public void removePerspectiveListener(IPerspectiveListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat removePerspectiveListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		// TODO Auto-generated method stub
-		return null;
+		return model.getContext().get(api.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		// TODO Auto-generated method stub
-		return false;
+		return model.getContext().containsKey(api.getName());
 	}
 
 }

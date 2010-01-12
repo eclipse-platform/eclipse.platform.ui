@@ -145,8 +145,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#addPropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void addPropertyChangeListener(IPropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addPropertyChangeListener
+		throw new UnsupportedOperationException();
 	}
 
 	private MPart findPart(IWorkbenchPart part) {
@@ -278,7 +278,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getActiveEditor()
 	 */
 	public IEditorPart getActiveEditor() {
-		// TODO Auto-generated method stub
 		MPart part = partService.getActivePart();
 		if (part instanceof MEditor) {
 			CompatibilityEditor editor = (CompatibilityEditor) part.getObject();
@@ -378,8 +377,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getLabel()
 	 */
 	public String getLabel() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getLabel
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -419,16 +418,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getWorkingSet()
 	 */
 	public IWorkingSet getWorkingSet() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getWorkingSet
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#hideActionSet(java.lang.String)
 	 */
 	public void hideActionSet(String actionSetID) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat hideActionSet
+		throw new UnsupportedOperationException();
 	}
 
 	private boolean hidePart(MPart part, boolean save) {
@@ -512,16 +511,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#isEditorAreaVisible()
 	 */
 	public boolean isEditorAreaVisible() {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat isEditorAreaVisible
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#reuseEditor(org.eclipse.ui.IReusableEditor, org.eclipse.ui.IEditorInput)
 	 */
 	public void reuseEditor(IReusableEditor editor, IEditorInput input) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat reuseEditor
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -600,16 +599,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#removePropertyChangeListener(org.eclipse.jface.util.IPropertyChangeListener)
 	 */
 	public void removePropertyChangeListener(IPropertyChangeListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat removePropertyChangeListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#resetPerspective()
 	 */
 	public void resetPerspective() {
-		// TODO Auto-generated method stub
-
+		// FIXME compat resetPerspective
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -649,24 +648,24 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#savePerspective()
 	 */
 	public void savePerspective() {
-		// TODO Auto-generated method stub
-
+		// FIXME compat savePerspective
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#savePerspectiveAs(org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void savePerspectiveAs(IPerspectiveDescriptor perspective) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat savePerspectiveAs
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorAreaVisible(boolean)
 	 */
 	public void setEditorAreaVisible(boolean showEditorArea) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat setEditorAreaVisible
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -693,8 +692,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#showActionSet(java.lang.String)
 	 */
 	public void showActionSet(String actionSetID) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat showActionSet
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -728,32 +727,32 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#isEditorPinned(org.eclipse.ui.IEditorPart)
 	 */
 	public boolean isEditorPinned(IEditorPart editor) {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat isEditorPinned
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReuseThreshold()
 	 */
 	public int getEditorReuseThreshold() {
-		// TODO Auto-generated method stub
-		return 0;
+		// FIXME compat getEditorReuseThreshold
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorReuseThreshold(int)
 	 */
 	public void setEditorReuseThreshold(int openEditors) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat setEditorReuseThreshold
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getNavigationHistory()
 	 */
 	public INavigationHistory getNavigationHistory() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getNavigationHistory
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -785,24 +784,24 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getNewWizardShortcuts()
 	 */
 	public String[] getNewWizardShortcuts() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getNewWizardShortcuts
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getPerspectiveShortcuts()
 	 */
 	public String[] getPerspectiveShortcuts() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getPerspectiveShortcuts
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getShowViewShortcuts()
 	 */
 	public String[] getShowViewShortcuts() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getShowViewShortcuts
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -853,39 +852,41 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getExtensionTracker()
 	 */
 	public IExtensionTracker getExtensionTracker() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat we'll probably need this at some point, or use the
+		// window version
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getWorkingSets()
 	 */
 	public IWorkingSet[] getWorkingSets() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat most of working sets API has been added back to
+		// WorkbenchPlugin
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#setWorkingSets(org.eclipse.ui.IWorkingSet[])
 	 */
 	public void setWorkingSets(IWorkingSet[] sets) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat setWorkingSets
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getAggregateWorkingSet()
 	 */
 	public IWorkingSet getAggregateWorkingSet() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getAggregateWorkingSet
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#isPageZoomed()
 	 */
 	public boolean isPageZoomed() {
-		// TODO Auto-generated method stub
+		// FIXME compat: the page is not zoomed :-)
 		return false;
 	}
 
@@ -893,32 +894,32 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#zoomOut()
 	 */
 	public void zoomOut() {
-		// TODO Auto-generated method stub
-
+		// FIXME compat zoomOut
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#toggleZoom(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public void toggleZoom(IWorkbenchPartReference ref) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat toggleZoom
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getPartState(org.eclipse.ui.IWorkbenchPartReference)
 	 */
 	public int getPartState(IWorkbenchPartReference ref) {
-		// TODO Auto-generated method stub
-		return 0;
+		// FIXME compat getPartState
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#setPartState(org.eclipse.ui.IWorkbenchPartReference, int)
 	 */
 	public void setPartState(IWorkbenchPartReference ref, int state) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat setPartState
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -944,16 +945,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#showEditor(org.eclipse.ui.IEditorReference)
 	 */
 	public void showEditor(IEditorReference ref) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat showEditor
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#hideEditor(org.eclipse.ui.IEditorReference)
 	 */
 	public void hideEditor(IEditorReference ref) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat hideEditor
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -993,8 +994,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#addPartListener(org.eclipse.ui.IPartListener2)
 	 */
 	public void addPartListener(IPartListener2 listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addPartListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -1037,88 +1038,88 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IPartService#removePartListener(org.eclipse.ui.IPartListener2)
 	 */
 	public void removePartListener(IPartListener2 listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat removePartListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#addSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void addSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addSelectionListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#addSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void addSelectionListener(String partId, ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addSelectionListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#addPostSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addPostSelectionListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#addPostSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void addPostSelectionListener(String partId, ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat addPostSelectionListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#getSelection()
 	 */
 	public ISelection getSelection() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat addPostSelectionListener
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#getSelection(java.lang.String)
 	 */
 	public ISelection getSelection(String partId) {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getSelection
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removeSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void removeSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat getSelection
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removeSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void removeSelectionListener(String partId, ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat getSelection
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removePostSelectionListener(org.eclipse.ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat getSelection
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.ISelectionService#removePostSelectionListener(java.lang.String, org.eclipse.ui.ISelectionListener)
 	 */
 	public void removePostSelectionListener(String partId, ISelectionListener listener) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat getSelection
+		throw new UnsupportedOperationException();
 	}
 
 }
