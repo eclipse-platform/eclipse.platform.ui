@@ -21,7 +21,6 @@ import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPartService;
@@ -113,7 +112,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IWorkbenchWindow#getShell()
 	 */
 	public Shell getShell() {
-		return ((Control) model.getWidget()).getShell();
+		return (Shell) model.getWidget();
 	}
 
 	/* (non-Javadoc)
@@ -161,7 +160,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 */
 	public void setActivePage(IWorkbenchPage page) {
 		// TODO Auto-generated method stub
-
+		this.page = (WorkbenchPage) page;
 	}
 
 	/* (non-Javadoc)

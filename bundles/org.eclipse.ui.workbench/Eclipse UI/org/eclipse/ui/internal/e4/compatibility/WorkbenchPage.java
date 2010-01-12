@@ -68,6 +68,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private WorkbenchWindow workbenchWindow;
 	private IAdaptable input;
 	private IPerspectiveDescriptor perspective;
+	private List<IPerspectiveDescriptor> openedPerspectives = new ArrayList<IPerspectiveDescriptor>();
+	private List<IPerspectiveDescriptor> sortedPerspectives = new ArrayList<IPerspectiveDescriptor>();
 
 	@Inject
 	private EPartService partService;
@@ -91,7 +93,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 			IPerspectiveDescriptor perspective) {
 		this.workbenchWindow = workbenchWindow;
 		this.input = input;
-		this.perspective = perspective;
+
+		setPerspective(perspective);
 	}
 
 	private void firePartBroughtToTop(IWorkbenchPart part) {
@@ -203,8 +206,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#closeEditors(org.eclipse.ui.IEditorReference[], boolean)
 	 */
 	public boolean closeEditors(IEditorReference[] editorRefs, boolean save) {
-		// TODO Auto-generated method stub
-		return false;
+		for (IEditorReference editorRef : editorRefs) {
+			MPart model = ((EditorReference) editorRef).getModel();
+			if (!(hidePart(model, save))) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 	/* (non-Javadoc)
@@ -663,8 +671,14 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#setPerspective(org.eclipse.ui.IPerspectiveDescriptor)
 	 */
 	public void setPerspective(IPerspectiveDescriptor perspective) {
-		// TODO Auto-generated method stub
+		this.perspective = perspective;
+		
+		sortedPerspectives.remove(perspective);
+		sortedPerspectives.add(0, perspective);
 
+		if (!openedPerspectives.contains(perspective)) {
+			openedPerspectives.add(perspective);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -787,24 +801,27 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getOpenPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getOpenPerspectives() {
-		// TODO Auto-generated method stub
-		return new IPerspectiveDescriptor[] { getPerspective() };
+		return sortedPerspectives.toArray(new IPerspectiveDescriptor[sortedPerspectives.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getSortedPerspectives()
 	 */
 	public IPerspectiveDescriptor[] getSortedPerspectives() {
-		// TODO Auto-generated method stub
-		return new IPerspectiveDescriptor[] { getPerspective() };
+		return sortedPerspectives.toArray(new IPerspectiveDescriptor[sortedPerspectives.size()]);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#closePerspective(org.eclipse.ui.IPerspectiveDescriptor, boolean, boolean)
 	 */
 	public void closePerspective(IPerspectiveDescriptor desc, boolean saveParts, boolean closePage) {
-		// TODO Auto-generated method stub
-
+		if (openedPerspectives.size() == 1) {
+			closeAllPerspectives(saveParts, closePage);
+		} else {
+			// TODO Auto-generated method stub
+			sortedPerspectives.remove(desc);
+			openedPerspectives.remove(desc);
+		}
 	}
 
 	/* (non-Javadoc)
@@ -812,7 +829,16 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public void closeAllPerspectives(boolean saveEditors, boolean closePage) {
 		// TODO Auto-generated method stub
+		if (saveEditors) {
+			saveAllEditors(true);
+		}
 
+		sortedPerspectives.clear();
+		openedPerspectives.clear();
+
+		if (closePage) {
+			workbenchWindow.setActivePage(null);
+		}
 	}
 
 	/* (non-Javadoc)
