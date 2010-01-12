@@ -188,9 +188,9 @@ html>body { overflow: visible; }
  * settings primarily apply to the content pages
  */
 body {
-	background-color : #FFFFFF;
-	background-repeat : no-repeat;
-	background-position : bottom right;
+    background-image: url(../graphics/contentpage/banner_extension.jpg);	
+    background-repeat: repeat-x;
+    background-position: top left;
 }
 
 /*
@@ -213,7 +213,7 @@ body, .page {
 }
 
 .page {
-	background-repeat : repeat-x;
+	background-repeat : no-repeat;
 	background-position : top left;
 	
 	min-width : 770px;
