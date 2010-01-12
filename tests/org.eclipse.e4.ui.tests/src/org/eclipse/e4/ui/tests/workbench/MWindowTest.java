@@ -331,6 +331,11 @@ public class MWindowTest extends TestCase {
 
 		// the shell's X coordinate should have been updated
 		window.setX(300);
+
+		while (shell.getDisplay().readAndDispatch()) {
+			// spin the event loop
+		}
+
 		bounds = shell.getBounds();
 		assertEquals(300, window.getX());
 		assertEquals(window.getX(), bounds.x);
@@ -360,6 +365,11 @@ public class MWindowTest extends TestCase {
 
 		// the shell's Y coordinate should have been updated
 		window.setY(300);
+
+		while (shell.getDisplay().readAndDispatch()) {
+			// spin the event loop
+		}
+
 		bounds = shell.getBounds();
 		assertEquals(300, window.getY());
 		assertEquals(window.getY(), bounds.y);
@@ -388,6 +398,11 @@ public class MWindowTest extends TestCase {
 
 		// the shell's width should have been updated
 		window.setWidth(300);
+
+		while (shell.getDisplay().readAndDispatch()) {
+			// spin the event loop
+		}
+
 		assertEquals(shell.getBounds().width, window.getWidth());
 		assertEquals(300, shell.getBounds().width);
 	}
@@ -414,6 +429,11 @@ public class MWindowTest extends TestCase {
 
 		// the shell's width should have been updated
 		window.setHeight(300);
+
+		while (shell.getDisplay().readAndDispatch()) {
+			// spin the event loop
+		}
+
 		assertEquals(shell.getBounds().height, window.getHeight());
 		assertEquals(300, shell.getBounds().height);
 	}

@@ -62,6 +62,32 @@ import org.osgi.service.event.EventHandler;
  * Render a Window or Workbench Window.
  */
 public class WBWRenderer extends SWTPartRenderer {
+
+	private class WindowSizeUpdateJob implements Runnable {
+		public List<MWindow> windowsToUpdate = new ArrayList<MWindow>();
+
+		public void run() {
+			clearSizeUpdate();
+			while (!windowsToUpdate.isEmpty()) {
+				MWindow window = windowsToUpdate.remove(0);
+				Shell shell = (Shell) window.getWidget();
+				if (shell == null || shell.isDisposed())
+					return;
+
+				shell.setBounds(window.getX(), window.getY(),
+						window.getWidth(), window.getHeight());
+			}
+		}
+	}
+
+	WindowSizeUpdateJob boundsJob;
+
+	void clearSizeUpdate() {
+		boundsJob = null;
+	}
+
+	boolean ignoreSizeChanges = false;
+
 	@Inject
 	Logger logger;
 
@@ -141,26 +167,6 @@ public class WBWRenderer extends SWTPartRenderer {
 					boolean isVisible = (Boolean) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
 					theShell.setVisible(isVisible);
-				} else if (UIEvents.Window.X.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setLocation(newValue.intValue(), windowModel
-							.getY());
-				} else if (UIEvents.Window.X.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setLocation(windowModel.getX(), newValue
-							.intValue());
-				} else if (UIEvents.Window.WIDTH.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setSize(newValue.intValue(), windowModel
-							.getHeight());
-				} else if (UIEvents.Window.HEIGHT.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setSize(windowModel.getWidth(), newValue
-							.intValue());
 				}
 			}
 		};
@@ -170,6 +176,9 @@ public class WBWRenderer extends SWTPartRenderer {
 
 		sizeHandler = new EventHandler() {
 			public void handleEvent(Event event) {
+				if (ignoreSizeChanges)
+					return;
+
 				// Ensure that this event is for a MMenuItem
 				Object objElement = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -192,28 +201,18 @@ public class WBWRenderer extends SWTPartRenderer {
 				String attName = (String) event
 						.getProperty(UIEvents.EventTags.ATTNAME);
 
-				if (UIEvents.UIElement.VISIBLE.equals(attName)) {
-					boolean isVisible = (Boolean) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setVisible(isVisible);
-				} else if (UIEvents.Window.X.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setLocation(newValue.intValue(), theShell
-							.getLocation().y);
-				} else if (UIEvents.Window.Y.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setLocation(theShell.getLocation().x, newValue
-							.intValue());
-				} else if (UIEvents.Window.WIDTH.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setSize(newValue.intValue(), theShell.getSize().y);
-				} else if (UIEvents.Window.HEIGHT.equals(attName)) {
-					Integer newValue = (Integer) event
-							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setSize(theShell.getSize().x, newValue.intValue());
+				if (UIEvents.Window.X.equals(attName)
+						|| UIEvents.Window.Y.equals(attName)
+						|| UIEvents.Window.WIDTH.equals(attName)
+						|| UIEvents.Window.HEIGHT.equals(attName)) {
+					if (boundsJob == null) {
+						boundsJob = new WindowSizeUpdateJob();
+						boundsJob.windowsToUpdate.add(windowModel);
+						theShell.getDisplay().asyncExec(boundsJob);
+					} else {
+						if (!boundsJob.windowsToUpdate.contains(windowModel))
+							boundsJob.windowsToUpdate.add(windowModel);
+					}
 				}
 			}
 		};
@@ -299,13 +298,23 @@ public class WBWRenderer extends SWTPartRenderer {
 			final MWindow w = (MWindow) me;
 			shell.addControlListener(new ControlListener() {
 				public void controlResized(ControlEvent e) {
-					w.setWidth(shell.getSize().x);
-					w.setHeight(shell.getSize().y);
+					try {
+						ignoreSizeChanges = true;
+						w.setWidth(shell.getSize().x);
+						w.setHeight(shell.getSize().y);
+					} finally {
+						ignoreSizeChanges = false;
+					}
 				}
 
 				public void controlMoved(ControlEvent e) {
-					w.setX(shell.getLocation().x);
-					w.setY(shell.getLocation().y);
+					try {
+						ignoreSizeChanges = true;
+						w.setX(shell.getLocation().x);
+						w.setY(shell.getLocation().y);
+					} finally {
+						ignoreSizeChanges = false;
+					}
 				}
 			});
 
@@ -352,7 +361,7 @@ public class WBWRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.MUIElement)
 	 */
 	@Override
-	protected Object getUIContainer(MUIElement element) {
+	public Object getUIContainer(MUIElement element) {
 		if (element instanceof MTrimContainer<?>)
 			return super.getUIContainer(element);
 
