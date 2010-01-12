@@ -43,6 +43,7 @@ import org.eclipse.ui.tests.navigator.extension.TestDragAssistant;
 import org.eclipse.ui.tests.navigator.extension.TestLabelProvider;
 import org.eclipse.ui.tests.navigator.extension.TestContentProviderResource;
 import org.eclipse.ui.tests.navigator.extension.TestSorterResource;
+import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 import org.eclipse.ui.tests.navigator.util.TestWorkspace;
 
 public class NavigatorTestBase extends TestCase {
@@ -51,34 +52,34 @@ public class NavigatorTestBase extends TestCase {
 
 	public static final String COMMON_NAVIGATOR_JAVA_EXT = "org.eclipse.jdt.java.ui.javaContent";
 
-	
 	public static final String TEST_VIEWER = "org.eclipse.ui.tests.navigator.TestView";
 	public static final String TEST_VIEWER_PROGRAMMATIC = "org.eclipse.ui.tests.navigator.ProgrammaticTestView";
 	public static final String TEST_VIEWER_PIPELINE = "org.eclipse.ui.tests.navigator.PipelineTestView";
 	public static final String TEST_VIEWER_HIDE_EXTENSIONS = "org.eclipse.ui.tests.navigator.HideAvailableExtensionsTestView";
 	public static final String TEST_VIEWER_INHERITED = "org.eclipse.ui.tests.navigator.InheritedTestView";
-	public static final String TEST_VIEWER_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer";	
+	public static final String TEST_VIEWER_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestViewer";
 
 	public static final String TEST_VIEW_NON_COMMONVIEWER = "org.eclipse.ui.tests.navigator.NonCommonViewerTestView";
-	
+
 	public static final String TEST_CONTENT = "org.eclipse.ui.tests.navigator.testContent";
-	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testContent2";	
+	public static final String TEST_CONTENT2 = "org.eclipse.ui.tests.navigator.testContent2";
 	public static final String TEST_CONTENT_OVERRIDDEN1 = "org.eclipse.ui.tests.navigator.testContentOverridden1";
 	public static final String TEST_CONTENT_OVERRIDDEN2 = "org.eclipse.ui.tests.navigator.testContentOverridden2";
 	public static final String TEST_CONTENT_OVERRIDE1 = "org.eclipse.ui.tests.navigator.testContentOverride1";
 	public static final String TEST_CONTENT_OVERRIDE2 = "org.eclipse.ui.tests.navigator.testContentOverride2";
 	public static final String TEST_CONTENT_OVERRIDE2_BLANK = "org.eclipse.ui.tests.navigator.testContentOverride2Blank";
-	public static final String TEST_CONTENT_PIPELINED = "org.eclipse.ui.tests.navigator.testContentPipelined";
+	public static final String TEST_CONTENT_RESOURCE_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentResourceOverride";
 	public static final String TEST_CONTENT_PIPELINE = "org.eclipse.ui.tests.navigator.testPipeline";
-	
+	public static final String TEST_CONTENT_WITH = "org.eclipse.ui.tests.navigator.testContentWith";
+
 	public static final String TEST_CONTENT_M12_VIEW = "org.eclipse.ui.tests.navigator.M12View";
 	public static final String TEST_CONTENT_M12_M1_CONTENT = "org.eclipse.ui.tests.navigator.m12.M1";
 	public static final String TEST_CONTENT_M12_M1_CONTENT_FIRST_CLASS = "org.eclipse.ui.tests.navigator.m12.M1FirstClass";
 	public static final String TEST_CONTENT_M12_M2_CONTENT = "org.eclipse.ui.tests.navigator.m12.M2";
-	
+
 	public static final String TEST_CONTENT_LABEL1 = "org.eclipse.ui.tests.navigator.testContentLabel1";
 	public static final String TEST_CONTENT_LABEL2 = "org.eclipse.ui.tests.navigator.testContentLabel2";
-	
+
 	public static final String TEST_CONTENT_SORTER_MODEL = "org.eclipse.ui.tests.navigator.testContentSorterModel";
 	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE = "org.eclipse.ui.tests.navigator.testContentSorterModel.override";
 	public static final String TEST_CONTENT_SORTER_MODEL_OVERRIDE_NOSORT = "org.eclipse.ui.tests.navigator.testContentSorterModel.override.nosort";
@@ -91,7 +92,7 @@ public class NavigatorTestBase extends TestCase {
 	public static final String TEST_CONTENT_DROP_COPY = "org.eclipse.ui.tests.navigator.testContentDropCopy";
 	public static final String TEST_CONTENT_HAS_CHILDREN = "org.eclipse.ui.tests.navigator.testContentHasChildren";
 	public static final String TEST_CONTENT_ACTION_PROVIDER = "org.eclipse.ui.tests.navigator.testContentActionProvider";
-	
+
 	public static final String TEST_CONTENT_TRACKING_LABEL = "org.eclipse.ui.tests.navigator.testTrackingLabel";
 
 	public static final String TEST_CONTENT_JST = "org.eclipse.ui.tests.navigator.jst.ContentProvider";
@@ -99,16 +100,14 @@ public class NavigatorTestBase extends TestCase {
 	protected static final String TEST_ACTIVITY = "org.eclipse.ui.tests.navigator.testActivity";
 	protected static final String TEST_ACTIVITY_PROVIDER = "org.eclipse.ui.tests.navigator.testActivityProvider";
 
-
 	public static final String TEST_ACTION_PROVIDER_PRIORITY = "org.eclipse.ui.tests.navigator.extension.TestActionProviderPriority";
-	
+
 	protected static final String ACTION_NESTED = "org.eclipse.ui.tests.navigator.NestedAction";
-	
+
 	public static final String TEST_VIEWER_HELP_CONTEXT = "org.eclipse.ui.tests.navigator.testHelpContext";
 
 	public static final String TEST_C_CONTENT = "org.eclipse.ui.tests.navigator.cdt.content";
-	
-	
+
 	protected String _navigatorInstanceId;
 
 	protected Set _expectedChildren = new HashSet();
@@ -137,8 +136,7 @@ public class NavigatorTestBase extends TestCase {
 	protected void setUp() throws Exception {
 
 		if (_navigatorInstanceId == null) {
-			throw new RuntimeException(
-					"Set the _navigatorInstanceId in the constructor");
+			throw new RuntimeException("Set the _navigatorInstanceId in the constructor");
 		}
 
 		// Easier if this is not around when not needed
@@ -177,11 +175,11 @@ public class NavigatorTestBase extends TestCase {
 
 		_contentService = _viewer.getNavigatorContentService();
 		_actionService = _commonNavigator.getNavigatorActionService();
-		
-		((NavigatorFilterService)_contentService.getFilterService()).resetFilterActivationState();
+
+		((NavigatorFilterService) _contentService.getFilterService()).resetFilterActivationState();
 
 	}
-	
+
 	protected void waitForModelObjects() throws Exception {
 		_project.findMember(TestContentProvider.MODEL_FILE_PATH).touch(null);
 		// Let build run to load the model objects
@@ -191,17 +189,14 @@ public class NavigatorTestBase extends TestCase {
 	protected void showNavigator() throws PartInitException {
 		EditorTestHelper.showView(_navigatorInstanceId, true);
 
-		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench()
-				.getActiveWorkbenchWindow();
+		IWorkbenchWindow activeWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage activePage = activeWindow.getActivePage();
 
-		_commonNavigator = (CommonNavigator) activePage
-				.findView(_navigatorInstanceId);
+		_commonNavigator = (CommonNavigator) activePage.findView(_navigatorInstanceId);
 		_commonNavigator.setFocus();
-		_viewer = (CommonViewer) _commonNavigator
-				.getAdapter(CommonViewer.class);
+		_viewer = (CommonViewer) _commonNavigator.getAdapter(CommonViewer.class);
 	}
-	
+
 	protected void tearDown() throws Exception {
 		clearAll();
 		// Hide it, we want a new one each time
@@ -209,22 +204,21 @@ public class NavigatorTestBase extends TestCase {
 	}
 
 	protected void clearAll() throws Exception {
-		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot()
-				.getProjects();
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
 		for (int i = 0; i < projects.length; i++) {
 			projects[i].delete(true, null);
 		}
 	}
 
-	// Need this to workaround a problem of the
-	// DecoratingStyledCellLabelProvider.
-	// The method returns early because there is a (background) decoration
-	// pending.
 	protected void refreshViewer() {
 		try {
+			// Setting the text in the tree to be empty forces the
+			// DecoratingStyledCellLabelProvider
+			// to refresh immediately and not wait for one that is scheduled to
+			// run.
 			TreeItem[] rootItems = _viewer.getTree().getItems();
-			if (rootItems.length > 0)
-				rootItems[0].setText("");
+			for (int i = 0; i < rootItems.length; i++)
+				rootItems[i].setText("");
 		} catch (Exception ex) {
 			// Ignore
 		}
@@ -248,8 +242,7 @@ public class NavigatorTestBase extends TestCase {
 			} else if (items[i] instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) items[i];
 				if (DEBUG) {
-					System.out.println("action text: "
-							+ aci.getAction().getText());
+					System.out.println("action text: " + aci.getAction().getText());
 				}
 				if (aci.getAction().getText().indexOf(item) >= 0)
 					return aci;
@@ -270,21 +263,69 @@ public class NavigatorTestBase extends TestCase {
 			MenuManager newMm = (MenuManager) items[1];
 			items = newMm.getItems();
 		}
-		
+
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) items[i];
 				if (aci.getAction().getText().startsWith(item))
 					return true;
 				if (DEBUG)
-					System.out.println("action text: "
-							+ aci.getAction().getText());
+					System.out.println("action text: " + aci.getAction().getText());
 			}
 		}
 
 		return false;
 	}
-	
+
+	protected static final boolean ALL = true;
+	protected static final boolean TEXT = true;
+
+	protected void checkItems(TreeItem[] rootItems, TestLabelProvider tlp) {
+		checkItems(rootItems, tlp, ALL, TEXT);
+	}
+
+	protected void checkItemsText(TreeItem[] rootItems, TestLabelProvider tlp, boolean all) {
+		checkItems(rootItems, tlp, all, TEXT);
+	}
+
+	protected void checkItems(TreeItem[] rootItems, TestLabelProvider tlp, boolean all, boolean text) {
+		for (int i = 0; i < rootItems.length; i++) {
+			// Skip the dummy items (for the + placeholder)
+			if (rootItems[i].getText() == null || rootItems[i].getText().equals(""))
+				continue;
+			if (text && !rootItems[i].getText().startsWith(tlp.getColorName()))
+				fail("Wrong text: " + rootItems[i].getText());
+			assertEquals(tlp.backgroundColor, rootItems[i].getBackground(0));
+			assertEquals(TestLabelProvider.toForegroundColor(tlp.backgroundColor), rootItems[i]
+					.getForeground(0));
+			assertEquals(tlp.font, rootItems[i].getFont(0));
+			assertEquals(tlp.image, rootItems[i].getImage(0));
+			if (all)
+				checkItems(rootItems[i].getItems(), tlp, all, text);
+		}
+	}
+
+	/**
+	 * Returns the TreeItem whose data is a ResourceWrapper with the specified
+	 * name.
+	 */
+	protected TreeItem _findChild(String name, TreeItem[] items) {
+		for (int i = 0; i < items.length; i++) {
+			assertTrue("Child " + items[i] + " should be an M1 or M2 resource",
+					items[i].getData() instanceof ResourceWrapper);
+			ResourceWrapper rw = (ResourceWrapper) items[i].getData();
+			if (name.equals(rw.getResource().getName())) {
+				return items[i];
+			}
+		}
+		return null;
+	}
+
+	protected void _expand(TreeItem[] items) {
+		for (int i = 0; i < items.length; i++) {
+			_viewer.setExpandedState(items[i].getData(), true);
+		}
+	}
 	
 	
 }

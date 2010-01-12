@@ -39,11 +39,14 @@ public final class NavigatorTestSuite extends TestSuite {
 		addTest(new TestSuite(INavigatorContentServiceTests.class));
 		addTest(new TestSuite(ProgrammaticOpenTest.class));
 		addTest(new TestSuite(PipelineTest.class));
+		addTest(new TestSuite(PipelineChainTest.class));
+		addTest(new TestSuite(JstPipelineTest.class));
 		addTest(new TestSuite(LabelProviderTest.class));
 		addTest(new TestSuite(SorterTest.class));
 		addTest(new TestSuite(ViewerTest.class));
 		addTest(new TestSuite(CdtTest.class));
-		addTest(new TestSuite(JstPipelineTest.class));
+		addTest(new TestSuite(M12Tests.class));
+		addTest(new TestSuite(FirstClassM1Tests.class));
 		//addTest(new TestSuite(DnDTest.class));
 		// Does not pass on all platforms see bug 264449
 		//addTest(new TestSuite(PerformanceTest.class));

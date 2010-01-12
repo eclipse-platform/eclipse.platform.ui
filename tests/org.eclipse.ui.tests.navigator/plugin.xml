@@ -838,8 +838,8 @@
 	  </navigatorContent>
 	  
 	  <navigatorContent 
-            id="org.eclipse.ui.tests.navigator.testContentPipelined" 
-            name="Test Pipelined Content Provider"
+            id="org.eclipse.ui.tests.navigator.testContentResourceOverride" 
+            name="Test Resource Override Content Provider"
             contentProvider="org.eclipse.ui.tests.navigator.extension.TestContentProviderPipelined"
             labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderPlainRed"
             activeByDefault="false"
@@ -852,7 +852,31 @@
             </instanceof>
          </enablement>
 	  </navigatorContent>
-	  
+
+
+      <navigatorContent 
+            id="org.eclipse.ui.tests.navigator.testContentWith" 
+            name="Test Content With (Blue)"
+            contentProvider="org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionContentProvider"
+            labelProvider="org.eclipse.ui.tests.navigator.extension.TestLabelProviderBlue"
+            priority="lower">
+  		  <override 
+    		  suppressedExtensionId="org.eclipse.ui.navigator.resourceContent"/>
+         <triggerPoints>
+		    <and>         
+            	<instanceof
+                  value="org.eclipse.core.resources.IResource">
+            	</instanceof>
+   				<with
+   					variable="activeWorkbenchWindow.activePerspective">
+   					<not><equals
+      					value="com.myperpective">
+   					</equals></not>
+   				</with>
+            </and>
+         </triggerPoints>
+	  </navigatorContent>      
+
 	<!-- CDT -->
     <navigatorContent
           contentProvider="org.eclipse.ui.tests.navigator.cdt.CNavigatorContentProvider"

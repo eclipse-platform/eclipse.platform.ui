@@ -53,8 +53,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 	// Bug 289090 label provider returning blank in getText() not properly
 	// skipped
 	// Bug 296253 blank label provider should be allowed if nothing better found
-	public void blankLabelProviderOverride(int nce, boolean blank, String suffix)
-			throws Exception {
+	public void blankLabelProviderOverride(int nce, boolean blank, String suffix) throws Exception {
 
 		String overriddenCp = TEST_CONTENT_OVERRIDDEN1 + suffix; // Red
 		String overrideCp = TEST_CONTENT_OVERRIDE1 + suffix; // Green
@@ -77,8 +76,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 			break;
 		}
 
-		_contentService.bindExtensions(
-				new String[] { overriddenCp, overrideCp }, false);
+		_contentService.bindExtensions(new String[] { overriddenCp, overrideCp }, false);
 		_contentService.getActivationService().activateExtensions(
 				new String[] { overrideCp, overriddenCp }, true);
 
@@ -174,34 +172,18 @@ public class LabelProviderTest extends NavigatorTestBase {
 		blankLabelProviderOverride(BOTH, NULL, PLAIN);
 	}
 
-	private void checkItemsAll(TreeItem[] rootItems, TestLabelProvider tlp) {
-		if (!rootItems[0].getText().startsWith(tlp.getColorName()))
-			fail("Wrong text: " + rootItems[0].getText());
-		checkItems(rootItems, tlp);
-	}
-
-	private void checkItems(TreeItem[] rootItems, TestLabelProvider tlp) {
-		assertEquals(tlp.backgroundColor, rootItems[0].getBackground(0));
-		assertEquals(TestLabelProvider.toForegroundColor(tlp.backgroundColor),
-				rootItems[0].getForeground(0));
-		assertEquals(tlp.font, rootItems[0].getFont(0));
-		assertEquals(tlp.image, rootItems[0].getImage(0));
-	}
-
 	// bug 252293 [CommonNavigator] LabelProviders do not obey override rules
 	public void testSimpleResFirst() throws Exception {
 
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1,
 				TEST_CONTENT_OVERRIDE1 }, false);
-		_contentService.getActivationService()
-				.activateExtensions(
-						new String[] { TEST_CONTENT_OVERRIDE1,
-								TEST_CONTENT_OVERRIDDEN1 }, true);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_OVERRIDE1, TEST_CONTENT_OVERRIDDEN1 }, true);
 
 		refreshViewer();
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
-		checkItemsAll(rootItems, TestLabelProviderStyledGreen.instance);
+		checkItems(rootItems, TestLabelProviderStyledGreen.instance);
 	}
 
 	/**
@@ -211,17 +193,12 @@ public class LabelProviderTest extends NavigatorTestBase {
 	 * D - B) then C branches (F - G - C) then A
 	 */
 	public void testOverrideChain() throws Exception {
-		final String[] EXTENSIONS = new String[] {
-				TEST_CONTENT_TRACKING_LABEL + ".A",
-				TEST_CONTENT_TRACKING_LABEL + ".B",
-				TEST_CONTENT_TRACKING_LABEL + ".C",
-				TEST_CONTENT_TRACKING_LABEL + ".D",
-				TEST_CONTENT_TRACKING_LABEL + ".E",
-				TEST_CONTENT_TRACKING_LABEL + ".F",
-				TEST_CONTENT_TRACKING_LABEL + ".G" };
+		final String[] EXTENSIONS = new String[] { TEST_CONTENT_TRACKING_LABEL + ".A",
+				TEST_CONTENT_TRACKING_LABEL + ".B", TEST_CONTENT_TRACKING_LABEL + ".C",
+				TEST_CONTENT_TRACKING_LABEL + ".D", TEST_CONTENT_TRACKING_LABEL + ".E",
+				TEST_CONTENT_TRACKING_LABEL + ".F", TEST_CONTENT_TRACKING_LABEL + ".G" };
 		_contentService.bindExtensions(EXTENSIONS, true);
-		_contentService.getActivationService().activateExtensions(EXTENSIONS,
-				true);
+		_contentService.getActivationService().activateExtensions(EXTENSIONS, true);
 
 		refreshViewer();
 		_viewer.getTree().getItems();
@@ -240,10 +217,8 @@ public class LabelProviderTest extends NavigatorTestBase {
 
 		final String EXPECTED = "EDBFGCA";
 		if (false)
-			System.out.println("Map: "
-					+ TrackingLabelProvider.styledTextQueries);
-		String queries = (String) TrackingLabelProvider.styledTextQueries
-				.get(_project);
+			System.out.println("Map: " + TrackingLabelProvider.styledTextQueries);
+		String queries = (String) TrackingLabelProvider.styledTextQueries.get(_project);
 		// This can happen multiple times depending on when the decorating label
 		// provider
 		// runs, so just make sure the sequence is right
@@ -254,24 +229,23 @@ public class LabelProviderTest extends NavigatorTestBase {
 	public void testSimpleResLast() throws Exception {
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
 				TEST_CONTENT_OVERRIDE2 }, false);
-		_contentService.getActivationService()
-				.activateExtensions(
-						new String[] { TEST_CONTENT_OVERRIDDEN2,
-								TEST_CONTENT_OVERRIDE2 }, true);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_OVERRIDDEN2, TEST_CONTENT_OVERRIDE2 }, true);
 
 		refreshViewer();
 
+		if (false)
+			DisplayHelper.sleep(10000000);
+
 		TreeItem[] rootItems = _viewer.getTree().getItems();
-		checkItemsAll(rootItems, TestLabelProviderCyan.instance);
+		checkItems(rootItems, TestLabelProviderCyan.instance);
 	}
 
 	public void testOverrideAdd() throws Exception {
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
 				TEST_CONTENT_OVERRIDE2 }, false);
-		_contentService.getActivationService()
-				.activateExtensions(
-						new String[] { TEST_CONTENT_OVERRIDDEN2,
-								TEST_CONTENT_OVERRIDE2 }, true);
+		_contentService.getActivationService().activateExtensions(
+				new String[] { TEST_CONTENT_OVERRIDDEN2, TEST_CONTENT_OVERRIDE2 }, true);
 
 		refreshViewer();
 
@@ -284,7 +258,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 			DisplayHelper.sleep(10000000);
 
 		TreeItem[] rootItems = _viewer.getTree().getItems();
-		checkItemsAll(rootItems, TestLabelProviderCyan.instance);
+		checkItems(rootItems, TestLabelProviderCyan.instance);
 	}
 
 	// Make sure that it finds label providers that are in overridden content
@@ -296,8 +270,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN2,
 				TEST_CONTENT_OVERRIDE2_BLANK }, true);
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_CONTENT_OVERRIDDEN2,
-						TEST_CONTENT_OVERRIDE2_BLANK }, true);
+				new String[] { TEST_CONTENT_OVERRIDDEN2, TEST_CONTENT_OVERRIDE2_BLANK }, true);
 
 		refreshViewer();
 
@@ -311,21 +284,18 @@ public class LabelProviderTest extends NavigatorTestBase {
 			fail("Wrong text: " + rootItems[0].getText());
 
 		// We get the everything else from the blank label provider
-		checkItems(rootItems, TestLabelProviderBlank.instance);
+		checkItems(rootItems, TestLabelProviderBlank.instance, ALL, !TEXT);
 	}
 
 	// Bug 295803 Source of contribution set to lowest priority NCE
-	// Not fixed yet
 	public void XXXtestMultiNceSameObject() throws Exception {
 
-		_contentService.bindExtensions(
-				new String[] { TEST_CONTENT_OVERRIDDEN1, }, true);
+		_contentService.bindExtensions(new String[] { TEST_CONTENT_OVERRIDDEN1, }, true);
 		// Just two different ones, they don't override, the label provider
 		// should be associated with the higher priority extension that
 		// contributed the object.
 		_contentService.getActivationService().activateExtensions(
-				new String[] { TEST_CONTENT_OVERRIDDEN1,
-						COMMON_NAVIGATOR_RESOURCE_EXT }, true);
+				new String[] { TEST_CONTENT_OVERRIDDEN1, COMMON_NAVIGATOR_RESOURCE_EXT }, true);
 
 		refreshViewer();
 

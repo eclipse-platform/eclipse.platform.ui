@@ -12,7 +12,6 @@ import org.eclipse.ui.tests.navigator.m12.M1ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.M2ContentProvider;
 import org.eclipse.ui.tests.navigator.m12.model.M1Project;
 import org.eclipse.ui.tests.navigator.m12.model.M2File;
-import org.eclipse.ui.tests.navigator.m12.model.ResourceWrapper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IWorkspaceRunnable;
@@ -147,7 +146,7 @@ public class M12Tests extends NavigatorTestBase {
 	 * @throws CoreException
 	 */
 	// Turned off until 285529 is fixed
-	public void testInterceptRemove() throws CoreException {
+	public void XXXtestInterceptRemove() throws CoreException {
 		final String NEW_FOLDER_1 = "newFolder1";
 
 		_initContent();
@@ -183,7 +182,7 @@ public class M12Tests extends NavigatorTestBase {
 	 * @throws CoreException
 	 */
 	// Turned off until 285529 is fixed
-	public void testInterceptRefreshOnChildTypeChange() throws CoreException {
+	public void XXXtestInterceptRefreshOnChildTypeChange() throws CoreException {
 		_initContent();
 
 		final IFile file2 = _p2.getFile("file2.txt");
@@ -210,25 +209,4 @@ public class M12Tests extends NavigatorTestBase {
 						+ M2ContentProvider.getInterceptUpdateCount() >= 1);
 	}
 
-	/**
-	 * Returns the TreeItem whose data is a ResourceWrapper with the specified
-	 * name.
-	 */
-	private TreeItem _findChild(String name, TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			assertTrue("Child " + items[i] + " should be an M1 or M2 resource",
-					items[i].getData() instanceof ResourceWrapper);
-			ResourceWrapper rw = (ResourceWrapper) items[i].getData();
-			if (name.equals(rw.getResource().getName())) {
-				return items[i];
-			}
-		}
-		return null;
-	}
-
-	private void _expand(TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			_viewer.setExpandedState(items[i].getData(), true);
-		}
-	}
 }

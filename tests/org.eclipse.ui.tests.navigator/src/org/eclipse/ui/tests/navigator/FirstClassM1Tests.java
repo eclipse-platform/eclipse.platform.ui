@@ -17,8 +17,6 @@ import org.eclipse.ui.tests.navigator.m12.model.M1Project;
 /**
  * M1/M2 tests with M1 as a first class provider (i.e. override policy set to
  * InvokeAlways...)
- * 
- * @author Franck102@yahoo.com
  */
 public class FirstClassM1Tests extends NavigatorTestBase {
 	public FirstClassM1Tests() {
@@ -53,12 +51,6 @@ public class FirstClassM1Tests extends NavigatorTestBase {
 
 		assertEquals("Project should have 3 children", 3, p1Children.length);
 
-	}
-
-	private void _expand(TreeItem[] items) {
-		for (int i = 0; i < items.length; i++) {
-			_viewer.setExpandedState(items[i].getData(), true);
-		}
 	}
 
 }

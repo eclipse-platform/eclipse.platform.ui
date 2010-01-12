@@ -97,13 +97,14 @@ public class PipelineTest extends NavigatorTestBase {
 		assertTrue(found);
 	}
 	
+	// Make sure problems in bad extension points are reported well
 	public void testInterceptAddThrow() throws Exception {
 		_contentService.bindExtensions(new String[] {
-				COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_PIPELINED},
+				COMMON_NAVIGATOR_RESOURCE_EXT, TEST_CONTENT_RESOURCE_OVERRIDE},
 				false);
 		_contentService.getActivationService().activateExtensions(
 				new String[] { COMMON_NAVIGATOR_RESOURCE_EXT,
-						TEST_CONTENT_PIPELINED }, true);
+						TEST_CONTENT_RESOURCE_OVERRIDE }, true);
 
 		refreshViewer();
 
