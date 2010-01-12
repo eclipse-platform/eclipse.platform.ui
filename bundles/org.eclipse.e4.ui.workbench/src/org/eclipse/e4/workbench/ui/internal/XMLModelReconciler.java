@@ -39,6 +39,7 @@ import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
 import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.MPartStack;
 import org.eclipse.e4.ui.model.application.MPerspective;
@@ -123,7 +124,9 @@ public class XMLModelReconciler extends ModelReconciler {
 		for (int i = 0; i < rootNodeList.getLength(); i++) {
 			Node node = rootNodeList.item(i);
 			if (node instanceof Element) {
-				constructDeltas(deltas, references, rootObject, (Element) node);
+				Element element = (Element) node;
+				constructDeltas(deltas, references, rootObject, element, element
+						.getAttribute(APPLICATIONELEMENT_ID_ATTNAME));
 			}
 		}
 
@@ -237,67 +240,66 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	private boolean constructDeltas(Collection<ModelDelta> deltas, List<Object> references,
-			EObject eObject, Element element) {
-		String id = element.getAttribute(APPLICATIONELEMENT_ID_ATTNAME);
-		if (eObject instanceof MApplicationElement || eObject instanceof MKeyBinding) {
-			if (getLocalId(eObject).equals(id)) {
-				constructObjectDeltas(deltas, references, eObject, element);
+			EObject object, Element element, String id) {
+		if (object instanceof MApplicationElement || object instanceof MKeyBinding) {
+			if (getLocalId(object).equals(id)) {
+				constructObjectDeltas(deltas, references, object, element);
 				return true;
 			}
 		}
 
-		if (eObject instanceof MElementContainer<?>) {
-			for (Object child : ((MElementContainer<?>) eObject).getChildren()) {
-				if (constructDeltas(deltas, references, (EObject) child, element)) {
+		if (object instanceof MElementContainer<?>) {
+			for (Object child : ((MElementContainer<?>) object).getChildren()) {
+				if (constructDeltas(deltas, references, (EObject) child, element, id)) {
 					return true;
 				}
 			}
 		}
 
-		if (eObject instanceof MBindingContainer) {
-			for (MKeyBinding keyBinding : ((MBindingContainer) eObject).getBindings()) {
-				if (constructDeltas(deltas, references, (EObject) keyBinding, element)) {
+		if (object instanceof MBindingContainer) {
+			for (MKeyBinding keyBinding : ((MBindingContainer) object).getBindings()) {
+				if (constructDeltas(deltas, references, (EObject) keyBinding, element, id)) {
 					return true;
 				}
 			}
 		}
 
-		if (eObject instanceof MHandlerContainer) {
-			for (MHandler handler : ((MHandlerContainer) eObject).getHandlers()) {
-				if (constructDeltas(deltas, references, (EObject) handler, element)) {
+		if (object instanceof MHandlerContainer) {
+			for (MHandler handler : ((MHandlerContainer) object).getHandlers()) {
+				if (constructDeltas(deltas, references, (EObject) handler, element, id)) {
 					return true;
 				}
 			}
 		}
 
-		if (eObject instanceof MApplication) {
-			for (MCommand command : ((MApplication) eObject).getCommands()) {
-				if (constructDeltas(deltas, references, (EObject) command, element)) {
+		if (object instanceof MApplication) {
+			for (MCommand command : ((MApplication) object).getCommands()) {
+				if (constructDeltas(deltas, references, (EObject) command, element, id)) {
 					return true;
 				}
 			}
 		}
 
-		if (eObject instanceof MPart) {
-			MPart part = (MPart) eObject;
+		if (object instanceof MPart) {
+			MPart part = (MPart) object;
 
 			for (MMenu menu : part.getMenus()) {
-				if (constructDeltas(deltas, references, (EObject) menu, element)) {
+				if (constructDeltas(deltas, references, (EObject) menu, element, id)) {
 					return true;
 				}
 			}
 
 			MToolBar toolBar = part.getToolbar();
 			if (toolBar != null) {
-				if (constructDeltas(deltas, references, (EObject) toolBar, element)) {
+				if (constructDeltas(deltas, references, (EObject) toolBar, element, id)) {
 					return true;
 				}
 			}
 		}
 
-		if (eObject instanceof MWindow) {
-			MWindow window = (MWindow) eObject;
-			if (constructDeltas(deltas, references, (EObject) window.getMainMenu(), element)) {
+		if (object instanceof MWindow) {
+			MWindow window = (MWindow) object;
+			if (constructDeltas(deltas, references, (EObject) window.getMainMenu(), element, id)) {
 				return true;
 			}
 		}
@@ -306,7 +308,7 @@ public class XMLModelReconciler extends ModelReconciler {
 	}
 
 	private void constructObjectDeltas(Collection<ModelDelta> deltas, List<Object> references,
-			EObject eObject, Element element) {
+			EObject object, Element element) {
 		NodeList nodeList = (NodeList) element;
 		for (int i = 0; i < nodeList.getLength(); i++) {
 			Node node = nodeList.item(i);
@@ -316,29 +318,26 @@ public class XMLModelReconciler extends ModelReconciler {
 
 			Element innerElement = (Element) node;
 			String featureName = innerElement.getNodeName();
-			EStructuralFeature feature = getStructuralFeature(eObject, featureName);
+			EStructuralFeature feature = getStructuralFeature(object, featureName);
 
 			if (isChainedReference(featureName)) {
-				ModelDelta delta = createMultiReferenceDelta(deltas, references, eObject, feature,
+				ModelDelta delta = createMultiReferenceDelta(deltas, references, object, feature,
+						innerElement);
+				deltas.add(delta);
+			} else if (isUnset(innerElement)) {
+				ModelDelta delta = new EMFModelDeltaUnset(object, feature);
+				deltas.add(delta);
+			} else if (isDirectReference(featureName)) {
+				ModelDelta delta = createDirectReferenceDelta(deltas, references, object, feature,
+						innerElement);
+				deltas.add(delta);
+			} else if (isIndirectReference(featureName)) {
+				ModelDelta delta = createIndirectReferenceDelta(references, object, feature,
 						innerElement);
 				deltas.add(delta);
 			} else {
-				if (isUnset(innerElement)) {
-					ModelDelta delta = new EMFModelDeltaUnset(eObject, feature);
-					deltas.add(delta);
-				} else if (isDirectReference(featureName)) {
-					ModelDelta delta = createDirectReferenceDelta(deltas, references, eObject,
-							feature, innerElement);
-					deltas.add(delta);
-				} else if (isIndirectReference(featureName)) {
-					ModelDelta delta = createIndirectReferenceDelta(references, eObject, feature,
-							innerElement);
-					deltas.add(delta);
-				} else {
-					ModelDelta delta = createAttributeDelta(eObject, feature, innerElement,
-							featureName);
-					deltas.add(delta);
-				}
+				ModelDelta delta = createAttributeDelta(object, feature, innerElement, featureName);
+				deltas.add(delta);
 			}
 		}
 	}
@@ -580,6 +579,8 @@ public class XMLModelReconciler extends ModelReconciler {
 			return (EObject) MApplicationFactory.eINSTANCE.createPerspective();
 		} else if (type.equals(MPerspectiveStack.class.getSimpleName())) {
 			return (EObject) MApplicationFactory.eINSTANCE.createPerspectiveStack();
+		} else if (type.equals(MPartDescriptor.class.getSimpleName())) {
+			return (EObject) MApplicationFactory.eINSTANCE.createPartDescriptor();
 		}
 		return null;
 	}
