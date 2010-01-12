@@ -141,7 +141,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 	}
 
 	// Bug 296253 blank label provider should be allowed if nothing better found
-	public void XXXtestBlankLabelProviderOverride2() throws Exception {
+	public void testBlankLabelProviderOverride2() throws Exception {
 		blankLabelProviderOverride(OVERRIDING, BLANK, "");
 	}
 
@@ -150,7 +150,7 @@ public class LabelProviderTest extends NavigatorTestBase {
 	}
 
 	// Bug 296253 blank label provider should be allowed if nothing better found
-	public void XXXtestPlainBlankLabelProviderOverride2() throws Exception {
+	public void testPlainBlankLabelProviderOverride2() throws Exception {
 		blankLabelProviderOverride(OVERRIDING, BLANK, PLAIN);
 	}
 
@@ -159,22 +159,22 @@ public class LabelProviderTest extends NavigatorTestBase {
 	}
 
 	// Bug 296253 blank label provider should be allowed if nothing better found
-	public void XXXtestBlankLabelProviderBoth() throws Exception {
+	public void testBlankLabelProviderBoth() throws Exception {
 		blankLabelProviderOverride(BOTH, BLANK, "");
 	}
 
 	// Bug 296253 blank label provider should be allowed if nothing better found
-	public void XXXtestNullLabelProviderBoth() throws Exception {
+	public void testNullLabelProviderBoth() throws Exception {
 		blankLabelProviderOverride(BOTH, NULL, "");
 	}
 
 	// Bug 296253 blank label provider should be allowed if nothing better found
-	public void XXXtestPlainBlankLabelProviderBoth() throws Exception {
+	public void testPlainBlankLabelProviderBoth() throws Exception {
 		blankLabelProviderOverride(BOTH, BLANK, PLAIN);
 	}
 
 	// Bug 296253 blank label provider should be allowed if nothing better found
-	public void XXXtestPlainNullLabelProviderBoth() throws Exception {
+	public void testPlainNullLabelProviderBoth() throws Exception {
 		blankLabelProviderOverride(BOTH, NULL, PLAIN);
 	}
 
