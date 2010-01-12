@@ -88,7 +88,7 @@ public class TestPipelineProvider extends ResourceWrapperContentProvider {
 			key = ((ResourceWrapper)key).getResource();
 		}
 		String queries = (String) map.get(key);
-		StringBuilder buf = new StringBuilder(queries==null ? "" : queries);
+		StringBuffer buf = new StringBuffer(queries==null ? "" : queries);
 		buf.append(id);
 		map.put(key, buf.toString());		
 	}
