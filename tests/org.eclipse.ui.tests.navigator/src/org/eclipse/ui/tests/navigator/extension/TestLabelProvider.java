@@ -14,13 +14,12 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IFontProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.StyledString;
-import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.ISharedImages;
@@ -31,39 +30,44 @@ import org.eclipse.ui.navigator.IDescriptionProvider;
 
 public abstract class TestLabelProvider extends LabelProvider implements
 		ICommonLabelProvider, IDescriptionProvider, IColorProvider,
-		IFontProvider, IStyledLabelProvider {
+		IFontProvider {
 
 	protected static FontData boldFontData = new FontData();
 
 	public Color backgroundColor;
 	public String backgroundColorName;
-	
+
 	public Image image;
 
 	public Font font;
-	
+
 	private Font boldFont;
 
-	public static boolean _blankStatic;
 	public boolean _blank;
-	
+	public boolean _null;
+
 	public static void resetTest() {
-		_blankStatic = false;
 	}
-	
+
 	static {
 		boldFontData.setStyle(SWT.BOLD);
 	}
-	
+
 	public void init(ICommonContentExtensionSite aSite) {
 		boldFont = new Font(Display.getDefault(), boldFontData);
 		initSubclass();
 	}
 
 	protected void initSubclass() {
-		
+
 	}
-	
+
+	public static Color toForegroundColor(Color backColor) {
+		RGB rgb = backColor.getRGB();
+		RGB newRgb = new RGB(rgb.blue, rgb.red, rgb.green);
+		return new Color(Display.getCurrent(), newRgb);
+	}
+
 	public Color getTestColor() {
 		return backgroundColor;
 	}
@@ -80,9 +84,11 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public String getText(Object element) {
-		if (_blankStatic || _blank)
+		if (_blank)
 			return "";
-		
+		if (_null)
+			return null;
+
 		if (element instanceof TestExtensionTreeData) {
 			TestExtensionTreeData data = (TestExtensionTreeData) element;
 			return getColorName() + data.getName();
@@ -91,12 +97,6 @@ public abstract class TestLabelProvider extends LabelProvider implements
 			return getColorName() + ((IResource) element).getName();
 		}
 		return null;
-	}
-
-	public StyledString getStyledText(Object element) {
-		if (_blankStatic || _blank)
-			return new StyledString("");
-		return new StyledString(getText(element));
 	}
 
 	public String getDescription(Object anElement) {
@@ -116,7 +116,7 @@ public abstract class TestLabelProvider extends LabelProvider implements
 	}
 
 	public Color getForeground(Object element) {
-		return getTestColor();
+		return toForegroundColor(getTestColor());
 	}
 
 	public Color getBackground(Object element) {

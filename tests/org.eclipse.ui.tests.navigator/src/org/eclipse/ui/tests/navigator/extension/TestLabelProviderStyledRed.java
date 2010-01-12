@@ -21,18 +21,16 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.3
  *
  */
-public class TestLabelProviderBlue extends TestStyledLabelProvider {
+public class TestLabelProviderStyledRed extends TestStyledLabelProvider {
+	public static TestLabelProviderStyledRed instance;
 
-	public static TestLabelProviderBlue instance;
-	
 	protected void initSubclass() {
 		backgroundColor = Display.getCurrent().getSystemColor(
-				SWT.COLOR_BLUE);
-		backgroundColorName = "Blue";
+				SWT.COLOR_RED);
+		backgroundColorName = "Red";
 		font = new Font(Display.getDefault(), boldFontData);
 		image = PlatformUI.getWorkbench().getSharedImages().getImage(
-				ISharedImages.IMG_DEC_FIELD_WARNING);
+				ISharedImages.IMG_ELCL_REMOVE);
 		instance = this;
 	}
-
 }
