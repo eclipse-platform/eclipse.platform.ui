@@ -144,21 +144,23 @@ public class WBWRenderer extends SWTPartRenderer {
 				} else if (UIEvents.Window.X.equals(attName)) {
 					Integer newValue = (Integer) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setLocation(newValue.intValue(), theShell
-							.getLocation().y);
+					theShell.setLocation(newValue.intValue(), windowModel
+							.getY());
 				} else if (UIEvents.Window.X.equals(attName)) {
 					Integer newValue = (Integer) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setLocation(theShell.getLocation().x, newValue
+					theShell.setLocation(windowModel.getX(), newValue
 							.intValue());
 				} else if (UIEvents.Window.WIDTH.equals(attName)) {
 					Integer newValue = (Integer) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setSize(newValue.intValue(), theShell.getSize().y);
+					theShell.setSize(newValue.intValue(), windowModel
+							.getHeight());
 				} else if (UIEvents.Window.HEIGHT.equals(attName)) {
 					Integer newValue = (Integer) event
 							.getProperty(UIEvents.EventTags.NEW_VALUE);
-					theShell.setSize(theShell.getSize().x, newValue.intValue());
+					theShell.setSize(windowModel.getWidth(), newValue
+							.intValue());
 				}
 			}
 		};

@@ -33,6 +33,7 @@ import org.eclipse.e4.workbench.ui.internal.E4Workbench;
 import org.eclipse.e4.workbench.ui.renderers.swt.TrimmedPartLayout;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -324,13 +325,16 @@ public class MWindowTest extends TestCase {
 		assertTrue(widget instanceof Shell);
 
 		Shell shell = (Shell) widget;
-		assertEquals(shell.getBounds().x, window.getX());
-		assertEquals(200, shell.getBounds().x);
+		Rectangle bounds = shell.getBounds();
+		assertEquals(window.getX(), bounds.x);
+		assertEquals(200, bounds.x);
 
 		// the shell's X coordinate should have been updated
 		window.setX(300);
-		assertEquals(shell.getBounds().x, window.getX());
-		assertEquals(300, shell.getBounds().x);
+		bounds = shell.getBounds();
+		assertEquals(300, window.getX());
+		assertEquals(window.getX(), bounds.x);
+		assertEquals(300, bounds.x);
 	}
 
 	public void testWindow_Y() {
@@ -350,13 +354,16 @@ public class MWindowTest extends TestCase {
 		assertTrue(widget instanceof Shell);
 
 		Shell shell = (Shell) widget;
-		assertEquals(shell.getBounds().y, window.getY());
-		assertEquals(200, shell.getBounds().y);
+		Rectangle bounds = shell.getBounds();
+		assertEquals(window.getY(), bounds.y);
+		assertEquals(200, bounds.y);
 
 		// the shell's Y coordinate should have been updated
 		window.setY(300);
-		assertEquals(shell.getBounds().y, window.getY());
-		assertEquals(300, shell.getBounds().y);
+		bounds = shell.getBounds();
+		assertEquals(300, window.getY());
+		assertEquals(window.getY(), bounds.y);
+		assertEquals(300, bounds.y);
 	}
 
 	public void testWindow_Width() {
