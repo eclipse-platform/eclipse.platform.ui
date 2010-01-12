@@ -149,6 +149,8 @@ public class PartServiceImpl implements EPartService {
 	}
 
 	private MApplicationElement findPart(MElementContainer<?> container, String id) {
+		if (id == null)
+			return null;
 		for (Object object : container.getChildren()) {
 			if (object instanceof MApplicationElement) {
 				MApplicationElement part = (MApplicationElement) object;
@@ -286,7 +288,7 @@ public class PartServiceImpl implements EPartService {
 		// 3) make it visible / active / re-layout
 
 		// bug with activation - need to deactivate first:
-		// deactivate(part);
+		deactivate(part);
 		activate(part);
 		return part;
 	}
