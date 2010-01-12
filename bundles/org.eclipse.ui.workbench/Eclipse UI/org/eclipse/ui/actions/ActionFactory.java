@@ -10,35 +10,18 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
-import org.eclipse.osgi.util.NLS;
-
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.action.IAction;
-
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchWindow;
-import org.eclipse.ui.internal.CloseAllSavedAction;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.IntroAction;
-import org.eclipse.ui.internal.LockToolBarAction;
-import org.eclipse.ui.internal.NavigationHistoryAction;
-import org.eclipse.ui.internal.OpenPreferencesAction;
-import org.eclipse.ui.internal.ResetPerspectiveAction;
-import org.eclipse.ui.internal.SaveAction;
-import org.eclipse.ui.internal.SaveAllAction;
-import org.eclipse.ui.internal.SaveAsAction;
-import org.eclipse.ui.internal.SavePerspectiveAction;
-import org.eclipse.ui.internal.ToggleEditorsVisibilityAction;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.actions.CommandAction;
-import org.eclipse.ui.internal.actions.DynamicHelpAction;
-import org.eclipse.ui.internal.actions.HelpContentsAction;
-import org.eclipse.ui.internal.actions.HelpSearchAction;
 
 /**
  * Access to standard actions provided by the workbench.
@@ -184,9 +167,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new NavigationHistoryAction(window, false);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new NavigationHistoryAction(window,
+			// false);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -296,9 +282,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new CloseAllSavedAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new CloseAllSavedAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -352,9 +340,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new IntroAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new IntroAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -565,9 +555,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new NavigationHistoryAction(window, true);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new NavigationHistoryAction(window,
+			// true);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -637,9 +630,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new LockToolBarAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new LockToolBarAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -955,9 +950,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new OpenPreferencesAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new OpenPreferencesAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1241,9 +1238,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new ResetPerspectiveAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new ResetPerspectiveAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1283,9 +1282,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new SaveAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new SaveAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1303,9 +1304,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new SaveAllAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new SaveAllAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1323,9 +1326,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new SaveAsAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new SaveAsAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1343,9 +1348,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new SavePerspectiveAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new SavePerspectiveAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1386,9 +1393,12 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new ToggleEditorsVisibilityAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new
+			// ToggleEditorsVisibilityAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1572,9 +1582,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new HelpContentsAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new HelpContentsAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1594,9 +1606,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new HelpSearchAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new HelpSearchAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -1616,9 +1630,11 @@ public abstract class ActionFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            IWorkbenchAction action = new DynamicHelpAction(window);
-            action.setId(getId());
-            return action;
+			// IWorkbenchAction action = new DynamicHelpAction(window);
+			// action.setId(getId());
+			// return action;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 

@@ -20,18 +20,10 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.internal.ChangeToPerspectiveMenu;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.ReopenEditorMenu;
-import org.eclipse.ui.internal.ShowInMenu;
-import org.eclipse.ui.internal.ShowViewMenu;
-import org.eclipse.ui.internal.SwitchToWindowMenu;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.actions.HelpSearchContributionItem;
-import org.eclipse.ui.internal.tweaklets.TabBehaviour;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.CommandContributionItemParameter;
 
@@ -165,10 +157,7 @@ public abstract class ContributionItemFactory {
 							IPreferenceStore store = WorkbenchPlugin
 									.getDefault().getPreferenceStore();
 							boolean reuseEditors = store
-									.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-									|| ((TabBehaviour) Tweaklets
-											.get(TabBehaviour.KEY))
-											.alwaysShowPinAction();
+									.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN);
 							action.setVisible(reuseEditors);
 							action.getParent().markDirty();
 							if (window.getShell() != null
@@ -190,9 +179,8 @@ public abstract class ContributionItemFactory {
 			WorkbenchPlugin.getDefault().getPreferenceStore()
 					.addPropertyChangeListener(perfs[0]);
 			action.setVisible(WorkbenchPlugin.getDefault().getPreferenceStore()
-					.getBoolean(IPreferenceConstants.REUSE_EDITORS_BOOLEAN)
-					|| ((TabBehaviour) Tweaklets.get(TabBehaviour.KEY))
-							.alwaysShowPinAction());
+.getBoolean(
+					IPreferenceConstants.REUSE_EDITORS_BOOLEAN));
 			return action;
 		}
 	};
@@ -210,7 +198,9 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new SwitchToWindowMenu(window, getId(), true);
+			// return new SwitchToWindowMenu(window, getId(), true);
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -228,7 +218,9 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new ShowViewMenu(window, getId());
+			// return new ShowViewMenu(window, getId());
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -247,10 +239,13 @@ public abstract class ContributionItemFactory {
                 throw new IllegalArgumentException();
             }
             
-            ShowInMenu showInMenu = new ShowInMenu();
-            showInMenu.setId(getId());
-            showInMenu.initialize(window);
-			return showInMenu;
+
+			// ShowInMenu showInMenu = new ShowInMenu();
+			// showInMenu.setId(getId());
+			// showInMenu.initialize(window);
+			// return showInMenu;
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -267,7 +262,9 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new ReopenEditorMenu(window, getId(), true);
+			// return new ReopenEditorMenu(window, getId(), true);
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
@@ -287,7 +284,8 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new ChangeToPerspectiveMenu(window, getId());
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
     
@@ -321,7 +319,9 @@ public abstract class ContributionItemFactory {
             if (window == null) {
                 throw new IllegalArgumentException();
             }
-            return new HelpSearchContributionItem(window, getId());
+			// return new HelpSearchContributionItem(window, getId());
+			// FIXME compat: where did this go?
+			throw new UnsupportedOperationException();
         }
     };
 
