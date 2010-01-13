@@ -14,6 +14,7 @@
 package org.eclipse.jface.viewers;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.Tree;
@@ -118,11 +119,24 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 	ViewerCell getInitialFocusCell() {
 		Tree tree = (Tree) getViewer().getControl();
 
-		if (! tree.isDisposed() && tree.getItemCount() > 0 && ! tree.getItem(0).isDisposed()) {
-			return getViewer().getViewerRowFromItem(tree.getItem(0)).getCell(0);
+		if (! tree.isDisposed() && tree.getItemCount() > 0 && ! tree.getTopItem().isDisposed()) {
+			ViewerRow aViewerRow = getViewer().getViewerRowFromItem(tree.getTopItem());
+			if (tree.getColumnCount() == 0) {
+				return aViewerRow.getCell(0);
+			}
+
+			Rectangle clientArea = tree.getClientArea();
+			for (int i = 0; i < tree.getColumnCount(); i++) {
+				if (aViewerRow.getWidth(i) > 0 && columnInVisibleArea(clientArea,aViewerRow,i))
+					return aViewerRow.getCell(i);
+			}
 		}
 
 		return null;
+	}
+
+	private boolean columnInVisibleArea(Rectangle clientArea, ViewerRow row, int colIndex) {
+		return row.getBounds(colIndex).x >= clientArea.x;
 	}
 
 	public ViewerCell getFocusCell() {
