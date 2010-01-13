@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2009 IBM Corporation and others.
+ * Copyright (c) 2004, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -23,8 +23,8 @@ import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IViewReference;
-import org.eclipse.ui.internal.WorkbenchPage;
-import org.eclipse.ui.internal.WorkbenchWindow;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -50,9 +50,9 @@ public class ArbitraryPropertyTest extends UITestCase {
 		super(testName);
 	}
 
-	WorkbenchWindow window;
+	IWorkbenchWindow window;
 
-	WorkbenchPage page;
+	IWorkbenchPage page;
 
 	/*
 	 * (non-Javadoc)
@@ -61,8 +61,8 @@ public class ArbitraryPropertyTest extends UITestCase {
 	 */
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		window = (WorkbenchWindow) openTestWindow();
-		page = (WorkbenchPage) window.getActivePage();
+		window = openTestWindow();
+		page = window.getActivePage();
 	}
 
 	/*
