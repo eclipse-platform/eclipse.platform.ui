@@ -558,7 +558,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 									.getName()));
 				}
 				// Spin the event loop until someone disposes the display
-				while (!testShell.isDisposed() && !display.isDisposed()) {
+				while (testShell != null && !testShell.isDisposed()
+						&& !display.isDisposed()) {
 					try {
 						if (!display.readAndDispatch()) {
 							if (spinOnce)
