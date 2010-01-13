@@ -11,6 +11,9 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
+import org.eclipse.e4.ui.model.application.MApplicationFactory;
+import org.eclipse.e4.ui.model.application.MPart;
+import org.eclipse.e4.ui.model.application.MToolBar;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
@@ -18,6 +21,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.StatusLineManager;
 import org.eclipse.jface.action.ToolBarManager;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -29,14 +33,20 @@ public class ActionBars implements IActionBars {
 
 	private StatusLineManager statusLineManager;
 
+	private MPart part;
+
+	ActionBars(MPart part) {
+		this.part = part;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see org.eclipse.ui.IActionBars#clearGlobalActionHandlers()
 	 */
 	public void clearGlobalActionHandlers() {
-		// TODO Auto-generated method stub
-
+		// FIXME compat clearGlobalActionHandlers
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -45,8 +55,8 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#getGlobalActionHandler(java.lang.String)
 	 */
 	public IAction getGlobalActionHandler(String actionId) {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getGlobalActionHandler
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -67,8 +77,16 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#getServiceLocator()
 	 */
 	public IServiceLocator getServiceLocator() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat create a delegation implementation for this?
+		return new IServiceLocator() {
+			public boolean hasService(Class api) {
+				return part.getContext().containsKey(api.getName());
+			}
+
+			public Object getService(Class api) {
+				return part.getContext().get(api.getName());
+			}
+		};
 	}
 
 	/*
@@ -90,7 +108,14 @@ public class ActionBars implements IActionBars {
 	 */
 	public IToolBarManager getToolBarManager() {
 		if (manager == null) {
-			manager = new ToolBarManager();
+			MToolBar toolbar = part.getToolbar();
+			if (toolbar == null) {
+				toolbar = MApplicationFactory.eINSTANCE.createToolBar();
+				part.setToolbar(toolbar);
+			}
+
+			ToolBar toolBarWidget = (ToolBar) toolbar.getWidget();
+			manager = new ToolBarManager(toolBarWidget);
 		}
 		return manager;
 	}
@@ -102,8 +127,8 @@ public class ActionBars implements IActionBars {
 	 * org.eclipse.jface.action.IAction)
 	 */
 	public void setGlobalActionHandler(String actionId, IAction handler) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat setGlobalActionHandler
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -112,8 +137,8 @@ public class ActionBars implements IActionBars {
 	 * @see org.eclipse.ui.IActionBars#updateActionBars()
 	 */
 	public void updateActionBars() {
-		// TODO Auto-generated method stub
-
+		// FIXME compat updateActionBars
+		throw new UnsupportedOperationException();
 	}
 
 }

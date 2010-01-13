@@ -19,10 +19,11 @@ import org.eclipse.ui.IWorkbenchPart;
 
 public class ViewSite extends WorkbenchPartSite implements IViewSite {
 
-	private IActionBars actionBars = new ActionBars();
+	private IActionBars actionBars;
 
 	ViewSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
 		super(model, part, element);
+		actionBars = new ActionBars(model);
 	}
 
 	/* (non-Javadoc)
@@ -36,8 +37,8 @@ public class ViewSite extends WorkbenchPartSite implements IViewSite {
 	 * @see org.eclipse.ui.IViewSite#getSecondaryId()
 	 */
 	public String getSecondaryId() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getSecondaryId
+		throw new UnsupportedOperationException();
 	}
 
 }
