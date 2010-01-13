@@ -12,10 +12,11 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
+import org.eclipse.e4.workbench.ui.IWorkbench;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
@@ -130,13 +131,11 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 		}
 
 		MWindow window = (MWindow) parent;
-		IWorkbenchWindow workbenchWindow = (IWorkbenchWindow) window.getContext().get(
-				IWorkbenchWindow.class.getName());
-		if (workbenchWindow == null) {
-			workbenchWindow = new WorkbenchWindow(null, null);
-			ContextInjectionFactory.inject(workbenchWindow, window.getContext());
-		}
-		return workbenchWindow;
+		MApplication application = (MApplication) window.getContext().get(
+				MApplication.class.getName());
+		Workbench workbench = (Workbench) application.getContext().get(IWorkbench.class.getName());
+
+		return workbench.createWorkbenchWindow(window);
 	}
 
 	/* (non-Javadoc)

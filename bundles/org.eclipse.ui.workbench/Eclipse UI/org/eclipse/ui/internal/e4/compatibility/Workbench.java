@@ -14,7 +14,6 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,9 +30,6 @@ import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceManager;
-import org.eclipse.jface.resource.ColorRegistry;
-import org.eclipse.jface.resource.FontRegistry;
-import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
@@ -64,7 +60,6 @@ import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.operations.IWorkbenchOperationSupport;
 import org.eclipse.ui.progress.IProgressService;
-import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
 import org.eclipse.ui.views.IViewRegistry;
 import org.eclipse.ui.wizards.IWizardRegistry;
@@ -90,6 +85,7 @@ public class Workbench implements IWorkbench {
 	private IViewRegistry viewRegistry;
 	private WorkingSetManager workingSetManager;
 
+	private ListenerList workbenchListeners = new ListenerList();
 	private ListenerList windowListeners = new ListenerList();
 
 	Workbench() {
@@ -150,7 +146,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getProgressService()
 	 */
 	public IProgressService getProgressService() {
-		return null;
+		// FIXME compat getProgressService
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -160,8 +157,7 @@ public class Workbench implements IWorkbench {
 	 * IWorkbenchListener)
 	 */
 	public void addWorkbenchListener(IWorkbenchListener listener) {
-		// TODO Auto-generated method stub
-
+		workbenchListeners.add(listener);
 	}
 
 	/*
@@ -171,8 +167,7 @@ public class Workbench implements IWorkbench {
 	 * IWorkbenchListener)
 	 */
 	public void removeWorkbenchListener(IWorkbenchListener listener) {
-		// TODO Auto-generated method stub
-
+		workbenchListeners.remove(listener);
 	}
 
 	/*
@@ -203,8 +198,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#close()
 	 */
 	public boolean close() {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat close
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -228,17 +223,19 @@ public class Workbench implements IWorkbench {
 		if (activeWindow == null && !application.getChildren().isEmpty()) {
 			activeWindow = application.getChildren().get(0);
 		}
-		IEclipseContext windowContext = activeWindow
-				.getContext();
-		IWorkbenchWindow result = (IWorkbenchWindow) windowContext
-				.get(
-				IWorkbenchWindow.class.getName());
+
+		return createWorkbenchWindow(activeWindow);
+	}
+
+	IWorkbenchWindow createWorkbenchWindow(MWindow window) {
+		IEclipseContext windowContext = window.getContext();
+		IWorkbenchWindow result = (IWorkbenchWindow) windowContext.get(IWorkbenchWindow.class
+				.getName());
 		if (result == null) {
 			result = new WorkbenchWindow(null, getPerspectiveRegistry().findPerspectiveWithId(
 					getPerspectiveRegistry().getDefaultPerspective()));
 			ContextInjectionFactory.inject(result, windowContext);
 			windowContext.set(IWorkbenchWindow.class.getName(), result);
-			//			throw new RuntimeException("No workbench window found"); //$NON-NLS-1$
 		}
 		return result;
 	}
@@ -276,8 +273,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getPreferenceManager()
 	 */
 	public PreferenceManager getPreferenceManager() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getPreferenceManager
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -286,8 +283,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getPreferenceStore()
 	 */
 	public IPreferenceStore getPreferenceStore() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getPreferenceStore
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -346,8 +343,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#createLocalWorkingSetManager()
 	 */
 	public ILocalWorkingSetManager createLocalWorkingSetManager() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat createLocalWorkingSetManager
+		throw new UnsupportedOperationException();
 	}
 
 	private void fireWindowOpened(IWorkbenchWindow window) {
@@ -406,8 +403,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#restart()
 	 */
 	public boolean restart() {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat restart
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -511,8 +508,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getElementFactory(java.lang.String)
 	 */
 	public IElementFactory getElementFactory(String factoryId) {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getElementFactory
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -521,8 +518,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getActivitySupport()
 	 */
 	public IWorkbenchActivitySupport getActivitySupport() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getActivitySupport
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -531,8 +528,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getCommandSupport()
 	 */
 	public IWorkbenchCommandSupport getCommandSupport() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getCommandSupport
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -541,8 +538,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getContextSupport()
 	 */
 	public IWorkbenchContextSupport getContextSupport() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getContextSupport
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -551,87 +548,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getThemeManager()
 	 */
 	public IThemeManager getThemeManager() {
-		return new IThemeManager() {
-
-			public void setCurrentTheme(String id) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void removePropertyChangeListener(IPropertyChangeListener listener) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public ITheme getTheme(String id) {
-				return getCurrentTheme();
-			}
-
-			public ITheme getCurrentTheme() {
-				return new ITheme() {
-
-					public void removePropertyChangeListener(IPropertyChangeListener listener) {
-						// TODO Auto-generated method stub
-
-					}
-
-					public Set keySet() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					public String getString(String key) {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					public String getLabel() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					public int getInt(String key) {
-						// TODO Auto-generated method stub
-						return 0;
-					}
-
-					public String getId() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					public FontRegistry getFontRegistry() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					public ColorRegistry getColorRegistry() {
-						// TODO Auto-generated method stub
-						return null;
-					}
-
-					public boolean getBoolean(String key) {
-						// TODO Auto-generated method stub
-						return false;
-					}
-
-					public void dispose() {
-						// TODO Auto-generated method stub
-
-					}
-
-					public void addPropertyChangeListener(IPropertyChangeListener listener) {
-						// TODO Auto-generated method stub
-
-					}
-				};
-			}
-
-			public void addPropertyChangeListener(IPropertyChangeListener listener) {
-				// TODO Auto-generated method stub
-
-			}
-		};
+		// FIXME compat getThemeManager
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -640,8 +558,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getIntroManager()
 	 */
 	public IIntroManager getIntroManager() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getIntroManager
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -659,8 +577,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getBrowserSupport()
 	 */
 	public IWorkbenchBrowserSupport getBrowserSupport() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getBrowserSupport
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -669,8 +587,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#isStarting()
 	 */
 	public boolean isStarting() {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat isStarting
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -679,8 +597,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#isClosing()
 	 */
 	public boolean isClosing() {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat isClosing
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -710,8 +628,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getNewWizardRegistry()
 	 */
 	public IWizardRegistry getNewWizardRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getNewWizardRegistry
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -720,8 +638,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getImportWizardRegistry()
 	 */
 	public IWizardRegistry getImportWizardRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getImportWizardRegistry
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -730,8 +648,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getExportWizardRegistry()
 	 */
 	public IWizardRegistry getExportWizardRegistry() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getExportWizardRegistry
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -745,8 +663,8 @@ public class Workbench implements IWorkbench {
 	public boolean saveAll(IShellProvider shellProvider,
 			IRunnableContext runnableContext, ISaveableFilter filter,
 			boolean confirm) {
-		// TODO Auto-generated method stub
-		return false;
+		// FIXME compat saveAll
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -755,8 +673,8 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getAdapter
+		throw new UnsupportedOperationException();
 	}
 
 	/*
@@ -765,8 +683,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		// TODO Auto-generated method stub
-		return null;
+		return application.getContext().get(api.getName());
 	}
 
 	/*
@@ -775,8 +692,7 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		// TODO Auto-generated method stub
-		return false;
+		return application.getContext().containsKey(api.getName());
 	}
 
 	/**
