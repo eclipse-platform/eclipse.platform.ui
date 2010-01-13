@@ -85,7 +85,9 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 */
 	private synchronized boolean isClosed(boolean setClosed) {
 	    boolean closed = fClosed;
-	    fClosed = setClosed;
+	    if (setClosed) {
+	        fClosed = true;
+	    }
 	    return closed;
 	}
 	
