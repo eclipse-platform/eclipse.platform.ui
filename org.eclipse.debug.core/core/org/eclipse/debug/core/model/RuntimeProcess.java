@@ -230,10 +230,10 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 	 * has terminated.
 	 */
 	protected void terminated() {
+        if (fStreamsProxy instanceof StreamsProxy) {
+            ((StreamsProxy)fStreamsProxy).close();
+        }
 		synchronized (this) {
-			if (fStreamsProxy instanceof StreamsProxy) {
-				((StreamsProxy)fStreamsProxy).close();
-			}
 			fTerminated= true;
 			try {
 				fExitValue = fProcess.exitValue();

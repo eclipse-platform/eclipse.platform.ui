@@ -37,9 +37,10 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	private InputStreamMonitor fInputMonitor;
 	/**
 	 * Records the open/closed state of communications with
-	 * the underlying streams.
+	 * the underlying streams.  Note: fClosed is initialized to 
+	 * <code>false</code> by default.
 	 */
-	private boolean fClosed= false;
+	private boolean fClosed;
 	/**
 	 * Creates a <code>StreamsProxy</code> on the streams
 	 * of the given system process.
@@ -66,8 +67,7 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * in the streams is read.
 	 */
 	public void close() {
-		if (!fClosed) {
-			fClosed= true;
+		if (!isClosed(true)) {
 			fOutputMonitor.close();
 			fErrorMonitor.close();
 			fInputMonitor.close();
@@ -75,13 +75,30 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	}
 
 	/**
+	 * Returns whether the proxy is currently closed.  This method 
+	 * synchronizes access to the <code>fClosed</code> flag.  
+	 *  
+	 * @param setClosed If <code>true</code> this method will also set the
+	 * <code>fClosed</code> flag to true.  Otherwise, the <code>fClosed</code>
+	 * flag is not modified.
+	 * @return Returns whether the stream proxy was already closed.
+	 */
+	private synchronized boolean isClosed(boolean setClosed) {
+	    boolean closed = fClosed;
+	    fClosed = setClosed;
+	    return closed;
+	}
+	
+	/**
 	 * Causes the proxy to close all
 	 * communications between it and the
 	 * underlying streams immediately.
 	 * Data remaining in the streams is lost.
 	 */	
 	public void kill() {
-		fClosed= true;
+	    synchronized (this) {
+	        fClosed= true;
+	    }
 		fOutputMonitor.kill();
 		fErrorMonitor.kill();
 		fInputMonitor.close();
@@ -105,7 +122,7 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * @see IStreamsProxy#write(String)
 	 */
 	public void write(String input) throws IOException {
-		if (!fClosed) {
+		if (!isClosed(false)) {
 			fInputMonitor.write(input);
 		} else {
 			throw new IOException();
@@ -116,7 +133,7 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
      * @see org.eclipse.debug.core.model.IStreamsProxy2#closeInputStream()
      */
     public void closeInputStream() throws IOException {
-        if (!fClosed) {
+        if (!isClosed(false)) {
             fInputMonitor.closeInputStream();
         } else {
             throw new IOException();
