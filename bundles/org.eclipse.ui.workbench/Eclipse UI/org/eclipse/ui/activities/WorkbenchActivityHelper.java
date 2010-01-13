@@ -34,11 +34,12 @@ public final class WorkbenchActivityHelper {
 	 * @since 3.4
 	 */
 	public static final String TRIGGER_PRE_UI_POINT = "org.eclipse.ui.workbenchModel"; //$NON-NLS-1$
-	
-	private static ITriggerPoint getTriggerPoint(String id) {
-		return PlatformUI.getWorkbench().getActivitySupport()
-				.getTriggerPointManager().getTriggerPoint(id);
-	}
+
+	// FIXME compat obviously we need to put back some activity support
+//	private static ITriggerPoint getTriggerPoint(String id) {
+//		return PlatformUI.getWorkbench().getActivitySupport()
+//				.getTriggerPointManager().getTriggerPoint(id);
+//	}
 
 	/**
 	 * Return the identifier that maps to the given contribution.
@@ -117,7 +118,9 @@ public final class WorkbenchActivityHelper {
 	 * @since 3.4
 	 */
 	public static boolean restrictUseOf(Object object) {
-		return !allowUseOf(getTriggerPoint(TRIGGER_PRE_UI_POINT), object);
+		// FIXME compat obviously we need to put back some activity support
+		// return !allowUseOf(getTriggerPoint(TRIGGER_PRE_UI_POINT), object);
+		return false;
 	}
 
 	/**
@@ -185,17 +188,18 @@ public final class WorkbenchActivityHelper {
 	 * @see #createUnifiedId(IPluginContribution)
 	 */
 	public static final boolean filterItem(Object object) {
-		if (object instanceof IPluginContribution) {
-			IPluginContribution contribution = (IPluginContribution) object;
-			IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
-					.getWorkbench().getActivitySupport();
-			IIdentifier identifier = workbenchActivitySupport
-					.getActivityManager().getIdentifier(
-							createUnifiedId(contribution));
-			if (!identifier.isEnabled()) {
-				return true;
-			}
-		}
+		// FIXME compat obviously we need to put back some activity support
+		// if (object instanceof IPluginContribution) {
+		// IPluginContribution contribution = (IPluginContribution) object;
+		// IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI
+		// .getWorkbench().getActivitySupport();
+		// IIdentifier identifier = workbenchActivitySupport
+		// .getActivityManager().getIdentifier(
+		// createUnifiedId(contribution));
+		// if (!identifier.isEnabled()) {
+		// return true;
+		// }
+		// }
 		return false;
 	}
 
