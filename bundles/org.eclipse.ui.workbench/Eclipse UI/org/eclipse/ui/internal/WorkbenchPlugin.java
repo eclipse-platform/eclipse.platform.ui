@@ -117,8 +117,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 //    // Manager for working sets (IWorkingSet)
 //    private WorkingSetManager workingSetManager;
 //
-//    // Working set registry, stores working set dialogs
-//    private WorkingSetRegistry workingSetRegistry;
+	// Working set registry, stores working set dialogs
+	private WorkingSetRegistry workingSetRegistry;
 
     // The context within which this plugin was started.
     private BundleContext bundleContext;
@@ -566,13 +566,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @since 2.0
      */
     public IWorkingSetManager getWorkingSetManager() {
-		// FIXME compat commented out for e4 compatibility
-		throw new UnsupportedOperationException();
-//        if (workingSetManager == null) {
-//            workingSetManager = new WorkingSetManager(bundleContext);
-//            workingSetManager.restoreState();
-//        }
-//        return workingSetManager;
+		return PlatformUI.getWorkbench().getWorkingSetManager();
     }
 
     /**
@@ -581,15 +575,12 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
      * @return the working set registry
      * @since 2.0
      */
-	// TODO commented out for e4 compatibility
 	public WorkingSetRegistry getWorkingSetRegistry() {
-		// FIXME compat: add working set stuff
-		throw new UnsupportedOperationException();
-//        if (workingSetRegistry == null) {
-//            workingSetRegistry = new WorkingSetRegistry();
-//            workingSetRegistry.load();
-//        }
-//        return workingSetRegistry;
+		if (workingSetRegistry == null) {
+			workingSetRegistry = new WorkingSetRegistry();
+			workingSetRegistry.load();
+		}
+		return workingSetRegistry;
 	}
 
     /**

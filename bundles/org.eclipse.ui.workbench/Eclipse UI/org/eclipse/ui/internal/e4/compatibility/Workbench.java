@@ -58,6 +58,7 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.help.IWorkbenchHelpSystem;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.WorkingSetManager;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
 import org.eclipse.ui.intro.IIntroManager;
@@ -87,6 +88,7 @@ public class Workbench implements IWorkbench {
 	private UIExtensionTracker tracker;
 	private IPerspectiveRegistry perspectiveRegistry;
 	private IViewRegistry viewRegistry;
+	private WorkingSetManager workingSetManager;
 
 	private ListenerList windowListeners = new ListenerList();
 
@@ -330,8 +332,12 @@ public class Workbench implements IWorkbench {
 	 * @see org.eclipse.ui.IWorkbench#getWorkingSetManager()
 	 */
 	public IWorkingSetManager getWorkingSetManager() {
-		// TODO Auto-generated method stub
-		return null;
+		if (workingSetManager == null) {
+			workingSetManager = new WorkingSetManager(WorkbenchPlugin.getDefault()
+					.getBundleContext());
+			workingSetManager.restoreState();
+		}
+		return workingSetManager;
 	}
 
 	/*
