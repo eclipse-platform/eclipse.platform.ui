@@ -1121,8 +1121,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertNotNull(view2);
 			view2.setDirty(true);
 
-			WorkbenchPage page = (WorkbenchPage) fActivePage;
-			page.getEditorManager().saveAll(true, false, false);
+			fActivePage.saveAllEditors(true);
 
 			assertFalse(view.isDirty());
 			assertFalse(view2.isDirty());
@@ -1170,8 +1169,7 @@ public class IWorkbenchPageTest extends UITestCase {
 			assertNotNull(view2);
 			view2.setSharedModel(model);
 
-			WorkbenchPage page = (WorkbenchPage) fActivePage;
-			page.getEditorManager().saveAll(true, false, false);
+			fActivePage.saveAllEditors(true);
 
 			assertFalse(view.isDirty());
 			assertFalse(view2.isDirty());
