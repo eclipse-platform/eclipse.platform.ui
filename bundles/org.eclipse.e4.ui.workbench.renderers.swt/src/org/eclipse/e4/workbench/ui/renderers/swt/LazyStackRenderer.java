@@ -303,6 +303,20 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 						.getUIContainer(element);
 				c.setParent(newParent);
 				Control[] changed = { c };
+
+				// Fix the Z-order
+				MUIElement prevElement = null;
+				for (MUIElement kid : phParent.getChildren()) {
+					if (kid == element) {
+						if (prevElement == null) {
+							c.moveAbove(null); // first one, on top
+						} else {
+							c.moveBelow((Control) prevElement.getWidget());
+						}
+					} else if (kid.getWidget() != null) {
+						prevElement = kid;
+					}
+				}
 				newParent.getShell().layout(changed, SWT.CHANGED | SWT.DEFER);
 				if (newParent instanceof CTabFolder) {
 					CTabFolder ctf = (CTabFolder) newParent;
