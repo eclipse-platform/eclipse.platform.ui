@@ -19,6 +19,7 @@ import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class PerspectiveDescriptor implements IPerspectiveDescriptor {
@@ -46,8 +47,7 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	}
 
 	public String getDescription() {
-		// TODO Auto-generated method stub
-		return null;
+		return RegistryReader.getDescription(element);
 	}
 
 	/* (non-Javadoc)

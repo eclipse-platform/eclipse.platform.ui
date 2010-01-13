@@ -14,6 +14,7 @@ package org.eclipse.ui.internal.e4.compatibility;
 import java.lang.reflect.InvocationTargetException;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.e4.core.services.context.IEclipseContext;
@@ -50,6 +51,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private IAdaptable input;
 	private IPerspectiveDescriptor perspective;
+
+	private ListenerList perspectiveListener = new ListenerList();
 
 	WorkbenchWindow(IAdaptable input, IPerspectiveDescriptor perspective) {
 		this.input = input;
@@ -185,8 +188,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IPageService#addPerspectiveListener(org.eclipse.ui.IPerspectiveListener)
 	 */
 	public void addPerspectiveListener(IPerspectiveListener listener) {
-		// FIXME compat addPerspectiveListener
-		throw new UnsupportedOperationException();
+		perspectiveListener.add(listener);
 	}
 
 	/* (non-Javadoc)
@@ -201,8 +203,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 	 * @see org.eclipse.ui.IPageService#removePerspectiveListener(org.eclipse.ui.IPerspectiveListener)
 	 */
 	public void removePerspectiveListener(IPerspectiveListener listener) {
-		// FIXME compat removePerspectiveListener
-		throw new UnsupportedOperationException();
+		perspectiveListener.remove(listener);
 	}
 
 	/* (non-Javadoc)
