@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2008 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -12,7 +12,6 @@ package org.eclipse.ltk.ui.refactoring.history;
 
 import java.text.Format;
 import java.util.Date;
-import java.util.Locale;
 
 import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.SimpleDateFormat;
@@ -65,9 +64,6 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 	/** The control configuration to use */
 	private final RefactoringHistoryControlConfiguration fControlConfiguration;
 
-	/** The current locale to use */
-	private final Locale fCurrentLocale;
-
 	/** The cached date format, or <code>null</code> */
 	private DateFormat fDateFormat= null;
 
@@ -96,7 +92,6 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 		fContainerImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_DATE.createImage();
 		fElementImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_TIME.createImage();
 		fCollectionImage= RefactoringPluginImages.DESC_OBJS_REFACTORING_COLL.createImage();
-		fCurrentLocale= new Locale(RefactoringUIMessages.RefactoringHistoryLabelProvider_label_language, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_country, RefactoringUIMessages.RefactoringHistoryLabelProvider_label_variant);
 	}
 
 	/**
@@ -221,48 +216,48 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 						switch (kind) {
 							case RefactoringHistoryNode.THIS_WEEK:
 								pattern= fControlConfiguration.getThisWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_week_format, fCurrentLocale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_week_format);
 								break;
 							case RefactoringHistoryNode.LAST_WEEK:
 								pattern= fControlConfiguration.getLastWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_week_format, fCurrentLocale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_week_format);
 								break;
 							case RefactoringHistoryNode.WEEK:
 								pattern= fControlConfiguration.getWeekPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_week_format, fCurrentLocale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_week_format);
 								break;
 							case RefactoringHistoryNode.YEAR:
 								pattern= fControlConfiguration.getYearPattern();
-								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_year_format, fCurrentLocale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_year_format);
 								break;
 							case RefactoringHistoryNode.THIS_MONTH:
 								pattern= fControlConfiguration.getThisMonthPattern();
-								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format, fCurrentLocale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_this_month_format2);
 								break;
 							case RefactoringHistoryNode.LAST_MONTH:
 								pattern= fControlConfiguration.getLastMonthPattern();
-								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_month_format, fCurrentLocale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_last_month_format2);
 								break;
 							case RefactoringHistoryNode.MONTH:
 								pattern= fControlConfiguration.getMonthPattern();
-								format= new java.text.SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format, fCurrentLocale);
+								format= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_month_format2);
 								break;
 							case RefactoringHistoryNode.DAY:
 								pattern= fControlConfiguration.getDayPattern();
 								final int type= node.getParent().getKind();
 								if (type == RefactoringHistoryNode.THIS_WEEK || type == RefactoringHistoryNode.LAST_WEEK) {
-									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format, fCurrentLocale);
+									final SimpleDateFormat simple= new SimpleDateFormat(RefactoringUIMessages.RefactoringHistoryLabelProvider_day_format);
 									buffer.append(Messages.format(RefactoringUIMessages.RefactoringHistoryControlConfiguration_day_detailed_pattern, new String[] { simple.format(stamp), DateFormat.getDateInstance().format(stamp)}));
 								} else
-									format= DateFormat.getDateInstance();
+									format= DateFormat.getDateInstance(DateFormat.DEFAULT);
 								break;
 							case RefactoringHistoryNode.YESTERDAY:
 								pattern= fControlConfiguration.getYesterdayPattern();
-								format= DateFormat.getDateInstance();
+								format= DateFormat.getDateInstance(DateFormat.DEFAULT);
 								break;
 							case RefactoringHistoryNode.TODAY:
 								pattern= fControlConfiguration.getTodayPattern();
-								format= DateFormat.getDateInstance();
+								format= DateFormat.getDateInstance(DateFormat.DEFAULT);
 								break;
 						}
 						if (format != null)
