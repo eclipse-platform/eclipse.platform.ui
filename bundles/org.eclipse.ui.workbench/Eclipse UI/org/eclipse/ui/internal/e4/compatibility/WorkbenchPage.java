@@ -33,6 +33,7 @@ import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.workbench.modeling.EPartService;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.ui.IEditorInput;
@@ -57,6 +58,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.MultiPartInitException;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
@@ -519,8 +522,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#reuseEditor(org.eclipse.ui.IReusableEditor, org.eclipse.ui.IEditorInput)
 	 */
 	public void reuseEditor(IReusableEditor editor, IEditorInput input) {
-		// FIXME compat reuseEditor
-		throw new UnsupportedOperationException();
+		editor.setInput(input);
 	}
 
 	/* (non-Javadoc)
@@ -727,23 +729,24 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#isEditorPinned(org.eclipse.ui.IEditorPart)
 	 */
 	public boolean isEditorPinned(IEditorPart editor) {
-		// FIXME compat isEditorPinned
-		throw new UnsupportedOperationException();
+		IEditorReference reference = (IEditorReference) getReference(editor);
+		return reference == null ? false : reference.isPinned();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#getEditorReuseThreshold()
 	 */
 	public int getEditorReuseThreshold() {
-		// FIXME compat getEditorReuseThreshold
-		throw new UnsupportedOperationException();
+		IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
+		return store.getInt(IPreferenceConstants.REUSE_EDITORS);
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPage#setEditorReuseThreshold(int)
 	 */
 	public void setEditorReuseThreshold(int openEditors) {
-		// FIXME compat setEditorReuseThreshold
+		// FIXME compat setEditorReuseThreshold, this is an empty implementation
+		// in 3.x, see IPageLayout's setEditorReuseThreshold
 		throw new UnsupportedOperationException();
 	}
 
@@ -911,7 +914,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 */
 	public int getPartState(IWorkbenchPartReference ref) {
 		// FIXME compat getPartState
-		throw new UnsupportedOperationException();
+		return STATE_RESTORED;
 	}
 
 	/* (non-Javadoc)

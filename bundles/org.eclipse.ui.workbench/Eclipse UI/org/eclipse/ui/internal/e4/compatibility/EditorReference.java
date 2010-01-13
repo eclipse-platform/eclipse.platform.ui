@@ -28,13 +28,12 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	}
 
 	public String getFactoryId() {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getFactoryId
+		throw new UnsupportedOperationException();
 	}
 
 	public String getName() {
-		// TODO Auto-generated method stub
-		return null;
+		return input.getName();
 	}
 
 	public IEditorPart getEditor(boolean restore) {
@@ -47,7 +46,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	 * @see org.eclipse.ui.IEditorReference#isPinned()
 	 */
 	public boolean isPinned() {
-		// TODO Auto-generated method stub
+		// FIXME compat implement pinning
 		return false;
 	}
 
