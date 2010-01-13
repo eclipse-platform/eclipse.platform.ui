@@ -270,31 +270,26 @@ public class IWorkbenchPageTest extends UITestCase {
 	 * stack that does not contain the active view. Ensures that the created
 	 * view is not the active part but is the top part in its stack.
 	 */
-	public void testView_VISIBLE2() {
-		WorkbenchPage page = (WorkbenchPage) fActivePage;
-		try {
-			page.setPerspective(WorkbenchPlugin.getDefault()
-					.getPerspectiveRegistry().findPerspectiveWithId(
-							"org.eclipse.ui.tests.api.ViewPerspective"));
+	public void testView_VISIBLE2() throws PartInitException {
+		fActivePage.setPerspective(WorkbenchPlugin.getDefault()
+				.getPerspectiveRegistry().findPerspectiveWithId(
+						"org.eclipse.ui.tests.api.ViewPerspective"));
 
-			// create a part to be active
-			IViewPart activePart = page.showView(MockViewPart.ID3);
+		// create a part to be active
+		IViewPart activePart = fActivePage.showView(MockViewPart.ID3);
 
-			IViewPart createdPart = page.showView(MockViewPart.ID2, null,
-					IWorkbenchPage.VIEW_VISIBLE);
+		IViewPart createdPart = fActivePage.showView(MockViewPart.ID2, null,
+				IWorkbenchPage.VIEW_VISIBLE);
 
-			IViewPart[] stack = page.getViewStack(createdPart);
-			assertEquals(2, stack.length);
+		IViewPart[] stack = fActivePage.getViewStack(createdPart);
+		assertEquals(2, stack.length);
 
-			assertEquals(createdPart, stack[0]);
-			assertEquals(page.findView(MockViewPart.ID), stack[1]);
+		assertEquals(createdPart, stack[0]);
+		assertEquals(fActivePage.findView(MockViewPart.ID), stack[1]);
 
-			assertTrue(page.isPartVisible(createdPart));
+		assertTrue(fActivePage.isPartVisible(createdPart));
 
-			assertEquals(activePart, page.getActivePart());
-		} catch (PartInitException e) {
-			fail(e.getMessage());
-		}
+		assertEquals(activePart, fActivePage.getActivePart());
 	}
 
 	/**
