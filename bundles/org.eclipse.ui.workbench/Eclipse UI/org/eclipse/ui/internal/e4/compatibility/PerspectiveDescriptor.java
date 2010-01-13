@@ -16,12 +16,16 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
+import org.eclipse.ui.ISharedImages;
+import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 
 	private String id;
 	private String label;
+	private ImageDescriptor image;
 	private IConfigurationElement element;
 
 	PerspectiveDescriptor(String id, String label, IConfigurationElement element) {
@@ -57,8 +61,20 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor {
 	 * @see org.eclipse.ui.IPerspectiveDescriptor#getImageDescriptor()
 	 */
 	public ImageDescriptor getImageDescriptor() {
-		// TODO Auto-generated method stub
-		return null;
+		if (image == null) {
+			if (element != null) {
+				String icon = element.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
+				if (icon != null) {
+					image = AbstractUIPlugin.imageDescriptorFromPlugin(element
+							.getNamespaceIdentifier(), icon);
+				}
+				if (image == null) {
+					image = WorkbenchImages
+							.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
+				}
+			}
+		}
+		return image;
 	}
 
 	/* (non-Javadoc)
