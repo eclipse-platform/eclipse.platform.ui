@@ -80,8 +80,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void registerContextMenu(MenuManager menuManager, ISelectionProvider selectionProvider) {
-		// FIXME compat registerContextMenu
-		throw new UnsupportedOperationException();
+		registerContextMenu(getId(), menuManager, selectionProvider);
 	}
 
 	/* (non-Javadoc)

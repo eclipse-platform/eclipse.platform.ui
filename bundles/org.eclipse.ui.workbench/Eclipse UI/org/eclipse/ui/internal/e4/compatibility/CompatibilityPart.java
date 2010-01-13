@@ -12,7 +12,6 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import javax.inject.Inject;
-import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.swt.widgets.Composite;
@@ -31,7 +30,7 @@ public abstract class CompatibilityPart {
 
 	IWorkbenchPart wrapped;
 
-	protected abstract IWorkbenchPart createPart();
+	protected abstract IWorkbenchPart createPart() throws PartInitException;
 
 	protected abstract void initialize(IWorkbenchPart part) throws PartInitException;
 
@@ -48,27 +47,22 @@ public abstract class CompatibilityPart {
 	}
 
 	@PostConstruct
-	public void create() {
-		try {
-			wrapped = createPart();
-			initialize(wrapped);
-			createPartControl(wrapped, composite);
-			delegateSetFocus();
+	public void create() throws PartInitException {
+		wrapped = createPart();
+		initialize(wrapped);
+		createPartControl(wrapped, composite);
+		delegateSetFocus();
 
-			part.setLabel(wrapped.getTitle());
-			part.setTooltip(wrapped.getTitleToolTip());
+		part.setLabel(wrapped.getTitle());
+		part.setTooltip(wrapped.getTitleToolTip());
 
-			wrapped.addPropertyListener(new IPropertyListener() {
-				public void propertyChanged(Object source, int propId) {
-					if (propId == IWorkbenchPartConstants.PROP_TITLE) {
-						part.setLabel(wrapped.getTitle());
-					}
+		wrapped.addPropertyListener(new IPropertyListener() {
+			public void propertyChanged(Object source, int propId) {
+				if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+					part.setLabel(wrapped.getTitle());
 				}
-			});
-		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			}
+		});
 	}
 
 	public IWorkbenchPart getPart() {

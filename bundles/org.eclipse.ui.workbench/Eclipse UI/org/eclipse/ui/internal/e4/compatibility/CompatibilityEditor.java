@@ -12,10 +12,13 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 
 public class CompatibilityEditor extends CompatibilityPart {
@@ -23,7 +26,7 @@ public class CompatibilityEditor extends CompatibilityPart {
 	private IEditorInput input;
 	private EditorDescriptor descriptor;
 
-	void set(IEditorInput input, EditorDescriptor descriptor) {
+	void set(IEditorInput input, EditorDescriptor descriptor) throws PartInitException {
 		this.input = input;
 		this.descriptor = descriptor;
 
@@ -32,17 +35,18 @@ public class CompatibilityEditor extends CompatibilityPart {
 	}
 
 	@Override
-	protected IWorkbenchPart createPart() {
+	protected IWorkbenchPart createPart() throws PartInitException {
 		try {
 			return descriptor.createEditor();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			throw new RuntimeException(e);
+			IStatus status = e.getStatus();
+			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+					status.getCode(), status.getMessage(), status.getException()));
 		}
 	}
 
 	@Override
-	public void create() {
+	public void create() throws PartInitException {
 		if (initialized) {
 			super.create();
 		}

@@ -12,10 +12,13 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public class CompatibilityView extends CompatibilityPart {
 
@@ -25,14 +28,15 @@ public class CompatibilityView extends CompatibilityPart {
 		return descriptor;
 	}
 
-	protected IWorkbenchPart createPart() {
+	protected IWorkbenchPart createPart() throws PartInitException {
 		try {
 			descriptor = (ViewDescriptor) PlatformUI.getWorkbench().getViewRegistry().find(
 					part.getId());
 			return descriptor.createView();
 		} catch (CoreException e) {
-			// TODO Auto-generated catch block
-			throw new RuntimeException(e);
+			IStatus status = e.getStatus();
+			throw new PartInitException(new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH,
+					status.getCode(), status.getMessage(), status.getException()));
 		}
 	}
 
