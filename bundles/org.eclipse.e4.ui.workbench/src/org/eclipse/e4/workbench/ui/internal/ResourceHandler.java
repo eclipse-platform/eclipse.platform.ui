@@ -143,8 +143,8 @@ public class ResourceHandler {
 
 	public Resource loadMostRecentModel() {
 		if (RESTORE_VIA_DELTAS) {
-			Resource resource = loadBaseModel();
 			try {
+				Resource resource = loadBaseModel();
 				MApplication appElement = (MApplication) resource.getContents().get(0);
 				// Add model items described in the model extension point
 				// This has to be done before commands are put into the context
@@ -183,6 +183,12 @@ public class ResourceHandler {
 		} else {
 			resource = loadBaseModel();
 		}
+
+		// Add model items described in the model extension point
+		// This has to be done before commands are put into the context
+		MApplication appElement = (MApplication) resource.getContents().get(0);
+		ModelExtensionProcessor extProcessor = new ModelExtensionProcessor(appElement);
+		extProcessor.addModelExtensions();
 
 		return resource;
 	}

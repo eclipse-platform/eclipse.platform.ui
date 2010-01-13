@@ -110,5 +110,5 @@ public interface EModelService {
 	 * @param placeholder
 	 *            The placeholder to swap it with
 	 */
-	public void swap(MUIElement element, MPlaceholder placeholder);
+	public void swap(MPlaceholder placeholder);
 }
