@@ -288,9 +288,16 @@ public class ModeledPageLayout implements IPageLayout {
 	private MPartStack insertStack(String stackId, int relationship,
 			float ratio, String refId, boolean visible) {
 		MUIElement refModel = findPart(perspModel, refId);
-		if (refModel == null || !(refModel instanceof MPart))
-			return null;
+		if (refModel == null || !(refModel instanceof MPart)) {
+			// If the 'refModel' is -not- a stack then find one
+			// This covers cases where the defining layout is adding
+			// Views relative to other views and relying on the stacks
+			// being automatically created.
 
+			MPartStack stack = createStack(stackId, visible);
+			perspModel.getChildren().add(stack);
+			return stack;
+		}
 		// If the 'refModel' is -not- a stack then find one
 		// This covers cases where the defining layout is adding
 		// Views relative to other views and relying on the stacks
@@ -306,7 +313,7 @@ public class ModeledPageLayout implements IPageLayout {
 		}
 
 		MPartStack stack = createStack(stackId, visible);
-		insert(stack, (MPart) refModel, plRelToSwt(relationship), ratio);
+		insert(stack, refModel, plRelToSwt(relationship), ratio);
 
 		return stack;
 	}

@@ -12,10 +12,10 @@
 package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MWindow;
-import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.swt.widgets.Control;
@@ -25,6 +25,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
  * @since 3.5
@@ -48,7 +49,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getId()
 	 */
 	public String getId() {
-		return element.getAttribute("id"); //$NON-NLS-1$
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_ID);
 	}
 
 	/* (non-Javadoc)
@@ -62,7 +63,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getRegisteredName()
 	 */
 	public String getRegisteredName() {
-		return element.getAttribute("name"); //$NON-NLS-1$
+		return element.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
 	}
 
 	/* (non-Javadoc)
@@ -70,44 +71,24 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 */
 	public void registerContextMenu(String menuId, MenuManager menuManager,
 			ISelectionProvider selectionProvider) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat registerContextMenu
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#registerContextMenu(org.eclipse.jface.action.MenuManager, org.eclipse.jface.viewers.ISelectionProvider)
 	 */
 	public void registerContextMenu(MenuManager menuManager, ISelectionProvider selectionProvider) {
-		// TODO Auto-generated method stub
-
+		// FIXME compat registerContextMenu
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.IWorkbenchPartSite#getKeyBindingService()
 	 */
 	public IKeyBindingService getKeyBindingService() {
-		return new IKeyBindingService() {
-
-			public void unregisterAction(IAction action) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void setScopes(String[] scopes) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public void registerAction(IAction action) {
-				// TODO Auto-generated method stub
-
-			}
-
-			public String[] getScopes() {
-				// TODO Auto-generated method stub
-				return null;
-			}
-		};
+		// FIXME compat getKeyBindingService
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
@@ -149,7 +130,13 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 		}
 
 		MWindow window = (MWindow) parent;
-		return (IWorkbenchWindow) window.getContext().get(IWorkbenchWindow.class.getName());
+		IWorkbenchWindow workbenchWindow = (IWorkbenchWindow) window.getContext().get(
+				IWorkbenchWindow.class.getName());
+		if (workbenchWindow == null) {
+			workbenchWindow = new WorkbenchWindow(null, null);
+			ContextInjectionFactory.inject(workbenchWindow, window.getContext());
+		}
+		return workbenchWindow;
 	}
 
 	/* (non-Javadoc)
@@ -163,24 +150,22 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
 	 */
 	public Object getAdapter(Class adapter) {
-		// TODO Auto-generated method stub
-		return null;
+		// FIXME compat getAdapter
+		throw new UnsupportedOperationException();
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#getService(java.lang.Class)
 	 */
 	public Object getService(Class api) {
-		// TODO Auto-generated method stub
-		return null;
+		return model.getContext().get(api.getName());
 	}
 
 	/* (non-Javadoc)
 	 * @see org.eclipse.ui.services.IServiceLocator#hasService(java.lang.Class)
 	 */
 	public boolean hasService(Class api) {
-		// TODO Auto-generated method stub
-		return false;
+		return model.getContext().containsKey(api.getName());
 	}
 
 }
