@@ -118,7 +118,12 @@ public class OSGiContextStrategy implements ILookupStrategy, IDisposable, Servic
 				return bundleContext.getService(ref);
 			// create a tracker to retrieve the service with the given name
 			data = new ServiceData(name);
-			data.tracker = new ServiceTracker(bundleContext, name, this);
+			try {
+				data.tracker = new ServiceTracker(bundleContext, name, this);
+			} catch (IllegalArgumentException iae) {
+				// we get these when the variables requested are not valid names
+				return null;
+			}
 			// add the context immediately so cleanReferences doesn't remove it
 			data.addContext(originatingContext);
 			services.put(name, data);
