@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 Siemens AG and others.
+ * Copyright (c) 2009, 2010 Siemens AG and others.
  * 
  * All rights reserved. This program and the accompanying materials 
  * are made available under the terms of the Eclipse Public License v1.0
@@ -20,11 +20,11 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -40,6 +40,7 @@ import org.eclipse.osgi.internal.signedcontent.Base64;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.widgets.Display;
+import org.osgi.framework.Bundle;
 
 @SuppressWarnings("restriction")
 public class VCardContactsRepository implements IContactsRepository {
@@ -66,10 +67,17 @@ public class VCardContactsRepository implements IContactsRepository {
 		if (localContacts.length == 0) {
 			IPath path = BundleActivatorImpl.getInstance().getStateLocation();
 			byte[] buffer = new byte[8192];
-			for (File contact : getStoredContacts()) {
-				FileInputStream inputStream = new FileInputStream(contact);
+			Bundle bundle = Platform.getBundle("org.eclipse.e4.demo.contacts"); //$NON-NLS-1$
+			
+			for (Enumeration<?> contacts = getStoredContacts(); contacts.hasMoreElements();) {
+				String bundlePath = (String) contacts.nextElement();
+				if (!bundlePath.endsWith(".vcf")) { //$NON-NLS-1$
+					continue;
+				}
+				
+				InputStream inputStream = FileLocator.openStream(bundle, new Path(bundlePath), false);
 				FileOutputStream outputStream = new FileOutputStream(path
-						.append(contact.getName()).toFile());
+						.append(bundlePath.substring(bundlePath.indexOf('/') + 1)).toFile());
 
 				int read = inputStream.read(buffer);
 				while (read != -1) {
@@ -91,22 +99,14 @@ public class VCardContactsRepository implements IContactsRepository {
 		File directory = path.toFile();
 		return directory.listFiles(new FilenameFilter() {
 			public boolean accept(File dir, String name) {
-				return name.endsWith(".vcf");
+				return name.endsWith(".vcf"); //$NON-NLS-1$
 			}
 		});
 	}
 
-	private File[] getStoredContacts() throws Exception {
-		URL url = FileLocator.find(Platform
-				.getBundle("org.eclipse.e4.demo.contacts"), new Path("vcards"),
-				null);
-		URI uri = FileLocator.toFileURL(url).toURI();
-		File directory = new File(uri);
-		return directory.listFiles(new FilenameFilter() {
-			public boolean accept(File dir, String name) {
-				return name.endsWith(".vcf");
-			}
-		});
+	private Enumeration<?> getStoredContacts() throws Exception {
+		Bundle bundle = Platform.getBundle("org.eclipse.e4.demo.contacts"); //$NON-NLS-1$
+		return bundle.getEntryPaths("vcards"); //$NON-NLS-1$
 	}
 
 	public void addContact(final Contact contact) {
