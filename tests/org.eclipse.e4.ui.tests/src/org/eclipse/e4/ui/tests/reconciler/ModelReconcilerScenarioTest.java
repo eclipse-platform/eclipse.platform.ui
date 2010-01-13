@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,7 @@ import java.util.Collection;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.model.application.MCommand;
+import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MKeyBinding;
 import org.eclipse.e4.ui.model.application.MMenu;
 import org.eclipse.e4.ui.model.application.MMenuItem;
@@ -1091,6 +1092,145 @@ public abstract class ModelReconcilerScenarioTest extends ModelReconcilerTest {
 		assertEquals(2, partStack2.getChildren().size());
 		assertEquals(part2, partStack2.getChildren().get(0));
 		assertEquals(part3, partStack2.getChildren().get(1));
+	}
+
+	/**
+	 * <ol>
+	 * <li>Initially, the application has one window, A.</li>
+	 * <li>The adds a window B, and places an editor in window B.</li>
+	 * <li>The user then removes window B.</li>
+	 * <li>The merged outcome should be only one window, window A.</li>
+	 * </ol>
+	 */
+	public void testElementContainer_Children_AddMultipleThenRemove() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window2);
+
+		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		window2.getChildren().add(editor);
+
+		application.getChildren().remove(window2);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+		assertEquals(0, deltas.size());
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+	}
+
+	/**
+	 * <ol>
+	 * <li>Initially, the application has one window, A.</li>
+	 * <li>The adds a window B, and sets it as the active window.</li>
+	 * <li>The user then removes window B.</li>
+	 * <li>The merged outcome should be only one window, window A, and the
+	 * application should not have an active window.</li>
+	 * </ol>
+	 */
+	public void testElementContainer_Children_AddMultipleThenRemove2() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window2);
+		application.setActiveChild(window2);
+
+		application.getChildren().remove(window2);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertNull(application.getActiveChild());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertNull(application.getActiveChild());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+	}
+
+	/**
+	 * <ol>
+	 * <li>Initially, the application has one window, A.</li>
+	 * <li>The adds a window B, and places an editor in window B.</li>
+	 * <li>The user then sets a name to the editor, "<code>editor</code>".</li>
+	 * <li>The user then removes window B.</li>
+	 * <li>The merged outcome should be only one window, window A.</li>
+	 * </ol>
+	 */
+	public void testElementContainer_Children_AddMultipleThenRemove3() {
+		MApplication application = createApplication();
+		MWindow window = createWindow(application);
+
+		saveModel();
+
+		ModelReconciler reconciler = createModelReconciler();
+		reconciler.recordChanges(application);
+
+		MWindow window2 = MApplicationFactory.eINSTANCE.createWindow();
+		application.getChildren().add(window2);
+
+		MEditor editor = MApplicationFactory.eINSTANCE.createEditor();
+		window2.getChildren().add(editor);
+		editor.setLabel("editor");
+
+		application.getChildren().remove(window2);
+
+		Object state = reconciler.serialize();
+
+		application = createApplication();
+		window = application.getChildren().get(0);
+
+		Collection<ModelDelta> deltas = constructDeltas(application, state);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
+
+		applyAll(deltas);
+
+		assertEquals(1, application.getChildren().size());
+		assertEquals(window, application.getChildren().get(0));
+
+		assertEquals(0, window.getChildren().size());
 	}
 
 	public void testMenu_MenuOrdering() {

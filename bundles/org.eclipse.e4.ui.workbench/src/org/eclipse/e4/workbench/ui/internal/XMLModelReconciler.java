@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -1035,14 +1035,24 @@ public class XMLModelReconciler extends ModelReconciler {
 	 */
 	private String getOriginalId(Object object) {
 		EObject reference = (EObject) object;
-		EObject container = getOriginalContainer(reference);
+		EObject originalContainer = getOriginalContainer(reference);
 
 		// did not exist in the model originally
-		if (container == null) {
+		if (originalContainer == null) {
 			return null;
 		}
 
-		return getResourceId(reference, container);
+		if (originalContainer != changeDescription) {
+			EObject container = originalContainer;
+			while (container != rootObject) {
+				container = getOriginalContainer(container);
+				if (container == null) {
+					return null;
+				}
+			}
+		}
+
+		return getResourceId(reference, originalContainer);
 	}
 
 	/**
