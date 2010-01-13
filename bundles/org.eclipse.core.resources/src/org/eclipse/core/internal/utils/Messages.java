@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2009 IBM Corporation and others.
+ * Copyright (c) 2005, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -86,6 +86,7 @@ public class Messages extends NLS {
 	public static String localstore_refreshing;
 	public static String localstore_refreshingRoot;
 	public static String localstore_resourceExists;
+	public static String localstore_resourceDoesNotExist;
 	public static String localstore_resourceIsOutOfSync;
 
 	// resource mappings and models

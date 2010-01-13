@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -352,6 +352,16 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 		}
 		return false;
 	}
+	
+	public boolean fastIsSynchronized(Folder target) {
+		ResourceInfo info = target.getResourceInfo(false, false);
+		if (target.exists(target.getFlags(info), true)) {
+			IFileInfo fileInfo = getStore(target).fetchInfo();
+			if (!fileInfo.exists() && info.getLocalSyncInfo() == fileInfo.getLastModified())
+				return true;
+		}
+		return false;
+	}
 
 	/**
 	 * Returns an IFile for the given file system location or null if there
@@ -586,6 +596,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				return true;
 			case IResource.PROJECT :
 				if (!target.isAccessible())
+					return true;
+				break;
+			case IResource.FOLDER :
+				if (fastIsSynchronized((Folder) target))
 					return true;
 				break;
 			case IResource.FILE :
@@ -935,11 +949,15 @@ public class FileSystemResourceManager implements ICoreConstants, IManager {
 				}
 			} else {
 				if (target.isLocal(IResource.DEPTH_ZERO)) {
-					// test if timestamp is the same since last synchronization
 					ResourceInfo info = ((Resource) target).getResourceInfo(true, false);
+					// test if timestamp is the same since last synchronization
 					if (lastModified != info.getLocalSyncInfo()) {
 						String message = NLS.bind(Messages.localstore_resourceIsOutOfSync, target.getFullPath());
 						throw new ResourceException(IResourceStatus.OUT_OF_SYNC_LOCAL, target.getFullPath(), message, null);
+					}
+					if (!fileInfo.exists()) {
+						String message = NLS.bind(Messages.localstore_resourceDoesNotExist, target.getFullPath());
+						throw new ResourceException(IResourceStatus.NOT_FOUND_LOCAL, target.getFullPath(), message, null);
 					}
 				} else {
 					if (fileInfo.exists()) {

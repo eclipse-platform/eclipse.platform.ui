@@ -1,0 +1,233 @@
+/*******************************************************************************
+ * Copyright (c) 2010 IBM Corporation and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ * 
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.core.tests.resources;
+
+import java.io.ByteArrayInputStream;
+import java.net.URI;
+import junit.framework.Test;
+import junit.framework.TestSuite;
+import org.eclipse.core.internal.resources.Workspace;
+import org.eclipse.core.resources.*;
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.IPath;
+
+public class LinkedResourceSyncMoveAndCopyTest extends ResourceTest {
+
+	protected IProject existingProject;
+	protected IProject otherExistingProject;
+
+	public static Test suite() {
+		return new TestSuite(LinkedResourceSyncMoveAndCopyTest.class);
+	}
+
+	public LinkedResourceSyncMoveAndCopyTest() {
+		super();
+	}
+
+	public LinkedResourceSyncMoveAndCopyTest(String name) {
+		super(name);
+	}
+
+	protected void doCleanup() throws Exception {
+		ensureExistsInWorkspace(new IResource[] {existingProject, otherExistingProject}, true);
+	}
+
+	/**
+	 * Maybe overridden in subclasses that use path variables.
+	 */
+	protected IPath resolve(IPath path) {
+		return path;
+	}
+
+	/**
+	 * Maybe overridden in subclasses that use path variables.
+	 */
+	protected URI resolve(URI uri) {
+		return uri;
+	}
+
+	protected void setUp() throws Exception {
+		super.setUp();
+		existingProject = getWorkspace().getRoot().getProject("ExistingProject");
+		otherExistingProject = getWorkspace().getRoot().getProject("OtherExistingProject");
+		doCleanup();
+	}
+
+	protected void tearDown() throws Exception {
+		super.tearDown();
+	}
+
+	public void internalMovedAndCopyTest(IResource resource, int copyMoveFlag, boolean copyMoveSucceeds) {
+		//		try {
+		//			resource.copy(otherExistingProject.getFullPath().append(resource.getProjectRelativePath()), copyMoveFlag, getMonitor());
+		//			if (!copyMoveSucceeds)
+		//				fail("1.0");
+		//		} catch (CoreException e) {
+		//			if (copyMoveSucceeds)
+		//				fail("4.99", e);
+		//		} finally {
+		//			if (otherExistingProject.findMember(resource.getProjectRelativePath()) != null)
+		//				ensureDoesNotExistInWorkspace(otherExistingProject.findMember(resource.getProjectRelativePath()));
+		//		}
+
+		//		try {
+		//			resource.move(otherExistingProject.getFullPath().append(resource.getProjectRelativePath()), copyMoveFlag, getMonitor());
+		//			if (!copyMoveSucceeds)
+		//				fail("1.0");
+		//		} catch (CoreException e) {
+		//			if (copyMoveSucceeds)
+		//				fail("4.99", e);
+		//		} finally {
+		//			if (otherExistingProject.findMember(resource.getProjectRelativePath()) != null)
+		//				ensureDoesNotExistInWorkspace(otherExistingProject.findMember(resource.getProjectRelativePath()));
+		//		}
+	}
+
+	public void testFileLinkedToNonExistent_Deep() {
+		IFile fileLink = existingProject.getFile(getUniqueString());
+		IPath fileLocation = getRandomLocation();
+		try {
+			fileLink.createLink(fileLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		try {
+			fileLink.setContents(new ByteArrayInputStream(getRandomString().getBytes()), IResource.NONE, getMonitor());
+			fail("1.1");
+		} catch (CoreException e) {
+			// should fail
+			assertEquals("1.2", IResourceStatus.NOT_FOUND_LOCAL, e.getStatus().getCode());
+		}
+
+		assertTrue("2.0", fileLink.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(fileLink, IResource.NONE, false);
+
+		createFileInFileSystem(fileLocation);
+
+		try {
+			fileLink.setContents(new ByteArrayInputStream(getRandomString().getBytes()), IResource.NONE, getMonitor());
+			fail("2.1");
+		} catch (CoreException e) {
+			// should fail
+			assertEquals("2.2", IResourceStatus.OUT_OF_SYNC_LOCAL, e.getStatus().getCode());
+		}
+
+		try {
+			assertFalse("3.0", fileLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(fileLink, IResource.NONE, false);
+
+			try {
+				fileLink.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+
+			assertTrue("5.0", fileLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(fileLink, IResource.NONE, true);
+		} finally {
+			Workspace.clear(resolve(fileLocation).toFile());
+		}
+	}
+
+	public void testFileLinkedToNonExistent_Shallow() {
+		IFile fileLink = existingProject.getFile(getUniqueString());
+		IPath fileLocation = getRandomLocation();
+		try {
+			fileLink.createLink(fileLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		assertTrue("2.0", fileLink.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(fileLink, IResource.SHALLOW, true);
+
+		createFileInFileSystem(fileLocation);
+
+		try {
+			assertFalse("3.0", fileLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(fileLink, IResource.SHALLOW, true);
+
+			try {
+				fileLink.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+
+			assertTrue("5.0", fileLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(fileLink, IResource.SHALLOW, true);
+		} finally {
+			Workspace.clear(resolve(fileLocation).toFile());
+		}
+	}
+
+	public void testFolderLinkedToNonExistent_Deep() {
+		IFolder folderLink = existingProject.getFolder(getUniqueString());
+		IPath folderLocation = getRandomLocation();
+		try {
+			folderLink.createLink(folderLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		assertTrue("3.0", folderLink.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(folderLink, IResource.NONE, false);
+
+		folderLocation.toFile().mkdir();
+
+		try {
+			assertFalse("3.0", folderLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folderLink, IResource.NONE, true);
+
+			try {
+				folderLink.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+
+			assertTrue("5.0", folderLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folderLink, IResource.NONE, true);
+		} finally {
+			Workspace.clear(resolve(folderLocation).toFile());
+		}
+	}
+
+	public void testFolderLinkedToNonExistent_Shallow() {
+		IFolder folderLink = existingProject.getFolder(getUniqueString());
+		IPath folderLocation = getRandomLocation();
+		try {
+			folderLink.createLink(folderLocation, IResource.ALLOW_MISSING_LOCAL, getMonitor());
+		} catch (CoreException e) {
+			fail("1.0", e);
+		}
+
+		assertTrue("2.0", folderLink.isSynchronized(IResource.DEPTH_INFINITE));
+		internalMovedAndCopyTest(folderLink, IResource.SHALLOW, true);
+
+		folderLocation.toFile().mkdir();
+
+		try {
+			assertFalse("3.0", folderLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folderLink, IResource.SHALLOW, true);
+
+			try {
+				folderLink.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			} catch (CoreException e) {
+				fail("4.0", e);
+			}
+
+			assertTrue("5.0", folderLink.isSynchronized(IResource.DEPTH_INFINITE));
+			internalMovedAndCopyTest(folderLink, IResource.SHALLOW, true);
+		} finally {
+			Workspace.clear(resolve(folderLocation).toFile());
+		}
+	}
+}

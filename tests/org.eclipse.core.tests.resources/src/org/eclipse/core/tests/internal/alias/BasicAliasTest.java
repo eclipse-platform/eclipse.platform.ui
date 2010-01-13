@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2010 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.core.tests.internal.alias;
-
-import org.eclipse.core.runtime.CoreException;
 
 import java.io.File;
 import java.net.URI;
@@ -295,13 +293,13 @@ public class BasicAliasTest extends ResourceTest {
 			clear(EFS.getLocalFileSystem().getStore(location2));
 		}
 	}
-	
+
 	private void replaceProject(IProject project, URI newLocation) throws CoreException {
 		IProjectDescription projectDesc = project.getDescription();
 		projectDesc.setLocationURI(newLocation);
 		project.move(projectDesc, IResource.REPLACE, null);
 	}
-	
+
 	public void testBug256837() {
 		final AliasManager aliasManager = ((Workspace) getWorkspace()).getAliasManager();
 		//force AliasManager to restart (simulates a shutdown/startup)
@@ -349,7 +347,7 @@ public class BasicAliasTest extends ResourceTest {
 		assertEquals("7.0", 1, resources.length);
 		assertEquals("8.0", link2TempFolder, resources[0]);
 	}
-	
+
 	public void testBug258987() {
 		// Create the directory to which you will link. The directory needs a single file.
 		IFileStore dirStore = getTempStore();
@@ -582,7 +580,7 @@ public class BasicAliasTest extends ResourceTest {
 			//now the linked resource will still exist but its local contents won't
 			assertTrue("2.4", lLinked.exists());
 			assertTrue("2.5", !lLinked.getLocation().toFile().exists());
-			assertTrue("2.6", !lLinked.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("2.6", lLinked.isSynchronized(IResource.DEPTH_INFINITE));
 			try {
 				lLinked.setContents(getRandomContents(), IResource.NONE, getMonitor());
 				//should fail
@@ -949,8 +947,7 @@ public class BasicAliasTest extends ResourceTest {
 			assertDoesNotExistInFileSystem("3.25", lLinked);
 			assertExistsInWorkspace("3.3", destination);
 			assertEquals("3.4", lLinked.getLocation(), lOverlap.getLocation());
-			//lLinked will be out of sync because it exists in the ws but not fs
-			assertTrue("3.4.1", !lLinked.isSynchronized(IResource.DEPTH_INFINITE));
+			assertTrue("3.4.1", lLinked.isSynchronized(IResource.DEPTH_INFINITE));
 
 			destination.move(lOverlap.getFullPath(), IResource.NONE, getMonitor());
 			assertExistsInWorkspace("3.5", lLinked);
