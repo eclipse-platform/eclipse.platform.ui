@@ -38,6 +38,7 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	private IWorkbenchPart part;
 	private IConfigurationElement element;
 
+	private IKeyBindingService keyBindingService;
 	private ISelectionProvider selectionProvider;
 
 	WorkbenchPartSite(MPart model, IWorkbenchPart part, IConfigurationElement element) {
@@ -88,7 +89,10 @@ public class WorkbenchPartSite implements IWorkbenchPartSite {
 	 */
 	public IKeyBindingService getKeyBindingService() {
 		// FIXME compat getKeyBindingService
-		throw new UnsupportedOperationException();
+		if (keyBindingService == null) {
+			keyBindingService = new KeyBindingService();
+		}
+		return keyBindingService;
 	}
 
 	/* (non-Javadoc)

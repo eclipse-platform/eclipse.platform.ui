@@ -83,6 +83,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 	private MApplication application;
 
 	@Inject
+	private MWindow window;
+
+	@Inject
 	private IEventBroker eventBroker;
 
 	private List<IViewReference> viewReferences = new ArrayList<IViewReference>();
@@ -94,12 +97,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @param workbenchWindow
 	 * @param input
 	 */
-	public WorkbenchPage(WorkbenchWindow workbenchWindow, IAdaptable input,
-			IPerspectiveDescriptor perspective) {
+	public WorkbenchPage(WorkbenchWindow workbenchWindow, IAdaptable input) {
 		this.workbenchWindow = workbenchWindow;
 		this.input = input;
-
-		setPerspective(perspective);
 	}
 
 	private void firePartBroughtToTop(IWorkbenchPart part) {
@@ -380,8 +380,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @see org.eclipse.ui.IWorkbenchPage#getLabel()
 	 */
 	public String getLabel() {
-		// FIXME compat getLabel
-		throw new UnsupportedOperationException();
+		// IWorkbenchPage#testGetLabel checks for non-null
+		String label = window.getLabel();
+		return label == null ? "" : label; //$NON-NLS-1$
 	}
 
 	/* (non-Javadoc)
@@ -576,9 +577,6 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		return compatibilityEditor.getEditor();
 	}
-
-	@Inject
-	private MWindow window;
 
 	private MPartDescriptor getEditorDescriptor() {
 		for (MPartDescriptor descriptor : application.getDescriptors()) {
