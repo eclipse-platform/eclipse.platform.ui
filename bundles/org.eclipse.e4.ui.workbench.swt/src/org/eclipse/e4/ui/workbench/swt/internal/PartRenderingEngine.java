@@ -26,6 +26,7 @@ import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.EclipseContextFactory;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.core.services.context.spi.ContextInjectionFactory;
+import org.eclipse.e4.core.services.context.spi.IContextConstants;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
@@ -84,7 +85,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	Map<String, RenderingRecord> renderedWidgets = new HashMap<String, RenderingRecord>();
 
 	// Life Cycle handlers
-	private EventHandler visibilityHandler = new EventHandler() {
+	private EventHandler toBeRenderedHandler = new EventHandler() {
 		public void handleEvent(Event event) {
 
 			MUIElement changedElement = (MUIElement) event
@@ -218,7 +219,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 		IEventBroker eventBroker = (IEventBroker) context
 				.get(IEventBroker.class.getName());
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UIElement.TOPIC,
-				UIEvents.UIElement.TOBERENDERED), visibilityHandler);
+				UIEvents.UIElement.TOBERENDERED), toBeRenderedHandler);
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.CHILDREN), childrenHandler);
@@ -232,7 +233,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 	private void contextDisposed() {
 		if (eventBroker == null)
 			return;
-		eventBroker.unsubscribe(visibilityHandler);
+		eventBroker.unsubscribe(toBeRenderedHandler);
 		eventBroker.unsubscribe(childrenHandler);
 	}
 
@@ -275,6 +276,33 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 		}
 
+		// Has this already been created? if so treat as a reparent
+		if (element.getWidget() != null) {
+			if (parent instanceof Composite
+					&& element.getWidget() instanceof Control) {
+				// Re-parent the control
+				final Composite p = (Composite) parent;
+				Control c = (Control) element.getWidget();
+				c.setParent(p);
+				final Control[] changed = { c };
+
+				// Defer the layout in order to allow the rendering to finish
+				c.getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						p.getShell().layout(changed, SWT.CHANGED | SWT.DEFER);
+					}
+				});
+
+				// Re-parent the context
+				if (element instanceof MContext) {
+					IEclipseContext ec = ((MContext) element).getContext();
+					IEclipseContext pc = getContext(element.getParent());
+					ec.set(IContextConstants.PARENT, pc);
+				}
+				return c;
+			}
+		}
+
 		// Create a control appropriate to the part
 		Object newWidget = createWidget(element, parent);
 
@@ -303,7 +331,8 @@ public class PartRenderingEngine implements IPresentationEngine {
 			factory.hookControllerLogic(element);
 
 			if (element instanceof MElementContainer) {
-				factory.processContents((MElementContainer<MUIElement>) element);
+				factory
+						.processContents((MElementContainer<MUIElement>) element);
 			}
 
 			factory.postProcess(element);
@@ -346,9 +375,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 		Object parent = null;
 		MUIElement parentME = element.getParent();
 		if (parentME != null) {
-			AbstractPartRenderer factory = getFactoryFor(parentME);
-			if (factory != null) {
-				parent = factory.getUIContainer(element);
+			AbstractPartRenderer renderer = getFactoryFor(parentME);
+			if (renderer != null) {
+				parent = renderer.getUIContainer(element);
 			}
 		}
 

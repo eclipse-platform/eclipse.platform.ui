@@ -139,7 +139,7 @@ public abstract class AbstractPartRenderer {
 	public void removeGui(MUIElement element, Object widget) {
 	}
 
-	protected Object getUIContainer(MUIElement element) {
+	public Object getUIContainer(MUIElement element) {
 		if (element.getParent() != null)
 			return element.getParent().getWidget();
 

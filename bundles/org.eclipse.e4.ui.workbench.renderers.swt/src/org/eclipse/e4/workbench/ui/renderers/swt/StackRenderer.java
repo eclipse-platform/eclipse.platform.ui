@@ -12,9 +12,9 @@ package org.eclipse.e4.workbench.ui.renderers.swt;
 
 import javax.inject.Inject;
 import org.eclipse.e4.core.services.annotations.PostConstruct;
+import org.eclipse.e4.core.services.annotations.PreDestroy;
 import org.eclipse.e4.core.services.context.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MDirtyable;
-import org.eclipse.e4.ui.model.application.MEditor;
 import org.eclipse.e4.ui.model.application.MElementContainer;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
@@ -42,7 +42,6 @@ import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
@@ -57,15 +56,22 @@ public class StackRenderer extends LazyStackRenderer {
 	@Inject
 	IStylingEngine stylingEngine;
 
+	@Inject
+	IEventBroker eventBroker;
+
+	private EventHandler itemUpdater;
+
+	private EventHandler dirtyUpdater;
+
 	public StackRenderer() {
 		super();
 	}
 
 	@PostConstruct
-	public void init(IEventBroker eventBroker) {
+	public void init() {
 		super.init(eventBroker);
 
-		EventHandler itemUpdater = new EventHandler() {
+		itemUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				Object objElement = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -110,7 +116,7 @@ public class StackRenderer extends LazyStackRenderer {
 		eventBroker.subscribe(UIEvents.buildTopic(UIEvents.UILabel.TOPIC),
 				itemUpdater);
 
-		EventHandler dirtyUpdater = new EventHandler() {
+		dirtyUpdater = new EventHandler() {
 			public void handleEvent(Event event) {
 				Object objElement = event
 						.getProperty(UIEvents.EventTags.ELEMENT);
@@ -155,6 +161,14 @@ public class StackRenderer extends LazyStackRenderer {
 				UIEvents.Dirtyable.DIRTY), dirtyUpdater);
 	}
 
+	@PreDestroy
+	public void contextDisposed() {
+		super.contextDisposed(eventBroker);
+
+		eventBroker.unsubscribe(itemUpdater);
+		eventBroker.unsubscribe(dirtyUpdater);
+	}
+
 	private String getLabel(MUILabel itemPart, String newName) {
 		if (newName == null) {
 			newName = ""; //$NON-NLS-1$
@@ -171,10 +185,7 @@ public class StackRenderer extends LazyStackRenderer {
 		if (!(element instanceof MPartStack) || !(parent instanceof Composite))
 			return null;
 
-		Widget parentWidget = (Widget) parent;
-
-		Composite stylingWrapper = createWrapperForStyling(
-				(Composite) parentWidget, getContext(element));
+		Composite parentComposite = (Composite) parent;
 
 		// TODO see bug #267434, SWT.BORDER should be determined from CSS
 		// TODO see bug #282901 - [UI] Need better support for switching
@@ -182,10 +193,10 @@ public class StackRenderer extends LazyStackRenderer {
 
 		// TBD: need to define attributes to handle this
 		int styleModifier = 0; // SWT.CLOSE
-		final CTabFolder ctf = new ETabFolder(stylingWrapper, SWT.BORDER
+		final CTabFolder ctf = new ETabFolder(parentComposite, SWT.BORDER
 				| styleModifier);
 
-		configureForStyling(ctf);
+		// configureForStyling(ctf);
 
 		// TBD: need to handle this
 		// boolean showCloseAlways = element instanceof MEditorStack;
@@ -300,9 +311,12 @@ public class StackRenderer extends LazyStackRenderer {
 			cti.setImage(getImage(itemPart));
 			cti.setToolTipText(itemPart.getTooltip());
 
-			Control widget = (Control) part.getWidget();
-			if (widget != null)
-				cti.setControl(widget);
+			Control ctrl = (Control) part.getWidget();
+			if (ctrl != null) {
+				if (ctrl.getParent() != ctf)
+					ctrl.setParent(ctf);
+				cti.setControl(ctrl);
+			}
 
 			// TODO HACK: see Bug 283585 [CSS] Specificity fails with
 			// descendents
@@ -382,25 +396,6 @@ public class StackRenderer extends LazyStackRenderer {
 		if (oldItem != null) {
 			oldItem.setControl(null); // prevent the widget from being disposed
 			oldItem.dispose();
-		}
-
-		// HACK!! 'auto-hide' empty stacks (should be modelled explicitly
-		CTabFolder ctf = (CTabFolder) parentElement.getWidget();
-		boolean isEditorStack = child instanceof MEditor;
-		if (ctf.getItemCount() == 0 && !isEditorStack) {
-			final Shell sh = ctf.getShell();
-			parentElement.setToBeRendered(false);
-			sh.getDisplay().asyncExec(new Runnable() {
-				public void run() {
-					if (!sh.isDisposed())
-						sh.layout(true, true);
-				}
-			});
-		}
-
-		// Auto-remove 'editor stack' entries on close
-		if (isEditorStack) {
-			parentElement.getChildren().remove(child);
 		}
 	}
 

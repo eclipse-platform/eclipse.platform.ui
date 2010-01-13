@@ -293,10 +293,10 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="PerspectiveStack">
     <eGenericSuperTypes eClassifier="#//UIElement"/>
-    <eGenericSuperTypes eClassifier="#//ElementContainer">
+    <eGenericSuperTypes eClassifier="#//PSCElement"/>
+    <eGenericSuperTypes eClassifier="#//GenericStack">
       <eTypeArguments eClassifier="#//Perspective"/>
     </eGenericSuperTypes>
-    <eGenericSuperTypes eClassifier="#//PSCElement"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="V_________Testing__________V" abstract="true"
       interface="true"/>

@@ -2044,11 +2044,11 @@ public class ApplicationPackageImpl extends EPackageImpl implements MApplication
 		perspectiveEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getUIElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getElementContainer());
+		g1 = createEGenericType(this.getPSCElement());
+		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
+		g1 = createEGenericType(this.getGenericStack());
 		g2 = createEGenericType(this.getPerspective());
 		g1.getETypeArguments().add(g2);
-		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(this.getPSCElement());
 		perspectiveStackEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(this.getApplicationElement());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);

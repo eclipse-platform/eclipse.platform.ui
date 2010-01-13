@@ -14,6 +14,7 @@ import java.util.Collection;
 
 import org.eclipse.e4.ui.model.application.MApplicationPackage;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MPSCElement;
 import org.eclipse.e4.ui.model.application.MPerspective;
 import org.eclipse.e4.ui.model.application.MPerspectiveStack;
@@ -244,6 +245,11 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 	 */
 	@Override
 	public int eBaseStructuralFeatureID(int derivedFeatureID, Class<?> baseClass) {
+		if (baseClass == MPSCElement.class) {
+			switch (derivedFeatureID) {
+				default: return -1;
+			}
+		}
 		if (baseClass == MElementContainer.class) {
 			switch (derivedFeatureID) {
 				case MApplicationPackage.PERSPECTIVE_STACK__CHILDREN: return MApplicationPackage.ELEMENT_CONTAINER__CHILDREN;
@@ -251,7 +257,7 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 				default: return -1;
 			}
 		}
-		if (baseClass == MPSCElement.class) {
+		if (baseClass == MGenericStack.class) {
 			switch (derivedFeatureID) {
 				default: return -1;
 			}
@@ -266,6 +272,11 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 	 */
 	@Override
 	public int eDerivedStructuralFeatureID(int baseFeatureID, Class<?> baseClass) {
+		if (baseClass == MPSCElement.class) {
+			switch (baseFeatureID) {
+				default: return -1;
+			}
+		}
 		if (baseClass == MElementContainer.class) {
 			switch (baseFeatureID) {
 				case MApplicationPackage.ELEMENT_CONTAINER__CHILDREN: return MApplicationPackage.PERSPECTIVE_STACK__CHILDREN;
@@ -273,7 +284,7 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 				default: return -1;
 			}
 		}
-		if (baseClass == MPSCElement.class) {
+		if (baseClass == MGenericStack.class) {
 			switch (baseFeatureID) {
 				default: return -1;
 			}

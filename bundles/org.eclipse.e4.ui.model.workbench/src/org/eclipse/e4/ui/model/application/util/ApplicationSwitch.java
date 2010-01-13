@@ -566,10 +566,11 @@ public class ApplicationSwitch<T1> {
 			case MApplicationPackage.PERSPECTIVE_STACK: {
 				MPerspectiveStack perspectiveStack = (MPerspectiveStack)theEObject;
 				T1 result = casePerspectiveStack(perspectiveStack);
-				if (result == null) result = caseElementContainer(perspectiveStack);
 				if (result == null) result = casePSCElement(perspectiveStack);
-				if (result == null) result = caseUIElement(perspectiveStack);
+				if (result == null) result = caseGenericStack(perspectiveStack);
 				if (result == null) result = caseApplicationElement(perspectiveStack);
+				if (result == null) result = caseElementContainer(perspectiveStack);
+				if (result == null) result = caseUIElement(perspectiveStack);
 				if (result == null) result = defaultCase(theEObject);
 				return result;
 			}

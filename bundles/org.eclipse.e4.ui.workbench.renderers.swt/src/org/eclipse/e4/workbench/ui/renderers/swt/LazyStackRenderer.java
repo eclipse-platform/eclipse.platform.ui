@@ -10,15 +10,22 @@
  *******************************************************************************/
 package org.eclipse.e4.workbench.ui.renderers.swt;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.eclipse.e4.ui.model.application.MElementContainer;
+import org.eclipse.e4.ui.model.application.MGenericStack;
 import org.eclipse.e4.ui.model.application.MPart;
 import org.eclipse.e4.ui.model.application.MPartStack;
+import org.eclipse.e4.ui.model.application.MPlaceholder;
 import org.eclipse.e4.ui.model.application.MUIElement;
+import org.eclipse.e4.ui.model.application.MWindow;
 import org.eclipse.e4.ui.services.events.IEventBroker;
 import org.eclipse.e4.ui.widgets.CTabFolder;
+import org.eclipse.e4.ui.workbench.swt.internal.AbstractPartRenderer;
 import org.eclipse.e4.workbench.ui.IPresentationEngine;
 import org.eclipse.e4.workbench.ui.UIEvents;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
@@ -35,15 +42,25 @@ import org.osgi.service.event.EventHandler;
  * 
  */
 public abstract class LazyStackRenderer extends SWTPartRenderer {
+	private EventHandler lazyLoader;
+
 	public LazyStackRenderer() {
 		super();
 	}
 
 	public void init(IEventBroker eventBroker) {
-		EventHandler lazyLoader = new EventHandler() {
+		lazyLoader = new EventHandler() {
 			public void handleEvent(Event event) {
 				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-				MElementContainer<MUIElement> stack = (MElementContainer<MUIElement>) element;
+
+				if (!(element instanceof MGenericStack<?>))
+					return;
+
+				MGenericStack<MUIElement> stack = (MGenericStack<MUIElement>) element;
+
+				MUIElement oldSel = (MUIElement) event
+						.getProperty(UIEvents.EventTags.OLD_VALUE);
+				selectStackElement(stack, oldSel);
 				MUIElement selPart = stack.getActiveChild();
 				if (selPart != null && selPart.getWidget() == null) {
 					IPresentationEngine renderer = (IPresentationEngine) context
@@ -51,12 +68,32 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					renderer.createGui(selPart);
 					// activate(selPart);
 				}
+				// else {
+				// // HACK!! Should be in StackRenderer
+				// if (stack.getWidget() instanceof CTabFolder) {
+				// CTabFolder ctf = (CTabFolder) stack.getWidget();
+				// CTabItem[] ctis = ctf.getItems();
+				// for (int i = 0; i < ctis.length; i++) {
+				// if (ctis[i].getData(OWNING_ME) == selPart) {
+				// ctf.setSelection(ctis[i]);
+				// break;
+				// }
+				// }
+				// }
+				// }
 			}
 		};
 
 		eventBroker.subscribe(UIEvents.buildTopic(
 				UIEvents.ElementContainer.TOPIC,
 				UIEvents.ElementContainer.ACTIVECHILD), lazyLoader);
+	}
+
+	/**
+	 * @param eventBroker
+	 */
+	public void contextDisposed(IEventBroker eventBroker) {
+		eventBroker.unsubscribe(lazyLoader);
 	}
 
 	public void postProcess(MUIElement element) {
@@ -130,6 +167,150 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 								activate(selPart);
 						}
 					});
+		}
+	}
+
+	public void selectStackElement(MGenericStack<MUIElement> stack,
+			MUIElement oldElement) {
+		List<MUIElement> goingHidden = new ArrayList<MUIElement>();
+		List<MUIElement> becomingVisible = new ArrayList<MUIElement>();
+		if (oldElement != null) {
+			assert (stack.getChildren().indexOf(oldElement) >= 0);
+
+			// First, get all the elements under the existing 'selected' element
+			hideElementRecursive(oldElement, goingHidden);
+		}
+
+		// Now process any newly visible elements
+		MUIElement curSel = stack.getActiveChild();
+		if (curSel != null) {
+			showElementRecursive(curSel, becomingVisible);
+		}
+	}
+
+	private void hideElementRecursive(MUIElement element,
+			List<MUIElement> goingHidden) {
+		if (element == null || element.getWidget() == null)
+			return;
+
+		// Hide any floating windows
+		if (element instanceof MWindow && element.getWidget() != null) {
+			element.setVisible(false);
+		}
+
+		goingHidden.add(element);
+
+		if (element instanceof MGenericStack<?>) {
+			// For stacks only the currently selected elements are being hidden
+			MGenericStack<?> container = (MGenericStack<?>) element;
+			MUIElement curSel = container.getActiveChild();
+			hideElementRecursive(curSel, goingHidden);
+		} else if (element instanceof MElementContainer<?>) {
+			MElementContainer<?> container = (MElementContainer<?>) element;
+			for (MUIElement childElement : container.getChildren()) {
+				hideElementRecursive(childElement, goingHidden);
+			}
+		}
+	}
+
+	private void showElementRecursive(MUIElement element,
+			List<MUIElement> becomingVisible) {
+		if (!element.isToBeRendered())
+			return;
+
+		if (element instanceof MPlaceholder) {
+			swap((MPlaceholder) element);
+			element = ((MPlaceholder) element).getRef();
+		}
+
+		// Show any floating windows
+		if (element instanceof MWindow && element.getWidget() != null) {
+			element.setVisible(true);
+		}
+
+		becomingVisible.add(element);
+
+		if (element instanceof MGenericStack<?>) {
+			// For stacks only the currently selected elements are being visible
+			MGenericStack<?> container = (MGenericStack<?>) element;
+			MUIElement curSel = container.getActiveChild();
+			if (curSel == null && container.getChildren().size() > 0)
+				curSel = container.getChildren().get(0);
+			if (curSel != null)
+				showElementRecursive(curSel, becomingVisible);
+		} else if (element instanceof MElementContainer<?>) {
+			MElementContainer<?> container = (MElementContainer<?>) element;
+			for (MUIElement childElement : container.getChildren()) {
+				showElementRecursive(childElement, becomingVisible);
+			}
+		}
+	}
+
+	public void swap(MPlaceholder placeholder) {
+		MUIElement element = placeholder.getRef();
+
+		MElementContainer<MUIElement> elementParent = element.getParent();
+		int elementIndex = elementParent.getChildren().indexOf(element);
+		MElementContainer<MUIElement> phParent = placeholder.getParent();
+		int phIndex = phParent.getChildren().indexOf(placeholder);
+
+		// Remove the two elements from their respective parents
+		elementParent.getChildren().remove(element);
+		phParent.getChildren().remove(placeholder);
+
+		// swap over the UIElement info
+		boolean onTop = element.isOnTop();
+		boolean vis = element.isVisible();
+		boolean tbr = element.isToBeRendered();
+		String cd = element.getContainerData();
+
+		element.setOnTop(placeholder.isOnTop());
+		element.setVisible(placeholder.isVisible());
+		element.setToBeRendered(placeholder.isToBeRendered());
+		element.setContainerData(placeholder.getContainerData());
+
+		placeholder.setOnTop(onTop);
+		placeholder.setVisible(vis);
+		placeholder.setToBeRendered(tbr);
+		placeholder.setContainerData(cd);
+
+		// Add the elements back into the new parents
+		elementParent.getChildren().add(elementIndex, placeholder);
+		phParent.getChildren().add(phIndex, element);
+
+		if (elementParent.getActiveChild() == element)
+			elementParent.setActiveChild(null);
+
+		if (phParent.getActiveChild() == null)
+			phParent.setActiveChild(element);
+
+		// directly manage the widget reparent if the parent exists
+		if (element.getWidget() instanceof Control) {
+			// Swap the control's layout data
+			// HACK!! for now use the placeholder's 'renderer' att to hold the
+			// value
+			Control c = (Control) element.getWidget();
+			Object phLayoutData = placeholder.getRenderer();
+			placeholder.setRenderer(c.getLayoutData());
+			c.setLayoutData(phLayoutData);
+
+			// If the new parent has already been rendered directly move the
+			// control
+			if (phParent.getWidget() instanceof Composite) {
+				AbstractPartRenderer renderer = (AbstractPartRenderer) phParent
+						.getRenderer();
+				Composite newParent = (Composite) renderer
+						.getUIContainer(element);
+				c.setParent(newParent);
+				Control[] changed = { c };
+				newParent.getShell().layout(changed, SWT.CHANGED | SWT.DEFER);
+				if (newParent instanceof CTabFolder) {
+					CTabFolder ctf = (CTabFolder) newParent;
+					if (ctf.getSelection() == null) {
+						ctf.setSelection(0);
+					}
+				}
+			}
 		}
 	}
 }

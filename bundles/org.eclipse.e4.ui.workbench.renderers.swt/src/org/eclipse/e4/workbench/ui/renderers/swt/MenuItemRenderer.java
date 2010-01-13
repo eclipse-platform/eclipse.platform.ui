@@ -209,7 +209,7 @@ public class MenuItemRenderer extends SWTPartRenderer {
 	 * (org.eclipse.e4.ui.model.application.MUIElement)
 	 */
 	@Override
-	protected Object getUIContainer(MUIElement element) {
+	public Object getUIContainer(MUIElement element) {
 		if (!(element instanceof MMenuItem))
 			return null;
 
