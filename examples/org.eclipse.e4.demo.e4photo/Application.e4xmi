@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="ASCII"?>
-<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xmi:id="_AXU5UO8IEd6FC9cDb6iV7g" id="_AXU5UO8IEd6FC9cDb6iV7g" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore" >
+<application:Application xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:application="http://www.eclipse.org/ui/2008/UIModel" xsi:schemaLocation="http://www.eclipse.org/ui/2008/UIModel ../org.eclipse.e4.ui.model.workbench/model/UIElements.ecore" xmi:id="_AXU5UO8IEd6FC9cDb6iV7g" id="_AXU5UO8IEd6FC9cDb6iV7g">
   <children xsi:type="application:Window" xmi:id="_AXU5Ue8IEd6FC9cDb6iV7g" id="_AXU5Ue8IEd6FC9cDb6iV7g" x="20" y="20" width="800" height="600">
     <children xsi:type="application:PerspectiveStack" xmi:id="DefaultPerspectiveStack" id="DefaultPerspectiveStack">
       <children xsi:type="application:Perspective" xmi:id="Default" id="Default">
@@ -22,12 +22,7 @@
         </children>
       </children>
       <children xsi:type="application:Perspective" xmi:id="Simple" id="Simple">
-        <children xsi:type="application:PartSashContainer" xmi:id="_AXU5XO8IEd6FC9cDb6iV7g" id="_AXU5XO8IEd6FC9cDb6iV7g">
-          <children xsi:type="application:Part" xmi:id="_AXU5Xe8IEd6FC9cDb6iV7g" id="_AXU5Xe8IEd6FC9cDb6iV7g" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.Location" containerData="70" label="Location"/>
-          <children xsi:type="application:PartStack" xmi:id="_AXU5Xu8IEd6FC9cDb6iV7g" id="_AXU5Xu8IEd6FC9cDb6iV7g" containerData="30">
-            <children xsi:type="application:Part" xmi:id="" id="" URI="platform:/plugin/org.eclipse.e4.demo.e4photo/org.eclipse.e4.demo.e4photo.ExifTable" label="Exif"/>
-          </children>
-        </children>
+        <children xsi:type="application:Placeholder" id="PH for ImageSash" ref="_AXU5WO8IEd6FC9cDb6iV7g"/>
       </children>
     </children>
     <variables>selection</variables>
